@@ -11,6 +11,7 @@ namespace Libs.Looting
     public class LootWheel
     {
         readonly WowProcess wowProcess;
+        readonly PlayerReader playerReader;
         readonly float num_theta = 32;
         readonly float radiusLarge;
         readonly float dtheta;
@@ -19,9 +20,10 @@ namespace Libs.Looting
 
         public CursorClassification Classification { get; set; }
 
-        public LootWheel(WowProcess wowProcess)
+        public LootWheel(WowProcess wowProcess, PlayerReader playerReader)
         {
             this.wowProcess = wowProcess;
+            this.playerReader = playerReader;
 
             var bounds = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
 
@@ -39,10 +41,13 @@ namespace Libs.Looting
         }
 
         public async Task<bool> Loot(bool searchForMobs)
-        {
-            if (await SearchInCircle(radiusLarge / 2, radiusLarge/2,searchForMobs))
+        {                   
+            if (!searchForMobs)
             {
-                return true;
+                if (await SearchInCircle(radiusLarge / 2, radiusLarge / 2, false))
+                {
+                    return true;
+                }
             }
 
             return await SearchInCircle(radiusLarge, radiusLarge, searchForMobs);
@@ -70,8 +75,10 @@ namespace Libs.Looting
 
         private async Task<bool> CheckForLoot(Point mousePosition, bool searchForMobs)
         {
+            var inCombat = this.playerReader.PlayerBitValues.PlayerInCombat;
+
             Classification = CursorClassification.None;
-            await Task.Delay(20);
+            await Task.Delay(30);
 
             CursorClassifier.Classify(out var cls);
 
@@ -88,7 +95,7 @@ namespace Libs.Looting
                 // found something, lets give the cursor a chance to update.
                 if (cls == CursorClassification.Loot || cls == CursorClassification.Kill || cls == CursorClassification.Skin)
                 {
-                    await Task.Delay(100);
+                    await Task.Delay(200);
                     CursorClassifier.Classify(out cls);
                 }
             }
@@ -98,7 +105,8 @@ namespace Libs.Looting
                 Log("Found: " + cls.ToString());
                 await wowProcess.RightClickMouse(mousePosition);
                 Classification = cls;
-                await Task.Delay(1000);
+                await Task.Delay(500);
+                await Wait(2000, inCombat);
             }
 
             if (cls == CursorClassification.Skin && !searchForMobs)
@@ -106,7 +114,8 @@ namespace Libs.Looting
                 Log("Found: " + cls.ToString());
                 await wowProcess.RightClickMouse(mousePosition);
                 Classification = cls;
-                await Task.Delay(5000);
+                await Task.Delay(1000);
+                await Wait(6000, inCombat);
             }
 
             if (cls == CursorClassification.Kill)
@@ -114,7 +123,6 @@ namespace Libs.Looting
                 Log("Found: " + cls.ToString());
                 await wowProcess.RightClickMouse(mousePosition);
                 Classification = cls;
-                await Task.Delay(1000);
             }
 
             if (searchForMobs)
@@ -123,6 +131,26 @@ namespace Libs.Looting
             }
 
             return cls == CursorClassification.Loot || cls== CursorClassification.Skin || cls == CursorClassification.Kill;
+        }
+
+        private async Task Wait(int delay, bool isInCombat)
+        {
+            for (int i = 0; i < delay; i += 100)
+            {
+                if (!isInCombat & this.playerReader.PlayerBitValues.PlayerInCombat)
+                {
+                    Debug.WriteLine ("We have enterred combat, aborting loot");
+                    return;
+                }
+
+                CursorClassifier.Classify(out var cls2);
+                if (cls2 != this.Classification)
+                {
+                    return;
+                }
+                await Task.Delay(100);
+            }
+            return;
         }
     }
 }

@@ -13,5 +13,6 @@ namespace Libs.GOAP
 		inmeleerange=50,
 		pulled=60,
 		shouldheal=70,
+		isdead=80
 	}
 }

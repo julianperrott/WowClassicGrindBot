@@ -41,6 +41,13 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
+            // force stop turning
+            wowProcess.KeyUp(ConsoleKey.LeftArrow);
+            await Task.Delay(1);
+            wowProcess.KeyUp(ConsoleKey.RightArrow);
+            await Task.Delay(1);
+            wowProcess.KeyUp(ConsoleKey.UpArrow);
+
             if (this.playerReader.HealthPercent < 40 && Eat != ConsoleKey.Escape)
             {
                 await PressKeyAndWait(Eat, 27);

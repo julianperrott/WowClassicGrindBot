@@ -18,7 +18,7 @@ namespace Libs.Actions
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
-            lootWheel = new LootWheel(wowProcess);
+            lootWheel = new LootWheel(wowProcess, playerReader);
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, false);
         }
@@ -54,14 +54,14 @@ namespace Libs.Actions
 
             // force stop turning
             wowProcess.KeyUp(ConsoleKey.LeftArrow);
-            await Task.Delay(100);
+            await Task.Delay(1);
             wowProcess.KeyUp(ConsoleKey.RightArrow);
-            await Task.Delay(100);
+            await Task.Delay(1);
             wowProcess.KeyUp(ConsoleKey.UpArrow);
 
             var healthAtStartOfLooting = playerReader.HealthPercent;
 
-            await Task.Delay(1000);
+            await Task.Delay(500);
 
             bool outOfCombat = false;
 
@@ -87,6 +87,23 @@ namespace Libs.Actions
                 if (foundSomething && lootWheel.Classification == Cursor.CursorClassification.Kill)
                 {
                     Log("We are being attacked!");
+
+                    for (int i = 0; i < 2000; i += 100)
+                    {
+                        Log("Waiting for target to be recognised!");
+                        await Task.Delay(100);
+                        if (string.IsNullOrEmpty(playerReader.Target) && playerReader.PlayerBitValues.TargetIsDead && playerReader.TargetHealth==0)
+                        {
+                            await Task.Delay(100);
+                            Log($"Waiting for target to be recognised! {playerReader.Target},{playerReader.PlayerBitValues.TargetIsDead},{playerReader.TargetHealth}");
+                        }
+                        else
+                        {
+                            Log("Target Aquired");
+                            break;
+                        }
+                    }
+
                     return;
                 }
 

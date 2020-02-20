@@ -39,6 +39,13 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
+
+            wowProcess.KeyUp(ConsoleKey.LeftArrow);
+            await Task.Delay(1);
+            wowProcess.KeyUp(ConsoleKey.RightArrow);
+            await Task.Delay(1);
+            wowProcess.KeyUp(ConsoleKey.UpArrow);
+            await Task.Delay(1);
             await this.wowProcess.KeyPress(ConsoleKey.H, 501);
         }
 

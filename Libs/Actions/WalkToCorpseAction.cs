@@ -9,41 +9,32 @@ using System.Numerics;
 
 namespace Libs.Actions
 {
-    public class FollowRouteAction : GoapAction
+    public class WalkToCorpseAction : GoapAction
     {
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
-        private readonly List<WowPoint> pointsList;
-        private Stack<WowPoint> points=new Stack<WowPoint>();
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private double lastDistance = 999;
-        private DateTime LastActive = DateTime.Now;
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points)
+        public WalkToCorpseAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
             this.playerDirection = playerDirection;
-            this.pointsList = points;
 
-            AddPrecondition(GoapKey.incombat, false);
-
-            RefillPoints();
+            AddPrecondition(GoapKey.isdead, true);
         }
 
-        private void RefillPoints()
-        {
-            pointsList.ForEach(p => points.Push(p));
-        }
+        public override float CostOfPerformingAction { get => 1f; }
 
-        public override float CostOfPerformingAction { get => 20f; }
+        public WowPoint CorpseLocation => new WowPoint(playerReader.CorpseX, playerReader.CorpseY);
 
         public void Dump(string description)
         {
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = DistanceTo(location, points.Peek());
-            var heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
+            var distance = DistanceTo(location, CorpseLocation);
+            var heading = new DirectionCalculator().CalculateHeading(location, CorpseLocation);
             //Debug.WriteLine($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
         }
 
@@ -54,28 +45,11 @@ namespace Libs.Actions
             await Task.Delay(200);
             //wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat){ return; }
-
-            if ((DateTime.Now - LastActive).TotalSeconds > 10)
-            {
-                var pointsRemoved = 0;
-                while (AdjustNextPointToClosest() && pointsRemoved<5) { pointsRemoved++; };
-            }
-
-            LastActive = DateTime.Now;
-
-            // press tab
-                if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
-            {
-                //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
-                this.wowProcess.SetKeyState(ConsoleKey.Tab, true);
-                Thread.Sleep(300);
-                this.wowProcess.SetKeyState(ConsoleKey.Tab, false);
-            }
+            if (!this.playerReader.PlayerBitValues.DeadStatus){ return; }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = DistanceTo(location, points.Peek());
-            var heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
+            var distance = DistanceTo(location, CorpseLocation);
+            var heading = new DirectionCalculator().CalculateHeading(location, CorpseLocation);
 
             if (lastDistance < distance)
             {
@@ -108,42 +82,6 @@ namespace Libs.Actions
             }
 
             lastDistance = distance;
-
-            if (distance < 4)
-            {
-                Debug.WriteLine($"Move to next point");
-                points.Pop();
-                lastDistance = 999;
-                if (points.Count == 0)
-                {
-                    RefillPoints();
-                }
-
-                heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
-                playerDirection.SetDirection(heading);
-            }
-        }
-
-        private bool AdjustNextPointToClosest()
-        {
-            if (points.Count < 2) { return false; }
-
-            var A = points.Pop();
-            var B = points.Peek();
-            var result = GetClosestPointOnLineSegment(A.Vector2, B.Vector2, new Vector2((float)this.playerReader.XCoord, (float)this.playerReader.YCoord));
-            var newPoint = new WowPoint(result.X, result.Y);
-            if (DistanceTo(newPoint, points.Peek()) >= 4)
-            {
-                points.Push(newPoint);
-                Debug.WriteLine($"Adjusted resume point");
-                return false;
-            }
-            else
-            {
-                Debug.WriteLine($"Skipped next point in path");
-                // skiped next point
-                return true;
-            }
         }
 
         public void Reset()

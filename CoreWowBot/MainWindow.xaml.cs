@@ -48,7 +48,7 @@ namespace Powershell
             //var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Path_20200210195132.json");
             //var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Path_20200215184939.json");
             //var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Path_20200217215324.json");
-            var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Wetlands_Raptor.json");
+            var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\WetlandsWhelps.json");
             
 
             var points = JsonConvert.DeserializeObject<List<WowPoint>>(text);//.Select(p => new WowPoint(p.X, p.Y)).ToList();
@@ -73,7 +73,8 @@ namespace Powershell
                 approachTargetAction,
                 lootAction,
                 healAction,
-                new TargetDeadAction(WowProcess,addonThread.PlayerReader)
+                new TargetDeadAction(WowProcess,addonThread.PlayerReader),
+                new WalkToCorpseAction(addonThread.PlayerReader,WowProcess,playerDirection)
             };
 
             this.agent = new GoapAgent(this.addonThread.PlayerReader, this.availableActions);

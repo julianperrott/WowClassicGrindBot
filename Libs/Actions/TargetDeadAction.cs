@@ -18,7 +18,7 @@ namespace Libs.Actions
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
-            lootWheel = new LootWheel(wowProcess);
+            lootWheel = new LootWheel(wowProcess, playerReader);
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, false);
         }
