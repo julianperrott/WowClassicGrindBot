@@ -304,12 +304,13 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(equipNum), 31)
             -- Amount of money in coppers
             MakePixelSquareArr(integerToColor(Modulo(self:getMoneyTotal(), 1000000)), 32) -- 13 Represents amount of money held (in copper)
-            
+            MakePixelSquareArr(integerToColor(floor(self:getMoneyTotal() / 1000000)), 33) -- 14 Represents amount of money held (in gold)
+           
             -- Start main action page (page 1)
-            MakePixelSquareArr(integerToColor(self:isActionUseable(1,24)), 33) 
-            MakePixelSquareArr(integerToColor(self:isActionUseable(25,48)), 34) 
-            MakePixelSquareArr(integerToColor(self:isActionUseable(49,72)), 35) 
-            .///MakePixelSquareArr(integerToColor(self:isActionUseable(73,96)), 36) 
+            MakePixelSquareArr(integerToColor(self:isActionUseable(1,24)), 34) 
+            MakePixelSquareArr(integerToColor(self:isActionUseable(25,48)), 35) 
+            MakePixelSquareArr(integerToColor(self:isActionUseable(49,72)), 36) 
+            MakePixelSquareArr(integerToColor(self:isActionUseable(73,96)), 42) 
 
 
             -- Number of slots each bag contains, not including our default backpack
@@ -321,13 +322,13 @@ function DataToColor:CreateFrames(n)
             -- tracks our skinning level
             MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
             -- tracks our fishing level
-            MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Fishing")), 42) -- Fishing profession level
+            --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Fishing")), 42) -- Fishing profession level
             MakePixelSquareArr(integerToColor(self:GetDebuffs("FrostNova")), 43) -- Checks if target is frozen by frost nova debuff
             MakePixelSquareArr(integerToColor(self:GameTime()), 44) -- Returns time in the game
             MakePixelSquareArr(integerToColor(self:GetGossipIcons()), 45) -- Returns which gossip icons are on display in dialogue box
             MakePixelSquareArr(integerToColor(self:PlayerClass()), 46) -- Returns player class as an integer
             MakePixelSquareArr(integerToColor(self:isUnskinnable()), 47) -- Returns 1 if creature is unskinnable
-            MakePixelSquareArr(integerToColor(self:hearthZoneID()), 48) -- Returns subzone of that is currently bound to hearhtstone
+            MakePixelSquareArr(integerToColor(self:hearthZoneID()), 48) -- Returns subzone of that is currently bound to hearthstone
 
             MakePixelSquareArr(integerToColor(self:areSpellsInRange()), 49) -- Are spells in range
 
