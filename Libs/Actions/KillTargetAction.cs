@@ -69,6 +69,14 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
+
+            wowProcess.KeyUp(ConsoleKey.LeftArrow);
+            await Task.Delay(1);
+            wowProcess.KeyUp(ConsoleKey.RightArrow);
+            await Task.Delay(1);
+            wowProcess.KeyUp(ConsoleKey.UpArrow);
+            await Task.Delay(1);
+
             this.actionBar = playerReader.ActionBarUseable_73To96;
 
             //StringBuilder sb = new StringBuilder();

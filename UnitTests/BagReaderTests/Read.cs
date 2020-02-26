@@ -18,18 +18,18 @@ namespace UnitTests.BagReaderTests
             // Arrange
             var cells = Enumerable.Range(1, 50).Select(i => new DataFrame(new Point(1, 1), i)).ToList();
             var reader = new Mock<ISquareReader>();
-            var bagreader = new BagReader(reader.Object, 20, cells);
+            var bagreader = new BagReader(reader.Object, 20);
 
-            reader.Setup(s => s.Get5Numbers(It.IsAny<DataFrame>(), It.IsAny<SquareReader.Part>())).Returns(0); // itemCount
-            reader.Setup(s => s.GetLongAtCell(It.IsAny<DataFrame>())).Returns(0); // itemCount
+            reader.Setup(s => s.Get5Numbers(It.IsAny<int>(), It.IsAny<SquareReader.Part>())).Returns(0); // itemCount
+            reader.Setup(s => s.GetLongAtCell(It.IsAny<int>())).Returns(0); // itemCount
 
-            reader.Setup(s => s.Get5Numbers(cells[20], SquareReader.Part.Left)).Returns(11); // itemCount
-            reader.Setup(s => s.Get5Numbers(cells[20], SquareReader.Part.Right)).Returns(1234); // ItemId
-            reader.Setup(s => s.GetLongAtCell(cells[21])).Returns(16 * 3 + 13); // Bag 3, index 13
+            reader.Setup(s => s.Get5Numbers(20, SquareReader.Part.Left)).Returns(11); // itemCount
+            reader.Setup(s => s.Get5Numbers(20, SquareReader.Part.Right)).Returns(1234); // ItemId
+            reader.Setup(s => s.GetLongAtCell(21)).Returns(16 * 3 + 13); // Bag 3, index 13
 
-            reader.Setup(s => s.Get5Numbers(cells[22], SquareReader.Part.Left)).Returns(3); // itemCount
-            reader.Setup(s => s.Get5Numbers(cells[22], SquareReader.Part.Right)).Returns(434); // ItemId
-            reader.Setup(s => s.GetLongAtCell(cells[23])).Returns(16 * 5 + 7); // Bag 5, index 7
+            reader.Setup(s => s.Get5Numbers(22, SquareReader.Part.Left)).Returns(3); // itemCount
+            reader.Setup(s => s.Get5Numbers(22, SquareReader.Part.Right)).Returns(434); // ItemId
+            reader.Setup(s => s.GetLongAtCell(23)).Returns(16 * 5 + 7); // Bag 5, index 7
 
             // Act
             var items = bagreader.Read();
@@ -51,18 +51,18 @@ namespace UnitTests.BagReaderTests
             // Arrange
             var cells = Enumerable.Range(1, 50).Select(i => new DataFrame(new Point(1, 1), i)).ToList();
             var reader = new Mock<ISquareReader>();
-            var bagreader = new BagReader(reader.Object, 20, cells);
+            var bagreader = new BagReader(reader.Object, 20);
 
-            reader.Setup(s => s.Get5Numbers(It.IsAny<DataFrame>(), It.IsAny<SquareReader.Part>())).Returns(0); // itemCount
-            reader.Setup(s => s.GetLongAtCell(It.IsAny<DataFrame>())).Returns(0); // itemCount
+            reader.Setup(s => s.Get5Numbers(It.IsAny<int>(), It.IsAny<SquareReader.Part>())).Returns(0); // itemCount
+            reader.Setup(s => s.GetLongAtCell(It.IsAny<int>())).Returns(0); // itemCount
 
-            reader.Setup(s => s.Get5Numbers(cells[20], SquareReader.Part.Left)).Returns(11); // itemCount
-            reader.Setup(s => s.Get5Numbers(cells[20], SquareReader.Part.Right)).Returns(1234); // ItemId
-            reader.Setup(s => s.GetLongAtCell(cells[21])).Returns(16 * 3 + 13); // Bag 3, index 13
+            reader.Setup(s => s.Get5Numbers(20, SquareReader.Part.Left)).Returns(11); // itemCount
+            reader.Setup(s => s.Get5Numbers(20, SquareReader.Part.Right)).Returns(1234); // ItemId
+            reader.Setup(s => s.GetLongAtCell(21)).Returns(16 * 3 + 13); // Bag 3, index 13
 
-            reader.Setup(s => s.Get5Numbers(cells[22], SquareReader.Part.Left)).Returns(3); // itemCount
-            reader.Setup(s => s.Get5Numbers(cells[22], SquareReader.Part.Right)).Returns(434); // ItemId
-            reader.Setup(s => s.GetLongAtCell(cells[23])).Returns(16 * 5 + 7); // Bag 5, index 7
+            reader.Setup(s => s.Get5Numbers(22, SquareReader.Part.Left)).Returns(3); // itemCount
+            reader.Setup(s => s.Get5Numbers(22, SquareReader.Part.Right)).Returns(434); // ItemId
+            reader.Setup(s => s.GetLongAtCell(23)).Returns(16 * 5 + 7); // Bag 5, index 7
 
             // Act
             bagreader.Read();
@@ -85,18 +85,18 @@ namespace UnitTests.BagReaderTests
             // Arrange
             var cells = Enumerable.Range(1, 50).Select(i => new DataFrame(new Point(1, 1), i)).ToList();
             var reader = new Mock<ISquareReader>();
-            var bagreader = new BagReader(reader.Object, 20, cells);
+            var bagreader = new BagReader(reader.Object, 20);
 
-            reader.Setup(s => s.Get5Numbers(It.IsAny<DataFrame>(), It.IsAny<SquareReader.Part>())).Returns(0); // itemCount
-            reader.Setup(s => s.GetLongAtCell(It.IsAny<DataFrame>())).Returns(0); // itemCount
+            reader.Setup(s => s.Get5Numbers(It.IsAny<int>(), It.IsAny<SquareReader.Part>())).Returns(0); // itemCount
+            reader.Setup(s => s.GetLongAtCell(It.IsAny<int>())).Returns(0); // itemCount
 
-            reader.Setup(s => s.Get5Numbers(cells[20], SquareReader.Part.Left)).Returns(11); // itemCount
-            reader.Setup(s => s.Get5Numbers(cells[20], SquareReader.Part.Right)).Returns(1234); // ItemId
-            reader.Setup(s => s.GetLongAtCell(cells[21])).Returns(16 * 3 + 13); // Bag 3, index 13
+            reader.Setup(s => s.Get5Numbers(20, SquareReader.Part.Left)).Returns(11); // itemCount
+            reader.Setup(s => s.Get5Numbers(20, SquareReader.Part.Right)).Returns(1234); // ItemId
+            reader.Setup(s => s.GetLongAtCell(21)).Returns(16 * 3 + 13); // Bag 3, index 13
 
-            reader.Setup(s => s.Get5Numbers(cells[22], SquareReader.Part.Left)).Returns(3); // itemCount
-            reader.Setup(s => s.Get5Numbers(cells[22], SquareReader.Part.Right)).Returns(434); // ItemId
-            reader.Setup(s => s.GetLongAtCell(cells[23])).Returns(16 * 5 + 7); // Bag 5, index 7
+            reader.Setup(s => s.Get5Numbers(22, SquareReader.Part.Left)).Returns(3); // itemCount
+            reader.Setup(s => s.Get5Numbers(22, SquareReader.Part.Right)).Returns(434); // ItemId
+            reader.Setup(s => s.GetLongAtCell(23)).Returns(16 * 5 + 7); // Bag 5, index 7
 
             // Act
             bagreader.Read();
@@ -113,7 +113,7 @@ namespace UnitTests.BagReaderTests
             Assert.AreEqual(434, bag1Item7.ItemId);
 
             // remove item
-            reader.Setup(s => s.Get5Numbers(cells[22], SquareReader.Part.Left)).Returns(0);
+            reader.Setup(s => s.Get5Numbers(22, SquareReader.Part.Left)).Returns(0);
 
             // Act
             bagreader.Read();

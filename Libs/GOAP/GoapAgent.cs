@@ -21,17 +21,7 @@ namespace Libs.GOAP
 
 		public GoapAction? GetAction()
 		{
-			var worldState = new HashSet<KeyValuePair<GoapKey, object>>
-			{
-				new KeyValuePair<GoapKey, object>(GoapKey.hastarget, !string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0),
-				new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, !playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0),
-				new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.PlayerBitValues.PlayerInCombat ),
-				new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
-				new KeyValuePair<GoapKey, object>(GoapKey.inmeleerange, playerReader.WithInMeleeRange),
-				new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
-				new KeyValuePair<GoapKey, object>(GoapKey.shouldheal, playerReader.HealthPercent<60 && !playerReader.PlayerBitValues.DeadStatus),
-				new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.PlayerBitValues.DeadStatus),
-			};
+			HashSet<KeyValuePair<GoapKey, object>> worldState = GetWorldState(playerReader);
 
 			//Debug.WriteLine(string.Join(", ",worldState.Select(k => k.Key + "=" + k.Value)));
 
@@ -53,6 +43,21 @@ namespace Libs.GOAP
 			new WowProcess().SetKeyState(ConsoleKey.Tab, false);
 
 			return null;
+		}
+
+		public static HashSet<KeyValuePair<GoapKey, object>> GetWorldState(PlayerReader playerReader)
+		{
+			return new HashSet<KeyValuePair<GoapKey, object>>
+			{
+				new KeyValuePair<GoapKey, object>(GoapKey.hastarget, !string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0),
+				new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, !playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0),
+				new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.PlayerBitValues.PlayerInCombat ),
+				new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
+				new KeyValuePair<GoapKey, object>(GoapKey.inmeleerange, playerReader.WithInMeleeRange),
+				new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
+				new KeyValuePair<GoapKey, object>(GoapKey.shouldheal, playerReader.HealthPercent<60 && !playerReader.PlayerBitValues.DeadStatus),
+				new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
+			};
 		}
 	}
 

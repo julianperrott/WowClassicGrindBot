@@ -23,9 +23,10 @@ namespace Libs
             this.AddonReader = new AddonReader(colorReader, frames, width, height);
 
             this.squareReader = new SquareReader(AddonReader);
-            this.bagReader = new BagReader(squareReader, 20, frames);
-            this.equipmentReader = new EquipmentReader(squareReader, 30, frames);
-            this.PlayerReader = new PlayerReader(squareReader, frames);
+
+            this.bagReader = new BagReader(squareReader, 20);
+            this.equipmentReader = new EquipmentReader(squareReader, 30);
+            this.PlayerReader = new PlayerReader(squareReader);
         }
 
         public void DoWork()

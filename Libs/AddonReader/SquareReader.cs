@@ -15,23 +15,23 @@ namespace Libs
         }
 
         // Converts a cell's hexideciml color code to decimal data
-        public long GetLongAtCell(DataFrame cell)
+        public long GetLongAtCell(int index)
         {
             // Finding the hexidecimal color
-            var color = addonReader.GetColorAt(cell);
+            var color = addonReader.GetColorAt(index);
             // Converting from base 16 (hexidecimal) to base 10 (decimal)
             return color.R * 65536 + color.G * 256 + color.B;
         }
 
         // Converts a cell's hexidecimal color to a 6 point decimal
-        public double GetFixedPointAtCell(DataFrame cell)
+        public double GetFixedPointAtCell(int index)
         {
-            return (double)this.GetLongAtCell(cell) / 100000;
+            return (double)this.GetLongAtCell(index) / 100000;
         }
 
-        public string GetStringAtCell(DataFrame cell)
+        public string GetStringAtCell(int index)
         {
-            var color = this.GetLongAtCell(cell);
+            var color = this.GetLongAtCell(index);
             if (color != 0)
             {
                 var colorString = color.ToString();
@@ -51,9 +51,9 @@ namespace Libs
             Left
         }
 
-        public int Get5Numbers(DataFrame cell, Part part)
+        public int Get5Numbers(int index, Part part)
         {
-            var text = GetLongAtCell(cell).ToString();
+            var text = GetLongAtCell(index).ToString();
             if (text=="0")
             {
                 return 0;

@@ -8,15 +8,13 @@ namespace Libs
     public class BagReader
     {
         private int bagItemsDataStart = 20;
-        public readonly List<DataFrame> frames;
         private readonly ISquareReader reader;
 
         public List<BagItem> bagItems=new List<BagItem>();
 
-        public BagReader(ISquareReader reader, int bagItemsDataStart, List<DataFrame> frames)
+        public BagReader(ISquareReader reader, int bagItemsDataStart)
         {
             this.bagItemsDataStart = bagItemsDataStart;
-            this.frames = frames;
             this.reader = reader;
         }
 
@@ -24,11 +22,11 @@ namespace Libs
         {
             for (var bag = 0; bag < 5; bag++)
             {
-                var cell = bagItemsDataStart + (bag * 2);
+                var cellIndex = bagItemsDataStart + (bag * 2);
 
-                var itemCount = reader.Get5Numbers(frames[cell], SquareReader.Part.Left);
+                var itemCount = reader.Get5Numbers(cellIndex, SquareReader.Part.Left);
 
-                var val = reader.GetLongAtCell(frames[cell + 1]);
+                var val = reader.GetLongAtCell(cellIndex + 1);
                 var bagNumber = val / 16;
                 var bagIndex = (int)(val - bagNumber * 16);
 
@@ -36,7 +34,7 @@ namespace Libs
 
                 if (itemCount > 0)
                 {
-                    var itemId = reader.Get5Numbers(frames[cell], SquareReader.Part.Right);
+                    var itemId = reader.Get5Numbers(cellIndex, SquareReader.Part.Right);
 
                     bool addItem = true;
 

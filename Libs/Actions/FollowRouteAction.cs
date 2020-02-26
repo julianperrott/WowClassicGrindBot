@@ -19,6 +19,8 @@ namespace Libs.Actions
         private readonly IPlayerDirection playerDirection;
         private double lastDistance = 999;
         private DateTime LastActive = DateTime.Now;
+        private DateTime LastJump = DateTime.Now;
+        private Random random = new Random();
 
         public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points)
         {
@@ -28,13 +30,19 @@ namespace Libs.Actions
             this.pointsList = points;
 
             AddPrecondition(GoapKey.incombat, false);
-
-            RefillPoints();
         }
 
-        private void RefillPoints()
+        private void RefillPoints(bool findClosest = false)
         {
-            pointsList.ForEach(p => points.Push(p));
+            if (findClosest)
+            {
+                var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+                WowPoint.ShortenRouteFromLocation(location, pointsList).ForEach(p => points.Push(p));
+            }
+            else
+            {
+                pointsList.ForEach(p => points.Push(p));
+            }
         }
 
         public override float CostOfPerformingAction { get => 20f; }
@@ -42,7 +50,7 @@ namespace Libs.Actions
         public void Dump(string description)
         {
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = DistanceTo(location, points.Peek());
+            var distance = WowPoint.DistanceTo(location, points.Peek());
             var heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
             //Debug.WriteLine($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
         }
@@ -51,6 +59,11 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
+            if(points.Count==0)
+            {
+                RefillPoints(true);
+            }
+
             await Task.Delay(200);
             //wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
 
@@ -64,6 +77,8 @@ namespace Libs.Actions
 
             LastActive = DateTime.Now;
 
+            await RandomJump();
+
             // press tab
                 if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
             {
@@ -74,7 +89,7 @@ namespace Libs.Actions
             }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = DistanceTo(location, points.Peek());
+            var distance = WowPoint.DistanceTo(location, points.Peek());
             var heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
 
             if (lastDistance < distance)
@@ -130,9 +145,9 @@ namespace Libs.Actions
 
             var A = points.Pop();
             var B = points.Peek();
-            var result = GetClosestPointOnLineSegment(A.Vector2, B.Vector2, new Vector2((float)this.playerReader.XCoord, (float)this.playerReader.YCoord));
+            var result = GetClosestPointOnLineSegment(A.Vector2(), B.Vector2(), new Vector2((float)this.playerReader.XCoord, (float)this.playerReader.YCoord));
             var newPoint = new WowPoint(result.X, result.Y);
-            if (DistanceTo(newPoint, points.Peek()) >= 4)
+            if (WowPoint.DistanceTo(newPoint, points.Peek()) >= 4)
             {
                 points.Push(newPoint);
                 Debug.WriteLine($"Adjusted resume point");
@@ -146,6 +161,18 @@ namespace Libs.Actions
             }
         }
 
+        private async Task RandomJump()
+        {
+            if ((DateTime.Now - LastJump).TotalSeconds > 10)
+            {
+                if (random.Next(1) == 0)
+                {
+                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 499);
+                }
+            }
+            LastJump = DateTime.Now;
+        }
+
         public void Reset()
         {
             wowProcess.SetKeyState(ConsoleKey.UpArrow, false);
@@ -154,18 +181,6 @@ namespace Libs.Actions
         public bool IsDone()
         {
             return false;
-        }
-
-        private double DistanceTo(WowPoint l1, WowPoint l2)
-        {
-            var x = l1.X - l2.X;
-            var y = l1.Y - l2.Y;
-            x = x * 100;
-            y = y * 100;
-            var distance = Math.Sqrt((x * x) + (y * y));
-
-            //Debug.WriteLine($"distance:{x} {y} {distance.ToString()}");
-            return distance;
         }
 
         public override void ResetBeforePlanning()

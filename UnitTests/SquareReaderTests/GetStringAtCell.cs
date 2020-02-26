@@ -19,11 +19,11 @@ namespace UnitTests.SquareReaderTests
             var color = ColorHelper.LongToColour(colorLong);
 
             var addonReader = new Mock<IAddonReader>();
-            addonReader.Setup(s => s.GetColorAt(cell)).Returns(color);
+            addonReader.Setup(s => s.GetColorAt(cell.index)).Returns(color);
             var reader = new SquareReader( addonReader.Object);
 
             // Act
-            var result = reader.GetStringAtCell(cell);
+            var result = reader.GetStringAtCell(cell.index);
 
             // Assert
             Assert.AreEqual("DOG", result);

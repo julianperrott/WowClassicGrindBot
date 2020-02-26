@@ -14,11 +14,11 @@ namespace UnitTests.SquareReaderTests
             // Arrange
             var cell = new DataFrame(new Point(10, 1), 12);
             var addonReader = new Mock<IAddonReader>();
-            addonReader.Setup(s => s.GetColorAt(cell)).Returns(ColorHelper.LongToColour(16654321));
+            addonReader.Setup(s => s.GetColorAt(cell.index)).Returns(ColorHelper.LongToColour(16654321));
             var reader = new SquareReader( addonReader.Object);
 
             // Act
-            var result = reader.Get5Numbers(cell,SquareReader.Part.Right);
+            var result = reader.Get5Numbers(cell.index, SquareReader.Part.Right);
 
             // Assert
             Assert.AreEqual(54321, result);
@@ -30,11 +30,11 @@ namespace UnitTests.SquareReaderTests
             // Arrange
             var cell = new DataFrame(new Point(10, 1), 12);
             var addonReader = new Mock<IAddonReader>();
-            addonReader.Setup(s => s.GetColorAt(cell)).Returns(ColorHelper.LongToColour(16654321));
+            addonReader.Setup(s => s.GetColorAt(cell.index)).Returns(ColorHelper.LongToColour(16654321));
             var reader = new SquareReader(addonReader.Object);
 
             // Act
-            var result = reader.Get5Numbers(cell, SquareReader.Part.Left);
+            var result = reader.Get5Numbers(cell.index, SquareReader.Part.Left);
 
             // Assert
             Assert.AreEqual(166, result);

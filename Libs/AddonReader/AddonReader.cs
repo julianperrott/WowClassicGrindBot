@@ -28,9 +28,9 @@ namespace Libs
             frames.ForEach(frame => FrameColor[frame.index] = colorReader.GetColorAt(frame.point, bitMap));
         }
 
-        public Color GetColorAt(DataFrame frame)
+        public Color GetColorAt(int index)
         {
-            return FrameColor[frame.index];
+            return FrameColor[index];
         }
     }
 }

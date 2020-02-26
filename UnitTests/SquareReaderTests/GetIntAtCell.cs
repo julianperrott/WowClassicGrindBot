@@ -17,11 +17,11 @@ namespace UnitTests.SquareReaderTests
             // Arrange
             var cell = new DataFrame(new Point(10, 1), 12);
             var addonReader = new Mock<IAddonReader>();
-            addonReader.Setup(s=>s.GetColorAt(cell)).Returns(Color.FromArgb(110, 89, 57));
+            addonReader.Setup(s=>s.GetColorAt(cell.index)).Returns(Color.FromArgb(110, 89, 57));
             var reader = new SquareReader(addonReader.Object);
 
             // Act
-            var result = reader.GetLongAtCell(cell);
+            var result = reader.GetLongAtCell(cell.index);
 
             // Assert
             Assert.AreEqual((110 * 65536) + (89 * 256) + 57, result);

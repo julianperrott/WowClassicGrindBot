@@ -25,8 +25,10 @@ namespace Libs
             // Press Right
             wowProcess.SetKeyState(key, true);
 
+            var startTime = DateTime.Now;
+
             // Wait until we are going the right direction
-            while (true)
+            while ((DateTime.Now-startTime).TotalSeconds<10)
             {
                 var actualDirection = playerReader.Direction;
 

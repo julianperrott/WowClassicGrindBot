@@ -37,7 +37,7 @@ namespace Libs.Actions
         }
 
         private ConsoleKey Eat => this.playerReader.ActionBarUseable_73To96.HotKey7 ? ConsoleKey.D7 : ConsoleKey.Escape;
-        private ConsoleKey Bandage => ConsoleKey.D8;
+        private ConsoleKey Bandage => this.playerReader.ActionBarUseable_73To96.HotKey8 ? ConsoleKey.D8 : ConsoleKey.Escape;
 
         public override async Task PerformAction()
         {
@@ -48,7 +48,7 @@ namespace Libs.Actions
             await Task.Delay(1);
             wowProcess.KeyUp(ConsoleKey.UpArrow);
 
-            if (this.playerReader.HealthPercent < 40 && Eat != ConsoleKey.Escape)
+            if ((this.playerReader.HealthPercent < 40|| Bandage== ConsoleKey.Escape) && Eat != ConsoleKey.Escape)
             {
                 await PressKeyAndWait(Eat, 27);
             }

@@ -48,15 +48,21 @@ namespace Powershell
             //var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Path_20200210195132.json");
             //var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Path_20200215184939.json");
             //var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Path_20200217215324.json");
-            var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\WetlandsWhelps.json");
-            
+            //var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\ThousandNeedles.json");
+            //var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\ThousandNeedlesSpiritHealer.json");
 
-            var points = JsonConvert.DeserializeObject<List<WowPoint>>(text);//.Select(p => new WowPoint(p.X, p.Y)).ToList();
-            var points2 = JsonConvert.DeserializeObject<List<WowPoint>>(text);//.Select(p => new WowPoint(p.X, p.Y)).ToList();
-            points2.Reverse();
-            points = points.Concat(points2).ToList();
+            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi.json");
+            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_SpritHealer.json");
 
-            var followRouteAction = new FollowRouteAction(addonThread.PlayerReader, WowProcess, playerDirection, points);
+
+            var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
+            var pathPointsReversed = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
+            pathPointsReversed.Reverse();
+            var pathThereAndBack = pathPoints.Concat(pathPointsReversed).ToList();
+
+            var spiritPoints = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
+
+            var followRouteAction = new FollowRouteAction(addonThread.PlayerReader, WowProcess, playerDirection, pathThereAndBack);
             this.currentAction = followRouteAction;
             
             var killMobAction = new KillTargetAction(WowProcess, addonThread.PlayerReader);
@@ -74,7 +80,7 @@ namespace Powershell
                 lootAction,
                 healAction,
                 new TargetDeadAction(WowProcess,addonThread.PlayerReader),
-                new WalkToCorpseAction(addonThread.PlayerReader,WowProcess,playerDirection)
+                new WalkToCorpseAction(addonThread.PlayerReader,WowProcess,playerDirection,spiritPoints,pathPoints)
             };
 
             this.agent = new GoapAgent(this.addonThread.PlayerReader, this.availableActions);
@@ -235,7 +241,7 @@ namespace Powershell
             if (locations.Count == 0 || DistanceTo(location, locations.Last()) > 6)
             {
                 locations.Add(location);
-                Debug.WriteLine($"Points: {locations.Count}");
+                Debug.WriteLine($"Points: {locations.Count}, {location.X},{location.Y}");
             }
         }
 

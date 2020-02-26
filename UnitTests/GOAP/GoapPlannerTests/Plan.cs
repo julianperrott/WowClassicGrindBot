@@ -24,7 +24,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
         [TestInitialize]
         public void TestInitialize()
         {
-            var playerReader = new PlayerReader(new Mock<ISquareReader>().Object, new List<DataFrame>());
+            var playerReader = new PlayerReader(new Mock<ISquareReader>().Object);
             this.followRouteAction = new FollowRouteAction(playerReader, new WowProcess(), new Mock<IPlayerDirection>().Object, new List<WowPoint>());
 
             this.killMobAction = new KillTargetAction(new WowProcess(), playerReader);

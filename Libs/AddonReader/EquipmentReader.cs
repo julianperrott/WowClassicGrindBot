@@ -8,24 +8,22 @@ namespace Libs
     public class EquipmentReader
     {
         public readonly int cellStart;
-        public readonly List<DataFrame> frames;
         public readonly ISquareReader reader;
 
         private long[] equipment = new long[20];
 
-        public EquipmentReader(ISquareReader reader,int cellStart, List<DataFrame> frames)
+        public EquipmentReader(ISquareReader reader,int cellStart)
         {
-            this.frames = frames;
             this.cellStart = cellStart;
             this.reader = reader;
         }
 
         public long[] Read()
         {
-            var index = reader.GetLongAtCell(frames[cellStart+1]) - 1;
+            var index = reader.GetLongAtCell(cellStart+1) - 1;
             if (index < 20 && index >= 0)
             {
-                equipment[index] = reader.GetLongAtCell(frames[cellStart]);
+                equipment[index] = reader.GetLongAtCell(cellStart);
             }
             return equipment;
         }

@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Powershell", "CoreWowBot\Po
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{E37B9CA5-4DF7-43A6-B048-834E7D76D708}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grid", "Grid\Grid.csproj", "{8D41B53B-92FE-4ECF-9F2B-6098C0196E75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorServer", "BlazorServer\BlazorServer.csproj", "{31DA3032-F0D5-42E0-8F93-AE8622B42C53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{E37B9CA5-4DF7-43A6-B048-834E7D76D708}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E37B9CA5-4DF7-43A6-B048-834E7D76D708}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E37B9CA5-4DF7-43A6-B048-834E7D76D708}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D41B53B-92FE-4ECF-9F2B-6098C0196E75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D41B53B-92FE-4ECF-9F2B-6098C0196E75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D41B53B-92FE-4ECF-9F2B-6098C0196E75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D41B53B-92FE-4ECF-9F2B-6098C0196E75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31DA3032-F0D5-42E0-8F93-AE8622B42C53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31DA3032-F0D5-42E0-8F93-AE8622B42C53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31DA3032-F0D5-42E0-8F93-AE8622B42C53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31DA3032-F0D5-42E0-8F93-AE8622B42C53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

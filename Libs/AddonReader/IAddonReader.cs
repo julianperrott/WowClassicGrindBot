@@ -6,6 +6,6 @@ namespace Libs
     {
 
         void Refresh();
-        Color GetColorAt(DataFrame cell);
+        Color GetColorAt(int index);
     }
 }

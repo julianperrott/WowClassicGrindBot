@@ -17,12 +17,12 @@ namespace UnitTests.SquareReaderTests
             // Arrange
             var cell = new DataFrame(new Point(10, 1), 12);
             var addonReader = new Mock<IAddonReader>();
-            addonReader.Setup(s => s.GetColorAt(cell)).Returns(Color.FromArgb(110, 89, 57));
+            addonReader.Setup(s => s.GetColorAt(cell.index)).Returns(Color.FromArgb(110, 89, 57));
             var reader = new SquareReader( addonReader.Object);
             var longValue = (110 * 65536) + (89 * 256) + 57;
 
             // Act
-            var result = reader.GetFixedPointAtCell(cell);
+            var result = reader.GetFixedPointAtCell(cell.index);
 
             // Assert
             Assert.AreEqual(((double)longValue) / 100000, result);
@@ -34,12 +34,12 @@ namespace UnitTests.SquareReaderTests
             // Arrange
             var cell = new DataFrame(new Point(10, 1), 12);
             var addonReader = new Mock<IAddonReader>();
-            addonReader.Setup(s => s.GetColorAt(cell)).Returns(Color.FromArgb(255, 255, 255));
+            addonReader.Setup(s => s.GetColorAt(cell.index)).Returns(Color.FromArgb(255, 255, 255));
             var reader = new SquareReader( addonReader.Object);
             var longValue = (255 * 65536) + (255 * 256) + 255;
 
             // Act
-            var result = reader.GetFixedPointAtCell(cell);
+            var result = reader.GetFixedPointAtCell(cell.index);
 
             // Assert
             Assert.AreEqual(((double)longValue) / 100000, result);
