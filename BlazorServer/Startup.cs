@@ -10,21 +10,24 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BlazorServer.Data;
 using Libs;
+using System.Threading;
 
 namespace BlazorServer
 {
     public class Startup
     {
+        AddonViewer addonViewer;
+        Thread thread;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
-
-            var addonReader = new StaticAddonReader();
-            var squareReader = new SquareReader(addonReader);
-            var PlayerReader = new PlayerReader(squareReader);
-
+            addonViewer = new AddonViewer();
+            this.thread = new Thread(addonViewer.DoWork);
+            this.thread.Start();
         }
+
 
         public IConfiguration Configuration { get; }
 

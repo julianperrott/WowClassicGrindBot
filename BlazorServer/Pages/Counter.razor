@@ -2,15 +2,18 @@
 
 <h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
+<p>X Coord: @BlazorServer.Data.AddonViewer.PlayerReader.XCoord</p>
+<p>Y Coord: @BlazorServer.Data.AddonViewer.PlayerReader.YCoord</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="Start">Start</button>
 
 @code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
+    private void Start()
     {
-        currentCount++;
+        BlazorServer.Data.AddonViewer.AddonDataChanged += (o, e) =>
+        {
+            base.InvokeAsync(() => StateHasChanged());
+        };
     }
 }

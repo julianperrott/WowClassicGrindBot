@@ -11,6 +11,7 @@ namespace Libs
 
         public Color GetColorAt(int index)
         {
+            if (index>= FrameColor.Length) { return Color.Black; }
             return FrameColor[index];
         }
 
