@@ -59,7 +59,7 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            if(points.Count==0)
+            if (points.Count == 0)
             {
                 RefillPoints(true);
             }
@@ -67,12 +67,12 @@ namespace Libs.Actions
             await Task.Delay(200);
             //wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat){ return; }
+            if (this.playerReader.PlayerBitValues.PlayerInCombat) { return; }
 
             if ((DateTime.Now - LastActive).TotalSeconds > 10)
             {
                 var pointsRemoved = 0;
-                while (AdjustNextPointToClosest() && pointsRemoved<5) { pointsRemoved++; };
+                while (AdjustNextPointToClosest() && pointsRemoved < 5) { pointsRemoved++; };
             }
 
             LastActive = DateTime.Now;
@@ -80,7 +80,7 @@ namespace Libs.Actions
             await RandomJump();
 
             // press tab
-                if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
+            if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
             {
                 //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
                 this.wowProcess.SetKeyState(ConsoleKey.Tab, true);

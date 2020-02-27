@@ -2,10 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <nullable>enable</nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Libs\Libs.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Threads\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PInvoke.Windows.Core" Version="0.6.6" />
   </ItemGroup>
 
 </Project>

@@ -11,23 +11,58 @@ using Microsoft.Extensions.Hosting;
 using BlazorServer.Data;
 using Libs;
 using System.Threading;
+using Libs.Looting;
 
 namespace BlazorServer
 {
     public class Startup
     {
-        AddonViewer addonViewer;
-        Thread thread;
+        public static AddonThread AddonThread { get; set; }
+        public static Thread addonThread;
+        public static Thread botThread;
+        public static Bot WowBot;
+        public static bool active=false;
+
+        static Startup()
+        {
+            var colorReader = new WowScreen();
+
+            var config = new DataFrameConfiguration(colorReader);
+
+            var frames = config.ConfigurationExists()
+                ? config.LoadConfiguration()
+                : config.CreateConfiguration(WowScreen.GetAddonBitmap());
+
+            AddonThread = new AddonThread(colorReader, frames);
+            addonThread = new Thread(AddonThread.DoWork);
+
+            WowBot = new Bot(AddonThread.PlayerReader);
+            botThread = new Thread(DoWork);
+        }
+
+        public static void DoWork()
+        {
+            Task.Factory.StartNew(() => WowBot.DoWork());
+        }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
-            addonViewer = new AddonViewer();
-            this.thread = new Thread(addonViewer.DoWork);
-            this.thread.Start();
+            addonThread.Start();
         }
 
+        public static void ToggleBotStatus()
+        {
+            if (!active)
+            {
+                botThread.Start();
+            }
+            else
+            {
+                botThread.Abort();
+            }
+        }
 
         public IConfiguration Configuration { get; }
 

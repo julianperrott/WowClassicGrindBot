@@ -13,6 +13,9 @@ namespace Libs.GOAP
 		private HashSet<GoapAction> availableActions;
 		private PlayerReader playerReader;
 
+		public GoapAction? CurrentAction;
+		public HashSet<KeyValuePair<GoapKey, object>> WorldState = new HashSet<KeyValuePair<GoapKey, object>>();
+
 		public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions)
 		{
 			this.playerReader = playerReader;
@@ -21,7 +24,7 @@ namespace Libs.GOAP
 
 		public GoapAction? GetAction()
 		{
-			HashSet<KeyValuePair<GoapKey, object>> worldState = GetWorldState(playerReader);
+			WorldState = GetWorldState(playerReader);
 
 			//Debug.WriteLine(string.Join(", ",worldState.Select(k => k.Key + "=" + k.Value)));
 
@@ -29,20 +32,22 @@ namespace Libs.GOAP
 			var goal = new HashSet<KeyValuePair<GoapKey, object>>();
 
 			//Plan
-			Queue<GoapAction> plan = planner.Plan(availableActions, worldState, goal);
+			Queue<GoapAction> plan = planner.Plan(availableActions, WorldState, goal);
 			if (plan != null && plan.Count > 0)
 			{
-				return plan.Peek();
+				CurrentAction = plan.Peek();
+			}
+			else
+			{
+				Debug.WriteLine($"Target Health: {playerReader.TargetHealth}, max {playerReader.TargetMaxHealth}, dead {playerReader.PlayerBitValues.TargetIsDead}");
+
+				//new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
+				new WowProcess().SetKeyState(ConsoleKey.Tab, true);
+				Thread.Sleep(420);
+				new WowProcess().SetKeyState(ConsoleKey.Tab, false);
 			}
 
-			Debug.WriteLine($"Target Health: {playerReader.TargetHealth}, max {playerReader.TargetMaxHealth}, dead {playerReader.PlayerBitValues.TargetIsDead}");
-
-			//new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
-			new WowProcess().SetKeyState(ConsoleKey.Tab, true);
-			Thread.Sleep(420);
-			new WowProcess().SetKeyState(ConsoleKey.Tab, false);
-
-			return null;
+			return CurrentAction;
 		}
 
 		public static HashSet<KeyValuePair<GoapKey, object>> GetWorldState(PlayerReader playerReader)
@@ -60,5 +65,4 @@ namespace Libs.GOAP
 			};
 		}
 	}
-
 }

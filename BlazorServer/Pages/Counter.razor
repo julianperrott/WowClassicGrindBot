@@ -2,18 +2,40 @@
 
 <h1>Counter</h1>
 
-<p>X Coord: @BlazorServer.Data.AddonViewer.PlayerReader.XCoord</p>
-<p>Y Coord: @BlazorServer.Data.AddonViewer.PlayerReader.YCoord</p>
+<p>X Coord: @Startup.AddonThread.PlayerReader.XCoord</p>
+<p>Y Coord: @Startup.AddonThread.PlayerReader.YCoord</p>
 
-<button class="btn btn-primary" @onclick="Start">Start</button>
+<p>HealthPercent: @Startup.AddonThread.PlayerReader.HealthPercent %</p>
+<p>HealthMax: @Startup.AddonThread.PlayerReader.HealthMax</p>
+<p>HealthCurrent: @Startup.AddonThread.PlayerReader.HealthCurrent</p>
+<hr />
+<p>Target: @Startup.AddonThread.PlayerReader.Target</p>
+<p>Health: @Startup.AddonThread.PlayerReader.TargetHealth</p>
+<p>Max Health @Startup.AddonThread.PlayerReader.TargetMaxHealth</p>
+
+@*<hr />
+<p>Action: @Startup.WowBot.Agent.CurrentAction?.GetType().Name</p>
+
+<hr />
+<p>Actions: @String.Join(", ", Startup.WowBot.Agent.WorldState.Select(ob=> ob.Key + "=" + ob.Value.ToString()))</p>*@
+
+
+<button class="btn btn-primary" @onclick="Start">Start Reading</button>
+
+<button class="btn btn-primary" @onclick="ToggleBot">Toggle Bot</button>
 
 @code {
 
     private void Start()
     {
-        BlazorServer.Data.AddonViewer.AddonDataChanged += (o, e) =>
+        Startup.AddonThread.AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() => StateHasChanged());
         };
+    }
+
+    private void ToggleBot()
+    {
+        Startup.ToggleBotStatus();
     }
 }

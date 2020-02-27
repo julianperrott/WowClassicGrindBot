@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Libs.Cursor;
+using PInvoke;
 
 namespace Libs.Looting
 {
@@ -20,15 +22,22 @@ namespace Libs.Looting
 
         public CursorClassification Classification { get; set; }
 
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
+
         public LootWheel(WowProcess wowProcess, PlayerReader playerReader)
         {
             this.wowProcess = wowProcess;
-            this.playerReader = playerReader;
+            this.playerReader = playerReader;                    
 
-            var bounds = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+            var handle = wowProcess.WarcraftProcess.MainWindowHandle;
+            RECT rect = new RECT();
+            GetWindowRect(handle, ref rect);
 
-            centre = new Point((int)(bounds.Width / 2f), (int)((bounds.Height / 5) * 3f));
-            radiusLarge = bounds.Height / 6;
+
+            centre = new Point((int)(rect.right / 2f), (int)((rect.bottom / 5) * 3f));
+            radiusLarge = rect.bottom / 6;
             dtheta = (float)(2 * Math.PI / num_theta);
         }
 
@@ -61,7 +70,9 @@ namespace Libs.Looting
                 float x = (float)(centre.X + rx * Math.Cos(theta));
                 float y = (float)(centre.Y + (ry * Math.Sin(theta)));
                 var mousePosition = new Point((int)x, (int)y);
-                System.Windows.Forms.Cursor.Position = mousePosition;
+
+                wowProcess.SetCursorPosition(mousePosition);
+
                 if (await CheckForLoot(mousePosition, searchForMobs))
                 {
                     return true;

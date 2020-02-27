@@ -73,13 +73,19 @@ namespace Libs
         [DllImport("user32.dll")]
         public static extern bool PostMessage(IntPtr hWnd, UInt32 Msg, int wParam, int lParam);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetCursorPos(int x, int y);
+
         public void KeyDown(ConsoleKey key)
         {
+            Debug.WriteLine($"KeyDown {key}");
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
         }
 
         public void KeyUp(ConsoleKey key)
         {
+            Debug.WriteLine($"KeyUp {key}");
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
         }
 
@@ -95,9 +101,15 @@ namespace Libs
             if (pressDown) { KeyDown(key); } else { KeyUp(key); }
         }
 
+        public void SetCursorPosition(System.Drawing.Point position)
+        {
+            SetCursorPos(position.X, position.Y);
+        }
+
         public async Task RightClickMouse(System.Drawing.Point position)
         {
-            System.Windows.Forms.Cursor.Position = position;
+
+            SetCursorPosition(position);
             PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_RBUTTONDOWN, Keys.VK_RMB, 0);
             await Task.Delay(101);
             PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_RBUTTONUP, Keys.VK_RMB, 0);

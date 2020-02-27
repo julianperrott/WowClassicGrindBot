@@ -23,9 +23,9 @@ namespace Powershell
         private AddonThread addonThread;
         private PlayerDirection playerDirection;
         private Thread thread;
-        private GoapAgent agent;
-        private GoapAction currentAction;
-        private HashSet<GoapAction> availableActions;
+        //private GoapAgent agent;
+        //private GoapAction currentAction;
+        //private HashSet<GoapAction> availableActions;
 
         public MainWindow()
         {
@@ -51,39 +51,39 @@ namespace Powershell
             //var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\ThousandNeedles.json");
             //var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\ThousandNeedlesSpiritHealer.json");
 
-            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi.json");
-            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_SpritHealer.json");
+            //var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi.json");
+            //var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_SpritHealer.json");
 
 
-            var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
-            var pathPointsReversed = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
-            pathPointsReversed.Reverse();
-            var pathThereAndBack = pathPoints.Concat(pathPointsReversed).ToList();
+            //var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
+            //var pathPointsReversed = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
+            //pathPointsReversed.Reverse();
+            //var pathThereAndBack = pathPoints.Concat(pathPointsReversed).ToList();
 
-            var spiritPoints = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
+            //var spiritPoints = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
 
-            var followRouteAction = new FollowRouteAction(addonThread.PlayerReader, WowProcess, playerDirection, pathThereAndBack);
-            this.currentAction = followRouteAction;
+            //var followRouteAction = new FollowRouteAction(addonThread.PlayerReader, WowProcess, playerDirection, pathThereAndBack);
+            //this.currentAction = followRouteAction;
             
-            var killMobAction = new KillTargetAction(WowProcess, addonThread.PlayerReader);
-            var pullTargetAction = new PullTargetAction(WowProcess, addonThread.PlayerReader);
-            var approachTargetAction = new ApproachTargetAction(WowProcess, addonThread.PlayerReader);
-            var lootAction = new LootAction(WowProcess, addonThread.PlayerReader);
-            var healAction = new HealAction(WowProcess, addonThread.PlayerReader);
+            //var killMobAction = new KillTargetAction(WowProcess, addonThread.PlayerReader);
+            //var pullTargetAction = new PullTargetAction(WowProcess, addonThread.PlayerReader);
+            //var approachTargetAction = new ApproachTargetAction(WowProcess, addonThread.PlayerReader);
+            //var lootAction = new LootAction(WowProcess, addonThread.PlayerReader);
+            //var healAction = new HealAction(WowProcess, addonThread.PlayerReader);
 
-            this.availableActions = new HashSet<GoapAction>
-            {
-                followRouteAction,
-                killMobAction,
-                pullTargetAction,
-                approachTargetAction,
-                lootAction,
-                healAction,
-                new TargetDeadAction(WowProcess,addonThread.PlayerReader),
-                new WalkToCorpseAction(addonThread.PlayerReader,WowProcess,playerDirection,spiritPoints,pathPoints)
-            };
+            //this.availableActions = new HashSet<GoapAction>
+            //{
+            //    followRouteAction,
+            //    killMobAction,
+            //    pullTargetAction,
+            //    approachTargetAction,
+            //    lootAction,
+            //    healAction,
+            //    new TargetDeadAction(WowProcess,addonThread.PlayerReader),
+            //    new WalkToCorpseAction(addonThread.PlayerReader,WowProcess,playerDirection,spiritPoints,pathPoints)
+            //};
 
-            this.agent = new GoapAgent(this.addonThread.PlayerReader, this.availableActions);
+            //this.agent = new GoapAgent(this.addonThread.PlayerReader, this.availableActions);
 
             thread.Start();
         }
@@ -205,30 +205,13 @@ namespace Powershell
 
         private async void RunPath_Click(object sender, RoutedEventArgs e)
         {
-            stop = false;
-
-            while (!stop)
+            if (!stop)
             {
-                var newAction = this.agent.GetAction();
-                
-                if (newAction != null)
-                {
-                    if (newAction != this.currentAction)
-                    {
-                        this.currentAction.DoReset();
-                        this.currentAction = newAction;
-                        Debug.WriteLine($"New Plan= {newAction.GetType().Name}");
-                    }
+                var bot = new Bot(this.addonThread.PlayerReader);
+                await bot.DoWork();
 
-                    await newAction.PerformAction();
-                }
-                else
-                {
-                    Debug.WriteLine($"New Plan= NULL");
-                    await (Task.Delay(1000));
-                }
             }
-
+            stop = false;
         }
 
         private bool stop = false;

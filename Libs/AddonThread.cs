@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -13,6 +14,8 @@ namespace Libs
         public BagReader bagReader { get; private set; }
         public EquipmentReader equipmentReader { get; private set; }
         public bool Active { get; set; } = true;
+
+        public event EventHandler? AddonDataChanged;
 
         public AddonThread(IColorReader colorReader, List<DataFrame> frames)
         {
@@ -44,7 +47,8 @@ namespace Libs
                 //Debug.WriteLine($"X: {PlayerReader.XCoord.ToString("0.00")}, Y: {PlayerReader.YCoord.ToString("0.00")}, Direction: {PlayerReader.Direction.ToString("0.00")}, Zone: {PlayerReader.Zone}, Gold: {PlayerReader.Gold}");
 
                 //Debug.WriteLine($"Enabled: {PlayerReader.ActionBarEnabledAction.value}, NotEnoughMana: {PlayerReader.ActionBarNotEnoughMana.value}, NotOnCooldown: {PlayerReader.ActionBarNotOnCooldown.value}, Charge: {PlayerReader.SpellInRange.Charge}, Rend: {PlayerReader.SpellInRange.Rend}, Shoot gun: {PlayerReader.SpellInRange.ShootGun}");
-                
+
+                AddonDataChanged?.Invoke(AddonReader, new EventArgs());
                 System.Threading.Thread.Sleep(10);
             }
         }
