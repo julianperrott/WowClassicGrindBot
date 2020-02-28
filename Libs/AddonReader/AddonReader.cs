@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 
@@ -24,8 +25,16 @@ namespace Libs
 
         public void Refresh()
         {
-            var bitMap = WowScreen.GetAddonBitmap(this.width, this.height);
-            frames.ForEach(frame => FrameColor[frame.index] = colorReader.GetColorAt(frame.point, bitMap));
+            try
+            {
+                var bitMap = WowScreen.GetAddonBitmap(this.width, this.height);
+                frames.ForEach(frame => FrameColor[frame.index] = colorReader.GetColorAt(frame.point, bitMap));
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                GC.Collect();
+            }
         }
 
         public Color GetColorAt(int index)

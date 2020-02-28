@@ -8,9 +8,10 @@ namespace Libs
         public static Bitmap GetAddonBitmap(int width = 300, int height = 200)
         {
             var bmpScreen = new Bitmap(width, height);
-            var graphics = Graphics.FromImage(bmpScreen);
-            graphics.CopyFromScreen(0, 0, 0, 0, bmpScreen.Size);
-            graphics.Dispose();
+            using (var graphics = Graphics.FromImage(bmpScreen))
+            {
+                graphics.CopyFromScreen(0, 0, 0, 0, bmpScreen.Size);
+            }
             return bmpScreen;
         }
 

@@ -34,6 +34,8 @@ namespace Libs
 
         public void DoWork()
         {
+            var seq = 0;
+
             while (this.Active)
             {
                 AddonReader.Refresh();
@@ -47,8 +49,13 @@ namespace Libs
                 //Debug.WriteLine($"X: {PlayerReader.XCoord.ToString("0.00")}, Y: {PlayerReader.YCoord.ToString("0.00")}, Direction: {PlayerReader.Direction.ToString("0.00")}, Zone: {PlayerReader.Zone}, Gold: {PlayerReader.Gold}");
 
                 //Debug.WriteLine($"Enabled: {PlayerReader.ActionBarEnabledAction.value}, NotEnoughMana: {PlayerReader.ActionBarNotEnoughMana.value}, NotOnCooldown: {PlayerReader.ActionBarNotOnCooldown.value}, Charge: {PlayerReader.SpellInRange.Charge}, Rend: {PlayerReader.SpellInRange.Rend}, Shoot gun: {PlayerReader.SpellInRange.ShootGun}");
+                seq++;
 
-                AddonDataChanged?.Invoke(AddonReader, new EventArgs());
+                if (seq == 10)
+                {
+                    seq = 0;
+                    AddonDataChanged?.Invoke(AddonReader, new EventArgs());
+                }
                 System.Threading.Thread.Sleep(10);
             }
         }

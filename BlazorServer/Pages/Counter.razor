@@ -13,11 +13,11 @@
 <p>Health: @Startup.AddonThread.PlayerReader.TargetHealth</p>
 <p>Max Health @Startup.AddonThread.PlayerReader.TargetMaxHealth</p>
 
-@*<hr />
+<hr />
 <p>Action: @Startup.WowBot.Agent.CurrentAction?.GetType().Name</p>
 
 <hr />
-<p>Actions: @String.Join(", ", Startup.WowBot.Agent.WorldState.Select(ob=> ob.Key + "=" + ob.Value.ToString()))</p>*@
+<p>Actions: @String.Join(", ", Startup.WowBot.Agent.WorldState.Select(ob=> ob.Key + "=" + ob.Value.ToString()))</p>
 
 
 <button class="btn btn-primary" @onclick="Start">Start Reading</button>
