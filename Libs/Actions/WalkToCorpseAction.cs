@@ -58,8 +58,6 @@ namespace Libs.Actions
                 await Reset();
             }
 
-            lastActive = DateTime.Now;
-
             await Task.Delay(200);
             //wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
 
@@ -87,11 +85,18 @@ namespace Libs.Actions
             }
             else if (lastDistance == distance)
             {
-                Dump("Stuck");
-                // stuck so jump
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(100);
-                await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+                // stuck so jump
+                if ((DateTime.Now - lastActive).TotalSeconds < 2)
+                {
+                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+                    Dump("Stuck");
+                }
+                else
+                {
+                    Dump("Resuming movement");
+                }
             }
             else // distance closer
             {
@@ -110,7 +115,7 @@ namespace Libs.Actions
 
             lastDistance = distance;
 
-            if (distance < 4 && points.Any())
+            if (distance < 40 && points.Any())
             {
                 Debug.WriteLine($"Move to next point");
                 points.Pop();
@@ -121,6 +126,8 @@ namespace Libs.Actions
                     playerDirection.SetDirection(heading);
                 }
             }
+
+            lastActive = DateTime.Now;
         }
 
         public async Task Reset()

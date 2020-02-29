@@ -2,6 +2,8 @@
 @inject Libs.WowData wowData
 @inject Libs.GOAP.GoapAgent goapAgent
 @inject Libs.BotController botController
+@inject Libs.RouteInfo routeinfo
+@inject IJSRuntime JSRuntime;
 
 <h1>Counter</h1>
 
@@ -16,10 +18,10 @@
 <p>Health: @wowData.PlayerReader.TargetHealth</p>
 <p>Max Health @wowData.PlayerReader.TargetMaxHealth</p>
 
-<table class="table table-sm table-striped" >
+<table class="table table-sm table-striped">
     @foreach (var action in goapAgent.AvailableActions)
     {
-        <GoapActionView action=@action IsSelected="@(action==goapAgent.CurrentAction)" />
+        <GoapActionView action="action" IsSelected="(action == goapAgent.CurrentAction)" />
     }
 </table>
 
@@ -27,12 +29,70 @@
 
 <button class="btn btn-primary" @onclick="ToggleBot">Toggle Bot</button>
 
+<div id="grid">
+    <svg width="602px" height="602px">
+        <g class="background">
+        </g>
+        <g class="group2">
+            @{ 
+                var colour = wowData.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
+
+                if (goapAgent.CurrentAction==botController.WowBot.followRouteAction)
+                {
+                    colour = "blue";
+                }
+
+                <circle cx="@routeinfo.ToCanvasPointX(wowData.PlayerReader.XCoord)" cy="@routeinfo.ToCanvasPointY(wowData.PlayerReader.YCoord)" r="4" fill="@colour" />
+            }
+
+            <g stroke-width="1" stroke="gray">
+                @for (var i = 0; i < routeinfo.PathPoints.Count() - 1; i++)
+                {
+                    var pt1 = routeinfo.PathPoints[i];
+                    var pt2 = routeinfo.PathPoints[i + 1];
+
+                    <line x1="@routeinfo.ToCanvasPointX(pt1.X)"
+                          y1="@routeinfo.ToCanvasPointY(pt1.Y)"
+                          x2="@routeinfo.ToCanvasPointX(pt2.X)"
+                          y2="@routeinfo.ToCanvasPointY(pt2.Y)" />
+                }
+            </g>
+
+            <g fill="black">
+                @foreach (var wowpoint in routeinfo.PathPoints)
+                {
+                    <circle cx="@routeinfo.ToCanvasPointX(wowpoint.X)" cy="@routeinfo.ToCanvasPointY(wowpoint.Y)" r="2" />
+                }
+            </g>
+
+            @{
+                var pt = botController.WowBot.followRouteAction.NextPoint();
+                if (pt != null)
+                {
+                    <circle cx="@routeinfo.ToCanvasPointX(pt.X)" cy="@routeinfo.ToCanvasPointY(pt.Y)" r="3" fill="blue"/>
+                }
+            }
+        </g>
+</svg>
+</div>
+
 @code {
 
-    private void Start()
+    private bool CanvasInitialised = false;
+
+    private async Task Start()
     {
+        await JSRuntime.InvokeAsync<string>("draw");
+
         wowData.AddonDataChanged += (o, e) =>
         {
+            if (!CanvasInitialised)
+            {
+                CanvasInitialised = true;
+                routeinfo.SetMargin(20);
+                routeinfo.SetCanvasSize(600);
+            }
+
             base.InvokeAsync(() => StateHasChanged());
         };
     }

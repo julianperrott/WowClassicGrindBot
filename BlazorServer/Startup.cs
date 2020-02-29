@@ -37,6 +37,7 @@ namespace BlazorServer
             services.AddSingleton<BotController>(botController);
             services.AddSingleton<WowData>(botController.WowData);
             services.AddSingleton<GoapAgent>(botController.WowBot.Agent);
+            services.AddSingleton<RouteInfo>(botController.WowBot.RouteInfo);
 
         }
 

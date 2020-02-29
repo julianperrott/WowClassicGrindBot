@@ -14,6 +14,7 @@
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
 <body>
     <app>
@@ -32,5 +33,49 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+    <script>
+        function draw() {
+
+          function gridData() {
+            var data = new Array();
+            var xpos = 1; var ypos = 1; var width = 20; var height = 20;
+
+            for (var row = 0; row < 30; row++) {
+                data.push(new Array());
+
+                for (var column = 0; column < 30; column++) {
+                    data[row].push({ x: xpos, y: ypos, width: width, height: height })
+                    xpos += width;
+                }
+                xpos = 1;
+                ypos += height;
+            }
+            return data;
+        }
+
+            var gridData = gridData();
+
+            var grid = d3.select("#grid").select("svg").select(".background");
+
+            var row = grid.selectAll(".row")
+                .data(gridData)
+                .enter()
+                .append("g")
+                .attr("class", "row");
+
+            var column = row.selectAll(".square")
+                .data(function (d) { return d; })
+                .enter().append("rect")
+                .attr("class", "square")
+                .attr("x", function (d) { return d.x; })
+                .attr("y", function (d) { return d.y; })
+                .attr("width", function (d) { return d.width; })
+                .attr("height", function (d) { return d.height; })
+                .style("fill", "#fff")
+                .style("stroke-width", "0.5px")
+                .style("stroke", "#bbb");
+        }
+    </script>
+
 </body>
 </html>

@@ -15,6 +15,11 @@ namespace Libs.Actions
         private WowProcess wowProcess;
         private readonly List<WowPoint> pointsList;
         private Stack<WowPoint> points=new Stack<WowPoint>();
+        public WowPoint? NextPoint()
+        {
+            return points.Count==0 ? null: points.Peek();
+        }
+
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
@@ -77,8 +82,6 @@ namespace Libs.Actions
                 while (AdjustNextPointToClosest() && pointsRemoved < 5) { pointsRemoved++; };
             }
 
-            LastActive = DateTime.Now;
-
             await RandomJump();
 
             // press tab
@@ -103,7 +106,16 @@ namespace Libs.Actions
                 // stuck so jump
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(100);
-                await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+                if (HasBeenActiveRecently())
+                {
+                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 502);
+                    Debug.WriteLine("Stuck");
+                }
+                else
+                {
+                    await Task.Delay(1000);
+                    Debug.WriteLine("Resuming movement");
+                }
             }
             else // distance closer
             {
@@ -122,7 +134,7 @@ namespace Libs.Actions
 
             lastDistance = distance;
 
-            if (distance < 4)
+            if (distance < 40)
             {
                 Debug.WriteLine($"Move to next point");
                 points.Pop();
@@ -135,6 +147,13 @@ namespace Libs.Actions
                 heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
                 playerDirection.SetDirection(heading);
             }
+
+            LastActive = DateTime.Now;
+        }
+
+        private bool HasBeenActiveRecently()
+        {
+            return (DateTime.Now - LastActive).TotalSeconds < 2;
         }
 
         private bool AdjustNextPointToClosest()
@@ -163,9 +182,11 @@ namespace Libs.Actions
         {
             if ((DateTime.Now - LastJump).TotalSeconds > 10)
             {
-                if (random.Next(1) == 0)
+                if (random.Next(1) == 0 && HasBeenActiveRecently())
                 {
-                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 499);
+                    Debug.WriteLine($"Random jump");
+
+                   await wowProcess.KeyPress(ConsoleKey.Spacebar, 499);
                 }
             }
             LastJump = DateTime.Now;

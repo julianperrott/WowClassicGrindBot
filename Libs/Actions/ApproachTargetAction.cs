@@ -53,7 +53,7 @@ namespace Libs.Actions
             {
                 if (random.Next(1)==0)
                 {
-                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 499);
+                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 498);
                 }
             }
             LastJump = DateTime.Now;

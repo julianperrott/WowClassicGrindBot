@@ -221,7 +221,7 @@ namespace Powershell
         private void OnTimedEvent(object sender, ElapsedEventArgs e)
         {
             var location = new WowPoint(addonThread.PlayerReader.XCoord, addonThread.PlayerReader.YCoord);
-            if (locations.Count == 0 || DistanceTo(location, locations.Last()) > 6)
+            if (locations.Count == 0 || DistanceTo(location, locations.Last()) > 60 & location.X!=0)
             {
                 locations.Add(location);
                 Debug.WriteLine($"Points: {locations.Count}, {location.X},{location.Y}");

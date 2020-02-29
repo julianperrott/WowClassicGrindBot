@@ -17,7 +17,12 @@ namespace Libs
         private GoapAction? currentAction;
         private HashSet<GoapAction> availableActions = new HashSet<GoapAction>();
         private PlayerReader playerReader;
+        private PlayerDirection playerDirection;
+        private StopMoving stopMoving;
         public GoapAgent Agent;
+        public FollowRouteAction followRouteAction;
+
+        public RouteInfo RouteInfo;
 
         public bool Active { get; set; }
 
@@ -25,32 +30,24 @@ namespace Libs
         {
             this.playerReader = playerReader;
             this.Agent = new GoapAgent(playerReader, this.availableActions);
+
+            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_37.json");
+            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_37_SpiritHealer.json");
+
+            var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
+            pathPoints.Reverse();
+            var spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
+
+            RouteInfo=new RouteInfo(pathPoints, spiritPath);
+
+            this.playerDirection = new PlayerDirection(playerReader, WowProcess);
+            this.stopMoving = new StopMoving(WowProcess, playerReader);
+            this.followRouteAction = new FollowRouteAction(playerReader, WowProcess, playerDirection, RouteInfo.PathPoints, stopMoving);
         }
 
         public async Task DoWork()
         {
-            var playerDirection = new PlayerDirection(playerReader, WowProcess);
-
-            //var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Path_20200210195132.json");
-            //var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Path_20200215184939.json");
-            //var text = File.ReadAllText(@"D:\GitHub\WowPixelBot\Path_20200217215324.json");
-            //var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\ThousandNeedles.json");
-            //var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\ThousandNeedlesSpiritHealer.json");
-
-            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi.json");
-            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_SpritHealer.json");
-
-            var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
-            var pathPointsReversed = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
-            pathPointsReversed.Reverse();
-            var pathThereAndBack = pathPoints.Concat(pathPointsReversed).ToList();
-
-            var spiritPoints = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
-
-            var stopMoving = new StopMoving(WowProcess, playerReader);
-            var followRouteAction = new FollowRouteAction(playerReader, WowProcess, playerDirection, pathThereAndBack, stopMoving);
             this.currentAction = followRouteAction;
-
 
             var killMobAction = new KillTargetAction(WowProcess, playerReader, stopMoving);
             var pullTargetAction = new PullTargetAction(WowProcess, playerReader);
@@ -65,7 +62,7 @@ namespace Libs
             this.availableActions.Add(lootAction);
             this.availableActions.Add(healAction);
             this.availableActions.Add(new TargetDeadAction(WowProcess, playerReader));
-            this.availableActions.Add(new WalkToCorpseAction(playerReader, WowProcess, playerDirection, spiritPoints, pathPoints, stopMoving));
+            this.availableActions.Add(new WalkToCorpseAction(playerReader, WowProcess, playerDirection, RouteInfo.SpiritPath, RouteInfo.PathPoints, stopMoving));
 
             while (Active)
             {
