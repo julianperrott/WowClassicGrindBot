@@ -5,9 +5,21 @@ using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
+    public class GoapPreCondition
+    {
+        public string Description { get; private set; }
+        public object State { get; private set; }
+
+        public GoapPreCondition(string description, object state)
+        {
+            this.Description = description;
+            this.State = state;
+        }
+    }
+
     public abstract class GoapAction
     {
-        public HashSet<KeyValuePair<GoapKey, object>> Preconditions { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
+        public HashSet<KeyValuePair<GoapKey, GoapPreCondition>> Preconditions { get; private set; } = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
         public HashSet<KeyValuePair<GoapKey, object>> Effects { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
 
         public bool InRangeOfTarget { get; set; }
@@ -19,26 +31,27 @@ namespace Libs.Actions
             ResetBeforePlanning();
         }
 
-        public abstract void ResetBeforePlanning();
+        public Dictionary<string, bool> State { get; set; } = new Dictionary<string, bool>();
 
-        public abstract bool IsActionDone();
+        public virtual void ResetBeforePlanning() { }
 
-        public abstract bool CheckIfActionCanRun();
+        public virtual bool CheckIfActionCanRun() { return true; }
 
         public abstract Task PerformAction();
 
-        public abstract bool NeedsToBeInRangeOfTargetToExecute();
-
-        public virtual void Abort() { }
+        public virtual async Task Abort() { await Task.Delay(0); }
 
         public void AddPrecondition(GoapKey key, object value)
         {
-            Preconditions.Add(new KeyValuePair<GoapKey, object>(key, value));
+            var precondition = new GoapPreCondition(GoapKeyDescription.ToString(key, value), value);
+            Preconditions.Add(new KeyValuePair<GoapKey, GoapPreCondition>(key, precondition));
         }
 
         public void RemovePrecondition(GoapKey key)
         {
-            Remove(key, Preconditions);
+            Preconditions.Where(o => o.Key.Equals(key))
+              .ToList()
+              .ForEach(o => Preconditions.Remove(o));
         }
 
         public void AddEffect(GoapKey key, object value)
@@ -48,14 +61,9 @@ namespace Libs.Actions
 
         public void RemoveEffect(GoapKey key)
         {
-            Remove(key, Effects);
-        }
-
-        private void Remove(GoapKey key, HashSet<KeyValuePair<GoapKey, object>> hash)
-        {
-            hash.Where(o => o.Key.Equals(key))
+            Effects.Where(o => o.Key.Equals(key))
                 .ToList()
-                .ForEach(o => hash.Remove(o));
+                .ForEach(o => Effects.Remove(o));
         }
     }
 }

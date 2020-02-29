@@ -10,43 +10,26 @@ namespace Libs.Actions
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
+        private readonly StopMoving stopMoving;
 
-        public HealAction(WowProcess wowProcess, PlayerReader playerReader)
+        public HealAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
+            this.stopMoving = stopMoving;
+
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.shouldheal, true);
         }
 
         public override float CostOfPerformingAction { get => 4f; }
 
-        public override bool CheckIfActionCanRun()
-        {
-            return true;
-        }
-
-        public override bool IsActionDone()
-        {
-            return false;
-        }
-
-        public override bool NeedsToBeInRangeOfTargetToExecute()
-        {
-            throw new NotImplementedException();
-        }
-
         private ConsoleKey Eat => this.playerReader.ActionBarUseable_73To96.HotKey7 ? ConsoleKey.D7 : ConsoleKey.Escape;
         private ConsoleKey Bandage => this.playerReader.ActionBarUseable_73To96.HotKey8 ? ConsoleKey.D8 : ConsoleKey.Escape;
 
         public override async Task PerformAction()
         {
-            // force stop turning
-            wowProcess.KeyUp(ConsoleKey.LeftArrow);
-            await Task.Delay(1);
-            wowProcess.KeyUp(ConsoleKey.RightArrow);
-            await Task.Delay(1);
-            wowProcess.KeyUp(ConsoleKey.UpArrow);
+            await stopMoving.Stop();
 
             if ((this.playerReader.HealthPercent < 40|| Bandage== ConsoleKey.Escape) && Eat != ConsoleKey.Escape)
             {
@@ -73,11 +56,6 @@ namespace Libs.Actions
                 }
                 await Task.Delay(1000);
             }
-        }
-
-        public override void ResetBeforePlanning()
-        {
-            
         }
     }
 }

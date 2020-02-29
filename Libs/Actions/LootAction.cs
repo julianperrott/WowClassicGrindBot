@@ -11,12 +11,16 @@ namespace Libs.Actions
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         private readonly LootWheel lootWheel;
+        private readonly StopMoving stopMoving;
+
         private bool debug = true;
 
-        public LootAction(WowProcess wowProcess, PlayerReader playerReader)
+        public LootAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
+            this.stopMoving = stopMoving;
+
             lootWheel = new LootWheel(wowProcess, playerReader);
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, false);
@@ -32,31 +36,9 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 4f; }
 
-        public override bool CheckIfActionCanRun()
-        {
-            return true;
-        }
-
-        public override bool IsActionDone()
-        {
-            return false;
-        }
-
-        public override bool NeedsToBeInRangeOfTargetToExecute()
-        {
-            throw new NotImplementedException();
-        }
-
         public override async Task PerformAction()
         {
-            Log("Start PerformAction");
-
-            // force stop turning
-            wowProcess.KeyUp(ConsoleKey.LeftArrow);
-            await Task.Delay(1);
-            wowProcess.KeyUp(ConsoleKey.RightArrow);
-            await Task.Delay(1);
-            wowProcess.KeyUp(ConsoleKey.UpArrow);
+            await stopMoving.Stop();
 
             var healthAtStartOfLooting = playerReader.HealthPercent;
 
@@ -149,10 +131,6 @@ namespace Libs.Actions
             //await wowProcess.RightClickMouse(new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width / 2, (Screen.PrimaryScreen.Bounds.Height / 2)));
 
             Log("End PerformAction");
-        }
-
-        public override void ResetBeforePlanning()
-        {
         }
     }
 }

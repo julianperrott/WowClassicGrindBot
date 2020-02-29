@@ -1,24 +1,27 @@
 ﻿@page "/counter"
+@inject Libs.WowData wowData
+@inject Libs.GOAP.GoapAgent goapAgent
+@inject Libs.BotController botController
 
 <h1>Counter</h1>
 
-<p>X Coord: @Startup.AddonThread.PlayerReader.XCoord</p>
-<p>Y Coord: @Startup.AddonThread.PlayerReader.YCoord</p>
+<p>X Coord: @wowData.PlayerReader.XCoord.ToString("0.000")</p>
+<p>Y Coord: @wowData.PlayerReader.YCoord.ToString("0.000")</p>
 
-<p>HealthPercent: @Startup.AddonThread.PlayerReader.HealthPercent %</p>
-<p>HealthMax: @Startup.AddonThread.PlayerReader.HealthMax</p>
-<p>HealthCurrent: @Startup.AddonThread.PlayerReader.HealthCurrent</p>
+<p>HealthPercent: @wowData.PlayerReader.HealthPercent %</p>
+<p>HealthMax: @wowData.PlayerReader.HealthMax</p>
+<p>HealthCurrent: @wowData.PlayerReader.HealthCurrent</p>
 <hr />
-<p>Target: @Startup.AddonThread.PlayerReader.Target</p>
-<p>Health: @Startup.AddonThread.PlayerReader.TargetHealth</p>
-<p>Max Health @Startup.AddonThread.PlayerReader.TargetMaxHealth</p>
+<p>Target: @wowData.PlayerReader.Target</p>
+<p>Health: @wowData.PlayerReader.TargetHealth</p>
+<p>Max Health @wowData.PlayerReader.TargetMaxHealth</p>
 
-<hr />
-<p>Action: @Startup.WowBot.Agent.CurrentAction?.GetType().Name</p>
-
-<hr />
-<p>Actions: @String.Join(", ", Startup.WowBot.Agent.WorldState.Select(ob=> ob.Key + "=" + ob.Value.ToString()))</p>
-
+<table class="table table-sm table-striped" >
+    @foreach (var action in goapAgent.AvailableActions)
+    {
+        <GoapActionView action=@action IsSelected="@(action==goapAgent.CurrentAction)" />
+    }
+</table>
 
 <button class="btn btn-primary" @onclick="Start">Start Reading</button>
 
@@ -28,7 +31,7 @@
 
     private void Start()
     {
-        Startup.AddonThread.AddonDataChanged += (o, e) =>
+        wowData.AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() => StateHasChanged());
         };
@@ -36,6 +39,6 @@
 
     private void ToggleBot()
     {
-        Startup.ToggleBotStatus();
+        botController.ToggleBotStatus();
     }
 }

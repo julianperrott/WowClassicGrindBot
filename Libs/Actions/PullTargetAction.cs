@@ -22,25 +22,7 @@ namespace Libs.Actions
             AddEffect(GoapKey.pulled, true);
         }
 
-
-
         public override float CostOfPerformingAction { get => 4f; }
-
-        public override bool CheckIfActionCanRun()
-        {
-            return true;
-            //return this.playerReader.Target.ToLower().StartsWith("g") || this.playerReader.Target.ToLower().StartsWith("c");
-        }
-
-        public override bool IsActionDone()
-        {
-            return false;
-        }
-
-        public override bool NeedsToBeInRangeOfTargetToExecute()
-        {
-            throw new NotImplementedException();
-        }
 
         public override async Task PerformAction()
         {
@@ -58,11 +40,6 @@ namespace Libs.Actions
             {
                 await this.wowProcess.KeyPress(ConsoleKey.D0, 401);
             }
-        }
-
-        public override void ResetBeforePlanning()
-        {
-            
         }
     }
 }

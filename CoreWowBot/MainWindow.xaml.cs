@@ -20,7 +20,7 @@ namespace Powershell
     /// </summary>
     public partial class MainWindow : Window
     {
-        private AddonThread addonThread;
+        private WowData addonThread;
         private PlayerDirection playerDirection;
         private Thread thread;
         //private GoapAgent agent;
@@ -39,7 +39,7 @@ namespace Powershell
                 ? config.LoadConfiguration()
                 : config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
-            this.addonThread = new AddonThread(colorReader, frames);
+            this.addonThread = new WowData(colorReader, frames);
             playerDirection = new PlayerDirection(this.addonThread.PlayerReader, WowProcess);
             this.thread = new Thread(addonThread.DoWork);
 

@@ -19,6 +19,8 @@ namespace Libs
         private PlayerReader playerReader;
         public GoapAgent Agent;
 
+        public bool Active { get; set; }
+
         public Bot(PlayerReader playerReader)
         {
             this.playerReader = playerReader;
@@ -45,14 +47,16 @@ namespace Libs
 
             var spiritPoints = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
 
-            var followRouteAction = new FollowRouteAction(playerReader, WowProcess, playerDirection, pathThereAndBack);
+            var stopMoving = new StopMoving(WowProcess, playerReader);
+            var followRouteAction = new FollowRouteAction(playerReader, WowProcess, playerDirection, pathThereAndBack, stopMoving);
             this.currentAction = followRouteAction;
 
-            var killMobAction = new KillTargetAction(WowProcess, playerReader);
+
+            var killMobAction = new KillTargetAction(WowProcess, playerReader, stopMoving);
             var pullTargetAction = new PullTargetAction(WowProcess, playerReader);
-            var approachTargetAction = new ApproachTargetAction(WowProcess, playerReader);
-            var lootAction = new LootAction(WowProcess, playerReader);
-            var healAction = new HealAction(WowProcess, playerReader);
+            var approachTargetAction = new ApproachTargetAction(WowProcess, playerReader, stopMoving);
+            var lootAction = new LootAction(WowProcess, playerReader, stopMoving);
+            var healAction = new HealAction(WowProcess, playerReader, stopMoving);
 
             this.availableActions.Add(followRouteAction);
             this.availableActions.Add(killMobAction);
@@ -61,33 +65,40 @@ namespace Libs
             this.availableActions.Add(lootAction);
             this.availableActions.Add(healAction);
             this.availableActions.Add(new TargetDeadAction(WowProcess, playerReader));
-            this.availableActions.Add(new WalkToCorpseAction(playerReader, WowProcess, playerDirection, spiritPoints, pathPoints));
+            this.availableActions.Add(new WalkToCorpseAction(playerReader, WowProcess, playerDirection, spiritPoints, pathPoints, stopMoving));
 
-            while (true)
+            while (Active)
             {
                 await GoapPerformAction();
             }
+
+            await stopMoving.Stop();
+            Debug.WriteLine("Stopped!");
+
         }
 
         private async Task GoapPerformAction()
         {
-            var newAction = this.Agent?.GetAction();
-
-            if (newAction != null)
+            if (this.Agent != null)
             {
-                if (newAction != this.currentAction)
+                var newAction = await this.Agent.GetAction();
+
+                if (newAction != null)
                 {
-                    this.currentAction?.DoReset();
-                    this.currentAction = newAction;
-                    Debug.WriteLine($"New Plan= {newAction.GetType().Name}");
-                }
+                    if (newAction != this.currentAction)
+                    {
+                        this.currentAction?.DoReset();
+                        this.currentAction = newAction;
+                        Debug.WriteLine($"New Plan= {newAction.GetType().Name}");
+                    }
 
-               await newAction.PerformAction();
-            }
-            else
-            {
-                Debug.WriteLine($"New Plan= NULL");
-                Thread.Sleep(500);
+                    await newAction.PerformAction();
+                }
+                else
+                {
+                    Debug.WriteLine($"New Plan= NULL");
+                    Thread.Sleep(500);
+                }
             }
 
         }

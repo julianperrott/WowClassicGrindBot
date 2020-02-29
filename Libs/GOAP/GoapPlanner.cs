@@ -17,9 +17,9 @@ namespace Libs.GOAP
 		 * that must be performed, in order, to fulfill the goal.
 		 */
 
-        public Queue<GoapAction> Plan(HashSet<GoapAction> availableActions,
+        public Queue<GoapAction> Plan(IEnumerable<GoapAction> availableActions,
                                       HashSet<KeyValuePair<GoapKey, object>> worldState,
-                                      HashSet<KeyValuePair<GoapKey, object>> goal)
+                                      HashSet<KeyValuePair<GoapKey, GoapPreCondition>> goal)
         {
             // reset the actions so we can start fresh with them
             foreach (GoapAction a in availableActions)
@@ -99,7 +99,7 @@ namespace Libs.GOAP
 		 * sequence.
 		 */
 
-        private bool BuildGraph(Node parent, List<Node> leaves, HashSet<GoapAction> usableActions, HashSet<KeyValuePair<GoapKey, object>> goal)
+        private bool BuildGraph(Node parent, List<Node> leaves, HashSet<GoapAction> usableActions, HashSet<KeyValuePair<GoapKey, GoapPreCondition>> goal)
         {
             bool foundOne = false;
 
@@ -107,14 +107,18 @@ namespace Libs.GOAP
             foreach (GoapAction action in usableActions)
             {
                 // if the parent state has the conditions for this action's preconditions, we can use it here
-                if (InState(action, action.Preconditions, parent.state))
+                var result = InState(action, action.Preconditions, parent.state);
+                action.State = result;
+
+                if (!result.ContainsValue(false))
                 {
                     // apply the action's effects to the parent state
                     var currentState = PopulateState(parent.state, action.Effects);
                     //Debug.Log(GoapAgent.prettyPrint(currentState));
                     var node = new Node(parent, parent.runningCost + action.CostOfPerformingAction, currentState, action);
 
-                    if (InState(action, goal, currentState))
+                    result = InState(action, goal, currentState);
+                    if (!result.ContainsValue(false))
                     {
                         // we found a solution!
                         leaves.Add(node);
@@ -156,49 +160,33 @@ namespace Libs.GOAP
 		 * then this returns false.
 		 */
 
-        private bool InState(GoapAction action, HashSet<KeyValuePair<GoapKey, object>> test, HashSet<KeyValuePair<GoapKey, object>> state)
+        private Dictionary<string, bool> InState(GoapAction action, HashSet<KeyValuePair<GoapKey, GoapPreCondition>> test, HashSet<KeyValuePair<GoapKey, object>> state)
         {
-            List<string> mismatch = new List<string>();
-            foreach (KeyValuePair<GoapKey, object> t in test)
+            var resultState = new Dictionary<string, bool>();
+            foreach (KeyValuePair<GoapKey, GoapPreCondition> t in test)
             {
-                bool match = false;
                 bool found = false;
                 foreach (KeyValuePair<GoapKey, object> s in state)
                 {
-                    if (s.Key == t.Key)
+                    found = s.Key == t.Key;
+                    if (found)
                     {
-                        found = true;
-                        match = s.Value.Equals(t.Value);
-                        if (!match)
-                        {
-                            mismatch.Add($"{t.Key} should be {t.Value}, but it is: {s.Value}.");
-                        }
+                        resultState.Add(t.Value.Description, s.Value.Equals(t.Value.State));
                         break;
                     }
                 }
 
                 if (!found)
                 {
-                    mismatch.Add($"{t.Key} should be {t.Value}, but it is not found.");
-                    break;
+                    resultState.Add(t.Value.Description, false);
                 }
             }
-
-            if (mismatch.Count>0)
-            {
-                //Debug.WriteLine($"{action.GetType().Name}. "+string.Join(", ",mismatch));
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return resultState;
         }
 
         /**
 		 * Apply the stateChange to the currentState
 		 */
-
         private HashSet<KeyValuePair<GoapKey, object>> PopulateState(HashSet<KeyValuePair<GoapKey, object>> currentState, HashSet<KeyValuePair<GoapKey, object>> stateChange)
         {
             HashSet<KeyValuePair<GoapKey, object>> state = new HashSet<KeyValuePair<GoapKey, object>>();

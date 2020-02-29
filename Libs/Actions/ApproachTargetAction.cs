@@ -10,14 +10,17 @@ namespace Libs.Actions
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
+        private readonly StopMoving stopMoving;
 
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
         
-        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader)
+        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
+            this.stopMoving = stopMoving;
+
             AddPrecondition(GoapKey.inmeleerange, false);
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, true);
@@ -25,30 +28,9 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 8f; }
 
-        public override bool CheckIfActionCanRun()
-        {
-            return true;
-        }
-
-        public override bool IsActionDone()
-        {
-            return false;
-        }
-
-        public override bool NeedsToBeInRangeOfTargetToExecute()
-        {
-            throw new NotImplementedException();
-        }
-
         public override async Task PerformAction()
         {
-
-            wowProcess.KeyUp(ConsoleKey.LeftArrow);
-            await Task.Delay(1);
-            wowProcess.KeyUp(ConsoleKey.RightArrow);
-            await Task.Delay(1);
-            wowProcess.KeyUp(ConsoleKey.UpArrow);
-            await Task.Delay(1);
+            //await stopMoving.Stop();
 
             var location = playerReader.PlayerLocation;
 
@@ -60,7 +42,7 @@ namespace Libs.Actions
             var newLocation = playerReader.PlayerLocation;
             if (location.X == newLocation.X && location.Y == newLocation.Y)
             {
-                wowProcess.KeyDown(ConsoleKey.UpArrow);
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(2000);
             }
         }
@@ -75,11 +57,6 @@ namespace Libs.Actions
                 }
             }
             LastJump = DateTime.Now;
-        }
-
-        public override void ResetBeforePlanning()
-        {
-            
         }
     }
 }

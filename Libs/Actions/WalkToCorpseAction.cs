@@ -17,6 +17,7 @@ namespace Libs.Actions
         private WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
+        private readonly StopMoving stopMoving;
         private double lastDistance = 999;
         private readonly List<WowPoint> spiritWalkerPath;
         private readonly List<WowPoint> routePoints;
@@ -24,11 +25,12 @@ namespace Libs.Actions
 
         private DateTime lastActive=DateTime.Now.AddDays(-1);
 
-        public WalkToCorpseAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection,List<WowPoint> spiritWalker,List<WowPoint> routePoints)
+        public WalkToCorpseAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection,List<WowPoint> spiritWalker,List<WowPoint> routePoints, StopMoving stopMoving)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
             this.playerDirection = playerDirection;
+            this.stopMoving = stopMoving;
             this.routePoints = routePoints.ToList();
             this.spiritWalkerPath= spiritWalker.ToList();
 
@@ -89,9 +91,7 @@ namespace Libs.Actions
                 // stuck so jump
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(100);
-                wowProcess.SetKeyState(ConsoleKey.Spacebar, true);
-                await Task.Delay(500);
-                wowProcess.SetKeyState(ConsoleKey.Spacebar, false);
+                await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
             }
             else // distance closer
             {
@@ -240,28 +240,9 @@ namespace Libs.Actions
             return distance;
         }
 
-        public override void ResetBeforePlanning()
+        public override async Task Abort()
         {
-        }
-
-        public override bool IsActionDone()
-        {
-            return false;
-        }
-
-        public override bool CheckIfActionCanRun()
-        {
-            return true;
-        }
-
-        public override bool NeedsToBeInRangeOfTargetToExecute()
-        {
-            return false;
-        }
-
-        public override void Abort()
-        {
-            wowProcess.SetKeyState(ConsoleKey.UpArrow, false);
+            await this.stopMoving.Stop();
         }
 
         public static Vector2 GetClosestPointOnLineSegment(Vector2 A, Vector2 B, Vector2 P)

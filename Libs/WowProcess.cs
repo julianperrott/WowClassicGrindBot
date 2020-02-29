@@ -11,6 +11,7 @@ namespace Libs
     {
         private const UInt32 WM_KEYDOWN = 0x0100;
         private const UInt32 WM_KEYUP = 0x0101;
+        private Random random = new Random();
 
         private Process _warcraftProcess;
         public Process WarcraftProcess
@@ -77,13 +78,13 @@ namespace Libs
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetCursorPos(int x, int y);
 
-        public void KeyDown(ConsoleKey key)
+        private void KeyDown(ConsoleKey key)
         {
             Debug.WriteLine($"KeyDown {key}");
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
         }
 
-        public void KeyUp(ConsoleKey key)
+        private void KeyUp(ConsoleKey key)
         {
             Debug.WriteLine($"KeyUp {key}");
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
@@ -91,9 +92,10 @@ namespace Libs
 
         public async Task KeyPress(ConsoleKey key, int milliseconds)
         {
-            this.KeyDown(key);
-            await Task.Delay(milliseconds);
-            this.KeyUp(key);
+            Debug.WriteLine($"KeyPress {key} for {milliseconds}ms");
+            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
+            await Delay(milliseconds);
+            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
         }
 
         public void SetKeyState(ConsoleKey key, bool pressDown)
@@ -111,8 +113,13 @@ namespace Libs
 
             SetCursorPosition(position);
             PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_RBUTTONDOWN, Keys.VK_RMB, 0);
-            await Task.Delay(101);
+            await Delay(101);
             PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_RBUTTONUP, Keys.VK_RMB, 0);
+        }
+
+        public async Task Delay(int milliseconds)
+        {
+            await Task.Delay(milliseconds + random.Next(1, 200));
         }
     }
 }

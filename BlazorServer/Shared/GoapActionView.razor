@@ -1,0 +1,28 @@
+﻿<tr>
+    <td><h4 style="color:@ToColour(this.IsSelected)">@action.GetType().Name (@action.CostOfPerformingAction)</h4></td>
+    @foreach (var item in this.action.State)
+    {
+        <td style="color:@Colour(item)">@item.Key</td>
+    }
+</tr>
+
+@code {
+
+    [Parameter]
+    public bool IsSelected { get; set; }
+
+    [Parameter]
+    public Libs.Actions.GoapAction action { get; set; } = new Libs.Actions.NullAction();
+
+    public string Colour(KeyValuePair<string, bool> item)
+    {
+        return item.Value ? "green" : "red";
+    }
+
+    public string ToColour(bool item)
+    {
+        return item ? "green" : "black";
+    }
+
+}
+

@@ -17,16 +17,18 @@ namespace Libs.Actions
         private Stack<WowPoint> points=new Stack<WowPoint>();
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
+        private readonly StopMoving stopMoving;
         private double lastDistance = 999;
         private DateTime LastActive = DateTime.Now;
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points)
+        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
             this.playerDirection = playerDirection;
+            this.stopMoving = stopMoving;
             this.pointsList = points;
 
             AddPrecondition(GoapKey.incombat, false);
@@ -83,9 +85,7 @@ namespace Libs.Actions
             if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
             {
                 //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
-                this.wowProcess.SetKeyState(ConsoleKey.Tab, true);
-                Thread.Sleep(300);
-                this.wowProcess.SetKeyState(ConsoleKey.Tab, false);
+                await this.wowProcess.KeyPress(ConsoleKey.Tab, 300);
             }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
@@ -103,9 +103,7 @@ namespace Libs.Actions
                 // stuck so jump
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(100);
-                wowProcess.SetKeyState(ConsoleKey.Spacebar, true);
-                await Task.Delay(500);
-                wowProcess.SetKeyState(ConsoleKey.Spacebar, false);
+                await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
             }
             else // distance closer
             {
@@ -173,38 +171,14 @@ namespace Libs.Actions
             LastJump = DateTime.Now;
         }
 
-        public void Reset()
+        public async Task Reset()
         {
-            wowProcess.SetKeyState(ConsoleKey.UpArrow, false);
+            await this.stopMoving.Stop();
         }
 
-        public bool IsDone()
+        public override async Task Abort()
         {
-            return false;
-        }
-
-        public override void ResetBeforePlanning()
-        {
-        }
-
-        public override bool IsActionDone()
-        {
-            return false;
-        }
-
-        public override bool CheckIfActionCanRun()
-        {
-            return true;
-        }
-
-        public override bool NeedsToBeInRangeOfTargetToExecute()
-        {
-            return false;
-        }
-
-        public override void Abort()
-        {
-            wowProcess.SetKeyState(ConsoleKey.UpArrow, false);
+            await this.stopMoving.Stop();
         }
 
         public static Vector2 GetClosestPointOnLineSegment(Vector2 A, Vector2 B, Vector2 P)

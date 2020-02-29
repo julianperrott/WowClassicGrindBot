@@ -29,7 +29,7 @@ namespace Powershell
         public ActionBarStatus isUsableActionUsable_3 = new ActionBarStatus("isUsable 49-72");
         public ActionBarStatus isUsableActionUsable_4 = new ActionBarStatus("isUsable 73-96");
 
-        private AddonThread addonThread;
+        private WowData addonThread;
 
         List<ActionBarStatus> items = new List<ActionBarStatus>();
 
@@ -57,7 +57,7 @@ namespace Powershell
                 ? config.LoadConfiguration()
                 : config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
-            this.addonThread = new AddonThread(colorReader, frames);
+            this.addonThread = new WowData(colorReader, frames);
 
             Record_Click(this, new RoutedEventArgs());
         }

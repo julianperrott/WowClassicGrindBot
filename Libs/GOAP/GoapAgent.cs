@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Libs.Actions;
 
 namespace Libs.GOAP
@@ -10,29 +11,26 @@ namespace Libs.GOAP
 	public sealed class GoapAgent
 	{
 		private GoapPlanner planner = new GoapPlanner();
-		private HashSet<GoapAction> availableActions;
+		public IEnumerable<GoapAction> AvailableActions { get; set; }
 		private PlayerReader playerReader;
 
-		public GoapAction? CurrentAction;
-		public HashSet<KeyValuePair<GoapKey, object>> WorldState = new HashSet<KeyValuePair<GoapKey, object>>();
+		public GoapAction? CurrentAction { get; set; }
+		public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; set; } = new HashSet<KeyValuePair<GoapKey, object>>();
 
 		public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions)
 		{
 			this.playerReader = playerReader;
-			this.availableActions = availableActions;
+			this.AvailableActions = availableActions.OrderBy(a => a.CostOfPerformingAction);
 		}
 
-		public GoapAction? GetAction()
+		public async Task<GoapAction?> GetAction()
 		{
 			WorldState = GetWorldState(playerReader);
 
-			//Debug.WriteLine(string.Join(", ",worldState.Select(k => k.Key + "=" + k.Value)));
-
-
-			var goal = new HashSet<KeyValuePair<GoapKey, object>>();
+			var goal = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
 
 			//Plan
-			Queue<GoapAction> plan = planner.Plan(availableActions, WorldState, goal);
+			Queue<GoapAction> plan = planner.Plan(AvailableActions, WorldState, goal);
 			if (plan != null && plan.Count > 0)
 			{
 				CurrentAction = plan.Peek();
@@ -41,10 +39,7 @@ namespace Libs.GOAP
 			{
 				Debug.WriteLine($"Target Health: {playerReader.TargetHealth}, max {playerReader.TargetMaxHealth}, dead {playerReader.PlayerBitValues.TargetIsDead}");
 
-				//new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
-				new WowProcess().SetKeyState(ConsoleKey.Tab, true);
-				Thread.Sleep(420);
-				new WowProcess().SetKeyState(ConsoleKey.Tab, false);
+				await new WowProcess().KeyPress(ConsoleKey.Tab, 420);
 			}
 
 			return CurrentAction;

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Libs
 {
-    public class AddonThread
+    public class WowData
     {
         public List<DataFrame> frames { get; private set; } = new List<DataFrame>();
         public IAddonReader AddonReader { get; private set; }
@@ -17,7 +17,7 @@ namespace Libs
 
         public event EventHandler? AddonDataChanged;
 
-        public AddonThread(IColorReader colorReader, List<DataFrame> frames)
+        public WowData(IColorReader colorReader, List<DataFrame> frames)
         {
             this.frames = frames;
 

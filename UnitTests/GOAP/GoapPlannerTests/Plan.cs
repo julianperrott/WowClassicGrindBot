@@ -19,17 +19,18 @@ namespace UnitTests.GOAP.GoapPlannerTests
         GoapAction findTargetAction = null;
         HashSet<GoapAction> availableActions;
 
-        HashSet<KeyValuePair<GoapKey, object>> goal = new HashSet<KeyValuePair<GoapKey, object>>();
+        HashSet<KeyValuePair<GoapKey, GoapPreCondition>> goal = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
 
         [TestInitialize]
         public void TestInitialize()
         {
             var playerReader = new PlayerReader(new Mock<ISquareReader>().Object);
-            this.followRouteAction = new FollowRouteAction(playerReader, new WowProcess(), new Mock<IPlayerDirection>().Object, new List<WowPoint>());
+            var stopMoving = new StopMoving(new WowProcess(), playerReader);
+            this.followRouteAction = new FollowRouteAction(playerReader, new WowProcess(), new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving);
 
-            this.killMobAction = new KillTargetAction(new WowProcess(), playerReader);
+            this.killMobAction = new KillTargetAction(new WowProcess(), playerReader, stopMoving);
             this.pullTargetAction = new PullTargetAction(new WowProcess(), playerReader);
-            this.approachTargetAction = new ApproachTargetAction(new WowProcess(), playerReader);
+            this.approachTargetAction = new ApproachTargetAction(new WowProcess(), playerReader, stopMoving);
 
             this.availableActions = new HashSet<GoapAction>
             {

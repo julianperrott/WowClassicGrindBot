@@ -12,35 +12,23 @@ namespace Libs.Actions
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
+        private readonly StopMoving stopMoving;
         private ActionBarStatus actionBar = new ActionBarStatus(0);
 
         private Dictionary<ConsoleKey, DateTime> LastClicked = new Dictionary<ConsoleKey, DateTime>();
 
-        public KillTargetAction(WowProcess wowProcess, PlayerReader playerReader)
+        public KillTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
+            this.stopMoving = stopMoving;
+
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.inmeleerange, true);
         }
 
         public override float CostOfPerformingAction { get => 4f; }
-
-        public override bool CheckIfActionCanRun()
-        {
-            return true;
-        }
-
-        public override bool IsActionDone()
-        {
-            return false;
-        }
-
-        public override bool NeedsToBeInRangeOfTargetToExecute()
-        {
-            throw new NotImplementedException();
-        }
 
         private bool IsOnCooldown(ConsoleKey key, int seconds)
         {
@@ -69,33 +57,14 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-
-            wowProcess.KeyUp(ConsoleKey.LeftArrow);
-            await Task.Delay(1);
-            wowProcess.KeyUp(ConsoleKey.RightArrow);
-            await Task.Delay(1);
-            wowProcess.KeyUp(ConsoleKey.UpArrow);
-            await Task.Delay(1);
+            await stopMoving.Stop();
 
             this.actionBar = playerReader.ActionBarUseable_73To96;
-
-            //StringBuilder sb = new StringBuilder();
-            //if(actionBar.HotKey2) { sb.Append("2,"); }
-            //if (actionBar.HotKey3) { sb.Append("3,"); }
-            //if (actionBar.HotKey4) { sb.Append("4,"); }
-            //if (actionBar.HotKey5) { sb.Append("5,"); }
-            //if (actionBar.HotKey6) { sb.Append("6,"); }
-            //if (sb.ToString().Length > 0)
-            //{
-            //    Debug.WriteLine("Available =" + sb.ToString());
-            //}
-
 
             var key = new List<ConsoleKey> { Approach, Battleshout, Bloodrage, Overpower, Rend, HeroicStrike }
                 .Where(key => key != ConsoleKey.Escape)
                 .ToList()
                 .FirstOrDefault();
-
 
             if (key != 0)
             {
@@ -105,7 +74,6 @@ namespace Libs.Actions
 
         private async Task PressKey(ConsoleKey key)
         {
-            Debug.WriteLine($"Press key {key}");
             await wowProcess.KeyPress(key, 501);
 
             if (LastClicked.ContainsKey(key))
@@ -116,11 +84,6 @@ namespace Libs.Actions
             {
                 LastClicked.Add(key, DateTime.Now);
             }
-        }
-
-        public override void ResetBeforePlanning()
-        {
-            
         }
     }
 }

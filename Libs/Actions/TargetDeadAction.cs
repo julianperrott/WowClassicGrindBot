@@ -32,20 +32,6 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 4f; }
 
-        public override bool CheckIfActionCanRun()
-        {
-            return true;
-        }
-
-        public override bool IsActionDone()
-        {
-            return false;
-        }
-
-        public override bool NeedsToBeInRangeOfTargetToExecute()
-        {
-            throw new NotImplementedException();
-        }
 
         public override async Task PerformAction()
         {
@@ -54,10 +40,6 @@ namespace Libs.Actions
             await wowProcess.KeyPress(ConsoleKey.D0, 564);
 
             Log("End PerformAction");
-        }
-
-        public override void ResetBeforePlanning()
-        {
         }
     }
 }
