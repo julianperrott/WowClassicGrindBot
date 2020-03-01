@@ -1,6 +1,8 @@
 ﻿using Libs.GOAP;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
@@ -17,6 +19,18 @@ namespace Libs.Actions
         }
     }
 
+    public class ActionEvent: EventArgs
+    {
+        public GoapKey Key { get; private set; }
+        public object Value { get; private set; }
+
+        public ActionEvent(GoapKey key, object value) 
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+    }
+
     public abstract class GoapAction
     {
         public HashSet<KeyValuePair<GoapKey, GoapPreCondition>> Preconditions { get; private set; } = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
@@ -29,6 +43,28 @@ namespace Libs.Actions
         public void DoReset()
         {
             ResetBeforePlanning();
+        }
+
+        private string name = string.Empty;
+        public string Name
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(name))
+                {
+                    string output = Regex.Replace(this.GetType().Name.Replace("Action",""), @"\p{Lu}", m => " " + m.Value.ToLowerInvariant());
+                    this.name = char.ToUpperInvariant(output[0]) + output.Substring(1);
+                }
+                return name;
+            }
+        }
+
+        public delegate void ActionEventHandler(object sender, ActionEvent e);
+        public event ActionEventHandler? ActionEvent;
+
+        public void RaiseEvent(ActionEvent e)
+        {
+            ActionEvent?.Invoke(this, e);
         }
 
         public Dictionary<string, bool> State { get; set; } = new Dictionary<string, bool>();

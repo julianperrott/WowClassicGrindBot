@@ -45,9 +45,9 @@ namespace Libs.GOAP
 			return CurrentAction;
 		}
 
-		public static HashSet<KeyValuePair<GoapKey, object>> GetWorldState(PlayerReader playerReader)
+		public HashSet<KeyValuePair<GoapKey, object>> GetWorldState(PlayerReader playerReader)
 		{
-			return new HashSet<KeyValuePair<GoapKey, object>>
+			var state= new HashSet<KeyValuePair<GoapKey, object>>
 			{
 				new KeyValuePair<GoapKey, object>(GoapKey.hastarget, !string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0),
 				new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, !playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0),
@@ -57,7 +57,27 @@ namespace Libs.GOAP
 				new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
 				new KeyValuePair<GoapKey, object>(GoapKey.shouldheal, playerReader.HealthPercent<60 && !playerReader.PlayerBitValues.DeadStatus),
 				new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
+				new KeyValuePair<GoapKey, object>(GoapKey.usehealingpotion, playerReader.HealthPercent<20)
 			};
+
+			actionState.ToList().ForEach(kv => state.Add(kv));
+
+			return state;
+		}
+
+		public Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
+
+		public void OnActionEvent(object sender, ActionEvent e)
+		{
+			if (!actionState.ContainsKey(e.Key))
+			{
+				actionState.Add(e.Key, e.Value);
+			}
+			else
+			{
+				actionState[e.Key] = e.Value;
+			}
+
 		}
 	}
 }

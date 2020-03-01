@@ -13,7 +13,9 @@ namespace Libs.GOAP
 		inmeleerange = 50,
 		pulled = 60,
 		shouldheal = 70,
-		isdead = 80
+		isdead = 80,
+		shouldloot = 90,
+		usehealingpotion = 100
 	}
 
 	public static class GoapKeyDescription
@@ -44,6 +46,13 @@ namespace Libs.GOAP
 
 				 (GoapKey.isdead, true) => "I am dead",
 				 (GoapKey.isdead, false) => "I am alive",
+
+				 (GoapKey.shouldloot, true) => "Need to loot",
+				 (GoapKey.shouldloot, false) => "No need to loot",
+
+				 (GoapKey.usehealingpotion, true) => "Use healing pot",
+				 (GoapKey.usehealingpotion, false) => "My health is ok",
+
 				 (_, _) => "Unknown"
 			 };
 	}

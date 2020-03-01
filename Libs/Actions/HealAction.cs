@@ -37,7 +37,7 @@ namespace Libs.Actions
             }
             else
             {
-                await PressKeyAndWait(Bandage, 7);
+                await PressKeyAndWait(Bandage, 13);
             }
         }
 

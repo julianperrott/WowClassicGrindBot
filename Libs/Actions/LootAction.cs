@@ -8,7 +8,7 @@ namespace Libs.Actions
 {
     public class LootAction : GoapAction
     {
-        private readonly WowProcess wowProcess;
+        protected readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         private readonly LootWheel lootWheel;
         private readonly StopMoving stopMoving;
@@ -20,8 +20,13 @@ namespace Libs.Actions
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
-
             lootWheel = new LootWheel(wowProcess, playerReader);
+
+            AddPreconditions();
+        }
+
+        protected virtual void AddPreconditions()
+        {
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, false);
         }
@@ -129,6 +134,8 @@ namespace Libs.Actions
 
 
             //await wowProcess.RightClickMouse(new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width / 2, (Screen.PrimaryScreen.Bounds.Height / 2)));
+
+            RaiseEvent(new ActionEvent(GoapKey.shouldloot,false));
 
             Log("End PerformAction");
         }

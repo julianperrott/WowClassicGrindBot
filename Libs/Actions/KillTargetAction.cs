@@ -69,6 +69,7 @@ namespace Libs.Actions
             if (key != 0)
             {
                 await PressKey(key);
+                RaiseEvent(new ActionEvent(GoapKey.shouldloot, true));
             }
         }
 

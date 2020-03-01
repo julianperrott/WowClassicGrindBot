@@ -43,8 +43,7 @@ namespace Libs.Actions
         {
             if (findClosest)
             {
-                var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-                WowPoint.ShortenRouteFromLocation(location, pointsList).ForEach(p => points.Push(p));
+                pointsList.ForEach(p => points.Push(p));
                 AdjustNextPointToClosest();
             }
             else

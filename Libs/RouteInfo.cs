@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using Libs.Actions;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Libs
 {
@@ -11,6 +10,7 @@ namespace Libs
     {
         public List<WowPoint> PathPoints { get; private set; }
         public List<WowPoint> SpiritPath { get; private set; }
+        private FollowRouteAction followRouteAction;
 
         private double min;
         private double diff;
@@ -18,14 +18,15 @@ namespace Libs
         private double addY;
         private double addX;
 
-        private int margin=0;
+        private int margin = 0;
         private int canvasSize = 0;
-        
+
         public void SetMargin(int margin)
         {
             this.margin = margin;
             CalculatePointToGrid();
         }
+
         public void SetCanvasSize(int size)
         {
             this.canvasSize = size;
@@ -46,22 +47,23 @@ namespace Libs
 
         public int ToCanvasPointX(double value)
         {
-            return (int)(margin + ((value +addX - min) * pointToGrid));
+            return (int)(margin + ((value + addX - min) * pointToGrid));
         }
 
         public int ToCanvasPointY(double value)
         {
-            return (int)(margin + ((value+ addY- min) * pointToGrid));
+            return (int)(margin + ((value + addY - min) * pointToGrid));
         }
 
         private double pointToGrid;
 
-        public RouteInfo(List<WowPoint> pathPoints, List<WowPoint> spiritPath)
+        public RouteInfo(List<WowPoint> pathPoints, List<WowPoint> spiritPath, FollowRouteAction followRouteAction)
         {
             this.PathPoints = pathPoints.ToList();
             this.SpiritPath = spiritPath.ToList();
+            this.followRouteAction = followRouteAction;
 
-            var maxX = this.PathPoints.Max(s=>s.X);
+            var maxX = this.PathPoints.Max(s => s.X);
             var minX = this.PathPoints.Min(s => s.X);
             var diffX = maxX - minX;
 
@@ -84,6 +86,35 @@ namespace Libs
                 this.min = minY;
                 this.diff = diffY;
             }
+        }
+
+        public string RenderPathLines()
+        {
+            var sb = new StringBuilder();
+            for (var i = 0; i < PathPoints.Count() - 1; i++)
+            {
+                var pt1 = PathPoints[i];
+                var pt2 = PathPoints[i + 1];
+                sb.AppendLine($"<line x1 = '{ToCanvasPointX(pt1.X)}' y1 = '{ToCanvasPointY(pt1.Y)}' x2 = '{ToCanvasPointX(pt2.X)}' y2 = '{ToCanvasPointY(pt2.Y)}' />");
+            }
+            return sb.ToString();
+        }
+
+        public string RenderPathPoints()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var wowpoint in PathPoints)
+            {
+                sb.AppendLine($"<circle cx = '{ToCanvasPointX(wowpoint.X)}' cy = '{ToCanvasPointY(wowpoint.Y)}' r = '2' />");
+            }
+            return sb.ToString();
+        }
+
+        public string NextPoint()
+        {
+            var pt = followRouteAction.NextPoint();
+            return pt == null ? string.Empty:$"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '3' />";
         }
     }
 }

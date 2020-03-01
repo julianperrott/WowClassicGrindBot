@@ -1,5 +1,5 @@
 ﻿<tr>
-    <td><h4 style="color:@ToColour(this.IsSelected)">@action.GetType().Name (@action.CostOfPerformingAction)</h4></td>
+    <td><h4 style="color:@ActionColour(this.IsSelected)">@action.Name (@action.CostOfPerformingAction)</h4></td>
     @foreach (var item in this.action.State)
     {
         <td style="color:@Colour(item)">@item.Key</td>
@@ -19,9 +19,14 @@
         return item.Value ? "green" : "red";
     }
 
-    public string ToColour(bool item)
+    public string ActionColour(bool item)
     {
-        return item ? "green" : "black";
+        if (item==true)
+        {
+            return "green";
+        }
+
+        return action.CheckIfActionCanRun() ? "black" : "gray";
     }
 
 }
