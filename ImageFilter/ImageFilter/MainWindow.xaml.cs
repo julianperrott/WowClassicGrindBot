@@ -6,18 +6,10 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Brushes = System.Drawing.Brushes;
 using Color = System.Drawing.Color;
 
@@ -45,6 +37,21 @@ namespace ImageFilter
         }
     }
 
+    public class NPCName
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int XEnd { get; set; }
+        public bool IsInAgroup { get; set; } = false;
+
+        public NPCName(int x, int xend, int y)
+        {
+            this.X = x;
+            this.Y = y;
+            this.XEnd = xend;
+        }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -55,80 +62,132 @@ namespace ImageFilter
             InitializeComponent();
             timer = new System.Timers.Timer(5000);
             timer.Elapsed += OnTimedEvent;
-            timer.AutoReset = false;
+            timer.AutoReset = true;
             timer.Enabled = true;
+
+            var fileImage = new Bitmap(System.Drawing.Image.FromFile(@"C:\wip\WowPixelBot\ImageFilter\6.png"));
+            directImage = new DirectBitmap(fileImage.Width, fileImage.Height);
+            for (int y = 0; y < fileImage.Height; y++)
+            {
+                for (int x = 0; x < fileImage.Width; x++)
+                {
+                    directImage.SetPixel(x, y, fileImage.GetPixel(x, y));
+                }
+            }
         }
 
         private System.Timers.Timer? timer;
+        private DirectBitmap directImage; 
 
-        Bitmap savedImage = new Bitmap(System.Drawing.Image.FromFile(@"D:\GitHub\WowPixelBot\ImageFilter\6.png"));
 
         private void OnTimedEvent(object sender, ElapsedEventArgs e)
         {
-            Font drawFont = new Font("Arial", 16);
-            SolidBrush drawBrush = new SolidBrush(Color.Black);
+            var npc = new List<NPCName>();
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
+            bool isEndOfSection;
 
-            var image = savedImage;
-            //var image = new DirectBitmap(1920, 1080);
+            directImage = new DirectBitmap(1920, 1080);
 
-            var bitmap = new Bitmap(image.Width, image.Height);
-
-            var aBrush = (System.Drawing.Brush)Brushes.Red;
-
-            Debug.WriteLine("-----------------");
-            using (var gr = Graphics.FromImage(bitmap))
+            for (int y = 0; y < directImage.Height; y++)
             {
-                for (int y = 0; y < bitmap.Height; y++)
+                var lengthStart = -1;
+                var lengthEnd = -1;
+                for (int x = 0; x < directImage.Width; x++)
                 {
-                    var lengthStart = -1;
-                    var lengthEnd = -1;
-                    for (int x = 0; x < bitmap.Width; x++)
+                    var pixel = directImage.GetPixel(x, y);
+                    var isRedPixel = pixel.R == 255 && pixel.G <= 55 && pixel.B <= 55;
+
+                    if (isRedPixel)
                     {
-                        var pixel = image.GetPixel(x, y);
-                        if (pixel.R == 255 && pixel.G <= 55 && pixel.B <= 55)
+                        var isSameSection = lengthStart > -1 && (x - lengthEnd) < 12;
+
+                        if (isSameSection)
                         {
-                            var isSameSection = lengthStart > -1 && (x - lengthEnd) < 12;
-
-                            if (isSameSection)
-                            {
-                                gr.FillRectangle(aBrush, lengthStart, y, x - lengthStart + 1, 1);
-                                lengthEnd = x;
-                            }
-                            else
-                            {
-                                if (lengthStart > -1 && lengthEnd - lengthStart > 18)
-                                {
-                                    Debug.WriteLine($"Length: {lengthEnd - lengthStart} @ ({lengthStart},{y})");
-                                    gr.DrawString( (lengthEnd - lengthStart).ToString(), drawFont, drawBrush, lengthEnd, y);
-                                }
-
-                                lengthStart = x;
-                            }
                             lengthEnd = x;
                         }
-                    }
+                        else
+                        {
+                            isEndOfSection = lengthStart > -1 && lengthEnd - lengthStart > 18;
 
-                    if (lengthStart > -1 && lengthEnd - lengthStart > 18)
-                    {
-                        Debug.WriteLine($"Length: {lengthEnd - lengthStart} @ ({lengthStart},{y})");
-                        gr.DrawString((lengthEnd - lengthStart).ToString(), drawFont, drawBrush, lengthEnd, y);
+                            if (isEndOfSection)
+                            {
+                                npc.Add(new NPCName(lengthStart, lengthEnd, y));
+                            }
+
+                            lengthStart = x;
+                        }
+                        lengthEnd = x;
                     }
                 }
 
+                isEndOfSection = lengthStart > -1 && lengthEnd - lengthStart > 18;
+                if (isEndOfSection)
+                {
+                    npc.Add(new NPCName(lengthStart, lengthEnd, y));
+                }
             }
 
             stopwatch.Stop();
 
-            Application.Current.Dispatcher.Invoke(new Action(() => { this.Screenshot.Source = image.ToBitmapImage(); }));
+            Font drawFont = new Font("Arial", 24);
+            SolidBrush drawBrush = new SolidBrush(Color.Black);
+            var aBrush = (System.Drawing.Brush)Brushes.Red;
+
+            var bitmap = new Bitmap(directImage.Width, directImage.Height);
+            using (var gr = Graphics.FromImage(bitmap))
+            {
+                foreach (var item in npc)
+                {
+                    gr.FillRectangle(aBrush, item.X, item.Y, item.XEnd - item.X + 1, 1);
+                }
+            }
+
+            var npcGroup = new List<List<NPCName>>();
+
+            for (int i = 0; i < npc.Count; i++)
+            {
+                var mob = npc[i];
+                var group = new List<NPCName>() { mob };
+                var lastY = mob.Y;
+                int testX = mob.X + ((mob.XEnd - mob.X + 1) / 2); // mid point
+
+                if (!mob.IsInAgroup)
+                {
+                    for (int j = i + 1; j < npc.Count; j++)
+                    {
+                        var pMob = npc[j];
+                        if (pMob.Y > mob.Y + 10) { break; }
+                        if (pMob.Y > lastY + 2) { break; }
+
+                        if (pMob.X <= testX && pMob.XEnd >= testX && pMob.Y > lastY)
+                        {
+                            pMob.IsInAgroup = true;
+                            group.Add(pMob);
+                            lastY = pMob.Y;
+                        }
+                    }
+                    if (group.Count>1) { npcGroup.Add(group); }
+                }
+            }
+
+            using (var gr = Graphics.FromImage(bitmap))
+            {
+                foreach (var group in npcGroup)
+                {
+                    var item = group.First();
+                    gr.DrawString(group.Count().ToString(), drawFont, drawBrush, item.X, item.Y);
+                }
+            }
+
+            Application.Current.Dispatcher.Invoke(new Action(() => { this.Screenshot.Source = directImage.ToBitmapImage(); }));
             Application.Current.Dispatcher.Invoke(new Action(() => { this.Screenshot2.Source = bitmap.ToBitmapImage(); }));
             Application.Current.Dispatcher.Invoke(new Action(() => { Duration.Content = "Duration: " + stopwatch.ElapsedMilliseconds + "ms"; }));
-
         }
 
         private int redwidth = 10;
+
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             try
@@ -138,7 +197,6 @@ namespace ImageFilter
             catch
             {
             }
-
         }
     }
 
@@ -154,8 +212,8 @@ namespace ImageFilter
 
         public DirectBitmap(int width, int height)
         {
-            width = (width * 2) / 3;
-            height = height - 300;
+            //width = (width * 2) / 3;
+            //height = height - 300;
 
             Width = width;
             Height = height;
@@ -165,7 +223,7 @@ namespace ImageFilter
 
             using (var graphics = Graphics.FromImage(Bitmap))
             {
-                graphics.CopyFromScreen(width / 4, 100, 0, 0, Bitmap.Size);
+                graphics.CopyFromScreen(0, 0, 0, 0, Bitmap.Size);
             }
         }
 
@@ -190,10 +248,19 @@ namespace ImageFilter
 
         public void SetPixel(int x, int y, Color colour)
         {
-            int index = x + (y * Width);
-            int col = colour.ToArgb();
+            try
+            {
 
-            Bits[index] = col;
+
+                int index = x + (y * Width);
+                int col = colour.ToArgb();
+
+                Bits[index] = col;
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
 
         public Color GetPixel(int x, int y)
