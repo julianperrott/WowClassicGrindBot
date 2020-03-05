@@ -9,6 +9,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Libs.NpcFinder;
 
 namespace Libs
 {
@@ -21,6 +22,7 @@ namespace Libs
         private StopMoving stopMoving;
         public GoapAgent Agent;
         public FollowRouteAction followRouteAction;
+        public NpcNameFinder npcNameFinder;
 
         public RouteInfo RouteInfo;
 
@@ -31,7 +33,7 @@ namespace Libs
             this.playerReader = playerReader;
             this.Agent = new GoapAgent(playerReader, this.availableActions);
 
-            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands39.json");
+            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands41.json");
             var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands39_SpiritHealer.json");
 
             var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
@@ -40,7 +42,8 @@ namespace Libs
 
             this.playerDirection = new PlayerDirection(playerReader, WowProcess);
             this.stopMoving = new StopMoving(WowProcess, playerReader);
-            this.followRouteAction = new FollowRouteAction(playerReader, WowProcess, playerDirection, pathPoints, stopMoving);
+            this.npcNameFinder = new NpcNameFinder(WowProcess);
+            this.followRouteAction = new FollowRouteAction(playerReader, WowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder);
 
             RouteInfo = new RouteInfo(pathPoints, spiritPath, this.followRouteAction);
         }
@@ -49,11 +52,13 @@ namespace Libs
         {
             this.currentAction = followRouteAction;
 
+            var killTargetAction = new KillTargetAction(WowProcess, playerReader, stopMoving);
+
             this.availableActions.Clear();
             this.availableActions.Add(followRouteAction);
-            this.availableActions.Add(new KillTargetAction(WowProcess, playerReader, stopMoving));
-            this.availableActions.Add(new PullTargetAction(WowProcess, playerReader));
-            this.availableActions.Add(new ApproachTargetAction(WowProcess, playerReader, stopMoving));
+            this.availableActions.Add(killTargetAction);
+            this.availableActions.Add(new PullTargetAction(WowProcess, playerReader, npcNameFinder, stopMoving));
+            this.availableActions.Add(new ApproachTargetAction(WowProcess, playerReader, stopMoving, npcNameFinder));
             this.availableActions.Add(new LootAction(WowProcess, playerReader, stopMoving));
             this.availableActions.Add(new PostKillLootAction(WowProcess, playerReader, stopMoving));
             this.availableActions.Add(new HealAction(WowProcess, playerReader, stopMoving));
@@ -62,7 +67,14 @@ namespace Libs
             this.availableActions.Add(new UseHealingPotionAction(WowProcess, playerReader));
             this.availableActions.Add(new BuffAction(WowProcess, playerReader, stopMoving));
 
-            this.availableActions.ToList().ForEach(a => a.ActionEvent +=this.Agent.OnActionEvent);
+            this.availableActions.ToList().ForEach(a => 
+            {
+                a.ActionEvent += this.Agent.OnActionEvent;
+                a.ActionEvent += killTargetAction.OnActionEvent;
+                a.ActionEvent += npcNameFinder.OnActionEvent;
+            });
+
+
 
             while (Active)
             {
@@ -86,6 +98,7 @@ namespace Libs
                     {
                         this.currentAction?.DoReset();
                         this.currentAction = newAction;
+                        Debug.WriteLine("---------------------------------");
                         Debug.WriteLine($"New Plan= {newAction.GetType().Name}");
                     }
 

@@ -16,7 +16,8 @@ namespace Libs.GOAP
 		isdead = 80,
 		shouldloot = 90,
 		usehealingpotion = 100,
-		newtarget = 110
+		newtarget = 110,
+		fighting = 120
 	}
 
 	public static class GoapKeyDescription

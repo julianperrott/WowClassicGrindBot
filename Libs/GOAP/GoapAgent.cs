@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Libs.Actions;
+using Libs.NpcFinder;
 
 namespace Libs.GOAP
 {
@@ -57,7 +58,7 @@ namespace Libs.GOAP
 				new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
 				new KeyValuePair<GoapKey, object>(GoapKey.shouldheal, playerReader.HealthPercent<60 && !playerReader.PlayerBitValues.DeadStatus),
 				new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
-				new KeyValuePair<GoapKey, object>(GoapKey.usehealingpotion, playerReader.HealthPercent<20)
+				new KeyValuePair<GoapKey, object>(GoapKey.usehealingpotion, playerReader.HealthPercent<7)
 			};
 
 			actionState.ToList().ForEach(kv => state.Add(kv));
@@ -69,21 +70,13 @@ namespace Libs.GOAP
 
 		public void OnActionEvent(object sender, ActionEvent e)
 		{
-			if (e.Key == GoapKey.newtarget)
+			if (!actionState.ContainsKey(e.Key))
 			{
-				var killAction = AvailableActions.Where(a => a.GetType() == typeof(KillTargetAction)).FirstOrDefault() as KillTargetAction;
-				killAction?.ResetRend();
+				actionState.Add(e.Key, e.Value);
 			}
 			else
 			{
-				if (!actionState.ContainsKey(e.Key))
-				{
-					actionState.Add(e.Key, e.Value);
-				}
-				else
-				{
-					actionState[e.Key] = e.Value;
-				}
+				actionState[e.Key] = e.Value;
 			}
 		}
 	}

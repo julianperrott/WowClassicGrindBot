@@ -101,5 +101,10 @@ namespace Libs.Actions
                 .ToList()
                 .ForEach(o => Effects.Remove(o));
         }
+
+        public virtual void OnActionEvent(object sender, ActionEvent e)
+        {
+
+        }
     }
 }

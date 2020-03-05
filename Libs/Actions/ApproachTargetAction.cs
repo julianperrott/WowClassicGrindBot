@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using Libs.NpcFinder;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,15 +12,18 @@ namespace Libs.Actions
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
+        private readonly NpcNameFinder npcNameFinder;
 
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
-        
-        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
+        private DateTime lastNpcSearch = DateTime.Now;
+
+        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, NpcNameFinder npcNameFinder)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
+            this.npcNameFinder = npcNameFinder;
 
             AddPrecondition(GoapKey.inmeleerange, false);
             AddPrecondition(GoapKey.hastarget, true);
@@ -30,10 +34,13 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            //await stopMoving.Stop();
-
             var location = playerReader.PlayerLocation;
 
+            if ((DateTime.Now - lastNpcSearch).TotalMilliseconds > 1000 && !playerReader.WithInPullRange && !playerReader.WithInMeleeRange)
+            {
+                lastNpcSearch = DateTime.Now;
+                await this.npcNameFinder.FindAndClickNpc(8);
+            }
 
             await this.wowProcess.KeyPress(ConsoleKey.H, 501);
             await RandomJump();

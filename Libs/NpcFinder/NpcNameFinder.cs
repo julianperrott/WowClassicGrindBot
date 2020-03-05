@@ -1,5 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Libs.Actions;
+using Libs.GOAP;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Libs.NpcFinder
 {
@@ -8,11 +13,69 @@ namespace Libs.NpcFinder
         public List<LineOfNpcName> npcNameLine { get; set; } = new List<LineOfNpcName>();
         public List<List<LineOfNpcName>> npcs { get; set; } = new List<List<LineOfNpcName>>();
 
-        public LineOfNpcName? GetClosestNpc(DirectBitmap directImage)
+        private readonly WowProcess wowProcess;
+        private bool canFindNpcs = true;
+
+        public NpcNameFinder(WowProcess wowProcess)
+        {
+            this.wowProcess = wowProcess;
+        }
+
+        public async Task FindAndClickNpc(int threshold)
+        {
+            if (!canFindNpcs) { return; }
+
+            var rect = wowProcess.GetWindowRect();
+            DirectBitmap screenshot;
+            screenshot = new DirectBitmap(rect.right, rect.bottom);
+            screenshot.CaptureScreen();
+            var npc = GetClosestNpc(screenshot); 
+
+            if (npc != null)
+            {
+                var firstLine = npc.First();
+                if (npc.Count >= threshold)
+                {
+                    await this.wowProcess.LeftClickMouse(screenshot.ToScreenCoordinates(firstLine.X, firstLine.Y + 35));
+                    Debug.WriteLine($"{ this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
+                    await Task.Delay(300);
+                }
+                else
+                {
+                    Debug.WriteLine($"{ this.GetType().Name}: NPC found but below threshold {threshold}! Height={npc.Count}, width={firstLine.Length}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"{ this.GetType().Name}: NO NPC found!");
+            }
+        }
+
+        public int CountNpc()
+        {
+            var rect = wowProcess.GetWindowRect();
+            var screenshot = new DirectBitmap(rect.right, rect.bottom);
+            screenshot.CaptureScreen();
+            var npc = GetClosestNpc(screenshot);
+            return npcs.Where(c => c.Count > 3).Count();
+        }
+
+        public List<LineOfNpcName>? GetClosestNpc(DirectBitmap directImage)
         {
             PopulateLinesOfNpcNames(directImage);
             DetermineNpcs();
-            return npcs.Count == 0 ? null : npcs.First().First();
+
+            if (!npcs.Any())
+            {
+                return null;
+            }
+
+            var npcsInOrder = npcs.OrderByDescending(npc => npc.Count);
+
+            var info = string.Join(",", npcsInOrder.Select(n => n.Count));
+            Debug.WriteLine($"> NPCs found: {info}");
+
+            return npcsInOrder.First();
         }
 
         private void DetermineNpcs()
@@ -85,6 +148,20 @@ namespace Libs.NpcFinder
                 if (isEndOfSection)
                 {
                     npcNameLine.Add(new LineOfNpcName(lengthStart, lengthEnd, y));
+                }
+            }
+        }
+
+        public void OnActionEvent(object sender, ActionEvent e)
+        {
+            if (e.Key == GoapKey.fighting)
+            {
+                var newValue = (bool)e.Value == false;
+
+                if (newValue != this.canFindNpcs)
+                {
+                    this.canFindNpcs = (bool)e.Value == false;
+                    Debug.WriteLine($"{this.GetType().Name}: Can find NPC = {this.canFindNpcs}");
                 }
             }
         }

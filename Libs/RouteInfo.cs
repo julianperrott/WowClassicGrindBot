@@ -61,6 +61,7 @@ namespace Libs
         {
             this.PathPoints = pathPoints.ToList();
             this.SpiritPath = spiritPath.ToList();
+
             this.followRouteAction = followRouteAction;
 
             var maxX = this.PathPoints.Max(s => s.X);
@@ -88,25 +89,27 @@ namespace Libs
             }
         }
 
-        public string RenderPathLines()
+        public string RenderPathLines(List<WowPoint> path)
         {
             var sb = new StringBuilder();
-            for (var i = 0; i < PathPoints.Count() - 1; i++)
+            for (var i = 0; i < path.Count() - 1; i++)
             {
-                var pt1 = PathPoints[i];
-                var pt2 = PathPoints[i + 1];
+                var pt1 = path[i];
+                var pt2 = path[i + 1];
                 sb.AppendLine($"<line x1 = '{ToCanvasPointX(pt1.X)}' y1 = '{ToCanvasPointY(pt1.Y)}' x2 = '{ToCanvasPointX(pt2.X)}' y2 = '{ToCanvasPointY(pt2.Y)}' />");
             }
             return sb.ToString();
         }
 
-        public string RenderPathPoints()
+        public string RenderPathPoints(List<WowPoint> path)
         {
             var sb = new StringBuilder();
 
-            foreach (var wowpoint in PathPoints)
+            foreach (var wowpoint in path)
             {
-                sb.AppendLine($"<circle cx = '{ToCanvasPointX(wowpoint.X)}' cy = '{ToCanvasPointY(wowpoint.Y)}' r = '2' />");
+                var x = wowpoint.X.ToString("0.00");
+                var y = wowpoint.Y.ToString("0.00");
+                sb.AppendLine($"<circle  onmousemove=\"showTooltip(evt, '{x},{y}');\" onmouseout=\"hideTooltip();\"  cx = '{ToCanvasPointX(wowpoint.X)}' cy = '{ToCanvasPointY(wowpoint.Y)}' r = '2' />");
             }
             return sb.ToString();
         }

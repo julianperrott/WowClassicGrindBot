@@ -26,18 +26,21 @@ namespace Libs.Actions
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
+        private readonly NpcNameFinder npcNameFinder;
         private double lastDistance = 999;
         private DateTime LastActive = DateTime.Now;
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
+        private DateTime lastTab = DateTime.Now;
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving)
+        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.pointsList = points;
+            this.npcNameFinder = npcNameFinder;
 
             AddPrecondition(GoapKey.incombat, false);
         }
@@ -56,6 +59,7 @@ namespace Libs.Actions
         }
 
         public override float CostOfPerformingAction { get => 20f; }
+        
 
         public void Dump(string description)
         {
@@ -65,10 +69,10 @@ namespace Libs.Actions
             //Debug.WriteLine($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
         }
 
-        private DateTime lastTab = DateTime.Now;
-
         public override async Task PerformAction()
         {
+            RaiseEvent(new ActionEvent(GoapKey.fighting, false));
+
             if (points.Count == 0)
             {
                 RefillPoints(true);
@@ -93,22 +97,14 @@ namespace Libs.Actions
                 //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
                 await this.wowProcess.KeyPress(ConsoleKey.Tab, 300);
 
-                // take a look at the screen for Npcs
-                var rect = wowProcess.GetWindowRect();
-                var screenshot = new DirectBitmap(rect.right,rect.bottom);
-                screenshot.CaptureScreen();
-                var npc=new NpcNameFinder().GetClosestNpc(screenshot);
-                if (npc!=null)
-                {
-                    await this.wowProcess.LeftClickMouse(screenshot.ToScreenCoordinates(npc.X, npc.Y + 35));
-                    Debug.WriteLine("NPC found!");
-                }
-
+                await this.npcNameFinder.FindAndClickNpc(0);
             }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, points.Peek());
             var heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
+
+            if (this.playerReader.HasTarget) { return; }
 
             if (lastDistance < distance)
             {

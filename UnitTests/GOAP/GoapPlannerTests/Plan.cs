@@ -1,6 +1,7 @@
 ﻿using Libs;
 using Libs.Actions;
 using Libs.GOAP;
+using Libs.NpcFinder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -26,11 +27,12 @@ namespace UnitTests.GOAP.GoapPlannerTests
         {
             var playerReader = new PlayerReader(new Mock<ISquareReader>().Object);
             var stopMoving = new StopMoving(new WowProcess(), playerReader);
-            this.followRouteAction = new FollowRouteAction(playerReader, new WowProcess(), new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving);
+            var npcNameFinder = new NpcNameFinder(new WowProcess());
+            this.followRouteAction = new FollowRouteAction(playerReader, new WowProcess(), new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving, npcNameFinder);
 
             this.killMobAction = new KillTargetAction(new WowProcess(), playerReader, stopMoving);
-            this.pullTargetAction = new PullTargetAction(new WowProcess(), playerReader);
-            this.approachTargetAction = new ApproachTargetAction(new WowProcess(), playerReader, stopMoving);
+            this.pullTargetAction = new PullTargetAction(new WowProcess(), playerReader, npcNameFinder, stopMoving);
+            this.approachTargetAction = new ApproachTargetAction(new WowProcess(), playerReader, stopMoving, npcNameFinder);
 
             this.availableActions = new HashSet<GoapAction>
             {

@@ -40,10 +40,16 @@
                             <circle cx="@routeinfo.ToCanvasPointX(wowData.PlayerReader.XCoord)" cy="@routeinfo.ToCanvasPointY(wowData.PlayerReader.YCoord)" r="4" fill="@colour" />
                         }
 
+                        <g stroke-width="1" stroke="lightblue">
+                            @this.SpiritLines
+                        </g>
+                        <g fill="blue">
+                            @this.SpiritPathPoints
+                        </g>
+
                         <g stroke-width="1" stroke="gray">
                             @this.PathLines
                         </g>
-
                         <g fill="black">
                             @this.PathPoints
                         </g>
@@ -63,7 +69,7 @@
 
 <button class="btn btn-primary" @onclick="ToggleBot">Toggle Bot</button>
 
-
+<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
 
 @code {
 
@@ -71,6 +77,10 @@
 
     private MarkupString PathLines = new MarkupString();
     private MarkupString PathPoints = new MarkupString();
+
+    
+    private MarkupString SpiritLines = new MarkupString();
+    private MarkupString SpiritPathPoints = new MarkupString();
 
     private bool CanvasInitialised = false;
 
@@ -85,8 +95,11 @@
                 CanvasInitialised = true;
                 routeinfo.SetMargin(20);
                 routeinfo.SetCanvasSize(600);
-                this.PathLines = new MarkupString(routeinfo.RenderPathLines());
-                this.PathPoints = new MarkupString(routeinfo.RenderPathPoints());
+                this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
+                this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
+
+                this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
+                this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
             }
 
             base.InvokeAsync(() => StateHasChanged());

@@ -63,6 +63,8 @@ namespace Libs.Actions
         {
             await stopMoving.Stop();
 
+            RaiseEvent(new ActionEvent(GoapKey.fighting, true));
+
             this.actionBar = playerReader.ActionBarUseable_73To96;
 
             var key = new List<ConsoleKey> { Approach, Battleshout, Bloodrage, Overpower, Rend, HeroicStrike }
@@ -88,6 +90,14 @@ namespace Libs.Actions
             else
             {
                 LastClicked.Add(key, DateTime.Now);
+            }
+        }
+
+        public override void OnActionEvent(object sender, ActionEvent e)
+        {
+            if (e.Key == GoapKey.newtarget)
+            {
+                ResetRend();
             }
         }
     }

@@ -31,27 +31,35 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
+    <style>
+        #tooltip {
+            background: cornsilk;
+            border: 1px solid black;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
 
     <script src="_framework/blazor.server.js"></script>
     <script>
         function draw() {
 
-          function gridData() {
-            var data = new Array();
-            var xpos = 1; var ypos = 1; var width = 20; var height = 20;
+            function gridData() {
+                var data = new Array();
+                var xpos = 1; var ypos = 1; var width = 20; var height = 20;
 
-            for (var row = 0; row < 30; row++) {
-                data.push(new Array());
+                for (var row = 0; row < 30; row++) {
+                    data.push(new Array());
 
-                for (var column = 0; column < 30; column++) {
-                    data[row].push({ x: xpos, y: ypos, width: width, height: height })
-                    xpos += width;
+                    for (var column = 0; column < 30; column++) {
+                        data[row].push({ x: xpos, y: ypos, width: width, height: height })
+                        xpos += width;
+                    }
+                    xpos = 1;
+                    ypos += height;
                 }
-                xpos = 1;
-                ypos += height;
+                return data;
             }
-            return data;
-        }
 
             var gridData = gridData();
 
@@ -75,6 +83,21 @@
                 .style("stroke-width", "0.5px")
                 .style("stroke", "#bbb");
         }
+
+
+        function showTooltip(evt, text) {
+            let tooltip = document.getElementById("tooltip");
+            tooltip.innerHTML = text;
+            tooltip.style.display = "block";
+            tooltip.style.left = evt.pageX + 10 + 'px';
+            tooltip.style.top = evt.pageY + 10 + 'px';
+        }
+
+        function hideTooltip() {
+            var tooltip = document.getElementById("tooltip");
+            tooltip.style.display = "none";
+        }
+
     </script>
 
 </body>
