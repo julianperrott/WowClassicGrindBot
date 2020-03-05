@@ -15,7 +15,8 @@ namespace Libs.GOAP
 		shouldheal = 70,
 		isdead = 80,
 		shouldloot = 90,
-		usehealingpotion = 100
+		usehealingpotion = 100,
+		newtarget = 110
 	}
 
 	public static class GoapKeyDescription
@@ -52,6 +53,8 @@ namespace Libs.GOAP
 
 				 (GoapKey.usehealingpotion, true) => "Use healing pot",
 				 (GoapKey.usehealingpotion, false) => "My health is ok",
+
+				 
 
 				 (_, _) => "Unknown"
 			 };

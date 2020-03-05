@@ -69,15 +69,22 @@ namespace Libs.GOAP
 
 		public void OnActionEvent(object sender, ActionEvent e)
 		{
-			if (!actionState.ContainsKey(e.Key))
+			if (e.Key == GoapKey.newtarget)
 			{
-				actionState.Add(e.Key, e.Value);
+				var killAction = AvailableActions.Where(a => a.GetType() == typeof(KillTargetAction)).FirstOrDefault() as KillTargetAction;
+				killAction?.ResetRend();
 			}
 			else
 			{
-				actionState[e.Key] = e.Value;
+				if (!actionState.ContainsKey(e.Key))
+				{
+					actionState.Add(e.Key, e.Value);
+				}
+				else
+				{
+					actionState[e.Key] = e.Value;
+				}
 			}
-
 		}
 	}
 }

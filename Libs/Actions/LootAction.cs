@@ -86,6 +86,7 @@ namespace Libs.Actions
                         else
                         {
                             Log("Target Aquired");
+                            RaiseEvent(new ActionEvent(GoapKey.newtarget, true));
                             break;
                         }
                     }

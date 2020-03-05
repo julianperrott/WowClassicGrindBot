@@ -1,40 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Libs.Cursor;
+using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
-using Libs.Cursor;
-using PInvoke;
 
 namespace Libs.Looting
 {
     public class LootWheel
     {
-        readonly WowProcess wowProcess;
-        readonly PlayerReader playerReader;
-        readonly float num_theta = 32;
-        readonly float radiusLarge;
-        readonly float dtheta;
-        readonly Point centre;
-        readonly bool debug = true;
+        private readonly WowProcess wowProcess;
+        private readonly PlayerReader playerReader;
+        private readonly float num_theta = 32;
+        private readonly float radiusLarge;
+        private readonly float dtheta;
+        private readonly Point centre;
+        private readonly bool debug = true;
 
         public CursorClassification Classification { get; set; }
-
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
 
         public LootWheel(WowProcess wowProcess, PlayerReader playerReader)
         {
             this.wowProcess = wowProcess;
-            this.playerReader = playerReader;                    
+            this.playerReader = playerReader;
 
-            var handle = wowProcess.WarcraftProcess.MainWindowHandle;
-            RECT rect = new RECT();
-            GetWindowRect(handle, ref rect);
-
+            var rect = wowProcess.GetWindowRect();
 
             centre = new Point((int)(rect.right / 2f), (int)((rect.bottom / 5) * 3f));
             radiusLarge = rect.bottom / 6;
@@ -50,7 +39,7 @@ namespace Libs.Looting
         }
 
         public async Task<bool> Loot(bool searchForMobs)
-        {                   
+        {
             if (!searchForMobs)
             {
                 if (await SearchInCircle(radiusLarge / 2, radiusLarge / 2, false))
@@ -141,7 +130,7 @@ namespace Libs.Looting
                 return cls == CursorClassification.Kill;
             }
 
-            return cls == CursorClassification.Loot || cls== CursorClassification.Skin || cls == CursorClassification.Kill;
+            return cls == CursorClassification.Loot || cls == CursorClassification.Skin || cls == CursorClassification.Kill;
         }
 
         private async Task Wait(int delay, bool isInCombat)
@@ -150,7 +139,7 @@ namespace Libs.Looting
             {
                 if (!isInCombat & this.playerReader.PlayerBitValues.PlayerInCombat)
                 {
-                    Debug.WriteLine ("We have enterred combat, aborting loot");
+                    Debug.WriteLine("We have enterred combat, aborting loot");
                     return;
                 }
 

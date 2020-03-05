@@ -1,8 +1,8 @@
-﻿using System;
+﻿using PInvoke;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Libs
@@ -14,6 +14,7 @@ namespace Libs
         private Random random = new Random();
 
         private Process _warcraftProcess;
+
         public Process WarcraftProcess
         {
             get
@@ -33,6 +34,7 @@ namespace Libs
 
             private set { _warcraftProcess = value; }
         }
+
         private DateTime LastIntialised = DateTime.Now.AddHours(-1);
 
         public WowProcess()
@@ -76,7 +78,7 @@ namespace Libs
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetCursorPos(int x, int y);
+        private static extern bool SetCursorPos(int x, int y);
 
         private void KeyDown(ConsoleKey key)
         {
@@ -110,16 +112,35 @@ namespace Libs
 
         public async Task RightClickMouse(System.Drawing.Point position)
         {
-
             SetCursorPosition(position);
             PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_RBUTTONDOWN, Keys.VK_RMB, 0);
             await Delay(101);
             PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_RBUTTONUP, Keys.VK_RMB, 0);
         }
 
+        public async Task LeftClickMouse(System.Drawing.Point position)
+        {
+            SetCursorPosition(position);
+            PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_LBUTTONDOWN, Keys.VK_RMB, 0);
+            await Delay(101);
+            PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_LBUTTONUP, Keys.VK_RMB, 0);
+        }
+
         public async Task Delay(int milliseconds)
         {
             await Task.Delay(milliseconds + random.Next(1, 200));
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
+
+        public RECT GetWindowRect()
+        {
+            var handle = this.WarcraftProcess.MainWindowHandle;
+            RECT rect = new RECT();
+            GetWindowRect(handle, ref rect);
+            return rect;
         }
     }
 }

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using Libs.GOAP;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Libs.GOAP;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
@@ -28,6 +27,12 @@ namespace Libs.Actions
             AddPrecondition(GoapKey.inmeleerange, true);
         }
 
+        public void ResetRend()
+        {
+            Debug.WriteLine("Rend reset");
+            LastClicked.Remove(ConsoleKey.D3);
+        }
+
         public override float CostOfPerformingAction { get => 4f; }
 
         private bool IsOnCooldown(ConsoleKey key, int seconds)
@@ -38,7 +43,7 @@ namespace Libs.Actions
                 return false;
             }
 
-            bool isOnCooldown= (DateTime.Now - LastClicked[key]).TotalSeconds <= seconds;
+            bool isOnCooldown = (DateTime.Now - LastClicked[key]).TotalSeconds <= seconds;
 
             if (key != ConsoleKey.H)
             {
@@ -48,12 +53,11 @@ namespace Libs.Actions
         }
 
         private ConsoleKey Bloodrage => actionBar.HotKey2 ? ConsoleKey.D2 : ConsoleKey.Escape;
-        private ConsoleKey Rend => actionBar.HotKey3 && !IsOnCooldown(ConsoleKey.D3,15) ? ConsoleKey.D3 : ConsoleKey.Escape;
+        private ConsoleKey Rend => actionBar.HotKey3 && !IsOnCooldown(ConsoleKey.D3, 15) ? ConsoleKey.D3 : ConsoleKey.Escape;
         private ConsoleKey HeroicStrike => actionBar.HotKey4 ? ConsoleKey.D4 : ConsoleKey.Escape;
         private ConsoleKey Overpower => actionBar.HotKey5 ? ConsoleKey.D5 : ConsoleKey.Escape;
         private ConsoleKey Battleshout => actionBar.HotKey6 && !IsOnCooldown(ConsoleKey.D6, 120) ? ConsoleKey.D6 : ConsoleKey.Escape;
         private ConsoleKey Approach => !IsOnCooldown(ConsoleKey.H, 5) ? ConsoleKey.H : ConsoleKey.Escape;
-
 
         public override async Task PerformAction()
         {

@@ -6,6 +6,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Numerics;
+using Libs.NpcFinder;
+using System.Runtime.InteropServices;
+using PInvoke;
 
 namespace Libs.Actions
 {
@@ -89,6 +92,18 @@ namespace Libs.Actions
             {
                 //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
                 await this.wowProcess.KeyPress(ConsoleKey.Tab, 300);
+
+                // take a look at the screen for Npcs
+                var rect = wowProcess.GetWindowRect();
+                var screenshot = new DirectBitmap(rect.right,rect.bottom);
+                screenshot.CaptureScreen();
+                var npc=new NpcNameFinder().GetClosestNpc(screenshot);
+                if (npc!=null)
+                {
+                    await this.wowProcess.LeftClickMouse(screenshot.ToScreenCoordinates(npc.X, npc.Y + 35));
+                    Debug.WriteLine("NPC found!");
+                }
+
             }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
