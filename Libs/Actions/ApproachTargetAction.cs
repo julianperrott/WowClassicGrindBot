@@ -1,7 +1,10 @@
-﻿using Libs.GOAP;
+﻿using Libs.Cursor;
+using Libs.GOAP;
 using Libs.NpcFinder;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +21,18 @@ namespace Libs.Actions
         private Random random = new Random();
         private DateTime lastNpcSearch = DateTime.Now;
 
+        private bool debug=true;
+
+        private Point mouseLocationOfAdd;
+
+        private void Log(string text)
+        {
+            if (debug)
+            {
+                Debug.WriteLine($"{this.GetType().Name}: {text}");
+            }
+        }
+
         public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, NpcNameFinder npcNameFinder)
         {
             this.wowProcess = wowProcess;
@@ -28,29 +43,45 @@ namespace Libs.Actions
             AddPrecondition(GoapKey.inmeleerange, false);
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, true);
+
+            var rect = wowProcess.GetWindowRect();
+            mouseLocationOfAdd = new Point((int)(rect.right / 2f), (int)((rect.bottom / 20) * 13f));
         }
 
         public override float CostOfPerformingAction { get => 8f; }
+
+        private int SecondsSinceLastFighting => (int)(DateTime.Now - this.lastFighting).TotalSeconds;
 
         public override async Task PerformAction()
         {
             var location = playerReader.PlayerLocation;
 
-            if ((DateTime.Now - lastNpcSearch).TotalMilliseconds > 1000 && !playerReader.WithInPullRange && !playerReader.WithInMeleeRange)
+            if (SecondsSinceLastFighting > 10)
             {
-                lastNpcSearch = DateTime.Now;
-                await this.npcNameFinder.FindAndClickNpc(8);
+                await CheckForNpcFollowingMe();
             }
 
             await this.wowProcess.KeyPress(ConsoleKey.H, 501);
             await RandomJump();
-            await Task.Delay(500);
 
             var newLocation = playerReader.PlayerLocation;
-            if (location.X == newLocation.X && location.Y == newLocation.Y)
+            if (location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5)
             {
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(2000);
+            }
+        }
+
+        private async Task CheckForNpcFollowingMe()
+        {
+            wowProcess.SetCursorPosition(mouseLocationOfAdd);
+            CursorClassifier.Classify(out var cls);
+            if (cls == CursorClassification.Kill)
+            {
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+                Log("We are being attacked, switching target");
+                await wowProcess.LeftClickMouse(mouseLocationOfAdd);
+                await Task.Delay(1500);
             }
         }
 
@@ -64,6 +95,17 @@ namespace Libs.Actions
                 }
             }
             LastJump = DateTime.Now;
+        }
+
+
+        DateTime lastFighting = DateTime.Now;
+
+        public override void OnActionEvent(object sender, ActionEvent e)
+        {
+            if (e.Key == GoapKey.fighting)
+            {
+                lastFighting = DateTime.Now;
+            }
         }
     }
 }

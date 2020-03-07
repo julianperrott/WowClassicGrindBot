@@ -10,7 +10,8 @@ namespace Libs
     {
         public List<WowPoint> PathPoints { get; private set; }
         public List<WowPoint> SpiritPath { get; private set; }
-        private FollowRouteAction followRouteAction;
+        private readonly FollowRouteAction followRouteAction;
+        private readonly WalkToCorpseAction walkToCorpseAction;
 
         private double min;
         private double diff;
@@ -57,19 +58,23 @@ namespace Libs
 
         private double pointToGrid;
 
-        public RouteInfo(List<WowPoint> pathPoints, List<WowPoint> spiritPath, FollowRouteAction followRouteAction)
+        public RouteInfo(List<WowPoint> pathPoints, List<WowPoint> spiritPath, FollowRouteAction followRouteAction, WalkToCorpseAction walkToCorpseAction)
         {
             this.PathPoints = pathPoints.ToList();
             this.SpiritPath = spiritPath.ToList();
 
             this.followRouteAction = followRouteAction;
+            this.walkToCorpseAction = walkToCorpseAction;
 
-            var maxX = this.PathPoints.Max(s => s.X);
-            var minX = this.PathPoints.Min(s => s.X);
+            var allPoints = this.PathPoints.Select(s => s).ToList();
+            allPoints.AddRange(this.SpiritPath);
+
+            var maxX = allPoints.Max(s => s.X);
+            var minX = allPoints.Min(s => s.X);
             var diffX = maxX - minX;
 
-            var maxY = this.PathPoints.Max(s => s.Y);
-            var minY = this.PathPoints.Min(s => s.Y);
+            var maxY = allPoints.Max(s => s.Y);
+            var minY = allPoints.Min(s => s.Y);
             var diffY = maxY - minY;
 
             this.addY = 0;
@@ -116,7 +121,7 @@ namespace Libs
 
         public string NextPoint()
         {
-            var pt = followRouteAction.NextPoint();
+            var pt = followRouteAction.LastActive > walkToCorpseAction.LastActive ? followRouteAction.NextPoint() : walkToCorpseAction.NextPoint();
             return pt == null ? string.Empty:$"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '3' />";
         }
     }

@@ -17,21 +17,24 @@ namespace Libs
     {
         private GoapAction? currentAction;
         private HashSet<GoapAction> availableActions = new HashSet<GoapAction>();
-        private PlayerReader playerReader;
-        private PlayerDirection playerDirection;
-        private StopMoving stopMoving;
-        public GoapAgent Agent;
-        public FollowRouteAction followRouteAction;
-        public NpcNameFinder npcNameFinder;
+        private readonly PlayerReader playerReader;
+        private readonly PlayerDirection playerDirection;
+        private readonly StopMoving stopMoving;
+        public readonly GoapAgent Agent;
+        public readonly FollowRouteAction followRouteAction;
+        public readonly WalkToCorpseAction walkToCorpseAction;
+        public readonly NpcNameFinder npcNameFinder;
+        private List<string> blacklist = new List<string> { "THORKA", "ZARICO" };
 
-        public RouteInfo RouteInfo;
+        public readonly RouteInfo RouteInfo;
 
         public bool Active { get; set; }
 
         public Bot(PlayerReader playerReader)
         {
+
             this.playerReader = playerReader;
-            this.Agent = new GoapAgent(playerReader, this.availableActions);
+            this.Agent = new GoapAgent(playerReader, this.availableActions, this.blacklist);
 
             var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands41.json");
             var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands39_SpiritHealer.json");
@@ -43,35 +46,39 @@ namespace Libs
             this.playerDirection = new PlayerDirection(playerReader, WowProcess);
             this.stopMoving = new StopMoving(WowProcess, playerReader);
             this.npcNameFinder = new NpcNameFinder(WowProcess);
-            this.followRouteAction = new FollowRouteAction(playerReader, WowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder);
+            this.followRouteAction = new FollowRouteAction(playerReader, WowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist);
+            this.walkToCorpseAction = new WalkToCorpseAction(playerReader, WowProcess, playerDirection, spiritPath, pathPoints, stopMoving);
 
-            RouteInfo = new RouteInfo(pathPoints, spiritPath, this.followRouteAction);
+            this.RouteInfo = new RouteInfo(pathPoints, spiritPath, this.followRouteAction, this.walkToCorpseAction);
         }
 
         public async Task DoWork()
         {
             this.currentAction = followRouteAction;
 
-            var killTargetAction = new KillTargetAction(WowProcess, playerReader, stopMoving);
-
             this.availableActions.Clear();
             this.availableActions.Add(followRouteAction);
-            this.availableActions.Add(killTargetAction);
+            this.availableActions.Add(new KillTargetAction(WowProcess, playerReader, stopMoving));
             this.availableActions.Add(new PullTargetAction(WowProcess, playerReader, npcNameFinder, stopMoving));
             this.availableActions.Add(new ApproachTargetAction(WowProcess, playerReader, stopMoving, npcNameFinder));
             this.availableActions.Add(new LootAction(WowProcess, playerReader, stopMoving));
             this.availableActions.Add(new PostKillLootAction(WowProcess, playerReader, stopMoving));
             this.availableActions.Add(new HealAction(WowProcess, playerReader, stopMoving));
-            this.availableActions.Add(new TargetDeadAction(WowProcess, playerReader));
-            this.availableActions.Add(new WalkToCorpseAction(playerReader, WowProcess, playerDirection, RouteInfo.SpiritPath, RouteInfo.PathPoints, stopMoving));
+            this.availableActions.Add(new TargetDeadAction(WowProcess, playerReader, npcNameFinder));
+            this.availableActions.Add(this.walkToCorpseAction);
             this.availableActions.Add(new UseHealingPotionAction(WowProcess, playerReader));
             this.availableActions.Add(new BuffAction(WowProcess, playerReader, stopMoving));
 
             this.availableActions.ToList().ForEach(a => 
             {
                 a.ActionEvent += this.Agent.OnActionEvent;
-                a.ActionEvent += killTargetAction.OnActionEvent;
                 a.ActionEvent += npcNameFinder.OnActionEvent;
+
+                // tell other action about my actions
+                this.availableActions.ToList().ForEach(b =>
+                {
+                    if (b!=a) { a.ActionEvent += b.OnActionEvent; }
+                });
             });
 
 

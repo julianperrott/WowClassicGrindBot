@@ -97,7 +97,7 @@ namespace ImageFilter
 
         public void SetCursorPosition(System.Drawing.Point position)
         {
-            SetCursorPos(position.X, position.Y);
+            //SetCursorPos(position.X, position.Y);
         }
 
         [DllImport("user32.dll")]

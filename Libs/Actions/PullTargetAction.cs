@@ -35,11 +35,9 @@ namespace Libs.Actions
         {
             RaiseEvent(new ActionEvent(GoapKey.fighting, true));
 
-            // approach
-            await this.wowProcess.KeyPress(ConsoleKey.H, 501);
+            Debug.WriteLine($"Stop approach");
+            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
 
-            // stop approach
-            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 401);
 
             Debug.WriteLine($"Can shoot gun: {playerReader.SpellInRange.ShootGun}");
 
@@ -48,12 +46,32 @@ namespace Libs.Actions
 
             if (playerReader.SpellInRange.Charge && npcCount < 2)
             {
+                Debug.WriteLine($"Charging");
                 await this.wowProcess.KeyPress(ConsoleKey.D1, 401);
             }
-            else if (playerReader.SpellInRange.ShootGun)
+            else if (playerReader.SpellInRange.ShootGun && npcCount>1)
             {
+                // stop approach
+                Debug.WriteLine($"Stop approach");
+                await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
+
+                Debug.WriteLine($"Shooting Gun");
+                await Task.Delay(300);
                 await this.wowProcess.KeyPress(ConsoleKey.D9, 1000);
-                await Task.Delay(3000);
+
+                for (int i = 0; i < 10; i++)
+                {
+                    await Task.Delay(500);
+                    if (playerReader.WithInMeleeRange)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // approach
+                await this.wowProcess.KeyPress(ConsoleKey.H, 301);
             }
         }
     }

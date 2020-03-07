@@ -23,7 +23,12 @@ namespace Libs.Actions
         private readonly List<WowPoint> routePoints;
         private Stack<WowPoint> points = new Stack<WowPoint>();
 
-        private DateTime lastActive=DateTime.Now.AddDays(-1);
+        public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
+
+        public WowPoint? NextPoint()
+        {
+            return points.Count == 0 ? null : points.Peek();
+        }
 
         public WalkToCorpseAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection,List<WowPoint> spiritWalker,List<WowPoint> routePoints, StopMoving stopMoving)
         {
@@ -49,11 +54,17 @@ namespace Libs.Actions
             //Debug.WriteLine($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
         }
 
-        private DateTime lastTab = DateTime.Now;
+        private bool NeedsToReset = true;
+
+
+        public override void OnActionEvent(object sender, ActionEvent e)
+        {
+            NeedsToReset = true;
+        }
 
         public override async Task PerformAction()
         {
-            if ((DateTime.Now-lastActive).TotalSeconds>60)
+            if (NeedsToReset)
             {
                 await Reset();
             }
@@ -88,7 +99,7 @@ namespace Libs.Actions
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(100);
                 // stuck so jump
-                if ((DateTime.Now - lastActive).TotalSeconds < 2)
+                if ((DateTime.Now - LastActive).TotalSeconds < 2)
                 {
                     await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
                     Dump("Stuck");
@@ -127,7 +138,7 @@ namespace Libs.Actions
                 }
             }
 
-            lastActive = DateTime.Now;
+            LastActive = DateTime.Now;
         }
 
         public async Task Reset()
@@ -189,7 +200,7 @@ namespace Libs.Actions
 
             var cp = new CorpsePath { MyLocation = myLocation, CorpseLocation = CorpseLocation, RouteToCorpse = routeToCorpse, TruncatedRoute = truncatedRoute };
             File.WriteAllText($"../../../../CorpsePath_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(cp));
-
+            NeedsToReset = false;
         }
 
         public class CorpsePath

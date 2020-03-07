@@ -51,6 +51,8 @@ namespace Libs
         public long TargetMaxHealth => reader.GetLongAtCell(18);
 
         // Targets current percentage of health
+        public double TargetHealthPercentage => ((double)TargetHealth*100)/ TargetMaxHealth;
+
         public long TargetHealth => reader.GetLongAtCell(19);
 
         public bool HasTarget => !string.IsNullOrEmpty(Target) || TargetHealth > 0;

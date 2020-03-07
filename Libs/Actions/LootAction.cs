@@ -47,7 +47,7 @@ namespace Libs.Actions
 
             var healthAtStartOfLooting = playerReader.HealthPercent;
 
-            await Task.Delay(500);
+            await Task.Delay(1000);
 
             bool outOfCombat = false;
 

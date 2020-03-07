@@ -56,7 +56,7 @@ namespace ImageFilter
                 for (int x = 0; x < directImage.Width; x++)
                 {
                     var pixel = directImage.GetPixel(x, y);
-                    var isRedPixel = pixel.R > 200 && pixel.G <= 55 && pixel.B <= 55;
+                    var isRedPixel = pixel.R > 240 && pixel.G <= 35 && pixel.B <= 35;
 
                     if (isRedPixel)
                     {

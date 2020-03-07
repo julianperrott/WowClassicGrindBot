@@ -1,5 +1,126 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@inject Libs.WowData wowData
+@inject Libs.GOAP.GoapAgent goapAgent
+@inject Libs.BotController botController
+@inject Libs.RouteInfo routeinfo
+@inject IJSRuntime JSRuntime;
 
+<h1>Wow bot</h1>
+
+<table class="table table-bordered">
+    <tr>
+        <th>X Coord:</th>
+        <th>Y Coord:</th>
+        <th>Bag Items:</th>
+        <th>Health:</th>
+        <th>Target:</th>
+    </tr>
+    <tr>
+        <td>@wowData.PlayerReader.XCoord.ToString("0.00")</td>
+        <td>@wowData.PlayerReader.YCoord.ToString("0.00")</td>
+        <td> @wowData.bagReader.bagItems.Count</td>
+        <td>@wowData.PlayerReader.HealthPercent % (@wowData.PlayerReader.HealthCurrent of  @wowData.PlayerReader.HealthMax)</td>
+        <td>"@wowData.PlayerReader.Target" (@wowData.PlayerReader.TargetHealth of @wowData.PlayerReader.TargetMaxHealth)</td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td width="100%">
+            <table class="table table-sm table-striped">
+                @foreach (var action in goapAgent.AvailableActions)
+                {
+                    <GoapActionView action="action" IsSelected="(action == goapAgent.CurrentAction)" />
+                }
+            </table>
+        </td>
+        <td>
+            <div id="grid">
+                <svg width="602px" height="602px">
+                    <g class="background">
+                    </g>
+                    <g class="group2">
+                        @{
+                            var colour = wowData.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
+
+                            if (goapAgent.CurrentAction == botController.WowBot.followRouteAction)
+                            {
+                                colour = "blue";
+                            }
+
+                            <circle cx="@routeinfo.ToCanvasPointX(wowData.PlayerReader.XCoord)" cy="@routeinfo.ToCanvasPointY(wowData.PlayerReader.YCoord)" r="4" fill="@colour" />
+                        }
+
+                        <g stroke-width="1" stroke="lightgray">
+                            @this.SpiritLines
+                        </g>
+                        <g fill="gray">
+                            @this.SpiritPathPoints
+                        </g>
+
+                        <g stroke-width="1" stroke="gray">
+                            @this.PathLines
+                        </g>
+                        <g fill="black">
+                            @this.PathPoints
+                        </g>
+
+                        <g fill="blue">
+                            @((MarkupString)routeinfo.NextPoint())
+                        </g>
+                    </g>
+
+                </svg>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<button class="btn btn-primary" @onclick="Start">Start Reading</button>
+
+<button class="btn btn-primary" @onclick="ToggleBot">Toggle Bot</button>
+
+<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
+
+@code {
+
+    private string Circ = "<circle cx='300' cy='300' r='200' fill='Purple' />";
+
+    private MarkupString PathLines = new MarkupString();
+    private MarkupString PathPoints = new MarkupString();
+
+
+    private MarkupString SpiritLines = new MarkupString();
+    private MarkupString SpiritPathPoints = new MarkupString();
+
+    private bool CanvasInitialised = false;
+
+    private async Task Start()
+    {
+        await JSRuntime.InvokeAsync<string>("draw");
+
+        wowData.AddonDataChanged += (o, e) =>
+        {
+            if (!CanvasInitialised)
+            {
+                CanvasInitialised = true;
+                routeinfo.SetMargin(20);
+                routeinfo.SetCanvasSize(600);
+                this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
+                this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
+
+                this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
+                this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
+            }
+
+            base.InvokeAsync(() => StateHasChanged());
+        };
+    }
+
+    private void ToggleBot()
+    {
+        botController.ToggleBotStatus();
+    }
+}
 

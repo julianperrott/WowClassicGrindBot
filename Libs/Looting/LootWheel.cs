@@ -18,6 +18,8 @@ namespace Libs.Looting
 
         public CursorClassification Classification { get; set; }
 
+        private Point lastLootFoundAt;
+
         public LootWheel(WowProcess wowProcess, PlayerReader playerReader)
         {
             this.wowProcess = wowProcess;
@@ -40,6 +42,23 @@ namespace Libs.Looting
 
         public async Task<bool> Loot(bool searchForMobs)
         {
+            if (!searchForMobs)
+            {
+                wowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
+                await Task.Delay(150);
+                wowProcess.SetCursorPosition(this.lastLootFoundAt);
+                await Task.Delay(200);
+            }
+            if (await CheckForLoot(this.lastLootFoundAt, searchForMobs))
+            {
+                Debug.WriteLine($"Loot at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
+                return true;
+            }
+            else
+            {
+                Debug.WriteLine($"No loot at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
+            }
+
             if (!searchForMobs)
             {
                 if (await SearchInCircle(radiusLarge / 2, radiusLarge / 2, false))
@@ -123,6 +142,12 @@ namespace Libs.Looting
                 Log("Found: " + cls.ToString());
                 await wowProcess.RightClickMouse(mousePosition);
                 Classification = cls;
+            }
+
+            if (cls == CursorClassification.Loot || cls == CursorClassification.Skin)
+            {
+                lastLootFoundAt = mousePosition;
+                Debug.WriteLine($"Loot found at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
             }
 
             if (searchForMobs)

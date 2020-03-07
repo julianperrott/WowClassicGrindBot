@@ -1,5 +1,6 @@
 ﻿using Libs;
 using Libs.Actions;
+using Libs.Cursor;
 using Libs.GOAP;
 using Newtonsoft.Json;
 using System;
@@ -146,7 +147,9 @@ namespace Powershell
 
         private void North_Click(object sender, RoutedEventArgs e)
         {
-            playerDirection.SetDirection(0.0);
+            System.Threading.Thread.Sleep(2000);
+            CursorClassifier.Classify(out CursorClassification cursor);
+           // playerDirection.SetDirection(0.0);
         }
 
         private void East_Click(object sender, RoutedEventArgs e)

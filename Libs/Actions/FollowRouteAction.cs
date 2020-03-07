@@ -28,12 +28,13 @@ namespace Libs.Actions
         private readonly StopMoving stopMoving;
         private readonly NpcNameFinder npcNameFinder;
         private double lastDistance = 999;
-        private DateTime LastActive = DateTime.Now;
+        public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
         private DateTime lastTab = DateTime.Now;
+        private readonly List<string> blacklist;
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder)
+        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, List<string> blacklist)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
@@ -41,6 +42,7 @@ namespace Libs.Actions
             this.stopMoving = stopMoving;
             this.pointsList = points;
             this.npcNameFinder = npcNameFinder;
+            this.blacklist = blacklist;
 
             AddPrecondition(GoapKey.incombat, false);
         }
@@ -96,7 +98,6 @@ namespace Libs.Actions
             {
                 //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
                 await this.wowProcess.KeyPress(ConsoleKey.Tab, 300);
-
                 await this.npcNameFinder.FindAndClickNpc(0);
             }
 
@@ -104,7 +105,7 @@ namespace Libs.Actions
             var distance = WowPoint.DistanceTo(location, points.Peek());
             var heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
 
-            if (this.playerReader.HasTarget) { return; }
+            if (this.playerReader.HasTarget && !blacklist.Contains(playerReader.Target)) { return; }
 
             if (lastDistance < distance)
             {

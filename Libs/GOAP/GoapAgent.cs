@@ -17,16 +17,18 @@ namespace Libs.GOAP
 
 		public GoapAction? CurrentAction { get; set; }
 		public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; set; } = new HashSet<KeyValuePair<GoapKey, object>>();
+		private List<string> blacklist;
 
-		public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions)
+		public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, List<string> blacklist)
 		{
 			this.playerReader = playerReader;
 			this.AvailableActions = availableActions.OrderBy(a => a.CostOfPerformingAction);
+			this.blacklist = blacklist;
 		}
 
 		public async Task<GoapAction?> GetAction()
 		{
-			WorldState = GetWorldState(playerReader);
+			WorldState = await GetWorldState(playerReader);
 
 			var goal = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
 
@@ -46,11 +48,16 @@ namespace Libs.GOAP
 			return CurrentAction;
 		}
 
-		public HashSet<KeyValuePair<GoapKey, object>> GetWorldState(PlayerReader playerReader)
+		public async Task<HashSet<KeyValuePair<GoapKey, object>>> GetWorldState(PlayerReader playerReader)
 		{
+			if (blacklist.Contains(playerReader.Target))
+			{
+				await new WowProcess().KeyPress(ConsoleKey.D0, 400);
+			}
+
 			var state= new HashSet<KeyValuePair<GoapKey, object>>
 			{
-				new KeyValuePair<GoapKey, object>(GoapKey.hastarget, !string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0),
+				new KeyValuePair<GoapKey, object>(GoapKey.hastarget,!blacklist.Contains(playerReader.Target) && (!string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0)),
 				new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, !playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0),
 				new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.PlayerBitValues.PlayerInCombat ),
 				new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),

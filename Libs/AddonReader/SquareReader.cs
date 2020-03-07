@@ -53,20 +53,27 @@ namespace Libs
 
         public int Get5Numbers(int index, Part part)
         {
-            var text = GetLongAtCell(index).ToString();
-            if (text=="0")
+            try
+            {
+                var text = GetLongAtCell(index).ToString();
+                if (text == "0")
+                {
+                    return 0;
+                }
+
+                var v1 = part switch
+                {
+                    Part.Right => int.Parse(text.Substring(text.Length - 5, 5)), // right 5 chars
+                    Part.Left => int.Parse(text.Substring(0, text.Length - 5)),// left 5 chars
+                    _ => 0
+                };
+
+                return v1;
+            }
+            catch
             {
                 return 0;
             }
-
-            var v1 = part switch
-            {
-                Part.Right => int.Parse(text.Substring(text.Length-5,5)), // right 5 chars
-                Part.Left => int.Parse(text.Substring(0,text.Length -5)),// left 5 chars
-                _ => 0
-            };
-
-            return v1;
         }
 
         private string ToChar(string colorText, int start)

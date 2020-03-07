@@ -15,6 +15,7 @@ namespace Libs.NpcFinder
 
         private readonly WowProcess wowProcess;
         private bool canFindNpcs = true;
+        private DateTime pausedUntil = DateTime.Now;
 
         public NpcNameFinder(WowProcess wowProcess)
         {
@@ -36,9 +37,16 @@ namespace Libs.NpcFinder
                 var firstLine = npc.First();
                 if (npc.Count >= threshold)
                 {
-                    await this.wowProcess.LeftClickMouse(screenshot.ToScreenCoordinates(firstLine.X, firstLine.Y + 35));
-                    Debug.WriteLine($"{ this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
-                    await Task.Delay(300);
+                    if (DateTime.Now < pausedUntil)
+                    {
+                        await this.wowProcess.LeftClickMouse(screenshot.ToScreenCoordinates(firstLine.X, firstLine.Y + 35));
+                        Debug.WriteLine($"{ this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
+                        await Task.Delay(300);
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Paused - { this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
+                    }
                 }
                 else
                 {
@@ -51,13 +59,22 @@ namespace Libs.NpcFinder
             }
         }
 
+        internal void StopFindingNpcs(int seconds)
+        {
+            pausedUntil = DateTime.Now.AddSeconds(seconds);
+        }
+
         public int CountNpc()
         {
             var rect = wowProcess.GetWindowRect();
             var screenshot = new DirectBitmap(rect.right, rect.bottom);
             screenshot.CaptureScreen();
             var npc = GetClosestNpc(screenshot);
-            return npcs.Where(c => c.Count > 3).Count();
+
+            var count= npcs.Where(c => c.Count > 3).Count();
+            Debug.WriteLine($"> NPCs count: {count}");
+
+            return count;
         }
 
         public List<LineOfNpcName>? GetClosestNpc(DirectBitmap directImage)
@@ -72,7 +89,7 @@ namespace Libs.NpcFinder
 
             var npcsInOrder = npcs.OrderByDescending(npc => npc.Count);
 
-            var info = string.Join(",", npcsInOrder.Select(n => n.Count));
+            var info = string.Join(", ", npcsInOrder.Select(n => n.Count.ToString() + $"({n.First().X},{n.First().Y})"));
             Debug.WriteLine($"> NPCs found: {info}");
 
             return npcsInOrder.First();
@@ -119,7 +136,7 @@ namespace Libs.NpcFinder
                 for (int x = 0; x < directImage.Width; x++)
                 {
                     var pixel = directImage.GetPixel(x, y);
-                    var isRedPixel = pixel.R > 200 && pixel.G <= 55 && pixel.B <= 55;
+                    var isRedPixel = pixel.R > 240 && pixel.G <= 35 && pixel.B <= 35;
 
                     if (isRedPixel)
                     {

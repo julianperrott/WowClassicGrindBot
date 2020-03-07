@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -12,6 +13,8 @@ namespace Libs.Cursor
         Loot = 20,
         None = 30,
         Skin = 40,
+        Mine = 50,
+        Herb = 60,
         Unknown = 50
     }
 
@@ -22,7 +25,9 @@ namespace Libs.Cursor
             {CursorClassification.Kill, 9286546093378506253},
             {CursorClassification.Loot, 16205332705670085656},
             {CursorClassification.None, 4645529528554094592},
-            {CursorClassification.Skin, 13901748381153107456}
+            {CursorClassification.Skin, 13901748381153107456},
+            {CursorClassification.Mine, 4669700909741929478 },
+            {CursorClassification.Herb, 4683320813727784960 }
         };
 
         [StructLayout(LayoutKind.Sequential)]
@@ -73,6 +78,7 @@ namespace Libs.Cursor
                 }
 
                 var hash = ImageHashing.AverageHash(result);
+                //Debug.WriteLine("Hash: " + hash);
 
                 var matching = imageHashes.Select(i => (similarity: ImageHashing.Similarity(hash, i.Value), imagehash: i))
                     .OrderByDescending(t => t.similarity)

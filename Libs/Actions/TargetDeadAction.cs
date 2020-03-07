@@ -1,5 +1,6 @@
 ﻿using Libs.GOAP;
 using Libs.Looting;
+using Libs.NpcFinder;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -12,12 +13,16 @@ namespace Libs.Actions
         private readonly PlayerReader playerReader;
         private readonly LootWheel lootWheel;
         private bool debug = true;
+        private readonly NpcNameFinder npcFinder;
 
-        public TargetDeadAction(WowProcess wowProcess, PlayerReader playerReader)
+        public TargetDeadAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcFinder)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
+            this.npcFinder = npcFinder;
+
             lootWheel = new LootWheel(wowProcess, playerReader);
+
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, false);
         }
@@ -36,6 +41,8 @@ namespace Libs.Actions
         public override async Task PerformAction()
         {
             Log("Start PerformAction");
+
+            this.npcFinder.StopFindingNpcs(10);
 
             await wowProcess.KeyPress(ConsoleKey.D0, 564);
 
