@@ -23,7 +23,7 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            await base.wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+            //await base.wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
             await Task.Delay(1000);
             await base.PerformAction();
         }

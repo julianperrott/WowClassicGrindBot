@@ -36,8 +36,8 @@ namespace Libs
             this.playerReader = playerReader;
             this.Agent = new GoapAgent(playerReader, this.availableActions, this.blacklist);
 
-            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands41.json");
-            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands39_SpiritHealer.json");
+            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44.json");
+            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
 
             var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
             pathPoints.Reverse();

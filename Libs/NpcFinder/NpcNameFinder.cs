@@ -37,7 +37,7 @@ namespace Libs.NpcFinder
                 var firstLine = npc.First();
                 if (npc.Count >= threshold)
                 {
-                    if (DateTime.Now < pausedUntil)
+                    if (DateTime.Now > pausedUntil)
                     {
                         await this.wowProcess.LeftClickMouse(screenshot.ToScreenCoordinates(firstLine.X, firstLine.Y + 35));
                         Debug.WriteLine($"{ this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
@@ -45,7 +45,7 @@ namespace Libs.NpcFinder
                     }
                     else
                     {
-                        Debug.WriteLine($"Paused - { this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
+                        Debug.WriteLine($"Paused until {pausedUntil.ToLongTimeString()}- { this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
                     }
                 }
                 else
@@ -61,7 +61,8 @@ namespace Libs.NpcFinder
 
         internal void StopFindingNpcs(int seconds)
         {
-            pausedUntil = DateTime.Now.AddSeconds(seconds);
+           pausedUntil = DateTime.Now.AddSeconds(seconds);
+            Debug.WriteLine($"Pause set until {pausedUntil.ToLongTimeString()}");
         }
 
         public int CountNpc()

@@ -42,10 +42,11 @@ namespace Libs.Looting
 
         public async Task<bool> Loot(bool searchForMobs)
         {
+            wowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
+            await Task.Delay(150);
+
             if (!searchForMobs)
             {
-                wowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
-                await Task.Delay(150);
                 wowProcess.SetCursorPosition(this.lastLootFoundAt);
                 await Task.Delay(200);
             }
