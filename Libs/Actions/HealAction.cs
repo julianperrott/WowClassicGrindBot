@@ -24,8 +24,18 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 4f; }
 
-        private ConsoleKey Eat => this.playerReader.ActionBarUseable_73To96.HotKey7 ? ConsoleKey.D7 : ConsoleKey.Escape;
-        private ConsoleKey Bandage => this.playerReader.ActionBarUseable_73To96.HotKey8 ? ConsoleKey.D8 : ConsoleKey.Escape;
+        private ConsoleKey Eat => playerReader.PlayerClass switch
+        {
+            PlayerClassEnum.Warrior => this.playerReader.ActionBarUseable_73To96.HotKey7 ? ConsoleKey.D7 : ConsoleKey.Escape,
+            PlayerClassEnum.Rogue => this.playerReader.ActionBarUseable_1To24.HotKey7 ? ConsoleKey.D7 : ConsoleKey.Escape,
+            _ => ConsoleKey.Escape
+        };
+
+        private ConsoleKey Bandage => playerReader.PlayerClass switch
+        {
+            PlayerClassEnum.Warrior => this.playerReader.ActionBarUseable_73To96.HotKey8 ? ConsoleKey.D8 : ConsoleKey.Escape,
+            _ => ConsoleKey.Escape
+        };
 
         public override async Task PerformAction()
         {

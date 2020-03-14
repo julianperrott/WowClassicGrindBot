@@ -14,6 +14,7 @@ namespace Libs
         private readonly int height;
         private readonly List<DataFrame> frames;
         private readonly IColorReader colorReader;
+        public PlayerReader? PlayerReader { get; set; }
 
         public AddonReader(IColorReader colorReader, List<DataFrame> frames, int width, int height)
         {
@@ -29,6 +30,11 @@ namespace Libs
             {
                 var bitMap = WowScreen.GetAddonBitmap(this.width, this.height);
                 frames.ForEach(frame => FrameColor[frame.index] = colorReader.GetColorAt(frame.point, bitMap));
+
+                if (PlayerReader != null)
+                {
+                    PlayerReader.Updated();
+                }
             }
             catch(Exception ex)
             {

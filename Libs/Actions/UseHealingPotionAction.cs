@@ -25,16 +25,11 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 1f; }
 
-        private ConsoleKey HealingPotion => this.playerReader.ActionBarUseable_73To96.HotKey11 ? ConsoleKey.OemMinus : ConsoleKey.Escape;
-
         public override async Task PerformAction()
         {
-            if (HealingPotion != ConsoleKey.Escape)
-            {
-                await wowProcess.KeyPress(HealingPotion, 500);
-                LastHealed = DateTime.Now;
-                Debug.WriteLine("Using healing potion");
-            }
+            await wowProcess.KeyPress(ConsoleKey.F4, 500);
+            LastHealed = DateTime.Now;
+            Debug.WriteLine("Using healing potion");
         }
 
         public override bool CheckIfActionCanRun()

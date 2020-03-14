@@ -52,7 +52,7 @@ namespace Libs.GOAP
 		{
 			if (blacklist.Contains(playerReader.Target))
 			{
-				await new WowProcess().KeyPress(ConsoleKey.D0, 400);
+				await new WowProcess().KeyPress(ConsoleKey.F3, 400);
 			}
 
 			var state= new HashSet<KeyValuePair<GoapKey, object>>

@@ -183,13 +183,17 @@ namespace Libs.Actions
             if (shouldMount)
             {
                 shouldMount = false;
+
                 if (await LookForTarget()) { return; }
 
                 if (this.npcNameFinder.CountNpc(0) == 0)
                 {
-                    Debug.WriteLine("Mounting as no NPC in sight");
-                    await wowProcess.Mount();
-                    await Task.Delay(3500);
+                    Debug.WriteLine("Mounting if level >=40 no NPC in sight");
+                    if (this.playerReader.Level >= 40)
+                    {
+                        await wowProcess.Mount();
+                        await Task.Delay(3500);
+                    }
                 }
                 else
                 {

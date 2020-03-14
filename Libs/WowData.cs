@@ -30,6 +30,8 @@ namespace Libs
             this.bagReader = new BagReader(squareReader, 20);
             this.equipmentReader = new EquipmentReader(squareReader, 30);
             this.PlayerReader = new PlayerReader(squareReader);
+
+            this.AddonReader.PlayerReader = this.PlayerReader;
         }
 
         public void DoWork()

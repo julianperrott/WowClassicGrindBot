@@ -13,7 +13,7 @@ namespace Libs.Actions
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
 
-        private DateTime LastSharpened = DateTime.Now.AddDays(-1);
+        private DateTime LastBuffed = DateTime.Now.AddDays(-1);
 
         public BuffAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
         {
@@ -26,30 +26,33 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 1f; }
 
-        private ConsoleKey SharpenWeapon => this.playerReader.ActionBarUseable_73To96.HotKey12 ? ConsoleKey.OemPlus : ConsoleKey.Escape;
-
         public override async Task PerformAction()
         {
-            if (SharpenWeapon != ConsoleKey.Escape)
+            await this.stopMoving.Stop();
+
+            Debug.WriteLine("Sharening weapon");
+            await wowProcess.KeyPress(ConsoleKey.F1, 500);
+
+            for (int i = 0; i < 7; i++)
             {
-                await this.stopMoving.Stop();
-
-                Debug.WriteLine("Sharening weapon");
-                await wowProcess.KeyPress(SharpenWeapon, 500);
-
-                for (int i = 0; i < 7; i++)
-                {
-                    await Task.Delay(1000);
-                    if (playerReader.PlayerBitValues.PlayerInCombat) { return; }
-                }
+                await Task.Delay(1000);
+                if (playerReader.PlayerBitValues.PlayerInCombat) { return; }
             }
 
-            LastSharpened = DateTime.Now;
+            await wowProcess.KeyPress(ConsoleKey.F2, 500);
+
+            for (int i = 0; i < 7; i++)
+            {
+                await Task.Delay(1000);
+                if (playerReader.PlayerBitValues.PlayerInCombat) { return; }
+            }
+
+            LastBuffed = DateTime.Now;
         }
 
         public override bool CheckIfActionCanRun()
         {
-            return (DateTime.Now - LastSharpened).TotalMinutes > 31;
+            return (DateTime.Now - LastBuffed).TotalMinutes > 31;
         }
     }
 }

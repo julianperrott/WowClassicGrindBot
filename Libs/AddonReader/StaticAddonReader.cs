@@ -7,6 +7,8 @@ namespace Libs
 {
     public class StaticAddonReader : IAddonReader
     {
+        public PlayerReader? PlayerReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         private Color[] FrameColor { get; set; } = new Color[100];
 
         public Color GetColorAt(int index)

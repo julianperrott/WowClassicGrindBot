@@ -44,7 +44,7 @@ namespace Libs.Actions
 
             this.npcFinder.StopFindingNpcs(10);
 
-            await wowProcess.KeyPress(ConsoleKey.D0, 564);
+            await wowProcess.KeyPress(ConsoleKey.F3, 564);
 
             Log("End PerformAction");
         }

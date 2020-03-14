@@ -141,7 +141,7 @@ namespace Libs.Actions
 
             RaiseEvent(new ActionEvent(GoapKey.shouldloot,false));
 
-            if (bagReader.bagItems.Count > 76)
+            if (bagReader.bagItems.Count >= 76)
             //if (bagReader.bagItems.Count > 52)
             {
                 Debug.WriteLine("bags full");

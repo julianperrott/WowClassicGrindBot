@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Libs
+﻿namespace Libs
 {
-    public class PlayerReader
+    public partial class PlayerReader
     {
         private readonly ISquareReader reader;
 
@@ -12,6 +8,8 @@ namespace Libs
         {
             this.reader = reader;
         }
+
+        public int Sequence { get; private set; } = 0;
 
         public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord);
 
@@ -24,20 +22,29 @@ namespace Libs
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
 
         // gets the position of your corpse where you died
-        public double CorpseX => reader.GetFixedPointAtCell(6)*10;
-        public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
+        public double CorpseX => reader.GetFixedPointAtCell(6) * 10;
 
+        public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
 
         public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetLongAtCell(8));
 
         // Player health and mana
         public long HealthMax => reader.GetLongAtCell(10); // Maximum amount of health of player
+
+        internal void Updated()
+        {
+            Sequence++;
+
+            //Debug.WriteLine($"{SpellInRange.Rogue_SinisterStrike}-{SpellInRange.Rogue_Throw}-{SpellInRange.Rogue_ShootGun}");
+        }
+
         public long HealthCurrent => reader.GetLongAtCell(11); // Current amount of health of player
-        public long HealthPercent => HealthMax==0 ?0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
+        public long HealthPercent => HealthMax == 0 ? 0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
 
         public long ManaMax => reader.GetLongAtCell(12); // Maximum amount of mana
         public long ManaCurrent => reader.GetLongAtCell(13); // Current amount of mana
         public long Mana => (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
+
                                                            // Level is our character's exact level ranging from 1-60
         public long Level => reader.GetLongAtCell(14);
 
@@ -51,7 +58,7 @@ namespace Libs
         public long TargetMaxHealth => reader.GetLongAtCell(18);
 
         // Targets current percentage of health
-        public double TargetHealthPercentage => ((double)TargetHealth*100)/ TargetMaxHealth;
+        public double TargetHealthPercentage => ((double)TargetHealth * 100) / TargetMaxHealth;
 
         public long TargetHealth => reader.GetLongAtCell(19);
 
@@ -62,32 +69,47 @@ namespace Libs
 
         // 34 -36 Loops through binaries of three pixels. Currently does 24 slots. 1-12 and 61-72.
         public ActionBarStatus ActionBarUseable_1To24 => new ActionBarStatus(reader.GetLongAtCell(34));
+
         public ActionBarStatus ActionBarUseable_25To48 => new ActionBarStatus(reader.GetLongAtCell(35));
         public ActionBarStatus ActionBarUseable_49To72 => new ActionBarStatus(reader.GetLongAtCell(36));
         public ActionBarStatus ActionBarUseable_73To96 => new ActionBarStatus(reader.GetLongAtCell(42));
 
-        // 37- 40 Bag Slots 
+        // 37- 40 Bag Slots
         public long BagSlot1Slots => reader.GetLongAtCell(37);
+
         public long BagSlot2Slots => reader.GetLongAtCell(38);
         public long BagSlot3Slots => reader.GetLongAtCell(39);
         public long BagSlot4Slots => reader.GetLongAtCell(40);
 
-
         public long SkinningLevel => reader.GetLongAtCell(41);
         public long FishingLevel => reader.GetLongAtCell(42);
-
 
         //MakePixelSquareArr(integerToColor(self: GetDebuffs("FrostNova")), 43)-- Checks if target is frozen by frost nova debuff
 
         public long Gametime => reader.GetLongAtCell(44);// Returns time in the game
         public long GossipOptions => reader.GetLongAtCell(45); //  Returns which gossip icons are on display in dialogue box
-        public long Playerclass => reader.GetLongAtCell(46); // Returns player class as an integer
+
+        public PlayerClassEnum PlayerClass => (PlayerClassEnum)reader.GetLongAtCell(46);
+
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
         public long HearthZone => reader.GetLongAtCell(48); // Returns subzone of that is currently bound to hearthstone
 
-        public SpellInRange SpellInRange => new SpellInRange(reader.GetLongAtCell(49));
+        private SpellInRange spellInRange = new SpellInRange(0);
 
-        public bool WithInPullRange => SpellInRange.ShootGun || SpellInRange.Charge;
-        public bool WithInMeleeRange => SpellInRange.Rend;
+        public SpellInRange SpellInRange
+        {
+            get
+            {
+                var x = reader.GetLongAtCell(49);
+                if (x < 1024) // ignore odd values
+                {
+                    spellInRange = new SpellInRange(x);
+                }
+                return spellInRange;
+            }
+        }
+
+        public bool WithInPullRange => SpellInRange.WithInPullRange(this.PlayerClass);
+        public bool WithInMeleeRange => SpellInRange.WithInMeleeRange(this.PlayerClass);
     }
 }

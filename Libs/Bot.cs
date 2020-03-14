@@ -35,18 +35,18 @@ namespace Libs
             this.wowData = wowData;
             this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist);
 
-            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_47_easy.json");
-            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
+            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_34.json");
+            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_34_SpiritHealer.json");
 
             var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
             pathPoints.Reverse();
             var spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
 
-            this.playerDirection = new PlayerDirection(wowData.PlayerReader, WowProcess);
-            this.stopMoving = new StopMoving(WowProcess, wowData.PlayerReader);
-            this.npcNameFinder = new NpcNameFinder(WowProcess);
-            this.followRouteAction = new FollowRouteAction(wowData.PlayerReader, WowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist);
-            this.walkToCorpseAction = new WalkToCorpseAction(wowData.PlayerReader, WowProcess, playerDirection, spiritPath, pathPoints, stopMoving);
+            this.playerDirection = new PlayerDirection(wowData.PlayerReader, GetWowProcess);
+            this.stopMoving = new StopMoving(GetWowProcess, wowData.PlayerReader);
+            this.npcNameFinder = new NpcNameFinder(GetWowProcess);
+            this.followRouteAction = new FollowRouteAction(wowData.PlayerReader, GetWowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist);
+            this.walkToCorpseAction = new WalkToCorpseAction(wowData.PlayerReader, GetWowProcess, playerDirection, spiritPath, pathPoints, stopMoving);
 
             this.RouteInfo = new RouteInfo(pathPoints, spiritPath, this.followRouteAction, this.walkToCorpseAction);
         }
@@ -57,16 +57,22 @@ namespace Libs
 
             this.availableActions.Clear();
             this.availableActions.Add(followRouteAction);
-            this.availableActions.Add(new KillTargetAction(WowProcess, wowData.PlayerReader, stopMoving));
-            this.availableActions.Add(new PullTargetAction(WowProcess, wowData.PlayerReader, npcNameFinder, stopMoving));
-            this.availableActions.Add(new ApproachTargetAction(WowProcess, wowData.PlayerReader, stopMoving, npcNameFinder));
-            this.availableActions.Add(new LootAction(WowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving));
-            this.availableActions.Add(new PostKillLootAction(WowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving));
-            this.availableActions.Add(new HealAction(WowProcess, wowData.PlayerReader, stopMoving));
-            this.availableActions.Add(new TargetDeadAction(WowProcess, wowData.PlayerReader, npcNameFinder));
+            this.availableActions.Add(new PullTargetAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving));
+            this.availableActions.Add(new ApproachTargetAction(GetWowProcess, wowData.PlayerReader, stopMoving, npcNameFinder));
+            this.availableActions.Add(new LootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving));
+            this.availableActions.Add(new PostKillLootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving));
+            this.availableActions.Add(new HealAction(GetWowProcess, wowData.PlayerReader, stopMoving));
+            this.availableActions.Add(new TargetDeadAction(GetWowProcess, wowData.PlayerReader, npcNameFinder));
             this.availableActions.Add(this.walkToCorpseAction);
-            this.availableActions.Add(new UseHealingPotionAction(WowProcess, wowData.PlayerReader));
-            this.availableActions.Add(new BuffAction(WowProcess, wowData.PlayerReader, stopMoving));
+            this.availableActions.Add(new UseHealingPotionAction(GetWowProcess, wowData.PlayerReader));
+            this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving));
+
+            this.availableActions.Add(wowData.PlayerReader.PlayerClass switch
+            {
+                PlayerClassEnum.Warrior=> new WarriorCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving),
+                PlayerClassEnum.Rogue => new RogueCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving),
+                _ => throw new ArgumentOutOfRangeException("Player class")
+            });
 
             this.availableActions.ToList().ForEach(a => 
             {
@@ -130,7 +136,7 @@ namespace Libs
 
         private WowProcess? wowProcess;
 
-        public WowProcess WowProcess
+        public WowProcess GetWowProcess
         {
             get
             {
