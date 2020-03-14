@@ -17,6 +17,7 @@ namespace Libs
             return (value & (1 << pos)) != 0;
         }
 
+        public bool IsMounted { get => IsBitSet(18); }
         public bool ProcessExitStatus { get => IsBitSet(17); }
         public bool NeedManaGem { get => IsBitSet(16); }
         public bool TargetOfTargetIsPlayer { get => IsBitSet(15); }

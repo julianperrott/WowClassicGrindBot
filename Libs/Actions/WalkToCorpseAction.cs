@@ -22,6 +22,7 @@ namespace Libs.Actions
         private readonly List<WowPoint> spiritWalkerPath;
         private readonly List<WowPoint> routePoints;
         private Stack<WowPoint> points = new Stack<WowPoint>();
+        private Stopwatch LastReachedPoint = new Stopwatch();
 
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
@@ -60,10 +61,16 @@ namespace Libs.Actions
         public override void OnActionEvent(object sender, ActionEvent e)
         {
             NeedsToReset = true;
+            if (sender != this)
+            {
+                LastReachedPoint.Reset();
+            }
         }
 
         public override async Task PerformAction()
         {
+            if (!LastReachedPoint.IsRunning) { LastReachedPoint.Start(); }
+
             if (NeedsToReset)
             {
                 await Reset();
@@ -103,6 +110,13 @@ namespace Libs.Actions
                 {
                     await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
                     Dump("Stuck");
+
+                    if (LastReachedPoint.ElapsedMilliseconds > 1000 * 120)
+                    {
+                        // stuck for 2 minutes
+                        Debug.WriteLine("Stuck for 2 minutes");
+                        RaiseEvent(new ActionEvent(GoapKey.abort, true));
+                    }
                 }
                 else
                 {
@@ -129,6 +143,7 @@ namespace Libs.Actions
             if (distance < 40 && points.Any())
             {
                 Debug.WriteLine($"Move to next point");
+                LastReachedPoint.Reset();
                 points.Pop();
                 lastDistance = 999;
                 if (points.Count > 0)

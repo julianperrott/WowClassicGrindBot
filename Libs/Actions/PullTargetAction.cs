@@ -44,6 +44,11 @@ namespace Libs.Actions
             var npcCount = this.npcNameFinder.CountNpc();
             Debug.WriteLine($"Npc count = {npcCount}");
 
+            if (playerReader.PlayerBitValues.IsMounted)
+            {
+                await wowProcess.Mount();
+            }
+
             if (playerReader.SpellInRange.Charge && npcCount < 2)
             {
                 Debug.WriteLine($"Charging");
@@ -71,6 +76,10 @@ namespace Libs.Actions
             else
             {
                 // approach
+                if (playerReader.PlayerBitValues.IsMounted)
+                {
+                    await wowProcess.Mount();
+                }
                 await this.wowProcess.KeyPress(ConsoleKey.H, 301);
             }
         }

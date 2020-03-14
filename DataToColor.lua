@@ -421,12 +421,25 @@ end
 -- Base 2 converter for up to 24 boolean values to a single pixel square.
 function DataToColor:Base2Converter()
     -- 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384
-    return self:MakeIndexBase2(self:targetCombatStatus(), 0) + self:MakeIndexBase2(self:GetEnemyStatus(), 1) + self:MakeIndexBase2(self:deadOrAlive(), 2) +
-    self:MakeIndexBase2(self:checkTalentPoints(), 3) + self:MakeIndexBase2(self:needWater(), 4) + self:MakeIndexBase2(self:GetBuffs("Food"), 5) +
-    self:MakeIndexBase2(self:GetBuffs("Frost Armor"), 6) + self:MakeIndexBase2(self:GetBuffs("Arcane Intellect"), 7) + self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 8) +
-    self:MakeIndexBase2(self:GetInventoryBroken(), 9) + self:MakeIndexBase2(self:IsPlayerFlying(), 10) + self:MakeIndexBase2(self:needFood(), 11) +
-    self:MakeIndexBase2(self:GetBuffs("Evocation"), 12) + self:MakeIndexBase2(self:GetBuffs("Drink"), 13) + self:MakeIndexBase2(self:playerCombatStatus(), 14) +
-    self:MakeIndexBase2(self:IsTargetOfTargetPlayer(), 15) + self:MakeIndexBase2(self:needManaGem(), 16) + self:MakeIndexBase2(self:ProcessExitStatus(), 17)
+    return self:MakeIndexBase2(self:targetCombatStatus(), 0) + 
+    self:MakeIndexBase2(self:GetEnemyStatus(), 1) + 
+    self:MakeIndexBase2(self:deadOrAlive(), 2) +
+    self:MakeIndexBase2(self:checkTalentPoints(), 3) + 
+    self:MakeIndexBase2(self:needWater(), 4) + 
+    self:MakeIndexBase2(self:GetBuffs("Food"), 5) +
+    self:MakeIndexBase2(self:GetBuffs("Frost Armor"), 6) + 
+    self:MakeIndexBase2(self:GetBuffs("Arcane Intellect"), 7) + 
+    self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 8) +
+    self:MakeIndexBase2(self:GetInventoryBroken(), 9) + 
+    self:MakeIndexBase2(self:IsPlayerFlying(), 10) + 
+    self:MakeIndexBase2(self:needFood(), 11) +
+    self:MakeIndexBase2(self:GetBuffs("Evocation"), 12) + 
+    self:MakeIndexBase2(self:GetBuffs("Drink"), 13) + 
+    self:MakeIndexBase2(self:playerCombatStatus(), 14) +
+    self:MakeIndexBase2(self:IsTargetOfTargetPlayer(), 15) + 
+    self:MakeIndexBase2(self:needManaGem(), 16) + 
+    self:MakeIndexBase2(self:ProcessExitStatus(), 17)+
+    self:MakeIndexBase2(self:IsPlayerMounted(), 18)
 end
 
 -- Returns bitmask values.
@@ -799,6 +812,15 @@ end
 function DataToColor:IsPlayerFlying()
     local taxiStatus = UnitOnTaxi("player")
     if taxiStatus then
+        return 1
+    end
+    -- Returns 0 if not on a wind rider beast
+    return 0
+end
+
+function DataToColor:IsPlayerMounted()
+    local mounted = IsMounted()
+    if mounted then
         return 1
     end
     -- Returns 0 if not on a wind rider beast

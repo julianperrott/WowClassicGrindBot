@@ -142,5 +142,33 @@ namespace Libs
             GetWindowRect(handle, ref rect);
             return rect;
         }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
+
+        public const int KEYEVENTF_KEYDOWN = 0x0000; // New definition
+        public const int KEYEVENTF_EXTENDEDKEY = 0x0001; //Key down flag
+        public const int KEYEVENTF_KEYUP = 0x0002; //Key up flag
+        public const int VK_LCONTROL = 0xA2; //Left Control key code
+        
+        public const int VK_LEFT_SHIFT = 160;
+        public const int VK_LEFT_CONTROL = 162;
+        public const int VK_LEFT_ALT = 164;
+
+
+        public const int A = 0x41; //A key code
+        public const int C = 0x43; //C key code
+
+        public async Task Hearthstone()
+        {
+            // hearth macro = /use hearthstone
+            await KeyPress(ConsoleKey.I, 500);
+        }
+
+        public async Task Mount()
+        {
+            // mount macro = /use 'your mount here'
+            await KeyPress(ConsoleKey.O, 500);
+        }
     }
 }

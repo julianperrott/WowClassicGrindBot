@@ -18,7 +18,8 @@ namespace Libs.GOAP
 		usehealingpotion = 100,
 		newtarget = 110,
 		fighting = 120,
-		bagfull= 130
+		bagfull= 130,
+		abort=140
 	}
 
 	public static class GoapKeyDescription

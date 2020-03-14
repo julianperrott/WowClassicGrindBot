@@ -33,6 +33,9 @@ namespace Libs.Actions
         private Random random = new Random();
         private DateTime lastTab = DateTime.Now;
         private readonly List<string> blacklist;
+        private bool shouldMount = true;
+
+        private Stopwatch LastReachedPoint = new Stopwatch();
 
         public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, List<string> blacklist)
         {
@@ -71,8 +74,19 @@ namespace Libs.Actions
             //Debug.WriteLine($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
         }
 
+        public override void OnActionEvent(object sender, ActionEvent e)
+        {
+            if (sender!=this)
+            {
+                shouldMount = true;
+                LastReachedPoint.Reset();
+            }
+        }
+
         public override async Task PerformAction()
         {
+            if (!LastReachedPoint.IsRunning) { LastReachedPoint.Start(); }
+
             RaiseEvent(new ActionEvent(GoapKey.fighting, false));
 
             if (points.Count == 0)
@@ -97,15 +111,12 @@ namespace Libs.Actions
             if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
             {
                 //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
-                await this.wowProcess.KeyPress(ConsoleKey.Tab, 300);
-                await this.npcNameFinder.FindAndClickNpc(0);
+                if (await LookForTarget()) { return; }
             }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, points.Peek());
             var heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
-
-            if (this.playerReader.HasTarget && !blacklist.Contains(playerReader.Target)) { return; }
 
             if (lastDistance < distance)
             {
@@ -122,6 +133,13 @@ namespace Libs.Actions
                 {
                     await wowProcess.KeyPress(ConsoleKey.Spacebar, 502);
                     Debug.WriteLine("Stuck");
+
+                    if (LastReachedPoint.ElapsedMilliseconds > 1000 * 120)
+                    {
+                        // stuck for 2 minutes
+                        Debug.WriteLine("Stuck for 2 minutes");
+                        RaiseEvent(new ActionEvent(GoapKey.abort, true));
+                    }
                 }
                 else
                 {
@@ -149,6 +167,7 @@ namespace Libs.Actions
             if (distance < 40)
             {
                 Debug.WriteLine($"Move to next point");
+                LastReachedPoint.Reset();
                 points.Pop();
                 lastDistance = 999;
                 if (points.Count == 0)
@@ -160,7 +179,39 @@ namespace Libs.Actions
                 playerDirection.SetDirection(heading);
             }
 
+            // should mount
+            if (shouldMount)
+            {
+                shouldMount = false;
+                if (await LookForTarget()) { return; }
+
+                if (this.npcNameFinder.CountNpc(0) == 0)
+                {
+                    Debug.WriteLine("Mounting as no NPC in sight");
+                    await wowProcess.Mount();
+                    await Task.Delay(3500);
+                }
+                else
+                {
+                    Debug.WriteLine("Not mounting as can see NPC");
+                }
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+            }
+
             LastActive = DateTime.Now;
+        }
+
+        private async Task<bool> LookForTarget()
+        {
+            await this.wowProcess.KeyPress(ConsoleKey.Tab, 300);
+            await Task.Delay(300);
+            if (!playerReader.HasTarget)
+            {
+                await this.npcNameFinder.FindAndClickNpc(0);
+                await Task.Delay(300);
+            }
+
+            return this.playerReader.HasTarget && !blacklist.Contains(playerReader.Target);
         }
 
         private bool HasBeenActiveRecently()

@@ -61,6 +61,11 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
+            if (playerReader.PlayerBitValues.IsMounted)
+            {
+                await wowProcess.Mount();
+            }
+
             await stopMoving.Stop();
 
             RaiseEvent(new ActionEvent(GoapKey.fighting, true));

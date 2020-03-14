@@ -8,7 +8,8 @@ namespace Libs.Actions
 {
     public class PostKillLootAction : LootAction
     {
-        public PostKillLootAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving) : base(wowProcess, playerReader, stopMoving)
+        public PostKillLootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving) 
+            : base(wowProcess, playerReader, bagReader, stopMoving)
         {
         }
 
@@ -23,7 +24,6 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            //await base.wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
             await Task.Delay(1000);
             await base.PerformAction();
         }

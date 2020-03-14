@@ -65,14 +65,14 @@ namespace Libs.NpcFinder
             Debug.WriteLine($"Pause set until {pausedUntil.ToLongTimeString()}");
         }
 
-        public int CountNpc()
+        public int CountNpc(int threshold = 3)
         {
             var rect = wowProcess.GetWindowRect();
             var screenshot = new DirectBitmap(rect.right, rect.bottom);
             screenshot.CaptureScreen();
             var npc = GetClosestNpc(screenshot);
 
-            var count= npcs.Where(c => c.Count > 3).Count();
+            var count = npcs.Where(c => c.Count > threshold).Count();
             Debug.WriteLine($"> NPCs count: {count}");
 
             return count;

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -200,6 +201,33 @@ namespace Powershell
             playerDirection.SetDirection(5.3871);
         }
 
+        private void OnMouseEvent(object sender, ElapsedEventArgs e)
+        {
+            var pos = GetCursorPosition();
+            Debug.WriteLine($"{pos.X},{pos.Y}");
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+
+            public static implicit operator Point(POINT point)
+            {
+                return new Point(point.X, point.Y);
+            }
+        }
+
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorPos(out POINT lpPoint);
+        public static Point GetCursorPosition()
+        {
+            POINT lpPoint;
+            GetCursorPos(out lpPoint);
+            return lpPoint;
+        }
+
         private void StopRunPath_Click(object sender, RoutedEventArgs e)
         {
             stop = true;
@@ -210,7 +238,7 @@ namespace Powershell
         {
             if (!stop)
             {
-                var bot = new Bot(this.addonThread.PlayerReader);
+                var bot = new Bot(this.addonThread);
                 await bot.DoWork();
 
             }

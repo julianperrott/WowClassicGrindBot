@@ -24,7 +24,7 @@ namespace Libs
             addonThread = new Thread(WowData.DoWork);
             addonThread.Start();
 
-            WowBot = new Bot(WowData.PlayerReader);
+            WowBot = new Bot(WowData);
             
         }
 

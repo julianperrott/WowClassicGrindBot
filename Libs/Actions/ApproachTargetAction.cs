@@ -61,15 +61,20 @@ namespace Libs.Actions
                 await CheckForNpcFollowingMe();
             }
 
+            if (playerReader.PlayerBitValues.IsMounted)
+            {
+                await wowProcess.Mount();
+            }
             await this.wowProcess.KeyPress(ConsoleKey.H, 501);
-            await RandomJump();
 
             var newLocation = playerReader.PlayerLocation;
             if (location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5)
             {
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(2000);
+                await wowProcess.KeyPress(ConsoleKey.Spacebar, 498);
             }
+            await RandomJump();
         }
 
         private async Task CheckForNpcFollowingMe()
@@ -93,8 +98,8 @@ namespace Libs.Actions
                 {
                     await wowProcess.KeyPress(ConsoleKey.Spacebar, 498);
                 }
+                LastJump = DateTime.Now;
             }
-            LastJump = DateTime.Now;
         }
 
 

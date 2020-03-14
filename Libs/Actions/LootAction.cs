@@ -12,14 +12,17 @@ namespace Libs.Actions
         private readonly PlayerReader playerReader;
         private readonly LootWheel lootWheel;
         private readonly StopMoving stopMoving;
+        private readonly BagReader bagReader;
 
         private bool debug = true;
 
-        public LootAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
+        public LootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
+            this.bagReader = bagReader;
+
             lootWheel = new LootWheel(wowProcess, playerReader);
 
             AddPreconditions();
@@ -137,6 +140,13 @@ namespace Libs.Actions
             //await wowProcess.RightClickMouse(new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width / 2, (Screen.PrimaryScreen.Bounds.Height / 2)));
 
             RaiseEvent(new ActionEvent(GoapKey.shouldloot,false));
+
+            if (bagReader.bagItems.Count > 76)
+            //if (bagReader.bagItems.Count > 52)
+            {
+                Debug.WriteLine("bags full");
+                RaiseEvent(new ActionEvent(GoapKey.abort, true));
+            }
 
             Log("End PerformAction");
         }

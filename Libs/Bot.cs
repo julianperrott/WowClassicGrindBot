@@ -17,7 +17,7 @@ namespace Libs
     {
         private GoapAction? currentAction;
         private HashSet<GoapAction> availableActions = new HashSet<GoapAction>();
-        private readonly PlayerReader playerReader;
+        private readonly WowData wowData;
         private readonly PlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
         public readonly GoapAgent Agent;
@@ -30,24 +30,23 @@ namespace Libs
 
         public bool Active { get; set; }
 
-        public Bot(PlayerReader playerReader)
+        public Bot(WowData wowData)
         {
+            this.wowData = wowData;
+            this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist);
 
-            this.playerReader = playerReader;
-            this.Agent = new GoapAgent(playerReader, this.availableActions, this.blacklist);
-
-            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44.json");
+            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_47_easy.json");
             var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
 
             var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
             pathPoints.Reverse();
             var spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
 
-            this.playerDirection = new PlayerDirection(playerReader, WowProcess);
-            this.stopMoving = new StopMoving(WowProcess, playerReader);
+            this.playerDirection = new PlayerDirection(wowData.PlayerReader, WowProcess);
+            this.stopMoving = new StopMoving(WowProcess, wowData.PlayerReader);
             this.npcNameFinder = new NpcNameFinder(WowProcess);
-            this.followRouteAction = new FollowRouteAction(playerReader, WowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist);
-            this.walkToCorpseAction = new WalkToCorpseAction(playerReader, WowProcess, playerDirection, spiritPath, pathPoints, stopMoving);
+            this.followRouteAction = new FollowRouteAction(wowData.PlayerReader, WowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist);
+            this.walkToCorpseAction = new WalkToCorpseAction(wowData.PlayerReader, WowProcess, playerDirection, spiritPath, pathPoints, stopMoving);
 
             this.RouteInfo = new RouteInfo(pathPoints, spiritPath, this.followRouteAction, this.walkToCorpseAction);
         }
@@ -58,21 +57,22 @@ namespace Libs
 
             this.availableActions.Clear();
             this.availableActions.Add(followRouteAction);
-            this.availableActions.Add(new KillTargetAction(WowProcess, playerReader, stopMoving));
-            this.availableActions.Add(new PullTargetAction(WowProcess, playerReader, npcNameFinder, stopMoving));
-            this.availableActions.Add(new ApproachTargetAction(WowProcess, playerReader, stopMoving, npcNameFinder));
-            this.availableActions.Add(new LootAction(WowProcess, playerReader, stopMoving));
-            this.availableActions.Add(new PostKillLootAction(WowProcess, playerReader, stopMoving));
-            this.availableActions.Add(new HealAction(WowProcess, playerReader, stopMoving));
-            this.availableActions.Add(new TargetDeadAction(WowProcess, playerReader, npcNameFinder));
+            this.availableActions.Add(new KillTargetAction(WowProcess, wowData.PlayerReader, stopMoving));
+            this.availableActions.Add(new PullTargetAction(WowProcess, wowData.PlayerReader, npcNameFinder, stopMoving));
+            this.availableActions.Add(new ApproachTargetAction(WowProcess, wowData.PlayerReader, stopMoving, npcNameFinder));
+            this.availableActions.Add(new LootAction(WowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving));
+            this.availableActions.Add(new PostKillLootAction(WowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving));
+            this.availableActions.Add(new HealAction(WowProcess, wowData.PlayerReader, stopMoving));
+            this.availableActions.Add(new TargetDeadAction(WowProcess, wowData.PlayerReader, npcNameFinder));
             this.availableActions.Add(this.walkToCorpseAction);
-            this.availableActions.Add(new UseHealingPotionAction(WowProcess, playerReader));
-            this.availableActions.Add(new BuffAction(WowProcess, playerReader, stopMoving));
+            this.availableActions.Add(new UseHealingPotionAction(WowProcess, wowData.PlayerReader));
+            this.availableActions.Add(new BuffAction(WowProcess, wowData.PlayerReader, stopMoving));
 
             this.availableActions.ToList().ForEach(a => 
             {
                 a.ActionEvent += this.Agent.OnActionEvent;
                 a.ActionEvent += npcNameFinder.OnActionEvent;
+                a.ActionEvent += this.OnActionEvent;
 
                 // tell other action about my actions
                 this.availableActions.ToList().ForEach(b =>
@@ -80,8 +80,6 @@ namespace Libs
                     if (b!=a) { a.ActionEvent += b.OnActionEvent; }
                 });
             });
-
-
 
             while (Active)
             {
@@ -91,6 +89,16 @@ namespace Libs
             await stopMoving.Stop();
             Debug.WriteLine("Stopped!");
 
+        }
+
+        public void OnActionEvent(object sender, ActionEvent e)
+        {
+            if (e.Key == GoapKey.abort)
+            {
+                var location = wowData.PlayerReader.PlayerLocation;
+                wowProcess?.Hearthstone();
+                Active = false;
+            }
         }
 
         private async Task GoapPerformAction()

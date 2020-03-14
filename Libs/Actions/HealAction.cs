@@ -34,6 +34,7 @@ namespace Libs.Actions
             if ((this.playerReader.HealthPercent < 40|| Bandage== ConsoleKey.Escape) && Eat != ConsoleKey.Escape)
             {
                 await PressKeyAndWait(Eat, 27);
+                await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
             }
             else
             {
