@@ -98,8 +98,7 @@ namespace Libs.Actions
 
             if (lastDistance < distance)
             {
-                Dump("Further away");
-                playerDirection.SetDirection(heading);
+                await playerDirection.SetDirection(heading, points.Peek(), "Further away");
             }
             else if (lastDistance == distance)
             {
@@ -133,8 +132,7 @@ namespace Libs.Actions
 
                 if (Math.Min(diff1, diff2) > 0.3)
                 {
-                    Dump("Correcting direction");
-                    playerDirection.SetDirection(heading);
+                    await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
                 }
             }
 
@@ -149,7 +147,7 @@ namespace Libs.Actions
                 if (points.Count > 0)
                 {
                     heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
-                    playerDirection.SetDirection(heading);
+                    await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
                 }
             }
 

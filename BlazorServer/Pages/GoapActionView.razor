@@ -1,5 +1,5 @@
 ﻿<tr>
-    <td><h4 style="color:@ActionColour(this.IsSelected)">@action.Name (@action.CostOfPerformingAction)</h4></td>
+    <td><h5 style="color:@ActionColour(this.IsSelected)">@action.Name (@action.CostOfPerformingAction) @action.Description()</h5></td>
     @foreach (var item in this.action.State)
     {
         <td style="color:@Colour(item)">@item.Key</td>

@@ -153,19 +153,19 @@ namespace Powershell
            // playerDirection.SetDirection(0.0);
         }
 
-        private void East_Click(object sender, RoutedEventArgs e)
+        private async void East_Click(object sender, RoutedEventArgs e)
         {
-            playerDirection.SetDirection(1.5707963268);
+            await playerDirection.SetDirection(1.5707963268,new WowPoint(0,0),"");
         }
 
-        private void West_Click(object sender, RoutedEventArgs e)
+        private async void West_Click(object sender, RoutedEventArgs e)
         {
-            playerDirection.SetDirection(4.7123889804);
+            await playerDirection.SetDirection(4.7123889804, new WowPoint(0, 0), "");
         }
 
-        private void South_Click(object sender, RoutedEventArgs e)
+        private async void South_Click(object sender, RoutedEventArgs e)
         {
-            playerDirection.SetDirection(3.1415926536);
+            await playerDirection.SetDirection(3.1415926536, new WowPoint(0, 0), "");
         }
 
         private System.Timers.Timer? timer;
@@ -191,14 +191,14 @@ namespace Powershell
             }
         }
 
-        private void SetStartDirection_Click(object sender, RoutedEventArgs e)
+        private async void SetStartDirection_Click(object sender, RoutedEventArgs e)
         {
-            playerDirection.SetDirection(4.3507);
+            await playerDirection.SetDirection(4.3507, new WowPoint(0, 0), "");
         }
 
-        private void SetEndDirection_Click(object sender, RoutedEventArgs e)
+        private async void SetEndDirection_Click(object sender, RoutedEventArgs e)
         {
-            playerDirection.SetDirection(5.3871);
+            await playerDirection.SetDirection(5.3871, new WowPoint(0, 0), "");
         }
 
         private void OnMouseEvent(object sender, ElapsedEventArgs e)

@@ -59,7 +59,6 @@ local CELL_SIZE = 3
 local CELL_SPACING = 0
 -- Item slot trackers initialization
 local itemNum = 0
-local slotNum = 0
 local equipNum = 0
 local globalCounter = 0
 -- Global table of all items player has
@@ -275,33 +274,30 @@ function DataToColor:CreateFrames(n)
             end
             -- Controls rate at which item frames change.
             globalCounter = globalCounter + 1
-            -- Resets to beginning when we have finished entire loop of items.
-            if Modulo(17, itemNum) == 0 and slotNum == 4 then
+
+            if itemNum >= 17 then
                 itemNum = 1
-                slotNum = 0
             end
-            -- Moves on to next bag after we have looked at all possible slots.
-            if itemNum - 17 == 0 then
-                itemNum = 1
-                slotNum = slotNum + 1
-            end
-            -- Uses data pixel positions 20-29
-            for i = 0, 4 do
+
+            -- Bag contents - Uses data pixel positions 20-29
+            for bagNo = 0, 4 do
                 -- Returns item ID and quantity
-                MakePixelSquareArr(integerToColor(self:itemName(i, itemNum)), 20 + i * 2)
+                MakePixelSquareArr(integerToColor(self:itemName(bagNo, itemNum)), 20 + bagNo * 2) -- 20,22,24,26,28
                 -- Return item slot number
-                MakePixelSquareArr(integerToColor(i * 16 + itemNum), 21 + i * 2)
+                MakePixelSquareArr(integerToColor(bagNo * 16 + itemNum), 21 + bagNo * 2) -- 21,23,25,27,29
             end
             -- Worn inventory start.
             -- Starts at beginning once we have looked at all desired slots.
             if equipNum - 19 == 0 then
                 equipNum = 1
             end
+
             local equipName = self:equipName(equipNum)
             -- Equipment ID
             MakePixelSquareArr(integerToColor(equipName), 30)
             -- Equipment slot
             MakePixelSquareArr(integerToColor(equipNum), 31)
+            
             -- Amount of money in coppers
             MakePixelSquareArr(integerToColor(Modulo(self:getMoneyTotal(), 1000000)), 32) -- 13 Represents amount of money held (in copper)
             MakePixelSquareArr(integerToColor(floor(self:getMoneyTotal() / 1000000)), 33) -- 14 Represents amount of money held (in gold)
@@ -514,9 +510,6 @@ function DataToColor:isInRange()
     return range
 end
 
-
-
-
 -- A function used to check which items we have.
 -- Find item IDs on wowhead in the url: e.g: http://www.wowhead.com/item=5571/small-black-pouch. Best to confirm ingame if possible, though.
 function DataToColor:itemName(bag, slot)
@@ -532,7 +525,9 @@ function DataToColor:itemName(bag, slot)
     end
     if item == nil then item = 0
     end
-    if(itemCount ~= nil and itemCount > 0) then item = item + itemCount * 100000
+    if(itemCount ~= nil and itemCount > 0) then 
+        if (itemCount>100) then itemCount=100 end
+        item = item + itemCount * 100000
     end
     -- Sets global variable to current list of items
     items[(bag * 16) + slot] = item
@@ -563,13 +558,24 @@ end
 -- -- Function to tell if a spell is on cooldown and if the specified slot has a spell assigned to it
 -- -- Slot ID information can be found on WoW Wiki. Slots we are using: 1-12 (main action bar), Bottom Right Action Bar maybe(49-60), and  Bottom Left (61-72)
 
-local spellList = {
-    "Charge", --1
-    "Rend", --2
-    "Shoot Gun" --4
-}
-
 function DataToColor:areSpellsInRange()
+
+    local spellList, CC = UnitClass("player");
+    if CC == "ROGUE" then
+         spellList = {
+            "Sinister Strike", --1
+            "Throw", --2
+            "Shoot Gun" --4
+        }
+    elseif CC == "WARRIOR" then
+        spellList = {
+            "Charge", --1
+            "Rend", --2
+            "Shoot Gun", --4
+        };
+    end
+
+
     local inRange = 0
     for i = 1, table.getn(spellList ), 1 do
         local isInRange = IsSpellInRange(spellList[i], "target");

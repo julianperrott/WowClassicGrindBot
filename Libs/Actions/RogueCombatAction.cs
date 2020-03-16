@@ -30,8 +30,7 @@ namespace Libs.Actions
 
             if (playerReader.HealthPercent < 10 && !IsOnCooldown(Vanish, 600))
             {
-                await PressKey(Vanish);
-                await Task.Delay(3000);
+                await DoVanish();
                 return;
             }
 
@@ -45,6 +44,22 @@ namespace Libs.Actions
                 await PressKey(key);
                 RaiseEvent(new ActionEvent(GoapKey.shouldloot, true));
             }
+        }
+
+        private async Task DoVanish()
+        {
+            await PressKey(Vanish);
+
+            await new WowProcess().KeyPress(ConsoleKey.F3, 400); //clear target
+            for (int i = 0; i < 30; i++)
+            {
+                await Task.Delay(1000);
+                if (playerReader.PlayerBitValues.PlayerInCombat || playerReader.HealthPercent > 60)
+                {
+                    return;
+                }
+            }
+            return;
         }
 
         public override void OnActionEvent(object sender, ActionEvent e)

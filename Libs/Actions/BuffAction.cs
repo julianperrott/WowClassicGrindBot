@@ -54,5 +54,18 @@ namespace Libs.Actions
         {
             return (DateTime.Now - LastBuffed).TotalMinutes > 31;
         }
+
+        public override string Description()
+        {
+            if (!CheckIfActionCanRun())
+            {
+                var timespan = LastBuffed.AddMinutes(31) - DateTime.Now;
+                return " - F1/F2 - "+ DateTime.Now.Date.AddSeconds(timespan.TotalSeconds).ToString("mm:ss");
+            }
+            else
+            {
+                return " - F1/F2 - Pending";
+            }
+        }
     }
 }

@@ -106,5 +106,10 @@ namespace Libs.Actions
         {
 
         }
+
+        public virtual string Description()
+        {
+            return string.Empty;
+        }
     }
 }

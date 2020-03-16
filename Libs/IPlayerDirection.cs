@@ -4,7 +4,7 @@ namespace Libs
 {
     public interface IPlayerDirection
     {
-        void SetDirection(double desiredDirection);
+        System.Threading.Tasks.Task SetDirection(double desiredDirection, WowPoint point, string source);
         DateTime LastSetDirection { get; }
     }
 }

@@ -76,5 +76,7 @@ namespace Libs
                  ))
                 .ToList();
         }
+
+        public bool BagsFull => bagItems.Count >= 76;
     }
 }

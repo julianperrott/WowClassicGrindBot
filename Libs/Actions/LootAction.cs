@@ -141,14 +141,19 @@ namespace Libs.Actions
 
             RaiseEvent(new ActionEvent(GoapKey.shouldloot,false));
 
-            if (bagReader.bagItems.Count >= 76)
+            if (bagReader.BagsFull)
             //if (bagReader.bagItems.Count > 52)
             {
                 Debug.WriteLine("bags full");
-                RaiseEvent(new ActionEvent(GoapKey.abort, true));
+               //RaiseEvent(new ActionEvent(GoapKey.abort, true));
             }
 
             Log("End PerformAction");
+        }
+
+        public override bool CheckIfActionCanRun()
+        {
+            return !bagReader.BagsFull;
         }
     }
 }

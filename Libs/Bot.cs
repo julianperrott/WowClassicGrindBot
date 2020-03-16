@@ -35,10 +35,20 @@ namespace Libs
             this.wowData = wowData;
             this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist);
 
-            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_34.json");
-            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_34_SpiritHealer.json");
+            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44.json");
+            var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
 
             var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
+
+            //var pathPoints = new List<WowPoint>();
+            //for (int i=0;i< pathPoints2.Count;i+=2)
+            //{
+            //    if (i < pathPoints2.Count)
+            //    {
+            //        pathPoints.Add(pathPoints2[i]);
+            //    }
+            //}
+
             pathPoints.Reverse();
             var spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
 
@@ -66,6 +76,8 @@ namespace Libs
             this.availableActions.Add(this.walkToCorpseAction);
             this.availableActions.Add(new UseHealingPotionAction(GetWowProcess, wowData.PlayerReader));
             this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving));
+            this.availableActions.Add(new PressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F5, 313));
+            this.availableActions.Add(new PressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F6, 3600));
 
             this.availableActions.Add(wowData.PlayerReader.PlayerClass switch
             {
@@ -111,6 +123,11 @@ namespace Libs
         {
             if (this.Agent != null)
             {
+                if (this.wowData.PlayerReader.PlayerBitValues.ItemsAreBroken)
+                {
+                    OnActionEvent(this, new ActionEvent(GoapKey.abort, true));
+                }
+
                 var newAction = await this.Agent.GetAction();
 
                 if (newAction != null)
