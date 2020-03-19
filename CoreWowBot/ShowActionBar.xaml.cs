@@ -14,13 +14,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Extensions.Logging;
 
 namespace Powershell
 {
     /// <summary>
     /// Interaction logic for ShowActionBar.xaml
     /// </summary>
-    public partial class ShowActionBar : Window
+    public partial class ShowActionBar : Window, ILogger, IDisposable
     {
         public ActionBarStatus timeNow = new ActionBarStatus("Time");
 
@@ -57,7 +58,9 @@ namespace Powershell
                 ? config.LoadConfiguration()
                 : config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
-            this.addonThread = new WowData(colorReader, frames);
+            
+
+            this.addonThread = new WowData(colorReader, frames, this);
 
             Record_Click(this, new RoutedEventArgs());
         }
@@ -107,6 +110,28 @@ namespace Powershell
         {
 
             RefreshData();
+        }
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+            //throw new NotImplementedException();
+        }
+
+        bool ILogger.IsEnabled(LogLevel logLevel)
+        {
+            return false;
+            //throw new NotImplementedException();
+        }
+
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return this;
+            //throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }

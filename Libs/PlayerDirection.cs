@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -12,11 +13,13 @@ namespace Libs
         private WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         public DateTime LastSetDirection { get; private set; } = DateTime.Now.AddDays(-1);
+        private ILogger logger;
 
-        public PlayerDirection(PlayerReader playerReader, WowProcess wowProcess)
+        public PlayerDirection(PlayerReader playerReader, WowProcess wowProcess, ILogger logger)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
+            this.logger = logger;
         }
 
         public async Task SetDirection(double desiredDirection,WowPoint point, string source)
@@ -24,12 +27,12 @@ namespace Libs
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, point);
 
-            Debug.WriteLine("===============");
-            Debug.WriteLine($"SetDirection:- {source} Desired: {desiredDirection.ToString("0.000")}, Current: {playerReader.Direction.ToString("0.000")}, distance: {distance.ToString("0.000")}");
+            logger.LogInformation("===============");
+            logger.LogInformation($"SetDirection:- {source} Desired: {desiredDirection.ToString("0.000")}, Current: {playerReader.Direction.ToString("0.000")}, distance: {distance.ToString("0.000")}");
 
             if (distance < 40)
             {
-                Debug.WriteLine("Too close, ignoring direction change.");
+                logger.LogInformation("Too close, ignoring direction change.");
                 return;
             }
 
@@ -50,7 +53,7 @@ namespace Libs
 
                 if (closeEnoughToDesiredDirection)
                 {
-                    Debug.WriteLine("Close enough, stopping turn");
+                    logger.LogInformation("Close enough, stopping turn");
                     wowProcess.SetKeyState(key, false);
                     break;
                 }
@@ -58,7 +61,7 @@ namespace Libs
                 bool goingTheWrongWay = GetDirectionKeyToPress(desiredDirection) != key;
                 if (goingTheWrongWay)
                 {
-                    Debug.WriteLine("GOING THE WRONG WAY!");
+                    logger.LogInformation("GOING THE WRONG WAY! Stop turn");
                     wowProcess.SetKeyState(key, false);
                     break;
                 }
@@ -78,7 +81,7 @@ namespace Libs
 
             if (text != lastText)
             {
-                Debug.WriteLine(text);
+                //logger.LogInformation(text);
             }
 
             lastText = text;

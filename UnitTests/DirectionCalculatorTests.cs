@@ -1,5 +1,8 @@
-﻿using Libs;
+﻿
+using Libs;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -26,7 +29,8 @@ namespace UnitTests
 
         public void Test(double x, double y, double direction)
         {
-            var dc = new DirectionCalculator();
+            var logger = new Mock<ILogger>();
+            var dc = new DirectionCalculator(logger.Object);
             var target = new WowPoint(6.1899999999999995, 5.4147);
 
             var calcdirection = dc.CalculateHeading(new WowPoint(x, y), target);

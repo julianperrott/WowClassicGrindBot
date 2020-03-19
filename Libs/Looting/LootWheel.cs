@@ -1,4 +1,5 @@
 ﻿using Libs.Cursor;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,15 +16,17 @@ namespace Libs.Looting
         private readonly float dtheta;
         private readonly Point centre;
         private readonly bool debug = true;
+        private ILogger logger;
 
         public CursorClassification Classification { get; set; }
 
         private Point lastLootFoundAt;
 
-        public LootWheel(WowProcess wowProcess, PlayerReader playerReader)
+        public LootWheel(WowProcess wowProcess, PlayerReader playerReader, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
+            this.logger = logger;
 
             var rect = wowProcess.GetWindowRect();
 
@@ -36,7 +39,7 @@ namespace Libs.Looting
         {
             if (debug)
             {
-                Debug.WriteLine($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{this.GetType().Name}: {text}");
             }
         }
 
@@ -52,12 +55,12 @@ namespace Libs.Looting
             }
             if (await CheckForLoot(this.lastLootFoundAt, searchForMobs))
             {
-                Debug.WriteLine($"Loot at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
+                logger.LogInformation($"Loot at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
                 return true;
             }
             else
             {
-                Debug.WriteLine($"No loot at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
+                logger.LogInformation($"No loot at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
             }
 
             if (!searchForMobs)
@@ -148,7 +151,7 @@ namespace Libs.Looting
             if (cls == CursorClassification.Loot || cls == CursorClassification.Skin)
             {
                 lastLootFoundAt = mousePosition;
-                Debug.WriteLine($"Loot found at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
+                logger.LogInformation($"Loot found at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
             }
 
             if (searchForMobs)
@@ -165,7 +168,7 @@ namespace Libs.Looting
             {
                 if (!isInCombat & this.playerReader.PlayerBitValues.PlayerInCombat)
                 {
-                    Debug.WriteLine("We have enterred combat, aborting loot");
+                    logger.LogInformation("We have enterred combat, aborting loot");
                     return;
                 }
 

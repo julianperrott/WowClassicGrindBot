@@ -1,5 +1,6 @@
 ﻿using Libs.GOAP;
 using Libs.NpcFinder;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,13 +15,15 @@ namespace Libs.Actions
         private readonly PlayerReader playerReader;
         private readonly NpcNameFinder npcNameFinder;
         private readonly StopMoving stopMoving;
+        private ILogger logger;
 
-        public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving)
+        public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.npcNameFinder = npcNameFinder;
             this.stopMoving = stopMoving;
+            this.logger = logger;
 
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.hastarget, true);
@@ -35,11 +38,11 @@ namespace Libs.Actions
         {
             RaiseEvent(new ActionEvent(GoapKey.fighting, true));
 
-            Debug.WriteLine($"Stop approach");
+            logger.LogInformation($"Stop approach");
             await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
 
 
-            Debug.WriteLine($"Can shoot gun: {playerReader.SpellInRange.Warrior_ShootGun}");
+            logger.LogInformation($"Can shoot gun: {playerReader.SpellInRange.Warrior_ShootGun}");
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
@@ -61,7 +64,7 @@ namespace Libs.Actions
         public async Task<bool> Pull()
         {
             var npcCount = this.npcNameFinder.CountNpc();
-            Debug.WriteLine($"Npc count = {npcCount}");
+            logger.LogInformation($"Npc count = {npcCount}");
 
             bool pulled = false;
 
@@ -79,7 +82,7 @@ namespace Libs.Actions
         {
             if (playerReader.SpellInRange.Warrior_Charge && npcCount < 2)
             {
-                Debug.WriteLine($"Charging");
+                logger.LogInformation($"Charging");
                 await this.wowProcess.KeyPress(ConsoleKey.D1, 401);
                 return true;
             }
@@ -87,10 +90,10 @@ namespace Libs.Actions
             if (playerReader.SpellInRange.Warrior_ShootGun && npcCount > 1)
             {
                 // stop approach
-                Debug.WriteLine($"Stop approach");
+                logger.LogInformation($"Stop approach");
                 await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
 
-                Debug.WriteLine($"Shooting Gun");
+                logger.LogInformation($"Shooting Gun");
                 await Task.Delay(300);
                 await this.wowProcess.KeyPress(ConsoleKey.D9, 1000);
 
@@ -115,10 +118,10 @@ namespace Libs.Actions
             if (playerReader.SpellInRange.Rogue_Throw)
             {
                 // stop approach
-                Debug.WriteLine($"Stop approach");
+                logger.LogInformation($"Stop approach");
                 await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
 
-                Debug.WriteLine($"Throwing Knife");
+                logger.LogInformation($"Throwing Knife");
                 await Task.Delay(300);
                 await this.wowProcess.KeyPress(ConsoleKey.D9, 1000);
 

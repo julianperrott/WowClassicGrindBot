@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,10 +10,11 @@ namespace Libs.Actions
 {
     public class RogueCombatAction : CombatActionBase
     {
-        public RogueCombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving) : base(wowProcess, playerReader, stopMoving)
+        public RogueCombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger) : base(wowProcess, playerReader, stopMoving, logger)
         {
         }
 
+        private ConsoleKey Approach => !IsOnCooldown(ConsoleKey.H, 5) ? ConsoleKey.H : ConsoleKey.Escape;
         private ConsoleKey SinisterStrike => actionBar.HotKey2 ? ConsoleKey.D2 : ConsoleKey.Escape;
         private ConsoleKey SliceAndDice => actionBar.HotKey3 && !IsOnCooldown(ConsoleKey.D3, 20) ? ConsoleKey.D3 : ConsoleKey.Escape;
         private ConsoleKey Eviscerate => actionBar.HotKey4&& !IsOnCooldown(ConsoleKey.D4, 5)? ConsoleKey.D4 : ConsoleKey.Escape;
@@ -34,7 +36,7 @@ namespace Libs.Actions
                 return;
             }
 
-            var key = new List<ConsoleKey> { SliceAndDice, Eviscerate, SinisterStrike }
+            var key = new List<ConsoleKey> { Approach, SliceAndDice, Eviscerate, SinisterStrike }
                 .Where(key => key != ConsoleKey.Escape)
                 .ToList()
                 .FirstOrDefault();
@@ -50,15 +52,24 @@ namespace Libs.Actions
         {
             await PressKey(Vanish);
 
-            await new WowProcess().KeyPress(ConsoleKey.F3, 400); //clear target
+            await  wowProcess.KeyPress(ConsoleKey.F3, 400); //clear target
+
+            //wowProcess.SetKeyState(ConsoleKey.DownArrow,true); //walk backwards
+
             for (int i = 0; i < 30; i++)
             {
                 await Task.Delay(1000);
                 if (playerReader.PlayerBitValues.PlayerInCombat || playerReader.HealthPercent > 60)
                 {
+                    //wowProcess.SetKeyState(ConsoleKey.DownArrow, false);
                     return;
                 }
+                if (i == 6)
+                {
+                    //wowProcess.SetKeyState(ConsoleKey.DownArrow, false);
+                }
             }
+           // wowProcess.SetKeyState(ConsoleKey.DownArrow, false);
             return;
         }
 
@@ -66,7 +77,7 @@ namespace Libs.Actions
         {
             if (e.Key == GoapKey.newtarget)
             {
-                Debug.WriteLine("Rend reset");
+                logger.LogInformation("Rend reset");
                 LastClicked.Remove(ConsoleKey.D3);
                 LastClicked.Remove(ConsoleKey.D4);
 

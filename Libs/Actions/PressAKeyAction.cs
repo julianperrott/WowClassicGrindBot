@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,16 +12,18 @@ namespace Libs.Actions
     {
         private readonly WowProcess wowProcess;
         private readonly StopMoving stopMoving;
+        private ILogger logger;
         private readonly ConsoleKey key;
         private readonly int secondsCooldown;
         private DateTime LastPressed = DateTime.Now.AddDays(-1);
 
-        public PressAKeyAction(WowProcess wowProcess, StopMoving stopMoving, ConsoleKey key, int secondsCooldown)
+        public PressAKeyAction(WowProcess wowProcess, StopMoving stopMoving, ConsoleKey key, int secondsCooldown, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.stopMoving = stopMoving;
             this.key = key;
             this.secondsCooldown = secondsCooldown;
+            this.logger = logger;
 
             AddPrecondition(GoapKey.incombat, false);
         }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Numerics;
 using Newtonsoft.Json;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace Libs.Actions
 {
@@ -23,6 +24,8 @@ namespace Libs.Actions
         private readonly List<WowPoint> routePoints;
         private Stack<WowPoint> points = new Stack<WowPoint>();
         private Stopwatch LastReachedPoint = new Stopwatch();
+        private Random random = new Random();
+        private ILogger logger;
 
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
@@ -31,7 +34,7 @@ namespace Libs.Actions
             return points.Count == 0 ? null : points.Peek();
         }
 
-        public WalkToCorpseAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection,List<WowPoint> spiritWalker,List<WowPoint> routePoints, StopMoving stopMoving)
+        public WalkToCorpseAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection,List<WowPoint> spiritWalker,List<WowPoint> routePoints, StopMoving stopMoving, ILogger logger)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
@@ -39,6 +42,7 @@ namespace Libs.Actions
             this.stopMoving = stopMoving;
             this.routePoints = routePoints.ToList();
             this.spiritWalkerPath= spiritWalker.ToList();
+            this.logger = logger;
 
             AddPrecondition(GoapKey.isdead, true);
         }
@@ -51,8 +55,8 @@ namespace Libs.Actions
         {
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = DistanceTo(location, CorpseLocation);
-            var heading = new DirectionCalculator().CalculateHeading(location, CorpseLocation);
-            //Debug.WriteLine($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
+            var heading = new DirectionCalculator(logger).CalculateHeading(location, CorpseLocation);
+            //logger.LogInformation($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
         }
 
         private bool NeedsToReset = true;
@@ -88,12 +92,15 @@ namespace Libs.Actions
             if (points.Count == 0)
             {
                 distance = DistanceTo(location, CorpseLocation);
-                heading = new DirectionCalculator().CalculateHeading(location, CorpseLocation);
+                heading = new DirectionCalculator(logger).CalculateHeading(location, CorpseLocation);
+                this.logger.LogInformation("no more points, heading to corpse");
+                await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
+                return;
             }
             else
             {
                 distance = DistanceTo(location, points.Peek());
-                heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
+                heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
             }
 
             if (lastDistance < distance)
@@ -107,15 +114,7 @@ namespace Libs.Actions
                 // stuck so jump
                 if ((DateTime.Now - LastActive).TotalSeconds < 2)
                 {
-                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
-                    Dump("Stuck");
-
-                    if (LastReachedPoint.ElapsedMilliseconds > 1000 * 120)
-                    {
-                        // stuck for 2 minutes
-                        Debug.WriteLine("Stuck for 2 minutes");
-                        RaiseEvent(new ActionEvent(GoapKey.abort, true));
-                    }
+                    await Unstick();
                 }
                 else
                 {
@@ -140,13 +139,13 @@ namespace Libs.Actions
 
             if (distance < 40 && points.Any())
             {
-                Debug.WriteLine($"Move to next point");
+                logger.LogInformation($"Move to next point");
                 LastReachedPoint.Reset();
                 points.Pop();
                 lastDistance = 999;
                 if (points.Count > 0)
                 {
-                    heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
+                    heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
                     await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
                 }
             }
@@ -154,13 +153,19 @@ namespace Libs.Actions
             LastActive = DateTime.Now;
         }
 
+        private async Task Unstick()
+        {
+            await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+            Dump("Stuck");
+        }
+
         public async Task Reset()
         {
-            Debug.WriteLine("Sleeping 10 seconds");
+            logger.LogInformation("Sleeping 10 seconds");
             await Task.Delay(10000);
             while(new List<double> { playerReader.XCoord, playerReader.YCoord, CorpseLocation.X,CorpseLocation.Y }.Max()>100)
             {
-                Debug.WriteLine($"Waiting... odd coords read. Player {playerReader.XCoord},{playerReader.YCoord} corpse { CorpseLocation.X}{CorpseLocation.Y}");
+                logger.LogInformation($"Waiting... odd coords read. Player {playerReader.XCoord},{playerReader.YCoord} corpse { CorpseLocation.X}{CorpseLocation.Y}");
                 await Task.Delay(5000);
             }
 
@@ -267,7 +272,7 @@ namespace Libs.Actions
             y = y * 100;
             var distance = Math.Sqrt((x * x) + (y * y));
 
-            //Debug.WriteLine($"distance:{x} {y} {distance.ToString()}");
+            //logger.LogInformation($"distance:{x} {y} {distance.ToString()}");
             return distance;
         }
 

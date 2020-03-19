@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ namespace Libs.Actions
 {
     public class WarriorCombatAction : CombatActionBase
     {
-        public WarriorCombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving) : base(wowProcess, playerReader, stopMoving)
+        public WarriorCombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger) : base(wowProcess, playerReader, stopMoving, logger)
         {
         }
 
@@ -46,7 +47,7 @@ namespace Libs.Actions
 
         public void ResetRend()
         {
-            Debug.WriteLine("Rend reset");
+            logger.LogInformation("Rend reset");
             LastClicked.Remove(ConsoleKey.D3);
         }
     }

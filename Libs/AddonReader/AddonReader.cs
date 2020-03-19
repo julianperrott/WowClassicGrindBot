@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,23 +17,27 @@ namespace Libs
         private readonly List<DataFrame> frames;
         private readonly IColorReader colorReader;
         public PlayerReader? PlayerReader { get; set; }
+        private ILogger logger;
 
-        public AddonReader(IColorReader colorReader, List<DataFrame> frames, int width, int height)
+        public AddonReader(IColorReader colorReader, List<DataFrame> frames, int width, int height, ILogger logger)
         {
             this.colorReader = colorReader;
             this.frames = frames;
             this.width = width;
             this.height = height;
+            this.logger = logger;
         }
 
         public void Refresh()
         {
             try
             {
-                var bitMap = WowScreen.GetAddonBitmap(this.width, this.height);
-                frames.ForEach(frame => FrameColor[frame.index] = colorReader.GetColorAt(frame.point, bitMap));
+                using (var bitMap = WowScreen.GetAddonBitmap(this.width, this.height))
+                {
+                    frames.ForEach(frame => FrameColor[frame.index] = colorReader.GetColorAt(frame.point, bitMap));
+                }
 
-                //Debug.WriteLine(string.Join(",", frames.Select(frame => ToColor(frame, bitMap))));
+                //logger.LogInformation(string.Join(",", frames.Select(frame => ToColor(frame, bitMap))));
 
                 if (PlayerReader != null)
                 {
@@ -41,7 +46,7 @@ namespace Libs
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                logger.LogInformation(ex.Message);
                 GC.Collect();
             }
         }

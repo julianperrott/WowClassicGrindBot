@@ -1,4 +1,5 @@
-﻿using PInvoke;
+﻿using Microsoft.Extensions.Logging;
+using PInvoke;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,6 +13,7 @@ namespace Libs
         private const UInt32 WM_KEYDOWN = 0x0100;
         private const UInt32 WM_KEYUP = 0x0101;
         private Random random = new Random();
+        private ILogger logger;
 
         private Process _warcraftProcess;
 
@@ -37,8 +39,10 @@ namespace Libs
 
         private DateTime LastIntialised = DateTime.Now.AddHours(-1);
 
-        public WowProcess()
+        public WowProcess(ILogger logger)
         {
+            this.logger = logger;
+
             var process = Get();
             if (process == null)
             {
@@ -82,19 +86,19 @@ namespace Libs
 
         private void KeyDown(ConsoleKey key)
         {
-            Debug.WriteLine($"KeyDown {key}");
+            logger.LogInformation($"KeyDown {key}");
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
         }
 
         private void KeyUp(ConsoleKey key)
         {
-            Debug.WriteLine($"KeyUp {key}");
+            logger.LogInformation($"KeyUp {key}");
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
         }
 
         public async Task KeyPress(ConsoleKey key, int milliseconds)
         {
-            Debug.WriteLine($"KeyPress {key} for {milliseconds}ms");
+            logger.LogInformation($"KeyPress {key} for {milliseconds}ms");
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
             await Delay(milliseconds);
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);

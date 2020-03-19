@@ -1,11 +1,9 @@
-﻿using Libs.Cursor;
-using Libs.GOAP;
+﻿using Libs.GOAP;
 using Libs.NpcFinder;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
@@ -16,12 +14,14 @@ namespace Libs.Actions
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private readonly NpcNameFinder npcNameFinder;
+        private ILogger logger;
 
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
         private DateTime lastNpcSearch = DateTime.Now;
 
-        private bool debug=true;
+        private bool debug = true;
+        private bool playerWasInCombat = false;
 
         private Point mouseLocationOfAdd;
 
@@ -29,16 +29,17 @@ namespace Libs.Actions
         {
             if (debug)
             {
-                Debug.WriteLine($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{this.GetType().Name}: {text}");
             }
         }
 
-        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, NpcNameFinder npcNameFinder)
+        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, NpcNameFinder npcNameFinder, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
             this.npcNameFinder = npcNameFinder;
+            this.logger = logger;
 
             AddPrecondition(GoapKey.inmeleerange, false);
             AddPrecondition(GoapKey.hastarget, true);
@@ -54,17 +55,33 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            var location = playerReader.PlayerLocation;
-
-            if (SecondsSinceLastFighting > 10)
-            {
-                await CheckForNpcFollowingMe();
-            }
+            //logger.LogInformation($"ApproachTargetAction: Incombat={playerReader.PlayerBitValues.PlayerInCombat}, WasInCombat={playerWasInCombat}");
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
                 await wowProcess.Mount();
             }
+
+            var location = playerReader.PlayerLocation;
+
+            if (!playerReader.PlayerBitValues.PlayerInCombat)
+            {
+                playerWasInCombat = false;
+            }
+            else
+            {
+                // we are in combat
+                if (!playerWasInCombat)
+                {
+                    playerWasInCombat = true;
+                    logger.LogInformation("Looks like we have an add on approach");
+                    await this.stopMoving.Stop();
+                    await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 490);
+                    await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
+                    return;
+                }
+            }
+
             await this.wowProcess.KeyPress(ConsoleKey.H, 501);
 
             var newLocation = playerReader.PlayerLocation;
@@ -77,24 +94,11 @@ namespace Libs.Actions
             await RandomJump();
         }
 
-        private async Task CheckForNpcFollowingMe()
-        {
-            wowProcess.SetCursorPosition(mouseLocationOfAdd);
-            CursorClassifier.Classify(out var cls);
-            if (cls == CursorClassification.Kill)
-            {
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
-                Log("We are being attacked, switching target");
-                await wowProcess.LeftClickMouse(mouseLocationOfAdd);
-                await Task.Delay(1500);
-            }
-        }
-
         private async Task RandomJump()
         {
             if ((DateTime.Now - LastJump).TotalSeconds > 10)
             {
-                if (random.Next(1)==0)
+                if (random.Next(1) == 0)
                 {
                     await wowProcess.KeyPress(ConsoleKey.Spacebar, 498);
                 }
@@ -102,8 +106,7 @@ namespace Libs.Actions
             }
         }
 
-
-        DateTime lastFighting = DateTime.Now;
+        private DateTime lastFighting = DateTime.Now;
 
         public override void OnActionEvent(object sender, ActionEvent e)
         {

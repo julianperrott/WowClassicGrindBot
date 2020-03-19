@@ -52,10 +52,16 @@ namespace ImageFilter
 
         private void OnTimedEvent(object sender, ElapsedEventArgs e)
         {
+            if (directImage!=null)
+            {
+                return;
+            }
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
             directImage = new DirectBitmap(1920, 1080);
+
             directImage.CaptureScreen();
             var npcFinder = new NPCFinder();
             var npc = npcFinder.GetNpcs(directImage);
@@ -90,9 +96,15 @@ namespace ImageFilter
                 SetCursorPosition(screenCoord);
             }
 
-            Application.Current.Dispatcher.Invoke(new Action(() => { this.Screenshot.Source = directImage.ToBitmapImage(); }));
-            Application.Current.Dispatcher.Invoke(new Action(() => { this.Screenshot2.Source = bitmap.ToBitmapImage(); }));
-            Application.Current.Dispatcher.Invoke(new Action(() => { Duration.Content = "Duration: " + stopwatch.ElapsedMilliseconds + "ms"; }));
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                this.Screenshot.Source = directImage.ToBitmapImage();
+                this.Screenshot2.Source = bitmap.ToBitmapImage();
+                Duration.Content = "Duration: " + stopwatch.ElapsedMilliseconds + "ms";
+                directImage.Dispose();
+                directImage = null;
+            }));
+
         }
 
         public void SetCursorPosition(System.Drawing.Point position)

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using Microsoft.Extensions.Logging;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Libs
@@ -6,11 +7,12 @@ namespace Libs
     public class BotController
     {
         public WowData WowData { get; set; }
+        public Thread? screenshotThread;
         public Thread addonThread;
         public Thread? botThread;
         public Bot WowBot;
 
-        public BotController()
+        public BotController(ILogger logger)
         {
             var colorReader = new WowScreen();
 
@@ -20,17 +22,27 @@ namespace Libs
                 ? config.LoadConfiguration()
                 : config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
-            WowData = new WowData(colorReader, frames);
-            addonThread = new Thread(WowData.DoWork);
+            WowData = new WowData(colorReader, frames, logger);
+            addonThread = new Thread(AddonRefreshThread);
             addonThread.Start();
 
-            WowBot = new Bot(WowData);
-            
+            WowBot = new Bot(WowData, logger);
         }
 
-        public void DoWork()
+        public void AddonRefreshThread()
         {
-            Task.Factory.StartNew(() => WowBot.DoWork());
+            while (this.WowData.Active)
+            {
+                this.WowData.AddonRefresh();
+            }
+        }
+
+        public void ScreenshotRefreshThread()
+        {
+            while (this.WowBot.Active)
+            {
+                this.WowBot.DoScreenshot();
+            }
         }
 
         public void ToggleBotStatus()
@@ -38,8 +50,11 @@ namespace Libs
             if (!WowBot.Active)
             {
                 WowBot.Active = true;
-                botThread = new Thread(DoWork);
+                botThread = new Thread(()=> Task.Factory.StartNew(() => WowBot.DoWork()));
                 botThread.Start();
+
+                screenshotThread = new Thread(ScreenshotRefreshThread);
+                screenshotThread.Start();
             }
             else
             {

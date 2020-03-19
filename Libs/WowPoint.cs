@@ -53,7 +53,7 @@ namespace Libs
             y = y * 100;
             var distance = Math.Sqrt((x * x) + (y * y));
 
-            //Debug.WriteLine($"distance:{x} {y} {distance.ToString()}");
+            //logger.LogInformation($"distance:{x} {y} {distance.ToString()}");
             return distance;
         }
     }

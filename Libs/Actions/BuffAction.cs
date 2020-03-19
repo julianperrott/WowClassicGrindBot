@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,14 +13,17 @@ namespace Libs.Actions
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
+        private ILogger logger;
+
 
         private DateTime LastBuffed = DateTime.Now.AddDays(-1);
 
-        public BuffAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
+        public BuffAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
+            this.logger = logger;
 
             AddPrecondition(GoapKey.incombat, false);
         }
@@ -30,7 +34,7 @@ namespace Libs.Actions
         {
             await this.stopMoving.Stop();
 
-            Debug.WriteLine("Sharening weapon");
+            logger.LogInformation("Sharening weapon");
             await wowProcess.KeyPress(ConsoleKey.F1, 500);
 
             for (int i = 0; i < 7; i++)

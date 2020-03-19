@@ -1,5 +1,6 @@
 ﻿using Libs.GOAP;
 using Libs.Looting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -13,17 +14,19 @@ namespace Libs.Actions
         private readonly LootWheel lootWheel;
         private readonly StopMoving stopMoving;
         private readonly BagReader bagReader;
+        private ILogger logger;
 
         private bool debug = true;
 
-        public LootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving)
+        public LootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
             this.bagReader = bagReader;
+            this.logger = logger;
 
-            lootWheel = new LootWheel(wowProcess, playerReader);
+            lootWheel = new LootWheel(wowProcess, playerReader, logger);
 
             AddPreconditions();
         }
@@ -38,7 +41,7 @@ namespace Libs.Actions
         {
             if (debug)
             {
-                Debug.WriteLine($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{this.GetType().Name}: {text}");
             }
         }
 
@@ -111,6 +114,7 @@ namespace Libs.Actions
                     {
                         if (lootWheel.Classification == Cursor.CursorClassification.Kill)
                         {
+                            await wowProcess.KeyPress(ConsoleKey.H, 501);
                             Log($"Kill something !");
                             return;
                         }
@@ -144,7 +148,7 @@ namespace Libs.Actions
             if (bagReader.BagsFull)
             //if (bagReader.bagItems.Count > 52)
             {
-                Debug.WriteLine("bags full");
+                logger.LogInformation("bags full");
                //RaiseEvent(new ActionEvent(GoapKey.abort, true));
             }
 

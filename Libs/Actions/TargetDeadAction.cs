@@ -1,6 +1,7 @@
 ﻿using Libs.GOAP;
 using Libs.Looting;
 using Libs.NpcFinder;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -14,14 +15,16 @@ namespace Libs.Actions
         private readonly LootWheel lootWheel;
         private bool debug = true;
         private readonly NpcNameFinder npcFinder;
+        private ILogger logger;
 
-        public TargetDeadAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcFinder)
+        public TargetDeadAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcFinder, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.npcFinder = npcFinder;
+            this.logger = logger;
 
-            lootWheel = new LootWheel(wowProcess, playerReader);
+            lootWheel = new LootWheel(wowProcess, playerReader, logger);
 
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, false);
@@ -31,7 +34,7 @@ namespace Libs.Actions
         {
             if (debug)
             {
-                Debug.WriteLine($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{this.GetType().Name}: {text}");
             }
         }
 

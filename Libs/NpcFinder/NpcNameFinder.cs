@@ -1,5 +1,6 @@
 ﻿using Libs.Actions;
 using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,13 +14,15 @@ namespace Libs.NpcFinder
         public List<LineOfNpcName> npcNameLine { get; set; } = new List<LineOfNpcName>();
         public List<List<LineOfNpcName>> npcs { get; set; } = new List<List<LineOfNpcName>>();
 
+        private ILogger logger;
         private readonly WowProcess wowProcess;
         private bool canFindNpcs = true;
         private DateTime pausedUntil = DateTime.Now;
 
-        public NpcNameFinder(WowProcess wowProcess)
+        public NpcNameFinder(WowProcess wowProcess, ILogger logger)
         {
             this.wowProcess = wowProcess;
+            this.logger = logger;
         }
 
         public async Task FindAndClickNpc(int threshold)
@@ -27,55 +30,59 @@ namespace Libs.NpcFinder
             if (!canFindNpcs) { return; }
 
             var rect = wowProcess.GetWindowRect();
-            DirectBitmap screenshot;
-            screenshot = new DirectBitmap(rect.right, rect.bottom);
-            screenshot.CaptureScreen();
-            var npc = GetClosestNpc(screenshot); 
-
-            if (npc != null)
+            using (DirectBitmap screenshot = new DirectBitmap(rect.right, rect.bottom))
             {
-                var firstLine = npc.First();
-                if (npc.Count >= threshold)
+                screenshot.CaptureScreen();
+
+                var npc = GetClosestNpc(screenshot);
+
+                if (npc != null)
                 {
-                    if (DateTime.Now > pausedUntil)
+                    var firstLine = npc.First();
+                    if (npc.Count >= threshold)
                     {
-                        await this.wowProcess.LeftClickMouse(screenshot.ToScreenCoordinates(firstLine.X, firstLine.Y + 35));
-                        Debug.WriteLine($"{ this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
-                        await Task.Delay(300);
+                        if (DateTime.Now > pausedUntil)
+                        {
+                            await this.wowProcess.LeftClickMouse(screenshot.ToScreenCoordinates(firstLine.X, firstLine.Y + 35));
+                            logger.LogInformation($"{ this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
+                            await Task.Delay(300);
+                        }
+                        else
+                        {
+                            logger.LogInformation($"Paused until {pausedUntil.ToLongTimeString()}- { this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
+                        }
                     }
                     else
                     {
-                        Debug.WriteLine($"Paused until {pausedUntil.ToLongTimeString()}- { this.GetType().Name}: NPC found! Height={npc.Count}, width={firstLine.Length}");
+                        logger.LogInformation($"{ this.GetType().Name}: NPC found but below threshold {threshold}! Height={npc.Count}, width={firstLine.Length}");
                     }
                 }
                 else
                 {
-                    Debug.WriteLine($"{ this.GetType().Name}: NPC found but below threshold {threshold}! Height={npc.Count}, width={firstLine.Length}");
+                    logger.LogInformation($"{ this.GetType().Name}: NO NPC found!");
                 }
-            }
-            else
-            {
-                Debug.WriteLine($"{ this.GetType().Name}: NO NPC found!");
             }
         }
 
         internal void StopFindingNpcs(int seconds)
         {
            pausedUntil = DateTime.Now.AddSeconds(seconds);
-            Debug.WriteLine($"Pause set until {pausedUntil.ToLongTimeString()}");
+            logger.LogInformation($"Pause set until {pausedUntil.ToLongTimeString()}");
         }
 
         public int CountNpc(int threshold = 3)
         {
             var rect = wowProcess.GetWindowRect();
-            var screenshot = new DirectBitmap(rect.right, rect.bottom);
-            screenshot.CaptureScreen();
-            var npc = GetClosestNpc(screenshot);
+            using (var screenshot = new DirectBitmap(rect.right, rect.bottom))
+            {
+                screenshot.CaptureScreen();
+                var npc = GetClosestNpc(screenshot);
 
-            var count = npcs.Where(c => c.Count > threshold).Count();
-            Debug.WriteLine($"> NPCs count: {count}");
+                var count = npcs.Where(c => c.Count > threshold).Count();
+                logger.LogInformation($"> NPCs count: {count}");
 
-            return count;
+                return count;
+            }
         }
 
         public List<LineOfNpcName>? GetClosestNpc(DirectBitmap directImage)
@@ -91,7 +98,7 @@ namespace Libs.NpcFinder
             var npcsInOrder = npcs.OrderByDescending(npc => npc.Count);
 
             var info = string.Join(", ", npcsInOrder.Select(n => n.Count.ToString() + $"({n.First().X},{n.First().Y})"));
-            Debug.WriteLine($"> NPCs found: {info}");
+            logger.LogInformation($"> NPCs found: {info}");
 
             return npcsInOrder.First();
         }
@@ -179,7 +186,7 @@ namespace Libs.NpcFinder
                 if (newValue != this.canFindNpcs)
                 {
                     this.canFindNpcs = (bool)e.Value == false;
-                    Debug.WriteLine($"{this.GetType().Name}: Can find NPC = {this.canFindNpcs}");
+                    logger.LogInformation($"{this.GetType().Name}: Can find NPC = {this.canFindNpcs}");
                 }
             }
         }

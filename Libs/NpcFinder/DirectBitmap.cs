@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -31,6 +33,53 @@ namespace Libs.NpcFinder
             this.BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
             this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
+
+        public string ToBase64()
+        {
+            const int size = 600;
+            //const int quality = 75;
+
+            int width, height;
+            if (Bitmap.Width > Bitmap.Height)
+            {
+                width = size;
+                height = Convert.ToInt32(Bitmap.Height * size / (double)Bitmap.Width);
+            }
+            else
+            {
+                width = Convert.ToInt32(Bitmap.Width * size / (double)Bitmap.Height);
+                height = size;
+            }
+            var resized = new Bitmap(width, height);
+            using (var graphics = Graphics.FromImage(resized))
+            {
+                graphics.CompositingQuality = CompositingQuality.HighSpeed;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.DrawImage(Bitmap, 0, 0, width, height);
+
+                //using (var output = new MemoryStream())
+                //{
+                //    var qualityParamId = Encoder.Quality;
+                //    var encoderParameters = new EncoderParameters(1);
+                //    encoderParameters.Param[0] = new EncoderParameter(qualityParamId, quality);
+                //    var codec = ImageCodecInfo.GetImageDecoders()
+                //        .FirstOrDefault(codec => codec.FormatID == ImageFormat.Jpeg.Guid);
+                //    resized.Save(output, codec, encoderParameters);
+
+                //    byte[] byteImage = output.ToArray();
+                //    return Convert.ToBase64String(byteImage); // Get Base64
+                //}
+            }
+
+            using (System.IO.MemoryStream ms = new MemoryStream())
+            {
+                resized.Save(ms, ImageFormat.Jpeg);
+                byte[] byteImage = ms.ToArray();
+                return Convert.ToBase64String(byteImage); // Get Base64
+            }
+        }
+
 
         public void CaptureScreen()
         {

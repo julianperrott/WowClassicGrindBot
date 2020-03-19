@@ -1,4 +1,5 @@
 ﻿using Libs.Actions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +12,15 @@ namespace Libs.GOAP
 
     public class GoapPlanner
     {
+        private ILogger logger;
+
+
+        public GoapPlanner(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
+
         /**
 		 * Plan what sequence of actions can fulfill the goal.
 		 * Returns null if a plan could not be found, or a list of the actions
@@ -49,7 +59,7 @@ namespace Libs.GOAP
             if (!success)
             {
                 // oh no, we didn't get a plan
-                Debug.WriteLine("NO PLAN");
+                logger.LogInformation("NO PLAN");
 
                 return new Queue<GoapAction>();
             }

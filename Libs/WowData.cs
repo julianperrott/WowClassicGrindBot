@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,49 +18,46 @@ namespace Libs
 
         public event EventHandler? AddonDataChanged;
 
-        public WowData(IColorReader colorReader, List<DataFrame> frames)
+        public WowData(IColorReader colorReader, List<DataFrame> frames, ILogger logger)
         {
             this.frames = frames;
 
             var width = frames.Last().point.X + 1;
             var height = frames.Max(f => f.point.Y) + 1;
-            this.AddonReader = new AddonReader(colorReader, frames, width, height);
+            this.AddonReader = new AddonReader(colorReader, frames, width, height, logger);
 
             this.squareReader = new SquareReader(AddonReader);
 
             this.bagReader = new BagReader(squareReader, 20);
             this.equipmentReader = new EquipmentReader(squareReader, 30);
-            this.PlayerReader = new PlayerReader(squareReader);
+            this.PlayerReader = new PlayerReader(squareReader, logger);
 
             this.AddonReader.PlayerReader = this.PlayerReader;
         }
 
-        public void DoWork()
+        private int seq = 0;
+
+        public void AddonRefresh()
         {
-            var seq = 0;
+            AddonReader.Refresh();
 
-            while (this.Active)
+            // 20 - 29
+            var bagItems = bagReader.Read();
+
+            // 30 - 31
+            var equipment = equipmentReader.Read();
+
+            //logger.LogInformation($"X: {PlayerReader.XCoord.ToString("0.00")}, Y: {PlayerReader.YCoord.ToString("0.00")}, Direction: {PlayerReader.Direction.ToString("0.00")}, Zone: {PlayerReader.Zone}, Gold: {PlayerReader.Gold}");
+
+            //logger.LogInformation($"Enabled: {PlayerReader.ActionBarEnabledAction.value}, NotEnoughMana: {PlayerReader.ActionBarNotEnoughMana.value}, NotOnCooldown: {PlayerReader.ActionBarNotOnCooldown.value}, Charge: {PlayerReader.SpellInRange.Charge}, Rend: {PlayerReader.SpellInRange.Rend}, Shoot gun: {PlayerReader.SpellInRange.ShootGun}");
+            seq++;
+
+            if (seq >= 10)
             {
-                AddonReader.Refresh();
-
-                // 20 - 29
-                var bagItems = bagReader.Read();
-
-                // 30 - 31
-                var equipment = equipmentReader.Read();
-
-                //Debug.WriteLine($"X: {PlayerReader.XCoord.ToString("0.00")}, Y: {PlayerReader.YCoord.ToString("0.00")}, Direction: {PlayerReader.Direction.ToString("0.00")}, Zone: {PlayerReader.Zone}, Gold: {PlayerReader.Gold}");
-
-                //Debug.WriteLine($"Enabled: {PlayerReader.ActionBarEnabledAction.value}, NotEnoughMana: {PlayerReader.ActionBarNotEnoughMana.value}, NotOnCooldown: {PlayerReader.ActionBarNotOnCooldown.value}, Charge: {PlayerReader.SpellInRange.Charge}, Rend: {PlayerReader.SpellInRange.Rend}, Shoot gun: {PlayerReader.SpellInRange.ShootGun}");
-                seq++;
-
-                if (seq == 10)
-                {
-                    seq = 0;
-                    AddonDataChanged?.Invoke(AddonReader, new EventArgs());
-                }
-                System.Threading.Thread.Sleep(10);
+                seq = 0;
+                AddonDataChanged?.Invoke(AddonReader, new EventArgs());
             }
+            System.Threading.Thread.Sleep(10);
         }
     }
 }

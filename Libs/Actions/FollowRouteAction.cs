@@ -9,6 +9,7 @@ using System.Numerics;
 using Libs.NpcFinder;
 using System.Runtime.InteropServices;
 using PInvoke;
+using Microsoft.Extensions.Logging;
 
 namespace Libs.Actions
 {
@@ -34,10 +35,11 @@ namespace Libs.Actions
         private DateTime lastTab = DateTime.Now;
         private readonly List<string> blacklist;
         private bool shouldMount = true;
+        private ILogger logger;
 
         private Stopwatch LastReachedPoint = new Stopwatch();
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, List<string> blacklist)
+        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, List<string> blacklist, ILogger logger)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
@@ -46,6 +48,7 @@ namespace Libs.Actions
             this.pointsList = points;
             this.npcNameFinder = npcNameFinder;
             this.blacklist = blacklist;
+            this.logger = logger;
 
             AddPrecondition(GoapKey.incombat, false);
         }
@@ -70,8 +73,8 @@ namespace Libs.Actions
         {
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, points.Peek());
-            var heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
-            //Debug.WriteLine($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
+            var heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
+            //logger.LogInformation($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
         }
 
         public override void OnActionEvent(object sender, ActionEvent e)
@@ -116,7 +119,7 @@ namespace Libs.Actions
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, points.Peek());
-            var heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
+            var heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
 
             if (lastDistance < distance)
             {
@@ -130,20 +133,12 @@ namespace Libs.Actions
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
-                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 502);
-                    Debug.WriteLine("Stuck");
-
-                    if (LastReachedPoint.ElapsedMilliseconds > 1000 * 120)
-                    {
-                        // stuck for 2 minutes
-                        Debug.WriteLine("Stuck for 2 minutes");
-                        RaiseEvent(new ActionEvent(GoapKey.abort, true));
-                    }
+                    await Unstick();
                 }
                 else
                 {
                     await Task.Delay(1000);
-                    Debug.WriteLine("Resuming movement");
+                    logger.LogInformation("Resuming movement");
                 }
             }
             else // distance closer
@@ -164,7 +159,7 @@ namespace Libs.Actions
 
             if (distance < 50)
             {
-                Debug.WriteLine($"Move to next point");
+                logger.LogInformation($"Move to next point");
                 LastReachedPoint.Reset();
                 points.Pop();
                 lastDistance = 999;
@@ -173,7 +168,7 @@ namespace Libs.Actions
                     RefillPoints();
                 }
 
-                heading = new DirectionCalculator().CalculateHeading(location, points.Peek());
+                heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
                 await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
             }
 
@@ -186,7 +181,7 @@ namespace Libs.Actions
 
                 if (this.npcNameFinder.CountNpc(0) == 0)
                 {
-                    Debug.WriteLine("Mounting if level >=40 no NPC in sight");
+                    logger.LogInformation("Mounting if level >=40 no NPC in sight");
                     if (this.playerReader.Level >= 40)
                     {
                         await wowProcess.Mount();
@@ -195,7 +190,7 @@ namespace Libs.Actions
                 }
                 else
                 {
-                    Debug.WriteLine("Not mounting as can see NPC");
+                    logger.LogInformation("Not mounting as can see NPC");
                 }
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
             }
@@ -232,12 +227,12 @@ namespace Libs.Actions
             if (WowPoint.DistanceTo(newPoint, points.Peek()) >= 4)
             {
                 points.Push(newPoint);
-                Debug.WriteLine($"Adjusted resume point");
+                logger.LogInformation($"Adjusted resume point");
                 return false;
             }
             else
             {
-                Debug.WriteLine($"Skipped next point in path");
+                logger.LogInformation($"Skipped next point in path");
                 // skiped next point
                 return true;
             }
@@ -249,7 +244,7 @@ namespace Libs.Actions
             {
                 if (random.Next(1) == 0 && HasBeenActiveRecently())
                 {
-                    Debug.WriteLine($"Random jump");
+                    logger.LogInformation($"Random jump");
 
                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 499);
                 }
@@ -290,5 +285,40 @@ namespace Libs.Actions
                 return A + AB * distance;
             }
         }
+
+        private async Task Unstick()
+        {
+            await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+            Dump("Stuck");
+
+            int stuckSeconds = (int)(LastReachedPoint.ElapsedMilliseconds / 1000);
+
+            if (stuckSeconds > 240)
+            {
+                // stuck for 4 minutes
+                logger.LogInformation("Stuck for 4 minutes");
+                RaiseEvent(new ActionEvent(GoapKey.abort, true));
+            }
+
+            if (stuckSeconds > 30)
+            {
+                // stuck for 30 seconds
+                logger.LogInformation("Stuck for over 90 seconds");
+                var r = random.Next(0, 100);
+                if (r<25)
+                {
+                    wowProcess.SetKeyState(ConsoleKey.Q, true);
+                    await Task.Delay(5 * 1000);
+                    wowProcess.SetKeyState(ConsoleKey.Q, false);
+                }
+                else if(r > 75)
+                {
+                    wowProcess.SetKeyState(ConsoleKey.E, true);
+                    await Task.Delay(5 * 1000);
+                    wowProcess.SetKeyState(ConsoleKey.E, false);
+                }
+            }
+        }
+
     }
 }

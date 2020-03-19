@@ -1,2 +1,41 @@
 ﻿@page "/counter"
-    <h1>Hello, world!</h1>
+@inject Libs.BotController botController
+
+
+<h1>Wowbot</h1>
+
+<p>Screenshot</p>
+
+<img src="data:image/png;base64, @image" alt="Red dot" />
+<h3>@eventTime</h3>
+
+@code {
+    string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+    string eventTime = "";
+
+    protected override void OnInitialized()
+    {
+        // Subscription to table record change events
+        this.botController.WowBot.OnScreenChanged -= this.ImageChanged;
+        this.botController.WowBot.OnScreenChanged += this.ImageChanged;
+    }
+
+    // The event handler, will update the HTML view according to new stock value
+    private async void ImageChanged(object sender, Libs.ScreenChangeEventArgs args)
+    {
+        this.image = args.Screenshot;
+        this.eventTime = args.EventTime.ToString("HH:mm:ss");
+
+        await InvokeAsync(() =>
+        {
+            base.StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        this.botController.WowBot.OnScreenChanged -= this.ImageChanged;
+    }
+
+
+}

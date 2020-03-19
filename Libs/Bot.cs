@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Libs.NpcFinder;
+using Microsoft.Extensions.Logging;
 
 namespace Libs
 {
@@ -24,65 +25,81 @@ namespace Libs
         public readonly FollowRouteAction followRouteAction;
         public readonly WalkToCorpseAction walkToCorpseAction;
         public readonly NpcNameFinder npcNameFinder;
-        private List<string> blacklist = new List<string> { "THORKA", "ZARICO" };
+        private ILogger logger;
+        private List<string> blacklist = new List<string> { "THORKA", "ZARICO", "SHADOW" };
+
+        public delegate void ScreenChangeDelegate(object sender, ScreenChangeEventArgs args);
+        public event ScreenChangeDelegate? OnScreenChanged;
 
         public readonly RouteInfo RouteInfo;
 
         public bool Active { get; set; }
 
-        public Bot(WowData wowData)
+        public Bot(WowData wowData, ILogger logger)
         {
+            this.logger = logger;
             this.wowData = wowData;
-            this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist);
+            this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist, logger);
 
             var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44.json");
             var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
 
-            var pathPoints = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
+            var pathPoints2 = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
 
-            //var pathPoints = new List<WowPoint>();
-            //for (int i=0;i< pathPoints2.Count;i+=2)
-            //{
-            //    if (i < pathPoints2.Count)
-            //    {
-            //        pathPoints.Add(pathPoints2[i]);
-            //    }
-            //}
+            var pathPoints = new List<WowPoint>();
+            for (int i = 0; i < pathPoints2.Count; i += 2)
+            {
+                if (i < pathPoints2.Count)
+                {
+                    pathPoints.Add(pathPoints2[i]);
+                }
+            }
 
             pathPoints.Reverse();
             var spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
 
-            this.playerDirection = new PlayerDirection(wowData.PlayerReader, GetWowProcess);
-            this.stopMoving = new StopMoving(GetWowProcess, wowData.PlayerReader);
-            this.npcNameFinder = new NpcNameFinder(GetWowProcess);
-            this.followRouteAction = new FollowRouteAction(wowData.PlayerReader, GetWowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist);
-            this.walkToCorpseAction = new WalkToCorpseAction(wowData.PlayerReader, GetWowProcess, playerDirection, spiritPath, pathPoints, stopMoving);
+            this.playerDirection = new PlayerDirection(wowData.PlayerReader, GetWowProcess, logger);
+            this.stopMoving = new StopMoving(GetWowProcess, wowData.PlayerReader, logger);
+            this.npcNameFinder = new NpcNameFinder(GetWowProcess, logger);
+            this.followRouteAction = new FollowRouteAction(wowData.PlayerReader, GetWowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist, logger);
+            this.walkToCorpseAction = new WalkToCorpseAction(wowData.PlayerReader, GetWowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger);
 
             this.RouteInfo = new RouteInfo(pathPoints, spiritPath, this.followRouteAction, this.walkToCorpseAction);
         }
 
-        public async Task DoWork()
+        internal void DoScreenshot()
+        {
+            var rect = GetWowProcess.GetWindowRect();
+            using (var screenshot = new DirectBitmap(rect.right, rect.bottom))
+            {
+                screenshot.CaptureScreen();
+                this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(screenshot.ToBase64()));
+                Thread.Sleep(500);
+            }
+        }
+
+            public async Task DoWork()
         {
             this.currentAction = followRouteAction;
 
             this.availableActions.Clear();
             this.availableActions.Add(followRouteAction);
-            this.availableActions.Add(new PullTargetAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving));
-            this.availableActions.Add(new ApproachTargetAction(GetWowProcess, wowData.PlayerReader, stopMoving, npcNameFinder));
-            this.availableActions.Add(new LootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving));
-            this.availableActions.Add(new PostKillLootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving));
-            this.availableActions.Add(new HealAction(GetWowProcess, wowData.PlayerReader, stopMoving));
-            this.availableActions.Add(new TargetDeadAction(GetWowProcess, wowData.PlayerReader, npcNameFinder));
+            this.availableActions.Add(new PullTargetAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger));
+            this.availableActions.Add(new ApproachTargetAction(GetWowProcess, wowData.PlayerReader, stopMoving, npcNameFinder, logger));
+            this.availableActions.Add(new LootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
+            this.availableActions.Add(new PostKillLootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
+            this.availableActions.Add(new HealAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+            this.availableActions.Add(new TargetDeadAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, logger));
             this.availableActions.Add(this.walkToCorpseAction);
-            this.availableActions.Add(new UseHealingPotionAction(GetWowProcess, wowData.PlayerReader));
-            this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving));
-            this.availableActions.Add(new PressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F5, 313));
-            this.availableActions.Add(new PressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F6, 3600));
+            this.availableActions.Add(new UseHealingPotionAction(GetWowProcess, wowData.PlayerReader, logger));
+            this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+            this.availableActions.Add(new PressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F5, 313, logger));
+            this.availableActions.Add(new PressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F6, 3600, logger));
 
             this.availableActions.Add(wowData.PlayerReader.PlayerClass switch
             {
-                PlayerClassEnum.Warrior=> new WarriorCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving),
-                PlayerClassEnum.Rogue => new RogueCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving),
+                PlayerClassEnum.Warrior=> new WarriorCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger),
+                PlayerClassEnum.Rogue => new RogueCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger),
                 _ => throw new ArgumentOutOfRangeException("Player class")
             });
 
@@ -105,7 +122,7 @@ namespace Libs
             }
 
             await stopMoving.Stop();
-            Debug.WriteLine("Stopped!");
+            logger.LogInformation("Stopped!");
 
         }
 
@@ -136,15 +153,15 @@ namespace Libs
                     {
                         this.currentAction?.DoReset();
                         this.currentAction = newAction;
-                        Debug.WriteLine("---------------------------------");
-                        Debug.WriteLine($"New Plan= {newAction.GetType().Name}");
+                        logger.LogInformation("---------------------------------");
+                        logger.LogInformation($"New Plan= {newAction.GetType().Name}");
                     }
 
                     await newAction.PerformAction();
                 }
                 else
                 {
-                    Debug.WriteLine($"New Plan= NULL");
+                    logger.LogInformation($"New Plan= NULL");
                     Thread.Sleep(500);
                 }
             }
@@ -159,7 +176,7 @@ namespace Libs
             {
                 if (this.wowProcess == null)
                 {
-                    this.wowProcess = new WowProcess();
+                    this.wowProcess = new WowProcess(logger);
                 }
                 return this.wowProcess;
             }

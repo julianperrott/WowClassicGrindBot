@@ -1,12 +1,20 @@
-﻿namespace Libs
+﻿
+using Microsoft.Extensions.Logging;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+
+namespace Libs
 {
     public partial class PlayerReader
     {
         private readonly ISquareReader reader;
+        private ILogger logger;
 
-        public PlayerReader(ISquareReader reader)
+        public PlayerReader(ISquareReader reader, ILogger logger)
         {
             this.reader = reader;
+            this.logger = logger;
         }
 
         public int Sequence { get; private set; } = 0;
@@ -34,8 +42,8 @@
         internal void Updated()
         {
             Sequence++;
-
-            //Debug.WriteLine($"{SpellInRange.Rogue_SinisterStrike}-{SpellInRange.Rogue_Throw}-{SpellInRange.Rogue_ShootGun}");
+            //logger.LogInformation($"Target is me = {PlayerBitValues.TargetOfTargetIsPlayer}");
+            //logger.LogInformation($"{SpellInRange.Rogue_SinisterStrike}-{SpellInRange.Rogue_Throw}-{SpellInRange.Rogue_ShootGun}");
         }
 
         public long HealthCurrent => reader.GetLongAtCell(11); // Current amount of health of player
@@ -63,6 +71,15 @@
         public long TargetHealth => reader.GetLongAtCell(19);
 
         public bool HasTarget => !string.IsNullOrEmpty(Target) || TargetHealth > 0;
+
+        internal async Task WaitForUpdate()
+        {
+            var s = this.Sequence;
+            while (this.Sequence == s)
+            {
+                await Task.Delay(100);
+            }
+        }
 
         // 32 - 33
         public long Gold => reader.GetLongAtCell(32) + reader.GetLongAtCell(33) * 1000000;

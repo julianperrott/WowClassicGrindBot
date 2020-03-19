@@ -78,14 +78,14 @@ namespace Libs.Cursor
                 }
 
                 var hash = ImageHashing.AverageHash(result);
-                //Debug.WriteLine("Hash: " + hash);
+                //logger.LogInformation("Hash: " + hash);
 
                 var matching = imageHashes.Select(i => (similarity: ImageHashing.Similarity(hash, i.Value), imagehash: i))
                     .OrderByDescending(t => t.similarity)
                     .First();
 
                 classification = matching.imagehash.Key;
-                //System.Diagnostics.Debug.WriteLine(classification);
+                //System.Diagnostics.logger.LogInformation(classification);
                 return result;
             }
             catch

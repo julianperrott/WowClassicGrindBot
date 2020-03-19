@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PInvoke;
+using Serilog;
+using Serilog.Extensions.Logging;
 
 namespace BlazorServer
 {
@@ -20,6 +22,8 @@ namespace BlazorServer
 
         public static void Main(string[] args)
         {
+            Log.Information("Starting blazor server");
+
             CreateHostBuilder(args)
                 .Build()
                 .Run();
@@ -32,6 +36,13 @@ namespace BlazorServer
                 {
                     webBuilder.UseUrls(hostUrl);
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+            .ConfigureLogging((hostingContext, logging) =>
+            {
+                logging.AddConsole();
+                logging.AddDebug();
+                logging.AddEventSourceLogger();
+            });
+            
     }
 }

@@ -2,6 +2,7 @@
 using Libs.Actions;
 using Libs.GOAP;
 using Libs.NpcFinder;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -11,7 +12,7 @@ using System.Text;
 namespace UnitTests.GOAP.GoapPlannerTests
 {
     [TestClass]
-    public class Plan
+    public class Plan: ILogger,IDisposable
     {
         GoapAction followRouteAction = null;
         GoapAction killMobAction = null;
@@ -19,20 +20,24 @@ namespace UnitTests.GOAP.GoapPlannerTests
         GoapAction approachTargetAction = null;
         GoapAction findTargetAction = null;
         HashSet<GoapAction> availableActions;
+        Mock<ILogger> logger;
 
-        HashSet<KeyValuePair<GoapKey, GoapPreCondition>> goal = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
+       HashSet<KeyValuePair<GoapKey, GoapPreCondition>> goal = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
 
         [TestInitialize]
         public void TestInitialize()
         {
-            var playerReader = new PlayerReader(new Mock<ISquareReader>().Object);
-            var stopMoving = new StopMoving(new WowProcess(), playerReader);
-            var npcNameFinder = new NpcNameFinder(new WowProcess());
-            this.followRouteAction = new FollowRouteAction(playerReader, new WowProcess(), new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving, npcNameFinder, new List<string>());
+            logger = new Mock<ILogger>();
+            var wowprocess = new WowProcess(logger.Object);
 
-            this.killMobAction = new WarriorCombatAction(new WowProcess(), playerReader, stopMoving);
-            this.pullTargetAction = new PullTargetAction(new WowProcess(), playerReader, npcNameFinder, stopMoving);
-            this.approachTargetAction = new ApproachTargetAction(new WowProcess(), playerReader, stopMoving, npcNameFinder);
+            var playerReader = new PlayerReader(new Mock<ISquareReader>().Object, this);
+            var stopMoving = new StopMoving(wowprocess, playerReader, logger.Object);
+            var npcNameFinder = new NpcNameFinder(wowprocess, logger.Object);
+            this.followRouteAction = new FollowRouteAction(playerReader, wowprocess, new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving, npcNameFinder, new List<string>(), logger.Object);
+
+            this.killMobAction = new WarriorCombatAction(wowprocess, playerReader, stopMoving, logger.Object);
+            this.pullTargetAction = new PullTargetAction(wowprocess, playerReader, npcNameFinder, stopMoving, logger.Object);
+            this.approachTargetAction = new ApproachTargetAction(wowprocess, playerReader, stopMoving, npcNameFinder, logger.Object);
 
             this.availableActions = new HashSet<GoapAction>
             {
@@ -51,7 +56,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
             var worldState = new HashSet<KeyValuePair<GoapKey, object>>();
 
             // Act
-            var result = new GoapPlanner().Plan(this.availableActions, worldState, this.goal);
+            var result = new GoapPlanner(logger.Object).Plan(this.availableActions, worldState, this.goal);
 
             // Assert
             Assert.AreEqual(0, result.Count);
@@ -70,7 +75,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
             };
 
             // Act
-            var result = new GoapPlanner().Plan(this.availableActions, worldState, this.goal);
+            var result = new GoapPlanner(logger.Object).Plan(this.availableActions, worldState, this.goal);
 
             // Assert
             Assert.AreEqual(1, result.Count);
@@ -91,7 +96,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
             };
 
             // Act
-            var result = new GoapPlanner().Plan(this.availableActions, worldState, this.goal);
+            var result = new GoapPlanner(logger.Object).Plan(this.availableActions, worldState, this.goal);
 
             // Assert
             Assert.AreEqual(1, result.Count);
@@ -112,7 +117,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
             };
 
             // Act
-            var result = new GoapPlanner().Plan(this.availableActions, worldState, this.goal);
+            var result = new GoapPlanner(logger.Object).Plan(this.availableActions, worldState, this.goal);
 
             // Assert
             Assert.AreEqual(1, result.Count);
@@ -133,7 +138,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
             };
 
             // Act
-            var result = new GoapPlanner().Plan(this.availableActions, worldState, this.goal);
+            var result = new GoapPlanner(logger.Object).Plan(this.availableActions, worldState, this.goal);
 
             // Assert
             Assert.AreEqual(1, result.Count);
@@ -154,11 +159,31 @@ namespace UnitTests.GOAP.GoapPlannerTests
             };
 
             // Act
-            var result = new GoapPlanner().Plan(this.availableActions, worldState, this.goal);
+            var result = new GoapPlanner(logger.Object).Plan(this.availableActions, worldState, this.goal);
 
             // Assert
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(this.findTargetAction, result.Peek());
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+            
+        }
+
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return false;
+        }
+
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return this;
         }
     }
 }

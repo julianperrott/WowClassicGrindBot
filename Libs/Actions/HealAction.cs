@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,12 +12,14 @@ namespace Libs.Actions
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
+        private ILogger logger;
 
-        public HealAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
+        public HealAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
+            this.logger = logger;
 
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.shouldheal, true);

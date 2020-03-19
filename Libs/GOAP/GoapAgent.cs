@@ -6,24 +6,28 @@ using System.Threading;
 using System.Threading.Tasks;
 using Libs.Actions;
 using Libs.NpcFinder;
+using Microsoft.Extensions.Logging;
 
 namespace Libs.GOAP
 {
 	public sealed class GoapAgent
 	{
-		private GoapPlanner planner = new GoapPlanner();
+		private GoapPlanner planner;
 		public IEnumerable<GoapAction> AvailableActions { get; set; }
 		private PlayerReader playerReader;
+		private ILogger logger;
 
 		public GoapAction? CurrentAction { get; set; }
 		public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; set; } = new HashSet<KeyValuePair<GoapKey, object>>();
 		private List<string> blacklist;
 
-		public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, List<string> blacklist)
+		public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, List<string> blacklist, ILogger logger)
 		{
 			this.playerReader = playerReader;
 			this.AvailableActions = availableActions.OrderBy(a => a.CostOfPerformingAction);
 			this.blacklist = blacklist;
+			this.logger = logger;
+			this.planner = new GoapPlanner(logger);
 		}
 
 		public async Task<GoapAction?> GetAction()
@@ -40,9 +44,9 @@ namespace Libs.GOAP
 			}
 			else
 			{
-				Debug.WriteLine($"Target Health: {playerReader.TargetHealth}, max {playerReader.TargetMaxHealth}, dead {playerReader.PlayerBitValues.TargetIsDead}");
+				logger.LogInformation($"Target Health: {playerReader.TargetHealth}, max {playerReader.TargetMaxHealth}, dead {playerReader.PlayerBitValues.TargetIsDead}");
 
-				await new WowProcess().KeyPress(ConsoleKey.Tab, 420);
+				await new WowProcess(logger).KeyPress(ConsoleKey.Tab, 420);
 			}
 
 			return CurrentAction;
@@ -52,7 +56,7 @@ namespace Libs.GOAP
 		{
 			if (blacklist.Contains(playerReader.Target))
 			{
-				await new WowProcess().KeyPress(ConsoleKey.F3, 400);
+				await new WowProcess(logger).KeyPress(ConsoleKey.F3, 400);
 			}
 
 			var state= new HashSet<KeyValuePair<GoapKey, object>>

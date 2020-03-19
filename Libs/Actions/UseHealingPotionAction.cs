@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,13 +12,15 @@ namespace Libs.Actions
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
+        private ILogger logger;
 
         private DateTime LastHealed = DateTime.Now.AddDays(-1);
 
-        public UseHealingPotionAction(WowProcess wowProcess, PlayerReader playerReader)
+        public UseHealingPotionAction(WowProcess wowProcess, PlayerReader playerReader, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
+            this.logger = logger;
 
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.usehealingpotion, true);
@@ -29,7 +32,7 @@ namespace Libs.Actions
         {
             await wowProcess.KeyPress(ConsoleKey.F4, 500);
             LastHealed = DateTime.Now;
-            Debug.WriteLine("Using healing potion");
+            logger.LogInformation("Using healing potion");
         }
 
         public override bool CheckIfActionCanRun()

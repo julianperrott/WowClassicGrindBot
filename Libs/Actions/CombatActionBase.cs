@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,15 +13,17 @@ namespace Libs.Actions
         protected readonly WowProcess wowProcess;
         protected readonly PlayerReader playerReader;
         protected readonly StopMoving stopMoving;
+        protected ILogger logger;
         protected ActionBarStatus actionBar = new ActionBarStatus(0);
 
         protected Dictionary<ConsoleKey, DateTime> LastClicked = new Dictionary<ConsoleKey, DateTime>();
 
-        public CombatActionBase(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving)
+        public CombatActionBase(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
+            this.logger = logger;
 
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
@@ -33,7 +36,7 @@ namespace Libs.Actions
         {
             if (!LastClicked.ContainsKey(key))
             {
-                //Debug.WriteLine("Cooldown not found" + key.ToString());
+                //logger.LogInformation("Cooldown not found" + key.ToString());
                 return false;
             }
 
@@ -41,7 +44,7 @@ namespace Libs.Actions
 
             if (key != ConsoleKey.H)
             {
-                //Debug.WriteLine("On cooldown " + key);
+                //logger.LogInformation("On cooldown " + key);
             }
             return isOnCooldown;
         }

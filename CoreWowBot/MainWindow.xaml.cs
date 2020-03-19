@@ -2,6 +2,7 @@
 using Libs.Actions;
 using Libs.Cursor;
 using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace Powershell
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, ILogger, IDisposable
     {
         private WowData addonThread;
         private PlayerDirection playerDirection;
@@ -41,9 +42,9 @@ namespace Powershell
                 ? config.LoadConfiguration()
                 : config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
-            this.addonThread = new WowData(colorReader, frames);
-            playerDirection = new PlayerDirection(this.addonThread.PlayerReader, WowProcess);
-            this.thread = new Thread(addonThread.DoWork);
+            this.addonThread = new WowData(colorReader, frames, this);
+            playerDirection = new PlayerDirection(this.addonThread.PlayerReader, WowProcess,this);
+            this.thread = new Thread(addonThread.AddonRefreshThread);
 
 
 
@@ -105,7 +106,7 @@ namespace Powershell
             {
                 if (this.wowProcess == null)
                 {
-                    this.wowProcess = new WowProcess();
+                    this.wowProcess = new WowProcess(this);
                 }
                 return this.wowProcess;
             }
@@ -238,7 +239,7 @@ namespace Powershell
         {
             if (!stop)
             {
-                var bot = new Bot(this.addonThread);
+                var bot = new Bot(this.addonThread, this);
                 await bot.DoWork();
 
             }
@@ -269,6 +270,26 @@ namespace Powershell
 
             //Debug.WriteLine($"distance:{x} {y} {distance.ToString()}");
             return distance;
+        }
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILogger.IsEnabled(LogLevel logLevel)
+        {
+            return false;
+        }
+
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return this;
+        }
+
+        public void Dispose()
+        {
+            //throw new NotImplementedException();
         }
 
         //private void SetDirection(double desiredDirection)
