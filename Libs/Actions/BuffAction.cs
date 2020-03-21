@@ -15,7 +15,6 @@ namespace Libs.Actions
         private readonly StopMoving stopMoving;
         private ILogger logger;
 
-
         private DateTime LastBuffed = DateTime.Now.AddDays(-1);
 
         public BuffAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger)
@@ -34,7 +33,6 @@ namespace Libs.Actions
         {
             await this.stopMoving.Stop();
 
-            logger.LogInformation("Sharening weapon");
             await wowProcess.KeyPress(ConsoleKey.F1, 500);
 
             for (int i = 0; i < 7; i++)

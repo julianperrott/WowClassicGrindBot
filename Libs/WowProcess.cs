@@ -154,7 +154,7 @@ namespace Libs
         public const int KEYEVENTF_EXTENDEDKEY = 0x0001; //Key down flag
         public const int KEYEVENTF_KEYUP = 0x0002; //Key up flag
         public const int VK_LCONTROL = 0xA2; //Left Control key code
-        
+
         public const int VK_LEFT_SHIFT = 160;
         public const int VK_LEFT_CONTROL = 162;
         public const int VK_LEFT_ALT = 164;
@@ -169,10 +169,24 @@ namespace Libs
             await KeyPress(ConsoleKey.I, 500);
         }
 
-        public async Task Mount()
+        public async Task Mount(PlayerReader playerReader)
         {
             // mount macro = /use 'your mount here'
             await KeyPress(ConsoleKey.O, 500);
+
+            for (int i = 0; i < 40; i++)
+            {
+                if (playerReader.PlayerBitValues.IsMounted) { return; }
+                if (playerReader.PlayerBitValues.PlayerInCombat) { return; }
+                await Task.Delay(100);
+            }
+        }
+
+        public async Task Dismount()
+        {
+            // mount macro = /use 'your mount here'
+            await KeyPress(ConsoleKey.O, 500);
+            await Task.Delay(1500);
         }
     }
 }

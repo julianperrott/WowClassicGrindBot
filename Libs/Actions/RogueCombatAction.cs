@@ -77,7 +77,7 @@ namespace Libs.Actions
         {
             if (e.Key == GoapKey.newtarget)
             {
-                logger.LogInformation("Rend reset");
+                logger.LogInformation("Rend cooldowns as new target");
                 LastClicked.Remove(ConsoleKey.D3);
                 LastClicked.Remove(ConsoleKey.D4);
 

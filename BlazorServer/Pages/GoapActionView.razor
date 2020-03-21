@@ -1,5 +1,5 @@
-﻿<tr>
-    <td><h5 style="color:@ActionColour(this.IsSelected)">@action.Name (@action.CostOfPerformingAction) @action.Description()</h5></td>
+﻿<tr class="@ActionClass(this.IsSelected)">
+    <td><h5 style="color:@ActionColour(this.IsSelected)">@action.CostOfPerformingAction: @action.Name @action.Description()</h5></td>
     @foreach (var item in this.action.State)
     {
         <td style="color:@Colour(item)">@item.Key</td>
@@ -19,13 +19,18 @@
         return item.Value ? "green" : "red";
     }
 
-    public string ActionColour(bool item)
+    public string ActionClass(bool item)
     {
-        if (item==true)
+        if (item == true)
         {
-            return "green";
+            return "table-success";
         }
 
+        return "table-default";
+    }
+
+    public string ActionColour(bool item)
+    {
         return action.CheckIfActionCanRun() ? "black" : "gray";
     }
 

@@ -44,7 +44,7 @@ namespace Powershell
 
             this.addonThread = new WowData(colorReader, frames, this);
             playerDirection = new PlayerDirection(this.addonThread.PlayerReader, WowProcess,this);
-            this.thread = new Thread(addonThread.AddonRefreshThread);
+            this.thread = new Thread(addonThread.AddonRefresh);
 
 
 

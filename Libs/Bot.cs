@@ -41,7 +41,7 @@ namespace Libs
             this.wowData = wowData;
             this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist, logger);
 
-            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44.json");
+            var pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_47_easy.json");
             var spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
 
             var pathPoints2 = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
@@ -70,7 +70,7 @@ namespace Libs
         internal void DoScreenshot()
         {
             var rect = GetWowProcess.GetWindowRect();
-            using (var screenshot = new DirectBitmap(rect.right, rect.bottom))
+            using (var screenshot = new DirectBitmap(rect.right, rect.bottom, 0 ,0))
             {
                 screenshot.CaptureScreen();
                 this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(screenshot.ToBase64()));
@@ -84,24 +84,42 @@ namespace Libs
 
             this.availableActions.Clear();
             this.availableActions.Add(followRouteAction);
-            this.availableActions.Add(new PullTargetAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger));
-            this.availableActions.Add(new ApproachTargetAction(GetWowProcess, wowData.PlayerReader, stopMoving, npcNameFinder, logger));
             this.availableActions.Add(new LootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
             this.availableActions.Add(new PostKillLootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
-            this.availableActions.Add(new HealAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
             this.availableActions.Add(new TargetDeadAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, logger));
             this.availableActions.Add(this.walkToCorpseAction);
             this.availableActions.Add(new UseHealingPotionAction(GetWowProcess, wowData.PlayerReader, logger));
-            this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-            this.availableActions.Add(new PressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F5, 313, logger));
-            this.availableActions.Add(new PressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F6, 3600, logger));
+            this.availableActions.Add(new TimedPressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F5, 313, logger, "Delete stuff"));
+            this.availableActions.Add(new ApproachTargetAction(GetWowProcess, wowData.PlayerReader, stopMoving, npcNameFinder, logger));
 
-            this.availableActions.Add(wowData.PlayerReader.PlayerClass switch
+            switch (wowData.PlayerReader.PlayerClass)
             {
-                PlayerClassEnum.Warrior=> new WarriorCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger),
-                PlayerClassEnum.Rogue => new RogueCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger),
-                _ => throw new ArgumentOutOfRangeException("Player class")
-            });
+                case PlayerClassEnum.Warrior:
+                    this.availableActions.Add(new WarriorCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    this.availableActions.Add(new EatOrBandageAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D7, () => wowData.PlayerReader.Buffs.WellFed, logger, "Well Fed"));
+                    break;
+
+                case PlayerClassEnum.Rogue:
+                    this.availableActions.Add(new RogueCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    this.availableActions.Add(new TimedPressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F6, 3600, logger, "Equip dagger"));
+                    this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    this.availableActions.Add(new EatOrBandageAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    break;
+
+                case PlayerClassEnum.Priest:
+                    this.availableActions.Add(new PriestCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    this.availableActions.Add(new DrinkAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D1, () => wowData.PlayerReader.Buffs.Fortitude, 70, logger, "Fortitude"));
+                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D2, () => wowData.PlayerReader.Buffs.InnerFire, 70, logger, "Inner Fire"));
+                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D7, () => wowData.PlayerReader.Buffs.DivineSpirit, 70, logger, "Divine Spirit"));
+                    break;
+            }
+
+            var combatAction = this.availableActions.First(c => c as CombatActionBase != null) as CombatActionBase;
+            if (combatAction==null) { throw new Exception("Didn't find combat action"); }
+            this.availableActions.Add(new PullTargetAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger, combatAction));
 
             this.availableActions.ToList().ForEach(a => 
             {

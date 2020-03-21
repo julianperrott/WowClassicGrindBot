@@ -25,6 +25,18 @@ namespace Libs.NpcFinder
             return new Point(x, y + 100);
         }
 
+        public DirectBitmap(int width, int height, int topOffset, int bottomOffset)
+        {
+            this.TopOffset = topOffset;
+            this.BottomOffset = bottomOffset;
+            this.Width = width;
+            this.Height = height - TopOffset - BottomOffset;
+            this.Bits = new Int32[width * height];
+            this.BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+            this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+        }
+
+
         public DirectBitmap(int width, int height)
         {
             this.Width = width;
@@ -34,9 +46,11 @@ namespace Libs.NpcFinder
             this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
 
+
+
         public string ToBase64()
         {
-            const int size = 600;
+            const int size = 1200;
             //const int quality = 75;
 
             int width, height;

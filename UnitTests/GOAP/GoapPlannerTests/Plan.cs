@@ -36,7 +36,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
             this.followRouteAction = new FollowRouteAction(playerReader, wowprocess, new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving, npcNameFinder, new List<string>(), logger.Object);
 
             this.killMobAction = new WarriorCombatAction(wowprocess, playerReader, stopMoving, logger.Object);
-            this.pullTargetAction = new PullTargetAction(wowprocess, playerReader, npcNameFinder, stopMoving, logger.Object);
+            this.pullTargetAction = new PullTargetAction(wowprocess, playerReader, npcNameFinder, stopMoving, logger.Object, this.killMobAction as CombatActionBase);
             this.approachTargetAction = new ApproachTargetAction(wowprocess, playerReader, stopMoving, npcNameFinder, logger.Object);
 
             this.availableActions = new HashSet<GoapAction>
@@ -71,7 +71,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
                 new KeyValuePair<GoapKey, object>(GoapKey.hastarget, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, false),
-                new KeyValuePair<GoapKey, object>(GoapKey.inmeleerange, false)
+                new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, false)
             };
 
             // Act
@@ -91,7 +91,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
                 new KeyValuePair<GoapKey, object>(GoapKey.hastarget, true),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, true),
-                new KeyValuePair<GoapKey, object>(GoapKey.inmeleerange, false),
+                new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.pulled, false)
             };
 
@@ -112,7 +112,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
                 new KeyValuePair<GoapKey, object>(GoapKey.hastarget, true),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, true),
-                new KeyValuePair<GoapKey, object>(GoapKey.inmeleerange, false),
+                new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.pulled, true)
             };
 
@@ -133,7 +133,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
                 new KeyValuePair<GoapKey, object>(GoapKey.hastarget, true),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, true),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, true),
-                new KeyValuePair<GoapKey, object>(GoapKey.inmeleerange, false),
+                new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.pulled, false)
             };
 
@@ -154,7 +154,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
                 new KeyValuePair<GoapKey, object>(GoapKey.hastarget, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, true),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, true),
-                new KeyValuePair<GoapKey, object>(GoapKey.inmeleerange, false),
+                new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.pulled, false)
             };
 

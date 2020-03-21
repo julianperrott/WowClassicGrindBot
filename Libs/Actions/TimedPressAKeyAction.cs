@@ -8,19 +8,21 @@ using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
-    public class PressAKeyAction : GoapAction
+    public class TimedPressAKeyAction : GoapAction
     {
         private readonly WowProcess wowProcess;
         private readonly StopMoving stopMoving;
         private ILogger logger;
         private readonly ConsoleKey key;
         private readonly int secondsCooldown;
+        private readonly string description;
         private DateTime LastPressed = DateTime.Now.AddDays(-1);
 
-        public PressAKeyAction(WowProcess wowProcess, StopMoving stopMoving, ConsoleKey key, int secondsCooldown, ILogger logger)
+        public TimedPressAKeyAction(WowProcess wowProcess, StopMoving stopMoving, ConsoleKey key, int secondsCooldown, ILogger logger, string description)
         {
             this.wowProcess = wowProcess;
             this.stopMoving = stopMoving;
+            this.description = description;
             this.key = key;
             this.secondsCooldown = secondsCooldown;
             this.logger = logger;
@@ -49,11 +51,11 @@ namespace Libs.Actions
             if (!CheckIfActionCanRun())
             {
                 var timespan = LastPressed.AddSeconds(secondsCooldown) - DateTime.Now;
-                return $" - {key.ToString()} - {DateTime.Now.Date.AddSeconds(timespan.TotalSeconds).ToString("mm:ss")}";
+                return $" - {description} - {key.ToString()} - {DateTime.Now.Date.AddSeconds(timespan.TotalSeconds).ToString("mm:ss")}";
             }
             else
             {
-                return $" - {key.ToString()} - Pending";
+                return $" -{description} - {key.ToString()} - Pending";
             }
         }
     }

@@ -22,21 +22,28 @@
 
         // Rogue
         public bool Rogue_SinisterStrike { get => IsBitSet(0); }
-
         public bool Rogue_Throw { get => IsBitSet(1); }
         public bool Rogue_ShootGun { get => IsBitSet(2); }
+
+        // Priest
+        public bool Priest_ShadowWordPain { get => IsBitSet(0); }
+        public bool Priest_MindBlast { get => IsBitSet(1); }
+        public bool Priest_MindFlay { get => IsBitSet(2); }
+        public bool Priest_Shoot { get => IsBitSet(3); }
 
         public bool WithInPullRange(PlayerClassEnum playerClass) => playerClass switch
         {
             PlayerClassEnum.Warrior => Warrior_ShootGun || Warrior_Charge,
             PlayerClassEnum.Rogue => Rogue_Throw,
+            PlayerClassEnum.Priest => Priest_ShadowWordPain,
             _ => false
         };
 
-        public bool WithInMeleeRange(PlayerClassEnum playerClass) => playerClass switch
+        public bool WithInCombatRange(PlayerClassEnum playerClass) => playerClass switch
         {
             PlayerClassEnum.Warrior => Warrior_Rend,
             PlayerClassEnum.Rogue => Rogue_SinisterStrike,
+            PlayerClassEnum.Priest => Priest_Shoot,
             _ => false
         };
     }

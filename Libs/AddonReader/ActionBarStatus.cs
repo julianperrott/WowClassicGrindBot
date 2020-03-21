@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Libs
@@ -51,6 +52,16 @@ namespace Libs
         public bool HotKey22 { get => IsBitSet(21); }
         public bool HotKey23 { get => IsBitSet(22); }
         public bool HotKey24 { get => IsBitSet(23); }
+
+        internal void Dump()
+        {
+            var sb = new StringBuilder();
+            for(int i=1;i<12;i++)
+            {
+                sb.Append($"{i}:{IsBitSet(i-1)},");
+            }
+            Debug.WriteLine(sb.ToString());
+        }
 
 
         //local MAIN_MIN = 1

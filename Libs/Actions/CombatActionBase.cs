@@ -27,7 +27,7 @@ namespace Libs.Actions
 
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
-            AddPrecondition(GoapKey.inmeleerange, true);
+            AddPrecondition(GoapKey.incombatrange, true);
         }
 
         public override float CostOfPerformingAction { get => 4f; }
@@ -49,12 +49,16 @@ namespace Libs.Actions
             return isOnCooldown;
         }
 
+        protected bool HasEnoughMana(int mana)
+        {
+            return this.playerReader.ManaCurrent > mana;
+        }
 
         public override async Task PerformAction()
         {
             if (playerReader.PlayerBitValues.IsMounted)
             {
-                await wowProcess.Mount();
+                await wowProcess.Dismount();
             }
 
             await stopMoving.Stop();
@@ -66,7 +70,7 @@ namespace Libs.Actions
 
         protected abstract Task Fight();
 
-        protected async Task PressKey(ConsoleKey key)
+        public async Task PressKey(ConsoleKey key)
         {
             await wowProcess.KeyPress(key, 501);
 

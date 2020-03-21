@@ -316,9 +316,11 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(self:bagSlots(4)), 40) -- Bag slot 4
             -- Profession levels:
             -- tracks our skinning level
-            MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
+            --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
             -- tracks our fishing level
             --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Fishing")), 42) -- Fishing profession level
+            MakePixelSquareArr(integerToColor(self:getBuffsForClass()), 41);
+            -- 42 used by keys
             MakePixelSquareArr(integerToColor(self:GetDebuffs("FrostNova")), 43) -- Checks if target is frozen by frost nova debuff
             MakePixelSquareArr(integerToColor(self:GameTime()), 44) -- Returns time in the game
             MakePixelSquareArr(integerToColor(self:GetGossipIcons()), 45) -- Returns which gossip icons are on display in dialogue box
@@ -436,6 +438,26 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:needManaGem(), 16) + 
     self:MakeIndexBase2(self:ProcessExitStatus(), 17)+
     self:MakeIndexBase2(self:IsPlayerMounted(), 18)
+end
+
+function DataToColor:getBuffsForClass()
+    local class, CC = UnitClass("player")
+    if CC == "PRIEST" then 
+        class=self:MakeIndexBase2(self:GetBuffs("Food"), 0) +
+        self:MakeIndexBase2(self:GetBuffs("Drink"), 1) +
+        self:MakeIndexBase2(self:GetBuffs("Well Fed"), 2) +
+	    self:MakeIndexBase2(self:GetBuffs("Fortitude"), 3) +
+	    self:MakeIndexBase2(self:GetBuffs("Inner Fire"), 4)+
+	    self:MakeIndexBase2(self:GetBuffs("Renew"), 5)+
+        self:MakeIndexBase2(self:GetBuffs("Shield"), 6)+
+        self:MakeIndexBase2(self:GetBuffs("Mana Regeneration"), 7)+
+        self:MakeIndexBase2(self:GetBuffs("Spirit"), 8);
+    else
+        class = self:MakeIndexBase2(self:GetBuffs("Food"), 0) +
+            self:MakeIndexBase2(self:GetBuffs("Drink"), 1) +
+            self:MakeIndexBase2(self:GetBuffs("Well Fed"), 2);
+    end
+    return class;
 end
 
 -- Returns bitmask values.
@@ -573,6 +595,15 @@ function DataToColor:areSpellsInRange()
             "Rend", --2
             "Shoot Gun", --4
         };
+    elseif CC == "PRIEST" then
+        spellList = {
+            "Shadow Word: Pain", --1
+            "Mind Blast", --2
+            "Mind Flay", --4
+            "Shoot", --8
+        };
+    else
+        spellList = {};
     end
 
 
@@ -880,7 +911,7 @@ function DataToColor:isUnskinnable()
 end
 
 -- A variable which can trigger a process exit on the node side with this macro:
--- /script EXIT_PROCESS_STATUS = 1
+-- /script EXIT_PROCESS_STATfort = 1
 function DataToColor:ProcessExitStatus()
     -- Check if a process exit has been requested
     if EXIT_PROCESS_STATUS == 1 then

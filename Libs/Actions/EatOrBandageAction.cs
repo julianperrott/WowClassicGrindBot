@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
-    public class HealAction : GoapAction
+    public class EatOrBandageAction : GoapAction
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private ILogger logger;
 
-        public HealAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger)
+        public EatOrBandageAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;

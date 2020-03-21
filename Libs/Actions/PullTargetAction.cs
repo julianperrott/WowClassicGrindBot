@@ -16,14 +16,16 @@ namespace Libs.Actions
         private readonly NpcNameFinder npcNameFinder;
         private readonly StopMoving stopMoving;
         private ILogger logger;
+        private readonly CombatActionBase combatAction;
 
-        public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger)
+        public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CombatActionBase combatAction)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.npcNameFinder = npcNameFinder;
             this.stopMoving = stopMoving;
             this.logger = logger;
+            this.combatAction = combatAction;
 
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.hastarget, true);
@@ -41,12 +43,14 @@ namespace Libs.Actions
             logger.LogInformation($"Stop approach");
             await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
 
-
-            logger.LogInformation($"Can shoot gun: {playerReader.SpellInRange.Warrior_ShootGun}");
+            if (playerReader.PlayerClass == PlayerClassEnum.Warrior)
+            {
+                logger.LogInformation($"Can shoot gun: {playerReader.SpellInRange.Warrior_ShootGun}");
+            }
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
-                await wowProcess.Mount();
+                await wowProcess.Dismount();
             }
 
             bool pulled = await Pull();
@@ -55,7 +59,7 @@ namespace Libs.Actions
                 // approach
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
-                    await wowProcess.Mount();
+                    await wowProcess.Dismount();
                 }
                 await this.wowProcess.KeyPress(ConsoleKey.H, 301);
             }
@@ -72,6 +76,7 @@ namespace Libs.Actions
                 {
                     PlayerClassEnum.Warrior => await WarriorPull(npcCount),
                     PlayerClassEnum.Rogue => await RoguePull(npcCount),
+                    PlayerClassEnum.Priest => await PriestPull(npcCount),
                     _ => false
                 };
 
@@ -109,7 +114,7 @@ namespace Libs.Actions
             for (int i = 0; i < 10; i++)
             {
                 await Task.Delay(500);
-                if (playerReader.WithInMeleeRange) { return; }
+                if (playerReader.WithInCombatRange) { return; }
             }
         }
 
@@ -126,6 +131,45 @@ namespace Libs.Actions
                 await this.wowProcess.KeyPress(ConsoleKey.D9, 1000);
 
                 await WaitForWithinMelleRange();
+                return true;
+            }
+
+            return false;
+        }
+
+        private async Task<bool> PriestPull(int npcCount)
+        {
+            if (playerReader.SpellInRange.Priest_MindBlast)
+            {
+                logger.LogInformation($"Shield");
+                if (this.playerReader.HealthPercent < 90)
+                {
+                    await this.wowProcess.KeyPress(ConsoleKey.D3, 520);
+                }
+
+                // stop approach
+                logger.LogInformation($"Stop approach");
+                await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
+
+                await Task.Delay(300);
+
+                logger.LogInformation($"Cast Mind Blast");
+                await this.combatAction.PressKey(ConsoleKey.D5);
+
+                await Task.Delay(1000);
+                logger.LogInformation($"SWP");
+                await this.combatAction.PressKey(ConsoleKey.D6);
+
+                // wait for combat
+                for (int i=0;i<20;i++)
+                {
+                    if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.WithInCombatRange)
+                    {
+                        break;
+                    }
+                    await Task.Delay(100);
+                }
+
                 return true;
             }
 

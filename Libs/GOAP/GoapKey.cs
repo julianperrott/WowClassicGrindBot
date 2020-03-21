@@ -10,7 +10,7 @@ namespace Libs.GOAP
 		targetisalive = 20,
 		incombat = 30,
 		withinpullrange = 40,
-		inmeleerange = 50,
+		incombatrange = 50,
 		pulled = 60,
 		shouldheal = 70,
 		isdead = 80,
@@ -19,7 +19,8 @@ namespace Libs.GOAP
 		newtarget = 110,
 		fighting = 120,
 		bagfull= 130,
-		abort=140
+		abort=140,
+		shoulddrink=150
 	}
 
 	public static class GoapKeyDescription
@@ -39,8 +40,8 @@ namespace Libs.GOAP
 				 (GoapKey.withinpullrange, true) => "In pull range",
 				 (GoapKey.withinpullrange, false) => "Out of pull range",
 
-				 (GoapKey.inmeleerange, true) => "In melee range",
-				 (GoapKey.inmeleerange, false) => "Out of melee range",
+				 (GoapKey.incombatrange, true) => "In combat range",
+				 (GoapKey.incombatrange, false) => "Out of combat range",
 
 				 (GoapKey.pulled, true) => "Pulled",
 				 (GoapKey.pulled, false) => "Not pulled",

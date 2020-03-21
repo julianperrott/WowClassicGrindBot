@@ -77,8 +77,6 @@
     </tr>
 </table>
 
-<button class="btn btn-primary" @onclick="Start">Start Reading</button>
-
 <button class="btn btn-primary" @onclick="ToggleBot">Toggle Bot</button>
 
 <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
@@ -96,9 +94,8 @@
 
     private bool CanvasInitialised = false;
 
-    private async Task Start()
+    protected override void OnInitialized()
     {
-        await JSRuntime.InvokeAsync<string>("draw");
 
         wowData.AddonDataChanged += (o, e) =>
         {
@@ -118,8 +115,9 @@
         };
     }
 
-    private void ToggleBot()
+    private async void ToggleBot()
     {
+        await JSRuntime.InvokeAsync<string>("draw");
         botController.ToggleBotStatus();
     }
 }

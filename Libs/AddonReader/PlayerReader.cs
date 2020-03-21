@@ -51,7 +51,7 @@ namespace Libs
 
         public long ManaMax => reader.GetLongAtCell(12); // Maximum amount of mana
         public long ManaCurrent => reader.GetLongAtCell(13); // Current amount of mana
-        public long Mana => (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
+        public long ManaPercentage => ManaMax==0 ?0: (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
 
                                                            // Level is our character's exact level ranging from 1-60
         public long Level => reader.GetLongAtCell(14);
@@ -98,8 +98,10 @@ namespace Libs
         public long BagSlot3Slots => reader.GetLongAtCell(39);
         public long BagSlot4Slots => reader.GetLongAtCell(40);
 
-        public long SkinningLevel => reader.GetLongAtCell(41);
-        public long FishingLevel => reader.GetLongAtCell(42);
+        public BuffStatus Buffs => new BuffStatus(reader.GetLongAtCell(41));
+
+        //public long SkinningLevel => reader.GetLongAtCell(41);
+        //public long FishingLevel => reader.GetLongAtCell(42);
 
         //MakePixelSquareArr(integerToColor(self: GetDebuffs("FrostNova")), 43)-- Checks if target is frozen by frost nova debuff
 
@@ -127,6 +129,6 @@ namespace Libs
         }
 
         public bool WithInPullRange => SpellInRange.WithInPullRange(this.PlayerClass);
-        public bool WithInMeleeRange => SpellInRange.WithInMeleeRange(this.PlayerClass);
+        public bool WithInCombatRange => SpellInRange.WithInCombatRange(this.PlayerClass);
     }
 }

@@ -41,7 +41,7 @@ namespace Libs.Actions
             this.npcNameFinder = npcNameFinder;
             this.logger = logger;
 
-            AddPrecondition(GoapKey.inmeleerange, false);
+            AddPrecondition(GoapKey.incombatrange, false);
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, true);
 
@@ -59,7 +59,7 @@ namespace Libs.Actions
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
-                await wowProcess.Mount();
+                await wowProcess.Dismount();
             }
 
             var location = playerReader.PlayerLocation;

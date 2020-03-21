@@ -184,8 +184,7 @@ namespace Libs.Actions
                     logger.LogInformation("Mounting if level >=40 no NPC in sight");
                     if (this.playerReader.Level >= 40)
                     {
-                        await wowProcess.Mount();
-                        await Task.Delay(3500);
+                        await wowProcess.Mount(this.playerReader);
                     }
                 }
                 else
