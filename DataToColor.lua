@@ -839,7 +839,7 @@ end
 function DataToColor:GetInventoryBroken()
     for i = 1, 16 do
         local isBroken = GetInventoryItemBroken("player", i)
-        if isBroken == 1 then
+        if isBroken == true then
             return 1
         end
     end

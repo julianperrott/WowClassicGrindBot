@@ -40,6 +40,7 @@ namespace Libs.Actions
         public override async Task PerformAction()
         {
             await this.stopMoving.Stop();
+            await Task.Delay(1000);
 
             await wowProcess.KeyPress(key, 500);
 

@@ -41,26 +41,23 @@ namespace Libs.Actions
             RaiseEvent(new ActionEvent(GoapKey.fighting, true));
 
             logger.LogInformation($"Stop approach");
-            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
-
-            if (playerReader.PlayerClass == PlayerClassEnum.Warrior)
-            {
-                logger.LogInformation($"Can shoot gun: {playerReader.SpellInRange.Warrior_ShootGun}");
-            }
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
                 await wowProcess.Dismount();
             }
 
+            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 201);
+            await this.stopMoving.Stop();
+
+            if (playerReader.PlayerClass == PlayerClassEnum.Warrior)
+            {
+                logger.LogInformation($"Can shoot gun: {playerReader.SpellInRange.Warrior_ShootGun}");
+            }
+
             bool pulled = await Pull();
             if (!pulled)
             {
-                // approach
-                if (playerReader.PlayerBitValues.IsMounted)
-                {
-                    await wowProcess.Dismount();
-                }
                 await this.wowProcess.KeyPress(ConsoleKey.H, 301);
             }
         }

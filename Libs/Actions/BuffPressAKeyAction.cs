@@ -50,7 +50,15 @@ namespace Libs.Actions
                 await Task.Delay(1000);
             }
 
-            LastPressed = DateTime.Now;
+            if (HasDesiredBuff)
+            {
+                LastPressed = DateTime.Now;
+            }
+            else
+            {
+                // we should have got the buff, but perhaps we have run out, so don't try again for a while.
+                LastPressed = DateTime.Now.AddMinutes(10);
+            }
         }
 
         public bool HasDesiredBuff => hasDesiredBuff();

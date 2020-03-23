@@ -14,6 +14,8 @@ namespace Libs.Actions
         {
         }
 
+
+        private ConsoleKey ColdBlood => !IsOnCooldown(ConsoleKey.D1, 60) ? ConsoleKey.D1 : ConsoleKey.Escape;
         private ConsoleKey Approach => !IsOnCooldown(ConsoleKey.H, 5) ? ConsoleKey.H : ConsoleKey.Escape;
         private ConsoleKey SinisterStrike => actionBar.HotKey2 ? ConsoleKey.D2 : ConsoleKey.Escape;
         private ConsoleKey SliceAndDice => actionBar.HotKey3 && !IsOnCooldown(ConsoleKey.D3, 20) ? ConsoleKey.D3 : ConsoleKey.Escape;
@@ -30,13 +32,13 @@ namespace Libs.Actions
                 await PressKey(Evasion);
             }
 
-            if (playerReader.HealthPercent < 10 && !IsOnCooldown(Vanish, 600))
+            if (playerReader.HealthPercent < 4 && !IsOnCooldown(Vanish, 600))
             {
                 await DoVanish();
                 return;
             }
 
-            var key = new List<ConsoleKey> { Approach, SliceAndDice, Eviscerate, SinisterStrike }
+            var key = new List<ConsoleKey> { ColdBlood, Approach, SliceAndDice, Eviscerate, SinisterStrike }
                 .Where(key => key != ConsoleKey.Escape)
                 .ToList()
                 .FirstOrDefault();

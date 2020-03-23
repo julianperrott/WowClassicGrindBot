@@ -205,9 +205,19 @@ namespace Libs.Actions
             {
                 await this.npcNameFinder.FindAndClickNpc(0);
                 await Task.Delay(300);
+                
             }
 
-            return this.playerReader.HasTarget && !blacklist.Contains(playerReader.Target);
+            if( this.playerReader.HasTarget && !blacklist.Contains(playerReader.Target))
+            {
+                if (playerReader.PlayerBitValues.IsMounted)
+                {
+                    await wowProcess.Dismount();
+                    await wowProcess.KeyPress(ConsoleKey.H,300);
+                }
+                return true;
+            }
+            return false;
         }
 
         private bool HasBeenActiveRecently()

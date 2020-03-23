@@ -72,7 +72,7 @@ namespace Libs.Actions
 
         public async Task PressKey(ConsoleKey key)
         {
-            await wowProcess.KeyPress(key, 501);
+            await wowProcess.KeyPress(key, 301);
 
             if (LastClicked.ContainsKey(key))
             {

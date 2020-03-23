@@ -16,14 +16,18 @@ namespace Libs.Actions
 
         private BuffStatus Buffs => playerReader.Buffs;
 
-        private ConsoleKey Approach => !IsOnCooldown(ConsoleKey.H, 4) ? ConsoleKey.H : ConsoleKey.Escape;
+        private bool isTargetDamaged => this.playerReader.TargetHealthPercentage < 90;
 
-        private ConsoleKey Shield => !IsOnCooldown(ConsoleKey.D3, 10) && playerReader.TargetHealthPercentage > 15 && this.playerReader.HealthPercent < 90 && !Buffs.Shield && HasEnoughMana(100) ? ConsoleKey.D3 : ConsoleKey.Escape;
-        private ConsoleKey Renew => !IsOnCooldown(ConsoleKey.D4, 10) && !Buffs.Renew && this.playerReader.HealthPercent < 60 && HasEnoughMana(100) ? ConsoleKey.D4 : ConsoleKey.Escape;
-        private ConsoleKey Heal => !IsOnCooldown(ConsoleKey.D9, 10) && this.playerReader.HealthPercent < 40 && HasEnoughMana(100) ? ConsoleKey.D9 : ConsoleKey.Escape;
-        private ConsoleKey MindBlast => !IsOnCooldown(ConsoleKey.D5, 10) && playerReader.TargetHealthPercentage > 15 && HasEnoughMana(100) ? ConsoleKey.D5 : ConsoleKey.Escape;
-        private ConsoleKey ShadowWordPain => !IsOnCooldown(ConsoleKey.D6, 14) && playerReader.TargetHealthPercentage>35 && HasEnoughMana(100) ? ConsoleKey.D6 : ConsoleKey.Escape;
+        private ConsoleKey Approach => !IsOnCooldown(ConsoleKey.H, isTargetDamaged?15:5) ? ConsoleKey.H : ConsoleKey.Escape;
+
+        private ConsoleKey Shield => !IsOnCooldown(ConsoleKey.D3, 10) && playerReader.TargetHealthPercentage > 15 && this.playerReader.HealthPercent < 75 && !Buffs.Shield && HasEnoughMana(100) ? ConsoleKey.D3 : ConsoleKey.Escape;
+        private ConsoleKey Renew => !IsOnCooldown(ConsoleKey.D4, 10) && !Buffs.Renew && this.playerReader.HealthPercent < 75 && HasEnoughMana(100) ? ConsoleKey.D4 : ConsoleKey.Escape;
+        private ConsoleKey Heal => !IsOnCooldown(ConsoleKey.D9, 10) && this.playerReader.HealthPercent < 50 && HasEnoughMana(100) ? ConsoleKey.D9 : ConsoleKey.Escape;
+        private ConsoleKey MindBlast => !IsOnCooldown(ConsoleKey.D5, 12) && playerReader.TargetHealthPercentage > 15 && HasEnoughMana(100) ? ConsoleKey.D5 : ConsoleKey.Escape;
+        private ConsoleKey ShadowWordPain => !IsOnCooldown(ConsoleKey.D6, 24) && playerReader.TargetHealthPercentage>35 && HasEnoughMana(100) ? ConsoleKey.D6 : ConsoleKey.Escape;
         private ConsoleKey Shoot => !IsOnCooldown(ConsoleKey.D0, 3) && playerReader.ActionBarUseable_1To24.HotKey10 ? ConsoleKey.D0 : ConsoleKey.Escape;
+
+        private ConsoleKey ManaInfusion => !IsOnCooldown(ConsoleKey.OemPlus, 181) ? ConsoleKey.OemPlus : ConsoleKey.Escape;
 
         protected override async Task Fight()
         {
@@ -31,10 +35,10 @@ namespace Libs.Actions
 
             //this.actionBar.Dump();
 
-
             // make sure we are in spell range
             if (playerReader.SpellInRange.Priest_Shoot && Approach != ConsoleKey.Escape)
             {
+                Debug.WriteLine($"## Approach {isTargetDamaged}");
                 await PressKey(Approach);
                 for (int i = 0; i < 10; i++)
                 {
@@ -47,7 +51,7 @@ namespace Libs.Actions
                 }
             }
 
-            var key = new List<ConsoleKey> { Shield, Heal, Renew, MindBlast, ShadowWordPain, Shoot }
+            var key = new List<ConsoleKey> { Shield, Heal, Renew, ManaInfusion, MindBlast, ShadowWordPain, Shoot }
                 .Where(key => key != ConsoleKey.Escape)
                 .ToList()
                 .FirstOrDefault();
@@ -56,6 +60,7 @@ namespace Libs.Actions
             {
                 if (!playerReader.ActionBarUseable_1To24.HotKey10)
                 {
+                    Debug.WriteLine($"## Stop casting {isTargetDamaged}");
                     await PressKey(ConsoleKey.H);
 
                     for (int i = 0; i < 10; i++)
@@ -64,14 +69,14 @@ namespace Libs.Actions
                         await Task.Delay(100);
                     }
 
-                    await Task.Delay(400);
+                    await Task.Delay(300);
                 }
 
                 await PressKey(key);
 
                 if (key == ConsoleKey.D5) // Mind blast
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(1200);
                 }
 
                 if (key == ConsoleKey.D9) // Heal

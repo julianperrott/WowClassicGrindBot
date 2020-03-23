@@ -30,6 +30,12 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
+            if (this.playerReader.PlayerClass == PlayerClassEnum.Priest)
+            {
+                await wowProcess.KeyPress(ConsoleKey.F7, 500);
+                if (this.playerReader.HealthPercent > 10) { return; }
+            }
+
             await wowProcess.KeyPress(ConsoleKey.F4, 500);
             LastHealed = DateTime.Now;
             logger.LogInformation("Using healing potion");

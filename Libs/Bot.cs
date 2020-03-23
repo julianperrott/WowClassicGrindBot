@@ -78,8 +78,10 @@ namespace Libs
             }
         }
 
-            public async Task DoWork()
+        public async Task DoWork()
         {
+            await GetWowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
+
             this.currentAction = followRouteAction;
 
             this.availableActions.Clear();
@@ -114,6 +116,7 @@ namespace Libs
                     this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D1, () => wowData.PlayerReader.Buffs.Fortitude, 70, logger, "Fortitude"));
                     this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D2, () => wowData.PlayerReader.Buffs.InnerFire, 70, logger, "Inner Fire"));
                     this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D7, () => wowData.PlayerReader.Buffs.DivineSpirit, 70, logger, "Divine Spirit"));
+                    this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.OemMinus, () => wowData.PlayerReader.Buffs.ManaRegeneration, logger, "Nightfin Soup"));
                     break;
             }
 
