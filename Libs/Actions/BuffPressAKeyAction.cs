@@ -39,12 +39,24 @@ namespace Libs.Actions
         {
             await this.stopMoving.Stop();
 
+            if (playerReader.PlayerBitValues.IsMounted)
+            {
+                await wowProcess.Dismount();
+            }
+
+            await Task.Delay(1000);
+
             await wowProcess.KeyPress(key, 500);
 
             for (int i = 0; i < 12; i++)
             {
                 if (HasDesiredBuff || this.playerReader.PlayerBitValues.PlayerInCombat)
                 {
+                    if (i>5)
+                    {
+                        await wowProcess.KeyPress(ConsoleKey.UpArrow, 300);
+                    }
+
                     break;
                 }
                 await Task.Delay(1000);

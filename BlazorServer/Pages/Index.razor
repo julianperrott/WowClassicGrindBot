@@ -6,36 +6,21 @@
 @inject Libs.RouteInfo routeinfo
 @inject IJSRuntime JSRuntime;
 
-<h1>Wow bot</h1>
+    <h3>Wowbot - Main</h3>
 
-<table class="table table-bordered">
-    <tr>
-        <th>X Coord:</th>
-        <th>Y Coord:</th>
-        <th>Bag Items:</th>
-        <th>Health:</th>
-        <th>Target:</th>
-    </tr>
-    <tr>
-        <td>@wowData.PlayerReader.XCoord.ToString("0.00")</td>
-        <td>@wowData.PlayerReader.YCoord.ToString("0.00")</td>
-        <td> @wowData.bagReader.bagItems.Count</td>
-        <td>@wowData.PlayerReader.HealthPercent % (@wowData.PlayerReader.HealthCurrent of  @wowData.PlayerReader.HealthMax)</td>
-        <td>"@wowData.PlayerReader.Target" (@wowData.PlayerReader.TargetHealth of @wowData.PlayerReader.TargetMaxHealth)</td>
-    </tr>
-</table>
+<BotHeader />
 
-<table>
-    <tr>
-        <td width="100%">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm">
             <table class="table table-sm table-striped">
                 @foreach (var action in goapAgent.AvailableActions)
                 {
                     <GoapActionView action="action" IsSelected="(action == goapAgent.CurrentAction)" />
                 }
             </table>
-        </td>
-        <td>
+        </div>
+        <div class="col-sm">
             <div id="grid">
                 <svg width="602px" height="602px">
                     <g class="background">
@@ -73,9 +58,18 @@
 
                 </svg>
             </div>
+        </div>
+    </div>
+</div>
+<table>
+    <tr>
+        <td width="100%">
+        </td>
+        <td>
         </td>
     </tr>
 </table>
+
 
 <button class="btn btn-primary" @onclick="ToggleBot">Toggle Bot</button>
 
@@ -111,7 +105,7 @@
                 this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
             }
 
-            base.InvokeAsync(() => StateHasChanged());
+            base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };
     }
 

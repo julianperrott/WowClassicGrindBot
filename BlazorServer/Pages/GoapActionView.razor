@@ -1,9 +1,11 @@
 ﻿<tr class="@ActionClass(this.IsSelected)">
-    <td><h5 style="color:@ActionColour(this.IsSelected)">@action.CostOfPerformingAction: @action.Name @action.Description()</h5></td>
-    @foreach (var item in this.action.State)
-    {
-        <td style="color:@Colour(item)">@item.Key</td>
-    }
+    <td><b style="color:@ActionColour(this.IsSelected)">@action.CostOfPerformingAction: @action.Name @action.Description()</b></td>
+    <td>
+        @foreach (var item in this.action.State)
+        {
+            <span class="badge   @Badge(item)">@item.Key</span>
+        }
+    </td>
 </tr>
 
 @code {
@@ -14,9 +16,9 @@
     [Parameter]
     public Libs.Actions.GoapAction action { get; set; } = new Libs.Actions.NullAction();
 
-    public string Colour(KeyValuePair<string, bool> item)
+    public string Badge(KeyValuePair<string, bool> item)
     {
-        return item.Value ? "green" : "red";
+        return item.Value ? "badge-success" : "badge-danger";
     }
 
     public string ActionClass(bool item)

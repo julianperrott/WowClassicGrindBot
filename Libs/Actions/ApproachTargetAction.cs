@@ -24,6 +24,8 @@ namespace Libs.Actions
         private bool playerWasInCombat = false;
 
         private Point mouseLocationOfAdd;
+        private Stopwatch timeApproachingtarget = new Stopwatch();
+        private Stopwatch LastUnstickAttempt = new Stopwatch();
 
         private void Log(string text)
         {
@@ -55,6 +57,9 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
+            if (!timeApproachingtarget.IsRunning) { timeApproachingtarget.Start(); }
+            if (!LastUnstickAttempt.IsRunning) { LastUnstickAttempt.Start(); }
+
             //logger.LogInformation($"ApproachTargetAction: Incombat={playerReader.PlayerBitValues.PlayerInCombat}, WasInCombat={playerWasInCombat}");
 
             if (playerReader.PlayerBitValues.IsMounted)
@@ -92,6 +97,50 @@ namespace Libs.Actions
                 await wowProcess.KeyPress(ConsoleKey.Spacebar, 498);
             }
             await RandomJump();
+
+            int approachSeconds = (int)(timeApproachingtarget.ElapsedMilliseconds / 1000);
+            if (approachSeconds > 20)
+            {
+                await Unstick();
+            }
+        }
+
+        private async Task Unstick()
+        {
+            await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+
+            int approachSeconds = (int)(timeApproachingtarget.ElapsedMilliseconds / 1000);
+            int unstickSeconds = (int)(LastUnstickAttempt.ElapsedMilliseconds / 1000);
+
+            logger.LogInformation($"Stuck for {approachSeconds}s, last tried to unstick {unstickSeconds}s ago");
+
+            if (approachSeconds > 240)
+            {
+                // stuck for 4 minutes
+                logger.LogInformation("Stuck for 4 minutes on approach");
+                RaiseEvent(new ActionEvent(GoapKey.abort, true));
+            }
+
+            if (unstickSeconds > 10)
+            {
+                this.stopMoving?.Stop();
+                // stuck for 30 seconds
+                logger.LogInformation("Trying to unstick by strafing");
+                var r = random.Next(0, 100);
+                if (r < 50)
+                {
+                    wowProcess.SetKeyState(ConsoleKey.Q, true);
+                    await Task.Delay(5 * 1000);
+                    wowProcess.SetKeyState(ConsoleKey.Q, false);
+                }
+                else
+                {
+                    wowProcess.SetKeyState(ConsoleKey.E, true);
+                    await Task.Delay(5 * 1000);
+                    wowProcess.SetKeyState(ConsoleKey.E, false);
+                }
+                LastUnstickAttempt.Reset(); 
+            }
         }
 
         private async Task RandomJump()
@@ -110,10 +159,18 @@ namespace Libs.Actions
 
         public override void OnActionEvent(object sender, ActionEvent e)
         {
-            if (e.Key == GoapKey.fighting)
+            if (sender != this)
             {
-                lastFighting = DateTime.Now;
+                if (e.Key == GoapKey.fighting)
+                {
+                    lastFighting = DateTime.Now;
+                    timeApproachingtarget.Reset();
+                    LastUnstickAttempt.Reset();
+                }
             }
         }
+
+
+
     }
 }

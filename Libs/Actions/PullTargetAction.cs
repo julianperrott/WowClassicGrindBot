@@ -2,9 +2,6 @@
 using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
@@ -47,8 +44,18 @@ namespace Libs.Actions
                 await wowProcess.Dismount();
             }
 
-            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 201);
+            // face target
+            //if (playerReader.PlayerClass == PlayerClassEnum.Priest)
+            //{
+            //await this.wowProcess.KeyPress(ConsoleKey.H, 151);
+            //}
+            //else
+            //{
+            //await StopAfterH();
+            //}
+            await this.wowProcess.KeyPress(ConsoleKey.H, 151);
             await this.stopMoving.Stop();
+            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
 
             if (playerReader.PlayerClass == PlayerClassEnum.Warrior)
             {
@@ -58,9 +65,11 @@ namespace Libs.Actions
             bool pulled = await Pull();
             if (!pulled)
             {
-                await this.wowProcess.KeyPress(ConsoleKey.H, 301);
+                await this.wowProcess.KeyPress(ConsoleKey.H, 151);
             }
         }
+
+        private Random random = new Random();
 
         public async Task<bool> Pull()
         {
@@ -70,12 +79,13 @@ namespace Libs.Actions
             bool pulled = false;
 
             pulled = playerReader.PlayerClass switch
-                {
-                    PlayerClassEnum.Warrior => await WarriorPull(npcCount),
-                    PlayerClassEnum.Rogue => await RoguePull(npcCount),
-                    PlayerClassEnum.Priest => await PriestPull(npcCount),
-                    _ => false
-                };
+            {
+                PlayerClassEnum.Warrior => await WarriorPull(npcCount),
+                PlayerClassEnum.Rogue => await RoguePull(npcCount),
+                PlayerClassEnum.Priest => await PriestPull(npcCount),
+                PlayerClassEnum.Druid => await DruidPull(npcCount),
+                _ => false
+            };
 
             return false;
         }
@@ -134,10 +144,50 @@ namespace Libs.Actions
             return false;
         }
 
+        private async Task<bool> DruidPull(int npcCount)
+        {
+            //await this.wowProcess.KeyPress(ConsoleKey.OemPlus, 301);
+
+            if (playerReader.SpellInRange.Druid_Wrath)
+            {
+                logger.LogInformation($"Stop approach");
+                //await StopAfterH();
+
+                await Task.Delay(300);
+
+                logger.LogInformation($"Cast Wrath");
+                await this.combatAction.PressKey(ConsoleKey.D2);
+
+                // wait for combat
+                for (int i = 0; i < 20; i++)
+                {
+                    if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.WithInCombatRange)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            await Task.Delay(700);
+                            await this.combatAction.PressKey(ConsoleKey.D2);
+                        }
+                        break;
+                    }
+                    await Task.Delay(100);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         private async Task<bool> PriestPull(int npcCount)
         {
+            await this.wowProcess.KeyPress(ConsoleKey.OemPlus, 301);
+
             if (playerReader.SpellInRange.Priest_MindBlast)
             {
+                logger.LogInformation($"Stop approach");
+                //await StopAfterH();
+
                 logger.LogInformation($"Shield");
                 if (this.playerReader.HealthPercent < 90)
                 {
@@ -145,8 +195,8 @@ namespace Libs.Actions
                 }
 
                 // stop approach
-                logger.LogInformation($"Stop approach");
-                await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
+                //logger.LogInformation($"Stop approach");
+                //await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
 
                 await Task.Delay(300);
 
@@ -158,7 +208,7 @@ namespace Libs.Actions
                 await this.combatAction.PressKey(ConsoleKey.D6);
 
                 // wait for combat
-                for (int i=0;i<20;i++)
+                for (int i = 0; i < 20; i++)
                 {
                     if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.WithInCombatRange)
                     {

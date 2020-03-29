@@ -25,15 +25,19 @@ namespace Libs.Actions
         private ConsoleKey Heal => !IsOnCooldown(ConsoleKey.D9, 10) && this.playerReader.HealthPercent < 50 && HasEnoughMana(100) ? ConsoleKey.D9 : ConsoleKey.Escape;
         private ConsoleKey MindBlast => !IsOnCooldown(ConsoleKey.D5, 12) && playerReader.TargetHealthPercentage > 15 && HasEnoughMana(100) ? ConsoleKey.D5 : ConsoleKey.Escape;
         private ConsoleKey ShadowWordPain => !IsOnCooldown(ConsoleKey.D6, 24) && playerReader.TargetHealthPercentage>35 && HasEnoughMana(100) ? ConsoleKey.D6 : ConsoleKey.Escape;
-        private ConsoleKey Shoot => !IsOnCooldown(ConsoleKey.D0, 3) && playerReader.ActionBarUseable_1To24.HotKey10 ? ConsoleKey.D0 : ConsoleKey.Escape;
+        private ConsoleKey Shoot =>  !this.playerReader.IsShooting ? ConsoleKey.D0 : ConsoleKey.Escape;
 
-        private ConsoleKey ManaInfusion => !IsOnCooldown(ConsoleKey.OemPlus, 181) ? ConsoleKey.OemPlus : ConsoleKey.Escape;
+        bool lastIsShooting = false;
 
         protected override async Task Fight()
         {
             this.actionBar = playerReader.ActionBarUseable_1To24;
 
-            //this.actionBar.Dump();
+            if (lastIsShooting != this.playerReader.IsShooting)
+            {
+                Debug.WriteLine($"## Is Shooting {this.playerReader.IsShooting }");
+                lastIsShooting = this.playerReader.IsShooting;
+            }
 
             // make sure we are in spell range
             if (playerReader.SpellInRange.Priest_Shoot && Approach != ConsoleKey.Escape)
@@ -51,26 +55,28 @@ namespace Libs.Actions
                 }
             }
 
-            var key = new List<ConsoleKey> { Shield, Heal, Renew, ManaInfusion, MindBlast, ShadowWordPain, Shoot }
-                .Where(key => key != ConsoleKey.Escape)
-                .ToList()
-                .FirstOrDefault();
+            var key = GetKey();
 
             if (key != 0)
             {
-                if (!playerReader.ActionBarUseable_1To24.HotKey10)
+                if (key == ConsoleKey.D0 && this.playerReader.IsShooting)
                 {
-                    Debug.WriteLine($"## Stop casting {isTargetDamaged}");
+                    return;
+                }
+
+                if (this.playerReader.IsShooting)
+                {
+                    Debug.WriteLine($"## Stop casting shoot {isTargetDamaged}");
                     await PressKey(ConsoleKey.H);
 
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < 20; i++)
                     {
                         if (playerReader.ActionBarUseable_1To24.HotKey10) { break; }
                         await Task.Delay(100);
                     }
-
-                    await Task.Delay(300);
                 }
+
+                await Task.Delay(300);
 
                 await PressKey(key);
 
@@ -86,6 +92,14 @@ namespace Libs.Actions
 
                 RaiseEvent(new ActionEvent(GoapKey.shouldloot, true));
             }
+        }
+
+        private ConsoleKey GetKey()
+        {
+            return new List<ConsoleKey> { Shield, Heal, Renew, MindBlast, ShadowWordPain, Shoot }
+                .Where(key => key != ConsoleKey.Escape)
+                .ToList()
+                .FirstOrDefault();
         }
 
         public override void OnActionEvent(object sender, ActionEvent e)

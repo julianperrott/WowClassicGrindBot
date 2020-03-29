@@ -46,11 +46,9 @@ namespace Libs.NpcFinder
             this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
 
-
-
         public string ToBase64()
         {
-            const int size = 1200;
+            const int size = 1024;
             //const int quality = 75;
 
             int width, height;

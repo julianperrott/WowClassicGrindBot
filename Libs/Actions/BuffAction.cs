@@ -33,6 +33,13 @@ namespace Libs.Actions
         {
             await this.stopMoving.Stop();
 
+            if (playerReader.PlayerBitValues.IsMounted)
+            {
+                await wowProcess.Dismount();
+            }
+
+            await Task.Delay(1000);
+
             await wowProcess.KeyPress(ConsoleKey.F1, 500);
 
             for (int i = 0; i < 7; i++)

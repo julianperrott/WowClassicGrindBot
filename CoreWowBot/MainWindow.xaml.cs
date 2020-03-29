@@ -44,7 +44,7 @@ namespace Powershell
 
             this.addonThread = new WowData(colorReader, frames, this);
             playerDirection = new PlayerDirection(this.addonThread.PlayerReader, WowProcess,this);
-            this.thread = new Thread(addonThread.AddonRefresh);
+            this.thread = new Thread(ReadAddon);
 
 
 
@@ -89,6 +89,14 @@ namespace Powershell
             //this.agent = new GoapAgent(this.addonThread.PlayerReader, this.availableActions);
 
             thread.Start();
+        }
+
+        public void ReadAddon()
+        {
+            while(true)
+            {
+                addonThread.AddonRefresh();
+            }
         }
 
         private void Dump(long v)
@@ -181,6 +189,7 @@ namespace Powershell
                 timer = null;
 
                 File.WriteAllText($"../../../../Path_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(locations));
+                Debug.WriteLine($"Saved");
             }
             else
             {

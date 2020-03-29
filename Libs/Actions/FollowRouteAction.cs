@@ -37,7 +37,10 @@ namespace Libs.Actions
         private bool shouldMount = true;
         private ILogger logger;
 
+        public bool firstLoad = true;
+
         private Stopwatch LastReachedPoint = new Stopwatch();
+        private Stopwatch LastUnstickAttempt = new Stopwatch();
 
         public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, List<string> blacklist, ILogger logger)
         {
@@ -55,14 +58,30 @@ namespace Libs.Actions
 
         private void RefillPoints(bool findClosest = false)
         {
-            if (findClosest)
+            if (firstLoad)
             {
-                pointsList.ForEach(p => points.Push(p));
-                AdjustNextPointToClosest();
+                // start path at closest point
+                firstLoad = false;
+                var me = this.playerReader.PlayerLocation;
+                var closest = pointsList.OrderBy(p => WowPoint.DistanceTo(me, p)).FirstOrDefault();
+
+                for (int i = 0; i <pointsList.Count;i++)
+                {
+                    points.Push(pointsList[i]);
+                    if (pointsList[i] == closest) { break; }
+                }
             }
             else
             {
-                pointsList.ForEach(p => points.Push(p));
+                if (findClosest)
+                {
+                    pointsList.ForEach(p => points.Push(p));
+                    AdjustNextPointToClosest();
+                }
+                else
+                {
+                    pointsList.ForEach(p => points.Push(p));
+                }
             }
         }
 
@@ -83,12 +102,14 @@ namespace Libs.Actions
             {
                 shouldMount = true;
                 LastReachedPoint.Reset();
+                LastUnstickAttempt.Reset();
             }
         }
 
         public override async Task PerformAction()
         {
             if (!LastReachedPoint.IsRunning) { LastReachedPoint.Start(); }
+            if (!LastUnstickAttempt.IsRunning) { LastUnstickAttempt.Start(); }
 
             RaiseEvent(new ActionEvent(GoapKey.fighting, false));
 
@@ -161,6 +182,8 @@ namespace Libs.Actions
             {
                 logger.LogInformation($"Move to next point");
                 LastReachedPoint.Reset();
+                LastUnstickAttempt.Reset();
+
                 points.Pop();
                 lastDistance = 999;
                 if (points.Count == 0)
@@ -298,9 +321,11 @@ namespace Libs.Actions
         private async Task Unstick()
         {
             await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
-            Dump("Stuck");
 
             int stuckSeconds = (int)(LastReachedPoint.ElapsedMilliseconds / 1000);
+            int unstickSeconds = (int)(LastUnstickAttempt.ElapsedMilliseconds / 1000);
+
+            logger.LogInformation($"Stuck for {stuckSeconds}s, last tried to unstick {unstickSeconds}s ago");
 
             if (stuckSeconds > 240)
             {
@@ -309,25 +334,27 @@ namespace Libs.Actions
                 RaiseEvent(new ActionEvent(GoapKey.abort, true));
             }
 
-            if (stuckSeconds > 30)
+
+            if (unstickSeconds > 10)
             {
+                this.stopMoving?.Stop();
                 // stuck for 30 seconds
-                logger.LogInformation("Stuck for over 90 seconds");
+                logger.LogInformation("Trying to unstick by strafing");
                 var r = random.Next(0, 100);
-                if (r<25)
+                if (r < 50)
                 {
                     wowProcess.SetKeyState(ConsoleKey.Q, true);
                     await Task.Delay(5 * 1000);
                     wowProcess.SetKeyState(ConsoleKey.Q, false);
                 }
-                else if(r > 75)
+                else
                 {
                     wowProcess.SetKeyState(ConsoleKey.E, true);
                     await Task.Delay(5 * 1000);
                     wowProcess.SetKeyState(ConsoleKey.E, false);
                 }
+                LastUnstickAttempt.Reset();
             }
         }
-
     }
 }

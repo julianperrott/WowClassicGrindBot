@@ -29,7 +29,8 @@ namespace Libs.Actions
 
         private ConsoleKey Drink => playerReader.PlayerClass switch
         {
-            PlayerClassEnum.Priest => this.playerReader.ActionBarUseable_1To24.HotKey7 ? ConsoleKey.D8 : ConsoleKey.Escape,
+            PlayerClassEnum.Priest => this.playerReader.ActionBarUseable_1To24.HotKey8 ? ConsoleKey.D8 : ConsoleKey.Escape,
+            PlayerClassEnum.Druid => this.playerReader.ActionBarUseable_1To24.HotKey8 ? ConsoleKey.D8 : ConsoleKey.Escape,
             _ => ConsoleKey.Escape
         };
 
@@ -48,11 +49,18 @@ namespace Libs.Actions
 
             await Task.Delay(1000);
 
+            bool hasDrank = false;
+
             for (int i = 0; i < seconds; i++)
             {
+                hasDrank = hasDrank || this.playerReader.Buffs.Drinking;
+
                 if (this.playerReader.ManaPercentage > 98 || !this.playerReader.Buffs.Drinking)
                 {
-                    await wowProcess.KeyPress(ConsoleKey.UpArrow, 400);
+                    if (hasDrank)
+                    {
+                        await wowProcess.KeyPress(ConsoleKey.UpArrow, 400);
+                    }
                     break;
                 }
                 if (this.playerReader.PlayerBitValues.PlayerInCombat)

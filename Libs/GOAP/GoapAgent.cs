@@ -54,10 +54,15 @@ namespace Libs.GOAP
 
 		public async Task<HashSet<KeyValuePair<GoapKey, object>>> GetWorldState(PlayerReader playerReader)
 		{
-			if (blacklist.Contains(playerReader.Target))
+			//Debug.WriteLine("TargetOfTargetIsPlayer: " + playerReader.PlayerBitValues.TargetOfTargetIsPlayer);
+
+			if (blacklist.Contains(playerReader.Target)|| !playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
 			{
 				await new WowProcess(logger).KeyPress(ConsoleKey.F3, 400);
 			}
+
+			var drinkPercentage = 50;
+			if (this.playerReader.PlayerClass == PlayerClassEnum.Druid) { drinkPercentage = 25; }
 
 			var state= new HashSet<KeyValuePair<GoapKey, object>>
 			{
@@ -70,7 +75,7 @@ namespace Libs.GOAP
 				new KeyValuePair<GoapKey, object>(GoapKey.shouldheal, playerReader.HealthPercent<60 && !playerReader.PlayerBitValues.DeadStatus),
 				new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
 				new KeyValuePair<GoapKey, object>(GoapKey.usehealingpotion, playerReader.HealthPercent<7),
-				new KeyValuePair<GoapKey, object>(GoapKey.shoulddrink, playerReader.ManaPercentage<50),
+				new KeyValuePair<GoapKey, object>(GoapKey.shoulddrink, playerReader.ManaPercentage<drinkPercentage),
 			};
 
 			actionState.ToList().ForEach(kv => state.Add(kv));

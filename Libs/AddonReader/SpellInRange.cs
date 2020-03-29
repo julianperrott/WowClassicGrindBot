@@ -31,11 +31,15 @@
         public bool Priest_MindFlay { get => IsBitSet(2); }
         public bool Priest_Shoot { get => IsBitSet(3); }
 
+        // Druid
+        public bool Druid_Wrath { get => IsBitSet(0); }
+
         public bool WithInPullRange(PlayerClassEnum playerClass) => playerClass switch
         {
             PlayerClassEnum.Warrior => Warrior_ShootGun || Warrior_Charge,
             PlayerClassEnum.Rogue => Rogue_Throw,
             PlayerClassEnum.Priest => Priest_ShadowWordPain,
+            PlayerClassEnum.Druid => Druid_Wrath,
             _ => false
         };
 
@@ -44,6 +48,7 @@
             PlayerClassEnum.Warrior => Warrior_Rend,
             PlayerClassEnum.Rogue => Rogue_SinisterStrike,
             PlayerClassEnum.Priest => Priest_Shoot,
+            PlayerClassEnum.Druid => Druid_Wrath,
             _ => false
         };
     }

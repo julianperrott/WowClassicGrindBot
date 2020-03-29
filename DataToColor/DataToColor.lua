@@ -326,7 +326,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(self:GetGossipIcons()), 45) -- Returns which gossip icons are on display in dialogue box
             MakePixelSquareArr(integerToColor(self:PlayerClass()), 46) -- Returns player class as an integer
             MakePixelSquareArr(integerToColor(self:isUnskinnable()), 47) -- Returns 1 if creature is unskinnable
-            MakePixelSquareArr(integerToColor(self:hearthZoneID()), 48) -- Returns subzone of that is currently bound to hearthstone
+            --MakePixelSquareArr(integerToColor(self:hearthZoneID()), 48) -- Returns subzone of that is currently bound to hearthstone
 
             MakePixelSquareArr(integerToColor(self:areSpellsInRange()), 49) -- Are spells in range
 
@@ -437,25 +437,28 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:IsTargetOfTargetPlayer(), 15) + 
     self:MakeIndexBase2(self:needManaGem(), 16) + 
     self:MakeIndexBase2(self:ProcessExitStatus(), 17)+
-    self:MakeIndexBase2(self:IsPlayerMounted(), 18)
+    self:MakeIndexBase2(self:IsPlayerMounted(), 18)+
+    self:MakeIndexBase2(self:IsAutoRepeatActionOn(10), 19)+
+    self:MakeIndexBase2(self:IsCurrentActionOn(10), 20)
 end
 
 function DataToColor:getBuffsForClass()
-    local class, CC = UnitClass("player")
+    local class, CC = UnitClass("player");
+
+    class=self:MakeIndexBase2(self:GetBuffs("Food"), 0) +
+    self:MakeIndexBase2(self:GetBuffs("Drink"), 1) +
+    self:MakeIndexBase2(self:GetBuffs("Well Fed"), 2) +
+    self:MakeIndexBase2(self:GetBuffs("Mana Regeneration"), 3);
+
     if CC == "PRIEST" then 
-        class=self:MakeIndexBase2(self:GetBuffs("Food"), 0) +
-        self:MakeIndexBase2(self:GetBuffs("Drink"), 1) +
-        self:MakeIndexBase2(self:GetBuffs("Well Fed"), 2) +
-	    self:MakeIndexBase2(self:GetBuffs("Fortitude"), 3) +
-	    self:MakeIndexBase2(self:GetBuffs("Inner Fire"), 4)+
-	    self:MakeIndexBase2(self:GetBuffs("Renew"), 5)+
-        self:MakeIndexBase2(self:GetBuffs("Shield"), 6)+
-        self:MakeIndexBase2(self:GetBuffs("Mana Regeneration"), 7)+
-        self:MakeIndexBase2(self:GetBuffs("Spirit"), 8);
-    else
-        class = self:MakeIndexBase2(self:GetBuffs("Food"), 0) +
-            self:MakeIndexBase2(self:GetBuffs("Drink"), 1) +
-            self:MakeIndexBase2(self:GetBuffs("Well Fed"), 2);
+        class=class+self:MakeIndexBase2(self:GetBuffs("Fortitude"),10) +
+	    self:MakeIndexBase2(self:GetBuffs("Inner Fire"), 11)+
+	    self:MakeIndexBase2(self:GetBuffs("Renew"), 12)+
+        self:MakeIndexBase2(self:GetBuffs("Shield"), 13)+
+        self:MakeIndexBase2(self:GetBuffs("Spirit"), 14);
+    elseif CC == "DRUID" then
+        class=class+self:MakeIndexBase2(self:GetBuffs("Mark of the Wild"), 10) +
+	    self:MakeIndexBase2(self:GetBuffs("Thorns"), 11);
     end
     return class;
 end
@@ -588,13 +591,17 @@ function DataToColor:areSpellsInRange()
             "Sinister Strike", --1
             "Throw", --2
             "Shoot Gun" --4
-        }
+        };
+    elseif CC == "DRUID" then
+        spellList = {
+            "Wrath" --1
+        };
     elseif CC == "WARRIOR" then
         spellList = {
             "Charge", --1
             "Rend", --2
             "Shoot Gun", --4
-        };
+        };        
     elseif CC == "PRIEST" then
         spellList = {
             "Shadow Word: Pain", --1
@@ -888,12 +895,30 @@ function DataToColor:needManaGem()
     end
 end
 
+function DataToColor:IsTargetOfTargetPlayerAsNumber()
+    if CHARACTER_NAME == UnitName("target") then return 0 end; -- targeting self
+    if CHARACTER_NAME == UnitName("targettarget") then return 1 end; -- targetting me
+    if not(UnitName("targettarget")) then return 2 end; -- target has no target
+    return 3;
+end
+
 -- Returns true if target of our target is us
 function DataToColor:IsTargetOfTargetPlayer()
-    if CHARACTER_NAME == UnitName("targettarget") and CHARACTER_NAME ~= UnitName("target") then
+    local x = self:IsTargetOfTargetPlayerAsNumber();
+    if x==1 or x ==2 then return 1 else return 0 end;
+end
+
+function DataToColor:IsAutoRepeatActionOn(actionSlot)
+    if IsAutoRepeatAction(actionSlot)  then
         return 1
-    else
-        return 0
+    else return 0
+    end
+end
+
+function DataToColor:IsCurrentActionOn(actionSlot)
+    if IsCurrentAction(actionSlot)  then
+        return 1
+    else return 0
     end
 end
 

@@ -47,7 +47,7 @@ namespace Libs
         }
 
         public long HealthCurrent => reader.GetLongAtCell(11); // Current amount of health of player
-        public long HealthPercent => HealthMax == 0 ? 0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
+        public long HealthPercent => HealthMax == 0 || HealthCurrent==1 ? 0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
 
         public long ManaMax => reader.GetLongAtCell(12); // Maximum amount of mana
         public long ManaCurrent => reader.GetLongAtCell(13); // Current amount of mana
@@ -130,5 +130,8 @@ namespace Libs
 
         public bool WithInPullRange => SpellInRange.WithInPullRange(this.PlayerClass);
         public bool WithInCombatRange => SpellInRange.WithInCombatRange(this.PlayerClass);
+
+        public bool IsShooting => PlayerBitValues.IsAutoRepeatActionOnActionBar10;
+        public bool IsActionBar10Current => PlayerBitValues.IsCurrentActionOnActionBar10;
     }
 }

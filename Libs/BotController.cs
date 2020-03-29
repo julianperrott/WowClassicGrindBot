@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,6 +27,13 @@ namespace Libs
             WowData = new WowData(colorReader, frames, logger);
             addonThread = new Thread(AddonRefreshThread);
             addonThread.Start();
+
+            // wait for addon to read the wow state
+            while (WowData.PlayerReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(WowData.PlayerReader.PlayerClass))
+            {
+                logger.LogWarning("There is a problem with the addon, I have been unable to read the player class. Is it running ?");
+                Thread.Sleep(100);
+            }
 
             WowBot = new Bot(WowData, logger);
         }
