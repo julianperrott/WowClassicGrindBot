@@ -24,8 +24,10 @@ namespace Libs.Actions
         private readonly List<WowPoint> routePoints;
         private Stack<WowPoint> points = new Stack<WowPoint>();
         private Stopwatch LastReachedPoint = new Stopwatch();
+        private Stopwatch LastUnstickAttempt = new Stopwatch();
         private Random random = new Random();
         private ILogger logger;
+        private DateTime LastJump = DateTime.Now;
 
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
@@ -68,12 +70,14 @@ namespace Libs.Actions
             if (sender != this)
             {
                 LastReachedPoint.Reset();
+                LastUnstickAttempt.Reset();
             }
         }
 
         public override async Task PerformAction()
         {
             if (!LastReachedPoint.IsRunning) { LastReachedPoint.Start(); }
+            if (!LastUnstickAttempt.IsRunning) { LastUnstickAttempt.Start(); }
 
             if (NeedsToReset)
             {
@@ -91,11 +95,12 @@ namespace Libs.Actions
 
             if (points.Count == 0)
             {
+                points.Push(this.playerReader.CorpseLocation);
                 distance = DistanceTo(location, CorpseLocation);
                 heading = new DirectionCalculator(logger).CalculateHeading(location, CorpseLocation);
                 this.logger.LogInformation("no more points, heading to corpse");
                 await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
-                return;
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
             }
             else
             {
@@ -109,16 +114,18 @@ namespace Libs.Actions
             }
             else if (lastDistance == distance)
             {
+                Dump("Stuck");
+                // stuck so jump
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(100);
-                // stuck so jump
-                if ((DateTime.Now - LastActive).TotalSeconds < 2)
+                if (HasBeenActiveRecently())
                 {
                     await Unstick();
                 }
                 else
                 {
-                    Dump("Resuming movement");
+                    await Task.Delay(1000);
+                    logger.LogInformation("Resuming movement");
                 }
             }
             else // distance closer
@@ -141,6 +148,7 @@ namespace Libs.Actions
             {
                 logger.LogInformation($"Move to next point");
                 LastReachedPoint.Reset();
+                LastUnstickAttempt.Reset();
                 points.Pop();
                 lastDistance = 999;
                 if (points.Count > 0)
@@ -153,16 +161,15 @@ namespace Libs.Actions
             LastActive = DateTime.Now;
         }
 
-        private async Task Unstick()
+        private bool HasBeenActiveRecently()
         {
-            await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
-            Dump("Stuck");
+            return (DateTime.Now - LastActive).TotalSeconds < 2;
         }
 
         public async Task Reset()
         {
-            logger.LogInformation("Sleeping 10 seconds");
-            await Task.Delay(10000);
+            logger.LogInformation("Sleeping 2 seconds");
+            await Task.Delay(2000);
             while(new List<double> { playerReader.XCoord, playerReader.YCoord, CorpseLocation.X,CorpseLocation.Y }.Max()>100)
             {
                 logger.LogInformation($"Waiting... odd coords read. Player {playerReader.XCoord},{playerReader.YCoord} corpse { CorpseLocation.X}{CorpseLocation.Y}");
@@ -184,7 +191,6 @@ namespace Libs.Actions
                     break;
                 }
             }
-
 
             var closestRoutePointToCorpse = routePoints.Select(s => (pathPoint: s, distance: DistanceTo(s, CorpseLocation)))
                 .OrderBy(s => s.distance)
@@ -302,6 +308,58 @@ namespace Libs.Actions
             else
             {
                 return A + AB * distance;
+            }
+        }
+
+        private async Task RandomJump()
+        {
+            if ((DateTime.Now - LastJump).TotalSeconds > 5)
+            {
+                if (random.Next(1) == 0)
+                {
+                    logger.LogInformation($"Random jump");
+
+                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 499);
+                }
+            }
+            LastJump = DateTime.Now;
+        }
+
+        private async Task Unstick()
+        {
+            await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+
+            int stuckSeconds = (int)(LastReachedPoint.ElapsedMilliseconds / 1000);
+            int unstickSeconds = (int)(LastUnstickAttempt.ElapsedMilliseconds / 1000);
+
+            logger.LogInformation($"Stuck for {stuckSeconds}s, last tried to unstick {unstickSeconds}s ago");
+
+            if (stuckSeconds > 240)
+            {
+                // stuck for 4 minutes
+                logger.LogInformation("Stuck for 4 minutes");
+                RaiseEvent(new ActionEvent(GoapKey.abort, true));
+            }
+
+            if (unstickSeconds > 10)
+            {
+                this.stopMoving?.Stop();
+                // stuck for 30 seconds
+                logger.LogInformation("Trying to unstick by strafing");
+                var r = random.Next(0, 100);
+                if (r < 50)
+                {
+                    wowProcess.SetKeyState(ConsoleKey.Q, true);
+                    await Task.Delay(5 * 1000);
+                    wowProcess.SetKeyState(ConsoleKey.Q, false);
+                }
+                else
+                {
+                    wowProcess.SetKeyState(ConsoleKey.E, true);
+                    await Task.Delay(5 * 1000);
+                    wowProcess.SetKeyState(ConsoleKey.E, false);
+                }
+                LastUnstickAttempt.Reset();
             }
         }
     }

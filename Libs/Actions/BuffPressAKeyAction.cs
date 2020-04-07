@@ -14,19 +14,19 @@ namespace Libs.Actions
         private readonly StopMoving stopMoving;
         private readonly PlayerReader playerReader;
         private ILogger logger;
-        private readonly ConsoleKey key;
+        private readonly Func<Task> actionBuff;
         private readonly int secondsCooldown = 30;
         private readonly string description;
         private readonly Func<bool> hasDesiredBuff;
         private DateTime LastPressed = DateTime.Now.AddDays(-1);
 
-        public BuffPressAKeyAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ConsoleKey key, Func<bool> hasDesiredBuff, ILogger logger, string description)
+        public BuffPressAKeyAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, Func<Task> actionBuff, Func<bool> hasDesiredBuff, ILogger logger, string description)
         {
             this.wowProcess = wowProcess;
             this.stopMoving = stopMoving;
             this.description = description;
             this.playerReader = playerReader;
-            this.key = key;
+            this.actionBuff = actionBuff;
             this.hasDesiredBuff = hasDesiredBuff;
             this.logger = logger;
 
@@ -46,7 +46,7 @@ namespace Libs.Actions
 
             await Task.Delay(1000);
 
-            await wowProcess.KeyPress(key, 500);
+            await actionBuff();
 
             for (int i = 0; i < 12; i++)
             {

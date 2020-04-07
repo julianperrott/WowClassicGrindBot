@@ -105,13 +105,15 @@ namespace Libs
 
         //MakePixelSquareArr(integerToColor(self: GetDebuffs("FrostNova")), 43)-- Checks if target is frozen by frost nova debuff
 
-        public long Gametime => reader.GetLongAtCell(44);// Returns time in the game
-        public long GossipOptions => reader.GetLongAtCell(45); //  Returns which gossip icons are on display in dialogue box
+        public long TargetLevel => reader.GetLongAtCell(43);
+
+        //public long Gametime => reader.GetLongAtCell(44);// Returns time in the game
+        //public long GossipOptions => reader.GetLongAtCell(45); //  Returns which gossip icons are on display in dialogue box
 
         public PlayerClassEnum PlayerClass => (PlayerClassEnum)reader.GetLongAtCell(46);
 
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
-        public long HearthZone => reader.GetLongAtCell(48); // Returns subzone of that is currently bound to hearthstone
+        public long ShapeshiftForm => reader.GetLongAtCell(48); 
 
         private SpellInRange spellInRange = new SpellInRange(0);
 

@@ -14,20 +14,20 @@ namespace Libs.Actions
         private readonly StopMoving stopMoving;
         private readonly PlayerReader playerReader;
         private ILogger logger;
-        private readonly ConsoleKey key;
+        private readonly Func<Task> actionBuff;
         private readonly int secondsCooldown = 30;
         private readonly string description;
         private readonly Func<bool> hasDesiredBuff;
         private readonly int manaPercentage;
         private DateTime LastPressed = DateTime.Now.AddDays(-1);
 
-        public ManaBuffPressAKeyAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ConsoleKey key, Func<bool> hasDesiredBuff, int manaPercentage, ILogger logger, string description)
+        public ManaBuffPressAKeyAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, Func<Task> actionBuff, Func<bool> hasDesiredBuff, int manaPercentage, ILogger logger, string description)
         {
             this.wowProcess = wowProcess;
             this.stopMoving = stopMoving;
             this.description = description;
             this.playerReader = playerReader;
-            this.key = key;
+            this.actionBuff = actionBuff;
             this.hasDesiredBuff = hasDesiredBuff;
             this.manaPercentage = manaPercentage;
             this.logger = logger;
@@ -48,7 +48,7 @@ namespace Libs.Actions
 
             await Task.Delay(1000);
 
-            await wowProcess.KeyPress(key, 500);
+            await actionBuff();
 
             LastPressed = DateTime.Now;
         }

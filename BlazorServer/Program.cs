@@ -40,9 +40,7 @@ namespace BlazorServer
             .ConfigureLogging((hostingContext, logging) =>
             {
                 logging.AddConsole();
-                logging.AddDebug();
                 logging.AddEventSourceLogger();
             });
-            
     }
 }

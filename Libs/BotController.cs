@@ -48,7 +48,7 @@ namespace Libs
 
         public void ScreenshotRefreshThread()
         {
-            while (this.WowBot.Active)
+            while (true)//this.WowBot.Active)
             {
                 this.WowBot.DoScreenshot();
             }

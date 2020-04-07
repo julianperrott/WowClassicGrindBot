@@ -22,8 +22,13 @@ namespace Libs.Actions
 
         //private ConsoleKey Shield => !IsOnCooldown(ConsoleKey.D3, 10) && playerReader.TargetHealthPercentage > 15 && this.playerReader.HealthPercent < 75 && !Buffs.Shield && HasEnoughMana(100) ? ConsoleKey.D3 : ConsoleKey.Escape;
         //private ConsoleKey Renew => !IsOnCooldown(ConsoleKey.D4, 10) && !Buffs.Renew && this.playerReader.HealthPercent < 75 && HasEnoughMana(100) ? ConsoleKey.D4 : ConsoleKey.Escape;
-        private ConsoleKey Heal => !IsOnCooldown(ConsoleKey.D9, 10) && this.playerReader.HealthPercent < 50 && HasEnoughMana(20) ? ConsoleKey.D9 : ConsoleKey.Escape;
-        private ConsoleKey Wrath =>  HasEnoughMana(20) ? ConsoleKey.D2 : ConsoleKey.Escape;
+        private ConsoleKey Heal => !IsOnCooldown(ConsoleKey.D9, 10) && this.playerReader.HealthPercent < 50 ? ConsoleKey.D9 : ConsoleKey.Escape;
+        private ConsoleKey Wrath =>  HasEnoughMana(30) ? ConsoleKey.D2 : ConsoleKey.Escape;
+        private ConsoleKey Maul => !IsOnCooldown(ConsoleKey.D2, 3)? ConsoleKey.D2 : ConsoleKey.Escape;
+
+        private ConsoleKey Enrage => !IsOnCooldown(ConsoleKey.D3, 15) ? ConsoleKey.D3 : ConsoleKey.Escape;
+        private ConsoleKey Bash => !IsOnCooldown(ConsoleKey.D4, 10) ? ConsoleKey.D4 : ConsoleKey.Escape;
+
         //private ConsoleKey ShadowWordPain => !IsOnCooldown(ConsoleKey.D6, 24) && playerReader.TargetHealthPercentage>35 && HasEnoughMana(100) ? ConsoleKey.D6 : ConsoleKey.Escape;
         private ConsoleKey Shoot =>  !this.playerReader.IsActionBar10Current ? ConsoleKey.D0 : ConsoleKey.Escape;
 
@@ -39,7 +44,22 @@ namespace Libs.Actions
             {
                 await Task.Delay(300);
 
+                if (key == ConsoleKey.D9 && this.playerReader.ShapeshiftForm != 0) // heal
+                {
+                    await this.wowProcess.KeyPress(ConsoleKey.F8, 300); // cancelform
+                }
+
+                if (key != ConsoleKey.D9 && this.playerReader.ShapeshiftForm == 0) // needs bear form
+                {
+                    await this.wowProcess.KeyPress(ConsoleKey.D4, 300); // bear form
+                }
+
                 await PressKey(key);
+
+                if (key == ConsoleKey.D9) // Heal
+                {
+                    await Task.Delay(3000);
+                }
 
                 RaiseEvent(new ActionEvent(GoapKey.shouldloot, true));
             }
@@ -47,7 +67,13 @@ namespace Libs.Actions
 
         private ConsoleKey GetKey()
         {
-            return new List<ConsoleKey> { Approach, Heal, Wrath, Shoot }
+            var keys = new List<ConsoleKey> { Approach, Heal, Wrath, Shoot };
+            if (this.playerReader.Level > 10)
+            {
+                keys = new List<ConsoleKey> { Approach, Heal, Enrage, Bash, Maul };
+            }
+
+            return keys
                 .Where(key => key != ConsoleKey.Escape)
                 .ToList()
                 .FirstOrDefault();

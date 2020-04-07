@@ -15,6 +15,8 @@ namespace Libs.Actions
         protected readonly StopMoving stopMoving;
         protected ILogger logger;
         protected ActionBarStatus actionBar = new ActionBarStatus(0);
+        protected ConsoleKey lastKeyPressed = ConsoleKey.Escape;
+        protected WowPoint lastInteractPostion = new WowPoint(0, 0);
 
         protected Dictionary<ConsoleKey, DateTime> LastClicked = new Dictionary<ConsoleKey, DateTime>();
 
@@ -72,7 +74,26 @@ namespace Libs.Actions
 
         public async Task PressKey(ConsoleKey key)
         {
+            if (lastKeyPressed == ConsoleKey.H)
+            {
+                var distance = WowPoint.DistanceTo(lastInteractPostion, this.playerReader.PlayerLocation);
+
+                if (distance > 1)
+                {
+                    logger.LogInformation($"Stop moving: We have moved since the last interact: {distance}");
+                    await wowProcess.KeyPress(ConsoleKey.UpArrow, 101);
+                    lastInteractPostion = this.playerReader.PlayerLocation;
+                }
+            }
+
+            if (key== ConsoleKey.H)
+            {
+                lastInteractPostion = this.playerReader.PlayerLocation;
+            }
+
             await wowProcess.KeyPress(key, 301);
+
+            lastKeyPressed = key;
 
             if (LastClicked.ContainsKey(key))
             {

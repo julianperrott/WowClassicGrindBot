@@ -76,15 +76,15 @@ namespace Libs.Actions
             else
             {
                 // we are in combat
-                if (!playerWasInCombat)
+                if (!playerWasInCombat && HasPickedUpAnAdd)
                 {
-                    playerWasInCombat = true;
                     logger.LogInformation("Looks like we have an add on approach");
                     await this.stopMoving.Stop();
                     await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 490);
                     await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
                     return;
                 }
+                playerWasInCombat = true;
             }
 
             await this.wowProcess.KeyPress(ConsoleKey.H, 501);
@@ -102,6 +102,15 @@ namespace Libs.Actions
             if (approachSeconds > 20)
             {
                 await Unstick();
+            }
+        }
+
+        bool HasPickedUpAnAdd
+        {
+            get
+            {
+                logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
+                return this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer;
             }
         }
 

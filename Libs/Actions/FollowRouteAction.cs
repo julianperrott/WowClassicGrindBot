@@ -33,7 +33,7 @@ namespace Libs.Actions
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
         private DateTime lastTab = DateTime.Now;
-        private readonly List<string> blacklist;
+        private readonly Blacklist blacklist;
         private bool shouldMount = true;
         private ILogger logger;
 
@@ -42,7 +42,7 @@ namespace Libs.Actions
         private Stopwatch LastReachedPoint = new Stopwatch();
         private Stopwatch LastUnstickAttempt = new Stopwatch();
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, List<string> blacklist, ILogger logger)
+        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, Blacklist blacklist, ILogger logger)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
@@ -178,7 +178,7 @@ namespace Libs.Actions
 
             lastDistance = distance;
 
-            if (distance < 50)
+            if (distance < (this.playerReader.PlayerBitValues.IsMounted ? 50 : 40))
             {
                 logger.LogInformation($"Move to next point");
                 LastReachedPoint.Reset();
@@ -231,13 +231,14 @@ namespace Libs.Actions
                 
             }
 
-            if( this.playerReader.HasTarget && !blacklist.Contains(playerReader.Target))
+            if( this.playerReader.HasTarget && !blacklist.IsTargetBlacklisted())
             {
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
                     await wowProcess.Dismount();
-                    await wowProcess.KeyPress(ConsoleKey.H,300);
+                    
                 }
+                await wowProcess.KeyPress(ConsoleKey.H, 300);
                 return true;
             }
             return false;

@@ -44,15 +44,6 @@ namespace Libs.Actions
                 await wowProcess.Dismount();
             }
 
-            // face target
-            //if (playerReader.PlayerClass == PlayerClassEnum.Priest)
-            //{
-            //await this.wowProcess.KeyPress(ConsoleKey.H, 151);
-            //}
-            //else
-            //{
-            //await StopAfterH();
-            //}
             await this.wowProcess.KeyPress(ConsoleKey.H, 151);
             await this.stopMoving.Stop();
             await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
@@ -65,7 +56,26 @@ namespace Libs.Actions
             bool pulled = await Pull();
             if (!pulled)
             {
+                if (HasPickedUpAnAdd) 
+                {
+                    logger.LogInformation($"Add on approach");
+                    await this.stopMoving.Stop();
+                    await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 490);
+                    await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
+                    return; 
+                }
+
+                logger.LogInformation($"Approach target");
                 await this.wowProcess.KeyPress(ConsoleKey.H, 151);
+            }
+        }
+
+        bool HasPickedUpAnAdd
+        {
+            get
+            {
+                logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
+                return this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer;
             }
         }
 
@@ -77,6 +87,11 @@ namespace Libs.Actions
             logger.LogInformation($"Npc count = {npcCount}");
 
             bool pulled = false;
+
+            if (HasPickedUpAnAdd) { return false; }
+
+            await this.stopMoving.Stop();
+            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
 
             pulled = playerReader.PlayerClass switch
             {
@@ -148,30 +163,85 @@ namespace Libs.Actions
         {
             //await this.wowProcess.KeyPress(ConsoleKey.OemPlus, 301);
 
-            if (playerReader.SpellInRange.Druid_Wrath)
+            if (playerReader.WithInPullRange)
             {
                 logger.LogInformation($"Stop approach");
                 //await StopAfterH();
 
                 await Task.Delay(300);
 
+                if (HasPickedUpAnAdd) { return false; }
+
+                if (this.playerReader.ShapeshiftForm != 0)
+                {
+                    await this.wowProcess.KeyPress(ConsoleKey.F8, 300); // cancelform
+                }
+
+                if (this.playerReader.HealthPercent < 75)
+                {
+                    logger.LogInformation($"Healing");
+                    await this.wowProcess.KeyPress(ConsoleKey.D9, 300); // Rejuve
+                    while (this.playerReader.HealthPercent < 80 && !this.playerReader.PlayerBitValues.PlayerInCombat)
+                    {
+                        await Task.Delay(100);
+                    }
+                }
+
+                if (!playerReader.WithInPullRange)
+                {
+                    return false;
+                }
+
+                if (HasPickedUpAnAdd) { return false; }
+
                 logger.LogInformation($"Cast Wrath");
                 await this.combatAction.PressKey(ConsoleKey.D2);
+                await Task.Delay(1500);
+
+                if (random.Next(2) == 1)
+                {
+                    // moonfire
+                    await this.combatAction.PressKey(ConsoleKey.D5);
+                    await Task.Delay(1000);
+                }
+                else
+                {
+                    // roots
+                    await this.combatAction.PressKey(ConsoleKey.D2);
+                    await Task.Delay(1800);
+                }
+
+                if (random.Next(2) == 1)
+                {
+                    await this.combatAction.PressKey(ConsoleKey.D2);
+                    await Task.Delay(1800);
+                }
+                else
+                {
+                    await Task.Delay(1000);
+                }
+
+                if (this.playerReader.ShapeshiftForm == 0) // needs bear form
+                {
+                    await Task.Delay(500);
+                    await this.wowProcess.KeyPress(ConsoleKey.D4, 300); // bear form
+                    await Task.Delay(2000);
+                }
 
                 // wait for combat
-                for (int i = 0; i < 20; i++)
-                {
-                    if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.WithInCombatRange)
-                    {
-                        for (int j = 0; j < 4; j++)
-                        {
-                            await Task.Delay(700);
-                            await this.combatAction.PressKey(ConsoleKey.D2);
-                        }
-                        break;
-                    }
-                    await Task.Delay(100);
-                }
+                //for (int i = 0; i < 20; i++)
+                //{
+                //    if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.WithInCombatRange)
+                //    {
+                //        //for (int j = 0; j < 3; j++)
+                //        //{
+                //            await this.combatAction.PressKey(ConsoleKey.D2);
+                //            await Task.Delay(1500);
+                //        //}
+                //        break;
+                //    }
+                //    await Task.Delay(100);
+                //}
 
                 return true;
             }
@@ -194,10 +264,6 @@ namespace Libs.Actions
                     await this.wowProcess.KeyPress(ConsoleKey.D3, 520);
                 }
 
-                // stop approach
-                //logger.LogInformation($"Stop approach");
-                //await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
-
                 await Task.Delay(300);
 
                 logger.LogInformation($"Cast Mind Blast");
@@ -216,6 +282,8 @@ namespace Libs.Actions
                     }
                     await Task.Delay(100);
                 }
+
+                await Task.Delay(600);
 
                 return true;
             }

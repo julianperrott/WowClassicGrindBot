@@ -33,7 +33,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
             var playerReader = new PlayerReader(new Mock<ISquareReader>().Object, this);
             var stopMoving = new StopMoving(wowprocess, playerReader, logger.Object);
             var npcNameFinder = new NpcNameFinder(wowprocess, logger.Object);
-            this.followRouteAction = new FollowRouteAction(playerReader, wowprocess, new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving, npcNameFinder, new List<string>(), logger.Object);
+            this.followRouteAction = new FollowRouteAction(playerReader, wowprocess, new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving, npcNameFinder, new Blacklist(playerReader), logger.Object);
 
             this.killMobAction = new WarriorCombatAction(wowprocess, playerReader, stopMoving, logger.Object);
             this.pullTargetAction = new PullTargetAction(wowprocess, playerReader, npcNameFinder, stopMoving, logger.Object, this.killMobAction as CombatActionBase);

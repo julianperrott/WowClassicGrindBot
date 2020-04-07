@@ -33,6 +33,7 @@
 
         // Druid
         public bool Druid_Wrath { get => IsBitSet(0); }
+        public bool Druid_Bash { get => IsBitSet(1); }
 
         public bool WithInPullRange(PlayerClassEnum playerClass) => playerClass switch
         {
@@ -48,7 +49,7 @@
             PlayerClassEnum.Warrior => Warrior_Rend,
             PlayerClassEnum.Rogue => Rogue_SinisterStrike,
             PlayerClassEnum.Priest => Priest_Shoot,
-            PlayerClassEnum.Druid => Druid_Wrath,
+            PlayerClassEnum.Druid => Druid_Bash,
             _ => false
         };
     }

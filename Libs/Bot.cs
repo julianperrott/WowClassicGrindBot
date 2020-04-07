@@ -26,7 +26,7 @@ namespace Libs
         public readonly WalkToCorpseAction walkToCorpseAction;
         public readonly NpcNameFinder npcNameFinder;
         private ILogger logger;
-        private List<string> blacklist = new List<string> { "THORKA", "ZARICO", "SHADOW","DREADM","DUNEMA" };
+        private Blacklist blacklist;
 
         public delegate void ScreenChangeDelegate(object sender, ScreenChangeEventArgs args);
         public event ScreenChangeDelegate? OnScreenChanged;
@@ -39,6 +39,8 @@ namespace Libs
         {
             this.logger = logger;
             this.wowData = wowData;
+            this.blacklist = new Blacklist(wowData.PlayerReader);
+
             this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist, logger);
 
             string pathText = string.Empty;
@@ -61,10 +63,10 @@ namespace Libs
                     spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
                     break;
                 case PlayerClassEnum.Druid:
-                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Dolanar_9.json");
+                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_31.json");
                     thereAndBack = true;
-                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Dolanar_6_SpiritHealer.json");
-                    step = 1;
+                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_31_SpiritHealer.json");
+                    step = 2;
                     break;
             }
 
@@ -105,7 +107,7 @@ namespace Libs
             {
                 screenshot.CaptureScreen();
                 this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(screenshot.ToBase64()));
-                Thread.Sleep(500);
+                Thread.Sleep(1);
             }
         }
 
@@ -131,7 +133,7 @@ namespace Libs
                     this.availableActions.Add(new WarriorCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new EatOrBandageAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-                    this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D7, () => wowData.PlayerReader.Buffs.WellFed, logger, "Well Fed"));
+                    this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D7), () => wowData.PlayerReader.Buffs.WellFed, logger, "Well Fed"));
                     break;
 
                 case PlayerClassEnum.Rogue:
@@ -144,17 +146,18 @@ namespace Libs
                 case PlayerClassEnum.Priest:
                     this.availableActions.Add(new PriestCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new DrinkAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D1, () => wowData.PlayerReader.Buffs.Fortitude, 70, logger, "Fortitude"));
-                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D2, () => wowData.PlayerReader.Buffs.InnerFire, 70, logger, "Inner Fire"));
-                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D7, () => wowData.PlayerReader.Buffs.DivineSpirit, 70, logger, "Divine Spirit"));
-                    this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.OemMinus, () => wowData.PlayerReader.Buffs.ManaRegeneration, logger, "Nightfin Soup"));
+                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D1), () => wowData.PlayerReader.Buffs.Fortitude, 70, logger, "Fortitude"));
+                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D2), () => wowData.PlayerReader.Buffs.InnerFire, 70, logger, "Inner Fire"));
+                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D7), () => wowData.PlayerReader.Buffs.DivineSpirit, 70, logger, "Divine Spirit"));
+                    this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.OemMinus), () => wowData.PlayerReader.Buffs.ManaRegeneration, logger, "Well Fed")); // "Nightfin Soup"));
                     break;
 
                 case PlayerClassEnum.Druid:
                     this.availableActions.Add(new DruidCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new DrinkAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D1, () => wowData.PlayerReader.Buffs.MarkOfTheWild, 70, logger, "Mark of the Wild"));
-                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, ConsoleKey.D3, () => wowData.PlayerReader.Buffs.Thorns, 70, logger, "Thorns"));
+                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D1), () => wowData.PlayerReader.Buffs.MarkOfTheWild, 70, logger, "Mark of the Wild"));
+                    this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D3), () => wowData.PlayerReader.Buffs.Thorns, 70, logger, "Thorns"));
+                    this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D7), () => wowData.PlayerReader.Buffs.WellFed, logger, "Well Fed"));
                     break;
             }
 
@@ -185,10 +188,22 @@ namespace Libs
 
         }
 
+        public async Task PressKey(ConsoleKey key)
+        {
+            if (wowData.PlayerReader.PlayerClass == PlayerClassEnum.Druid && wowData.PlayerReader.ShapeshiftForm != 0)
+            {
+                await GetWowProcess.KeyPress(ConsoleKey.F8, 500);
+            }
+
+            await GetWowProcess.KeyPress(key, 500);
+        }
+
         public void OnActionEvent(object sender, ActionEvent e)
         {
             if (e.Key == GoapKey.abort)
             {
+                logger.LogInformation($"Abort from: {sender.GetType().Name}");
+
                 var location = wowData.PlayerReader.PlayerLocation;
                 wowProcess?.Hearthstone();
                 Active = false;

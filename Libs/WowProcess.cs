@@ -84,16 +84,44 @@ namespace Libs
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetCursorPos(int x, int y);
 
-        private void KeyDown(ConsoleKey key)
+        private void KeyDown(ConsoleKey key, bool always)
         {
+            if (keyDict.ContainsKey(key))
+            {
+                //if (keyDict[key] == true) { return; }
+            }
+            else
+            {
+                keyDict.Add(key, true);
+            }
+
             logger.LogInformation($"KeyDown {key}");
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
+
+            keyDict[key] = true;
         }
 
-        private void KeyUp(ConsoleKey key)
+        Dictionary<ConsoleKey, bool> keyDict = new Dictionary<ConsoleKey, bool>();
+
+
+        private void KeyUp(ConsoleKey key, bool always)
         {
+            if (keyDict.ContainsKey(key))
+            {
+                if (!always)
+                {
+                    if (keyDict[key] == false) { return; }
+                }
+            }
+            else
+            {
+                keyDict.Add(key, false);
+            }
+
             logger.LogInformation($"KeyUp {key}");
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
+
+            keyDict[key] = false;
         }
 
         public async Task KeyPress(ConsoleKey key, int milliseconds)
@@ -104,9 +132,9 @@ namespace Libs
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
         }
 
-        public void SetKeyState(ConsoleKey key, bool pressDown)
+        public void SetKeyState(ConsoleKey key, bool pressDown, bool always=false)
         {
-            if (pressDown) { KeyDown(key); } else { KeyUp(key); }
+            if (pressDown) { KeyDown(key, always); } else { KeyUp(key, always); }
         }
 
         public void SetCursorPosition(System.Drawing.Point position)

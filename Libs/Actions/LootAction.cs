@@ -51,6 +51,8 @@ namespace Libs.Actions
         {
             await stopMoving.Stop();
 
+            await wowProcess.KeyPress(ConsoleKey.F9, 300);
+
             var healthAtStartOfLooting = playerReader.HealthPercent;
 
             await Task.Delay(1000);

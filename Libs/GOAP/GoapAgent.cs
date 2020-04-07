@@ -19,9 +19,9 @@ namespace Libs.GOAP
 
 		public GoapAction? CurrentAction { get; set; }
 		public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; set; } = new HashSet<KeyValuePair<GoapKey, object>>();
-		private List<string> blacklist;
+		private Blacklist blacklist;
 
-		public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, List<string> blacklist, ILogger logger)
+		public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, Blacklist blacklist, ILogger logger)
 		{
 			this.playerReader = playerReader;
 			this.AvailableActions = availableActions.OrderBy(a => a.CostOfPerformingAction);
@@ -56,17 +56,24 @@ namespace Libs.GOAP
 		{
 			//Debug.WriteLine("TargetOfTargetIsPlayer: " + playerReader.PlayerBitValues.TargetOfTargetIsPlayer);
 
-			if (blacklist.Contains(playerReader.Target)|| !playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+			if (blacklist.IsTargetBlacklisted())
 			{
+				logger.LogInformation("Target is blacklisted");
 				await new WowProcess(logger).KeyPress(ConsoleKey.F3, 400);
 			}
+
+			//if (this.playerReader.PlayerBitValues.PlayerInCombat && !playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+			//{
+			//	logger.LogInformation("I am in combat, but my target is not targetting me.");
+			//	await new WowProcess(logger).KeyPress(ConsoleKey.F3, 400);
+			//}
 
 			var drinkPercentage = 50;
 			if (this.playerReader.PlayerClass == PlayerClassEnum.Druid) { drinkPercentage = 25; }
 
-			var state= new HashSet<KeyValuePair<GoapKey, object>>
+			var state = new HashSet<KeyValuePair<GoapKey, object>>
 			{
-				new KeyValuePair<GoapKey, object>(GoapKey.hastarget,!blacklist.Contains(playerReader.Target) && (!string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0)),
+				new KeyValuePair<GoapKey, object>(GoapKey.hastarget,!blacklist.IsTargetBlacklisted() && (!string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0)),
 				new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, !playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0),
 				new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.PlayerBitValues.PlayerInCombat ),
 				new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
@@ -75,7 +82,7 @@ namespace Libs.GOAP
 				new KeyValuePair<GoapKey, object>(GoapKey.shouldheal, playerReader.HealthPercent<60 && !playerReader.PlayerBitValues.DeadStatus),
 				new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
 				new KeyValuePair<GoapKey, object>(GoapKey.usehealingpotion, playerReader.HealthPercent<7),
-				new KeyValuePair<GoapKey, object>(GoapKey.shoulddrink, playerReader.ManaPercentage<drinkPercentage),
+				new KeyValuePair<GoapKey, object>(GoapKey.shoulddrink, playerReader.ManaPercentage<drinkPercentage && (playerReader.ShapeshiftForm==0 || playerReader.PlayerClass!=PlayerClassEnum.Druid)),
 			};
 
 			actionState.ToList().ForEach(kv => state.Add(kv));
