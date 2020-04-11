@@ -50,7 +50,7 @@ EXIT_PROCESS_STATUS = 0
 -- Assigns various macros if user changes variable to true
 ASSIGN_MACROS_INITIALIZE = false
 -- Total number of data frames generated
-local NUMBER_OF_FRAMES = 50
+local NUMBER_OF_FRAMES = 100
 -- Set number of pixel rows
 local FRAME_ROWS = 1
 -- Size of data squares in px. Varies based on rounding errors as well as dimension size. Use as a guideline, but not 100% accurate.
@@ -83,6 +83,7 @@ DataToColor.r = 0
 
 -- Character's name
 local CHARACTER_NAME = UnitName("player")
+local uiErrorMessage=0;
 
 -- List of possible subzones to which a player's hearthstone may be bound
 local HearthZoneList = {"CENARION HOLD", "VALLEY OF TRIALS", "THE CROSSROADS", "RAZOR HILL", "DUROTAR", "ORGRIMMAR", "CAMP TAURAJO", "FREEWIND POST", "GADGETZAN", "SHADOWPREY VILLAGE", "THUNDER BLUFF", "UNDERCITY", "CAMP MOJACHE", "COLDRIDGE VALLEY", "DUN MOROGH", "THUNDERBREW DISTILLERY", "IRONFORGE", "STOUTLAGER INN", "STORMWIND CITY", "SOUTHSHORE", "LAKESHIRE", "STONETALON PEAK", "GOLDSHIRE", "SENTINEL HILL", "DEEPWATER TAVERN", "THERAMORE ISLE", "DOLANAAR", "ASTRANAAR", "NIJEL'S POINT", "CRAFTSMEN'S TERRACE", "AUBERDINE", "FEATHERMOON STRONGHOLD", "BOOTY BAY", "WILDHAMMER KEEP", "DARKSHIRE", "EVERLOOK", "RATCHET", "LIGHT'S HOPE CHAPEL"}
@@ -93,6 +94,36 @@ function DataToColor:slashCommands()
     SLASH_DC2 = "/datatocolor";
     SlashCmdList["DC"] = StartSetup;
 end
+
+UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
+
+local function OnUIErrorMessage(self, event, messageType, message)
+    local errorName, soundKitID, voiceID = GetGameMessageInfo(messageType)
+    --if blacklist[errorName] then return end
+    --UIErrorsFrame:AddMessage("Hello", 1, .1, .1)
+    if errorName=="ERR_BADATTACKFACING" then
+        DataToColor:log("FACING!");
+        uiErrorMessage=1;
+    elseif errorName=="ERR_SPELL_FAILED_S" then
+        DataToColor:log("FACING!");
+        uiErrorMessage=2;   
+    elseif errorName=="ERR_SPELL_OUT_OF_RANGE" then
+        DataToColor:log("RANGE!");
+        uiErrorMessage=3;
+    elseif errorName=="ERR_BADATTACKPOS" then
+        DataToColor:log("FACING!");
+        uiErrorMessage=4;
+    else
+        DataToColor:log(message .. ":" .. errorName);    
+    end
+    --ERR_BADATTACKFACING
+    --ERR_SPELL_FAILED_S
+  end
+
+--event handler
+local eventHandler = CreateFrame("Frame");
+eventHandler:SetScript("OnEvent", OnUIErrorMessage);
+eventHandler:RegisterEvent("UI_ERROR_MESSAGE")
 
 -- Function to quickly log info to wow console
 function DataToColor:log(msg)
@@ -233,7 +264,7 @@ function DataToColor:CreateFrames(n)
         end
         -- Number of loops is based on the number of generated frames declared at beginning of script
         
-        for i = 1, 46 do
+        for i = 0, 99 do
             MakePixelSquareArr({63 / 255, 0, 63 / 255}, i)
         end
         if not SETUP_SEQUENCE then
@@ -321,14 +352,22 @@ function DataToColor:CreateFrames(n)
             --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Fishing")), 42) -- Fishing profession level
             MakePixelSquareArr(integerToColor(self:getBuffsForClass()), 41);
             -- 42 used by keys
-            MakePixelSquareArr(integerToColor(self:GetDebuffs("FrostNova")), 43) -- Checks if target is frozen by frost nova debuff
-            MakePixelSquareArr(integerToColor(self:GameTime()), 44) -- Returns time in the game
-            MakePixelSquareArr(integerToColor(self:GetGossipIcons()), 45) -- Returns which gossip icons are on display in dialogue box
+            
+            MakePixelSquareArr(integerToColor(self:getTargetLevel()), 43)
+            
+            --MakePixelSquareArr(integerToColor(self:GetDebuffs("FrostNova")), 43) -- Checks if target is frozen by frost nova debuff
+            --MakePixelSquareArr(integerToColor(self:GameTime()), 44) -- Returns time in the game
+            --MakePixelSquareArr(integerToColor(self:GetGossipIcons()), 45) -- Returns which gossip icons are on display in dialogue box
+
             MakePixelSquareArr(integerToColor(self:PlayerClass()), 46) -- Returns player class as an integer
             MakePixelSquareArr(integerToColor(self:isUnskinnable()), 47) -- Returns 1 if creature is unskinnable
-            --MakePixelSquareArr(integerToColor(self:hearthZoneID()), 48) -- Returns subzone of that is currently bound to hearthstone
-
+            MakePixelSquareArr(integerToColor(self:shapeshiftForm()), 48) -- Shapeshift id https://wowwiki.fandom.com/wiki/API_GetShapeshiftForm
             MakePixelSquareArr(integerToColor(self:areSpellsInRange()), 49) -- Are spells in range
+
+            MakePixelSquareArr(integerToColor(self:getUnitXP("player")), 50) -- Player Xp
+            MakePixelSquareArr(integerToColor(self:getUnitXPMax("player")), 51) -- Player Level Xp
+            MakePixelSquareArr(integerToColor(uiErrorMessage), 52) -- Last UI Error message
+            uiErrorMessage=0;
 
             self:HandleEvents()
         end
@@ -439,7 +478,8 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:ProcessExitStatus(), 17)+
     self:MakeIndexBase2(self:IsPlayerMounted(), 18)+
     self:MakeIndexBase2(self:IsAutoRepeatActionOn(10), 19)+
-    self:MakeIndexBase2(self:IsCurrentActionOn(10), 20)
+    self:MakeIndexBase2(self:IsCurrentActionOn(10), 20)+
+    self:MakeIndexBase2(self:targetIsNormal(), 21)
 end
 
 function DataToColor:getBuffsForClass()
@@ -490,6 +530,16 @@ function DataToColor:GetTargetName(partition)
     return 0
 end
 
+function DataToColor:getUnitXP(unit)
+    local value = UnitXP(unit);
+    return value
+end
+
+function DataToColor:getUnitXPMax(unit)
+    local value = UnitXPMax(unit);
+    return value
+end
+
 -- Finds maximum amount of health player can have
 function DataToColor:getHealthMax(unit)
     local health = UnitHealthMax(unit)
@@ -516,6 +566,10 @@ end
 -- Finds player current level
 function DataToColor:getPlayerLevel()
     return UnitLevel("player")
+end
+
+function DataToColor:getTargetLevel()
+    return UnitLevel("target")
 end
 
 -- Finds the total amount of money.
@@ -594,7 +648,8 @@ function DataToColor:areSpellsInRange()
         };
     elseif CC == "DRUID" then
         spellList = {
-            "Wrath" --1
+            "Wrath", --1
+            "Bash" --2
         };
     elseif CC == "WARRIOR" then
         spellList = {
@@ -801,6 +856,19 @@ function DataToColor:GetEnemyStatus()
     end
 end
 
+function DataToColor:targetIsNormal()
+    local classification = UnitClassification("target");
+    if classification=="normal" then
+        if (UnitIsPlayer("target")) then 
+            return 0 
+        end
+        return 1
+        -- if target is not in combat, return 1 for bitmask
+    else 
+        return 0
+    end
+end
+
 -- Checks if we are currently alive or are a ghost/dead.
 function DataToColor:deadOrAlive()
     local deathStatus = UnitIsDeadOrGhost("player")
@@ -817,6 +885,14 @@ function DataToColor:checkTalentPoints()
         return 1
     else return 0
     end
+end
+
+function DataToColor:shapeshiftForm()
+    local form = GetShapeshiftForm(true)
+    if form == nil then
+        form =0
+    end;
+    return form;
 end
 
 function DataToColor:playerCombatStatus()
@@ -905,7 +981,7 @@ end
 -- Returns true if target of our target is us
 function DataToColor:IsTargetOfTargetPlayer()
     local x = self:IsTargetOfTargetPlayerAsNumber();
-    if x==1 or x ==2 then return 1 else return 0 end;
+    if x==1 then return 1 else return 0 end;
 end
 
 function DataToColor:IsAutoRepeatActionOn(actionSlot)
@@ -1125,7 +1201,7 @@ function DataToColor:CheckTrainer()
             end
             -- DEFAULT_CHAT_FRAME:AddMessage('between')
             -- Automatically closes menu after we have bought all spells we need to buy
-            CloseTrainer()
+            --CloseTrainer()
             -- LPCONFIG.AUTO_TRAIN_SPELLS = true
         end
     end
@@ -1156,4 +1232,3 @@ function DataToColor:ResurrectPlayer()
         end
     end
 end
-

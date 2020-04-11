@@ -44,6 +44,14 @@ namespace Libs.Actions
         {
             if (key != ConsoleKey.Escape)
             {
+                if (playerReader.PlayerClass == PlayerClassEnum.Druid)
+                {
+                    if (this.playerReader.Druid_ShapeshiftForm != ShapeshiftForm.None)
+                    {
+                        await this.wowProcess.KeyPress(ConsoleKey.F8, 100); // cancelform
+                    }
+                }
+
                 await wowProcess.KeyPress(key, 500);
             }
 
@@ -61,12 +69,18 @@ namespace Libs.Actions
                     {
                         await wowProcess.KeyPress(ConsoleKey.UpArrow, 400);
                     }
+
+                    if (playerReader.PlayerClass == PlayerClassEnum.Druid)
+                    {
+                        RaiseEvent(new ActionEvent(GoapKey.postloot, true));
+                    }
                     break;
                 }
                 if (this.playerReader.PlayerBitValues.PlayerInCombat)
                 {
                     return;
                 }
+
 
                 await Task.Delay(1000);
             }

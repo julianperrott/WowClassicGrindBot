@@ -15,12 +15,14 @@ namespace Libs.GOAP
 		shouldheal = 70,
 		isdead = 80,
 		shouldloot = 90,
+		postloot = 91,
 		usehealingpotion = 100,
 		newtarget = 110,
 		fighting = 120,
 		bagfull= 130,
 		abort=140,
-		shoulddrink=150
+		shoulddrink=150,
+		classMount=160
 	}
 
 	public static class GoapKeyDescription
@@ -58,9 +60,25 @@ namespace Libs.GOAP
 				 (GoapKey.usehealingpotion, true) => "Use healing pot",
 				 (GoapKey.usehealingpotion, false) => "My health is ok",
 
-				 
+				 (GoapKey.newtarget, true) => "Has a new target",
+				 (GoapKey.newtarget, false) => "No new target",
 
-				 (_, _) => "Unknown"
+				 (GoapKey.fighting, true) => "Is fighting",
+				 (GoapKey.fighting, false) => "Is not fighting",
+
+				 (GoapKey.bagfull, true) => "Bags are full",
+				 (GoapKey.bagfull, false) => "Bags are not full",
+
+				 (GoapKey.abort, true) => "Should abort",
+				 (GoapKey.abort, false) => "Should not abort",
+
+				 (GoapKey.shoulddrink, true) => "Mana low",
+				 (GoapKey.shoulddrink, false) => "Mana ok",
+
+				 (GoapKey.classMount, true) => "Should mount",
+				 (GoapKey.classMount, false) => "No need to mount",
+
+				(_, _) => "Unknown"
 			 };
 	}
 }

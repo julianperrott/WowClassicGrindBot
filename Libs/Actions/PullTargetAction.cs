@@ -44,9 +44,17 @@ namespace Libs.Actions
                 await wowProcess.Dismount();
             }
 
-            await this.wowProcess.KeyPress(ConsoleKey.H, 151);
+            if (playerReader.PlayerClass == PlayerClassEnum.Druid)
+            {
+                if (this.playerReader.Druid_ShapeshiftForm != ShapeshiftForm.None)
+                {
+                    await this.wowProcess.KeyPress(ConsoleKey.F8, 100); // cancelform
+                }
+            }
+
             await this.stopMoving.Stop();
-            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
+            await this.wowProcess.KeyPress(ConsoleKey.H, 94);
+            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 91);
 
             if (playerReader.PlayerClass == PlayerClassEnum.Warrior)
             {
@@ -83,38 +91,34 @@ namespace Libs.Actions
 
         public async Task<bool> Pull()
         {
-            var npcCount = this.npcNameFinder.CountNpc();
-            logger.LogInformation($"Npc count = {npcCount}");
+            var potentialAdds=this.npcNameFinder.PotentialAddsExist();
 
             bool pulled = false;
 
             if (HasPickedUpAnAdd) { return false; }
 
-            await this.stopMoving.Stop();
-            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 301);
-
             pulled = playerReader.PlayerClass switch
             {
-                PlayerClassEnum.Warrior => await WarriorPull(npcCount),
-                PlayerClassEnum.Rogue => await RoguePull(npcCount),
-                PlayerClassEnum.Priest => await PriestPull(npcCount),
-                PlayerClassEnum.Druid => await DruidPull(npcCount),
+                PlayerClassEnum.Warrior => await WarriorPull(potentialAdds),
+                PlayerClassEnum.Rogue => await RoguePull(potentialAdds),
+                PlayerClassEnum.Priest => await PriestPull(potentialAdds),
+                PlayerClassEnum.Druid => await DruidPull(potentialAdds),
                 _ => false
             };
 
             return false;
         }
 
-        private async Task<bool> WarriorPull(int npcCount)
+        private async Task<bool> WarriorPull(bool potentialAdds)
         {
-            if (playerReader.SpellInRange.Warrior_Charge && npcCount < 2)
+            if (playerReader.SpellInRange.Warrior_Charge && !potentialAdds)
             {
                 logger.LogInformation($"Charging");
                 await this.wowProcess.KeyPress(ConsoleKey.D1, 401);
                 return true;
             }
 
-            if (playerReader.SpellInRange.Warrior_ShootGun && npcCount > 1)
+            if (playerReader.SpellInRange.Warrior_ShootGun && potentialAdds)
             {
                 // stop approach
                 logger.LogInformation($"Stop approach");
@@ -140,7 +144,7 @@ namespace Libs.Actions
             }
         }
 
-        private async Task<bool> RoguePull(int npcCount)
+        private async Task<bool> RoguePull(bool potentialAdds)
         {
             if (playerReader.SpellInRange.Rogue_Throw)
             {
@@ -159,7 +163,7 @@ namespace Libs.Actions
             return false;
         }
 
-        private async Task<bool> DruidPull(int npcCount)
+        private async Task<bool> DruidPull(bool potentialAdds)
         {
             //await this.wowProcess.KeyPress(ConsoleKey.OemPlus, 301);
 
@@ -168,11 +172,11 @@ namespace Libs.Actions
                 logger.LogInformation($"Stop approach");
                 //await StopAfterH();
 
-                await Task.Delay(300);
+                await Task.Delay(600);
 
                 if (HasPickedUpAnAdd) { return false; }
 
-                if (this.playerReader.ShapeshiftForm != 0)
+                if (this.playerReader.Druid_ShapeshiftForm != ShapeshiftForm.None)
                 {
                     await this.wowProcess.KeyPress(ConsoleKey.F8, 300); // cancelform
                 }
@@ -198,18 +202,16 @@ namespace Libs.Actions
                 await this.combatAction.PressKey(ConsoleKey.D2);
                 await Task.Delay(1500);
 
+                if (this.playerReader.WithInCombatRange) { return true; }
+
                 if (random.Next(2) == 1)
                 {
                     // moonfire
                     await this.combatAction.PressKey(ConsoleKey.D5);
                     await Task.Delay(1000);
+                    if (this.playerReader.WithInCombatRange) { return true; }
                 }
-                else
-                {
-                    // roots
-                    await this.combatAction.PressKey(ConsoleKey.D2);
-                    await Task.Delay(1800);
-                }
+
 
                 if (random.Next(2) == 1)
                 {
@@ -221,27 +223,14 @@ namespace Libs.Actions
                     await Task.Delay(1000);
                 }
 
-                if (this.playerReader.ShapeshiftForm == 0) // needs bear form
+                if (this.playerReader.Druid_ShapeshiftForm != ShapeshiftForm.Druid_Bear) // needs bear form
                 {
                     await Task.Delay(500);
                     await this.wowProcess.KeyPress(ConsoleKey.D4, 300); // bear form
+
+                    if (this.playerReader.WithInCombatRange) { return true; }
                     await Task.Delay(2000);
                 }
-
-                // wait for combat
-                //for (int i = 0; i < 20; i++)
-                //{
-                //    if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.WithInCombatRange)
-                //    {
-                //        //for (int j = 0; j < 3; j++)
-                //        //{
-                //            await this.combatAction.PressKey(ConsoleKey.D2);
-                //            await Task.Delay(1500);
-                //        //}
-                //        break;
-                //    }
-                //    await Task.Delay(100);
-                //}
 
                 return true;
             }
@@ -249,7 +238,7 @@ namespace Libs.Actions
             return false;
         }
 
-        private async Task<bool> PriestPull(int npcCount)
+        private async Task<bool> PriestPull(bool potentialAdds)
         {
             await this.wowProcess.KeyPress(ConsoleKey.OemPlus, 301);
 

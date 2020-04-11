@@ -44,6 +44,11 @@ namespace Libs
             Sequence++;
             //logger.LogInformation($"Target is me = {PlayerBitValues.TargetOfTargetIsPlayer}");
             //logger.LogInformation($"{SpellInRange.Rogue_SinisterStrike}-{SpellInRange.Rogue_Throw}-{SpellInRange.Rogue_ShootGun}");
+
+            if (UIErrorMessage > 0)
+            {
+                LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
+            }
         }
 
         public long HealthCurrent => reader.GetLongAtCell(11); // Current amount of health of player
@@ -53,8 +58,7 @@ namespace Libs
         public long ManaCurrent => reader.GetLongAtCell(13); // Current amount of mana
         public long ManaPercentage => ManaMax==0 ?0: (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
 
-                                                           // Level is our character's exact level ranging from 1-60
-        public long Level => reader.GetLongAtCell(14);
+        public long PlayerLevel => reader.GetLongAtCell(14); // Level is our character's exact level ranging from 1-60
 
         // Todo !
         // range detects if a target range. Bases information off of action slot 2, 3, and 4. Outputs: 50, 35, 30, or 20
@@ -113,7 +117,26 @@ namespace Libs
         public PlayerClassEnum PlayerClass => (PlayerClassEnum)reader.GetLongAtCell(46);
 
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
-        public long ShapeshiftForm => reader.GetLongAtCell(48); 
+        //public long ShapeshiftForm => reader.GetLongAtCell(48);
+
+        public ShapeshiftForm Druid_ShapeshiftForm => (ShapeshiftForm)reader.GetLongAtCell(48);
+
+        public long PlayerXp => reader.GetLongAtCell(50);
+        public long PlayerMaxXp => reader.GetLongAtCell(51);
+        public long PlayerXpPercentage => (PlayerXp*100)/ (PlayerMaxXp==0?1: PlayerMaxXp);
+
+        private long UIErrorMessage => reader.GetLongAtCell(52);
+        public UI_ERROR LastUIErrorMessage { get; set; }
+
+        public enum UI_ERROR
+        {
+            NONE = 0,
+            ERR_BADATTACKFACING = 1,
+            ERR_SPELL_FAILED_S = 2,
+            ERR_SPELL_OUT_OF_RANGE = 3,
+            ERR_BADATTACKPOS = 4
+        }
+
 
         private SpellInRange spellInRange = new SpellInRange(0);
 

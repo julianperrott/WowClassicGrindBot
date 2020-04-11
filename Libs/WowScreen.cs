@@ -5,7 +5,7 @@ namespace Libs
 {
     public class WowScreen : IColorReader
     {
-        public static Bitmap GetAddonBitmap(int width = 300, int height = 200)
+        public static Bitmap GetAddonBitmap(int width = 500, int height = 200)
         {
             var bmpScreen = new Bitmap(width, height);
             using (var graphics = Graphics.FromImage(bmpScreen))
@@ -17,7 +17,9 @@ namespace Libs
 
         public Color GetColorAt(Point pos, Bitmap bmp)
         {
-            return bmp.GetPixel(pos.X, pos.Y);
+            var color= bmp.GetPixel(pos.X, pos.Y);
+
+            return color;
         }
     }
 }

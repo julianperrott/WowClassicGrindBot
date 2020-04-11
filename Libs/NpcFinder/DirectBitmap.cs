@@ -22,7 +22,7 @@ namespace Libs.NpcFinder
 
         public Point ToScreenCoordinates(int x, int y)
         {
-            return new Point(x, y + 100);
+            return new Point(x, y + this.TopOffset);
         }
 
         public DirectBitmap(int width, int height, int topOffset, int bottomOffset)
@@ -35,7 +35,6 @@ namespace Libs.NpcFinder
             this.BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
             this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
-
 
         public DirectBitmap(int width, int height)
         {

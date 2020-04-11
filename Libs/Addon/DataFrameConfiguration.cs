@@ -39,7 +39,7 @@ namespace Libs
         public List<DataFrame> CreateConfiguration(Bitmap bmp)
         {
             var dataFrames = new List<DataFrame>() { new DataFrame(new Point(1, 1), 0) };
-            for (int dataframe = 1; dataframe < 100; dataframe++)
+            for (int dataframe = 1; dataframe < 400; dataframe++)
             {
                 var point = GetFramePoint(bmp, dataframe, dataFrames.Last().point.X);
                 if (point == null)

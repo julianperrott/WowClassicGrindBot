@@ -51,9 +51,14 @@ namespace Libs.Actions
             return isOnCooldown;
         }
 
-        protected bool HasEnoughMana(int mana)
+        protected bool HasEnoughMana(int value)
         {
-            return this.playerReader.ManaCurrent > mana;
+            return this.playerReader.ManaCurrent >= value;
+        }
+
+        protected bool HasEnoughRage(int value)
+        {
+            return this.playerReader.ManaCurrent >= value;
         }
 
         public override async Task PerformAction()
@@ -67,7 +72,24 @@ namespace Libs.Actions
 
             RaiseEvent(new ActionEvent(GoapKey.fighting, true));
 
+            await InteractOnUIError();
+
             await Fight();
+        }
+
+        protected virtual async Task InteractOnUIError()
+        {
+            switch (this.playerReader.LastUIErrorMessage)
+            {
+                case PlayerReader.UI_ERROR.ERR_BADATTACKFACING:
+                case PlayerReader.UI_ERROR.ERR_SPELL_FAILED_S:
+                case PlayerReader.UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
+                case PlayerReader.UI_ERROR.ERR_BADATTACKPOS:
+                    logger.LogInformation("Interact due to: this.playerReader.LastUIErrorMessage");
+                    await PressKey(ConsoleKey.H);
+                    this.playerReader.LastUIErrorMessage = PlayerReader.UI_ERROR.NONE;
+                    break;
+            }
         }
 
         protected abstract Task Fight();

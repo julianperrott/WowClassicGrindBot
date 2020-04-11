@@ -1,23 +1,56 @@
-﻿@inject Libs.WowData wowData
+﻿@using Libs;
+@inject Libs.WowData wowData
 
 <table class="table table-bordered">
     <tr>
-        <th>X Coord:</th>
-        <th>Y Coord:</th>
+        <th>Level</th>
+        <th>X Coord,Y Coord:</th>
         <th>Bag Items:</th>
         <th>Health:</th>
         <th>Target:</th>
     </tr>
     <tr>
-        <td>@wowData.PlayerReader.XCoord.ToString("0.00")</td>
-        <td>@wowData.PlayerReader.YCoord.ToString("0.00")</td>
+        <td>
+            @playerReader.PlayerLevel (XP: @((int)playerReader.PlayerXpPercentage)%)
+            <br />
+            Time to level: @levelTracker.TimeToLevel
+            <br />
+            at @levelTracker.PredictedLevelTime.ToString("HH:mm:ss")
+        </td>
+        <td>@playerReader.XCoord.ToString("0.00"),@playerReader.YCoord.ToString("0.00")</td>
         <td> @wowData.bagReader.bagItems.Count</td>
-        <td>@wowData.PlayerReader.HealthPercent % (@wowData.PlayerReader.HealthCurrent of  @wowData.PlayerReader.HealthMax)</td>
-        <td>"@wowData.PlayerReader.Target" (@wowData.PlayerReader.TargetHealth of @wowData.PlayerReader.TargetMaxHealth)</td>
+        <td>@playerReader.HealthPercent %</td>
+        <td>
+            @if (!string.IsNullOrEmpty(playerReader.Target))
+            {
+                <div>
+                    @playerReader.Target
+                    (@playerReader.TargetLevel)
+                    @((int)playerReader.TargetHealthPercentage) %
+
+                    @if (!playerReader.PlayerBitValues.TargetIsNormal)
+                    {
+                        <div>
+                            NOT NORMAL
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div>Kills: @levelTracker.MobsKilled</div>
+            }
+            </td>
     </tr>
 </table>
 
 @code {
+
+    PlayerReader playerReader => wowData.PlayerReader;
+    LevelTracker levelTracker => wowData.LevelTracker;
+
+
     protected override void OnInitialized()
     {
 

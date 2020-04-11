@@ -28,6 +28,7 @@ namespace Libs.Actions
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
         private readonly NpcNameFinder npcNameFinder;
+        private readonly StuckDetector stuckDetector;
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private DateTime LastJump = DateTime.Now;
@@ -39,10 +40,7 @@ namespace Libs.Actions
 
         public bool firstLoad = true;
 
-        private Stopwatch LastReachedPoint = new Stopwatch();
-        private Stopwatch LastUnstickAttempt = new Stopwatch();
-
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, Blacklist blacklist, ILogger logger)
+        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, Blacklist blacklist, ILogger logger,StuckDetector stuckDetector)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
@@ -52,6 +50,7 @@ namespace Libs.Actions
             this.npcNameFinder = npcNameFinder;
             this.blacklist = blacklist;
             this.logger = logger;
+            this.stuckDetector = stuckDetector;
 
             AddPrecondition(GoapKey.incombat, false);
         }
@@ -101,31 +100,28 @@ namespace Libs.Actions
             if (sender!=this)
             {
                 shouldMount = true;
-                LastReachedPoint.Reset();
-                LastUnstickAttempt.Reset();
             }
         }
 
         public override async Task PerformAction()
         {
-            if (!LastReachedPoint.IsRunning) { LastReachedPoint.Start(); }
-            if (!LastUnstickAttempt.IsRunning) { LastUnstickAttempt.Start(); }
-
             RaiseEvent(new ActionEvent(GoapKey.fighting, false));
 
             if (points.Count == 0)
             {
                 RefillPoints(true);
+                this.stuckDetector.SetTargetLocation(this.points.Peek());
             }
 
             await Task.Delay(200);
-            //wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+            wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
 
             if (this.playerReader.PlayerBitValues.PlayerInCombat) { return; }
 
             if ((DateTime.Now - LastActive).TotalSeconds > 10)
             {
                 var pointsRemoved = 0;
+                this.stuckDetector.SetTargetLocation(this.points.Peek());
                 while (AdjustNextPointToClosest() && pointsRemoved < 5) { pointsRemoved++; };
             }
 
@@ -135,8 +131,16 @@ namespace Libs.Actions
             if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
             {
                 //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
-                if (await LookForTarget()) { return; }
+                if (await LookForTarget())
+                {
+                    if (this.playerReader.HasTarget)
+                    {
+                        logger.LogInformation("Has target!");
+                        return;
+                    }
+                }
             }
+
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, points.Peek());
@@ -146,7 +150,7 @@ namespace Libs.Actions
             {
                 await playerDirection.SetDirection(heading, points.Peek(), "Further away");
             }
-            else if (lastDistance == distance)
+            else if (!this.stuckDetector.IsGettingCloser())
             {
                 Dump("Stuck");
                 // stuck so jump
@@ -154,7 +158,7 @@ namespace Libs.Actions
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
-                    await Unstick();
+                    await this.stuckDetector.Unstick();
                 }
                 else
                 {
@@ -178,11 +182,9 @@ namespace Libs.Actions
 
             lastDistance = distance;
 
-            if (distance < (this.playerReader.PlayerBitValues.IsMounted ? 50 : 40))
+            if (distance < PointReachedDistance())
             {
                 logger.LogInformation($"Move to next point");
-                LastReachedPoint.Reset();
-                LastUnstickAttempt.Reset();
 
                 points.Pop();
                 lastDistance = 999;
@@ -190,6 +192,8 @@ namespace Libs.Actions
                 {
                     RefillPoints();
                 }
+
+                this.stuckDetector.SetTargetLocation(this.points.Peek());
 
                 heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
                 await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
@@ -202,11 +206,13 @@ namespace Libs.Actions
 
                 if (await LookForTarget()) { return; }
 
-                if (this.npcNameFinder.CountNpc(0) == 0)
+                if (!this.npcNameFinder.PotentialAddsExist())
                 {
                     logger.LogInformation("Mounting if level >=40 no NPC in sight");
-                    if (this.playerReader.Level >= 40)
+                    if (this.playerReader.PlayerLevel >= 40 && this.playerReader.PlayerClass != PlayerClassEnum.Druid)
                     {
+                        await wowProcess.KeyPress(ConsoleKey.UpArrow, 100);
+                        await Task.Delay(500);
                         await wowProcess.Mount(this.playerReader);
                     }
                 }
@@ -220,6 +226,16 @@ namespace Libs.Actions
             LastActive = DateTime.Now;
         }
 
+        private int PointReachedDistance()
+        {
+            if (this.playerReader.PlayerClass == PlayerClassEnum.Druid && this.playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Travel)
+            {
+                return 50;
+            }
+
+            return (this.playerReader.PlayerBitValues.IsMounted ? 50 : 40);
+        }
+
         private async Task<bool> LookForTarget()
         {
             await this.wowProcess.KeyPress(ConsoleKey.Tab, 300);
@@ -227,8 +243,7 @@ namespace Libs.Actions
             if (!playerReader.HasTarget)
             {
                 await this.npcNameFinder.FindAndClickNpc(0);
-                await Task.Delay(300);
-                
+                //await Task.Delay(300);
             }
 
             if( this.playerReader.HasTarget && !blacklist.IsTargetBlacklisted())
@@ -316,45 +331,6 @@ namespace Libs.Actions
             else
             {
                 return A + AB * distance;
-            }
-        }
-
-        private async Task Unstick()
-        {
-            await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
-
-            int stuckSeconds = (int)(LastReachedPoint.ElapsedMilliseconds / 1000);
-            int unstickSeconds = (int)(LastUnstickAttempt.ElapsedMilliseconds / 1000);
-
-            logger.LogInformation($"Stuck for {stuckSeconds}s, last tried to unstick {unstickSeconds}s ago");
-
-            if (stuckSeconds > 240)
-            {
-                // stuck for 4 minutes
-                logger.LogInformation("Stuck for 4 minutes");
-                RaiseEvent(new ActionEvent(GoapKey.abort, true));
-            }
-
-
-            if (unstickSeconds > 10)
-            {
-                this.stopMoving?.Stop();
-                // stuck for 30 seconds
-                logger.LogInformation("Trying to unstick by strafing");
-                var r = random.Next(0, 100);
-                if (r < 50)
-                {
-                    wowProcess.SetKeyState(ConsoleKey.Q, true);
-                    await Task.Delay(5 * 1000);
-                    wowProcess.SetKeyState(ConsoleKey.Q, false);
-                }
-                else
-                {
-                    wowProcess.SetKeyState(ConsoleKey.E, true);
-                    await Task.Delay(5 * 1000);
-                    wowProcess.SetKeyState(ConsoleKey.E, false);
-                }
-                LastUnstickAttempt.Reset();
             }
         }
     }

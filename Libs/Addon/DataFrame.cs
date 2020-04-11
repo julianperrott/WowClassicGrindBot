@@ -9,10 +9,10 @@ namespace Libs
     {
         public Point point { get; private set; }
         public int index { get; private set; }
-        public DataFrame(Point point, int frame)
+        public DataFrame(Point point, int index)
         {
             this.point = point;
-            this.index = frame;
+            this.index = index;
         }
     }
 }

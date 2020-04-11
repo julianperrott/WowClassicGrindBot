@@ -14,7 +14,9 @@ namespace Libs.Actions
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private readonly NpcNameFinder npcNameFinder;
+        private readonly StuckDetector stuckDetector;
         private ILogger logger;
+        private bool NeedsToReset=true;
 
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
@@ -24,8 +26,6 @@ namespace Libs.Actions
         private bool playerWasInCombat = false;
 
         private Point mouseLocationOfAdd;
-        private Stopwatch timeApproachingtarget = new Stopwatch();
-        private Stopwatch LastUnstickAttempt = new Stopwatch();
 
         private void Log(string text)
         {
@@ -35,13 +35,14 @@ namespace Libs.Actions
             }
         }
 
-        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, NpcNameFinder npcNameFinder, ILogger logger)
+        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, NpcNameFinder npcNameFinder, ILogger logger, StuckDetector stuckDetector)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
             this.npcNameFinder = npcNameFinder;
             this.logger = logger;
+            this.stuckDetector = stuckDetector;
 
             AddPrecondition(GoapKey.incombatrange, false);
             AddPrecondition(GoapKey.hastarget, true);
@@ -57,14 +58,16 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            if (!timeApproachingtarget.IsRunning) { timeApproachingtarget.Start(); }
-            if (!LastUnstickAttempt.IsRunning) { LastUnstickAttempt.Start(); }
-
             //logger.LogInformation($"ApproachTargetAction: Incombat={playerReader.PlayerBitValues.PlayerInCombat}, WasInCombat={playerWasInCombat}");
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
                 await wowProcess.Dismount();
+            }
+
+            if (NeedsToReset)
+            {
+                this.stuckDetector.ResetStuckParameters();
             }
 
             var location = playerReader.PlayerLocation;
@@ -98,10 +101,11 @@ namespace Libs.Actions
             }
             await RandomJump();
 
-            int approachSeconds = (int)(timeApproachingtarget.ElapsedMilliseconds / 1000);
+            int approachSeconds = (int)(this.stuckDetector.actionDurationSeconds);
             if (approachSeconds > 20)
             {
-                await Unstick();
+                await this.stuckDetector.Unstick();
+                await this.wowProcess.KeyPress(ConsoleKey.H, 501);
             }
         }
 
@@ -111,44 +115,6 @@ namespace Libs.Actions
             {
                 logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
                 return this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer;
-            }
-        }
-
-        private async Task Unstick()
-        {
-            await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
-
-            int approachSeconds = (int)(timeApproachingtarget.ElapsedMilliseconds / 1000);
-            int unstickSeconds = (int)(LastUnstickAttempt.ElapsedMilliseconds / 1000);
-
-            logger.LogInformation($"Stuck for {approachSeconds}s, last tried to unstick {unstickSeconds}s ago");
-
-            if (approachSeconds > 240)
-            {
-                // stuck for 4 minutes
-                logger.LogInformation("Stuck for 4 minutes on approach");
-                RaiseEvent(new ActionEvent(GoapKey.abort, true));
-            }
-
-            if (unstickSeconds > 10)
-            {
-                this.stopMoving?.Stop();
-                // stuck for 30 seconds
-                logger.LogInformation("Trying to unstick by strafing");
-                var r = random.Next(0, 100);
-                if (r < 50)
-                {
-                    wowProcess.SetKeyState(ConsoleKey.Q, true);
-                    await Task.Delay(5 * 1000);
-                    wowProcess.SetKeyState(ConsoleKey.Q, false);
-                }
-                else
-                {
-                    wowProcess.SetKeyState(ConsoleKey.E, true);
-                    await Task.Delay(5 * 1000);
-                    wowProcess.SetKeyState(ConsoleKey.E, false);
-                }
-                LastUnstickAttempt.Reset(); 
             }
         }
 
@@ -170,16 +136,12 @@ namespace Libs.Actions
         {
             if (sender != this)
             {
+                NeedsToReset = true;
                 if (e.Key == GoapKey.fighting)
                 {
                     lastFighting = DateTime.Now;
-                    timeApproachingtarget.Reset();
-                    LastUnstickAttempt.Reset();
                 }
             }
         }
-
-
-
     }
 }

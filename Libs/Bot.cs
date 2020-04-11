@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;
+using System.Drawing;
 
 namespace Libs
 {
@@ -25,6 +26,7 @@ namespace Libs
         public readonly FollowRouteAction followRouteAction;
         public readonly WalkToCorpseAction walkToCorpseAction;
         public readonly NpcNameFinder npcNameFinder;
+        public readonly StuckDetector stuckDetector;
         private ILogger logger;
         private Blacklist blacklist;
 
@@ -51,8 +53,8 @@ namespace Libs
             switch (wowData.PlayerReader.PlayerClass)
             {
                 case PlayerClassEnum.Warrior:
-                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_52.json");
-                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_52_SpiritHealer.json");
+                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\EPL_57.json");
+                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\EPL_57_SpiritHealer.json");
                     break;
                 case PlayerClassEnum.Rogue:
                     pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_52.json");
@@ -63,9 +65,9 @@ namespace Libs
                     spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
                     break;
                 case PlayerClassEnum.Druid:
-                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_31.json");
+                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_37.json");
                     thereAndBack = true;
-                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_31_SpiritHealer.json");
+                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_37_SpiritHealer.json");
                     step = 2;
                     break;
             }
@@ -93,22 +95,49 @@ namespace Libs
 
             this.playerDirection = new PlayerDirection(wowData.PlayerReader, GetWowProcess, logger);
             this.stopMoving = new StopMoving(GetWowProcess, wowData.PlayerReader, logger);
-            this.npcNameFinder = new NpcNameFinder(GetWowProcess, logger);
-            this.followRouteAction = new FollowRouteAction(wowData.PlayerReader, GetWowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist, logger);
-            this.walkToCorpseAction = new WalkToCorpseAction(wowData.PlayerReader, GetWowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger);
+            this.npcNameFinder = new NpcNameFinder(GetWowProcess, wowData.PlayerReader, logger);
+
+            this.stuckDetector = new StuckDetector(wowData.PlayerReader, GetWowProcess, playerDirection, stopMoving, logger);
+
+            this.followRouteAction = new FollowRouteAction(wowData.PlayerReader, GetWowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist, logger, stuckDetector);
+            this.walkToCorpseAction = new WalkToCorpseAction(wowData.PlayerReader, GetWowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger, stuckDetector);
 
             this.RouteInfo = new RouteInfo(pathPoints, spiritPath, this.followRouteAction, this.walkToCorpseAction);
         }
 
         internal void DoScreenshot()
         {
-            var rect = GetWowProcess.GetWindowRect();
-            using (var screenshot = new DirectBitmap(rect.right, rect.bottom, 0 ,0))
+            try
             {
-                screenshot.CaptureScreen();
-                this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(screenshot.ToBase64()));
-                Thread.Sleep(1);
+                var npcs = this.npcNameFinder.RefreshNpcPositions();
+
+                if (npcs.Count > 0)
+                {
+                    var bitmap = this.npcNameFinder.Screenshot.Bitmap;
+
+                    using (var gr = Graphics.FromImage(bitmap))
+                    {
+                        var margin = 10;
+
+                        using (var pen = new Pen(Color.Red, 2))
+                        {
+                            npcs.ForEach(n => gr.DrawRectangle(pen, new Rectangle(n.Min.X - margin, n.Min.Y - margin, margin + n.Max.X - n.Min.X, margin + n.Max.Y - n.Min.Y)));
+                        }
+                        using (var pen = new Pen(Color.White, 3))
+                        {
+                            npcs.ForEach(n => gr.DrawEllipse(pen, new Rectangle(n.ClickPoint.X - (margin / 2), n.ClickPoint.Y - (margin / 2), margin, margin)));
+                        }
+                    }
+                }
+
+                this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(this.npcNameFinder.Screenshot.ToBase64()));
             }
+            catch(Exception ex)
+            {
+                logger.LogError(ex.Message);
+            }
+            Thread.Sleep(1);
+
         }
 
         public async Task DoWork()
@@ -125,7 +154,7 @@ namespace Libs
             this.availableActions.Add(this.walkToCorpseAction);
             this.availableActions.Add(new UseHealingPotionAction(GetWowProcess, wowData.PlayerReader, logger));
             this.availableActions.Add(new TimedPressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F5, 313, logger, "Delete stuff"));
-            this.availableActions.Add(new ApproachTargetAction(GetWowProcess, wowData.PlayerReader, stopMoving, npcNameFinder, logger));
+            this.availableActions.Add(new ApproachTargetAction(GetWowProcess, wowData.PlayerReader, stopMoving, npcNameFinder, logger, this.stuckDetector));
 
             switch (wowData.PlayerReader.PlayerClass)
             {
@@ -133,13 +162,13 @@ namespace Libs
                     this.availableActions.Add(new WarriorCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new EatOrBandageAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-                    this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D7), () => wowData.PlayerReader.Buffs.WellFed, logger, "Well Fed"));
+                    this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D0), () => wowData.PlayerReader.Buffs.WellFed, logger, "Well Fed"));
                     break;
 
                 case PlayerClassEnum.Rogue:
                     this.availableActions.Add(new RogueCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new TimedPressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F6, 3600, logger, "Equip dagger"));
-                    this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                   // this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new EatOrBandageAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     break;
 
@@ -190,7 +219,7 @@ namespace Libs
 
         public async Task PressKey(ConsoleKey key)
         {
-            if (wowData.PlayerReader.PlayerClass == PlayerClassEnum.Druid && wowData.PlayerReader.ShapeshiftForm != 0)
+            if (wowData.PlayerReader.PlayerClass == PlayerClassEnum.Druid && wowData.PlayerReader.Druid_ShapeshiftForm != ShapeshiftForm.None)
             {
                 await GetWowProcess.KeyPress(ConsoleKey.F8, 500);
             }

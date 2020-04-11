@@ -146,6 +146,7 @@ namespace Libs.Actions
             //await wowProcess.RightClickMouse(new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width / 2, (Screen.PrimaryScreen.Bounds.Height / 2)));
 
             RaiseEvent(new ActionEvent(GoapKey.shouldloot,false));
+            RaiseEvent(new ActionEvent(GoapKey.postloot, true));
 
             if (bagReader.BagsFull)
             //if (bagReader.bagItems.Count > 52)

@@ -15,6 +15,7 @@ namespace Libs
         public BagReader bagReader { get; private set; }
         public EquipmentReader equipmentReader { get; private set; }
         public bool Active { get; set; } = true;
+        public LevelTracker LevelTracker { get; private set; }
 
         public event EventHandler? AddonDataChanged;
 
@@ -31,6 +32,7 @@ namespace Libs
             this.bagReader = new BagReader(squareReader, 20);
             this.equipmentReader = new EquipmentReader(squareReader, 30);
             this.PlayerReader = new PlayerReader(squareReader, logger);
+            this.LevelTracker = new LevelTracker(PlayerReader);
 
             this.AddonReader.PlayerReader = this.PlayerReader;
         }
@@ -46,6 +48,8 @@ namespace Libs
 
             // 30 - 31
             var equipment = equipmentReader.Read();
+
+            LevelTracker.Update();
 
             //logger.LogInformation($"X: {PlayerReader.XCoord.ToString("0.00")}, Y: {PlayerReader.YCoord.ToString("0.00")}, Direction: {PlayerReader.Direction.ToString("0.00")}, Zone: {PlayerReader.Zone}, Gold: {PlayerReader.Gold}");
 

@@ -32,12 +32,14 @@ namespace UnitTests.GOAP.GoapPlannerTests
 
             var playerReader = new PlayerReader(new Mock<ISquareReader>().Object, this);
             var stopMoving = new StopMoving(wowprocess, playerReader, logger.Object);
-            var npcNameFinder = new NpcNameFinder(wowprocess, logger.Object);
-            this.followRouteAction = new FollowRouteAction(playerReader, wowprocess, new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving, npcNameFinder, new Blacklist(playerReader), logger.Object);
+            var npcNameFinder = new NpcNameFinder(wowprocess, playerReader,logger.Object);
+            var stuckDetector = new StuckDetector(playerReader, wowprocess, new Mock<IPlayerDirection>().Object, stopMoving, logger.Object);
+
+            this.followRouteAction = new FollowRouteAction(playerReader, wowprocess, new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving, npcNameFinder, new Blacklist(playerReader), logger.Object, stuckDetector);
 
             this.killMobAction = new WarriorCombatAction(wowprocess, playerReader, stopMoving, logger.Object);
             this.pullTargetAction = new PullTargetAction(wowprocess, playerReader, npcNameFinder, stopMoving, logger.Object, this.killMobAction as CombatActionBase);
-            this.approachTargetAction = new ApproachTargetAction(wowprocess, playerReader, stopMoving, npcNameFinder, logger.Object);
+            this.approachTargetAction = new ApproachTargetAction(wowprocess, playerReader, stopMoving, npcNameFinder, logger.Object, stuckDetector);
 
             this.availableActions = new HashSet<GoapAction>
             {

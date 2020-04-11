@@ -10,7 +10,7 @@ namespace Libs
 {
     public class AddonReader : IAddonReader
     {
-        private Color[] FrameColor { get; set; } = new Color[100];
+        private Color[] FrameColor { get; set; } = new Color[200];
 
         private readonly int width;
         private readonly int height;

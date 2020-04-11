@@ -56,20 +56,14 @@ namespace Libs.GOAP
 		{
 			//Debug.WriteLine("TargetOfTargetIsPlayer: " + playerReader.PlayerBitValues.TargetOfTargetIsPlayer);
 
-			if (blacklist.IsTargetBlacklisted())
+			if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
 			{
 				logger.LogInformation("Target is blacklisted");
 				await new WowProcess(logger).KeyPress(ConsoleKey.F3, 400);
 			}
 
-			//if (this.playerReader.PlayerBitValues.PlayerInCombat && !playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
-			//{
-			//	logger.LogInformation("I am in combat, but my target is not targetting me.");
-			//	await new WowProcess(logger).KeyPress(ConsoleKey.F3, 400);
-			//}
-
 			var drinkPercentage = 50;
-			if (this.playerReader.PlayerClass == PlayerClassEnum.Druid) { drinkPercentage = 25; }
+			if (this.playerReader.PlayerClass == PlayerClassEnum.Druid) { drinkPercentage = 40; }
 
 			var state = new HashSet<KeyValuePair<GoapKey, object>>
 			{
@@ -82,12 +76,22 @@ namespace Libs.GOAP
 				new KeyValuePair<GoapKey, object>(GoapKey.shouldheal, playerReader.HealthPercent<60 && !playerReader.PlayerBitValues.DeadStatus),
 				new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
 				new KeyValuePair<GoapKey, object>(GoapKey.usehealingpotion, playerReader.HealthPercent<7),
-				new KeyValuePair<GoapKey, object>(GoapKey.shoulddrink, playerReader.ManaPercentage<drinkPercentage && (playerReader.ShapeshiftForm==0 || playerReader.PlayerClass!=PlayerClassEnum.Druid)),
+				new KeyValuePair<GoapKey, object>(GoapKey.shoulddrink, playerReader.ManaPercentage< drinkPercentage && ManaValueIsValid()),
 			};
 
 			actionState.ToList().ForEach(kv => state.Add(kv));
 
 			return state;
+		}
+
+		private bool ManaValueIsValid()
+		{
+			if (playerReader.PlayerClass != PlayerClassEnum.Druid)
+			{
+				return true;
+			}
+
+			return playerReader.Druid_ShapeshiftForm == ShapeshiftForm.None || playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Travel;
 		}
 
 		public Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
