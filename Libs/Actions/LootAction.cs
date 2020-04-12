@@ -51,7 +51,20 @@ namespace Libs.Actions
         {
             await stopMoving.Stop();
 
-            await wowProcess.KeyPress(ConsoleKey.F9, 300);
+            // check for targets attacking me
+            await wowProcess.KeyPress(ConsoleKey.Tab, 100);
+            await Task.Delay(300);
+            if (this.playerReader.HasTarget)
+            {
+                if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                {
+                    await wowProcess.KeyPress(ConsoleKey.H, 200);
+                    return;
+                }
+                await wowProcess.KeyPress(ConsoleKey.F3, 200);
+            }
+
+            await wowProcess.KeyPress(ConsoleKey.F9, 100);
 
             var healthAtStartOfLooting = playerReader.HealthPercent;
 

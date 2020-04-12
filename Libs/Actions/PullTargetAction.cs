@@ -106,7 +106,7 @@ namespace Libs.Actions
                 _ => false
             };
 
-            return false;
+            return pulled;
         }
 
         private async Task<bool> WarriorPull(bool potentialAdds)

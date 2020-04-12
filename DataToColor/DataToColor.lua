@@ -102,17 +102,25 @@ local function OnUIErrorMessage(self, event, messageType, message)
     --if blacklist[errorName] then return end
     --UIErrorsFrame:AddMessage("Hello", 1, .1, .1)
     if errorName=="ERR_BADATTACKFACING" then
-        DataToColor:log("FACING!");
         uiErrorMessage=1;
     elseif errorName=="ERR_SPELL_FAILED_S" then
-        DataToColor:log("FACING!");
         uiErrorMessage=2;   
     elseif errorName=="ERR_SPELL_OUT_OF_RANGE" then
-        DataToColor:log("RANGE!");
         uiErrorMessage=3;
     elseif errorName=="ERR_BADATTACKPOS" then
-        DataToColor:log("FACING!");
         uiErrorMessage=4;
+    elseif errorName=="ERR_AUTOFOLLOW_TOO_FAR" then
+        uiErrorMessage=5;
+    elseif errorName=="ERR_ABILITY_COOLDOWN" then
+        uiErrorMessage=6;
+    elseif errorName=="ERR_OUT_OF_RAGE" then
+        uiErrorMessage=7;
+    elseif errorName=="ERR_NO_ATTACK_TARGET" or errorName=="ERR_GENERIC_NO_TARGET" then
+        uiErrorMessage=8;
+    elseif errorName=="ERR_OUT_OF_MANA" then
+        uiErrorMessage=9;        
+    elseif errorName=="ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS" then
+        uiErrorMessage=10;
     else
         DataToColor:log(message .. ":" .. errorName);    
     end

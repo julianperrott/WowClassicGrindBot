@@ -1,5 +1,6 @@
 ﻿@using Libs;
 @inject Libs.WowData wowData
+@inject Libs.GOAP.GoapAgent goapAgent
 
 <table class="table table-bordered">
     <tr>
@@ -41,8 +42,15 @@
             {
                 <div>Kills: @levelTracker.MobsKilled</div>
             }
-            </td>
+        </td>
     </tr>
+</table>
+
+<table class="table table-sm table-striped">
+    @if (goapAgent.CurrentAction != null)
+    {
+        <GoapActionView action="goapAgent.CurrentAction" IsSelected="true" />
+    }
 </table>
 
 @code {

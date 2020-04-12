@@ -93,11 +93,12 @@ namespace Libs.Actions
             await this.wowProcess.KeyPress(ConsoleKey.H, 501);
 
             var newLocation = playerReader.PlayerLocation;
-            if (location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5)
+            if ((location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5) || this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
                 await Task.Delay(2000);
                 await wowProcess.KeyPress(ConsoleKey.Spacebar, 498);
+                this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
             }
             await RandomJump();
 

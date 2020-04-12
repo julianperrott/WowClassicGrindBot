@@ -81,13 +81,13 @@ namespace Libs.Actions
         {
             switch (this.playerReader.LastUIErrorMessage)
             {
-                case PlayerReader.UI_ERROR.ERR_BADATTACKFACING:
-                case PlayerReader.UI_ERROR.ERR_SPELL_FAILED_S:
-                case PlayerReader.UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
-                case PlayerReader.UI_ERROR.ERR_BADATTACKPOS:
+                case UI_ERROR.ERR_BADATTACKFACING:
+                case UI_ERROR.ERR_SPELL_FAILED_S:
+                case UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
+                case UI_ERROR.ERR_BADATTACKPOS:
                     logger.LogInformation("Interact due to: this.playerReader.LastUIErrorMessage");
                     await PressKey(ConsoleKey.H);
-                    this.playerReader.LastUIErrorMessage = PlayerReader.UI_ERROR.NONE;
+                    this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
             }
         }
@@ -105,10 +105,11 @@ namespace Libs.Actions
                     logger.LogInformation($"Stop moving: We have moved since the last interact: {distance}");
                     await wowProcess.KeyPress(ConsoleKey.UpArrow, 101);
                     lastInteractPostion = this.playerReader.PlayerLocation;
+                    await Task.Delay(300);
                 }
             }
 
-            if (key== ConsoleKey.H)
+            if (key == ConsoleKey.H)
             {
                 lastInteractPostion = this.playerReader.PlayerLocation;
             }

@@ -128,16 +128,6 @@ namespace Libs
         private long UIErrorMessage => reader.GetLongAtCell(52);
         public UI_ERROR LastUIErrorMessage { get; set; }
 
-        public enum UI_ERROR
-        {
-            NONE = 0,
-            ERR_BADATTACKFACING = 1,
-            ERR_SPELL_FAILED_S = 2,
-            ERR_SPELL_OUT_OF_RANGE = 3,
-            ERR_BADATTACKPOS = 4
-        }
-
-
         private SpellInRange spellInRange = new SpellInRange(0);
 
         public SpellInRange SpellInRange

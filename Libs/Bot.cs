@@ -65,9 +65,9 @@ namespace Libs
                     spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
                     break;
                 case PlayerClassEnum.Druid:
-                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_37.json");
+                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands39.json");
                     thereAndBack = true;
-                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Arathi_37_SpiritHealer.json");
+                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands39_SpiritHealer.json");
                     step = 2;
                     break;
             }
@@ -119,13 +119,14 @@ namespace Libs
                     {
                         var margin = 10;
 
-                        using (var pen = new Pen(Color.Red, 2))
+                        using (var redPen = new Pen(Color.Red, 2))
                         {
-                            npcs.ForEach(n => gr.DrawRectangle(pen, new Rectangle(n.Min.X - margin, n.Min.Y - margin, margin + n.Max.X - n.Min.X, margin + n.Max.Y - n.Min.Y)));
-                        }
-                        using (var pen = new Pen(Color.White, 3))
-                        {
-                            npcs.ForEach(n => gr.DrawEllipse(pen, new Rectangle(n.ClickPoint.X - (margin / 2), n.ClickPoint.Y - (margin / 2), margin, margin)));
+                            npcs.ForEach(n => gr.DrawRectangle(redPen, new Rectangle(n.Min.X - margin, n.Min.Y - margin, margin + n.Max.X - n.Min.X, margin + n.Max.Y - n.Min.Y)));
+
+                            using (var whitePen = new Pen(Color.White, 3))
+                            {
+                                npcs.ForEach(n => gr.DrawEllipse(n.IsAdd ? whitePen : redPen, new Rectangle(n.ClickPoint.X - (margin / 2), n.ClickPoint.Y - (margin / 2), margin, margin)));
+                            }
                         }
                     }
                 }
