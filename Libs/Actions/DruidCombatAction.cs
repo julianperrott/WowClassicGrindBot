@@ -58,11 +58,13 @@ namespace Libs.Actions
                     await UseShapeshiftForm(ShapeshiftForm.Druid_Bear);
                 }
 
-                await PressKey(key);
-
-                if (key == ConsoleKey.D9) // Heal
+                if (key == ConsoleKey.D9)
                 {
-                    await Task.Delay(3000);
+                    await PressCastKeyAndWaitForCastToEnd(key, 3000);
+                }
+                else
+                {
+                    await PressKey(key);
                 }
 
                 RaiseEvent(new ActionEvent(GoapKey.shouldloot, true));
@@ -107,6 +109,10 @@ namespace Libs.Actions
                 if (LastClicked.ContainsKey(ConsoleKey.D7))
                 {
                     LastClicked.Remove(ConsoleKey.D7);
+                }
+                if (LastClicked.ContainsKey(ConsoleKey.D5))
+                {
+                    LastClicked.Remove(ConsoleKey.D5);
                 }
             }
             if (e.Key == GoapKey.postloot)

@@ -65,9 +65,9 @@ namespace Libs
                     spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
                     break;
                 case PlayerClassEnum.Druid:
-                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands39.json");
-                    thereAndBack = true;
-                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Badlands39_SpiritHealer.json");
+                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44.json");
+                    thereAndBack = false;
+                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
                     step = 2;
                     break;
             }

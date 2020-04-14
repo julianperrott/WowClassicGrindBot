@@ -94,6 +94,25 @@ namespace Libs.Actions
 
         protected abstract Task Fight();
 
+        public async Task PressCastKeyAndWaitForCastToEnd(ConsoleKey key, int maxWaitMs)
+        {
+            await PressKey(key);
+            if (!this.playerReader.IsCasting)
+            {
+                // try again
+                await PressKey(key);
+            }
+
+            for (int i = 0; i < maxWaitMs; i += 100)
+            {
+                if (!this.playerReader.IsCasting)
+                {
+                    return;
+                }
+                await Task.Delay(100);
+            }
+        }
+
         public async Task PressKey(ConsoleKey key)
         {
             if (lastKeyPressed == ConsoleKey.H)

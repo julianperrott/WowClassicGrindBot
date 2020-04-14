@@ -52,13 +52,13 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 1f; }
 
-        public WowPoint CorpseLocation => new WowPoint(playerReader.CorpseX, playerReader.CorpseY);
+        private WowPoint corpseLocation = new WowPoint(0, 0);
 
         public void Dump(string description)
         {
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = DistanceTo(location, CorpseLocation);
-            var heading = new DirectionCalculator(logger).CalculateHeading(location, CorpseLocation);
+            var distance = DistanceTo(location, corpseLocation);
+            var heading = new DirectionCalculator(logger).CalculateHeading(location, corpseLocation);
             //logger.LogInformation($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
         }
 
@@ -67,12 +67,23 @@ namespace Libs.Actions
         public override void OnActionEvent(object sender, ActionEvent e)
         {
             NeedsToReset = true;
+            points.Clear();
+            this.corpseLocation = new WowPoint(0, 0);
         }
 
         public override async Task PerformAction()
         {
             if (NeedsToReset)
             {
+                while (true)
+                {
+                    this.corpseLocation = new WowPoint(playerReader.CorpseX, playerReader.CorpseY);
+                    if (this.corpseLocation.X > 0) { break; }
+                    logger.LogInformation($"Waiting for corpse location to update {playerReader.CorpseX},{playerReader.CorpseY}");
+                    await Task.Delay(1000);
+                }
+                logger.LogInformation($"Corpse location is {playerReader.CorpseX},{playerReader.CorpseY}");
+
                 await Reset();
                 this.stuckDetector.SetTargetLocation(points.Peek());
             }
@@ -88,8 +99,8 @@ namespace Libs.Actions
             if (points.Count == 0)
             {
                 points.Push(this.playerReader.CorpseLocation);
-                distance = DistanceTo(location, CorpseLocation);
-                heading = new DirectionCalculator(logger).CalculateHeading(location, CorpseLocation);
+                distance = DistanceTo(location, corpseLocation);
+                heading = new DirectionCalculator(logger).CalculateHeading(location, corpseLocation);
                 this.logger.LogInformation("no more points, heading to corpse");
                 await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
@@ -159,13 +170,14 @@ namespace Libs.Actions
             return (DateTime.Now - LastActive).TotalSeconds < 2;
         }
 
+
         public async Task Reset()
         {
             logger.LogInformation("Sleeping 2 seconds");
             await Task.Delay(2000);
-            while(new List<double> { playerReader.XCoord, playerReader.YCoord, CorpseLocation.X,CorpseLocation.Y }.Max()>100)
+            while(new List<double> { playerReader.XCoord, playerReader.YCoord, corpseLocation.X,corpseLocation.Y }.Max()>100)
             {
-                logger.LogInformation($"Waiting... odd coords read. Player {playerReader.XCoord},{playerReader.YCoord} corpse { CorpseLocation.X}{CorpseLocation.Y}");
+                logger.LogInformation($"Waiting... odd coords read. Player {playerReader.XCoord},{playerReader.YCoord} corpse { corpseLocation.X}{corpseLocation.Y}");
                 await Task.Delay(5000);
             }
 
@@ -185,7 +197,7 @@ namespace Libs.Actions
                 }
             }
 
-            var closestRoutePointToCorpse = routePoints.Select(s => (pathPoint: s, distance: DistanceTo(s, CorpseLocation)))
+            var closestRoutePointToCorpse = routePoints.Select(s => (pathPoint: s, distance: DistanceTo(s, corpseLocation)))
                 .OrderBy(s => s.distance)
                 .First()
                 .pathPoint;
@@ -215,7 +227,7 @@ namespace Libs.Actions
                 points.Push(truncatedRoute[i]);
             }
 
-            var cp = new CorpsePath { MyLocation = myLocation, CorpseLocation = CorpseLocation, RouteToCorpse = routeToCorpse, TruncatedRoute = truncatedRoute };
+            var cp = new CorpsePath { MyLocation = myLocation, CorpseLocation = corpseLocation, RouteToCorpse = routeToCorpse, TruncatedRoute = truncatedRoute };
             File.WriteAllText($"../../../../CorpsePath_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(cp));
             NeedsToReset = false;
         }

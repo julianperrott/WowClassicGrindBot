@@ -198,38 +198,28 @@ namespace Libs.Actions
 
                 if (HasPickedUpAnAdd) { return false; }
 
-                logger.LogInformation($"Cast Wrath");
-                await this.combatAction.PressKey(ConsoleKey.D2);
-                await Task.Delay(1500);
+                await this.combatAction.PressCastKeyAndWaitForCastToEnd(ConsoleKey.D2,2000);
 
                 if (this.playerReader.WithInCombatRange) { return true; }
 
-                if (random.Next(2) == 1)
+                var combatSequence = random.Next(3);
+                if (combatSequence != 0)
                 {
-                    // moonfire
-                    await this.combatAction.PressKey(ConsoleKey.D5);
-                    await Task.Delay(1000);
-                    if (this.playerReader.WithInCombatRange) { return true; }
+                    await this.combatAction.PressKey(ConsoleKey.D5); // moonfire
                 }
 
-
-                if (random.Next(2) == 1)
-                {
-                    await this.combatAction.PressKey(ConsoleKey.D2);
-                    await Task.Delay(1800);
-                }
-                else
-                {
-                    await Task.Delay(1000);
-                }
-
+                if (this.playerReader.WithInCombatRange) { return true; }
+                await this.combatAction.PressCastKeyAndWaitForCastToEnd(ConsoleKey.D2,2000);
+                
                 if (this.playerReader.Druid_ShapeshiftForm != ShapeshiftForm.Druid_Bear) // needs bear form
                 {
-                    await Task.Delay(500);
                     await this.wowProcess.KeyPress(ConsoleKey.D4, 300); // bear form
 
-                    if (this.playerReader.WithInCombatRange) { return true; }
-                    await Task.Delay(2000);
+                    for(int i=0;i<20;i++)
+                    {
+                        if (this.playerReader.WithInCombatRange) { return true; }
+                        await Task.Delay(100);
+                    }
                 }
 
                 return true;

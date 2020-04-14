@@ -97,35 +97,40 @@ end
 
 UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
 
+
+local errorList = {
+    "ERR_BADATTACKFACING", --1
+    "ERR_SPELL_FAILED_S", --2
+    "ERR_SPELL_OUT_OF_RANGE", --3
+    "ERR_BADATTACKPOS", --4
+    "ERR_AUTOFOLLOW_TOO_FAR", --5
+    "ERR_ABILITY_COOLDOWN", --6
+    "ERR_OUT_OF_RAGE", --7
+    "ERR_NO_ATTACK_TARGET", --8
+    "ERR_OUT_OF_MANA", --9
+    "ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS", --10
+    "ERR_SPELL_COOLDOWN", --11
+    "ERR_SPELL_FAILED_SHAPESHIFT_FORM_S", --12
+    "ERR_GENERIC_NO_TARGET" --13
+};
+
+-- handle error events
 local function OnUIErrorMessage(self, event, messageType, message)
     local errorName, soundKitID, voiceID = GetGameMessageInfo(messageType)
-    --if blacklist[errorName] then return end
-    --UIErrorsFrame:AddMessage("Hello", 1, .1, .1)
-    if errorName=="ERR_BADATTACKFACING" then
-        uiErrorMessage=1;
-    elseif errorName=="ERR_SPELL_FAILED_S" then
-        uiErrorMessage=2;   
-    elseif errorName=="ERR_SPELL_OUT_OF_RANGE" then
-        uiErrorMessage=3;
-    elseif errorName=="ERR_BADATTACKPOS" then
-        uiErrorMessage=4;
-    elseif errorName=="ERR_AUTOFOLLOW_TOO_FAR" then
-        uiErrorMessage=5;
-    elseif errorName=="ERR_ABILITY_COOLDOWN" then
-        uiErrorMessage=6;
-    elseif errorName=="ERR_OUT_OF_RAGE" then
-        uiErrorMessage=7;
-    elseif errorName=="ERR_NO_ATTACK_TARGET" or errorName=="ERR_GENERIC_NO_TARGET" then
-        uiErrorMessage=8;
-    elseif errorName=="ERR_OUT_OF_MANA" then
-        uiErrorMessage=9;        
-    elseif errorName=="ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS" then
-        uiErrorMessage=10;
-    else
-        DataToColor:log(message .. ":" .. errorName);    
+
+    local foundMessage=false;
+    for i = 1, table.getn(errorList), 1 do
+        if errorList[i]==errorName then
+            uiErrorMessage = i;
+            foundMessage=true;
+            UIErrorsFrame:AddMessage(message, 0, 1, 0) -- show as green messasge
+        end
     end
-    --ERR_BADATTACKFACING
-    --ERR_SPELL_FAILED_S
+
+    if not foundMessage then
+        DataToColor:log(message .. ":" .. errorName);
+        UIErrorsFrame:AddMessage(message, 0, 0, 1) -- show as blue message
+    end
   end
 
 --event handler
@@ -377,6 +382,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(uiErrorMessage), 52) -- Last UI Error message
             uiErrorMessage=0;
 
+            MakePixelSquareArr(integerToColor(DataToColor:CastingInfoSpellId()), 53) -- Spell being cast
             self:HandleEvents()
         end
         if SETUP_SEQUENCE then
@@ -534,6 +540,14 @@ function DataToColor:GetTargetName(partition)
             end
         end
         return 0
+    end
+    return 0
+end
+
+function DataToColor:CastingInfoSpellId()
+    local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = CastingInfo();
+    if spellID ~= nil then
+        return spellID
     end
     return 0
 end

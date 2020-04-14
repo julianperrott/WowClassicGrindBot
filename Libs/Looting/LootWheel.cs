@@ -171,11 +171,13 @@ namespace Libs.Looting
                     logger.LogInformation("We have enterred combat, aborting loot");
                     return;
                 }
-
-                CursorClassifier.Classify(out var cls2);
-                if (cls2 != this.Classification)
+                if (!this.playerReader.IsCasting)
                 {
-                    return;
+                    CursorClassifier.Classify(out var cls2);
+                    if (cls2 != this.Classification)
+                    {
+                        return;
+                    }
                 }
                 await Task.Delay(100);
             }

@@ -148,5 +148,9 @@ namespace Libs
 
         public bool IsShooting => PlayerBitValues.IsAutoRepeatActionOnActionBar10;
         public bool IsActionBar10Current => PlayerBitValues.IsCurrentActionOnActionBar10;
+
+
+        public long SpellBeingCast => reader.GetLongAtCell(53);
+        public bool IsCasting => SpellBeingCast != 0;
     }
 }
