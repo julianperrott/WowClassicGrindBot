@@ -50,7 +50,31 @@ namespace Libs.Actions
 
             await actionBuff();
 
-            LastPressed = DateTime.Now;
+            for (int i = 0; i < 12; i++)
+            {
+                if (HasDesiredBuff || this.playerReader.PlayerBitValues.PlayerInCombat)
+                {
+                    if (i > 5)
+                    {
+                        await wowProcess.TapStopKey();
+                    }
+
+                    this.logger.LogInformation($"I have the buff '{this.description}'");
+                    break;
+                }
+                await Task.Delay(1000);
+                this.logger.LogInformation($"Waiting for buff '{this.description}'");
+            }
+
+            if (HasDesiredBuff)
+            {
+                LastPressed = DateTime.Now;
+            }
+            else
+            {
+                // we should have got the buff, but perhaps we have run out, so don't try again for a while.
+                LastPressed = DateTime.Now.AddMinutes(10);
+            }
         }
 
         public bool HasEnoughMana => this.playerReader.ManaPercentage > manaPercentage;

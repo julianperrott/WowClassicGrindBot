@@ -9,6 +9,7 @@
         <th>Bag Items:</th>
         <th>Health:</th>
         <th>Target:</th>
+        <th>UI Error:</th>
     </tr>
     <tr>
         <td>
@@ -42,6 +43,9 @@
             {
                 <div>Kills: @levelTracker.MobsKilled</div>
             }
+        </td>
+        <td>
+            @playerReader.LastUIErrorMessage.ToString()
         </td>
     </tr>
 </table>

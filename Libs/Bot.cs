@@ -61,13 +61,19 @@ namespace Libs
                     spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_52_SpiritHealer.json");
                     break;
                 case PlayerClassEnum.Priest:
-                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_47.json");
-                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
+                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_52.json");
+                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_52_SpiritHealer.json");
                     break;
                 case PlayerClassEnum.Druid:
                     pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44.json");
                     thereAndBack = false;
                     spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
+                    step = 2;
+                    break;
+                case PlayerClassEnum.Paladin:
+                    pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\LochModan_19.json");
+                    thereAndBack = true;
+                    spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\LochModan_19_SpiritHealer.json");
                     step = 2;
                     break;
             }
@@ -169,7 +175,7 @@ namespace Libs
                 case PlayerClassEnum.Rogue:
                     this.availableActions.Add(new RogueCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new TimedPressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F6, 3600, logger, "Equip dagger"));
-                   // this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     this.availableActions.Add(new EatOrBandageAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
                     break;
 
@@ -189,11 +195,33 @@ namespace Libs
                     this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D3), () => wowData.PlayerReader.Buffs.Thorns, 70, logger, "Thorns"));
                     this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D7), () => wowData.PlayerReader.Buffs.WellFed, logger, "Well Fed"));
                     break;
+
+                case PlayerClassEnum.Paladin:
+                    var classConfig= JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(@"D:\GitHub\WowPixelBot\Paladin.json"));
+
+                    var combat = new GenericCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger, classConfig);
+                    this.availableActions.Add(combat);
+                    this.availableActions.Add(new GenericPullAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger, combat, classConfig, this.stuckDetector));
+                    //this.availableActions.Add(new DrinkAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
+                    
+                    //this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D5), () => wowData.PlayerReader.Buffs.Aura, logger, "Devotion Aura"));
+                    //this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D4), () => wowData.PlayerReader.Buffs.Blessing, logger, "Blessing of Might"));
+
+                    foreach(var item in classConfig.Buffs.Sequence)
+                    {
+                        var hasBuff = wowData.PlayerReader.GetBuffFunc(item.Name, item.Buff);
+                        this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader,stopMoving, () => PressKey(item.Key),hasBuff, item.ManaRequirement, logger,item.Name));
+                    }
+
+                    break;
             }
 
-            var combatAction = this.availableActions.First(c => c as CombatActionBase != null) as CombatActionBase;
-            if (combatAction==null) { throw new Exception("Didn't find combat action"); }
-            this.availableActions.Add(new PullTargetAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger, combatAction));
+            if (!this.availableActions.Any(c => c as PullTargetAction != null))
+            {
+                var combatAction = this.availableActions.First(c => c as CombatActionBase != null) as CombatActionBase;
+                if (combatAction == null) { throw new Exception("Didn't find combat action"); }
+                this.availableActions.Add(new ClassPullTargetAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger, combatAction,this.stuckDetector));
+            }
 
             this.availableActions.ToList().ForEach(a => 
             {

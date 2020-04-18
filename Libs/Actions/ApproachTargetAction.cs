@@ -83,14 +83,15 @@ namespace Libs.Actions
                 {
                     logger.LogInformation("Looks like we have an add on approach");
                     await this.stopMoving.Stop();
-                    await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 490);
+                    await wowProcess.TapStopKey();
                     await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
                     return;
                 }
                 playerWasInCombat = true;
             }
 
-            await this.wowProcess.KeyPress(ConsoleKey.H, 501);
+            await this.wowProcess.TapInteractKey();
+            await Task.Delay(500);
 
             var newLocation = playerReader.PlayerLocation;
             if ((location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5) || this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
@@ -106,7 +107,8 @@ namespace Libs.Actions
             if (approachSeconds > 20)
             {
                 await this.stuckDetector.Unstick();
-                await this.wowProcess.KeyPress(ConsoleKey.H, 501);
+                await this.wowProcess.TapInteractKey();
+                await Task.Delay(500);
             }
         }
 

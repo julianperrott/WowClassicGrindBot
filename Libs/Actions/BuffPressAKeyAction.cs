@@ -54,7 +54,7 @@ namespace Libs.Actions
                 {
                     if (i>5)
                     {
-                        await wowProcess.KeyPress(ConsoleKey.UpArrow, 300);
+                        await wowProcess.TapStopKey();
                     }
 
                     break;

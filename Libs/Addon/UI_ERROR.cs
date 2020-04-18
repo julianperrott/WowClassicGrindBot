@@ -8,8 +8,5 @@
         ERR_SPELL_OUT_OF_RANGE = 3,
         ERR_BADATTACKPOS = 4,
         ERR_AUTOFOLLOW_TOO_FAR = 5,
-        ERR_ABILITY_COOLDOWN = 6,
-        ERR_OUT_OF_RAGE = 7,
-        ERR_NO_ATTACK_TARGET = 8
     }
 }

@@ -1,7 +1,9 @@
 ﻿
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Libs
@@ -52,11 +54,11 @@ namespace Libs
         }
 
         public long HealthCurrent => reader.GetLongAtCell(11); // Current amount of health of player
-        public long HealthPercent => HealthMax == 0 || HealthCurrent==1 ? 0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
+        public long HealthPercent => HealthMax == 0 || HealthCurrent == 1 ? 0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
 
         public long ManaMax => reader.GetLongAtCell(12); // Maximum amount of mana
         public long ManaCurrent => reader.GetLongAtCell(13); // Current amount of mana
-        public long ManaPercentage => ManaMax==0 ?0: (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
+        public long ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
 
         public long PlayerLevel => reader.GetLongAtCell(14); // Level is our character's exact level ranging from 1-60
 
@@ -123,7 +125,7 @@ namespace Libs
 
         public long PlayerXp => reader.GetLongAtCell(50);
         public long PlayerMaxXp => reader.GetLongAtCell(51);
-        public long PlayerXpPercentage => (PlayerXp*100)/ (PlayerMaxXp==0?1: PlayerMaxXp);
+        public long PlayerXpPercentage => (PlayerXp * 100) / (PlayerMaxXp == 0 ? 1 : PlayerMaxXp);
 
         private long UIErrorMessage => reader.GetLongAtCell(52);
         public UI_ERROR LastUIErrorMessage { get; set; }
@@ -152,5 +154,42 @@ namespace Libs
 
         public long SpellBeingCast => reader.GetLongAtCell(53);
         public bool IsCasting => SpellBeingCast != 0;
+
+        private Dictionary<string, Func<bool>> BuffDictionary = new Dictionary<string, Func<bool>>();
+
+        public Func<bool> GetBuffFunc(string name, string buff)
+        {
+            if (BuffDictionary.Count == 0)
+            {
+                BuffDictionary = new Dictionary<string, Func<bool>>
+                {
+                    {  "Seal", ()=> this.Buffs.Seal },
+                    {  "Aura", ()=>Buffs.Aura },
+                    {  "Devotion Aura", ()=>Buffs.Aura },
+                    {  "Blessing", ()=> Buffs.Blessing },
+                    {  "Blessing of Might", ()=> Buffs.Blessing },
+                    {  "Well Fed", ()=> Buffs.WellFed },
+                    {  "Eating", ()=> Buffs.Eating },
+                    {  "Drinking", ()=> Buffs.Drinking },
+                    {  "Mana Regeneration", ()=> Buffs.ManaRegeneration },
+                    {  "Fortitude", ()=> Buffs.Fortitude },
+                    {  "InnerFire", ()=> Buffs.InnerFire },
+                    {  "Renew", ()=> Buffs.Renew },
+                    {  "Shield", ()=> Buffs.Shield },
+                    {  "Mark of the Wild", ()=> Buffs.MarkOfTheWild },
+                    {  "Thorns", ()=> Buffs.Thorns }
+                };
+            }
+
+            if (BuffDictionary.Keys.Contains(buff))
+            {
+                return BuffDictionary[buff];
+            }
+            else
+            {
+                logger.LogInformation($"UNKNOWN BUFF! {name} - {buff}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
+                return () => true;
+            }
+        }
     }
 }

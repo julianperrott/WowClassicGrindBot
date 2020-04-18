@@ -67,7 +67,7 @@ namespace Libs.Actions
                 {
                     if (hasDrank)
                     {
-                        await wowProcess.KeyPress(ConsoleKey.UpArrow, 400);
+                        await wowProcess.TapStopKey();
                     }
 
                     if (playerReader.PlayerClass == PlayerClassEnum.Druid)

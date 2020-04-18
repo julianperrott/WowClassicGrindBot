@@ -83,8 +83,6 @@ namespace Libs
 
             if (unstickSeconds > 5)
             {
-
-
                 int strafeDuration = (int)(1000 + (((double)actionDurationSeconds * 1000) / 12));
 
                 if (strafeDuration>5)
@@ -118,7 +116,7 @@ namespace Libs
                     wowProcess.SetKeyState(ConsoleKey.E, false);
                 }
 
-                await wowProcess.KeyPress(ConsoleKey.UpArrow, 100);
+                await wowProcess.TapStopKey();
 
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
 
@@ -127,6 +125,10 @@ namespace Libs
 
                 LastUnstickAttemptTimer.Reset();
                 LastUnstickAttemptTimer.Start();
+            }
+            else
+            {
+                await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
             }
         }
 
@@ -146,7 +148,27 @@ namespace Libs
                 currentDistanceToTarget = previousDistanceToTarget;
             }
 
-            if ((DateTime.Now - timeOfLastSignificantMovement).TotalSeconds > 10)
+            if ((DateTime.Now - timeOfLastSignificantMovement).TotalSeconds > 3)
+            {
+                logger.LogInformation("We seem to be stuck!");
+                return false;
+            }
+
+            return true;
+        }
+
+        internal bool IsMoving()
+        {
+            var currentDistanceToTarget = WowPoint.DistanceTo(this.playerReader.PlayerLocation, targetLocation);
+
+            if (Math.Abs(currentDistanceToTarget - previousDistanceToTarget) > 1)
+            {
+                ResetStuckParameters();
+                previousDistanceToTarget = currentDistanceToTarget;
+                return true;
+            }
+
+            if ((DateTime.Now - timeOfLastSignificantMovement).TotalSeconds > 3)
             {
                 logger.LogInformation("We seem to be stuck!");
                 return false;

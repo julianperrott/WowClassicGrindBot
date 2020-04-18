@@ -166,7 +166,7 @@ namespace Libs
             npcNameLine = new List<LineOfNpcName>();
 
             bool isEndOfSection;
-            for (int y = 0; y < Screenshot.Height/2; y++)
+            for (int y = 30; y < Screenshot.Height/2; y++)
             {
                 var lengthStart = -1;
                 var lengthEnd = -1;

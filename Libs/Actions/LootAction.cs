@@ -58,7 +58,7 @@ namespace Libs.Actions
             {
                 if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
                 {
-                    await wowProcess.KeyPress(ConsoleKey.H, 200);
+                    await this.wowProcess.TapInteractKey();
                     return;
                 }
                 await wowProcess.KeyPress(ConsoleKey.F3, 200);
@@ -129,7 +129,7 @@ namespace Libs.Actions
                     {
                         if (lootWheel.Classification == Cursor.CursorClassification.Kill)
                         {
-                            await wowProcess.KeyPress(ConsoleKey.H, 501);
+                            await this.wowProcess.TapInteractKey();
                             Log($"Kill something !");
                             return;
                         }

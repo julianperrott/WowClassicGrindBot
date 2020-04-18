@@ -36,6 +36,9 @@ namespace Libs
             }
 
             WowBot = new Bot(WowData, logger);
+
+            screenshotThread = new Thread(ScreenshotRefreshThread);
+            screenshotThread.Start();
         }
 
         public void AddonRefreshThread()
@@ -61,9 +64,6 @@ namespace Libs
                 WowBot.Active = true;
                 botThread = new Thread(()=> Task.Factory.StartNew(() => WowBot.DoWork()));
                 botThread.Start();
-
-                screenshotThread = new Thread(ScreenshotRefreshThread);
-                screenshotThread.Start();
             }
             else
             {

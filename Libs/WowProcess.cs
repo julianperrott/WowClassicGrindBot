@@ -132,6 +132,17 @@ namespace Libs
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
         }
 
+        public async Task TapStopKey()
+        {
+            await KeyPress(ConsoleKey.UpArrow, 51);
+        }
+
+        public async Task TapInteractKey()
+        {
+            logger.LogInformation($"Approach target");
+            await KeyPress(ConsoleKey.H, 99);
+        }
+
         public void SetKeyState(ConsoleKey key, bool pressDown, bool always=false)
         {
             if (pressDown) { KeyDown(key, always); } else { KeyUp(key, always); }

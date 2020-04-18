@@ -157,9 +157,52 @@ namespace Powershell
 
         private void North_Click(object sender, RoutedEventArgs e)
         {
+            var config = new ClassConfiguration
+            {
+                ClassName = "Paladin1"
+            };
+
+            config.Pull.Sequence.Add(new KeyConfiguration
+            {
+                Name = "Attack",
+                StopBeforeCast = false,
+                Key = ConsoleKey.D1
+            });
+
+            config.Combat.Sequence.AddRange(
+                new List<KeyConfiguration> {
+                new KeyConfiguration
+                {
+                    Name = "Holy Light",
+                    Key = ConsoleKey.D3,
+                    ManaRequirement = 35,
+                    CastIfHealthBelowPercentage = 25,
+                    Cooldown = 10
+                },
+                new KeyConfiguration
+                {
+                    Name = "Seal of Righteousness",
+                    Key = ConsoleKey.D2,
+                    ManaRequirement = 20,
+                    Cooldown = 30
+                },
+                new KeyConfiguration
+                {
+                    Name = "Attack",
+                    StopBeforeCast = false,
+                    Key = ConsoleKey.D1
+                }
+                }
+            );
+
+            string output = JsonConvert.SerializeObject(config);
+
+            File.WriteAllText("Paladin1.json", output);
+
+
             System.Threading.Thread.Sleep(2000);
             CursorClassifier.Classify(out CursorClassification cursor);
-           // playerDirection.SetDirection(0.0);
+            // playerDirection.SetDirection(0.0);
         }
 
         private async void East_Click(object sender, RoutedEventArgs e)

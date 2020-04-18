@@ -17,6 +17,7 @@ namespace Libs.Actions
         protected ActionBarStatus actionBar = new ActionBarStatus(0);
         protected ConsoleKey lastKeyPressed = ConsoleKey.Escape;
         protected WowPoint lastInteractPostion = new WowPoint(0, 0);
+        private DateTime lastActive = DateTime.Now;
 
         protected Dictionary<ConsoleKey, DateTime> LastClicked = new Dictionary<ConsoleKey, DateTime>();
 
@@ -34,21 +35,19 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 4f; }
 
-        protected bool IsOnCooldown(ConsoleKey key, int seconds)
+        public int GetCooldownRemaining(ConsoleKey key, int seconds)
         {
             if (!LastClicked.ContainsKey(key))
             {
-                //logger.LogInformation("Cooldown not found" + key.ToString());
-                return false;
+                return 0;
             }
 
-            bool isOnCooldown = (DateTime.Now - LastClicked[key]).TotalSeconds <= seconds;
+            return seconds - ((int)(DateTime.Now - LastClicked[key]).TotalSeconds);
+        }
 
-            if (key != ConsoleKey.H)
-            {
-                //logger.LogInformation("On cooldown " + key);
-            }
-            return isOnCooldown;
+        public bool IsOnCooldown(ConsoleKey key, int seconds)
+        {
+            return GetCooldownRemaining(key, seconds) > 0;
         }
 
         protected bool HasEnoughMana(int value)
@@ -61,11 +60,23 @@ namespace Libs.Actions
             return this.playerReader.ManaCurrent >= value;
         }
 
+        protected bool HasEnoughEnergy(int value)
+        {
+            return this.playerReader.ManaCurrent >= value;
+        }
+
         public override async Task PerformAction()
         {
             if (playerReader.PlayerBitValues.IsMounted)
             {
                 await wowProcess.Dismount();
+            }
+
+            if ((DateTime.Now-lastActive).TotalSeconds>5)
+            {
+                logger.LogInformation("Interact and stop");
+               await this.wowProcess.TapInteractKey();
+                await this.PressKey(ConsoleKey.UpArrow, 57);
             }
 
             await stopMoving.Stop();
@@ -75,9 +86,11 @@ namespace Libs.Actions
             await InteractOnUIError();
 
             await Fight();
+
+            lastActive = DateTime.Now;
         }
 
-        protected virtual async Task InteractOnUIError()
+        public virtual async Task InteractOnUIError()
         {
             switch (this.playerReader.LastUIErrorMessage)
             {
@@ -86,7 +99,7 @@ namespace Libs.Actions
                 case UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
                 case UI_ERROR.ERR_BADATTACKPOS:
                     logger.LogInformation("Interact due to: this.playerReader.LastUIErrorMessage");
-                    await PressKey(ConsoleKey.H);
+                    await this.wowProcess.TapInteractKey();
                     this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
             }
@@ -113,7 +126,7 @@ namespace Libs.Actions
             }
         }
 
-        public async Task PressKey(ConsoleKey key)
+        public async Task PressKey(ConsoleKey key, int duration = 300)
         {
             if (lastKeyPressed == ConsoleKey.H)
             {
@@ -122,7 +135,7 @@ namespace Libs.Actions
                 if (distance > 1)
                 {
                     logger.LogInformation($"Stop moving: We have moved since the last interact: {distance}");
-                    await wowProcess.KeyPress(ConsoleKey.UpArrow, 101);
+                    await wowProcess.TapStopKey();
                     lastInteractPostion = this.playerReader.PlayerLocation;
                     await Task.Delay(300);
                 }
@@ -133,7 +146,7 @@ namespace Libs.Actions
                 lastInteractPostion = this.playerReader.PlayerLocation;
             }
 
-            await wowProcess.KeyPress(key, 301);
+            await wowProcess.KeyPress(key, duration);
 
             lastKeyPressed = key;
 
@@ -145,6 +158,66 @@ namespace Libs.Actions
             {
                 LastClicked.Add(key, DateTime.Now);
             }
+        }
+
+        public bool AddsExist { get; set; }
+
+        public async Task<bool> CastIfReady(KeyConfiguration item)
+        {
+            if (!item.CastIfAddsVisible && AddsExist)
+            {
+                logger.LogInformation($"-{item.Name}: Adds exist");
+                return false;
+            }
+
+            if (item.ManaRequirement > this.playerReader.ManaCurrent)
+            {
+                logger.LogInformation($"-{item.Name}: mana too low");
+                return false;
+            }
+            if (item.CastIfHealthBelowPercentage > 0 && item.CastIfHealthBelowPercentage < this.playerReader.HealthPercent)
+            {
+                logger.LogInformation($"-{item.Name}: health too high");
+                return false;
+            }
+
+            var secs = GetCooldownRemaining(item.Key, item.Cooldown);
+            if (secs > 0)
+            {
+                logger.LogInformation($"-{item.Name}: on cooldown, {secs}s left");
+                return false;
+            }
+
+            if (!CheckBuff(item)) { return false; }
+
+            logger.LogInformation($"+{item.Name} casting.");
+            await PressKey(item.Key, item.PressDuration);
+            await Task.Delay(1500);
+
+            if (item.HasCastBar)
+            {
+                for (int i = 0; i < 2000; i += 100)
+                {
+                    if (!this.playerReader.IsCasting) { break; }
+                    await Task.Delay(100);
+                }
+            }
+
+            return true;
+        }
+
+        private bool CheckBuff(KeyConfiguration item)
+        {
+            if (!string.IsNullOrEmpty(item.Buff))
+            {
+                if (this.playerReader.GetBuffFunc(item.Name, item.Buff)())
+                {
+                    logger.LogInformation($"-{item.Name}: already has this buff '{item.Buff}'");
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

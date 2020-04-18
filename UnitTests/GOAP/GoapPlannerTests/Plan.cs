@@ -38,7 +38,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
             this.followRouteAction = new FollowRouteAction(playerReader, wowprocess, new Mock<IPlayerDirection>().Object, new List<WowPoint>(), stopMoving, npcNameFinder, new Blacklist(playerReader), logger.Object, stuckDetector);
 
             this.killMobAction = new WarriorCombatAction(wowprocess, playerReader, stopMoving, logger.Object);
-            this.pullTargetAction = new PullTargetAction(wowprocess, playerReader, npcNameFinder, stopMoving, logger.Object, this.killMobAction as CombatActionBase);
+            this.pullTargetAction = new ClassPullTargetAction(wowprocess, playerReader, npcNameFinder, stopMoving, logger.Object, this.killMobAction as CombatActionBase, stuckDetector);
             this.approachTargetAction = new ApproachTargetAction(wowprocess, playerReader, stopMoving, npcNameFinder, logger.Object, stuckDetector);
 
             this.availableActions = new HashSet<GoapAction>

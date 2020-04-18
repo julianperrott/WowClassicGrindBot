@@ -46,7 +46,11 @@ namespace Libs
             // Wait until we are going the right direction
             while ((DateTime.Now-startTime).TotalSeconds<10)
             {
-                await Task.Delay(1);
+                if((DateTime.Now - startTime).TotalSeconds>10)
+                {
+                    await Task.Delay(1);
+                }
+                System.Threading.Thread.Sleep(1);
                 var actualDirection = playerReader.Direction;
 
                 bool closeEnoughToDesiredDirection = Math.Abs(actualDirection - desiredDirection) < 0.01;

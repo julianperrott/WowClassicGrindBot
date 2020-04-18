@@ -12,7 +12,7 @@ namespace Libs
         private int screenMidBuffer;
         public bool IsAdd => ClickPoint.X < screenMid- screenMidBuffer || ClickPoint.X > screenMid + screenMidBuffer;
 
-        public Point ClickPoint => new Point(Min.X + (Width / 2), Max.Y + 45);
+        public Point ClickPoint => new Point(Min.X + (Width / 2), Max.Y + 30+(Height*7));
 
         public NpcPosition(Point min, Point max, int screenWidth)
         {

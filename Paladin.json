@@ -1,0 +1,97 @@
+{
+  "ClassName": "Paladin7",
+  "Pull": {
+    "Sequence": [
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Holy Light",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": 54,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 50,
+        "Cooldown": 10,
+        "ManaRequirement": 60
+      },
+      {
+        "Name": "Seal of Righteousness",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": 50,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 3,
+        "ManaRequirement": 20,
+        "Buff": "Seal"
+      },
+      {
+        "Name": "Judgement",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": 51,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 15,
+        "ManaRequirement": 20
+      },
+	{
+        "Name": "Interact",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": 72,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 3,
+        "ManaRequirement": 0
+      },
+      {
+        "Name": "Attack",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": 49,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 5,
+        "ManaRequirement": 0
+      }
+    ]
+  },
+  "Buffs": {
+    "Sequence": [
+      {
+        "Name": "Devotion Aura",
+        "StopBeforeCast": false,
+        "Key": 53,
+        "ManaRequirement": 0,
+	"Buff": "Aura"
+      },
+      {
+        "Name": "Blessing of Might",
+        "StopBeforeCast": false,
+        "Key": 52,
+        "ManaRequirement": 30,
+	"Buff": "Blessing"
+      },
+      {
+        "Name": "Well Fed",
+        "StopBeforeCast": false,
+        "Key": 55,
+        "ManaRequirement": 0,
+	"Buff": "Well Fed"
+      }
+   ]
+  }
+}

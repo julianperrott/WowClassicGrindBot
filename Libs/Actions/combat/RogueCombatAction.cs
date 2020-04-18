@@ -17,9 +17,9 @@ namespace Libs.Actions
 
         private ConsoleKey ColdBlood => !IsOnCooldown(ConsoleKey.D1, 60) ? ConsoleKey.D1 : ConsoleKey.Escape;
         private ConsoleKey Approach => !IsOnCooldown(ConsoleKey.H, 5) ? ConsoleKey.H : ConsoleKey.Escape;
-        private ConsoleKey SinisterStrike => actionBar.HotKey2 ? ConsoleKey.D2 : ConsoleKey.Escape;
-        private ConsoleKey SliceAndDice => actionBar.HotKey3 && !IsOnCooldown(ConsoleKey.D3, 20) ? ConsoleKey.D3 : ConsoleKey.Escape;
-        private ConsoleKey Eviscerate => actionBar.HotKey4&& !IsOnCooldown(ConsoleKey.D4, 5)? ConsoleKey.D4 : ConsoleKey.Escape;
+        private ConsoleKey SinisterStrike => HasEnoughEnergy(40) ? ConsoleKey.D2 : ConsoleKey.Escape;
+        private ConsoleKey SliceAndDice => HasEnoughEnergy(25) && !IsOnCooldown(ConsoleKey.D3, 20) ? ConsoleKey.D3 : ConsoleKey.Escape;
+        private ConsoleKey Eviscerate => HasEnoughEnergy(35) && !IsOnCooldown(ConsoleKey.D4, 10)? ConsoleKey.D4 : ConsoleKey.Escape;
         private ConsoleKey Evasion => ConsoleKey.D5;
         private ConsoleKey Vanish => ConsoleKey.D8;
 

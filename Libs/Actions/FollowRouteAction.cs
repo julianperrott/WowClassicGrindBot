@@ -211,7 +211,7 @@ namespace Libs.Actions
                     logger.LogInformation("Mounting if level >=40 no NPC in sight");
                     if (this.playerReader.PlayerLevel >= 40 && this.playerReader.PlayerClass != PlayerClassEnum.Druid)
                     {
-                        await wowProcess.KeyPress(ConsoleKey.UpArrow, 100);
+                        await wowProcess.TapStopKey();
                         await Task.Delay(500);
                         await wowProcess.Mount(this.playerReader);
                     }
@@ -253,7 +253,7 @@ namespace Libs.Actions
                     await wowProcess.Dismount();
                     
                 }
-                await wowProcess.KeyPress(ConsoleKey.H, 300);
+                await this.wowProcess.TapInteractKey();
                 return true;
             }
             return false;
