@@ -30,7 +30,7 @@ namespace UnitTests.GOAP.GoapPlannerTests
             logger = new Mock<ILogger>();
             var wowprocess = new WowProcess(logger.Object);
 
-            var playerReader = new PlayerReader(new Mock<ISquareReader>().Object, this);
+            var playerReader = new PlayerReader(new Mock<ISquareReader>().Object, this, new BagReader(new Mock<ISquareReader>().Object,0));
             var stopMoving = new StopMoving(wowprocess, playerReader, logger.Object);
             var npcNameFinder = new NpcNameFinder(wowprocess, playerReader,logger.Object);
             var stuckDetector = new StuckDetector(playerReader, wowprocess, new Mock<IPlayerDirection>().Object, stopMoving, logger.Object);

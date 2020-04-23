@@ -1,0 +1,115 @@
+{
+  "ClassName": "Mage",
+  "Pull": {
+    "Sequence": [
+	{
+        "Name": "Fireball",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 50,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 0,
+        "ManaRequirement": 45
+      },{
+        "Name": "Frost Bolt",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 53,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 0,
+        "ManaRequirement": 25
+      },
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Fireball",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 50,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 0,
+        "ManaRequirement": 45
+      },
+	{
+        "Name": "Interact",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": 72,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 3,
+        "ManaRequirement": 0
+      }
+    ]
+  },
+  "Buffs": {
+    "Sequence": [
+      {
+        "Name": "Frost Armor",
+        "StopBeforeCast": false,
+        "Key": 51,
+        "ManaRequirement": 60,
+	"Buff": "Frost Armor"
+      },
+	{
+        "Name": "Arcane Intellect",
+        "StopBeforeCast": false,
+        "Key": 52,
+        "ManaRequirement": 60,
+	"Buff": "Arcane Intellect"
+      },
+      {
+        "Name": "Low Health",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 54,
+        "ManaRequirement": 0,
+	"Buff": "Health%50",
+	"CastIfHealthBelowPercentage": 50,
+      },
+	{
+        "Name": "Drink",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 56,
+        "ManaRequirement": 0,
+	"Buff": "Mana%50",
+	"CastIfManaBelowPercentage": 50,
+	"Cooldown": 10,
+      },
+	{
+        "Name": "Conjure Water",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 57,
+        "ManaRequirement": 0,
+	"Buff": "BagItem:5350",
+	"CastIfManaBelowPercentage": 0,
+	"Cooldown": 300,
+      },
+	{
+        "Name": "Conjure Food",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 55,
+        "ManaRequirement": 0,
+	"Buff": "BagItem:5349",
+	"CastIfManaBelowPercentage": 0,
+	"Cooldown": 300,
+      }
+   ]
+  }
+}

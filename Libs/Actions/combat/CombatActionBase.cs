@@ -72,10 +72,10 @@ namespace Libs.Actions
                 await wowProcess.Dismount();
             }
 
-            if ((DateTime.Now-lastActive).TotalSeconds>5)
+            if ((DateTime.Now - lastActive).TotalSeconds > 5)
             {
                 logger.LogInformation("Interact and stop");
-               await this.wowProcess.TapInteractKey();
+                await this.wowProcess.TapInteractKey();
                 await this.PressKey(ConsoleKey.UpArrow, 57);
             }
 
@@ -98,9 +98,16 @@ namespace Libs.Actions
                 case UI_ERROR.ERR_SPELL_FAILED_S:
                 case UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
                 case UI_ERROR.ERR_BADATTACKPOS:
+                case UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR:
                     logger.LogInformation("Interact due to: this.playerReader.LastUIErrorMessage");
                     await this.wowProcess.TapInteractKey();
                     this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+
+                    //if (this.playerReader.PlayerClass==PlayerClassEnum.Mage)
+                    //{
+                    //    this.wowProcess.RightClickMouseBehindPlayer();
+                    //}
+
                     break;
             }
         }
@@ -162,33 +169,55 @@ namespace Libs.Actions
 
         public bool AddsExist { get; set; }
 
-        public async Task<bool> CastIfReady(KeyConfiguration item)
+
+        public bool CanRun(KeyConfiguration item, bool log)
         {
             if (!item.CastIfAddsVisible && AddsExist)
             {
-                logger.LogInformation($"-{item.Name}: Adds exist");
+                if (log) { logger.LogInformation($"-{item.Name}: Adds exist"); }
                 return false;
             }
 
             if (item.ManaRequirement > this.playerReader.ManaCurrent)
             {
-                logger.LogInformation($"-{item.Name}: mana too low");
+                if (log) { logger.LogInformation($"-{item.Name}: mana too low: {item.ManaRequirement} > {this.playerReader.ManaCurrent}"); }
                 return false;
             }
+
+            if (item.ComboPointRequirement > this.playerReader.ComboPoints)
+            {
+                if (log) { logger.LogInformation($"-{item.Name}: combo points too low: {item.ComboPointRequirement} > {this.playerReader.ComboPoints}"); }
+                return false;
+            }
+
             if (item.CastIfHealthBelowPercentage > 0 && item.CastIfHealthBelowPercentage < this.playerReader.HealthPercent)
             {
-                logger.LogInformation($"-{item.Name}: health too high");
+                if (log) { logger.LogInformation($"-{item.Name}: health too high: {item.CastIfHealthBelowPercentage} < {this.playerReader.HealthPercent}"); }
+                return false;
+            }
+
+            if (item.CastIfManaBelowPercentage > 0 && item.CastIfManaBelowPercentage < this.playerReader.ManaPercentage)
+            {
+                if (log) { logger.LogInformation($"-{item.Name}: mana too high: {item.CastIfManaBelowPercentage} < {this.playerReader.ManaPercentage}"); }
                 return false;
             }
 
             var secs = GetCooldownRemaining(item.Key, item.Cooldown);
             if (secs > 0)
             {
-                logger.LogInformation($"-{item.Name}: on cooldown, {secs}s left");
+                if (log) { logger.LogInformation($"-{item.Name}: on cooldown, {secs}s left"); }
                 return false;
             }
 
-            if (!CheckBuff(item)) { return false; }
+            return true;
+        }
+
+        public async Task<bool> CastIfReady(KeyConfiguration item)
+        {
+            if (!CanRun(item, true) || !CheckBuff(item, true))
+            {
+                return false;
+            }
 
             logger.LogInformation($"+{item.Name} casting.");
             await PressKey(item.Key, item.PressDuration);
@@ -206,13 +235,13 @@ namespace Libs.Actions
             return true;
         }
 
-        private bool CheckBuff(KeyConfiguration item)
+        public bool CheckBuff(KeyConfiguration item, bool log)
         {
             if (!string.IsNullOrEmpty(item.Buff))
             {
                 if (this.playerReader.GetBuffFunc(item.Name, item.Buff)())
                 {
-                    logger.LogInformation($"-{item.Name}: already has this buff '{item.Buff}'");
+                    if (log) { logger.LogInformation($"-{item.Name}: already has this buff '{item.Buff}'"); }
                     return false;
                 }
             }

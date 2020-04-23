@@ -8,7 +8,7 @@
     "Sequence": [
       {
         "Name": "Holy Light",
-        "HasCastBar": false,
+        "HasCastBar": true,
         "StopBeforeCast": false,
         "Key": 54,
         "PressDuration": 200,
@@ -16,7 +16,7 @@
         "CastIfAddsVisible": true,
         "CastIfHealthBelowPercentage": 50,
         "Cooldown": 10,
-        "ManaRequirement": 60
+        "ManaRequirement": 190
       },
       {
         "Name": "Seal of Righteousness",
@@ -28,7 +28,7 @@
         "CastIfAddsVisible": true,
         "CastIfHealthBelowPercentage": 0,
         "Cooldown": 3,
-        "ManaRequirement": 20,
+        "ManaRequirement": 82,
         "Buff": "Seal"
       },
       {
@@ -41,7 +41,19 @@
         "CastIfAddsVisible": true,
         "CastIfHealthBelowPercentage": 0,
         "Cooldown": 15,
-        "ManaRequirement": 20
+        "ManaRequirement": 32
+      },
+      {
+        "Name": "Hammer of Justice",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": 57,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 60,
+        "ManaRequirement": 50
       },
 	{
         "Name": "Interact",
@@ -82,7 +94,7 @@
         "Name": "Blessing of Might",
         "StopBeforeCast": false,
         "Key": 52,
-        "ManaRequirement": 30,
+        "ManaRequirement": 45,
 	"Buff": "Blessing"
       },
       {
@@ -90,7 +102,37 @@
         "StopBeforeCast": false,
         "Key": 55,
         "ManaRequirement": 0,
-	"Buff": "Well Fed"
+	"Buff": "Well Fed",
+	"Cooldown": 120,
+      },
+      {
+        "Name": "Low Health",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 54,
+        "ManaRequirement": 190,
+	"Buff": "Health%80",
+	"CastIfHealthBelowPercentage": 80,
+      },
+	{
+        "Name": "Drink",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 56,
+        "ManaRequirement": 0,
+	"Buff": "Mana%80",
+	"CastIfManaBelowPercentage": 80,
+	"Cooldown": 60,
+      },
+{
+        "Name": "Sharpen Weapon",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 112,
+        "ManaRequirement": 0,
+	"Buff": "",
+	"CastIfManaBelowPercentage": 0,
+	"Cooldown": 1800,
       }
    ]
   }

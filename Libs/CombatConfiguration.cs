@@ -26,8 +26,10 @@ namespace Libs
         public int ShapeShiftForm { get; set; } = 0;
         public bool CastIfAddsVisible { get; set; } = true;
         public int CastIfHealthBelowPercentage { get; set; } = 0;
+        public int CastIfManaBelowPercentage { get; set; } = 0;
         public int Cooldown { get; set; } = 0;
         public int ManaRequirement { get; set; } = 0;
+        public int ComboPointRequirement { get; set; } = 0;
 
         public string Buff { get; set; } = string.Empty;
     }

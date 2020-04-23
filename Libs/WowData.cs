@@ -31,7 +31,7 @@ namespace Libs
 
             this.bagReader = new BagReader(squareReader, 20);
             this.equipmentReader = new EquipmentReader(squareReader, 30);
-            this.PlayerReader = new PlayerReader(squareReader, logger);
+            this.PlayerReader = new PlayerReader(squareReader, logger, this.bagReader);
             this.LevelTracker = new LevelTracker(PlayerReader);
 
             this.AddonReader.PlayerReader = this.PlayerReader;

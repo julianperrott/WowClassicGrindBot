@@ -78,5 +78,7 @@ namespace Libs
         }
 
         public bool BagsFull => bagItems.Count >= 76;
+
+        public bool Contains(int itemId) => bagItems.Any(bi => bi.ItemId == itemId);
     }
 }

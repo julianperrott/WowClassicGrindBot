@@ -17,6 +17,7 @@ namespace Libs
             return (value & (1 << pos)) != 0;
         }
 
+        public bool IsTagged { get => IsBitSet(22); }
         public bool TargetIsNormal { get => IsBitSet(21); }
         public bool IsCurrentActionOnActionBar10 { get => IsBitSet(20); }
         public bool IsAutoRepeatActionOnActionBar10 { get => IsBitSet(19); }

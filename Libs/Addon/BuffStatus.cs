@@ -47,5 +47,10 @@ namespace Libs
         public bool Aura { get => IsBitSet(10); }
         public bool Blessing { get => IsBitSet(11); }
         public bool Seal { get => IsBitSet(12); }
+
+        // Mage
+        public bool FrostArmor { get => IsBitSet(10); }
+        public bool ArcaneIntellect { get => IsBitSet(11); }
+        public bool IceBarrier { get => IsBitSet(12); }
     }
 }

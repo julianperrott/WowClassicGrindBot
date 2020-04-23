@@ -33,6 +33,11 @@ namespace Libs
                 return true; // ignore elites
             }
 
+            if (this.playerReader.PlayerBitValues.IsTagged)
+            {
+                return true; // ignore tagged mobs
+            }
+
             if (this.playerReader.TargetLevel > this.playerReader.PlayerLevel + 1)
             {
                 return true; // ignore if current level + 2

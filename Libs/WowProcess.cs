@@ -3,6 +3,7 @@ using PInvoke;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -122,6 +123,13 @@ namespace Libs
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
 
             keyDict[key] = false;
+        }
+
+        public async void RightClickMouseBehindPlayer()
+        {
+            var rect = GetWindowRect();
+
+            await RightClickMouse(new Point(rect.right / 2, (rect.bottom *2) / 3));
         }
 
         public async Task KeyPress(ConsoleKey key, int milliseconds)

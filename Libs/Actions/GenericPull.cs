@@ -22,11 +22,27 @@ namespace Libs.Actions
         {
             this.combatAction.AddsExist = npcNameFinder.PotentialAddsExist();
 
+            await Task.Delay(500);
+
+            bool hasCast = false;
+
             foreach (var item in this.classConfiguration.Pull.Sequence)
             {
-                await this.combatAction.CastIfReady(item);
+                hasCast = hasCast || await this.combatAction.CastIfReady(item);
             }
 
+            if (hasCast)
+            {
+                for (int i = 0; i < 40; i++)
+                {
+                    if (this.playerReader.PlayerBitValues.PlayerInCombat)
+                    {
+                        return true;
+                    }
+                    await Task.Delay(100);
+                }
+            }
+            
             return this.playerReader.PlayerBitValues.PlayerInCombat;
         }
     }

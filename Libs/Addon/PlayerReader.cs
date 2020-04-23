@@ -11,12 +11,14 @@ namespace Libs
     public partial class PlayerReader
     {
         private readonly ISquareReader reader;
+        private readonly BagReader bagReader;
         private ILogger logger;
 
-        public PlayerReader(ISquareReader reader, ILogger logger)
+        public PlayerReader(ISquareReader reader, ILogger logger, BagReader bagReader)
         {
             this.reader = reader;
             this.logger = logger;
+            this.bagReader = bagReader;
         }
 
         public int Sequence { get; private set; } = 0;
@@ -153,12 +155,30 @@ namespace Libs
 
 
         public long SpellBeingCast => reader.GetLongAtCell(53);
+        public long ComboPoints => reader.GetLongAtCell(54);
+
         public bool IsCasting => SpellBeingCast != 0;
 
         private Dictionary<string, Func<bool>> BuffDictionary = new Dictionary<string, Func<bool>>();
 
         public Func<bool> GetBuffFunc(string name, string buff)
         {
+            if (buff.StartsWith("Health%"))
+            {
+                var minHealth = int.Parse(buff.Replace("Health%", ""));
+                return () => this.HealthPercent >= minHealth;
+            }
+            else if (buff.StartsWith("Mana%"))
+            {
+                var minMana = int.Parse(buff.Replace("Mana%", ""));
+                return () => this.ManaPercentage >= minMana;
+            }
+            else if (buff.StartsWith("BagItem:"))
+            {
+                var itemId = int.Parse(buff.Replace("BagItem:", ""));
+                return () => this.bagReader.Contains(itemId);
+            }
+
             if (BuffDictionary.Count == 0)
             {
                 BuffDictionary = new Dictionary<string, Func<bool>>
@@ -177,7 +197,10 @@ namespace Libs
                     {  "Renew", ()=> Buffs.Renew },
                     {  "Shield", ()=> Buffs.Shield },
                     {  "Mark of the Wild", ()=> Buffs.MarkOfTheWild },
-                    {  "Thorns", ()=> Buffs.Thorns }
+                    {  "Thorns", ()=> Buffs.Thorns },
+                    {  "Frost Armor", ()=> Buffs.FrostArmor },
+                    {  "Arcane Intellect", ()=> Buffs.ArcaneIntellect },
+                    {  "Ice Barrier", ()=> Buffs.IceBarrier },
                 };
             }
 

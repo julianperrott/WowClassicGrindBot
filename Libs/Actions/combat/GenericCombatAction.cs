@@ -23,7 +23,7 @@ namespace Libs.Actions
         protected override async Task Fight()
         {
             logger.LogInformation("-");
-            if ((DateTime.Now-lastActive).TotalSeconds>5)
+            if ((DateTime.Now - lastActive).TotalSeconds > 5)
             {
                 if (this.LastClicked.ContainsKey(ConsoleKey.H))
                 {
@@ -31,14 +31,19 @@ namespace Libs.Actions
                 }
             }
 
+            bool pressed = false;
             foreach (var item in this.classConfiguration.Combat.Sequence)
             {
-                var pressed=await this.CastIfReady(item);
-                if (pressed) 
+                pressed = await this.CastIfReady(item);
+                if (pressed)
                 {
                     RaiseEvent(new ActionEvent(GoapKey.shouldloot, true));
-                    break; 
+                    break;
                 }
+            }
+            if (!pressed)
+            {
+                await Task.Delay(500);
             }
 
             this.lastActive = DateTime.Now;

@@ -1,0 +1,77 @@
+{
+  "ClassName": "Mage",
+  "Pull": {
+    "Sequence": [
+	{
+        "Name": "Fireball",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 50,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 0,
+        "ManaRequirement": 30
+      },
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Fireball",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 50,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 0,
+        "ManaRequirement": 30
+      },
+	{
+        "Name": "Interact",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": 72,
+        "PressDuration": 200,
+        "ShapeShiftForm": 0,
+        "CastIfAddsVisible": true,
+        "CastIfHealthBelowPercentage": 0,
+        "Cooldown": 3,
+        "ManaRequirement": 0
+      }
+    ]
+  },
+  "Buffs": {
+    "Sequence": [
+      {
+        "Name": "Frost Armor",
+        "StopBeforeCast": false,
+        "Key": 51,
+        "ManaRequirement": 60,
+	"Buff": "Frost"
+      },
+      {
+        "Name": "Low Health",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 54,
+        "ManaRequirement": 0,
+	"Buff": "Health%50",
+	"CastIfHealthBelowPercentage": 50,
+      },
+	{
+        "Name": "Drink",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": 56,
+        "ManaRequirement": 0,
+	"Buff": "Mana%40",
+	"CastIfManaBelowPercentage": 40,
+	"Cooldown": 60,
+      }
+   ]
+  }
+}
