@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,9 +27,10 @@ namespace Libs.Actions
 
             bool hasCast = false;
 
-            foreach (var item in this.classConfiguration.Pull.Sequence)
+            foreach (var item in this.classConfiguration.Pull.Sequence.Where(i=>i!=null))
             {
-                hasCast = hasCast || await this.combatAction.CastIfReady(item);
+                var success=await this.combatAction.CastIfReady(item);
+                hasCast = hasCast || success;
             }
 
             if (hasCast)

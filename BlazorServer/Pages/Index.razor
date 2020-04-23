@@ -76,9 +76,6 @@
 <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
 
 @code {
-
-    private string Circ = "<circle cx='300' cy='300' r='200' fill='Purple' />";
-
     private MarkupString PathLines = new MarkupString();
     private MarkupString PathPoints = new MarkupString();
 
@@ -117,7 +114,7 @@
         }
     }
 
-    private async void ToggleBot()
+    private void ToggleBot()
     {
         botController.ToggleBotStatus();
     }

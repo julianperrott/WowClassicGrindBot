@@ -1,37 +1,30 @@
 {
   "ClassName": "Mage",
-  "Loot": true,
-
-  "PathFilename":  "D:\\GitHub\\WowPixelBot\\10_Human.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\10_Human_SpiritHealer.json",
-  "PathThereAndBack": true,
-  "PathReduceSteps": false,
-
   "Pull": {
     "Sequence": [
       {
         "Name": "Stop Attack",
-        "Key": "0",
+        "Key": 48,
         "StopBeforeCast": true,
         "DelayAfterCast" : 600
       },
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "Key": "2",
+        "Key": 50,
         "MinMana": 45
       },
       {
         "Name": "Stop Attack",
-        "Key": "0",
+        "Key": 48,
         "DelayAfterCast" : 400
       },
       {
         "Name": "Frost Bolt",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "5",
-        "MinMana": 35
+        "Key": 53,
+        "MinMana": 25
       }
     ]
   },
@@ -41,7 +34,7 @@
         "Name": "Fireball",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "2",
+        "Key": 50,
         "MinMana": 45,
         "DelayAfterCast" : 500
       },
@@ -49,27 +42,27 @@
         "Name": "Interact",
         "HasCastBar": false,
         "StopBeforeCast": false,
-        "Key": "H",
+        "Key": 72,
         "Cooldown": 3,
         "Log": false,
         "DelayAfterCast" : 0
       }
     ]
   },
-  "Adhoc": {
+  "Buffs": {
     "Sequence": [
       {
         "Name": "Frost Armor",
         "StopBeforeCast": false,
-        "Key": "3",
-        "MinMana": 110,
+        "Key": 51,
+        "MinMana": 60,
         "Requirement": "Frost Armor",
         "Log": false
       },
       {
         "Name": "Arcane Intellect",
         "StopBeforeCast": false,
-        "Key": "4",
+        "Key": 52,
         "MinMana": 60,
         "Requirement": "Arcane Intellect",
         "Log": false
@@ -78,7 +71,7 @@
         "Name": "Low Health",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "6",
+        "Key": 54,
         "Requirement": "Health>50%",
         "Log": false
       },
@@ -86,7 +79,7 @@
         "Name": "Drink",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "8",
+        "Key": 56,
         "Requirement": "Mana>50%",
         "Cooldown": 10,
         "Log": false
@@ -95,8 +88,8 @@
         "Name": "Conjure Water",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "9",
-        "Requirement": "BagItem:2288",
+        "Key": 57,
+        "Requirement": "BagItem:5350",
         "Cooldown": 300,
         "Log": false
       },
@@ -104,7 +97,7 @@
         "Name": "Conjure Food",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "7",
+        "Key": 55,
         "Requirement": "BagItem:5349",
         "Cooldown": 300,
         "Log": false

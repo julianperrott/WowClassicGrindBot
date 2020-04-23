@@ -161,22 +161,41 @@ namespace Libs
 
         private Dictionary<string, Func<bool>> BuffDictionary = new Dictionary<string, Func<bool>>();
 
-        public Func<bool> GetBuffFunc(string name, string buff)
+
+        public class Requirement
         {
-            if (buff.StartsWith("Health%"))
+            public Func<bool> HasRequirement { get; set; } = () => false;
+            public Func<string> LogMessage { get; set; } = () => "Unknown requirement";
+        }
+
+        public Requirement GetRequirement(KeyConfiguration item)
+        {
+            if (item.Requirement.StartsWith("Health>"))
             {
-                var minHealth = int.Parse(buff.Replace("Health%", ""));
-                return () => this.HealthPercent >= minHealth;
+                var minHealth = int.Parse(item.Requirement.Replace("Health>", "").Replace("%", ""));
+                return new Requirement
+                {
+                    HasRequirement = () => this.HealthPercent >= minHealth,
+                    LogMessage = () => $"health too high: {HealthPercent} > {minHealth}"
+                };
             }
-            else if (buff.StartsWith("Mana%"))
+            else if (item.Requirement.StartsWith("Mana>"))
             {
-                var minMana = int.Parse(buff.Replace("Mana%", ""));
-                return () => this.ManaPercentage >= minMana;
+                var minMana = int.Parse(item.Requirement.Replace("Mana>", "").Replace("%", ""));
+                return new Requirement
+                {
+                    HasRequirement = () => this.ManaPercentage >= minMana,
+                    LogMessage = () => $"mana too high: {ManaPercentage} > {minMana}"
+                };
             }
-            else if (buff.StartsWith("BagItem:"))
+            else if (item.Requirement.StartsWith("BagItem:"))
             {
-                var itemId = int.Parse(buff.Replace("BagItem:", ""));
-                return () => this.bagReader.Contains(itemId);
+                var itemId = int.Parse(item.Requirement.Replace("BagItem:", ""));
+                return new Requirement
+                {
+                    HasRequirement = () => this.bagReader.Contains(itemId),
+                    LogMessage = () => $"item {itemId} not found in bag"
+                };
             }
 
             if (BuffDictionary.Count == 0)
@@ -204,14 +223,22 @@ namespace Libs
                 };
             }
 
-            if (BuffDictionary.Keys.Contains(buff))
+            if (BuffDictionary.Keys.Contains(item.Requirement))
             {
-                return BuffDictionary[buff];
+                return new Requirement
+                {
+                    HasRequirement = BuffDictionary[item.Requirement],
+                    LogMessage = () => $"Buff {item.Requirement} missing"
+                };
             }
             else
             {
-                logger.LogInformation($"UNKNOWN BUFF! {name} - {buff}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
-                return () => true;
+                logger.LogInformation($"UNKNOWN BUFF! {item.Name} - {item.Requirement}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
+                return new Requirement
+                {
+                    HasRequirement = () => true,
+                    LogMessage = () => $"UNKNOWN BUFF! {item.Requirement}"
+                };
             }
         }
     }

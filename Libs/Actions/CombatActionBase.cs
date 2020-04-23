@@ -76,7 +76,7 @@ namespace Libs.Actions
             {
                 logger.LogInformation("Interact and stop");
                 await this.wowProcess.TapInteractKey();
-                await this.PressKey(ConsoleKey.UpArrow, 57);
+                await this.PressKey(ConsoleKey.UpArrow, "",57);
             }
 
             await stopMoving.Stop();
@@ -102,12 +102,6 @@ namespace Libs.Actions
                     logger.LogInformation("Interact due to: this.playerReader.LastUIErrorMessage");
                     await this.wowProcess.TapInteractKey();
                     this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-
-                    //if (this.playerReader.PlayerClass==PlayerClassEnum.Mage)
-                    //{
-                    //    this.wowProcess.RightClickMouseBehindPlayer();
-                    //}
-
                     break;
             }
         }
@@ -133,7 +127,7 @@ namespace Libs.Actions
             }
         }
 
-        public async Task PressKey(ConsoleKey key, int duration = 300)
+        public async Task PressKey(ConsoleKey key, string description="", int duration = 300)
         {
             if (lastKeyPressed == ConsoleKey.H)
             {
@@ -153,7 +147,7 @@ namespace Libs.Actions
                 lastInteractPostion = this.playerReader.PlayerLocation;
             }
 
-            await wowProcess.KeyPress(key, duration);
+            await wowProcess.KeyPress(key, duration, description);
 
             lastKeyPressed = key;
 
@@ -170,42 +164,38 @@ namespace Libs.Actions
         public bool AddsExist { get; set; }
 
 
-        public bool CanRun(KeyConfiguration item, bool log)
+        private void Log(KeyConfiguration item, string message)
+        {
+            if (item.Log)
+            {
+                logger.LogInformation($"{item.Name}: {message}");
+            }
+        }
+
+        public bool CanRun(KeyConfiguration item)
         {
             if (!item.CastIfAddsVisible && AddsExist)
             {
-                if (log) { logger.LogInformation($"-{item.Name}: Adds exist"); }
+                Log(item, "Adds exist");
                 return false;
             }
 
-            if (item.ManaRequirement > this.playerReader.ManaCurrent)
+            if (item.MinMana > this.playerReader.ManaCurrent)
             {
-                if (log) { logger.LogInformation($"-{item.Name}: mana too low: {item.ManaRequirement} > {this.playerReader.ManaCurrent}"); }
+                Log(item, $"mana too low: {item.MinMana} > {this.playerReader.ManaCurrent}");
                 return false;
             }
 
-            if (item.ComboPointRequirement > this.playerReader.ComboPoints)
+            if (item.MinComboPoints > this.playerReader.ComboPoints)
             {
-                if (log) { logger.LogInformation($"-{item.Name}: combo points too low: {item.ComboPointRequirement} > {this.playerReader.ComboPoints}"); }
+                Log(item, "combo points too low: {item.ComboPointRequirement} > {this.playerReader.ComboPoints}");
                 return false;
             }
 
-            if (item.CastIfHealthBelowPercentage > 0 && item.CastIfHealthBelowPercentage < this.playerReader.HealthPercent)
-            {
-                if (log) { logger.LogInformation($"-{item.Name}: health too high: {item.CastIfHealthBelowPercentage} < {this.playerReader.HealthPercent}"); }
-                return false;
-            }
-
-            if (item.CastIfManaBelowPercentage > 0 && item.CastIfManaBelowPercentage < this.playerReader.ManaPercentage)
-            {
-                if (log) { logger.LogInformation($"-{item.Name}: mana too high: {item.CastIfManaBelowPercentage} < {this.playerReader.ManaPercentage}"); }
-                return false;
-            }
-
-            var secs = GetCooldownRemaining(item.Key, item.Cooldown);
+            var secs = GetCooldownRemaining(item.ConsoleKey, item.Cooldown);
             if (secs > 0)
             {
-                if (log) { logger.LogInformation($"-{item.Name}: on cooldown, {secs}s left"); }
+                Log(item, $"on cooldown, {secs}s left");
                 return false;
             }
 
@@ -214,14 +204,22 @@ namespace Libs.Actions
 
         public async Task<bool> CastIfReady(KeyConfiguration item)
         {
-            if (!CanRun(item, true) || !CheckBuff(item, true))
+            if (!CanRun(item) || MeetsRequirement(item))
             {
                 return false;
             }
 
-            logger.LogInformation($"+{item.Name} casting.");
-            await PressKey(item.Key, item.PressDuration);
-            await Task.Delay(1500);
+            if (item.ConsoleKey == 0)
+            {
+                if (!item.ReadKey(this.logger))
+                {
+                    return false;
+                }
+            }
+
+            Log(item, " ==> casting.");
+            await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
+            await Task.Delay(item.DelayAfterCast);
 
             if (item.HasCastBar)
             {
@@ -235,18 +233,21 @@ namespace Libs.Actions
             return true;
         }
 
-        public bool CheckBuff(KeyConfiguration item, bool log)
+        public bool MeetsRequirement(KeyConfiguration item)
         {
-            if (!string.IsNullOrEmpty(item.Buff))
+            if (string.IsNullOrEmpty(item.Requirement))
             {
-                if (this.playerReader.GetBuffFunc(item.Name, item.Buff)())
-                {
-                    if (log) { logger.LogInformation($"-{item.Name}: already has this buff '{item.Buff}'"); }
-                    return false;
-                }
+                return false;
             }
 
-            return true;
+            if (item.RequirementObject == null)
+            {
+                item.RequirementObject = this.playerReader.GetRequirement(item);
+            }
+
+            bool meetsRequirement = item.RequirementObject.HasRequirement();
+            Log(item, $"{item.Requirement} met: '{meetsRequirement}'");
+            return meetsRequirement;
         }
     }
 }

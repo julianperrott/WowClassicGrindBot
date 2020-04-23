@@ -75,7 +75,7 @@ namespace Libs.Actions
         {
             if (NeedsToReset)
             {
-                while (true)
+                while (true && this.playerReader.PlayerBitValues.DeadStatus)
                 {
                     this.corpseLocation = new WowPoint(playerReader.CorpseX, playerReader.CorpseY);
                     if (this.corpseLocation.X > 0) { break; }

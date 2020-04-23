@@ -71,7 +71,7 @@ namespace Libs.Actions
 
                 if (!this.combatAction.IsOnCooldown(ConsoleKey.Spacebar, 10))
                 {
-                    await this.combatAction.PressKey(ConsoleKey.Spacebar, 500);
+                    await this.combatAction.PressKey(ConsoleKey.Spacebar,"", 500);
                 }
 
                 if (!this.stuckDetector.IsMoving())

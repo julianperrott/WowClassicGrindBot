@@ -8,18 +8,16 @@ using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
-    public class HouseKeepingAction : GoapAction
+    public class AdhocAction : GoapAction
     {
         private readonly WowProcess wowProcess;
         private readonly StopMoving stopMoving;
         private readonly PlayerReader playerReader;
         private readonly ILogger logger;
         private readonly KeyConfiguration key;
-        //private DateTime LastPressed = DateTime.Now.AddDays(-1);
-        private Func<bool> HasBuff;
         private readonly CombatActionBase combatAction;
 
-        public HouseKeepingAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving,KeyConfiguration key, CombatActionBase combatAction, ILogger logger)
+        public AdhocAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, KeyConfiguration key, CombatActionBase combatAction, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.stopMoving = stopMoving;
@@ -28,19 +26,19 @@ namespace Libs.Actions
             this.logger = logger;
             this.combatAction = combatAction;
 
-            if (string.IsNullOrEmpty(key.Buff))
+            if (key.InCombat == "false")
             {
-                this.HasBuff = () => false;
+                AddPrecondition(GoapKey.incombat, false);
             }
-            else
+            else if (key.InCombat == "true")
             {
-                this.HasBuff = playerReader.GetBuffFunc(key.Name, key.Buff);
+                AddPrecondition(GoapKey.incombat, true);
             }
 
-            AddPrecondition(GoapKey.incombat, false);
+            key.ReadKey(this.logger);
         }
 
-        public override float CostOfPerformingAction { get => 18f; }
+        public override float CostOfPerformingAction { get => key.Cost; }
 
         public override async Task PerformAction()
         {
@@ -71,11 +69,11 @@ namespace Libs.Actions
                 {
                     if (this.playerReader.ManaPercentage > 98) { break; }
                 }
-                else if (this.playerReader.Buffs.Eating && this.key.Buff != "Well Fed")
+                else if (this.playerReader.Buffs.Eating && this.key.Requirement != "Well Fed")
                 {
                     if (this.playerReader.HealthPercent > 98) { break; }
                 }
-                else if (this.HasBuff())
+                else if (this.HasRequirement())
                 {
                     break;
                 }
@@ -87,7 +85,7 @@ namespace Libs.Actions
                 }
             }
 
-            if (HasBuff())
+            if (HasRequirement())
             {
                 this.logger.LogInformation($"I have the buff {key.Name}");
             }
@@ -104,23 +102,25 @@ namespace Libs.Actions
 
         public override bool CheckIfActionCanRun()
         {
-            return this.combatAction.CanRun(key, false) && !HasBuff();
+            return this.combatAction.CanRun(key) && !HasRequirement();
+        }
+
+        public bool HasRequirement()
+        {
+            return this.combatAction.MeetsRequirement(this.key);
         }
 
         public override string Description()
         {
-            if (HasBuff())
+            if (HasRequirement())
             {
-                return $" - {key.Name} - Has buff";
+                return key.ToString();
             }
             else
             {
-                //var timespan = LastPressed.AddSeconds(key.Cooldown) - DateTime.Now;
-                //var timeCoolDownText = !CheckIfActionCanRun() ? DateTime.Now.Date.AddSeconds(timespan.TotalSeconds).ToString("mm:ss") : string.Empty;
-                var canRun = this.combatAction.CanRun(key, false);
-                var hasEnoughManaText = this.playerReader.ManaCurrent > this.key.ManaRequirement ? string.Empty : "(MANA)";
-                var hasDesiredBuffText = HasBuff() ? "OK" : "Need Buff";
-                return $" - {key.Name} - {hasDesiredBuffText} {hasEnoughManaText} CanRun:{canRun}".Replace(" ", " ");
+                var canRun = this.combatAction.CanRun(key);
+                var hasEnoughManaText = this.playerReader.ManaCurrent > this.key.MinMana ? string.Empty : "(MANA)";
+                return $"{key.ToString()} {hasEnoughManaText} Can Run:{canRun}".Replace(" ", " ");
             }
         }
     }

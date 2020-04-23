@@ -32,7 +32,7 @@ namespace Libs.Actions
             }
 
             bool pressed = false;
-            foreach (var item in this.classConfiguration.Combat.Sequence)
+            foreach (var item in this.classConfiguration.Combat.Sequence.Where(i => i != null))
             {
                 pressed = await this.CastIfReady(item);
                 if (pressed)

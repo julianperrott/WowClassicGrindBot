@@ -132,9 +132,12 @@ namespace Libs
             await RightClickMouse(new Point(rect.right / 2, (rect.bottom *2) / 3));
         }
 
-        public async Task KeyPress(ConsoleKey key, int milliseconds)
+        public async Task KeyPress(ConsoleKey key, int milliseconds, string description="")
         {
-            logger.LogInformation($"KeyPress {key} for {milliseconds}ms");
+            var keyDescription = string.Empty;
+            if (!string.IsNullOrEmpty(description)) { keyDescription = $" for {description}"; }
+            logger.LogInformation($"KeyPress {key}{keyDescription} duration {milliseconds}ms");
+
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
             await Delay(milliseconds);
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);

@@ -166,7 +166,7 @@ namespace Powershell
             {
                 Name = "Attack",
                 StopBeforeCast = false,
-                Key = ConsoleKey.D1
+                ConsoleKey = ConsoleKey.D1
             });
 
             config.Combat.Sequence.AddRange(
@@ -174,23 +174,22 @@ namespace Powershell
                 new KeyConfiguration
                 {
                     Name = "Holy Light",
-                    Key = ConsoleKey.D3,
-                    ManaRequirement = 35,
-                    CastIfHealthBelowPercentage = 25,
+                    ConsoleKey = ConsoleKey.D3,
+                    MinMana = 35,
                     Cooldown = 10
                 },
                 new KeyConfiguration
                 {
                     Name = "Seal of Righteousness",
-                    Key = ConsoleKey.D2,
-                    ManaRequirement = 20,
+                    ConsoleKey = ConsoleKey.D2,
+                    MinMana = 20,
                     Cooldown = 30
                 },
                 new KeyConfiguration
                 {
                     Name = "Attack",
                     StopBeforeCast = false,
-                    Key = ConsoleKey.D1
+                    ConsoleKey = ConsoleKey.D1
                 }
                 }
             );
