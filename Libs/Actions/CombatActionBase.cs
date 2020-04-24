@@ -18,15 +18,19 @@ namespace Libs.Actions
         protected ConsoleKey lastKeyPressed = ConsoleKey.Escape;
         protected WowPoint lastInteractPostion = new WowPoint(0, 0);
         private DateTime lastActive = DateTime.Now;
+        protected readonly ClassConfiguration classConfiguration;
 
         protected Dictionary<ConsoleKey, DateTime> LastClicked = new Dictionary<ConsoleKey, DateTime>();
 
-        public CombatActionBase(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger)
+        public bool AddsExist { get; set; }
+
+        public CombatActionBase(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
             this.logger = logger;
+            this.classConfiguration = classConfiguration;
 
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
@@ -161,9 +165,6 @@ namespace Libs.Actions
             }
         }
 
-        public bool AddsExist { get; set; }
-
-
         private void Log(KeyConfiguration item, string message)
         {
             if (item.Log)
@@ -174,10 +175,14 @@ namespace Libs.Actions
 
         public bool CanRun(KeyConfiguration item)
         {
-            if (!item.CastIfAddsVisible && AddsExist)
+            if(!string.IsNullOrEmpty(item.CastIfAddsVisible))
             {
-                Log(item, "Adds exist");
-                return false;
+                var needAdds = bool.Parse(item.CastIfAddsVisible);
+                if (needAdds != AddsExist)
+                {
+                    Log(item, $"Only cast if adds exist = {item.CastIfAddsVisible} and it is {AddsExist}");
+                    return false;
+                }
             }
 
             if (item.MinMana > this.playerReader.ManaCurrent)
@@ -202,7 +207,7 @@ namespace Libs.Actions
             return true;
         }
 
-        public async Task<bool> CastIfReady(KeyConfiguration item)
+        public async Task<bool> CastIfReady(KeyConfiguration item, int sleepBeforeCast = 0)
         {
             if (!CanRun(item) || MeetsRequirement(item))
             {
@@ -211,18 +216,35 @@ namespace Libs.Actions
 
             if (item.ConsoleKey == 0)
             {
-                if (!item.ReadKey(this.logger))
-                {
-                    return false;
-                }
+                return false;
             }
 
-            Log(item, " ==> casting.");
-            await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
-            await Task.Delay(item.DelayAfterCast);
+            await SwitchToCorrectShapeShiftForm(item);
 
-            if (item.HasCastBar)
+            if (sleepBeforeCast > 0)
             {
+                Log(item, $" Wait before {sleepBeforeCast}.");
+                await Task.Delay(sleepBeforeCast);
+            }
+
+            await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
+
+            if (!item.HasCastBar)
+            {
+                Log(item, $" ... delay after cast {item.DelayAfterCast}");
+                await Task.Delay(item.DelayAfterCast);
+            }
+            else
+            {
+                await Task.Delay(300);
+                if (!this.playerReader.IsCasting)
+                {
+                    await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
+                    await Task.Delay(300);
+                }
+
+
+                Log(item, " waiting for cast bar to end.");
                 for (int i = 0; i < 2000; i += 100)
                 {
                     if (!this.playerReader.IsCasting) { break; }
@@ -233,20 +255,36 @@ namespace Libs.Actions
             return true;
         }
 
+        public async Task SwitchToCorrectShapeShiftForm(KeyConfiguration item)
+        {
+            if (this.playerReader.PlayerClass != PlayerClassEnum.Druid || string.IsNullOrEmpty(item.ShapeShiftForm)
+                || this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum)
+            {
+                return;
+            }
+
+            var desiredFormKey = this.classConfiguration.ShapeshiftForm
+                .Where(s => s.ShapeShiftFormEnum == item.ShapeShiftFormEnum)
+                .FirstOrDefault();
+
+            if (desiredFormKey == null)
+            {
+                logger.LogWarning($"Unable to find key in ShapeshiftForm to transform into {item.ShapeShiftFormEnum}");
+                return;
+            }
+
+            await this.wowProcess.KeyPress(desiredFormKey.ConsoleKey, 325);
+        }
+
         public bool MeetsRequirement(KeyConfiguration item)
         {
-            if (string.IsNullOrEmpty(item.Requirement))
+            if (string.IsNullOrEmpty(item.Requirement) || item.RequirementObject == null)
             {
                 return false;
             }
 
-            if (item.RequirementObject == null)
-            {
-                item.RequirementObject = this.playerReader.GetRequirement(item);
-            }
-
             bool meetsRequirement = item.RequirementObject.HasRequirement();
-            Log(item, $"{item.Requirement} met: '{meetsRequirement}'");
+            Log(item, $"{item.Requirement.ToString()} = {meetsRequirement}");
             return meetsRequirement;
         }
     }

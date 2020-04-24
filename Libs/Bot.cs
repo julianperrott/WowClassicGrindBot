@@ -1,17 +1,14 @@
 ﻿using Libs.Actions;
 using Libs.GOAP;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
-using System.Text;
-using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Libs.NpcFinder;
-using Microsoft.Extensions.Logging;
-using System.Drawing;
 
 namespace Libs
 {
@@ -22,28 +19,28 @@ namespace Libs
         private readonly WowData wowData;
         private readonly PlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
-        public readonly GoapAgent Agent;
-        public readonly FollowRouteAction followRouteAction;
-        public readonly WalkToCorpseAction walkToCorpseAction;
-        public readonly NpcNameFinder npcNameFinder;
-        public readonly StuckDetector stuckDetector;
+        private readonly FollowRouteAction followRouteAction;
+        private readonly WalkToCorpseAction walkToCorpseAction;
+        private readonly NpcNameFinder npcNameFinder;
+        private readonly StuckDetector stuckDetector;
         private ILogger logger;
         private Blacklist blacklist;
-
-        public ClassConfiguration? classConfig;
+        private WowProcess wowProcess;
+        private ClassConfiguration classConfig = new ClassConfiguration();
 
         public delegate void ScreenChangeDelegate(object sender, ScreenChangeEventArgs args);
         public event ScreenChangeDelegate? OnScreenChanged;
-
+        public readonly GoapAgent Agent;
         public readonly RouteInfo RouteInfo;
-
         public bool Active { get; set; }
+        public bool PotentialAddsExist => npcNameFinder.PotentialAddsExist;
 
         public Bot(WowData wowData, ILogger logger)
         {
             this.logger = logger;
             this.wowData = wowData;
             this.blacklist = new Blacklist(wowData.PlayerReader);
+            this.wowProcess = new WowProcess(logger);
 
             this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist, logger);
 
@@ -51,18 +48,23 @@ namespace Libs
             if (File.Exists(classFilename))
             {
                 classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilename));
+                classConfig.Initialise(wowData.PlayerReader, logger);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException($"Class config file not found {classFilename}");
             }
 
             List<WowPoint> pathPoints, spiritPath;
             GetPaths(wowData, out pathPoints, out spiritPath);
 
-            this.playerDirection = new PlayerDirection(wowData.PlayerReader, GetWowProcess, logger);
-            this.stopMoving = new StopMoving(GetWowProcess, wowData.PlayerReader, logger);
-            this.npcNameFinder = new NpcNameFinder(GetWowProcess, wowData.PlayerReader, logger);
+            this.playerDirection = new PlayerDirection(wowData.PlayerReader, wowProcess, logger);
+            this.stopMoving = new StopMoving(wowProcess, wowData.PlayerReader, logger);
+            this.npcNameFinder = new NpcNameFinder(wowProcess, wowData.PlayerReader, logger);
 
-            this.stuckDetector = new StuckDetector(wowData.PlayerReader, GetWowProcess, playerDirection, stopMoving, logger);
-            this.followRouteAction = new FollowRouteAction(wowData.PlayerReader, GetWowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist, logger, stuckDetector);
-            this.walkToCorpseAction = new WalkToCorpseAction(wowData.PlayerReader, GetWowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger, stuckDetector);
+            this.stuckDetector = new StuckDetector(wowData.PlayerReader, wowProcess, playerDirection, stopMoving, logger);
+            this.followRouteAction = new FollowRouteAction(wowData.PlayerReader, wowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, this.blacklist, logger, stuckDetector, classConfig);
+            this.walkToCorpseAction = new WalkToCorpseAction(wowData.PlayerReader, wowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger, stuckDetector);
             this.RouteInfo = new RouteInfo(pathPoints, spiritPath, this.followRouteAction, this.walkToCorpseAction);
         }
 
@@ -73,54 +75,14 @@ namespace Libs
             int step = 2;
             bool thereAndBack = false;
 
-            if (this.classConfig != null)
+            pathText = File.ReadAllText(classConfig.PathFilename);
+            thereAndBack = classConfig.PathThereAndBack;
+            if (string.IsNullOrEmpty(classConfig.SpiritPathFilename))
             {
-                pathText = File.ReadAllText(classConfig.PathFilename);
-                thereAndBack = classConfig.PathThereAndBack;
-                if (string.IsNullOrEmpty(classConfig.SpiritPathFilename))
-                {
-                    classConfig.SpiritPathFilename = classConfig.PathFilename;
-                }
-                spiritText = File.ReadAllText(classConfig.SpiritPathFilename);
-                step = classConfig.PathReduceSteps ? 2 : 1;
+                classConfig.SpiritPathFilename = classConfig.PathFilename;
             }
-            else
-
-            {
-                //switch (wowData.PlayerReader.PlayerClass)
-                //{
-                //    case PlayerClassEnum.Warrior:
-                //        pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\EPL_57.json");
-                //        spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\EPL_57_SpiritHealer.json");
-                //        break;
-                //    case PlayerClassEnum.Rogue:
-                //        pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\52_Tanaris.json");
-                //        spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\52_Tanaris_SpiritHealer.json");
-                //        break;
-                //    case PlayerClassEnum.Priest:
-                //        pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_52.json");
-                //        spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_52_SpiritHealer.json");
-                //        break;
-                //    case PlayerClassEnum.Druid:
-                //        pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44.json");
-                //        thereAndBack = false;
-                //        spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\Tanaris_44_SpiritHealer.json");
-                //        step = 2;
-                //        break;
-                //    case PlayerClassEnum.Paladin:
-                //        pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\30_ThousandNeedles.json");
-                //        thereAndBack = false;
-                //        spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\30_ThousandNeedles_SpirirtHealer.json");
-                //        step = 2;
-                //        break;
-                //    case PlayerClassEnum.Mage:
-                //        pathText = File.ReadAllText(@"D:\GitHub\WowPixelBot\7_Human.json");
-                //        thereAndBack = true;
-                //        spiritText = File.ReadAllText(@"D:\GitHub\WowPixelBot\7_Human.json");
-                //        step = 1;
-                //        break;
-                //}
-            }
+            spiritText = File.ReadAllText(classConfig.SpiritPathFilename);
+            step = classConfig.PathReduceSteps ? 2 : 1;
 
             var pathPoints2 = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
 
@@ -172,19 +134,18 @@ namespace Libs
 
                 this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(this.npcNameFinder.Screenshot.ToBase64()));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex.Message);
             }
             Thread.Sleep(1);
-
         }
 
         public async Task DoWork()
         {
             this.currentAction = followRouteAction;
 
-            await GetWowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
+            await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
 
             CreateActions();
 
@@ -195,49 +156,40 @@ namespace Libs
 
             await stopMoving.Stop();
             logger.LogInformation("Stopped!");
-
         }
 
         private void CreateActions()
         {
             this.availableActions.Clear();
 
-            this.availableActions.Add(followRouteAction);
+            this.availableActions.Add(this.followRouteAction);
             this.availableActions.Add(this.walkToCorpseAction);
-            this.availableActions.Add(new TargetDeadAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, logger));
-            this.availableActions.Add(new ApproachTargetAction(GetWowProcess, wowData.PlayerReader, stopMoving, npcNameFinder, logger, this.stuckDetector));
+            this.availableActions.Add(new TargetDeadAction(wowProcess, wowData.PlayerReader, npcNameFinder, logger));
+            this.availableActions.Add(new ApproachTargetAction(wowProcess, wowData.PlayerReader, stopMoving, npcNameFinder, logger, this.stuckDetector));
 
-            if (this.classConfig != null)
+            if (this.classConfig.Loot)
             {
-                if (this.classConfig.Loot)
-                {
-                    this.availableActions.Add(new LootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
-                    this.availableActions.Add(new PostKillLootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
-                }
-
-                try
-                {
-                    var genericCombat = new GenericCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger, classConfig);
-                    this.availableActions.Add(genericCombat);
-                    this.availableActions.Add(new GenericPullAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger, genericCombat, classConfig, this.stuckDetector));
-
-                    foreach (var item in classConfig.Adhoc.Sequence)
-                    {
-                        this.availableActions.Add(new AdhocAction(GetWowProcess, wowData.PlayerReader, stopMoving, item, genericCombat, logger));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex.ToString());
-                }
-
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException("Class config not loaded");
-                //AddClassSpecificActions();
+                this.availableActions.Add(new LootAction(wowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
+                this.availableActions.Add(new PostKillLootAction(wowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
             }
 
+            try
+            {
+                var genericCombat = new GenericCombatAction(wowProcess, wowData.PlayerReader, stopMoving, logger, classConfig);
+                this.availableActions.Add(genericCombat);
+                this.availableActions.Add(new GenericPullAction(wowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger, genericCombat, classConfig, this.stuckDetector));
+
+                foreach (var item in classConfig.Adhoc.Sequence)
+                {
+                    this.availableActions.Add(new AdhocAction(wowProcess, wowData.PlayerReader, stopMoving, item, genericCombat, logger));
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
+            }
+
+            // hookup events between actions
             this.availableActions.ToList().ForEach(a =>
             {
                 a.ActionEvent += this.Agent.OnActionEvent;
@@ -250,65 +202,6 @@ namespace Libs
                     if (b != a) { a.ActionEvent += b.OnActionEvent; }
                 });
             });
-        }
-
-        //private void AddClassSpecificActions()
-        //{
-        //    this.availableActions.Add(new LootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
-        //    this.availableActions.Add(new PostKillLootAction(GetWowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
-        //    this.availableActions.Add(new TimedPressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F5, 313, logger, "Delete stuff"));
-        //    this.availableActions.Add(new UseHealingPotionAction(GetWowProcess, wowData.PlayerReader, logger));
-
-        //    switch (wowData.PlayerReader.PlayerClass)
-        //    {
-        //        case PlayerClassEnum.Warrior:
-        //            this.availableActions.Add(new WarriorCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            this.availableActions.Add(new EatOrBandageAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D0), () => wowData.PlayerReader.Buffs.WellFed, logger, "Well Fed"));
-        //            break;
-
-        //        case PlayerClassEnum.Rogue:
-        //            this.availableActions.Add(new RogueCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            this.availableActions.Add(new TimedPressAKeyAction(GetWowProcess, stopMoving, ConsoleKey.F6, 3600, logger, "Equip dagger"));
-        //            this.availableActions.Add(new BuffAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            this.availableActions.Add(new EatOrBandageAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            break;
-
-        //        case PlayerClassEnum.Priest:
-        //            this.availableActions.Add(new PriestCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            this.availableActions.Add(new DrinkAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D1), () => wowData.PlayerReader.Buffs.Fortitude, 70, logger, "Fortitude"));
-        //            this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D2), () => wowData.PlayerReader.Buffs.InnerFire, 70, logger, "Inner Fire"));
-        //            this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D7), () => wowData.PlayerReader.Buffs.DivineSpirit, 70, logger, "Divine Spirit"));
-        //            this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.OemMinus), () => wowData.PlayerReader.Buffs.ManaRegeneration, logger, "Well Fed")); // "Nightfin Soup"));
-        //            break;
-
-        //        case PlayerClassEnum.Druid:
-        //            this.availableActions.Add(new DruidCombatAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            this.availableActions.Add(new DrinkAction(GetWowProcess, wowData.PlayerReader, stopMoving, logger));
-        //            this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D1), () => wowData.PlayerReader.Buffs.MarkOfTheWild, 70, logger, "Mark of the Wild"));
-        //            this.availableActions.Add(new ManaBuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D3), () => wowData.PlayerReader.Buffs.Thorns, 70, logger, "Thorns"));
-        //            this.availableActions.Add(new BuffPressAKeyAction(GetWowProcess, wowData.PlayerReader, stopMoving, () => PressKey(ConsoleKey.D7), () => wowData.PlayerReader.Buffs.WellFed, logger, "Well Fed"));
-        //            break;
-        //    }
-
-        //    if (!this.availableActions.Any(c => c as PullTargetAction != null))
-        //    {
-        //        var combatAction = this.availableActions.First(c => c as CombatActionBase != null) as CombatActionBase;
-        //        if (combatAction == null) { throw new Exception("Didn't find combat action"); }
-        //        this.availableActions.Add(new ClassPullTargetAction(GetWowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger, combatAction, this.stuckDetector));
-        //    }
-        //}
-
-        public async Task PressKey(ConsoleKey key)
-        {
-            if (wowData.PlayerReader.PlayerClass == PlayerClassEnum.Druid && wowData.PlayerReader.Druid_ShapeshiftForm != ShapeshiftForm.None)
-            {
-                await GetWowProcess.KeyPress(ConsoleKey.F8, 500);
-            }
-
-            await GetWowProcess.KeyPress(key, 500);
         }
 
         public void OnActionEvent(object sender, ActionEvent e)
@@ -348,7 +241,7 @@ namespace Libs
                     {
                         await newAction.PerformAction();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         logger.LogError(ex, $"PerformAction on {newAction.GetType().Name}");
                     }
@@ -358,21 +251,6 @@ namespace Libs
                     logger.LogInformation($"New Plan= NULL");
                     Thread.Sleep(500);
                 }
-            }
-
-        }
-
-        private WowProcess? wowProcess;
-
-        public WowProcess GetWowProcess
-        {
-            get
-            {
-                if (this.wowProcess == null)
-                {
-                    this.wowProcess = new WowProcess(logger);
-                }
-                return this.wowProcess;
             }
         }
     }

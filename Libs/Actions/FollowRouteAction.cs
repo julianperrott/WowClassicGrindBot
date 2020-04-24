@@ -29,6 +29,7 @@ namespace Libs.Actions
         private readonly StopMoving stopMoving;
         private readonly NpcNameFinder npcNameFinder;
         private readonly StuckDetector stuckDetector;
+        protected readonly ClassConfiguration classConfiguration;
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private DateTime LastJump = DateTime.Now;
@@ -40,7 +41,7 @@ namespace Libs.Actions
 
         public bool firstLoad = true;
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, Blacklist blacklist, ILogger logger,StuckDetector stuckDetector)
+        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, Blacklist blacklist, ILogger logger,StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
@@ -51,6 +52,7 @@ namespace Libs.Actions
             this.blacklist = blacklist;
             this.logger = logger;
             this.stuckDetector = stuckDetector;
+            this.classConfiguration = classConfiguration;
 
             AddPrecondition(GoapKey.incombat, false);
         }
@@ -206,19 +208,26 @@ namespace Libs.Actions
 
                 if (await LookForTarget()) { return; }
 
-                if (!this.npcNameFinder.PotentialAddsExist())
+                logger.LogInformation("Mounting if level >=40 (druid 30) and no NPC in sight");
+                if (!this.npcNameFinder.MobsVisible)
                 {
-                    logger.LogInformation("Mounting if level >=40 no NPC in sight");
                     if (this.playerReader.PlayerLevel >= 40 && this.playerReader.PlayerClass != PlayerClassEnum.Druid)
                     {
                         await wowProcess.TapStopKey();
                         await Task.Delay(500);
                         await wowProcess.Mount(this.playerReader);
                     }
+                    if (this.playerReader.PlayerLevel >= 30 & this.playerReader.PlayerClass == PlayerClassEnum.Druid)
+                    {
+                        this.classConfiguration.ShapeshiftForm
+                          .Where(s => s.ShapeShiftFormEnum == ShapeshiftForm.Druid_Travel)
+                          .ToList()
+                          .ForEach(async k => await this.wowProcess.KeyPress(k.ConsoleKey, 325));
+                    }
                 }
                 else
                 {
-                    logger.LogInformation("Not mounting as can see NPC");
+                    logger.LogInformation("Not mounting as can see NPC.");
                 }
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
             }

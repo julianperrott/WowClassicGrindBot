@@ -29,7 +29,7 @@
                         @{
                             var colour = wowData.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
 
-                            if (goapAgent.CurrentAction == botController.WowBot.followRouteAction)
+                            if (goapAgent.CurrentAction?.GetType() == typeof(Libs.Actions.FollowRouteAction))
                             {
                                 colour = "blue";
                             }

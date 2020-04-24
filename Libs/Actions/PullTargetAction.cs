@@ -112,10 +112,14 @@ namespace Libs.Actions
 
         protected async Task WaitForWithinMelleRange()
         {
-            for (int i = 0; i < 10; i++)
+            this.logger.LogInformation("Waiting for Mellee range");
+            for (int i = 0; i < 50; i++)
             {
-                await Task.Delay(500);
-                if (playerReader.WithInCombatRange) { return; }
+                await Task.Delay(100);
+                if (playerReader.WithInCombatRange|| (!this.playerReader.PlayerBitValues.PlayerInCombat && i>20)) 
+                { 
+                    return; 
+                }
             }
         }
     }

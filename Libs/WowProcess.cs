@@ -135,8 +135,8 @@ namespace Libs
         public async Task KeyPress(ConsoleKey key, int milliseconds, string description="")
         {
             var keyDescription = string.Empty;
-            if (!string.IsNullOrEmpty(description)) { keyDescription = $" for {description}"; }
-            logger.LogInformation($"KeyPress {key}{keyDescription} duration {milliseconds}ms");
+            if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
+            logger.LogInformation($"{keyDescription}[{key}] pressing for {milliseconds}ms");
 
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
             await Delay(milliseconds);

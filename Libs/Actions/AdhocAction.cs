@@ -34,8 +34,6 @@ namespace Libs.Actions
             {
                 AddPrecondition(GoapKey.incombat, true);
             }
-
-            key.ReadKey(this.logger);
         }
 
         public override float CostOfPerformingAction { get => key.Cost; }

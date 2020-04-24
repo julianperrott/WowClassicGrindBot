@@ -107,6 +107,7 @@ namespace Libs
         public long BagSlot4Slots => reader.GetLongAtCell(40);
 
         public BuffStatus Buffs => new BuffStatus(reader.GetLongAtCell(41));
+        public DebuffStatus Debuffs => new DebuffStatus(reader.GetLongAtCell(55));
 
         //public long SkinningLevel => reader.GetLongAtCell(41);
         //public long FishingLevel => reader.GetLongAtCell(42);
@@ -184,7 +185,7 @@ namespace Libs
                 var minMana = int.Parse(item.Requirement.Replace("Mana>", "").Replace("%", ""));
                 return new Requirement
                 {
-                    HasRequirement = () => this.ManaPercentage >= minMana,
+                    HasRequirement = () => this.ManaPercentage >= minMana || this.Druid_ShapeshiftForm > ShapeshiftForm.None,
                     LogMessage = () => $"mana too high: {ManaPercentage} > {minMana}"
                 };
             }
@@ -220,6 +221,14 @@ namespace Libs
                     {  "Frost Armor", ()=> Buffs.FrostArmor },
                     {  "Arcane Intellect", ()=> Buffs.ArcaneIntellect },
                     {  "Ice Barrier", ()=> Buffs.IceBarrier },
+                    {  "Slice And Dice", ()=> Buffs.SliceAndDice },
+                    {  "Battle Shout", ()=> Buffs.BattleShout },
+
+                    {  "Demoralizing Roar", ()=> Debuffs.Roar },
+                    {  "Faerie Fire", ()=> Debuffs.FaerieFire },
+
+                    { "OutOfCombatRange", ()=> this.WithInCombatRange },
+                    { "InCombatRange", ()=> !this.WithInCombatRange }
                 };
             }
 

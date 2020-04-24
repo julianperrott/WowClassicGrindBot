@@ -1,0 +1,104 @@
+{
+  "ClassName": "Rogue",
+  "Loot": true,
+
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\57_WPL.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\57_WPL_SpiritHealer.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Charge",
+        "Key": "1",
+        "DelayAfterCast": 1000,
+        "CastIfAddsVisible": "false",
+        "StopBeforeCast": false
+      },
+      {
+        "Name": "Shoot Gun",
+        "Key": "9",
+        "DelayAfterCast": 100,
+        "WaitForWithinMelleRange": true,
+        "CastIfAddsVisible": true,
+        "StopBeforeCast": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Approach",
+        "Key": "H",
+        "Cooldown": 10,
+        "DelayAfterCast": "200"
+      },
+      {
+        "Name": "Battle Shout",
+        "Key": "6",
+        "Requirement": "Battle Shout",
+        "MinMana": 10,
+        "Cooldown": 10,
+        "DelayAfterCast": "200"
+      },
+      {
+        "Name": "Bloodrage",
+        "Key": "2",
+        "Cooldown": 61,
+        "DelayAfterCast": "200"
+      },
+      {
+        "Name": "Overpower",
+        "Key": "5",
+        "Cooldown": 2,
+        "MinMana": 5,
+        "DelayAfterCast": "200"
+      },
+      {
+        "Name": "Rend",
+        "Key": "3",
+        "Cooldown": 15,
+        "MinMana": 10,
+        "DelayAfterCast": "200",
+        "ResetOnNewTarget": true
+      },
+      {
+        "Name": "HeroicStrike",
+        "Key": "4",
+        "Cooldown": 0,
+        "MinMana": 12,
+        "DelayAfterCast": "500"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Eat",
+        "StopBeforeCast": false,
+        "Key": "7",
+        "Requirement": "Health>60%",
+        "Cooldown": 0,
+        "DelayAfterCast": 1000,
+        "Log": false,
+        "Cost": 3
+      },
+      {
+        "Name": "Well Fed",
+        "StopBeforeCast": false,
+        "Key": "0",
+        "Requirement": "Well Fed",
+        "Cooldown": 120,
+        "Log": false
+      },
+      {
+        "Name": "Sharpen Weapon 1",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "F1",
+        "Cooldown": 1800,
+        "Log": false
+      }
+    ]
+  }
+}

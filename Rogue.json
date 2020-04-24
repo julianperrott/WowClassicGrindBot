@@ -1,0 +1,107 @@
+{
+  "ClassName": "Rogue",
+  "Loot": true,
+
+  "PathFilename":  "D:\\GitHub\\WowPixelBot\\52_Tanaris.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\52_Tanaris_SpiritHealer.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Throwing Knife",
+        "Key": "D9",
+        "DelayAfterCast": 1000,
+        "WaitForWithinMelleRange": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Vanish",
+        "Key": "8",
+        "Requirement": "Health>5%",
+        "DelayAfterCast": 10000,
+        "Cooldown": 300
+      },
+      {
+        "Name": "Evasion",
+        "Key": "5",
+        "Requirement": "Health>50%",
+        "Cooldown": 210
+      },
+      {
+        "Name": "Slice And Dice",
+        "Key": "3",
+        "MinMana": 25,
+        "MinComboPoints": 2,
+        "Cooldown": 3,
+        "Requirement": "Slice And Dice"
+      },
+      {
+        "Name": "Eviscerate",
+        "Key": "4",
+        "MinMana": 35,
+        "MinComboPoints": 3,
+        "Cooldown": 10
+      },
+      {
+        "Name": "Sinister Strike",
+        "Key": "2",
+        "MinMana": 40
+      }, 
+      {
+        "Name": "Approach",
+        "Key": "H",
+        "Cooldown": 3
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Eat",
+        "StopBeforeCast": false,
+        "Key": "7",
+        "Requirement": "Health>50%",
+        "Cooldown": 0,
+        "DelayAfterCast": 1000,
+        "Log": false,
+        "Cost": 3
+      },
+      {
+        "Name": "Well Fed",
+        "StopBeforeCast": false,
+        "Key": "7",
+        "Requirement": "Well Fed",
+        "Cooldown": 120,
+        "Log": false
+      },
+      {
+        "Name": "Sharpen Weapon 1",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "F1",
+        "Cooldown": 1800,
+        "Log": false
+      },
+      {
+        "Name": "Sharpen Weapon 2",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "F2",
+        "Cooldown": 1800,
+        "Log": false
+      },
+      {
+        "Name": "Equip Dagger",
+        "Key": "F6",
+        "Cooldown": 600,
+        "Log": false
+      }
+    ]
+  }
+}

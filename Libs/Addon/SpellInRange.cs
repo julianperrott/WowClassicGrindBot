@@ -44,7 +44,7 @@
 
         public bool WithInPullRange(PlayerClassEnum playerClass) => playerClass switch
         {
-            PlayerClassEnum.Warrior => Warrior_ShootGun || Warrior_Charge,
+            PlayerClassEnum.Warrior => Warrior_Charge,
             PlayerClassEnum.Rogue => Rogue_Throw,
             PlayerClassEnum.Priest => Priest_ShadowWordPain,
             PlayerClassEnum.Druid => Druid_Wrath,

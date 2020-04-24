@@ -52,5 +52,11 @@ namespace Libs
         public bool FrostArmor { get => IsBitSet(10); }
         public bool ArcaneIntellect { get => IsBitSet(11); }
         public bool IceBarrier { get => IsBitSet(12); }
+
+        // Rogue
+        public bool SliceAndDice { get => IsBitSet(10); }
+
+        // Warrior
+        public bool BattleShout { get => IsBitSet(10); }
     }
 }

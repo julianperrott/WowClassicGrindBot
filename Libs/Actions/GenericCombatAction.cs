@@ -9,16 +9,13 @@ using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
-    public class GenericCombatAction: CombatActionBase
+    public class GenericCombatAction : CombatActionBase
     {
-        private readonly ClassConfiguration classConfiguration;
-
         private DateTime lastActive = DateTime.Now;
 
-        public GenericCombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration) 
-            : base(wowProcess, playerReader, stopMoving, logger)
+        public GenericCombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
+            : base(wowProcess, playerReader, stopMoving, logger, classConfiguration)
         {
-            this.classConfiguration = classConfiguration;
         }
         protected override async Task Fight()
         {
@@ -54,11 +51,15 @@ namespace Libs.Actions
             if (e.Key == GoapKey.newtarget)
             {
                 logger.LogInformation("?Reset cooldowns");
-                //LastClicked.Remove(ConsoleKey.D3);
-                //LastClicked.Remove(ConsoleKey.D4);
 
-                //LastClicked[ConsoleKey.D3] = DateTime.Now.AddSeconds(-15);
-                //LastClicked[ConsoleKey.D4] = DateTime.Now;
+                this.classConfiguration.Combat.Sequence
+                    .Where(i => i.ResetOnNewTarget)
+                    .ToList()
+                    .ForEach(item =>
+                    {
+                        logger.LogInformation($"Reset cooldown on {item.Name}");
+                        if (this.LastClicked.ContainsKey(item.ConsoleKey)) { this.LastClicked.Remove(item.ConsoleKey); }
+                    });
             }
         }
     }

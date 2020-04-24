@@ -98,20 +98,26 @@ end
 UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
 
 
+local ignoreErrorList = {
+    "ERR_ABILITY_COOLDOWN",
+    "ERR_OUT_OF_RAGE",
+    "ERR_NO_ATTACK_TARGET",
+    "ERR_OUT_OF_MANA",
+    "ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS", 
+    "ERR_SPELL_COOLDOWN", 
+    "ERR_SPELL_FAILED_SHAPESHIFT_FORM_S",
+    "ERR_GENERIC_NO_TARGET",
+    "ERR_ATTACK_PREVENTED_BY_MECHANIC_S",
+    "ERR_ATTACK_STUNNED",
+    "ERR_NOEMOTEWHILERUNNING",
+}
+
 local errorList = {
     "ERR_BADATTACKFACING", --1
     "ERR_SPELL_FAILED_S", --2
     "ERR_SPELL_OUT_OF_RANGE", --3
     "ERR_BADATTACKPOS", --4
     "ERR_AUTOFOLLOW_TOO_FAR", --5
-    "ERR_ABILITY_COOLDOWN", --6
-    "ERR_OUT_OF_RAGE", --7
-    "ERR_NO_ATTACK_TARGET", --8
-    "ERR_OUT_OF_MANA", --9
-    "ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS", --10
-    "ERR_SPELL_COOLDOWN", --11
-    "ERR_SPELL_FAILED_SHAPESHIFT_FORM_S", --12
-    "ERR_GENERIC_NO_TARGET" --13
 };
 
 -- handle error events
@@ -119,17 +125,26 @@ local function OnUIErrorMessage(self, event, messageType, message)
     local errorName, soundKitID, voiceID = GetGameMessageInfo(messageType)
 
     local foundMessage=false;
-    for i = 1, table.getn(errorList), 1 do
-        if errorList[i]==errorName then
-            uiErrorMessage = i;
+    for i = 1, table.getn(ignoreErrorList), 1 do
+        if ignoreErrorList[i]==errorName then
             foundMessage=true;
-            UIErrorsFrame:AddMessage(message, 0, 1, 0) -- show as green messasge
+            UIErrorsFrame:AddMessage(message, 0.7, 0.7, 0.7) -- show as grey messasge
+        end
+    end
+
+    if not foundMessage then
+        for i = 1, table.getn(errorList), 1 do
+            if errorList[i]==errorName then
+                uiErrorMessage = i;
+                foundMessage=true;
+                UIErrorsFrame:AddMessage(message, 0, 1, 0) -- show as green messasge
+            end
         end
     end
 
     if not foundMessage then
         DataToColor:log(message .. ":" .. errorName);
-        UIErrorsFrame:AddMessage(message, 0, 0, 1) -- show as blue message
+        UIErrorsFrame:AddMessage(message, 0, 0, 1) -- show as blue message (unknown message)
     end
   end
 
@@ -367,8 +382,7 @@ function DataToColor:CreateFrames(n)
             -- 42 used by keys
             
             MakePixelSquareArr(integerToColor(self:getTargetLevel()), 43)
-            
-            --MakePixelSquareArr(integerToColor(self:GetDebuffs("FrostNova")), 43) -- Checks if target is frozen by frost nova debuff
+
             --MakePixelSquareArr(integerToColor(self:GameTime()), 44) -- Returns time in the game
             --MakePixelSquareArr(integerToColor(self:GetGossipIcons()), 45) -- Returns which gossip icons are on display in dialogue box
 
@@ -383,6 +397,8 @@ function DataToColor:CreateFrames(n)
             uiErrorMessage=0;
 
             MakePixelSquareArr(integerToColor(DataToColor:CastingInfoSpellId()), 53) -- Spell being cast
+            MakePixelSquareArr(integerToColor(DataToColor:ComboPoints()), 54) -- Combo points for rogue / druid
+            MakePixelSquareArr(integerToColor(DataToColor:getDebuffsForTarget()), 55) -- target debuffs
             self:HandleEvents()
         end
         if SETUP_SEQUENCE then
@@ -493,7 +509,8 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:IsPlayerMounted(), 18)+
     self:MakeIndexBase2(self:IsAutoRepeatActionOn(10), 19)+
     self:MakeIndexBase2(self:IsCurrentActionOn(10), 20)+
-    self:MakeIndexBase2(self:targetIsNormal(), 21)
+    self:MakeIndexBase2(self:targetIsNormal(), 21)+
+    self:MakeIndexBase2(self:IsTagged(), 22);
 end
 
 function DataToColor:getBuffsForClass()
@@ -512,8 +529,44 @@ function DataToColor:getBuffsForClass()
         self:MakeIndexBase2(self:GetBuffs("Spirit"), 14);
     elseif CC == "DRUID" then
         class=class+self:MakeIndexBase2(self:GetBuffs("Mark of the Wild"), 10) +
-	    self:MakeIndexBase2(self:GetBuffs("Thorns"), 11);
+        self:MakeIndexBase2(self:GetBuffs("Thorns"), 11);
+    elseif CC == "PALADIN" then
+        class=class+self:MakeIndexBase2(self:GetBuffs("Aura"), 10) +
+        self:MakeIndexBase2(self:GetBuffs("Blessing"), 11)+       
+        self:MakeIndexBase2(self:GetBuffs("Seal"), 12); 
+    elseif CC == "MAGE" then
+        class=class+self:MakeIndexBase2(self:GetBuffs("Frost Armor"), 10)+
+        self:MakeIndexBase2(self:GetBuffs("Arcane Intellect"), 11)+       
+        self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 12); 
+    elseif CC == "ROGUE" then        
+        class=class+self:MakeIndexBase2(self:GetBuffs("Slice and Dice"), 10);
+    elseif CC == "WARRIOR" then        
+        class=class+self:MakeIndexBase2(self:GetBuffs("Battle Shout"), 10);        
     end
+    return class;
+end
+
+
+function DataToColor:getDebuffsForTarget()
+
+    local class, CC = UnitClass("player");
+    class=0;
+
+    if CC == "PRIEST" then 
+        class=0;
+    elseif CC == "DRUID" then
+        class=class+self:MakeIndexBase2(self:GetDebuffs("Roar"), 0) +
+        self:MakeIndexBase2(self:GetDebuffs("Faerie Fire"), 1);
+    elseif CC == "PALADIN" then
+        class=0;
+    elseif CC == "MAGE" then
+        class=0;
+    elseif CC == "ROGUE" then        
+        class=0;
+    elseif CC == "WARRIOR" then        
+        class=0;
+    end
+
     return class;
 end
 
@@ -686,6 +739,15 @@ function DataToColor:areSpellsInRange()
             "Mind Flay", --4
             "Shoot", --8
         };
+    elseif CC == "PALADIN" then
+        spellList = {
+            "Judgement" --1
+        };
+    elseif CC == "MAGE" then
+        spellList = {
+            "Fireball", --1
+            "Shoot", --2
+        };        
     else
         spellList = {};
     end
@@ -851,6 +913,18 @@ function DataToColor:PlayerClass()
     end
     return class
 end
+
+function DataToColor:ComboPoints()
+    local points = GetComboPoints("player","target");
+    -- if target is in combat, return 0 for bitmask
+    if points ~= nil then
+        return points
+        -- if target is not in combat, return 1 for bitmask
+    else 
+        return 0
+    end
+end
+
 -----------------------------------------------------------------
 -- Boolean functions --------------------------------------------
 -- Only put functions here that are part of a boolean sequence --
@@ -1004,6 +1078,11 @@ end
 function DataToColor:IsTargetOfTargetPlayer()
     local x = self:IsTargetOfTargetPlayerAsNumber();
     if x==1 then return 1 else return 0 end;
+end
+
+function DataToColor:IsTagged()
+    local x = self:IsTargetOfTargetPlayerAsNumber();
+    if x==3 then return 1 else return 0 end;
 end
 
 function DataToColor:IsAutoRepeatActionOn(actionSlot)

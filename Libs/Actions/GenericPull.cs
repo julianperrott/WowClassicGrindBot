@@ -21,16 +21,21 @@ namespace Libs.Actions
 
         public override async Task<bool> Pull()
         {
-            this.combatAction.AddsExist = npcNameFinder.PotentialAddsExist();
-
-            await Task.Delay(500);
+            this.combatAction.AddsExist = npcNameFinder.PotentialAddsExist;
 
             bool hasCast = false;
 
-            foreach (var item in this.classConfiguration.Pull.Sequence.Where(i=>i!=null))
+            foreach (var item in this.classConfiguration.Pull.Sequence.Where(i => i != null))
             {
-                var success=await this.combatAction.CastIfReady(item);
+                var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast ? 500 : 0;
+
+                var success = await this.combatAction.CastIfReady(item, sleepBeforeFirstCast);
                 hasCast = hasCast || success;
+
+                if (hasCast && item.WaitForWithinMelleRange)
+                {
+                    await this.WaitForWithinMelleRange();
+                }
             }
 
             if (hasCast)

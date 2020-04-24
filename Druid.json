@@ -1,0 +1,191 @@
+{
+  "ClassName": "Druid",
+  "Loot": true,
+
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\44_Tanaris.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\44_Tanaris_SpiritHealer.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+
+  "ShapeshiftForm": [
+    {
+      "Name": "/cancelform",
+      "Key": "F8",
+      "ShapeShiftForm": "None"
+    },
+    {
+      "Name": "Druid_Bear",
+      "Key": "2",
+      "ShapeShiftForm": "Druid_Bear"
+    },
+    {
+      "Name": "Druid_Travel",
+      "Key": "1",
+      "ShapeShiftForm": "Druid_Travel"
+    }
+  ],
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Rejuvenation",
+        "Key": "1",
+        "Requirement": "Health>70",
+        "ShapeShiftForm": "None"
+      },
+      {
+        "Name": "Wrath",
+        "Key": "7",
+        "Requirement": "OutOfCombatRange",
+        "StopBeforeCast": true,
+        "ShapeShiftForm": "None",
+        "HasCastBar": true
+      },
+      {
+        "Name": "Moonfire",
+        "Key": "8",
+        "ShapeShiftForm": "None"
+      },
+      {
+        "Name": "Wrath",
+        "Key": "7",
+        "Requirement": "OutOfCombatRange",
+        "ShapeShiftForm": "None",
+        "HasCastBar": true,
+        "WaitForWithinMelleRange": true
+      },
+      {
+        "Name": "Bear form",
+        "Key": "2",
+        "ShapeShiftForm": "None",
+        "WaitForWithinMelleRange": true
+      }
+    ]
+  },
+
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Approach",
+        "Key": "H",
+        "Cooldown": 10,
+        "Log": false,
+        "DelayAfterCast": "200"
+      },
+      {
+        "Name": "Heal",
+        "Key": "6",
+        "Requirement": "Health>50%",
+        "MinMana": 0,
+        "Cooldown": 10,
+        "HasCastBar": true,
+        "Log": false,
+        "ShapeShiftForm": "None"
+      },
+      {
+        "Name": "Enrage",
+        "Key": "3",
+        "Cooldown": 15,
+        "DelayAfterCast": "200",
+        "Log": false,
+        "ShapeShiftForm": "Druid_Bear"
+      },
+      {
+        "Name": "Faerie Fire",
+        "Requirement": "Faerie Fire",
+        "Key": "7",
+        "MinMana": 10,
+        "Cooldown": 6,
+        "ShapeShiftForm": "Druid_Bear",
+        "Log": false,
+        "ResetOnNewTarget": true
+      },
+      {
+        "Name": "Roar",
+        "Requirement": "Demoralizing Roar",
+        "Key": "5",
+        "MinMana": 6,
+        "Cooldown": 10,
+        "Log": false,
+        "ShapeShiftForm": "Druid_Bear"
+      },
+      {
+        "Name": "Bash",
+        "Key": "4",
+        "MinMana": 10,
+        "Cooldown": 31,
+        "Log": false,
+        "ShapeShiftForm": "Druid_Bear"
+      },
+      {
+        "Name": "Maul",
+        "Key": "2",
+        "MinMana": 10,
+        "Cooldown": 2,
+        "DelayAfterCast": "500",
+        "Log": false,
+        "ShapeShiftForm": "Druid_Bear"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Healing Potion",
+        "Key": "-",
+        "Requirement": "Health>7%",
+        "Cooldown": 60,
+        "ShapeShiftForm": "None",
+        "InCombat": "true",
+        "Log": false,
+        "Cost": 3
+      },
+      {
+        "Name": "Heal",
+        "Key": "6",
+        "Requirement": "Health>60%",
+        "Cooldown": 10,
+        "HasCastBar": true,
+        "Log": false,
+        "ShapeShiftForm": "None"
+      },
+      {
+        "Name": "Well Fed",
+        "StopBeforeCast": false,
+        "Key": "9",
+        "Requirement": "Well Fed",
+        "Cooldown": 120,
+        "Log": false,
+        "ShapeShiftForm": "None"
+      },
+      {
+        "Name": "Drink",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "0",
+        "Requirement": "Mana>40%",
+        "Cooldown": 10,
+        "Log": false,
+        "ShapeShiftForm": "None"
+      },
+      {
+        "Name": "Thorns",
+        "StopBeforeCast": false,
+        "Key": "3",
+        "Cooldown": 10,
+        "Requirement": "Thorns",
+        "Log": false,
+        "ShapeShiftForm": "None"
+      },
+      {
+        "Name": "Mark of the Wild",
+        "StopBeforeCast": false,
+        "Key": "4",
+        "Cooldown": 10,
+        "Requirement": "Mark of the Wild",
+        "Log": false,
+        "ShapeShiftForm": "None"
+      }
+    ]
+  }
+}

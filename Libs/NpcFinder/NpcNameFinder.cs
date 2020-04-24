@@ -114,14 +114,32 @@ namespace Libs
             //    wowProcess.SetCursorPosition(Screenshot.ToScreenCoordinates(npc.ClickPoint.X, npc.ClickPoint.Y));
             //}
 
+            UpdatePotentialAddsExist();
+
             return Npcs;
         }
 
-        public bool PotentialAddsExist()
+        public bool MobsVisible { get; private set; }
+        public bool PotentialAddsExist { get; private set; }
+        public DateTime LastPotentialAddsSeen { get; private set; } = DateTime.Now.AddMinutes(-1);
+
+        public void UpdatePotentialAddsExist()
         {
             var countAdds = Npcs.Where(c => c.IsAdd).Where(c => c.Height > 2).Count();
-            logger.LogInformation($"> NPCs adds: {countAdds}");
-            return countAdds > 0;
+            var MobsVisible = Npcs.Where(c => c.Height > 2).Count() > 0;
+
+            if (countAdds > 0)
+            {
+                PotentialAddsExist = true;
+                LastPotentialAddsSeen = DateTime.Now;
+            }
+            else
+            {
+                if (PotentialAddsExist && (DateTime.Now - LastPotentialAddsSeen).TotalSeconds > 2)
+                {
+                    PotentialAddsExist = false;
+                }
+            }
         }
 
         public NpcPosition? GetClosestNpc()

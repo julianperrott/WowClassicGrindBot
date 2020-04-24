@@ -37,6 +37,8 @@ namespace Libs.GOAP
                 a.ResetBeforePlanning();
             }
 
+            Node start = new Node(null, 0, worldState, null);
+
             // check what actions can run using their checkProceduralPrecondition
             HashSet<GoapAction> usableActions = new HashSet<GoapAction>();
             foreach (GoapAction a in availableActions)
@@ -44,6 +46,10 @@ namespace Libs.GOAP
                 if (a.CheckIfActionCanRun())
                 {
                     usableActions.Add(a);
+                }
+                else
+                {
+                    a.State = InState(a, a.Preconditions, start.state);
                 }
             }
 
@@ -53,7 +59,6 @@ namespace Libs.GOAP
             List<Node> leaves = new List<Node>();
 
             // build graph
-            Node start = new Node(null, 0, worldState, null);
             bool success = BuildGraph(start, leaves, usableActions, goal);
 
             if (!success)

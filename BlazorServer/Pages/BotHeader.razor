@@ -1,6 +1,7 @@
 ﻿@using Libs;
 @inject Libs.WowData wowData
 @inject Libs.GOAP.GoapAgent goapAgent
+@inject Libs.BotController botController
 
 <table class="table table-bordered">
     <tr>
@@ -40,6 +41,7 @@
                         <div>Combo Points: @playerReader.ComboPoints</div>
                     }
                 </div>
+                <div>Potential Adds: @botController.WowBot.PotentialAddsExist</div>
             }
             else
             {

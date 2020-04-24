@@ -26,7 +26,7 @@
         "MinMana": 50
       },
       {
-        "Name": "Interact",
+        "Name": "Approach",
         "Key": "H",
         "Cooldown": 3
       },
