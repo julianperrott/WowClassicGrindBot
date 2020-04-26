@@ -27,10 +27,15 @@ namespace Libs.Actions
 
             foreach (var item in this.classConfiguration.Pull.Sequence.Where(i => i != null))
             {
-                var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast ? 500 : 0;
+                var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast && 500> item.DelayBeforeCast ? 500 : item.DelayBeforeCast;
 
                 var success = await this.combatAction.CastIfReady(item, sleepBeforeFirstCast);
                 hasCast = hasCast || success;
+
+                if (!this.playerReader.HasTarget)
+                {
+                    return false;
+                }
 
                 if (hasCast && item.WaitForWithinMelleRange)
                 {

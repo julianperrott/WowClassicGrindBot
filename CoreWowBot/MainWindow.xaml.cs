@@ -126,33 +126,33 @@ namespace Powershell
         private void Up_Click(object sender, RoutedEventArgs e)
         {
             UpKeyIsDown = !UpKeyIsDown;
-            WowProcess.SetKeyState(ConsoleKey.UpArrow, UpKeyIsDown);
+            WowProcess.SetKeyState(ConsoleKey.UpArrow, UpKeyIsDown,false,"MainWindowXaml");
         }
 
         private void Left_Down(object sender, MouseButtonEventArgs e)
         {
-            WowProcess.SetKeyState(ConsoleKey.LeftArrow, true);
+            WowProcess.SetKeyState(ConsoleKey.LeftArrow, true, false, "MainWindowXaml");
         }
 
         private void Left_Up(object sender, MouseButtonEventArgs e)
         {
-            WowProcess.SetKeyState(ConsoleKey.LeftArrow, false);
+            WowProcess.SetKeyState(ConsoleKey.LeftArrow, false, false, "MainWindowXaml");
         }
 
         private void Right_Down(object sender, MouseButtonEventArgs e)
         {
-            WowProcess.SetKeyState(ConsoleKey.RightArrow, true);
+            WowProcess.SetKeyState(ConsoleKey.RightArrow, true, false, "MainWindowXaml");
         }
 
         private void Right_Up(object sender, MouseButtonEventArgs e)
         {
-            WowProcess.SetKeyState(ConsoleKey.RightArrow, false);
+            WowProcess.SetKeyState(ConsoleKey.RightArrow, false, false, "MainWindowXaml");
         }
 
         private void Down_Click(object sender, RoutedEventArgs e)
         {
             DownKeyIsDown = !DownKeyIsDown;
-            WowProcess.SetKeyState(ConsoleKey.DownArrow, DownKeyIsDown);
+            WowProcess.SetKeyState(ConsoleKey.DownArrow, DownKeyIsDown, false, "MainWindowXaml");
         }
 
         private void North_Click(object sender, RoutedEventArgs e)
@@ -216,7 +216,14 @@ namespace Powershell
 
         private async void South_Click(object sender, RoutedEventArgs e)
         {
-            await playerDirection.SetDirection(3.1415926536, new WowPoint(0, 0), "");
+            //await playerDirection.SetDirection(3.1415926536, new WowPoint(0, 0), "");
+            var myDirection = this.addonThread.PlayerReader.Direction;
+            myDirection+= Math.PI;
+            if (myDirection> Math.PI*2)
+            {
+                myDirection -= Math.PI * 2;
+            }
+            await playerDirection.SetDirection(myDirection, new WowPoint(0, 0), "");
         }
 
         private System.Timers.Timer? timer;
@@ -325,7 +332,7 @@ namespace Powershell
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            throw new NotImplementedException();
+            
         }
 
         bool ILogger.IsEnabled(LogLevel logLevel)

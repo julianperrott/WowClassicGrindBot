@@ -18,7 +18,7 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="1" Content="Up" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Click="Up_Click" />
+            <Button Grid.Row="0" Grid.Column="1" Content="Up" VerticalAlignment="Top" Click="Up_Click" Height="29" Grid.RowSpan="2" />
             <Button Grid.Row="1" Grid.Column="0" Content="Left" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" PreviewMouseDown="Left_Down" PreviewMouseUp="Left_Up" />
             <Button Grid.Row="1" Grid.Column="2" Content="Right" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" PreviewMouseDown="Right_Down" PreviewMouseUp="Right_Up" />
             <Button Grid.Row="2" Grid.Column="1" Content="Down" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Click="Down_Click" />

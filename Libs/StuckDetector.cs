@@ -93,9 +93,9 @@ namespace Libs
                 if (actionDurationSeconds > 60)
                 {
                     // back up a bit
-                    wowProcess.SetKeyState(ConsoleKey.DownArrow, true);
+                    wowProcess.SetKeyState(ConsoleKey.DownArrow, true, false, "StuckDetector");
                     await Task.Delay(strafeDuration);
-                    wowProcess.SetKeyState(ConsoleKey.DownArrow, false);
+                    wowProcess.SetKeyState(ConsoleKey.DownArrow, false, false, "StuckDetector");
                 }
                 this.stopMoving?.Stop();
 
@@ -104,21 +104,21 @@ namespace Libs
                 if (r < 50)
                 {
                     logger.LogInformation($"Trying to unstick by strafing left for {strafeDuration}ms");
-                    wowProcess.SetKeyState(ConsoleKey.Q, true);
+                    wowProcess.SetKeyState(ConsoleKey.Q, true, false, "StuckDetector");
                     await Task.Delay(strafeDuration);
-                    wowProcess.SetKeyState(ConsoleKey.Q, false);
+                    wowProcess.SetKeyState(ConsoleKey.Q, false, false, "StuckDetector");
                 }
                 else
                 {
                     logger.LogInformation($"Trying to unstick by strafing right for {strafeDuration}ms");
-                    wowProcess.SetKeyState(ConsoleKey.E, true);
+                    wowProcess.SetKeyState(ConsoleKey.E, true, false, "StuckDetector");
                     await Task.Delay(strafeDuration);
-                    wowProcess.SetKeyState(ConsoleKey.E, false);
+                    wowProcess.SetKeyState(ConsoleKey.E, false, false, "StuckDetector");
                 }
 
                 await wowProcess.TapStopKey();
 
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "StuckDetector");
 
                 var heading = new DirectionCalculator(logger).CalculateHeading(this.playerReader.PlayerLocation, targetLocation);
                 await playerDirection.SetDirection(heading, targetLocation, "Move to next point");

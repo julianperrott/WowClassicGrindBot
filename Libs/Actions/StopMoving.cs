@@ -27,15 +27,15 @@ namespace Libs.Actions
         {
             if (XCoord != playerReader.XCoord || YCoord != playerReader.YCoord)
             {
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, false);
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, false,false, "StopMoving");
                 await Task.Delay(1);
             }
 
             if (Direction != playerReader.Direction)
             {
-                wowProcess.SetKeyState(ConsoleKey.LeftArrow, false);
+                wowProcess.SetKeyState(ConsoleKey.LeftArrow, false, false, "StopMoving");
                 await Task.Delay(1);
-                wowProcess.SetKeyState(ConsoleKey.RightArrow, false);
+                wowProcess.SetKeyState(ConsoleKey.RightArrow, false, false, "StopMoving");
                 await Task.Delay(1);
             }
 

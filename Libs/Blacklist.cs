@@ -9,10 +9,14 @@ namespace Libs
         private List<string> blacklist = new List<string> { "THORKA", "SHADOW", "DREADM", "DUNEMA", "BONE C", "FLESH", "REDRID", "MOSSHI", "VOIDWA","WAILIN" };
 
         private readonly PlayerReader playerReader;
+        private readonly int above;
+        private readonly int below;
 
-        public Blacklist(PlayerReader playerReader)
+        public Blacklist(PlayerReader playerReader, int above, int below)
         {
             this.playerReader = playerReader;
+            this.above = above;
+            this.below = below;
         }
 
         public bool IsTargetBlacklisted()
@@ -38,12 +42,12 @@ namespace Libs
                 return true; // ignore tagged mobs
             }
 
-            if (this.playerReader.TargetLevel > this.playerReader.PlayerLevel + 1)
+            if (this.playerReader.TargetLevel > this.playerReader.PlayerLevel + above)
             {
                 return true; // ignore if current level + 2
             }
 
-            if (this.playerReader.TargetLevel < this.playerReader.PlayerLevel - 7)
+            if (this.playerReader.TargetLevel < this.playerReader.PlayerLevel - below)
             {
                 return true; // ignore if current level - 7
             }

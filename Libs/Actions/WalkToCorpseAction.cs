@@ -103,7 +103,7 @@ namespace Libs.Actions
                 heading = new DirectionCalculator(logger).CalculateHeading(location, corpseLocation);
                 this.logger.LogInformation("no more points, heading to corpse");
                 await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpse");
                 this.stuckDetector.SetTargetLocation(points.Peek());
             }
             else
@@ -120,7 +120,7 @@ namespace Libs.Actions
             {
                 Dump("Stuck");
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpseAction");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {

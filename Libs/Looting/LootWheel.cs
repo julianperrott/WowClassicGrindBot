@@ -43,7 +43,7 @@ namespace Libs.Looting
             }
         }
 
-        public async Task<bool> Loot(bool searchForMobs)
+        public async Task<bool> Loot(bool searchForMobs, bool doExtendedLootSearch)
         {
             wowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
             await Task.Delay(150);
@@ -53,7 +53,7 @@ namespace Libs.Looting
                 wowProcess.SetCursorPosition(this.lastLootFoundAt);
                 await Task.Delay(200);
             }
-            if (await CheckForLoot(this.lastLootFoundAt, searchForMobs))
+            if (await CheckForLoot(this.lastLootFoundAt, searchForMobs, false))
             {
                 logger.LogInformation($"Loot at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
                 return true;
@@ -65,27 +65,36 @@ namespace Libs.Looting
 
             if (!searchForMobs)
             {
-                if (await SearchInCircle(radiusLarge / 2, radiusLarge / 2, false))
+                if (await SearchInCircle(radiusLarge / 2, radiusLarge / 2, false, centre, false))
                 {
                     return true;
                 }
             }
 
-            return await SearchInCircle(radiusLarge, radiusLarge, searchForMobs);
+            if (await SearchInCircle(radiusLarge, radiusLarge, searchForMobs, centre, false))
+            {
+                return true;
+            }
+
+            if (!searchForMobs && doExtendedLootSearch)
+            {
+                return await SearchInCircle(radiusLarge / 4, radiusLarge, false, new Point(this.centre.X, (this.centre.Y * 2) / 3), true);
+            }
+            return false;
         }
 
-        private async Task<bool> SearchInCircle(float rx, float ry, bool searchForMobs)
+        private async Task<bool> SearchInCircle(float rx, float ry, bool searchForMobs, Point circleCentre, bool ignoreMobs)
         {
             float theta = 0;
             for (int i = 0; i < num_theta; i++)
             {
-                float x = (float)(centre.X + rx * Math.Cos(theta));
-                float y = (float)(centre.Y + (ry * Math.Sin(theta)));
+                float x = (float)(circleCentre.X + rx * Math.Cos(theta));
+                float y = (float)(circleCentre.Y + (ry * Math.Sin(theta)));
                 var mousePosition = new Point((int)x, (int)y);
 
                 wowProcess.SetCursorPosition(mousePosition);
 
-                if (await CheckForLoot(mousePosition, searchForMobs))
+                if (await CheckForLoot(mousePosition, searchForMobs, ignoreMobs))
                 {
                     return true;
                 }
@@ -96,7 +105,7 @@ namespace Libs.Looting
             return false;
         }
 
-        private async Task<bool> CheckForLoot(Point mousePosition, bool searchForMobs)
+        private async Task<bool> CheckForLoot(Point mousePosition, bool searchForMobs, bool ignoreMobs)
         {
             var inCombat = this.playerReader.PlayerBitValues.PlayerInCombat;
 
@@ -141,7 +150,7 @@ namespace Libs.Looting
                 await Wait(6000, inCombat);
             }
 
-            if (cls == CursorClassification.Kill)
+            if (cls == CursorClassification.Kill && !ignoreMobs)
             {
                 Log("Found: " + cls.ToString());
                 await wowProcess.RightClickMouse(mousePosition);

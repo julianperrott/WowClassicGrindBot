@@ -116,7 +116,7 @@ namespace Libs.Actions
             }
 
             await Task.Delay(200);
-            wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+            wowProcess.SetKeyState(ConsoleKey.UpArrow, true,false, "FollowRouteAction");
 
             if (this.playerReader.PlayerBitValues.PlayerInCombat) { return; }
 
@@ -156,7 +156,7 @@ namespace Libs.Actions
             {
                 Dump("Stuck");
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
@@ -229,7 +229,7 @@ namespace Libs.Actions
                 {
                     logger.LogInformation("Not mounting as can see NPC.");
                 }
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
             }
 
             LastActive = DateTime.Now;
@@ -247,12 +247,20 @@ namespace Libs.Actions
 
         private async Task<bool> LookForTarget()
         {
-            await this.wowProcess.KeyPress(ConsoleKey.Tab, 300);
-            await Task.Delay(300);
-            if (!playerReader.HasTarget)
+            if (this.playerReader.HasTarget && !blacklist.IsTargetBlacklisted())
             {
-                await this.npcNameFinder.FindAndClickNpc(0);
-                //await Task.Delay(300);
+                return true;
+            }
+            else
+            {
+                await this.wowProcess.KeyPress(ConsoleKey.Tab, 300);
+                await Task.Delay(300);
+
+                if (!playerReader.HasTarget)
+                {
+                    await this.npcNameFinder.FindAndClickNpc(0);
+                    //await Task.Delay(300);
+                }
             }
 
             if( this.playerReader.HasTarget && !blacklist.IsTargetBlacklisted())
@@ -262,7 +270,7 @@ namespace Libs.Actions
                     await wowProcess.Dismount();
                     
                 }
-                await this.wowProcess.TapInteractKey();
+                await this.wowProcess.TapInteractKey("FollowRouteAction");
                 return true;
             }
             return false;

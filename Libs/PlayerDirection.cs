@@ -39,7 +39,7 @@ namespace Libs
             var key = GetDirectionKeyToPress(desiredDirection);
 
             // Press Right
-            wowProcess.SetKeyState(key, true, true);
+            wowProcess.SetKeyState(key, true, true, "PlayerDirection");
 
             var startTime = DateTime.Now;
 
@@ -58,7 +58,7 @@ namespace Libs
                 if (closeEnoughToDesiredDirection)
                 {
                     logger.LogInformation("Close enough, stopping turn");
-                    wowProcess.SetKeyState(key, false, true);
+                    wowProcess.SetKeyState(key, false, true, "PlayerDirection");
                     break;
                 }
 
@@ -66,7 +66,7 @@ namespace Libs
                 if (goingTheWrongWay)
                 {
                     logger.LogInformation("GOING THE WRONG WAY! Stop turn");
-                    wowProcess.SetKeyState(key, false, true);
+                    wowProcess.SetKeyState(key, false, true, "PlayerDirection");
                     break;
                 }
             }

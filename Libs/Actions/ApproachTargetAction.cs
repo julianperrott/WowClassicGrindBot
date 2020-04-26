@@ -90,13 +90,13 @@ namespace Libs.Actions
                 playerWasInCombat = true;
             }
 
-            await this.wowProcess.TapInteractKey();
+            await this.wowProcess.TapInteractKey("ApproachTargetAction 1");
             await Task.Delay(500);
 
             var newLocation = playerReader.PlayerLocation;
             if ((location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5) || this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true);
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "ApproachTargetAction");
                 await Task.Delay(2000);
                 await wowProcess.KeyPress(ConsoleKey.Spacebar, 498);
                 this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
@@ -107,7 +107,7 @@ namespace Libs.Actions
             if (approachSeconds > 20)
             {
                 await this.stuckDetector.Unstick();
-                await this.wowProcess.TapInteractKey();
+                await this.wowProcess.TapInteractKey("ApproachTargetAction unstick");
                 await Task.Delay(500);
             }
         }

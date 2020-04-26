@@ -27,7 +27,7 @@ namespace Libs
         public string name { get; set; } = string.Empty;
 
         // Priest
-
+        public bool ShadowWordPain { get => IsBitSet(0); }
 
         // Druid
         public bool Roar { get => IsBitSet(0); }

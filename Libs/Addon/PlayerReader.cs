@@ -151,9 +151,7 @@ namespace Libs
         public bool WithInPullRange => SpellInRange.WithInPullRange(this.PlayerClass);
         public bool WithInCombatRange => SpellInRange.WithInCombatRange(this.PlayerClass);
 
-        public bool IsShooting => PlayerBitValues.IsAutoRepeatActionOnActionBar10;
-        public bool IsActionBar10Current => PlayerBitValues.IsCurrentActionOnActionBar10;
-
+        public bool IsShooting => PlayerBitValues.IsAutoRepeatSpellOn_Shoot;
 
         public long SpellBeingCast => reader.GetLongAtCell(53);
         public long ComboPoints => reader.GetLongAtCell(54);
@@ -169,29 +167,46 @@ namespace Libs
             public Func<string> LogMessage { get; set; } = () => "Unknown requirement";
         }
 
-        public Requirement GetRequirement(KeyConfiguration item)
+        public void InitialiseRequirements(KeyConfiguration item)
         {
-            if (item.Requirement.StartsWith("Health>"))
+            foreach(string requirement in item.Requirements)
             {
-                var minHealth = int.Parse(item.Requirement.Replace("Health>", "").Replace("%", ""));
+                item.RequirementObjects.Add(GetRequirement(item.Name, requirement));
+            }
+        }
+
+        public Requirement GetRequirement(string name,string requirement)
+        {
+            if (requirement.StartsWith("Health>"))
+            {
+                var minHealth = int.Parse(requirement.Replace("Health>", "").Replace("%", ""));
                 return new Requirement
                 {
                     HasRequirement = () => this.HealthPercent >= minHealth,
                     LogMessage = () => $"health too high: {HealthPercent} > {minHealth}"
                 };
             }
-            else if (item.Requirement.StartsWith("Mana>"))
+            else if (requirement.StartsWith("TargetHealth>"))
             {
-                var minMana = int.Parse(item.Requirement.Replace("Mana>", "").Replace("%", ""));
+                var minHealth = int.Parse(requirement.Replace("TargetHealth>", "").Replace("%", ""));
+                return new Requirement
+                {
+                    HasRequirement = () => this.TargetHealthPercentage >= minHealth,
+                    LogMessage = () => $"target health too high: {TargetHealthPercentage} > {minHealth}"
+                };
+            }
+            else if (requirement.StartsWith("Mana>"))
+            {
+                var minMana = int.Parse(requirement.Replace("Mana>", "").Replace("%", ""));
                 return new Requirement
                 {
                     HasRequirement = () => this.ManaPercentage >= minMana || this.Druid_ShapeshiftForm > ShapeshiftForm.None,
                     LogMessage = () => $"mana too high: {ManaPercentage} > {minMana}"
                 };
             }
-            else if (item.Requirement.StartsWith("BagItem:"))
+            else if (requirement.StartsWith("BagItem:"))
             {
-                var itemId = int.Parse(item.Requirement.Replace("BagItem:", ""));
+                var itemId = int.Parse(requirement.Replace("BagItem:", ""));
                 return new Requirement
                 {
                     HasRequirement = () => this.bagReader.Contains(itemId),
@@ -214,6 +229,7 @@ namespace Libs
                     {  "Mana Regeneration", ()=> Buffs.ManaRegeneration },
                     {  "Fortitude", ()=> Buffs.Fortitude },
                     {  "InnerFire", ()=> Buffs.InnerFire },
+                    {  "Divine Spirit", ()=> Buffs.DivineSpirit },
                     {  "Renew", ()=> Buffs.Renew },
                     {  "Shield", ()=> Buffs.Shield },
                     {  "Mark of the Wild", ()=> Buffs.MarkOfTheWild },
@@ -223,30 +239,34 @@ namespace Libs
                     {  "Ice Barrier", ()=> Buffs.IceBarrier },
                     {  "Slice And Dice", ()=> Buffs.SliceAndDice },
                     {  "Battle Shout", ()=> Buffs.BattleShout },
+                    {  "Demon Skin", ()=> Buffs.DemonSkin },
 
                     {  "Demoralizing Roar", ()=> Debuffs.Roar },
                     {  "Faerie Fire", ()=> Debuffs.FaerieFire },
+                    {  "Shadow Word: Pain", ()=> Debuffs.ShadowWordPain },
 
                     { "OutOfCombatRange", ()=> this.WithInCombatRange },
-                    { "InCombatRange", ()=> !this.WithInCombatRange }
+                    { "InCombatRange", ()=> !this.WithInCombatRange },
+
+                    {  "Shooting", ()=> this.IsShooting },
                 };
             }
 
-            if (BuffDictionary.Keys.Contains(item.Requirement))
+            if (BuffDictionary.Keys.Contains(requirement))
             {
                 return new Requirement
                 {
-                    HasRequirement = BuffDictionary[item.Requirement],
-                    LogMessage = () => $"Buff {item.Requirement} missing"
+                    HasRequirement = BuffDictionary[requirement],
+                    LogMessage = () => $"Buff {requirement} missing"
                 };
             }
             else
             {
-                logger.LogInformation($"UNKNOWN BUFF! {item.Name} - {item.Requirement}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
+                logger.LogInformation($"UNKNOWN BUFF! {name} - {requirement}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
                 return new Requirement
                 {
                     HasRequirement = () => true,
-                    LogMessage = () => $"UNKNOWN BUFF! {item.Requirement}"
+                    LogMessage = () => $"UNKNOWN BUFF! {requirement}"
                 };
             }
         }

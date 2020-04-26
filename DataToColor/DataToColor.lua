@@ -14,8 +14,8 @@ DATA_CONFIG = {
     REZ = true,
     HIDE_SHAPESHIFT_BAR = true,
     AUTO_REPAIR_ITEMS = true, -- O
-    AUTO_LEARN_TALENTS = true, -- O
-    AUTO_TRAIN_SPELLS = true, -- O
+    AUTO_LEARN_TALENTS = false, -- O
+    AUTO_TRAIN_SPELLS = false, -- O
     AUTO_RESURRECT = true,
     SELL_WHITE_ITEMS = true
 }
@@ -128,7 +128,7 @@ local function OnUIErrorMessage(self, event, messageType, message)
     for i = 1, table.getn(ignoreErrorList), 1 do
         if ignoreErrorList[i]==errorName then
             foundMessage=true;
-            UIErrorsFrame:AddMessage(message, 0.7, 0.7, 0.7) -- show as grey messasge
+            UIErrorsFrame:AddMessage(errorName..":"..message, 0.7, 0.7, 0.7) -- show as grey messasge
         end
     end
 
@@ -137,7 +137,7 @@ local function OnUIErrorMessage(self, event, messageType, message)
             if errorList[i]==errorName then
                 uiErrorMessage = i;
                 foundMessage=true;
-                UIErrorsFrame:AddMessage(message, 0, 1, 0) -- show as green messasge
+                UIErrorsFrame:AddMessage(errorName..":"..message, 0, 1, 0) -- show as green messasge
             end
         end
     end
@@ -507,11 +507,13 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:needManaGem(), 16) + 
     self:MakeIndexBase2(self:ProcessExitStatus(), 17)+
     self:MakeIndexBase2(self:IsPlayerMounted(), 18)+
-    self:MakeIndexBase2(self:IsAutoRepeatActionOn(10), 19)+
+    self:MakeIndexBase2(self:IsAutoRepeatSpellOn("Shoot"), 19)+
     self:MakeIndexBase2(self:IsCurrentActionOn(10), 20)+
     self:MakeIndexBase2(self:targetIsNormal(), 21)+
     self:MakeIndexBase2(self:IsTagged(), 22);
 end
+
+
 
 function DataToColor:getBuffsForClass()
     local class, CC = UnitClass("player");
@@ -542,6 +544,8 @@ function DataToColor:getBuffsForClass()
         class=class+self:MakeIndexBase2(self:GetBuffs("Slice and Dice"), 10);
     elseif CC == "WARRIOR" then        
         class=class+self:MakeIndexBase2(self:GetBuffs("Battle Shout"), 10);        
+    elseif CC == "WARLOCK" then        
+        class=class+self:MakeIndexBase2(self:GetBuffs("Demon Skin"), 10);               
     end
     return class;
 end
@@ -553,7 +557,7 @@ function DataToColor:getDebuffsForTarget()
     class=0;
 
     if CC == "PRIEST" then 
-        class=0;
+        class=class+self:MakeIndexBase2(self:GetDebuffs("Pain"), 0);
     elseif CC == "DRUID" then
         class=class+self:MakeIndexBase2(self:GetDebuffs("Roar"), 0) +
         self:MakeIndexBase2(self:GetDebuffs("Faerie Fire"), 1);
@@ -746,8 +750,18 @@ function DataToColor:areSpellsInRange()
     elseif CC == "MAGE" then
         spellList = {
             "Fireball", --1
-            "Shoot", --2
+            "Shoot"
         };        
+    elseif CC == "HUNTER" then
+        spellList = {
+            "Raptor Strike", --1
+            "Auto Shot", --2
+        };        
+    elseif CC == "WARLOCK" then
+        spellList = {
+            "Shadow Bolt",
+            "Shoot"
+        };               
     else
         spellList = {};
     end
@@ -1092,6 +1106,13 @@ function DataToColor:IsAutoRepeatActionOn(actionSlot)
     end
 end
 
+function DataToColor:IsAutoRepeatSpellOn(spell)
+    if IsAutoRepeatSpell(spell)  then
+        return 1
+    else return 0
+    end
+end
+
 function DataToColor:IsCurrentActionOn(actionSlot)
     if IsCurrentAction(actionSlot)  then
         return 1
@@ -1170,6 +1191,8 @@ function DataToColor:HandleEvents()
     if DATA_CONFIG.AUTO_RESURRECT then
         self:ResurrectPlayer()
     end
+
+    self:IncrementIterator();
 end
 
 -- Declines/Accepts Party Invites.
@@ -1259,6 +1282,10 @@ function ValidSpell(spell)
     return false
 end
 
+function DataToColor:IncrementIterator()
+    iterator = iterator + 1
+end 
+
 -- Used purely for training spells and professions
 function DataToColor:CheckTrainer()
     iterator = iterator + 1
@@ -1313,6 +1340,7 @@ end
 function DataToColor:ResurrectPlayer()
     if Modulo(iterator, 150) == 1 then
         if UnitIsDeadOrGhost("player") then
+            
             -- Accept Release Spirit immediately after dying
             if not UnitIsGhost("player") and UnitIsGhost("player") ~= nil then
                 RepopMe()

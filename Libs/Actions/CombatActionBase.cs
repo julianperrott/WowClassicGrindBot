@@ -19,18 +19,21 @@ namespace Libs.Actions
         protected WowPoint lastInteractPostion = new WowPoint(0, 0);
         private DateTime lastActive = DateTime.Now;
         protected readonly ClassConfiguration classConfiguration;
+        protected readonly IPlayerDirection direction;
+        protected DateTime lastPulled = DateTime.Now;
 
         protected Dictionary<ConsoleKey, DateTime> LastClicked = new Dictionary<ConsoleKey, DateTime>();
 
         public bool AddsExist { get; set; }
 
-        public CombatActionBase(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
+        public CombatActionBase(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, IPlayerDirection direction)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
             this.logger = logger;
             this.classConfiguration = classConfiguration;
+            this.direction = direction;
 
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
@@ -76,11 +79,11 @@ namespace Libs.Actions
                 await wowProcess.Dismount();
             }
 
-            if ((DateTime.Now - lastActive).TotalSeconds > 5)
+            if ((DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5)
             {
                 logger.LogInformation("Interact and stop");
-                await this.wowProcess.TapInteractKey();
-                await this.PressKey(ConsoleKey.UpArrow, "",57);
+                await this.wowProcess.TapInteractKey("CombatActionBase PerformAction");
+                await this.PressKey(ConsoleKey.UpArrow, "", 57);
             }
 
             await stopMoving.Stop();
@@ -96,6 +99,7 @@ namespace Libs.Actions
 
         public virtual async Task InteractOnUIError()
         {
+            var lastError = this.playerReader.LastUIErrorMessage;
             switch (this.playerReader.LastUIErrorMessage)
             {
                 case UI_ERROR.ERR_BADATTACKFACING:
@@ -103,8 +107,43 @@ namespace Libs.Actions
                 case UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
                 case UI_ERROR.ERR_BADATTACKPOS:
                 case UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR:
-                    logger.LogInformation("Interact due to: this.playerReader.LastUIErrorMessage");
-                    await this.wowProcess.TapInteractKey();
+
+                    await this.wowProcess.KeyPress(ConsoleKey.F10, 500, $"Stop attack {this.playerReader.LastUIErrorMessage}");
+
+                    logger.LogInformation($"Interact due to: this.playerReader.LastUIErrorMessage: {this.playerReader.LastUIErrorMessage}");
+                    var facing = this.playerReader.Direction;
+                    var location = this.playerReader.PlayerLocation;
+                    await this.wowProcess.TapInteractKey("CombatActionBase InteractOnUIError 1");
+                    await Task.Delay(500);
+                    if (lastError == UI_ERROR.ERR_SPELL_FAILED_S)
+                    {
+                        await this.wowProcess.TapInteractKey("CombatActionBase InteractOnUIError 2");
+                        await Task.Delay(1000);
+                        if (this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_BADATTACKPOS && this.playerReader.Direction == facing)
+                        {
+                            logger.LogInformation("Turning 180 as I have not moved!");
+                            var desiredDirection = facing + Math.PI;
+                            desiredDirection = desiredDirection > Math.PI * 2 ? desiredDirection - Math.PI * 2 : desiredDirection;
+                            await this.direction.SetDirection(desiredDirection, new WowPoint(0, 0), "InteractOnUIError");
+                        }
+                    }
+
+                    //if (lastError == UI_ERROR.ERR_BADATTACKPOS)
+                    //{
+                    //    await Task.Delay(1000);
+                    //    if (this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_BADATTACKPOS 
+                    //        && this.playerReader.Direction == facing
+                    //        && WowPoint.DistanceTo(this.playerReader.PlayerLocation, location)<0.2
+                    //        )
+                    //    {
+                    //        //var desiredDirection = facing + Math.PI;
+                    //        //desiredDirection = desiredDirection > Math.PI * 2 ? desiredDirection - Math.PI * 2 : desiredDirection;
+                    //        //await this.direction.SetDirection(desiredDirection, new WowPoint(0, 0), "Reverse facing as interact failed");
+
+                    //        await this.wowProcess.KeyPress(ConsoleKey.F3, 200, "ERR_BADATTACKPOS Stop Combat");
+                    //    }
+                    //}
+
                     this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
             }
@@ -131,7 +170,7 @@ namespace Libs.Actions
             }
         }
 
-        public async Task PressKey(ConsoleKey key, string description="", int duration = 300)
+        public async Task PressKey(ConsoleKey key, string description = "", int duration = 300)
         {
             if (lastKeyPressed == ConsoleKey.H)
             {
@@ -175,7 +214,7 @@ namespace Libs.Actions
 
         public bool CanRun(KeyConfiguration item)
         {
-            if(!string.IsNullOrEmpty(item.CastIfAddsVisible))
+            if (!string.IsNullOrEmpty(item.CastIfAddsVisible))
             {
                 var needAdds = bool.Parse(item.CastIfAddsVisible);
                 if (needAdds != AddsExist)
@@ -221,6 +260,12 @@ namespace Libs.Actions
 
             await SwitchToCorrectShapeShiftForm(item);
 
+            if (this.playerReader.IsShooting)
+            {
+                await PressKey(ConsoleKey.H, "Stop casting shoot", 300);
+                await Task.Delay(1300); // wait for shooting to end
+            }
+
             if (sleepBeforeCast > 0)
             {
                 Log(item, $" Wait before {sleepBeforeCast}.");
@@ -239,15 +284,39 @@ namespace Libs.Actions
                 await Task.Delay(300);
                 if (!this.playerReader.IsCasting)
                 {
+                    await this.InteractOnUIError();
+                    Log(item, $"Not casting, pressing it again");
                     await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
                     await Task.Delay(300);
+                    if (!this.playerReader.IsCasting)
+                    {
+                        Log(item, $"Still not casting !");
+                        await this.InteractOnUIError();
+                        return false;
+                    }
                 }
 
+                var inCombat = this.playerReader.PlayerBitValues.PlayerInCombat;
 
                 Log(item, " waiting for cast bar to end.");
                 for (int i = 0; i < 2000; i += 100)
                 {
-                    if (!this.playerReader.IsCasting) { break; }
+                    if (!this.playerReader.IsCasting)
+                    {
+                        await Task.Delay(100);
+                        break;
+                    }
+
+                    if (inCombat = false && this.playerReader.PlayerBitValues.PlayerInCombat)
+                    {
+                        if (!this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                        {
+                            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 100, "Stop cast as picked up an add");
+                            await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
+                            break;
+                        }
+                    }
+
                     await Task.Delay(100);
                 }
             }
@@ -278,14 +347,22 @@ namespace Libs.Actions
 
         public bool MeetsRequirement(KeyConfiguration item)
         {
-            if (string.IsNullOrEmpty(item.Requirement) || item.RequirementObject == null)
+            if (!item.RequirementObjects.Any())
             {
                 return false;
             }
 
-            bool meetsRequirement = item.RequirementObject.HasRequirement();
+            bool meetsRequirement = !item.RequirementObjects.Any(r => !r.HasRequirement());
             Log(item, $"{item.Requirement.ToString()} = {meetsRequirement}");
             return meetsRequirement;
+        }
+
+        public override void OnActionEvent(object sender, ActionEvent e)
+        {
+            if (e.Key == GoapKey.pulled)
+            {
+                this.lastPulled = DateTime.Now;
+            }
         }
     }
 }

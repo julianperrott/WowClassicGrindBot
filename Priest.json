@@ -1,0 +1,150 @@
+{
+  "ClassName": "Priest",
+  "Loot": true,
+
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54_SpiritHealer.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Mind Blast",
+        "Key": "5",
+        "DelayBeforeCast": 1000,
+        "StopBeforeCast": true,
+        "HasCastBar": true
+      },
+      {
+        "Name": "Shadow Word Pain",
+        "Key": "6",
+        "DelayBeforeCast": 500,
+        "ShapeShiftForm": "None"
+      },
+      {
+        "Name": "Shoot",
+        "Key": "0"
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Heal",
+        "Key": "9",
+        "Requirement": "Health>60%",
+        "MinMana": 455,
+        "Cooldown": 10,
+        "HasCastBar": true,
+        "Log": false
+      },
+      {
+        "Name": "Shadow Word Pain",
+        "Key": "6",
+        "Requirements": ["Shadow Word: Pain","TargetHealth>10%"],
+        "Cooldown": 10,
+        "MinMana": 274,
+        "ResetOnNewTarget": true,
+        "Log": false
+      },
+      {
+        "Name": "Mind Blast",
+        "Key": "5",
+        "Cooldown": 10,
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+        "MinMana": 25000,
+        "Log": false
+      },
+      {
+        "Name": "Shield",
+        "Key": "3",
+        "Requirements": ["Health>75%","Shield","TargetHealth>15%"],
+        "Cooldown": 10,
+        "MinMana": 270,
+        "Log": false
+      },
+      {
+        "Name": "Shooting",
+        "Key": "0",
+        "Requirement": "Shooting",
+        "Cooldown": 2,
+        "Log": false
+      },
+      {
+        "Name": "Approach",
+        "Key": "H",
+        "Cooldown": 10,
+        "Log": false,
+        "DelayAfterCast": "200",
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Healing Potion",
+        "Key": "F4",
+        "Requirement": "Health>7%",
+        "Cooldown": 60,
+        "InCombat": "true",
+        "Log": false,
+        "Cost": 3
+      },
+      {
+        "Name": "Heal",
+        "Key": "9",
+        "Requirement": "Health>60%",
+        "StopBeforeCast": true,
+        "Cooldown": 10,
+        "HasCastBar": true,
+        "Log": false
+      },
+      {
+        "Name": "Well Fed",
+        "StopBeforeCast": true,
+        "Key": "=",
+        "Requirement": "Well Fed",
+        "Cooldown": 120,
+        "Log": false
+      },
+      {
+        "Name": "Drink",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirement": "Mana>40%",
+        "Cooldown": 10,
+        "Log": false
+      },
+      {
+        "Name": "Fortitude",
+        "Key": "1",
+        "Cooldown": 10,
+        "Requirement": "Fortitude",
+        "Log": false
+      },
+      {
+        "Name": "InnerFire",
+        "Key": "2",
+        "Cooldown": 10,
+        "Requirement": "InnerFire",
+        "Log": false
+      },
+      {
+        "Name": "Divine Spirit",
+        "Key": "7",
+        "Cooldown": 10,
+        "Requirement": "Divine Spirit",
+        "Log": false
+      },
+      {
+        "Name": "Open Clam",
+        "Key": "-",
+        "Cooldown": 30,
+        "Log": false
+      }
+    ]
+  }
+}

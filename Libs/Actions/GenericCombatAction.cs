@@ -13,8 +13,8 @@ namespace Libs.Actions
     {
         private DateTime lastActive = DateTime.Now;
 
-        public GenericCombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
-            : base(wowProcess, playerReader, stopMoving, logger, classConfiguration)
+        public GenericCombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, IPlayerDirection direction)
+            : base(wowProcess, playerReader, stopMoving, logger, classConfiguration, direction)
         {
         }
         protected override async Task Fight()
@@ -61,6 +61,8 @@ namespace Libs.Actions
                         if (this.LastClicked.ContainsKey(item.ConsoleKey)) { this.LastClicked.Remove(item.ConsoleKey); }
                     });
             }
+
+            base.OnActionEvent(sender, e);
         }
     }
 }

@@ -42,6 +42,14 @@
         public bool Mage_Fireball { get => IsBitSet(0); }
         public bool Mage_Shoot { get => IsBitSet(1); }
 
+        //Hunter
+        public bool Hunter_RaptorStrike { get => IsBitSet(0); }
+        public bool Hunter_ShootGun { get => IsBitSet(1); }
+
+        // Warlock
+        public bool Warlock_ShadowBolt { get => IsBitSet(0); }
+        public bool Warlock_Shoot { get => IsBitSet(1); }
+
         public bool WithInPullRange(PlayerClassEnum playerClass) => playerClass switch
         {
             PlayerClassEnum.Warrior => Warrior_Charge,
@@ -49,6 +57,8 @@
             PlayerClassEnum.Priest => Priest_ShadowWordPain,
             PlayerClassEnum.Druid => Druid_Wrath,
             PlayerClassEnum.Mage => Mage_Fireball,
+            PlayerClassEnum.Hunter => Hunter_ShootGun,
+            PlayerClassEnum.Warlock => Warlock_ShadowBolt,
             _ => true
         };
 
@@ -60,6 +70,8 @@
             PlayerClassEnum.Druid => Druid_Bash,
             PlayerClassEnum.Paladin => Paladin_Judgement,
             PlayerClassEnum.Mage => Mage_Fireball,
+            PlayerClassEnum.Hunter => Hunter_ShootGun || Hunter_RaptorStrike,
+            PlayerClassEnum.Warlock => Warlock_ShadowBolt,
             _ => true
         };
     }

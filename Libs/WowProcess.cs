@@ -15,6 +15,7 @@ namespace Libs
         private const UInt32 WM_KEYUP = 0x0101;
         private Random random = new Random();
         private ILogger logger;
+        public DateTime LastInteract { get; private set; } = DateTime.Now;
 
         private Process _warcraftProcess;
 
@@ -85,7 +86,7 @@ namespace Libs
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetCursorPos(int x, int y);
 
-        private void KeyDown(ConsoleKey key, bool always)
+        private void KeyDown(ConsoleKey key, bool forceClick, string description)
         {
             if (keyDict.ContainsKey(key))
             {
@@ -105,11 +106,11 @@ namespace Libs
         Dictionary<ConsoleKey, bool> keyDict = new Dictionary<ConsoleKey, bool>();
 
 
-        private void KeyUp(ConsoleKey key, bool always)
+        private void KeyUp(ConsoleKey key, bool forceClick, string description)
         {
             if (keyDict.ContainsKey(key))
             {
-                if (!always)
+                if (!forceClick)
                 {
                     if (keyDict[key] == false) { return; }
                 }
@@ -148,15 +149,16 @@ namespace Libs
             await KeyPress(ConsoleKey.UpArrow, 51);
         }
 
-        public async Task TapInteractKey()
+        public async Task TapInteractKey(string source)
         {
-            logger.LogInformation($"Approach target");
+            logger.LogInformation($"Approach target ({source})");
             await KeyPress(ConsoleKey.H, 99);
+            LastInteract = DateTime.Now;
         }
 
-        public void SetKeyState(ConsoleKey key, bool pressDown, bool always=false)
+        public void SetKeyState(ConsoleKey key, bool pressDown, bool forceClick, string description)
         {
-            if (pressDown) { KeyDown(key, always); } else { KeyUp(key, always); }
+            if (pressDown) { KeyDown(key, forceClick, description); } else { KeyUp(key, forceClick, description); }
         }
 
         public void SetCursorPosition(System.Drawing.Point position)

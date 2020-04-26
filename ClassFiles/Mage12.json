@@ -10,34 +10,45 @@
   "Pull": {
     "Sequence": [
       {
+        "Name": "Stop Attack",
+        "Key": "0",
+        "StopBeforeCast": true,
+        "DelayAfterCast" : 600
+      },
+      {
         "Name": "Fireball",
         "HasCastBar": true,
         "Key": "2",
         "MinMana": 45
+      },
+      {
+        "Name": "Frost Bolt",
+        "DelayBeforeCast" : 600,
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "5",
+        "MinMana": 35
       }
     ]
   },
   "Combat": {
     "Sequence": [
       {
-        "Name": "Fire Blast",
-        "Key": "1",
-        "MinMana": 75,
-        "Cooldown": 8
-      },
-      {
-        "Name": "Frost Bolt",
-        "HasCastBar": true,
-        "Key": "5",
-        "MinMana": 50,
-        "Cooldown": 6
-      },
-      {
         "Name": "Fireball",
         "HasCastBar": true,
+        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 45,
         "DelayAfterCast" : 500
+      },
+      {
+        "Name": "Interact",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": "H",
+        "Cooldown": 3,
+        "Log": false,
+        "DelayAfterCast" : 0
       }
     ]
   },

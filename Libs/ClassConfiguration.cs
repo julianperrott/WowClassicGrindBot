@@ -16,6 +16,9 @@ namespace Libs
         public bool PathThereAndBack = true;
         public bool PathReduceSteps = false;
 
+        public int NPCMaxLevels_Above = 1;
+        public int NPCMaxLevels_Below = -7;
+
         public KeyConfigurations Pull { get; set; } = new KeyConfigurations();
         public KeyConfigurations Combat { get; set; } = new KeyConfigurations();
         public KeyConfigurations Adhoc { get; set; } = new KeyConfigurations();
@@ -49,7 +52,7 @@ namespace Libs
         public bool StopBeforeCast { get; set; } = false;
         public ConsoleKey ConsoleKey { get; set; } = 0;
         public string Key { get; set; } = string.Empty;
-        public int PressDuration { get; set; } = 200;
+        public int PressDuration { get; set; } = 250;
         public string ShapeShiftForm { get; set; } = string.Empty;
         public ShapeshiftForm ShapeShiftFormEnum { get; set; } = ShapeshiftForm.None;
         public string CastIfAddsVisible { get; set; } = "";
@@ -57,21 +60,29 @@ namespace Libs
         public int MinMana { get; set; } = 0;
         public int MinComboPoints { get; set; } = 0;
         public string Requirement { get; set; } = string.Empty;
+        public List<string> Requirements { get; set; } = new List<string>();
+
         public bool WaitForWithinMelleRange { get; set; } = false;
         public bool ResetOnNewTarget { get; set; } = false;
 
         public bool Log { get; set; } = true;
         public int DelayAfterCast { get; set; } = 1500;
+        public int DelayBeforeCast { get; set; } = 0;
         public float Cost { get; set; } = 18;
         public string InCombat { get; set; } = "false";
 
-        public PlayerReader.Requirement? RequirementObject { get; set; }
+        public List<PlayerReader.Requirement> RequirementObjects { get; set; } = new List<PlayerReader.Requirement>();
 
         public void Initialise(PlayerReader playerReader, ILogger logger)
         {
-            if (RequirementObject == null)
+            if (!string.IsNullOrEmpty(this.Requirement))
             {
-                RequirementObject = playerReader.GetRequirement(this);
+                Requirements.Add(this.Requirement);
+            }
+
+            if (RequirementObjects.Count == 0 && Requirements.Count > 0)
+            {
+                playerReader.InitialiseRequirements(this);
             }
 
             if (!string.IsNullOrEmpty(ShapeShiftForm))
@@ -97,9 +108,9 @@ namespace Libs
             }
 
             var status = "NEED";
-            if (RequirementObject != null)
+            if (RequirementObjects.Any())
             {
-                status = RequirementObject.HasRequirement() ? "OK" : "NEED";
+                status = RequirementObjects.Any(r => !r.HasRequirement()) ? "NEED" : "OK";
             }
 
             if (Name.Contains(Requirement))

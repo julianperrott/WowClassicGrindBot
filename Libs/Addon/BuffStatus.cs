@@ -58,5 +58,8 @@ namespace Libs
 
         // Warrior
         public bool BattleShout { get => IsBitSet(10); }
+
+        // Warlock
+        public bool DemonSkin { get => IsBitSet(10); }
     }
 }

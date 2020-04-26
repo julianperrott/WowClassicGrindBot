@@ -39,11 +39,7 @@ namespace Libs
         {
             this.logger = logger;
             this.wowData = wowData;
-            this.blacklist = new Blacklist(wowData.PlayerReader);
-            this.wowProcess = new WowProcess(logger);
-
-            this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist, logger);
-
+            
             var classFilename = $"D:\\GitHub\\WowPixelBot\\{wowData.PlayerReader.PlayerClass.ToString()}.json";
             if (File.Exists(classFilename))
             {
@@ -54,6 +50,12 @@ namespace Libs
             {
                 throw new ArgumentOutOfRangeException($"Class config file not found {classFilename}");
             }
+
+            this.blacklist = new Blacklist(wowData.PlayerReader, classConfig.NPCMaxLevels_Above,classConfig.NPCMaxLevels_Below);
+            this.wowProcess = new WowProcess(logger);
+
+            this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist, logger);
+
 
             List<WowPoint> pathPoints, spiritPath;
             GetPaths(wowData, out pathPoints, out spiritPath);
@@ -175,7 +177,7 @@ namespace Libs
 
             try
             {
-                var genericCombat = new GenericCombatAction(wowProcess, wowData.PlayerReader, stopMoving, logger, classConfig);
+                var genericCombat = new GenericCombatAction(wowProcess, wowData.PlayerReader, stopMoving, logger, classConfig, this.playerDirection);
                 this.availableActions.Add(genericCombat);
                 this.availableActions.Add(new GenericPullAction(wowProcess, wowData.PlayerReader, npcNameFinder, stopMoving, logger, genericCombat, classConfig, this.stuckDetector));
 

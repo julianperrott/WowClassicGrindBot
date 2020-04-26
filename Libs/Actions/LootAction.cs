@@ -47,6 +47,9 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 4f; }
 
+        private bool foundAddWhileLooting = false;
+        private bool doExtendedLootSearch = true;
+
         public override async Task PerformAction()
         {
             await stopMoving.Stop();
@@ -58,7 +61,7 @@ namespace Libs.Actions
             {
                 if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
                 {
-                    await this.wowProcess.TapInteractKey();
+                    await this.wowProcess.TapInteractKey("LootAction");
                     return;
                 }
                 await wowProcess.KeyPress(ConsoleKey.F3, 200);
@@ -89,10 +92,11 @@ namespace Libs.Actions
                 }
 
                 Log(searchForMobs?"Searching for mobs": $"Looting (attempt: {lootAttempt + 1}.");
-                var foundSomething = await lootWheel.Loot(searchForMobs);
+                var foundSomething = await lootWheel.Loot(searchForMobs, doExtendedLootSearch || foundAddWhileLooting);
 
                 if (foundSomething && lootWheel.Classification == Cursor.CursorClassification.Kill)
                 {
+                    foundAddWhileLooting = true;
                     Log("We are being attacked!");
 
                     for (int i = 0; i < 2000; i += 100)
@@ -118,9 +122,12 @@ namespace Libs.Actions
                 if (!foundSomething && !searchForMobs)
                 {
                     lootAttempt = 10;
+                    foundAddWhileLooting = false;
+                    doExtendedLootSearch = true;
                 }
                 else
                 {
+                    doExtendedLootSearch = false;
                     if (searchForMobs)
                     {
                         searchForMobs = false;
@@ -129,7 +136,8 @@ namespace Libs.Actions
                     {
                         if (lootWheel.Classification == Cursor.CursorClassification.Kill)
                         {
-                            await this.wowProcess.TapInteractKey();
+                            foundAddWhileLooting = true;
+                            await this.wowProcess.TapInteractKey("LootAction");
                             Log($"Kill something !");
                             return;
                         }

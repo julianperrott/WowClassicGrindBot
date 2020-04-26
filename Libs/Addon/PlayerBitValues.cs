@@ -19,8 +19,7 @@ namespace Libs
 
         public bool IsTagged { get => IsBitSet(22); }
         public bool TargetIsNormal { get => IsBitSet(21); }
-        public bool IsCurrentActionOnActionBar10 { get => IsBitSet(20); }
-        public bool IsAutoRepeatActionOnActionBar10 { get => IsBitSet(19); }
+        public bool IsAutoRepeatSpellOn_Shoot { get => IsBitSet(19); }
         public bool IsMounted { get => IsBitSet(18); }
         public bool ProcessExitStatus { get => IsBitSet(17); }
         public bool NeedManaGem { get => IsBitSet(16); }

@@ -17,7 +17,8 @@ namespace Libs.Actions
         protected readonly StuckDetector stuckDetector;
         protected ILogger logger;
         protected readonly CombatActionBase combatAction;
-        private DateTime LastInteract = DateTime.Now;
+        private DateTime PullStartTime = DateTime.Now;
+        private DateTime LastActive = DateTime.Now;
 
         public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CombatActionBase combatAction, StuckDetector stuckDetector)
         {
@@ -40,8 +41,20 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            RaiseEvent(new ActionEvent(GoapKey.fighting, true));
+            if ((DateTime.Now - LastActive).TotalSeconds > 5)
+            {
+                PullStartTime = DateTime.Now;
+            }
+            LastActive = DateTime.Now;
 
+            if ((DateTime.Now - PullStartTime).TotalSeconds > 30)
+            {
+                await wowProcess.KeyPress(ConsoleKey.F3, 300); // clear target
+                await this.wowProcess.KeyPress(ConsoleKey.RightArrow, 1000, "Turn after pull timeout");
+                return;
+            }
+            
+            RaiseEvent(new ActionEvent(GoapKey.fighting, true));
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
@@ -82,16 +95,20 @@ namespace Libs.Actions
                 await Interact();
                 await Task.Delay(501);
             }
+            else
+            {
+                this.RaiseEvent(new ActionEvent(GoapKey.pulled, true));
+                this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+            }
         }
 
         public abstract bool ShouldStopBeforePull { get; }
 
         private async Task Interact()
         {
-            if ((DateTime.Now - LastInteract).TotalSeconds > 1)
+            if ((DateTime.Now - this.wowProcess.LastInteract).TotalSeconds > 2)
             {
-                await this.wowProcess.TapInteractKey();
-                this.LastInteract = DateTime.Now;
+                await this.wowProcess.TapInteractKey("PullTargetAction");
             }
 
             await this.combatAction.InteractOnUIError();
