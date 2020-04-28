@@ -29,7 +29,7 @@ namespace Libs.Actions
             {
                 var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast && 500> item.DelayBeforeCast ? 500 : item.DelayBeforeCast;
 
-                var success = await this.combatAction.CastIfReady(item, sleepBeforeFirstCast);
+                var success = await this.combatAction.CastIfReady(item,this, sleepBeforeFirstCast);
                 hasCast = hasCast || success;
 
                 if (!this.playerReader.HasTarget)
@@ -43,14 +43,19 @@ namespace Libs.Actions
                 }
             }
 
+            // Wait for combat
             if (hasCast)
             {
                 for (int i = 0; i < 40; i++)
                 {
-                    if (this.playerReader.PlayerBitValues.PlayerInCombat)
+                    // wait for combat, for mob to be targetting me or have suffered damage or 2 seconds to have elapsed.
+                    // sometimes after casting a ranged attack, we can be in combat before the attack has landed.
+                    if (this.playerReader.PlayerBitValues.PlayerInCombat &&
+                        (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer || this.playerReader.TargetHealthPercentage < 99 || i > 20))
                     {
                         return true;
                     }
+
                     await Task.Delay(100);
                 }
             }

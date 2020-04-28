@@ -41,5 +41,7 @@ namespace Libs
 
         // Warrior
 
+        // Warlock
+        public bool CurseofWeakness { get => IsBitSet(0); }
     }
 }

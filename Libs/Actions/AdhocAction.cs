@@ -51,7 +51,7 @@ namespace Libs.Actions
                 await Task.Delay(1000);
             }
 
-            await this.combatAction.CastIfReady(key);
+            await this.combatAction.CastIfReady(key, this);
 
             bool wasDrinkingOrEating = this.playerReader.Buffs.Drinking || this.playerReader.Buffs.Eating;
 
@@ -105,7 +105,7 @@ namespace Libs.Actions
 
         public bool HasRequirement()
         {
-            return this.combatAction.MeetsRequirement(this.key);
+            return this.combatAction.IgnoreKeyAction(this.key);
         }
 
         public override string Description()

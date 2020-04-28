@@ -18,6 +18,7 @@ namespace Libs
 
         public int NPCMaxLevels_Above = 1;
         public int NPCMaxLevels_Below = -7;
+        public List<string> Blacklist { get; set; } = new List<string>();
 
         public KeyConfigurations Pull { get; set; } = new KeyConfigurations();
         public KeyConfigurations Combat { get; set; } = new KeyConfigurations();
@@ -110,7 +111,7 @@ namespace Libs
             var status = "NEED";
             if (RequirementObjects.Any())
             {
-                status = RequirementObjects.Any(r => !r.HasRequirement()) ? "NEED" : "OK";
+                status = RequirementObjects.Any(r => r.HasRequirement()) ? "OK" : "NEED";
             }
 
             if (Name.Contains(Requirement))

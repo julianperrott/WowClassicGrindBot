@@ -246,9 +246,9 @@ namespace Libs.Actions
             return true;
         }
 
-        public async Task<bool> CastIfReady(KeyConfiguration item, int sleepBeforeCast = 0)
+        public async Task<bool> CastIfReady(KeyConfiguration item, GoapAction source, int sleepBeforeCast = 0)
         {
-            if (!CanRun(item) || MeetsRequirement(item))
+            if (!CanRun(item) || IgnoreKeyAction(item))
             {
                 return false;
             }
@@ -282,13 +282,13 @@ namespace Libs.Actions
             else
             {
                 await Task.Delay(300);
-                if (!this.playerReader.IsCasting)
+                if (!this.playerReader.IsCasting && this.playerReader.HasTarget)
                 {
                     await this.InteractOnUIError();
                     Log(item, $"Not casting, pressing it again");
                     await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
                     await Task.Delay(300);
-                    if (!this.playerReader.IsCasting)
+                    if (!this.playerReader.IsCasting && this.playerReader.HasTarget)
                     {
                         Log(item, $"Still not casting !");
                         await this.InteractOnUIError();
@@ -296,10 +296,8 @@ namespace Libs.Actions
                     }
                 }
 
-                var inCombat = this.playerReader.PlayerBitValues.PlayerInCombat;
-
                 Log(item, " waiting for cast bar to end.");
-                for (int i = 0; i < 2000; i += 100)
+                for (int i = 0; i < 15000; i += 100)
                 {
                     if (!this.playerReader.IsCasting)
                     {
@@ -307,14 +305,11 @@ namespace Libs.Actions
                         break;
                     }
 
-                    if (inCombat = false && this.playerReader.PlayerBitValues.PlayerInCombat)
+                    if (source.GetType()==typeof(PullTargetAction) && this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer && this.playerReader.IsCasting)
                     {
-                        if (!this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
-                        {
-                            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 100, "Stop cast as picked up an add");
-                            await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
-                            break;
-                        }
+                        await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 200, "Stop cast as picked up an add, my mob is not targetting me.");
+                        await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
+                        break;
                     }
 
                     await Task.Delay(100);
@@ -345,16 +340,17 @@ namespace Libs.Actions
             await this.wowProcess.KeyPress(desiredFormKey.ConsoleKey, 325);
         }
 
-        public bool MeetsRequirement(KeyConfiguration item)
+        public bool IgnoreKeyAction(KeyConfiguration item)
         {
             if (!item.RequirementObjects.Any())
             {
-                return false;
+                return false; // don't ignore
             }
 
-            bool meetsRequirement = !item.RequirementObjects.Any(r => !r.HasRequirement());
-            Log(item, $"{item.Requirement.ToString()} = {meetsRequirement}");
-            return meetsRequirement;
+            var meetsSomeRequirement = item.RequirementObjects.FirstOrDefault(r => r.HasRequirement());
+
+            Log(item, $"{item.Requirement.ToString()} = {meetsSomeRequirement?.LogMessage()}");
+            return meetsSomeRequirement != null;
         }
 
         public override void OnActionEvent(object sender, ActionEvent e)

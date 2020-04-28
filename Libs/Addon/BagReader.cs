@@ -10,7 +10,7 @@ namespace Libs
         private int bagItemsDataStart = 20;
         private readonly ISquareReader reader;
 
-        public List<BagItem> bagItems=new List<BagItem>();
+        public List<BagItem> bagItems = new List<BagItem>();
 
         public BagReader(ISquareReader reader, int bagItemsDataStart)
         {
@@ -40,7 +40,7 @@ namespace Libs
 
                     if (item != null)
                     {
-                        if (item.ItemId!= itemId || item.Count!= itemCount)
+                        if (item.ItemId != itemId || item.Count != itemCount)
                         {
                             bagItems.Remove(item);
                         }
@@ -79,6 +79,6 @@ namespace Libs
 
         public bool BagsFull => bagItems.Count >= 76;
 
-        public bool Contains(int itemId) => bagItems.Any(bi => bi.ItemId == itemId);
+        public int ItemCount(int itemId) => bagItems.Where(bi => bi.ItemId == itemId).Sum(bi => bi.Count);
     }
 }

@@ -12,11 +12,13 @@ namespace Libs
         private readonly int above;
         private readonly int below;
 
-        public Blacklist(PlayerReader playerReader, int above, int below)
+        public Blacklist(PlayerReader playerReader, int above, int below, List<string> blacklisted)
         {
             this.playerReader = playerReader;
             this.above = above;
             this.below = below;
+
+            blacklisted.ForEach(npc => blacklist.Add(npc.ToUpper().Substring(0, 6)));
         }
 
         public bool IsTargetBlacklisted()

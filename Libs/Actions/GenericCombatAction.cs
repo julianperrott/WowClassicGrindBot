@@ -31,7 +31,7 @@ namespace Libs.Actions
             bool pressed = false;
             foreach (var item in this.classConfiguration.Combat.Sequence.Where(i => i != null))
             {
-                pressed = await this.CastIfReady(item);
+                pressed = await this.CastIfReady(item, this);
                 if (pressed)
                 {
                     RaiseEvent(new ActionEvent(GoapKey.shouldloot, true));

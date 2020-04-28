@@ -51,7 +51,7 @@ namespace Libs
                 throw new ArgumentOutOfRangeException($"Class config file not found {classFilename}");
             }
 
-            this.blacklist = new Blacklist(wowData.PlayerReader, classConfig.NPCMaxLevels_Above,classConfig.NPCMaxLevels_Below);
+            this.blacklist = new Blacklist(wowData.PlayerReader, classConfig.NPCMaxLevels_Above,classConfig.NPCMaxLevels_Below, classConfig.Blacklist);
             this.wowProcess = new WowProcess(logger);
 
             this.Agent = new GoapAgent(wowData.PlayerReader, this.availableActions, this.blacklist, logger);

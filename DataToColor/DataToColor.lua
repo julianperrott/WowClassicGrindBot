@@ -492,23 +492,23 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:GetEnemyStatus(), 1) + 
     self:MakeIndexBase2(self:deadOrAlive(), 2) +
     self:MakeIndexBase2(self:checkTalentPoints(), 3) + 
-    self:MakeIndexBase2(self:needWater(), 4) + 
-    self:MakeIndexBase2(self:GetBuffs("Food"), 5) +
-    self:MakeIndexBase2(self:GetBuffs("Frost Armor"), 6) + 
-    self:MakeIndexBase2(self:GetBuffs("Arcane Intellect"), 7) + 
-    self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 8) +
+    self:MakeIndexBase2(0, 4) + 
+    self:MakeIndexBase2(0, 5) +
+    self:MakeIndexBase2(self:IsPetVisible(), 6) + 
+    self:MakeIndexBase2(0, 7) + 
+    self:MakeIndexBase2(0, 8) +
     self:MakeIndexBase2(self:GetInventoryBroken(), 9) + 
     self:MakeIndexBase2(self:IsPlayerFlying(), 10) + 
-    self:MakeIndexBase2(self:needFood(), 11) +
-    self:MakeIndexBase2(self:GetBuffs("Evocation"), 12) + 
-    self:MakeIndexBase2(self:GetBuffs("Drink"), 13) + 
+    self:MakeIndexBase2(0, 11) +
+    self:MakeIndexBase2(0, 12) + 
+    self:MakeIndexBase2(0, 13) + 
     self:MakeIndexBase2(self:playerCombatStatus(), 14) +
     self:MakeIndexBase2(self:IsTargetOfTargetPlayer(), 15) + 
-    self:MakeIndexBase2(self:needManaGem(), 16) + 
+    self:MakeIndexBase2(0, 16) + 
     self:MakeIndexBase2(self:ProcessExitStatus(), 17)+
     self:MakeIndexBase2(self:IsPlayerMounted(), 18)+
     self:MakeIndexBase2(self:IsAutoRepeatSpellOn("Shoot"), 19)+
-    self:MakeIndexBase2(self:IsCurrentActionOn(10), 20)+
+    self:MakeIndexBase2(0, 20)+
     self:MakeIndexBase2(self:targetIsNormal(), 21)+
     self:MakeIndexBase2(self:IsTagged(), 22);
 end
@@ -569,6 +569,8 @@ function DataToColor:getDebuffsForTarget()
         class=0;
     elseif CC == "WARRIOR" then        
         class=0;
+    elseif CC == "WARLOCK" then        
+        class=self:MakeIndexBase2(self:GetDebuffs("Curse of Weakness"), 0);
     end
 
     return class;
@@ -604,6 +606,10 @@ end
 function DataToColor:CastingInfoSpellId()
     local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = CastingInfo();
     if spellID ~= nil then
+        return spellID
+    end
+     _, _, _, _, _, _, _, spellID = ChannelInfo();
+     if spellID ~= nil then
         return spellID
     end
     return 0
@@ -1082,16 +1088,17 @@ function DataToColor:needManaGem()
 end
 
 function DataToColor:IsTargetOfTargetPlayerAsNumber()
-    if CHARACTER_NAME == UnitName("target") then return 0 end; -- targeting self
-    if CHARACTER_NAME == UnitName("targettarget") then return 1 end; -- targetting me
     if not(UnitName("targettarget")) then return 2 end; -- target has no target
+    if CHARACTER_NAME == UnitName("target") then return 0 end; -- targeting self
+    if UnitName("pet") == UnitName("targettarget") then return 4 end; -- targetting my pet
+    if CHARACTER_NAME == UnitName("targettarget") then return 1 end; -- targetting me
     return 3;
 end
 
 -- Returns true if target of our target is us
 function DataToColor:IsTargetOfTargetPlayer()
     local x = self:IsTargetOfTargetPlayerAsNumber();
-    if x==1 then return 1 else return 0 end;
+    if x==1 or x==4 then return 1 else return 0 end;
 end
 
 function DataToColor:IsTagged()
@@ -1115,6 +1122,13 @@ end
 
 function DataToColor:IsCurrentActionOn(actionSlot)
     if IsCurrentAction(actionSlot)  then
+        return 1
+    else return 0
+    end
+end
+
+function DataToColor:IsPetVisible()
+    if UnitIsVisible("pet") and not UnitIsDead("pet")  then
         return 1
     else return 0
     end

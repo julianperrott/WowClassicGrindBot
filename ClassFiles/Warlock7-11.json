@@ -1,15 +1,18 @@
 {
   "ClassName": "Warlock",
-  "Loot": true,
+  "Loot": false,
   "NPCMaxLevels_Below": 4,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\12_LochModan.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\12_LochModan_Spirithealer.json",
+  // 7-9
+  //"PathFilename": "D:\\GitHub\\WowPixelBot\\7_Human.json",
+  //"SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\7_Human.json",
+
+  //10-11
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\10_Human.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\10_Human_SpiritHealer.json",
 
   "PathThereAndBack": true,
   "PathReduceSteps": false,
-
-  "Blacklist": ["Tunnel"],
 
   "Pull": {
     "Sequence": [
@@ -25,51 +28,39 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Soul Shard",
-        "Key": "9",
-        "HasCastBar": true,
-        "Requirements": ["TargetHealth>36%", "BagItem:6265:3"],
-        "MinMana": 55
-      },
-      {
         "Name": "Curse of Weakness",
         "Key": "6",
         "Cooldown": 10,
         "ResetOnNewTarget": true,
         "Requirement": "Curse of Weakness",
-        "MinMana": 20,
-        "Log": false
+        "MinMana": 20
       },
       {
         "Name": "Immolate",
         "HasCastBar": true,
         "Key": "5",
-        "Cooldown": 15,
+        "Cooldown": 999,
         "ResetOnNewTarget": true,
-        "MinMana": 25,
-        "Log": false
+        "MinMana": 25
       },
       {
         "Name": "Corruption",
         "HasCastBar": true,
         "Key": "7",
-        "Cooldown": 12,
+        "Cooldown": 999,
         "ResetOnNewTarget": true,
-        "MinMana": 25,
-        "Log": false
+        "MinMana": 25
       },
       {
         "Name": "Shadow Bolt",
         "HasCastBar": true,
         "Key": "2",
-        "MinMana": 25,
-        "Log": false
+        "MinMana": 25
       },
       {
         "Name": "Interact",
         "Key": "H",
-        "Cooldown": 3,
-        "Log": false
+        "Cooldown": 3
       }
     ]
   },
@@ -92,22 +83,6 @@
         "Log": false
       },
       {
-        "Name": "Life Tap",
-        "StopBeforeCast": true,
-        "Key": "8",
-        "Requirements": ["Health<70%","Mana>60%"],
-        "Cooldown": 0,
-        "Log": false
-      },
-      {
-        "Name": "Life Tap 2",
-        "StopBeforeCast": true,
-        "Key": "8",
-        "Requirements": ["Health<80%","Mana>80%"],
-        "Cooldown": 0,
-        "Log": false
-      },
-      {
         "Name": "Eat",
         "HasCastBar": true,
         "StopBeforeCast": true,
@@ -122,14 +97,6 @@
         "Key": "-",
         "Requirement": "Mana>60%",
         "Cooldown": 20,
-        "Log": false
-      },
-      {
-        "Name": "Well Fed",
-        "StopBeforeCast": true,
-        "Key": "0",
-        "Requirement": "Well Fed",
-        "Cooldown": 120,
         "Log": false
       }
     ]

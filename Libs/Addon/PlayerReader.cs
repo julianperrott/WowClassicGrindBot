@@ -74,7 +74,7 @@ namespace Libs
         public long TargetMaxHealth => reader.GetLongAtCell(18);
 
         // Targets current percentage of health
-        public double TargetHealthPercentage => ((double)TargetHealth * 100) / TargetMaxHealth;
+        public long TargetHealthPercentage => TargetMaxHealth == 0 || TargetHealth == 1 ? 0 : (TargetHealth * 100) / TargetMaxHealth;
 
         public long TargetHealth => reader.GetLongAtCell(19);
 
@@ -175,42 +175,25 @@ namespace Libs
             }
         }
 
+
+
+
         public Requirement GetRequirement(string name,string requirement)
         {
-            if (requirement.StartsWith("Health>"))
+            if (requirement.Contains(">") || requirement.Contains("<"))
             {
-                var minHealth = int.Parse(requirement.Replace("Health>", "").Replace("%", ""));
+                return GetValueBasedRequirement(name, requirement);
+            }            
+            
+            if (requirement.StartsWith("BagItem:"))
+            {
+                var parts = requirement.Split(":");
+                var itemId = int.Parse(parts[1]);
+                var count = parts.Count() < 2 ? 1 : int.Parse(parts[2]);
                 return new Requirement
                 {
-                    HasRequirement = () => this.HealthPercent >= minHealth,
-                    LogMessage = () => $"health too high: {HealthPercent} > {minHealth}"
-                };
-            }
-            else if (requirement.StartsWith("TargetHealth>"))
-            {
-                var minHealth = int.Parse(requirement.Replace("TargetHealth>", "").Replace("%", ""));
-                return new Requirement
-                {
-                    HasRequirement = () => this.TargetHealthPercentage >= minHealth,
-                    LogMessage = () => $"target health too high: {TargetHealthPercentage} > {minHealth}"
-                };
-            }
-            else if (requirement.StartsWith("Mana>"))
-            {
-                var minMana = int.Parse(requirement.Replace("Mana>", "").Replace("%", ""));
-                return new Requirement
-                {
-                    HasRequirement = () => this.ManaPercentage >= minMana || this.Druid_ShapeshiftForm > ShapeshiftForm.None,
-                    LogMessage = () => $"mana too high: {ManaPercentage} > {minMana}"
-                };
-            }
-            else if (requirement.StartsWith("BagItem:"))
-            {
-                var itemId = int.Parse(requirement.Replace("BagItem:", ""));
-                return new Requirement
-                {
-                    HasRequirement = () => this.bagReader.Contains(itemId),
-                    LogMessage = () => $"item {itemId} not found in bag"
+                    HasRequirement = () => this.bagReader.ItemCount(itemId) >= count,
+                    LogMessage = () => $"item {itemId} not found enough in bag {this.bagReader.ItemCount(itemId)} < {count}"
                 };
             }
 
@@ -240,10 +223,12 @@ namespace Libs
                     {  "Slice And Dice", ()=> Buffs.SliceAndDice },
                     {  "Battle Shout", ()=> Buffs.BattleShout },
                     {  "Demon Skin", ()=> Buffs.DemonSkin },
+                    {  "Has Pet", ()=> this.PlayerBitValues.HasPet },
 
                     {  "Demoralizing Roar", ()=> Debuffs.Roar },
                     {  "Faerie Fire", ()=> Debuffs.FaerieFire },
                     {  "Shadow Word: Pain", ()=> Debuffs.ShadowWordPain },
+                    {  "Curse of Weakness", ()=> Debuffs.CurseofWeakness },
 
                     { "OutOfCombatRange", ()=> this.WithInCombatRange },
                     { "InCombatRange", ()=> !this.WithInCombatRange },
@@ -262,11 +247,59 @@ namespace Libs
             }
             else
             {
-                logger.LogInformation($"UNKNOWN BUFF! {name} - {requirement}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
+                logger.LogInformation($"UNKNOWN REQUIREMENT! {name} - {requirement}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
                 return new Requirement
                 {
                     HasRequirement = () => true,
-                    LogMessage = () => $"UNKNOWN BUFF! {requirement}"
+                    LogMessage = () => $"UNKNOWN REQUIREMENT! {requirement}"
+                };
+            }
+        }
+
+        private Requirement GetValueBasedRequirement(string name, string requirement)
+        {
+            var symbol = "<";
+            if(requirement.Contains(">"))
+            {
+                symbol = ">";
+            }
+
+            var parts = requirement.Split(symbol);
+            var value = int.Parse(parts[1].Replace("%",""));
+
+            var valueDictionary = new Dictionary<string, Func<long>>
+            {
+                    {  "Health", ()=> this.HealthPercent },
+                    {  "TargetHealth", ()=> this.TargetHealthPercentage },
+                    {  "Mana", ()=> this.ManaPercentage }
+            };
+
+            if (!valueDictionary.Keys.Contains(parts[0]))
+            { 
+                logger.LogInformation($"UNKNOWN REQUIREMENT! {name} - {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
+                return new Requirement
+                {
+                    HasRequirement = () => true,
+                    LogMessage = () => $"UNKNOWN REQUIREMENT! {requirement}"
+                };
+            }
+
+            var comparisonValue = valueDictionary[parts[0]];
+
+            if (symbol == ">")
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => comparisonValue() >= value,
+                    LogMessage = () => $"{parts[0]} too high: {comparisonValue()} > {value}"
+                };
+            }
+            else
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => comparisonValue() <= value,
+                    LogMessage = () => $"{parts[0]} too low: {comparisonValue} < {value}"
                 };
             }
         }
