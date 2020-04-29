@@ -1,4 +1,5 @@
 ﻿using Libs.Actions;
+using Libs.Addon;
 using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -39,7 +40,7 @@ namespace Libs
         {
             this.logger = logger;
             this.wowData = wowData;
-            
+
             var classFilename = $"D:\\GitHub\\WowPixelBot\\{wowData.PlayerReader.PlayerClass.ToString()}.json";
             if (File.Exists(classFilename))
             {
@@ -171,8 +172,8 @@ namespace Libs
 
             if (this.classConfig.Loot)
             {
-                this.availableActions.Add(new LootAction(wowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
-                this.availableActions.Add(new PostKillLootAction(wowProcess, wowData.PlayerReader, wowData.bagReader, stopMoving, logger));
+                this.availableActions.Add(new LootAction(wowProcess, wowData.PlayerReader, wowData.BagReader, stopMoving, logger));
+                this.availableActions.Add(new PostKillLootAction(wowProcess, wowData.PlayerReader, wowData.BagReader, stopMoving, logger));
             }
 
             try

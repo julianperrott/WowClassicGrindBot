@@ -189,7 +189,7 @@ namespace Libs
             {
                 var parts = requirement.Split(":");
                 var itemId = int.Parse(parts[1]);
-                var count = parts.Count() < 2 ? 1 : int.Parse(parts[2]);
+                var count = parts.Count() < 3 ? 1 : int.Parse(parts[2]);
                 return new Requirement
                 {
                     HasRequirement = () => this.bagReader.ItemCount(itemId) >= count,

@@ -19,7 +19,7 @@
             at @levelTracker.PredictedLevelTime.ToString("HH:mm:ss")
         </td>
         <td>@playerReader.XCoord.ToString("0.00"),@playerReader.YCoord.ToString("0.00")</td>
-        <td>@wowData.bagReader.bagItems.Count</td>
+        <td>@wowData.BagReader.BagItems.Count</td>
         <td>@playerReader.HealthPercent %</td>
         <td>@playerReader.ManaCurrent (@playerReader.ManaPercentage %) </td>
         <td>
@@ -75,7 +75,6 @@
 
     protected override void OnInitialized()
     {
-
         wowData.AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() => StateHasChanged());

@@ -128,22 +128,6 @@ namespace Libs.Actions
                         }
                     }
 
-                    //if (lastError == UI_ERROR.ERR_BADATTACKPOS)
-                    //{
-                    //    await Task.Delay(1000);
-                    //    if (this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_BADATTACKPOS 
-                    //        && this.playerReader.Direction == facing
-                    //        && WowPoint.DistanceTo(this.playerReader.PlayerLocation, location)<0.2
-                    //        )
-                    //    {
-                    //        //var desiredDirection = facing + Math.PI;
-                    //        //desiredDirection = desiredDirection > Math.PI * 2 ? desiredDirection - Math.PI * 2 : desiredDirection;
-                    //        //await this.direction.SetDirection(desiredDirection, new WowPoint(0, 0), "Reverse facing as interact failed");
-
-                    //        await this.wowProcess.KeyPress(ConsoleKey.F3, 200, "ERR_BADATTACKPOS Stop Combat");
-                    //    }
-                    //}
-
                     this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
             }

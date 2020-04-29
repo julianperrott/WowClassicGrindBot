@@ -1,6 +1,16 @@
 {
   "ClassName": "Paladin30",
   "Loot": true,
+  "NPCMaxLevels_Below": 4,
+
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\30_ThousandNeedles.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\30_ThousandNeedles_SpirirtHealer.json",
+
+  "PathThereAndBack": true,
+  "PathReduceSteps": false,
+
+  //"Blacklist": ["Tunnel","OL' SO","HAREN S","THRAGO"],
+
   "Pull": {
     "Sequence": []
   },
@@ -11,7 +21,7 @@
         "Key": "2",
         "Cooldown": 3,
         "MinMana": 82,
-        "Requirement": "Seal"
+        "Requirement": "Seal" // HasAura("Seal")=false
       },
       {
         "Name": "Judgement",

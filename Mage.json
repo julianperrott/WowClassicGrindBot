@@ -1,11 +1,15 @@
 {
   "ClassName": "Mage",
   "Loot": true,
+  "NPCMaxLevels_Below": 4,
 
-  "PathFilename":  "D:\\GitHub\\WowPixelBot\\12_LochModan.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\12_LochModan_Spirithealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\16_LochModan.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\16_LochModan_Spirithealer.json",
+
   "PathThereAndBack": true,
   "PathReduceSteps": false,
+
+  "Blacklist": ["Tunnel","OL' SO","HAREN S","THRAGO"],
 
   "Pull": {
     "Sequence": [

@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Libs.Addon;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace Libs
@@ -12,7 +15,7 @@ namespace Libs
         public IAddonReader AddonReader { get; private set; }
         private readonly ISquareReader squareReader;
         public PlayerReader PlayerReader { get; private set; }
-        public BagReader bagReader { get; private set; }
+        public BagReader BagReader { get; private set; }
         public EquipmentReader equipmentReader { get; private set; }
         public bool Active { get; set; } = true;
         public LevelTracker LevelTracker { get; private set; }
@@ -29,9 +32,13 @@ namespace Libs
 
             this.squareReader = new SquareReader(AddonReader);
 
-            this.bagReader = new BagReader(squareReader, 20);
+            //read item database
+            var itemFilename = $"D:\\GitHub\\WowPixelBot\\items.json";
+            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText(itemFilename));
+
+            this.BagReader = new BagReader(squareReader, 20, items);
             this.equipmentReader = new EquipmentReader(squareReader, 30);
-            this.PlayerReader = new PlayerReader(squareReader, logger, this.bagReader);
+            this.PlayerReader = new PlayerReader(squareReader, logger, this.BagReader);
             this.LevelTracker = new LevelTracker(PlayerReader);
 
             this.AddonReader.PlayerReader = this.PlayerReader;
@@ -44,7 +51,7 @@ namespace Libs
             AddonReader.Refresh();
 
             // 20 - 29
-            var bagItems = bagReader.Read();
+            var bagItems = BagReader.Read();
 
             // 30 - 31
             var equipment = equipmentReader.Read();

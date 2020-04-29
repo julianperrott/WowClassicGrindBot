@@ -25,6 +25,10 @@ namespace Libs.Actions
 
             bool hasCast = false;
 
+            //stop combat
+            await this.wowProcess.KeyPress(ConsoleKey.F10, 300);
+            this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+
             foreach (var item in this.classConfiguration.Pull.Sequence.Where(i => i != null))
             {
                 var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast && 500> item.DelayBeforeCast ? 500 : item.DelayBeforeCast;

@@ -1,0 +1,90 @@
+﻿@page "/Bag"
+
+@inject Libs.WowData wowData
+@inject Libs.BotController botController
+@inject IJSRuntime JSRuntime;
+
+<h1>Wowbot - Bag</h1>
+
+<BotHeader />
+
+<table class="table table-sm table-striped">
+    <tr>
+        <th>Bag 1</th>
+        <th>Bag 2</th>
+        <th>Bag 3</th>
+        <th>Bag 4</th>
+        <th>Bag 5</th>
+    </tr>
+    @for (int bagIndex = 0; bagIndex < 16; bagIndex++)
+    {
+        <tr>
+            @for (int bag = 0; bag < 5; bag++)
+            {
+                <td>
+                    @{ var item = wowData.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
+                    @if (item != null)
+                    {
+                        <a href="https://classic.wowhead.com/item=@item.ItemId" target="_blank" onmousemove="showTooltip(event, '@item.ItemId (@item.item.ToSellPrice())');" onmouseout="hideTooltip();">
+                            @if (item.WasRecentlyUpdated)
+                            {
+                                <div class="badge @BagItemBadge(item.item)">
+                                    @if (@item.Count > 1)
+                                    {
+                                        <b>@item.Count @item.item.Name</b>
+                                    }
+                                    else
+                                    {
+                                        <b>@item.item.Name</b>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+
+                                <div style="color:@BagItemColour(item.item)">
+                                    <b>@item.item.Name - @item.Count</b>
+                                </div>
+                            }
+                        </a>
+                    }
+                </td>
+            }
+        </tr>
+    }
+
+</table>
+<h3>@eventTime</h3>
+<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
+
+@code {
+
+    string eventTime = "";
+
+    List<string> itemColour = new List<string> { "grey", "black", "green", "blue", "purple", "yellow", "yellow", "yellow" };
+
+    protected string BagItemColour(Libs.Addon.Item item)
+    {
+        if (item.Quality < 0 || item.Quality > 7) { return "black"; }
+        return itemColour[item.Quality];
+    }
+
+    List<string> itemBadge = new List<string> { "badge-secondary", "badge-dark", "badge-success", "badge-primary", "badge-warning", "badge-warning", "badge-warning", "badge-warning" };
+
+    protected string BagItemBadge(Libs.Addon.Item item)
+    {
+        if (item.Quality < 0 || item.Quality > 7) { return "badge-dark"; }
+        return itemBadge[item.Quality];
+    }
+
+
+    protected override void OnInitialized()
+    {
+        wowData.BagReader.DataChanged += (o, e) =>
+        {
+            this.eventTime = DateTime.Now.ToString("HH:mm:ss");
+            base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
+        };
+    }
+}
+
