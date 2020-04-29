@@ -11,11 +11,20 @@ namespace Libs
         public int ItemId { get; private set; }
         public int BagIndex { get; private set; }
         public int Count { get; private set; }
-        public Item item { get; private set; }
+        public Item Item { get; private set; }
+        public string LastChangeDescription { get; private set; } = "New";
+
 
         public void UpdateCount(int count)
         {
+            if (Count == count)
+            {
+                return;
+            }
+
             LastUpdated = DateTime.Now;
+            LastChangeDescription = (count - Count).ToString();
+            if (!LastChangeDescription.StartsWith("-")) { LastChangeDescription = $"+{LastChangeDescription}"; }
             this.Count = count;
         }
 
@@ -28,7 +37,7 @@ namespace Libs
             this.BagIndex = bagIndex;
             this.ItemId = itemId;
             this.Count = count;
-            this.item = item;
+            this.Item = item;
         }
     }
 }

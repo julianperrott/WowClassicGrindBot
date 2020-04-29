@@ -41,11 +41,13 @@ namespace Libs
             this.logger = logger;
             this.wowData = wowData;
 
+            var requirementFactory = new RequirementFactory(wowData.PlayerReader, wowData.BagReader, logger);
+
             var classFilename = $"D:\\GitHub\\WowPixelBot\\{wowData.PlayerReader.PlayerClass.ToString()}.json";
             if (File.Exists(classFilename))
             {
                 classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilename));
-                classConfig.Initialise(wowData.PlayerReader, logger);
+                classConfig.Initialise(requirementFactory, logger);
             }
             else
             {
@@ -168,12 +170,12 @@ namespace Libs
             this.availableActions.Add(this.followRouteAction);
             this.availableActions.Add(this.walkToCorpseAction);
             this.availableActions.Add(new TargetDeadAction(wowProcess, wowData.PlayerReader, npcNameFinder, logger));
-            this.availableActions.Add(new ApproachTargetAction(wowProcess, wowData.PlayerReader, stopMoving, npcNameFinder, logger, this.stuckDetector));
+            this.availableActions.Add(new ApproachTargetAction(wowProcess, wowData.PlayerReader, stopMoving, npcNameFinder, logger, this.stuckDetector, classConfig));
 
             if (this.classConfig.Loot)
             {
-                this.availableActions.Add(new LootAction(wowProcess, wowData.PlayerReader, wowData.BagReader, stopMoving, logger));
-                this.availableActions.Add(new PostKillLootAction(wowProcess, wowData.PlayerReader, wowData.BagReader, stopMoving, logger));
+                this.availableActions.Add(new LootAction(wowProcess, wowData.PlayerReader, wowData.BagReader, stopMoving, logger, classConfig));
+                this.availableActions.Add(new PostKillLootAction(wowProcess, wowData.PlayerReader, wowData.BagReader, stopMoving, logger, classConfig));
             }
 
             try

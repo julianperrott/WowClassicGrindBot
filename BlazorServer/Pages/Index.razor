@@ -6,7 +6,7 @@
 @inject Libs.RouteInfo routeinfo
 @inject IJSRuntime JSRuntime;
 
-    <h3>Wowbot - Main</h3>
+<h3>Wowbot - Main</h3>
 
 <BotHeader />
 
@@ -16,7 +16,7 @@
             <table class="table table-sm table-striped">
                 @foreach (var action in goapAgent.AvailableActions)
                 {
-                    <GoapActionView action="action" IsSelected="(action == goapAgent.CurrentAction)" />
+                    <GoapActionView action="action" IsSelected="(action == goapAgent.CurrentAction)" ShowKeys="true" />
                 }
             </table>
         </div>
@@ -108,7 +108,7 @@
 
     protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
             await JSRuntime.InvokeAsync<string>("draw");
         }

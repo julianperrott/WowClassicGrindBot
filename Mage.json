@@ -5,7 +5,6 @@
 
   "PathFilename": "D:\\GitHub\\WowPixelBot\\16_LochModan.json",
   "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\16_LochModan_Spirithealer.json",
-
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
@@ -52,7 +51,7 @@
         "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 110,
-        "Requirement": "Frost Armor",
+        "Requirement": "not Frost Armor",
         "Log": false
       },
       {
@@ -60,7 +59,7 @@
         "StopBeforeCast": false,
         "Key": "4",
         "MinMana": 60,
-        "Requirement": "Arcane Intellect",
+        "Requirement": "not Arcane Intellect",
         "Log": false
       },
       {
@@ -68,7 +67,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "6",
-        "Requirement": "Health>50%",
+        "Requirement": "Health%<50",
         "Log": false
       },
       {
@@ -76,7 +75,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirement": "Mana>50%",
+        "Requirement": "Mana%<50",
         "Cooldown": 10,
         "Log": false
       },
@@ -85,7 +84,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "9",
-        "Requirement": "BagItem:2288",
+        "Requirement": "not BagItem:2288",
         "Cooldown": 300,
         "Log": false
       },
@@ -94,7 +93,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "7",
-        "Requirement": "BagItem:1113",
+        "Requirement": "not BagItem:1113",
         "Cooldown": 300,
         "Log": false
       },
@@ -102,7 +101,7 @@
         "Name": "Well Fed",
         "StopBeforeCast": true,
         "Key": "=",
-        "Requirement": "Well Fed",
+        "Requirement": "not Well Fed",
         "Cooldown": 120,
         "Log": false
       }

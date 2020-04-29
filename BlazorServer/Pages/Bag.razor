@@ -9,41 +9,41 @@
 <BotHeader />
 
 <table class="table table-sm table-striped">
-    <tr>
-        <th>Bag 1</th>
-        <th>Bag 2</th>
-        <th>Bag 3</th>
-        <th>Bag 4</th>
-        <th>Bag 5</th>
-    </tr>
+    <thead class="thead-light">
+        <tr>
+            <th>Bag 1</th>
+            <th>Bag 2</th>
+            <th>Bag 3</th>
+            <th>Bag 4</th>
+            <th>Bag 5</th>
+        </tr>
+    </thead>
     @for (int bagIndex = 0; bagIndex < 16; bagIndex++)
     {
         <tr>
             @for (int bag = 0; bag < 5; bag++)
             {
                 <td>
-                    @{ var item = wowData.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
-                    @if (item != null)
+                    @{ var bagItem = wowData.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
+                    @if (bagItem != null)
                     {
-                        <a href="https://classic.wowhead.com/item=@item.ItemId" target="_blank" onmousemove="showTooltip(event, '@item.ItemId (@item.item.ToSellPrice())');" onmouseout="hideTooltip();">
-                            @if (item.WasRecentlyUpdated)
+                        <a href="https://classic.wowhead.com/item=@bagItem.ItemId" target="_blank" onmousemove="showTooltip(event, '@bagItem.ItemId (@bagItem.Item.ToSellPrice())');" onmouseout="hideTooltip();">
+                            @if (bagItem.WasRecentlyUpdated)
                             {
-                                <div class="badge @BagItemBadge(item.item)">
-                                    @if (@item.Count > 1)
-                                    {
-                                        <b>@item.Count @item.item.Name</b>
-                                    }
-                                    else
-                                    {
-                                        <b>@item.item.Name</b>
-                                    }
-                                </div>
+                                <b>
+                                    <span style="color:@BagItemColour(bagItem.Item)">
+                                        @if (bagItem.Count > 1)
+                                        {@bagItem.Count<span>&nbsp;</span>}
+                                        @bagItem.Item.Name
+                                    </span>
+                                    <span class="badge @BagItemBadge(bagItem.Item)"> @bagItem.LastChangeDescription </span>
+                                </b>
+
                             }
                             else
                             {
-
-                                <div style="color:@BagItemColour(item.item)">
-                                    <b>@item.item.Name - @item.Count</b>
+                                <div style="color:@BagItemColour(bagItem.Item)">
+                                    <b>@bagItem.Count @bagItem.Item.Name</b>
                                 </div>
                             }
                         </a>

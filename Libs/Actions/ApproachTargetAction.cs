@@ -15,6 +15,7 @@ namespace Libs.Actions
         private readonly StopMoving stopMoving;
         private readonly NpcNameFinder npcNameFinder;
         private readonly StuckDetector stuckDetector;
+        private readonly ClassConfiguration classConfiguration;
         private ILogger logger;
         private bool NeedsToReset=true;
 
@@ -35,7 +36,7 @@ namespace Libs.Actions
             }
         }
 
-        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, NpcNameFinder npcNameFinder, ILogger logger, StuckDetector stuckDetector)
+        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, NpcNameFinder npcNameFinder, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
@@ -43,6 +44,7 @@ namespace Libs.Actions
             this.npcNameFinder = npcNameFinder;
             this.logger = logger;
             this.stuckDetector = stuckDetector;
+            this.classConfiguration = classConfiguration;
 
             AddPrecondition(GoapKey.incombatrange, false);
             AddPrecondition(GoapKey.hastarget, true);
@@ -90,7 +92,7 @@ namespace Libs.Actions
                 playerWasInCombat = true;
             }
 
-            await this.wowProcess.TapInteractKey("ApproachTargetAction 1");
+            await this.TapInteractKey("ApproachTargetAction 1");
             await Task.Delay(500);
 
             var newLocation = playerReader.PlayerLocation;
@@ -107,7 +109,7 @@ namespace Libs.Actions
             if (approachSeconds > 20)
             {
                 await this.stuckDetector.Unstick();
-                await this.wowProcess.TapInteractKey("ApproachTargetAction unstick");
+                await this.TapInteractKey("ApproachTargetAction unstick");
                 await Task.Delay(500);
             }
         }
@@ -145,6 +147,15 @@ namespace Libs.Actions
                     lastFighting = DateTime.Now;
                 }
             }
+        }
+
+        public async Task TapInteractKey(string source)
+        {
+            await this.wowProcess.KeyPress(ConsoleKey.F10, 300);
+            logger.LogInformation($"Approach target ({source})");
+            await this.wowProcess.KeyPress(this.classConfiguration.Interact.ConsoleKey, 99);
+            this.classConfiguration.Interact.SetClicked();
+            this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
         }
     }
 }

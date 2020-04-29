@@ -28,7 +28,7 @@
         "Name": "Soul Shard",
         "Key": "9",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth>36%", "BagItem:6265:3"],
+        "Requirements": ["TargetHealth%>36", "BagItem:6265:3"],
         "MinMana": 55
       },
       {
@@ -95,7 +95,7 @@
         "Name": "Life Tap",
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirements": ["Health<70%","Mana>60%"],
+        "Requirements": ["Health%<70","Mana%>60"],
         "Cooldown": 0,
         "Log": false
       },
@@ -103,7 +103,7 @@
         "Name": "Life Tap 2",
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirements": ["Health<80%","Mana>80%"],
+        "Requirements": ["Health%<80","Mana%>80"],
         "Cooldown": 0,
         "Log": false
       },
@@ -112,7 +112,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "=",
-        "Requirement": "Health>70%",
+        "Requirement": "Health%>70",
         "Log": false
       },
       {
@@ -120,7 +120,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "-",
-        "Requirement": "Mana>60%",
+        "Requirement": "Mana%>60",
         "Cooldown": 20,
         "Log": false
       },

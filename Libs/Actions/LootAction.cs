@@ -14,17 +14,19 @@ namespace Libs.Actions
         private readonly LootWheel lootWheel;
         private readonly StopMoving stopMoving;
         private readonly BagReader bagReader;
+        private readonly ClassConfiguration classConfiguration;
         private ILogger logger;
 
         private bool debug = true;
 
-        public LootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger)
+        public LootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
             this.bagReader = bagReader;
             this.logger = logger;
+            this.classConfiguration = classConfiguration;
 
             lootWheel = new LootWheel(wowProcess, playerReader, logger);
 
@@ -61,7 +63,7 @@ namespace Libs.Actions
             {
                 if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
                 {
-                    await this.wowProcess.TapInteractKey("LootAction");
+                    await this.TapInteractKey("LootAction");
                     return;
                 }
                 await wowProcess.KeyPress(ConsoleKey.F3, 200);
@@ -137,7 +139,7 @@ namespace Libs.Actions
                         if (lootWheel.Classification == Cursor.CursorClassification.Kill)
                         {
                             foundAddWhileLooting = true;
-                            await this.wowProcess.TapInteractKey("LootAction");
+                            await this.TapInteractKey("LootAction");
                             Log($"Kill something !");
                             return;
                         }
@@ -182,6 +184,13 @@ namespace Libs.Actions
         public override bool CheckIfActionCanRun()
         {
             return !bagReader.BagsFull;
+        }
+
+        public async Task TapInteractKey(string source)
+        {
+            logger.LogInformation($"Approach target ({source})");
+            await this.wowProcess.KeyPress(this.classConfiguration.Interact.ConsoleKey, 99);
+            this.classConfiguration.Interact.SetClicked();
         }
     }
 }

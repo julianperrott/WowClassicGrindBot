@@ -270,10 +270,17 @@ namespace Libs.Actions
                     await wowProcess.Dismount();
                     
                 }
-                await this.wowProcess.TapInteractKey("FollowRouteAction");
+                await this.TapInteractKey("FollowRouteAction");
                 return true;
             }
             return false;
+        }
+
+        public async Task TapInteractKey(string source)
+        {
+            logger.LogInformation($"Approach target ({source})");
+            await this.wowProcess.KeyPress(this.classConfiguration.Interact.ConsoleKey, 99);
+            this.classConfiguration.Interact.SetClicked();
         }
 
         private bool HasBeenActiveRecently()

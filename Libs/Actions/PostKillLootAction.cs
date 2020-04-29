@@ -9,8 +9,8 @@ namespace Libs.Actions
 {
     public class PostKillLootAction : LootAction
     {
-        public PostKillLootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger) 
-            : base(wowProcess, playerReader, bagReader, stopMoving, logger)
+        public PostKillLootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration) 
+            : base(wowProcess, playerReader, bagReader, stopMoving, logger, classConfiguration)
         {
         }
 

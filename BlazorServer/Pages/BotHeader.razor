@@ -77,7 +77,7 @@
     {
         wowData.AddonDataChanged += (o, e) =>
         {
-            base.InvokeAsync(() => StateHasChanged());
-        };
-    }
+            base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
+    };
+}
 }

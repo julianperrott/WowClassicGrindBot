@@ -21,9 +21,6 @@ namespace Libs.Actions
         protected readonly ClassConfiguration classConfiguration;
         protected readonly IPlayerDirection direction;
         protected DateTime lastPulled = DateTime.Now;
-
-        protected Dictionary<ConsoleKey, DateTime> LastClicked = new Dictionary<ConsoleKey, DateTime>();
-
         public bool AddsExist { get; set; }
 
         public CombatActionBase(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, IPlayerDirection direction)
@@ -38,39 +35,11 @@ namespace Libs.Actions
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.incombatrange, true);
+
+            this.classConfiguration.Combat.Sequence.Where(k=>k!=null).ToList().ForEach(key => this.Keys.Add(key));
         }
 
         public override float CostOfPerformingAction { get => 4f; }
-
-        public int GetCooldownRemaining(ConsoleKey key, int seconds)
-        {
-            if (!LastClicked.ContainsKey(key))
-            {
-                return 0;
-            }
-
-            return seconds - ((int)(DateTime.Now - LastClicked[key]).TotalSeconds);
-        }
-
-        public bool IsOnCooldown(ConsoleKey key, int seconds)
-        {
-            return GetCooldownRemaining(key, seconds) > 0;
-        }
-
-        protected bool HasEnoughMana(int value)
-        {
-            return this.playerReader.ManaCurrent >= value;
-        }
-
-        protected bool HasEnoughRage(int value)
-        {
-            return this.playerReader.ManaCurrent >= value;
-        }
-
-        protected bool HasEnoughEnergy(int value)
-        {
-            return this.playerReader.ManaCurrent >= value;
-        }
 
         public override async Task PerformAction()
         {
@@ -82,7 +51,7 @@ namespace Libs.Actions
             if ((DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5)
             {
                 logger.LogInformation("Interact and stop");
-                await this.wowProcess.TapInteractKey("CombatActionBase PerformAction");
+                await this.TapInteractKey("CombatActionBase PerformAction");
                 await this.PressKey(ConsoleKey.UpArrow, "", 57);
             }
 
@@ -113,11 +82,11 @@ namespace Libs.Actions
                     logger.LogInformation($"Interact due to: this.playerReader.LastUIErrorMessage: {this.playerReader.LastUIErrorMessage}");
                     var facing = this.playerReader.Direction;
                     var location = this.playerReader.PlayerLocation;
-                    await this.wowProcess.TapInteractKey("CombatActionBase InteractOnUIError 1");
+                    await this.TapInteractKey("CombatActionBase InteractOnUIError 1");
                     await Task.Delay(500);
                     if (lastError == UI_ERROR.ERR_SPELL_FAILED_S)
                     {
-                        await this.wowProcess.TapInteractKey("CombatActionBase InteractOnUIError 2");
+                        await this.TapInteractKey("CombatActionBase InteractOnUIError 2");
                         await Task.Delay(1000);
                         if (this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_BADATTACKPOS && this.playerReader.Direction == facing)
                         {
@@ -156,7 +125,7 @@ namespace Libs.Actions
 
         public async Task PressKey(ConsoleKey key, string description = "", int duration = 300)
         {
-            if (lastKeyPressed == ConsoleKey.H)
+            if (lastKeyPressed == classConfiguration.Interact.ConsoleKey)
             {
                 var distance = WowPoint.DistanceTo(lastInteractPostion, this.playerReader.PlayerLocation);
 
@@ -169,7 +138,7 @@ namespace Libs.Actions
                 }
             }
 
-            if (key == ConsoleKey.H)
+            if (key == classConfiguration.Interact.ConsoleKey)
             {
                 lastInteractPostion = this.playerReader.PlayerLocation;
             }
@@ -177,15 +146,6 @@ namespace Libs.Actions
             await wowProcess.KeyPress(key, duration, description);
 
             lastKeyPressed = key;
-
-            if (LastClicked.ContainsKey(key))
-            {
-                LastClicked[key] = DateTime.Now;
-            }
-            else
-            {
-                LastClicked.Add(key, DateTime.Now);
-            }
         }
 
         private void Log(KeyConfiguration item, string message)
@@ -196,7 +156,7 @@ namespace Libs.Actions
             }
         }
 
-        public bool CanRun(KeyConfiguration item)
+        protected bool CanRun(KeyConfiguration item)
         {
             if (!string.IsNullOrEmpty(item.CastIfAddsVisible))
             {
@@ -208,31 +168,12 @@ namespace Libs.Actions
                 }
             }
 
-            if (item.MinMana > this.playerReader.ManaCurrent)
-            {
-                Log(item, $"mana too low: {item.MinMana} > {this.playerReader.ManaCurrent}");
-                return false;
-            }
-
-            if (item.MinComboPoints > this.playerReader.ComboPoints)
-            {
-                Log(item, "combo points too low: {item.ComboPointRequirement} > {this.playerReader.ComboPoints}");
-                return false;
-            }
-
-            var secs = GetCooldownRemaining(item.ConsoleKey, item.Cooldown);
-            if (secs > 0)
-            {
-                Log(item, $"on cooldown, {secs}s left");
-                return false;
-            }
-
-            return true;
+            return item.CanRun();
         }
 
         public async Task<bool> CastIfReady(KeyConfiguration item, GoapAction source, int sleepBeforeCast = 0)
         {
-            if (!CanRun(item) || IgnoreKeyAction(item))
+            if (!CanRun(item))
             {
                 return false;
             }
@@ -246,8 +187,8 @@ namespace Libs.Actions
 
             if (this.playerReader.IsShooting)
             {
-                await PressKey(ConsoleKey.H, "Stop casting shoot", 300);
-                await Task.Delay(1300); // wait for shooting to end
+                await TapInteractKey("Stop casting shoot");
+                await Task.Delay(1500); // wait for shooting to end
             }
 
             if (sleepBeforeCast > 0)
@@ -257,6 +198,8 @@ namespace Libs.Actions
             }
 
             await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
+
+            item.SetClicked();
 
             if (!item.HasCastBar)
             {
@@ -324,17 +267,11 @@ namespace Libs.Actions
             await this.wowProcess.KeyPress(desiredFormKey.ConsoleKey, 325);
         }
 
-        public bool IgnoreKeyAction(KeyConfiguration item)
+        public async Task TapInteractKey(string source)
         {
-            if (!item.RequirementObjects.Any())
-            {
-                return false; // don't ignore
-            }
-
-            var meetsSomeRequirement = item.RequirementObjects.FirstOrDefault(r => r.HasRequirement());
-
-            Log(item, $"{item.Requirement.ToString()} = {meetsSomeRequirement?.LogMessage()}");
-            return meetsSomeRequirement != null;
+            logger.LogInformation($"Approach target ({source})");
+            await this.wowProcess.KeyPress(this.classConfiguration.Interact.ConsoleKey,99);
+            this.classConfiguration.Interact.SetClicked();
         }
 
         public override void OnActionEvent(object sender, ActionEvent e)

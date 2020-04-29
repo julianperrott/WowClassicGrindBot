@@ -149,13 +149,6 @@ namespace Libs
             await KeyPress(ConsoleKey.UpArrow, 51);
         }
 
-        public async Task TapInteractKey(string source)
-        {
-            logger.LogInformation($"Approach target ({source})");
-            await KeyPress(ConsoleKey.H, 99);
-            LastInteract = DateTime.Now;
-        }
-
         public void SetKeyState(ConsoleKey key, bool pressDown, bool forceClick, string description)
         {
             if (pressDown) { KeyDown(key, forceClick, description); } else { KeyUp(key, forceClick, description); }

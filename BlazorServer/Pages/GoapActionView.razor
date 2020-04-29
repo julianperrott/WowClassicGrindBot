@@ -1,12 +1,50 @@
 ﻿<tr class="@ActionClass(this.IsSelected)">
-    <td><b style="color:@ActionColour(this.IsSelected)">@action.CostOfPerformingAction: @action.Name @action.Description()</b></td>
+    <td>
+        <b style="color:@DisplayColour(action.CheckIfActionCanRun())">@action.CostOfPerformingAction: @action.Description()</b>
+    </td>
     <td>
         @foreach (var item in this.action.State)
         {
-            <span class="badge   @Badge(item)">@item.Key</span>
+            <span class="badge @Badge(item)">@item.Key</span>
+        }
+        @if (this.action.Keys.Count == 1)
+        {
+            @foreach (var requirement in this.action.Keys[0].RequirementObjects)
+            {
+                @if (requirement.VisibleIfHasRequirement || !requirement.HasRequirement())
+                {
+                    <span class="badge @Badge(requirement.HasRequirement())">@requirement.LogMessage()</span>
+                }
+            }
         }
     </td>
 </tr>
+@if (this.action.Keys.Count > 1 && ShowKeys)
+{
+    <tr>
+        <td colspan="2">
+            <table style="margin-left: 60px;">
+                @foreach (var key in this.action.Keys)
+                {
+                    <tr>
+                        <td>
+                            <b style="color:@DisplayColour(key.CanRun())">@key.Name [@key.ConsoleKey]</b>
+                        </td>
+                        <td>
+                            @foreach (var requirement in key.RequirementObjects)
+                            {
+                                @if (requirement.VisibleIfHasRequirement || !requirement.HasRequirement())
+                                {
+                                    <span class="badge @Badge(requirement.HasRequirement())">@requirement.LogMessage()</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+        </td>
+    </tr>
+}
 
 @code {
 
@@ -14,11 +52,19 @@
     public bool IsSelected { get; set; }
 
     [Parameter]
+    public bool ShowKeys { get; set; } = false;
+
+    [Parameter]
     public Libs.Actions.GoapAction action { get; set; } = new Libs.Actions.NullAction();
 
     public string Badge(KeyValuePair<string, bool> item)
     {
         return item.Value ? "badge-success" : "badge-danger";
+    }
+
+    public string Badge(bool value)
+    {
+        return value ? "badge-success" : "badge-danger";
     }
 
     public string ActionClass(bool item)
@@ -31,10 +77,9 @@
         return "table-default";
     }
 
-    public string ActionColour(bool item)
+    public string DisplayColour(bool item)
     {
-        return action.CheckIfActionCanRun() ? "black" : "gray";
+        return item ? "black" : "gray";
     }
-
 }
 

@@ -36,6 +36,8 @@ namespace Libs.Actions
         public HashSet<KeyValuePair<GoapKey, GoapPreCondition>> Preconditions { get; private set; } = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
         public HashSet<KeyValuePair<GoapKey, object>> Effects { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
 
+        public List<KeyConfiguration> Keys = new List<KeyConfiguration>();
+
         public bool InRangeOfTarget { get; set; }
 
         public abstract float CostOfPerformingAction { get; }
@@ -46,7 +48,7 @@ namespace Libs.Actions
         }
 
         private string name = string.Empty;
-        public string Name
+        public virtual string Name
         {
             get
             {
@@ -109,7 +111,7 @@ namespace Libs.Actions
 
         public virtual string Description()
         {
-            return string.Empty;
+            return $"{Name} " + (Keys.Count()==1 ? $"[{Keys.First().ConsoleKey}]" : "");
         }
     }
 }

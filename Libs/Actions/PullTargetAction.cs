@@ -41,6 +41,9 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
+            await this.wowProcess.KeyPress(ConsoleKey.F10, 300);
+            this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+
             if ((DateTime.Now - LastActive).TotalSeconds > 5)
             {
                 PullStartTime = DateTime.Now;
@@ -82,10 +85,10 @@ namespace Libs.Actions
                     return;
                 }
 
-                if (!this.combatAction.IsOnCooldown(ConsoleKey.Spacebar, 10))
-                {
-                    await this.combatAction.PressKey(ConsoleKey.Spacebar,"", 500);
-                }
+                //if (!this.combatAction.IsOnCooldown(ConsoleKey.Spacebar, 10))
+                //{
+                //    await this.combatAction.PressKey(ConsoleKey.Spacebar,"", 500);
+                //}
 
                 if (!this.stuckDetector.IsMoving())
                 {
@@ -108,7 +111,7 @@ namespace Libs.Actions
         {
             if ((DateTime.Now - this.wowProcess.LastInteract).TotalSeconds > 2)
             {
-                await this.wowProcess.TapInteractKey("PullTargetAction");
+                await this.combatAction.TapInteractKey("PullTargetAction");
             }
 
             await this.combatAction.InteractOnUIError();

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,6 +35,13 @@ namespace Libs.Actions
             {
                 AddPrecondition(GoapKey.incombat, true);
             }
+
+            this.Keys.Add(key);
+        }
+
+        public override bool CheckIfActionCanRun()
+        {
+            return this.key.CanRun();
         }
 
         public override float CostOfPerformingAction { get => key.Cost; }
@@ -53,6 +61,8 @@ namespace Libs.Actions
 
             await this.combatAction.CastIfReady(key, this);
 
+            this.key.ResetCooldown();
+
             bool wasDrinkingOrEating = this.playerReader.Buffs.Drinking || this.playerReader.Buffs.Eating;
 
             int seconds = 0;
@@ -67,11 +77,11 @@ namespace Libs.Actions
                 {
                     if (this.playerReader.ManaPercentage > 98) { break; }
                 }
-                else if (this.playerReader.Buffs.Eating && this.key.Requirement != "Well Fed")
+                else if (this.playerReader.Buffs.Eating && !this.key.Requirement.Contains("Well Fed"))
                 {
                     if (this.playerReader.HealthPercent > 98) { break; }
                 }
-                else if (this.HasRequirement())
+                else if (!this.key.CanRun())
                 {
                     break;
                 }
@@ -83,43 +93,14 @@ namespace Libs.Actions
                 }
             }
 
-            if (HasRequirement())
-            {
-                this.logger.LogInformation($"I have the buff {key.Name}");
-            }
-            else
-            {
-                this.logger.LogInformation($"I don't have the buff {key.Name}");
-            }
-
             if (wasDrinkingOrEating)
             {
                 await wowProcess.TapStopKey(); // stand up
             }
+
+            this.key.SetClicked();
         }
 
-        public override bool CheckIfActionCanRun()
-        {
-            return this.combatAction.CanRun(key) && !HasRequirement();
-        }
-
-        public bool HasRequirement()
-        {
-            return this.combatAction.IgnoreKeyAction(this.key);
-        }
-
-        public override string Description()
-        {
-            if (HasRequirement())
-            {
-                return key.ToString();
-            }
-            else
-            {
-                var canRun = this.combatAction.CanRun(key);
-                var hasEnoughManaText = this.playerReader.ManaCurrent > this.key.MinMana ? string.Empty : "(MANA)";
-                return $"{key.ToString()} {hasEnoughManaText} Can Run:{canRun}".Replace(" ", " ");
-            }
-        }
+        public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
     }
 }

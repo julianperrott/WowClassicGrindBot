@@ -15,6 +15,8 @@ namespace Libs.Actions
         : base(wowProcess, playerReader, npcNameFinder, stopMoving, logger, combatAction, stuckDetector)
         {
             this.classConfiguration = classConfiguration;
+
+            this.classConfiguration.Pull.Sequence.Where(k => k != null).ToList().ForEach(key => this.Keys.Add(key));
         }
 
         public override bool ShouldStopBeforePull => this.classConfiguration.Pull.Sequence.Count>0;
@@ -29,11 +31,11 @@ namespace Libs.Actions
             await this.wowProcess.KeyPress(ConsoleKey.F10, 300);
             this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
-            foreach (var item in this.classConfiguration.Pull.Sequence.Where(i => i != null))
+            foreach (var item in this.Keys)
             {
-                var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast && 500> item.DelayBeforeCast ? 500 : item.DelayBeforeCast;
+                var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast && 500 > item.DelayBeforeCast ? 500 : item.DelayBeforeCast;
 
-                var success = await this.combatAction.CastIfReady(item,this, sleepBeforeFirstCast);
+                var success = await this.combatAction.CastIfReady(item, this, sleepBeforeFirstCast);
                 hasCast = hasCast || success;
 
                 if (!this.playerReader.HasTarget)
