@@ -15,12 +15,13 @@ namespace Libs.Actions
         protected readonly NpcNameFinder npcNameFinder;
         protected readonly StopMoving stopMoving;
         protected readonly StuckDetector stuckDetector;
+        protected readonly ClassConfiguration classConfiguration;
         protected ILogger logger;
         protected readonly CombatActionBase combatAction;
         private DateTime PullStartTime = DateTime.Now;
         private DateTime LastActive = DateTime.Now;
 
-        public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CombatActionBase combatAction, StuckDetector stuckDetector)
+        public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CombatActionBase combatAction, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
@@ -29,6 +30,7 @@ namespace Libs.Actions
             this.logger = logger;
             this.combatAction = combatAction;
             this.stuckDetector = stuckDetector;
+            this.classConfiguration = classConfiguration;
 
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.hastarget, true);
@@ -109,7 +111,7 @@ namespace Libs.Actions
 
         private async Task Interact()
         {
-            if ((DateTime.Now - this.wowProcess.LastInteract).TotalSeconds > 2)
+            if (this.classConfiguration.Interact.SecondsSinceLastClick > 4)
             {
                 await this.combatAction.TapInteractKey("PullTargetAction");
             }

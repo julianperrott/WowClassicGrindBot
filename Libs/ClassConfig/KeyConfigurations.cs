@@ -7,9 +7,9 @@ namespace Libs
     {
         public List<KeyConfiguration> Sequence { get; set; } = new List<KeyConfiguration>();
 
-        public void Initialise(RequirementFactory requirementFactory, ILogger logger)
+        public void Initialise(PlayerReader playerReader,RequirementFactory requirementFactory, ILogger logger)
         {
-            Sequence.ForEach(i => i.Initialise(requirementFactory, logger));
+            Sequence.ForEach(i => i.Initialise(playerReader,requirementFactory, logger));
         }
     }
 }

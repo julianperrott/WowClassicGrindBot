@@ -1,9 +1,7 @@
 ﻿@page "/"
 
-@inject Libs.WowData wowData
-@inject Libs.GOAP.GoapAgent goapAgent
+@inject Libs.AddonReader addonReader
 @inject Libs.BotController botController
-@inject Libs.RouteInfo routeinfo
 @inject IJSRuntime JSRuntime;
 
 <h3>Wowbot - Main</h3>
@@ -14,9 +12,9 @@
     <div class="row">
         <div class="col-sm">
             <table class="table table-sm table-striped">
-                @foreach (var action in goapAgent.AvailableActions)
+                @foreach (var action in botController.GoapAgent.AvailableActions)
                 {
-                    <GoapActionView action="action" IsSelected="(action == goapAgent.CurrentAction)" ShowKeys="true" />
+                    <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
                 }
             </table>
         </div>
@@ -27,14 +25,14 @@
                     </g>
                     <g class="group2">
                         @{
-                            var colour = wowData.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
+                            var colour = addonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
 
-                            if (goapAgent.CurrentAction?.GetType() == typeof(Libs.Actions.FollowRouteAction))
+                            if (botController.GoapAgent.CurrentAction?.GetType() == typeof(Libs.Actions.FollowRouteAction))
                             {
                                 colour = "blue";
                             }
 
-                            <circle cx="@routeinfo.ToCanvasPointX(wowData.PlayerReader.XCoord)" cy="@routeinfo.ToCanvasPointY(wowData.PlayerReader.YCoord)" r="4" fill="@colour" />
+                            <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)" cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)" r="4" fill="@colour" />
                         }
 
                         <g stroke-width="1" stroke="lightgray">
@@ -52,7 +50,7 @@
                         </g>
 
                         <g fill="blue">
-                            @((MarkupString)routeinfo.NextPoint())
+                            @((MarkupString)botController.RouteInfo.NextPoint())
                         </g>
                     </g>
 
@@ -88,22 +86,34 @@
     protected override void OnInitialized()
     {
 
-        wowData.AddonDataChanged += (o, e) =>
+        addonReader.AddonDataChanged += (o, e) =>
         {
-            if (!CanvasInitialised)
+            base.InvokeAsync(() =>
             {
-                CanvasInitialised = true;
-                routeinfo.SetMargin(20);
-                routeinfo.SetCanvasSize(600);
-                this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
-                this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
-
-                this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
-                this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
-            }
-
-            base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
+                try
+                {
+                    InitialiseRoute();
+                    StateHasChanged();
+                } catch { }
+            });
         };
+    }
+
+    private void InitialiseRoute()
+    {
+        if (!CanvasInitialised && botController.RouteInfo !=null)
+        {
+            var routeinfo = botController.RouteInfo;
+
+            CanvasInitialised = true;
+            routeinfo.SetMargin(20);
+            routeinfo.SetCanvasSize(600);
+            this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
+            this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
+
+            this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
+            this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
+        }
     }
 
     protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)

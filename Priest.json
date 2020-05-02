@@ -1,6 +1,7 @@
 {
   "ClassName": "Priest",
   "Loot": true,
+  "NPCMaxLevels_Below": 6,
 
   "PathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54.json",
   "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54_SpiritHealer.json",
@@ -19,8 +20,7 @@
       {
         "Name": "Shadow Word Pain",
         "Key": "6",
-        "DelayBeforeCast": 500,
-        "ShapeShiftForm": "None"
+        "DelayBeforeCast": 500
       },
       {
         "Name": "Shoot",
@@ -31,9 +31,16 @@
   "Combat": {
     "Sequence": [
       {
+        "Name": "Power Infusion",
+        "Key": "F11",
+        "MinMana": 229,
+        "Cooldown": 180,
+        "Log": false
+      },
+      {
         "Name": "Heal",
         "Key": "9",
-        "Requirement": "Health>60%",
+        "Requirement": "Health%<60",
         "MinMana": 455,
         "Cooldown": 10,
         "HasCastBar": true,
@@ -42,7 +49,7 @@
       {
         "Name": "Shadow Word Pain",
         "Key": "6",
-        "Requirements": ["Shadow Word: Pain","TargetHealth>10%"],
+        "Requirements": ["not Shadow Word: Pain","TargetHealth%>10","Health%>40"],
         "Cooldown": 10,
         "MinMana": 274,
         "ResetOnNewTarget": true,
@@ -53,14 +60,15 @@
         "Key": "5",
         "Cooldown": 10,
         "StopBeforeCast": true,
+        "Requirements": ["Health%>40"],
         "HasCastBar": true,
-        "MinMana": 25000,
+        "MinMana": 2500,
         "Log": false
       },
       {
         "Name": "Shield",
         "Key": "3",
-        "Requirements": ["Health>75%","Shield","TargetHealth>15%"],
+        "Requirements": ["Health%<75","not Shield","TargetHealth%>15"],
         "Cooldown": 10,
         "MinMana": 270,
         "Log": false
@@ -68,7 +76,7 @@
       {
         "Name": "Shooting",
         "Key": "0",
-        "Requirement": "Shooting",
+        "Requirement": "not Shooting",
         "Cooldown": 2,
         "Log": false
       },
@@ -77,7 +85,7 @@
         "Key": "H",
         "Cooldown": 10,
         "Log": false,
-        "DelayAfterCast": "200",
+        "DelayAfterCast": "200"
       }
     ]
   },
@@ -86,7 +94,7 @@
       {
         "Name": "Healing Potion",
         "Key": "F4",
-        "Requirement": "Health>7%",
+        "Requirement": "Health%<7",
         "Cooldown": 60,
         "InCombat": "true",
         "Log": false,
@@ -95,7 +103,7 @@
       {
         "Name": "Heal",
         "Key": "9",
-        "Requirement": "Health>60%",
+        "Requirement": "Health%<60",
         "StopBeforeCast": true,
         "Cooldown": 10,
         "HasCastBar": true,
@@ -105,7 +113,7 @@
         "Name": "Well Fed",
         "StopBeforeCast": true,
         "Key": "=",
-        "Requirement": "Well Fed",
+        "Requirement": "not Well Fed",
         "Cooldown": 120,
         "Log": false
       },
@@ -114,7 +122,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirement": "Mana>40%",
+        "Requirement": "Mana%<40",
         "Cooldown": 10,
         "Log": false
       },
@@ -122,21 +130,21 @@
         "Name": "Fortitude",
         "Key": "1",
         "Cooldown": 10,
-        "Requirement": "Fortitude",
+        "Requirement": "not Fortitude",
         "Log": false
       },
       {
         "Name": "InnerFire",
         "Key": "2",
         "Cooldown": 10,
-        "Requirement": "InnerFire",
+        "Requirement": "not InnerFire",
         "Log": false
       },
       {
         "Name": "Divine Spirit",
         "Key": "7",
         "Cooldown": 10,
-        "Requirement": "Divine Spirit",
+        "Requirement": "not Divine Spirit",
         "Log": false
       },
       {

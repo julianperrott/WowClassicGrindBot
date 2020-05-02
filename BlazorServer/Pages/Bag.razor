@@ -1,10 +1,10 @@
 ﻿@page "/Bag"
 
-@inject Libs.WowData wowData
+@inject Libs.AddonReader addonReader
 @inject Libs.BotController botController
 @inject IJSRuntime JSRuntime;
 
-<h1>Wowbot - Bag</h1>
+    <h1>Wowbot - Bag  - @eventTime</h1>
 
 <BotHeader />
 
@@ -24,7 +24,7 @@
             @for (int bag = 0; bag < 5; bag++)
             {
                 <td>
-                    @{ var bagItem = wowData.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
+                    @{ var bagItem = addonReader.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
                     @if (bagItem != null)
                     {
                         <a href="https://classic.wowhead.com/item=@bagItem.ItemId" target="_blank" onmousemove="showTooltip(event, '@bagItem.ItemId (@bagItem.Item.ToSellPrice())');" onmouseout="hideTooltip();">
@@ -36,7 +36,7 @@
                                         {@bagItem.Count<span>&nbsp;</span>}
                                         @bagItem.Item.Name
                                     </span>
-                                    <span class="badge @BagItemBadge(bagItem.Item)"> @bagItem.LastChangeDescription </span>
+                                    <span class="badge badge-info"> @bagItem.LastChangeDescription </span>
                                 </b>
 
                             }
@@ -54,7 +54,7 @@
     }
 
 </table>
-<h3>@eventTime</h3>
+
 <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
 
 @code {
@@ -80,7 +80,7 @@
 
     protected override void OnInitialized()
     {
-        wowData.BagReader.DataChanged += (o, e) =>
+        addonReader.BagReader.DataChanged += (o, e) =>
         {
             this.eventTime = DateTime.Now.ToString("HH:mm:ss");
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });

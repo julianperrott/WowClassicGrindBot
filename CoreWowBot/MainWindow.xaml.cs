@@ -93,11 +93,45 @@ namespace Powershell
 
         public void ReadAddon()
         {
-            while(true)
+            while (true)
             {
                 addonThread.AddonRefresh();
+
+                this.Dispatcher.Invoke(() =>
+                {
+                    try
+                    {
+
+                        var desiredDirection = double.Parse(DesiredDirection.Text);
+                        //double RADIAN = Math.PI * 2;
+                        //var result = (RADIAN + desiredDirection - this.addonThread.PlayerReader.Direction) % RADIAN;
+                        //if (result > Math.PI) { result = RADIAN - result;  }
+
+                        var result = playerDirection.TurnAmount(desiredDirection);
+                        var turnDuration = playerDirection.TurnDuration(desiredDirection);
+
+                        this.LabDirection.Content = $"Dir: {this.addonThread.PlayerReader.Direction.ToString("0.0")} / {result.ToString("0.0")} / {turnDuration.ToString("0.0")}";
+                    }
+                    catch
+                    {
+                    }
+                });
             }
         }
+
+        private async void Turn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var desiredDirection = double.Parse(DesiredDirection.Text);
+                await this.playerDirection.SetDirection(desiredDirection, new WowPoint(0,0), "Turn_Click");
+            }
+            catch
+            {
+            }
+        }
+
+            
 
         private void Dump(long v)
         {

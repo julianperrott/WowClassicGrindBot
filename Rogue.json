@@ -1,9 +1,10 @@
 {
   "ClassName": "Rogue",
   "Loot": true,
+  "NPCMaxLevels_Below": 6,
 
-  "PathFilename":  "D:\\GitHub\\WowPixelBot\\52_Tanaris.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\52_Tanaris_SpiritHealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 
@@ -14,59 +15,89 @@
         "Name": "Throwing Knife",
         "Key": "D9",
         "DelayAfterCast": 1000,
+        "Requirement": "not npcID:6195",
         "WaitForWithinMelleRange": true
+      },
+      {
+        "Name": "Sprint",
+        "Key": "0",
+        "DelayAfterCast": 100,
+        "Requirement": "npcID:6195",
+        "WaitForWithinMelleRange": false
+      },
+      {
+        "Name": "Approach",
+        "Key": "H",
+        "DelayAfterCast": 1000,
+        "Requirement": "npcID:6195",
+        "WaitForWithinMelleRange": false
       }
     ]
   },
   "Combat": {
     "Sequence": [
       {
+        "Name": "Cold Blood",
+        "Key": "1",
+        "Cooldown": 180
+      },
+      {
         "Name": "Vanish",
         "Key": "8",
-        "Requirement": "Health>5%",
+        "Requirement": "Health%<10",
         "DelayAfterCast": 10000,
         "Cooldown": 300
       },
       {
         "Name": "Evasion",
         "Key": "5",
-        "Requirement": "Health>50%",
+        "Requirement": "Health%<50",
         "Cooldown": 210
       },
       {
         "Name": "Slice And Dice",
         "Key": "3",
-        "MinMana": 25,
+        "MinEnergy": 25,
         "MinComboPoints": 2,
         "Cooldown": 3,
         "Requirement": "Slice And Dice"
+      }, 
+      {
+        "Name": "Approach",
+        "Key": "H",
+        "Cooldown": 5,
+        "MinEnergy": 50
       },
       {
         "Name": "Eviscerate",
         "Key": "4",
-        "MinMana": 35,
+        "MinEnergy": 35,
         "MinComboPoints": 3,
         "Cooldown": 10
       },
       {
         "Name": "Sinister Strike",
         "Key": "2",
-        "MinMana": 40
-      }, 
-      {
-        "Name": "Approach",
-        "Key": "H",
-        "Cooldown": 3
+        "MinEnergy": 40
       }
     ]
   },
   "Adhoc": {
     "Sequence": [
       {
+        "Name": "Healing Potion",
+        "Key": "F4",
+        "Requirement": "Health%<5",
+        "Cooldown": 60,
+        "InCombat": "true",
+        "Log": false,
+        "Cost": 3
+      },
+      {
         "Name": "Eat",
         "StopBeforeCast": false,
         "Key": "7",
-        "Requirement": "Health>50%",
+        "Requirement": "Health%<50",
         "Cooldown": 0,
         "DelayAfterCast": 1000,
         "Log": false,
@@ -76,7 +107,7 @@
         "Name": "Well Fed",
         "StopBeforeCast": false,
         "Key": "7",
-        "Requirement": "Well Fed",
+        "Requirement": "not Well Fed",
         "Cooldown": 120,
         "Log": false
       },
@@ -100,6 +131,13 @@
         "Name": "Equip Dagger",
         "Key": "F6",
         "Cooldown": 600,
+        "Log": false
+      },
+      {
+        "Name": "Open Clam",
+        "Key": "-",
+        "Cooldown": 30,
+        "Requirements": ["BagItem:7973:1"],
         "Log": false
       }
     ]

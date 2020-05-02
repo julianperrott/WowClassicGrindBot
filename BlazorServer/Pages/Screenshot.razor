@@ -2,13 +2,13 @@
 @inject Libs.BotController botController
 
 
-<h1>Wowbot - Screenshot</h1>
-
+<h1>Wowbot - Screenshot - @eventTime</h1>
 
 <BotHeader />
 
 <img src="data:image/png;base64, @image" alt="Red dot" />
-<h3>@eventTime</h3>
+
+<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
 
 @code {
     string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
@@ -17,8 +17,8 @@
     protected override void OnInitialized()
     {
         // Subscription to table record change events
-        this.botController.WowBot.OnScreenChanged -= this.ImageChanged;
-        this.botController.WowBot.OnScreenChanged += this.ImageChanged;
+        this.botController.WowScreen.OnScreenChanged -= this.ImageChanged;
+        this.botController.WowScreen.OnScreenChanged += this.ImageChanged;
     }
 
     // The event handler, will update the HTML view according to new stock value
@@ -35,7 +35,7 @@
 
     public void Dispose()
     {
-        this.botController.WowBot.OnScreenChanged -= this.ImageChanged;
+        this.botController.WowScreen.OnScreenChanged -= this.ImageChanged;
     }
 
 

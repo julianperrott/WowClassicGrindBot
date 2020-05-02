@@ -1,10 +1,10 @@
 {
   "ClassName": "Mage",
   "Loot": true,
-  "NPCMaxLevels_Below": 4,
+  "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\16_LochModan.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\16_LochModan_Spirithealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\19_LochModan.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\19_LochModan_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
@@ -68,7 +68,8 @@
         "StopBeforeCast": true,
         "Key": "6",
         "Requirement": "Health%<50",
-        "Log": false
+        "Log": false,
+        "Cost": 3
       },
       {
         "Name": "Drink",
@@ -77,7 +78,8 @@
         "Key": "8",
         "Requirement": "Mana%<50",
         "Cooldown": 10,
-        "Log": false
+        "Log": false,
+        "Cost": 3
       },
       {
         "Name": "Conjure Water",

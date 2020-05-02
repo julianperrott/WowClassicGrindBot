@@ -48,14 +48,14 @@ namespace BlazorServer
         {
             var logger = new SerilogLoggerProvider(Log.Logger).CreateLogger(nameof(Program));
             var botController = new BotController(logger);
+            botController.InitialiseBot();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<BotController>(botController);
-            services.AddSingleton<WowData>(botController.WowData);
-            services.AddSingleton<GoapAgent>(botController.WowBot.Agent);
-            services.AddSingleton<RouteInfo>(botController.WowBot.RouteInfo);
+            services.AddSingleton<AddonReader>(botController.AddonReader);
+            //services.AddSingleton<RouteInfo>(botController.WowBot.RouteInfo);
 
         }
 

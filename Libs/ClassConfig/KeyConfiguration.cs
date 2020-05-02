@@ -17,7 +17,7 @@ namespace Libs
         public ShapeshiftForm ShapeShiftFormEnum { get; set; } = ShapeshiftForm.None;
         public string CastIfAddsVisible { get; set; } = "";
         public int Cooldown { get; set; } = 0;
-        
+
         public int MinMana { get; set; } = 0;
         public int MinRage { get; set; } = 0;
         public int MinEnergy { get; set; } = 0;
@@ -35,12 +35,18 @@ namespace Libs
         public float Cost { get; set; } = 18;
         public string InCombat { get; set; } = "false";
 
+        public WowPoint LastClickPostion  { get; private set; } = new WowPoint(0, 0);
+
         public List<Requirement> RequirementObjects { get; set; } = new List<Requirement>();
 
         protected static Dictionary<ConsoleKey, DateTime> LastClicked = new Dictionary<ConsoleKey, DateTime>();
 
-        public void Initialise(RequirementFactory requirementFactory, ILogger logger)
+        private PlayerReader? playerReader;
+
+        public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
         {
+            this.playerReader = playerReader;
+
             if (!string.IsNullOrEmpty(this.Requirement))
             {
                 Requirements.Add(this.Requirement);
@@ -90,6 +96,11 @@ namespace Libs
 
         internal void SetClicked()
         {
+            if (this.playerReader != null)
+            {
+                LastClickPostion = this.playerReader.PlayerLocation;
+            }
+
             if (LastClicked.ContainsKey(this.ConsoleKey))
             {
                 LastClicked[this.ConsoleKey] = DateTime.Now;
@@ -99,6 +110,8 @@ namespace Libs
                 LastClicked.Add(this.ConsoleKey, DateTime.Now);
             }
         }
+
+        public double SecondsSinceLastClick => LastClicked.ContainsKey(this.ConsoleKey) ? (DateTime.Now - LastClicked[this.ConsoleKey]).TotalSeconds : 999;
 
         internal void ResetCooldown()
         {

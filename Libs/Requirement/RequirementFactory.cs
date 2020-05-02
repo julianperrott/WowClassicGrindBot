@@ -61,11 +61,33 @@ namespace Libs
 
         public Requirement GetRequirement(string name, string requirement)
         {
+            this.logger.LogInformation($"Processing requirement {name} : {requirement}");
+
             var requirementText = requirement;
 
             if (requirement.Contains(">") || requirement.Contains("<"))
             {
                 return GetValueBasedRequirement(name, requirement);
+            }
+
+            if (requirement.Contains("npcID:"))
+            {
+                var parts = requirement.Split(":");
+                var npcId = int.Parse(parts[1]);
+
+                if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+                {
+                    return new Requirement
+                    {
+                        HasRequirement = () => this.playerReader.TargetId != npcId,
+                        LogMessage = () => $"not Target id {this.playerReader.TargetId} = {npcId}"
+                    };
+                }
+                return new Requirement
+                {
+                    HasRequirement = () => this.playerReader.TargetId == npcId,
+                    LogMessage = () => $"Target id {this.playerReader.TargetId} = {npcId}"
+                };
             }
 
             if (requirement.Contains("BagItem:"))

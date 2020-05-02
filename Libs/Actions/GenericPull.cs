@@ -9,13 +9,11 @@ namespace Libs.Actions
 {
     public class GenericPullAction : PullTargetAction
     {
-        private readonly ClassConfiguration classConfiguration;
+        
 
         public GenericPullAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CombatActionBase combatAction, ClassConfiguration classConfiguration, StuckDetector stuckDetector)
-        : base(wowProcess, playerReader, npcNameFinder, stopMoving, logger, combatAction, stuckDetector)
+        : base(wowProcess, playerReader, npcNameFinder, stopMoving, logger, combatAction, stuckDetector, classConfiguration)
         {
-            this.classConfiguration = classConfiguration;
-
             this.classConfiguration.Pull.Sequence.Where(k => k != null).ToList().ForEach(key => this.Keys.Add(key));
         }
 

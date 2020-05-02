@@ -1,6 +1,5 @@
 ﻿@using Libs;
-@inject Libs.WowData wowData
-@inject Libs.GOAP.GoapAgent goapAgent
+@inject Libs.AddonReader addonReader
 @inject Libs.BotController botController
 
 <table class="table table-bordered">
@@ -19,7 +18,7 @@
             at @levelTracker.PredictedLevelTime.ToString("HH:mm:ss")
         </td>
         <td>@playerReader.XCoord.ToString("0.00"),@playerReader.YCoord.ToString("0.00")</td>
-        <td>@wowData.BagReader.BagItems.Count</td>
+        <td>@addonReader.BagReader.BagItems.Count</td>
         <td>@playerReader.HealthPercent %</td>
         <td>@playerReader.ManaCurrent (@playerReader.ManaPercentage %) </td>
         <td>
@@ -27,27 +26,33 @@
 
             @if (!string.IsNullOrEmpty(playerReader.Target))
             {
-                <div>
-                    @playerReader.Target
-                    (@playerReader.TargetLevel)
-                    @((int)playerReader.TargetHealthPercentage) %
+                <a href="https://classic.wowhead.com/npc=@playerReader.TargetId"
+                   target="_blank" 
+                   onmousemove="showTooltip(event, '@playerReader.TargetId (GUID: @playerReader.TargetGuid)');" 
+                   onmouseout="hideTooltip();">
 
-                    @if (!playerReader.PlayerBitValues.TargetIsNormal)
-                    {
-                        <div>NOT NORMAL</div>
-                    }
-                    else if (playerReader.ComboPoints > 0)
-                    {
-                        <div>Combo Points: @playerReader.ComboPoints</div>
-                    }
-                </div>
-                <div>Potential Adds: @botController.WowBot.PotentialAddsExist</div>
+                    <div>
+                        @playerReader.Target
+                        (@playerReader.TargetLevel)
+                        @((int)playerReader.TargetHealthPercentage) %
+
+                        @if (!playerReader.PlayerBitValues.TargetIsNormal)
+                        {
+                            <div>NOT NORMAL</div>
+                        }
+                        else if (playerReader.ComboPoints > 0)
+                        {
+                            <div>Combo Points: @playerReader.ComboPoints</div>
+                        }
+                    </div>
+                    <div>Potential Adds: @botController.WowBot.PotentialAddsExist</div>
+                    </a>
             }
             else
             {
-                <div>Kills: @levelTracker.MobsKilled</div>
+                    <div>Kills: @levelTracker.MobsKilled</div>
             }
-        </td>
+            </td>
         <td>
             @playerReader.LastUIErrorMessage.ToString()
         </td>
@@ -55,16 +60,16 @@
 </table>
 
 <table class="table table-sm table-striped">
-    @if (goapAgent.CurrentAction != null)
+    @if (botController.GoapAgent.CurrentAction != null)
     {
-        <GoapActionView action="goapAgent.CurrentAction" IsSelected="true" />
+        <GoapActionView action="botController.GoapAgent.CurrentAction" IsSelected="true" />
     }
 </table>
 
 @code {
 
-    PlayerReader playerReader => wowData.PlayerReader;
-    LevelTracker levelTracker => wowData.LevelTracker;
+    PlayerReader playerReader => addonReader.PlayerReader;
+    LevelTracker levelTracker => addonReader.LevelTracker;
 
     public bool PlayerInCombat => this.playerReader.PlayerBitValues.PlayerInCombat;
 
@@ -75,9 +80,9 @@
 
     protected override void OnInitialized()
     {
-        wowData.AddonDataChanged += (o, e) =>
+        addonReader.AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
-    };
-}
+        };
+    }
 }

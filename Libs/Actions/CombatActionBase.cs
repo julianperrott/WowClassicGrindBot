@@ -16,7 +16,6 @@ namespace Libs.Actions
         protected ILogger logger;
         protected ActionBarStatus actionBar = new ActionBarStatus(0);
         protected ConsoleKey lastKeyPressed = ConsoleKey.Escape;
-        protected WowPoint lastInteractPostion = new WowPoint(0, 0);
         private DateTime lastActive = DateTime.Now;
         protected readonly ClassConfiguration classConfiguration;
         protected readonly IPlayerDirection direction;
@@ -82,8 +81,13 @@ namespace Libs.Actions
                     logger.LogInformation($"Interact due to: this.playerReader.LastUIErrorMessage: {this.playerReader.LastUIErrorMessage}");
                     var facing = this.playerReader.Direction;
                     var location = this.playerReader.PlayerLocation;
-                    await this.TapInteractKey("CombatActionBase InteractOnUIError 1");
-                    await Task.Delay(500);
+
+                    if (this.classConfiguration.Interact.SecondsSinceLastClick > 4)
+                    {
+                        await this.TapInteractKey("CombatActionBase InteractOnUIError 1");
+                        await Task.Delay(500);
+                    }
+
                     if (lastError == UI_ERROR.ERR_SPELL_FAILED_S)
                     {
                         await this.TapInteractKey("CombatActionBase InteractOnUIError 2");
@@ -127,20 +131,15 @@ namespace Libs.Actions
         {
             if (lastKeyPressed == classConfiguration.Interact.ConsoleKey)
             {
-                var distance = WowPoint.DistanceTo(lastInteractPostion, this.playerReader.PlayerLocation);
+                var distance = WowPoint.DistanceTo(classConfiguration.Interact.LastClickPostion, this.playerReader.PlayerLocation);
 
                 if (distance > 1)
                 {
                     logger.LogInformation($"Stop moving: We have moved since the last interact: {distance}");
                     await wowProcess.TapStopKey();
-                    lastInteractPostion = this.playerReader.PlayerLocation;
+                    classConfiguration.Interact.SetClicked();
                     await Task.Delay(300);
                 }
-            }
-
-            if (key == classConfiguration.Interact.ConsoleKey)
-            {
-                lastInteractPostion = this.playerReader.PlayerLocation;
             }
 
             await wowProcess.KeyPress(key, duration, description);
@@ -183,7 +182,10 @@ namespace Libs.Actions
                 return false;
             }
 
-            await SwitchToCorrectShapeShiftForm(item);
+            if (!await SwitchToCorrectShapeShiftForm(item))
+            {
+                return false;
+            }
 
             if (this.playerReader.IsShooting)
             {
@@ -232,7 +234,7 @@ namespace Libs.Actions
                         break;
                     }
 
-                    if (source.GetType()==typeof(PullTargetAction) && this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer && this.playerReader.IsCasting)
+                    if (source.GetType()==typeof(GenericPullAction) && this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer && this.playerReader.IsCasting)
                     {
                         await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 200, "Stop cast as picked up an add, my mob is not targetting me.");
                         await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
@@ -246,12 +248,12 @@ namespace Libs.Actions
             return true;
         }
 
-        public async Task SwitchToCorrectShapeShiftForm(KeyConfiguration item)
+        public async Task<bool> SwitchToCorrectShapeShiftForm(KeyConfiguration item)
         {
             if (this.playerReader.PlayerClass != PlayerClassEnum.Druid || string.IsNullOrEmpty(item.ShapeShiftForm)
                 || this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum)
             {
-                return;
+                return true;
             }
 
             var desiredFormKey = this.classConfiguration.ShapeshiftForm
@@ -261,10 +263,12 @@ namespace Libs.Actions
             if (desiredFormKey == null)
             {
                 logger.LogWarning($"Unable to find key in ShapeshiftForm to transform into {item.ShapeShiftFormEnum}");
-                return;
+                return false;
             }
 
             await this.wowProcess.KeyPress(desiredFormKey.ConsoleKey, 325);
+
+            return this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum;
         }
 
         public async Task TapInteractKey(string source)

@@ -29,15 +29,15 @@ namespace Libs
 
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys = new Dictionary<ShapeshiftForm, ConsoleKey>();
 
-        public void Initialise(RequirementFactory requirementFactory, ILogger logger)
+        public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
         {
-            Pull.Initialise(requirementFactory, logger);
-            Combat.Initialise(requirementFactory, logger);
-            Adhoc.Initialise(requirementFactory, logger);
-            ShapeshiftForm.ForEach(i => i.Initialise(requirementFactory, logger));
+            Pull.Initialise(playerReader, requirementFactory, logger);
+            Combat.Initialise(playerReader, requirementFactory, logger);
+            Adhoc.Initialise(playerReader, requirementFactory, logger);
+            ShapeshiftForm.ForEach(i => i.Initialise(playerReader, requirementFactory, logger));
 
             Interact.Key = InteractKey;
-            Interact.Initialise(requirementFactory, logger);
+            Interact.Initialise(playerReader, requirementFactory, logger);
         }
     }
 }

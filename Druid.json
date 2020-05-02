@@ -164,7 +164,7 @@
         "Name": "Drink",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "H",
+        "Key": "0",
         "Requirement": "Mana%<40",
         "Cooldown": 10,
         "Log": false,

@@ -399,6 +399,10 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(DataToColor:CastingInfoSpellId()), 53) -- Spell being cast
             MakePixelSquareArr(integerToColor(DataToColor:ComboPoints()), 54) -- Combo points for rogue / druid
             MakePixelSquareArr(integerToColor(DataToColor:getDebuffsForTarget()), 55) -- target debuffs
+
+            MakePixelSquareArr(integerToColor(DataToColor:targetNpcId()), 56) -- target id
+            MakePixelSquareArr(integerToColor(DataToColor:targetGuid()),57) -- target reasonably uniqueId
+
             self:HandleEvents()
         end
         if SETUP_SEQUENCE then
@@ -441,27 +445,23 @@ function DataToColor:CreateFrames(n)
     backgroundframe:SetWidth(floor(n / FRAME_ROWS) * (CELL_SIZE + CELL_SPACING))
     backgroundframe:SetFrameStrata("HIGH")
     
-    local windowCheckFrame = CreateFrame("Frame", "frame_windowcheck", UIParent)
-    windowCheckFrame:SetPoint("TOPLEFT", 120, -200)
-    windowCheckFrame:SetHeight(5)
-    windowCheckFrame:SetWidth(5)
-    windowCheckFrame:SetFrameStrata("LOW")
-    setFramePixelBackdrop(windowCheckFrame)
-    windowCheckFrame:SetBackdropColor(0.5, 0.1, 0.8, 1)
+    --local windowCheckFrame = CreateFrame("Frame", "frame_windowcheck", UIParent)
+    --windowCheckFrame:SetPoint("TOPLEFT", 120, -200)
+    --windowCheckFrame:SetHeight(5)
+    --windowCheckFrame:SetWidth(5)
+    --windowCheckFrame:SetFrameStrata("LOW")
+    --setFramePixelBackdrop(windowCheckFrame)
+    --windowCheckFrame:SetBackdropColor(0.5, 0.1, 0.8, 1)
     
     -- creating a new frame to check for open BOE and BOP windows
-    local bindingCheckFrame = CreateFrame("Frame", "frame_bindingcheck", UIParent)
+    --local bindingCheckFrame = CreateFrame("Frame", "frame_bindingcheck", UIParent)
     -- 90 and 200 are the x and y offsets from the default "CENTER" position
-    bindingCheckFrame:SetPoint("CENTER", 90, 200)
-    -- Frame height as 5px
-    bindingCheckFrame:SetHeight(5)
-    -- Frame width as 5px
-    bindingCheckFrame:SetWidth(5)
-    -- sets the priority of the Frame
-    bindingCheckFrame:SetFrameStrata("LOW")
-    setFramePixelBackdrop(bindingCheckFrame)
-    -- sets the rgba color format
-    bindingCheckFrame:SetBackdropColor(0.5, 0.1, 0.8, 1)
+    --bindingCheckFrame:SetPoint("CENTER", 90, 200)
+    --bindingCheckFrame:SetHeight(5)
+    --bindingCheckFrame:SetWidth(5)
+    --bindingCheckFrame:SetFrameStrata("LOW")
+    --setFramePixelBackdrop(bindingCheckFrame)
+    --bindingCheckFrame:SetBackdropColor(0.5, 0.1, 0.8, 1)
     
     -- Note: Use for loop based on input to generate "n" number of frames
     for frame = 0, n - 1 do
@@ -672,6 +672,22 @@ function DataToColor:isInRange()
     if IsActionInRange(10) then range = 30 end -- Checks Counterspell Range, slot 11. Useful for when after arctic reach is applied
     if IsActionInRange(4) then range = 20 end -- Checks Fire Blast Range, slot 4
     return range
+end
+
+function DataToColor:targetNpcId()
+    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("target") or ''); 
+    if npcID ~= nil then
+        return tonumber(npcID);
+    end
+    return 0;
+end
+
+function DataToColor:targetGuid()
+    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("target") or ''); 
+    if npcID ~= nil then
+        return tonumber(string.sub(guid, -6),16); -- last 6 hex chars e.g. 00002D3C4A becomes 2D3C4A, not perfect, but should be good enough.
+    end
+    return 0;
 end
 
 -- A function used to check which items we have.
@@ -978,6 +994,11 @@ function DataToColor:targetIsNormal()
         if (UnitIsPlayer("target")) then 
             return 0 
         end
+
+        if UnitName("pet") ==  UnitName("target") then
+            return 0
+        end
+
         return 1
         -- if target is not in combat, return 1 for bitmask
     else 

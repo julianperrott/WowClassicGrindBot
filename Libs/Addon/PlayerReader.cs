@@ -1,4 +1,5 @@
 ﻿
+using Libs.Addon;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,14 @@ namespace Libs
         private readonly ISquareReader reader;
         private readonly BagReader bagReader;
         private ILogger logger;
+        public Dictionary<int, Creature> creatureDictionary = new Dictionary<int, Creature>();
 
-        public PlayerReader(ISquareReader reader, ILogger logger, BagReader bagReader)
+        public PlayerReader(ISquareReader reader, ILogger logger, BagReader bagReader, List<Creature> creatures)
         {
             this.reader = reader;
             this.logger = logger;
             this.bagReader = bagReader;
+            creatures.ForEach(i => creatureDictionary.Add(i.Entry, i));
         }
 
         public int Sequence { get; private set; } = 0;
@@ -68,8 +71,17 @@ namespace Libs
         // range detects if a target range. Bases information off of action slot 2, 3, and 4. Outputs: 50, 35, 30, or 20
         public long Range => reader.GetLongAtCell(15);
 
-        // target bane
-        public string Target => reader.GetStringAtCell(16) + (reader.GetStringAtCell(17));
+        public string Target
+        {
+            get
+            {
+                if (TargetId>0 && creatureDictionary.ContainsKey(this.TargetId))
+                {
+                    return creatureDictionary[this.TargetId].Name;
+                }
+                return reader.GetStringAtCell(16) + (reader.GetStringAtCell(17));
+            }
+        }
 
         public long TargetMaxHealth => reader.GetLongAtCell(18);
 
@@ -155,6 +167,9 @@ namespace Libs
 
         public long SpellBeingCast => reader.GetLongAtCell(53);
         public long ComboPoints => reader.GetLongAtCell(54);
+
+        public int TargetId => (int)reader.GetLongAtCell(56);
+        public long TargetGuid => reader.GetLongAtCell(57);
 
         public bool IsCasting => SpellBeingCast != 0;
     }

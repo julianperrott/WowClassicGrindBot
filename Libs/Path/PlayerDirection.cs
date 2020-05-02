@@ -38,15 +38,43 @@ namespace Libs
 
             var key = GetDirectionKeyToPress(desiredDirection);
 
+            TurnUsingTimedPress(desiredDirection, key);
+
+            //await TurnAndReadActualDirection(desiredDirection, key);
+            await Task.Delay(1);
+
+            LastSetDirection = DateTime.Now;
+        }
+
+        private void TurnUsingTimedPress(double desiredDirection, ConsoleKey key)
+        {
+            wowProcess.KeyPressSleep(key, TurnDuration(desiredDirection), "TurnUsingTimedPress");
+        }
+
+        public double TurnAmount(double desiredDirection)
+        {
+            double RADIAN = Math.PI * 2;
+            var result = (RADIAN + desiredDirection - playerReader.Direction) % RADIAN;
+            if (result > Math.PI) { result = RADIAN - result; }
+            return result;
+        }
+
+        public int TurnDuration(double desiredDirection)
+        {
+            return (int)((TurnAmount(desiredDirection) * 1000) / Math.PI);
+        }
+
+            private async Task TurnAndReadActualDirection(double desiredDirection, ConsoleKey key)
+        {
             // Press Right
             wowProcess.SetKeyState(key, true, true, "PlayerDirection");
 
             var startTime = DateTime.Now;
 
             // Wait until we are going the right direction
-            while ((DateTime.Now-startTime).TotalSeconds<10)
+            while ((DateTime.Now - startTime).TotalSeconds < 10)
             {
-                if((DateTime.Now - startTime).TotalSeconds>10)
+                if ((DateTime.Now - startTime).TotalSeconds > 10)
                 {
                     await Task.Delay(1);
                 }
@@ -70,8 +98,6 @@ namespace Libs
                     break;
                 }
             }
-
-            LastSetDirection = DateTime.Now;
         }
 
         string lastText = string.Empty;

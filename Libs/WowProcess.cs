@@ -5,17 +5,23 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Libs
 {
     public class WowProcess
     {
-        private const UInt32 WM_KEYDOWN = 0x0100;
-        private const UInt32 WM_KEYUP = 0x0101;
+        public const UInt32 WM_KEYDOWN = 0x0100;
+        public const UInt32 WM_KEYUP = 0x0101;
+        public const UInt32 WM_LBUTTONDOWN = 0x201;
+        public const UInt32 WM_LBUTTONUP = 0x202;
+        public const UInt32 WM_RBUTTONDOWN = 0x204;
+        public const UInt32 WM_RBUTTONUP = 0x205;
+        public const int VK_RMB = 0x02;
+
         private Random random = new Random();
         private ILogger logger;
-        public DateTime LastInteract { get; private set; } = DateTime.Now;
 
         private Process _warcraftProcess;
 
@@ -144,6 +150,17 @@ namespace Libs
             PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
         }
 
+        public void KeyPressSleep(ConsoleKey key, int milliseconds, string description = "")
+        {
+            var keyDescription = string.Empty;
+            if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
+            logger.LogInformation($"{keyDescription}[{key}] pressing for {milliseconds}ms");
+
+            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
+            Thread.Sleep(milliseconds);
+            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
+        }
+
         public async Task TapStopKey()
         {
             await KeyPress(ConsoleKey.UpArrow, 51);
@@ -162,17 +179,19 @@ namespace Libs
         public async Task RightClickMouse(System.Drawing.Point position)
         {
             SetCursorPosition(position);
-            PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_RBUTTONDOWN, Keys.VK_RMB, 0);
+            PostMessage(WarcraftProcess.MainWindowHandle, WM_RBUTTONDOWN, VK_RMB, 0);
             await Delay(101);
-            PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_RBUTTONUP, Keys.VK_RMB, 0);
+            PostMessage(WarcraftProcess.MainWindowHandle, WM_RBUTTONUP, VK_RMB, 0);
         }
 
         public async Task LeftClickMouse(System.Drawing.Point position)
         {
             SetCursorPosition(position);
-            PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_LBUTTONDOWN, Keys.VK_RMB, 0);
             await Delay(101);
-            PostMessage(WarcraftProcess.MainWindowHandle, Keys.WM_LBUTTONUP, Keys.VK_RMB, 0);
+            PostMessage(WarcraftProcess.MainWindowHandle, WM_LBUTTONDOWN, VK_RMB, 0);
+            await Delay(101);
+            PostMessage(WarcraftProcess.MainWindowHandle, WM_LBUTTONUP, VK_RMB, 0);
+            await Delay(101);
         }
 
         public async Task Delay(int milliseconds)

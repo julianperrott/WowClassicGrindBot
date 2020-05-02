@@ -2,3 +2,4 @@ start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://loca
 d:
 cd D:\GitHub\WowPixelBot\BlazorServer
 dotnet run
+pause
