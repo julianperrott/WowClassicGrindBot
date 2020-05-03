@@ -10,6 +10,7 @@ namespace Libs
         private readonly ILogger logger;
         public delegate void ScreenChangeDelegate(object sender, ScreenChangeEventArgs args);
         public event ScreenChangeDelegate? OnScreenChanged;
+        public int Size { get; set; } = 1024;
 
         public WowScreen( ILogger logger)
         {
@@ -59,7 +60,7 @@ namespace Libs
                     }
                 }
 
-                this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(npcNameFinder.Screenshot.ToBase64()));
+                this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(npcNameFinder.Screenshot.ToBase64(Size)));
             }
             catch (Exception ex)
             {

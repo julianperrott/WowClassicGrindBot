@@ -1,0 +1,202 @@
+﻿@page "/RecordPath"
+
+@using Libs
+@using Newtonsoft.Json
+@using System.IO
+
+@inject Libs.AddonReader addonReader
+@inject Libs.BotController botController
+@inject IJSRuntime JSRuntime
+
+<h3>Wowbot - Record Path</h3>
+
+@if (!recording)
+{
+    <button class="btn btn-primary" @onclick="Record">Record</button>
+}
+@if (recording)
+{
+    <button class="btn btn-primary" @onclick="Save">Save</button>
+    <button class="btn btn-primary" @onclick="Clear">Clear</button>
+}
+<div>@Message</div>
+
+<div class="row">
+    <div class="col-sm">
+        <div id="grid">
+            <svg width="602px" height="602px">
+                <g class="background">
+                </g>
+
+                <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)"
+                        cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)"
+                        r="4" fill="blue" />
+
+                <g class="group2">
+                    <g stroke-width="1" stroke="gray">
+                        @this.PathLines
+                    </g>
+                    <g fill="black">
+                        @this.PathPoints
+                    </g>
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <div class="col-sm">
+
+        @if (editPoint != null)
+        {
+            <input type="text" @bind="X" />
+            <input type="text " @bind="Y" />
+            <button class="btn btn-primary" @onclick="Update">Update</button>
+            <button class="btn btn-primary" @onclick="Remove">Remove</button>
+            <div>@error</div>
+            <br />
+        }
+
+
+        @foreach (var point in @botController.RouteInfo.PathPoints)
+        {
+            <span class="badge badge-info" @onclick="() => EditPoint(point)">
+                @point.X.ToString("0.00"),@point.Y.ToString("0.00")&nbsp;
+            </span>
+        }
+    </div>
+</div>
+
+<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
+
+@code {
+    private MarkupString PathLines = new MarkupString();
+    private MarkupString PathPoints = new MarkupString();
+
+    string X = "";
+    string Y = "";
+    string error = "";
+    string Message = "";
+
+    private bool CanvasInitialised = false;
+
+    WowPoint editPoint = null;
+
+    protected override void OnInitialized()
+    {
+
+        addonReader.AddonDataChanged += (o, e) =>
+        {
+            base.InvokeAsync(() =>
+            {
+                try
+                {
+                    AddonDataChanged();
+                    StateHasChanged();
+                }
+                catch { }
+            });
+        };
+    }
+
+    private void UpdateRoute()
+    {
+        if (botController.RouteInfo != null)
+        {
+            error = "";
+            CanvasInitialised = true;
+            botController.RouteInfo.SetMargin(20);
+            botController.RouteInfo.SetCanvasSize(600);
+
+
+            if (botController.RouteInfo.PathPoints.Count > 0)
+            {
+                this.PathLines = new MarkupString(botController.RouteInfo.RenderPathLines(botController.RouteInfo.PathPoints));
+                this.PathPoints = new MarkupString(botController.RouteInfo.RenderPathPoints(botController.RouteInfo.PathPoints));
+            }
+        }
+    }
+
+    protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeAsync<string>("draw");
+        }
+    }
+
+    private void AddonDataChanged()
+    {
+        if (!recording) { return; }
+
+        var location = new WowPoint(addonReader.PlayerReader.XCoord, addonReader.PlayerReader.YCoord);
+        if (botController.RouteInfo.PathPoints.Count == 0 || DistanceTo(location, botController.RouteInfo.PathPoints.Last()) > 60 & location.X != 0)
+        {
+            botController.RouteInfo.PathPoints.Add(location);
+            UpdateRoute();
+        }
+    }
+
+    private double DistanceTo(WowPoint l1, WowPoint l2)
+    {
+        var x = l1.X - l2.X;
+        var y = l1.Y - l2.Y;
+        x = x * 100;
+        y = y * 100;
+        return Math.Sqrt((x * x) + (y * y));
+    }
+
+    private bool recording = false;
+
+    private void Record()
+    {
+        if (!recording)
+        {
+            recording = true;
+            botController.RouteInfo.PathPoints.Clear();
+            Message = "Recording...";
+        }
+    }
+
+    private void Clear()
+    {
+        recording = false;
+        botController.RouteInfo.PathPoints.Clear();
+        Message = "Cleared...";
+    }
+
+    private void Save()
+    {
+        var filename = $"Path_{ DateTime.Now.ToString("yyyyMMddHHmmss")}.json";
+        File.WriteAllText($"D:/GitHub/WowPixelBot/{filename}", JsonConvert.SerializeObject(botController.RouteInfo.PathPoints));
+        Message = $"Saved to: {filename}";
+    }
+
+    private void EditPoint(WowPoint point)
+    {
+        this.editPoint = point;
+        this.X = point.X.ToString("0.00");
+        this.Y = point.Y.ToString("0.00");
+    }
+
+    private void Update()
+    {
+        try
+        {
+            editPoint.X = double.Parse(this.X);
+            editPoint.Y = double.Parse(this.Y);
+            UpdateRoute();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private void Remove()
+    {
+        botController.RouteInfo.PathPoints.Remove(editPoint);
+        this.editPoint = null;
+        UpdateRoute();
+    }
+}
+

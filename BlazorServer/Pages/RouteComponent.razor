@@ -1,0 +1,98 @@
+﻿
+@inject Libs.AddonReader addonReader
+@inject Libs.BotController botController
+@inject IJSRuntime JSRuntime;
+
+<div id="grid">
+
+    <svg width="@(Size+2)px" height="@(Size+2)px" style="margin-top:10px">
+        <g class="background">
+        </g>
+        <g class="group2">
+            @{
+                var colour = addonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
+
+                if (botController.GoapAgent.CurrentAction?.GetType() == typeof(Libs.Actions.FollowRouteAction))
+                {
+                    colour = "blue";
+                }
+
+                <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)" cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)" r="4" fill="@colour" />
+            }
+
+            <g stroke-width="1" stroke="lightgray">
+                @this.SpiritLines
+            </g>
+            <g fill="gray">
+                @this.SpiritPathPoints
+            </g>
+
+            <g stroke-width="1" stroke="gray">
+                @this.PathLines
+            </g>
+            <g fill="black">
+                @this.PathPoints
+            </g>
+
+            <g fill="blue">
+                @((MarkupString)botController.RouteInfo.NextPoint())
+            </g>
+        </g>
+    </svg>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Size { get; set; } = 1024;
+
+    private MarkupString PathLines = new MarkupString();
+    private MarkupString PathPoints = new MarkupString();
+
+    private MarkupString SpiritLines = new MarkupString();
+    private MarkupString SpiritPathPoints = new MarkupString();
+
+    private bool CanvasInitialised = false;
+
+    protected override void OnInitialized()
+    {
+        addonReader.AddonDataChanged += (o, e) =>
+        {
+            base.InvokeAsync(() =>
+            {
+                try
+                {
+                    InitialiseRoute();
+                    StateHasChanged();
+                }
+                catch { }
+            });
+        };
+    }
+
+    private void InitialiseRoute()
+    {
+        if (!CanvasInitialised && botController.RouteInfo != null)
+        {
+            var routeinfo = botController.RouteInfo;
+
+            CanvasInitialised = true;
+            routeinfo.SetMargin(10);
+            routeinfo.SetCanvasSize(Size);
+            this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
+            this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
+
+            this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
+            this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
+        }
+    }
+
+    protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeAsync<string>("draw");
+        }
+    }
+}
+

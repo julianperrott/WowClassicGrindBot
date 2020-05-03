@@ -1,42 +1,7 @@
 ﻿@page "/Screenshot"
 @inject Libs.BotController botController
 
-
-<h1>Wowbot - Screenshot - @eventTime</h1>
+<h1>Wowbot - Screenshot</h1>
 
 <BotHeader />
-
-<img src="data:image/png;base64, @image" alt="Red dot" />
-
-<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
-
-@code {
-    string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
-    string eventTime = "";
-
-    protected override void OnInitialized()
-    {
-        // Subscription to table record change events
-        this.botController.WowScreen.OnScreenChanged -= this.ImageChanged;
-        this.botController.WowScreen.OnScreenChanged += this.ImageChanged;
-    }
-
-    // The event handler, will update the HTML view according to new stock value
-    private async void ImageChanged(object sender, Libs.ScreenChangeEventArgs args)
-    {
-        this.image = args.Screenshot;
-        this.eventTime = args.EventTime.ToString("HH:mm:ss");
-
-        await InvokeAsync(() =>
-        {
-            base.StateHasChanged();
-        });
-    }
-
-    public void Dispose()
-    {
-        this.botController.WowScreen.OnScreenChanged -= this.ImageChanged;
-    }
-
-
-}
+<ScreenshotComponent />

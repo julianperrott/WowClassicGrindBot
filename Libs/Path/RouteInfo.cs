@@ -44,6 +44,7 @@ namespace Libs
         public void CalculatePointToGrid()
         {
             pointToGrid = ((double)canvasSize - (margin * 2)) / diff;
+            CalculateDiffs();
         }
 
         public int ToCanvasPointX(double value)
@@ -66,6 +67,11 @@ namespace Libs
             this.followRouteAction = followRouteAction;
             this.walkToCorpseAction = walkToCorpseAction;
 
+            CalculateDiffs();
+        }
+
+        private void CalculateDiffs()
+        {
             var allPoints = this.PathPoints.Select(s => s).ToList();
             allPoints.AddRange(this.SpiritPath);
 

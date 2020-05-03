@@ -7,7 +7,7 @@
         {
             <span class="badge @Badge(item)">@item.Key</span>
         }
-        @if (this.action.Keys.Count == 1)
+        @if (this.action.Keys.Count == 1 && this.action.GetType().Name!= "GenericPullAction")
         {
             @foreach (var requirement in this.action.Keys[0].RequirementObjects)
             {
@@ -19,7 +19,7 @@
         }
     </td>
 </tr>
-@if (this.action.Keys.Count > 1 && ShowKeys)
+@if ((this.action.Keys.Count > 1 || this.action.GetType().Name == "GenericPullAction") && ShowKeys && this.IsSelected)
 {
     <tr>
         <td colspan="2">

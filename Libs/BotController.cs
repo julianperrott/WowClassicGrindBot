@@ -76,6 +76,8 @@ namespace Libs
             }
         }
 
+        public bool IsBotActive => actionThread == null ? false:  actionThread.Active;
+
         public void ToggleBotStatus()
         {
             if (actionThread != null)

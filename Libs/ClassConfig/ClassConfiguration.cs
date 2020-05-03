@@ -15,7 +15,7 @@ namespace Libs
         public bool PathReduceSteps = false;
 
         public int NPCMaxLevels_Above = 1;
-        public int NPCMaxLevels_Below = -7;
+        public int NPCMaxLevels_Below = 7;
         public List<string> Blacklist { get; set; } = new List<string>();
 
         public KeyConfigurations Pull { get; set; } = new KeyConfigurations();

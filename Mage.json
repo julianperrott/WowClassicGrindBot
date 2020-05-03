@@ -3,10 +3,10 @@
   "Loot": true,
   "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\19_LochModan.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\19_LochModan_SpiritHealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\21_Duskwood.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\21_Duskwood_SpiritHealer.json",
   "PathThereAndBack": true,
-  "PathReduceSteps": false,
+  "PathReduceSteps": true,
 
   "Blacklist": ["Tunnel","OL' SO","HAREN S","THRAGO"],
 

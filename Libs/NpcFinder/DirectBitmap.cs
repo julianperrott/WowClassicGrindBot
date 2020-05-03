@@ -45,11 +45,8 @@ namespace Libs.NpcFinder
             this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
 
-        public string ToBase64()
+        public string ToBase64(int size)
         {
-            const int size = 1024;
-            //const int quality = 75;
-
             int width, height;
             if (Bitmap.Width > Bitmap.Height)
             {
@@ -68,19 +65,6 @@ namespace Libs.NpcFinder
                 graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.DrawImage(Bitmap, 0, 0, width, height);
-
-                //using (var output = new MemoryStream())
-                //{
-                //    var qualityParamId = Encoder.Quality;
-                //    var encoderParameters = new EncoderParameters(1);
-                //    encoderParameters.Param[0] = new EncoderParameter(qualityParamId, quality);
-                //    var codec = ImageCodecInfo.GetImageDecoders()
-                //        .FirstOrDefault(codec => codec.FormatID == ImageFormat.Jpeg.Guid);
-                //    resized.Save(output, codec, encoderParameters);
-
-                //    byte[] byteImage = output.ToArray();
-                //    return Convert.ToBase64String(byteImage); // Get Base64
-                //}
             }
 
             using (System.IO.MemoryStream ms = new MemoryStream())
@@ -99,25 +83,6 @@ namespace Libs.NpcFinder
                 graphics.CopyFromScreen(0, TopOffset, 0, 0, Bitmap.Size);
             }
         }
-
-        //public BitmapImage ToBitmapImage()
-        //{
-        //    using (var memory = new MemoryStream())
-        //    {
-        //        Bitmap.Save(memory, ImageFormat.Png);
-        //        memory.Position = 0;
-
-        //        var bitmapImage = new BitmapImage();
-        //        bitmapImage.BeginInit();
-        //        bitmapImage.StreamSource = memory;
-        //        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-        //        bitmapImage.EndInit();
-        //        bitmapImage.Freeze();
-
-        //        memory.Dispose();
-        //        return bitmapImage;
-        //    }
-        //}
 
         public void SetPixel(int x, int y, Color colour)
         {

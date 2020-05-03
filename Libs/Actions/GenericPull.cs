@@ -9,8 +9,6 @@ namespace Libs.Actions
 {
     public class GenericPullAction : PullTargetAction
     {
-        
-
         public GenericPullAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CombatActionBase combatAction, ClassConfiguration classConfiguration, StuckDetector stuckDetector)
         : base(wowProcess, playerReader, npcNameFinder, stopMoving, logger, combatAction, stuckDetector, classConfiguration)
         {
