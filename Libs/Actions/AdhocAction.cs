@@ -16,16 +16,16 @@ namespace Libs.Actions
         private readonly PlayerReader playerReader;
         private readonly ILogger logger;
         private readonly KeyConfiguration key;
-        private readonly CombatActionBase combatAction;
+        private readonly CastingHandler castingHandler;
 
-        public AdhocAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, KeyConfiguration key, CombatActionBase combatAction, ILogger logger)
+        public AdhocAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, KeyConfiguration key, CastingHandler castingHandler, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.stopMoving = stopMoving;
             this.playerReader = playerReader;
             this.key = key;
             this.logger = logger;
-            this.combatAction = combatAction;
+            this.castingHandler = castingHandler;
 
             if (key.InCombat == "false")
             {
@@ -59,7 +59,7 @@ namespace Libs.Actions
                 await Task.Delay(1000);
             }
 
-            await this.combatAction.CastIfReady(key, this);
+            await this.castingHandler.CastIfReady(key, this);
 
             this.key.ResetCooldown();
 

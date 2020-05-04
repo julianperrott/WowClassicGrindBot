@@ -35,7 +35,7 @@ namespace Libs
         public float Cost { get; set; } = 18;
         public string InCombat { get; set; } = "false";
 
-        public WowPoint LastClickPostion  { get; private set; } = new WowPoint(0, 0);
+        public WowPoint LastClickPostion { get; private set; } = new WowPoint(0, 0);
 
         public List<Requirement> RequirementObjects { get; set; } = new List<Requirement>();
 
@@ -43,9 +43,12 @@ namespace Libs
 
         private PlayerReader? playerReader;
 
+        private ILogger? logger;
+
         public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
         {
             this.playerReader = playerReader;
+            this.logger = logger;
 
             if (!string.IsNullOrEmpty(this.Requirement))
             {
@@ -121,6 +124,14 @@ namespace Libs
         public bool CanRun()
         {
             return !this.RequirementObjects.Any(r => !r.HasRequirement());
+        }
+
+        public void LogInformation(string message)
+        {
+            if (this.Log)
+            {
+                logger.LogInformation($"{this.Name}: {message}");
+            }
         }
     }
 }

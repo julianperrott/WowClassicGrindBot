@@ -3,9 +3,8 @@
   "Loot": true,
   "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\21_Duskwood.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\21_Duskwood_SpiritHealer.json",
-
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\20_Redridge.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\20_Redridge_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 

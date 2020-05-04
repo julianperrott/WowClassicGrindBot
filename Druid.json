@@ -97,7 +97,7 @@
         "Requirement": "not Faerie Fire",
         "Key": "7",
         "MinRage": 10,
-        "Cooldown": 6,
+        "Cooldown": 10,
         "ShapeShiftForm": "Druid_Bear",
         "Log": false,
         "ResetOnNewTarget": true

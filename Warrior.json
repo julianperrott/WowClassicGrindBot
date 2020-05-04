@@ -1,5 +1,5 @@
 {
-  "ClassName": "Rogue",
+  "ClassName": "Warrior",
   "Loot": true,
 
   "PathFilename": "D:\\GitHub\\WowPixelBot\\57_WPL.json",
@@ -36,7 +36,7 @@
       {
         "Name": "Battle Shout",
         "Key": "6",
-        "Requirement": "Battle Shout",
+        "Requirement": "not Battle Shout",
         "MinMana": 10,
         "Cooldown": 10,
         "DelayAfterCast": "200"
@@ -77,7 +77,7 @@
         "Name": "Eat",
         "StopBeforeCast": false,
         "Key": "7",
-        "Requirement": "Health>60%",
+        "Requirement": "Health%<60",
         "Cooldown": 0,
         "DelayAfterCast": 1000,
         "Log": false,
@@ -87,7 +87,7 @@
         "Name": "Well Fed",
         "StopBeforeCast": false,
         "Key": "0",
-        "Requirement": "Well Fed",
+        "Requirement": "not Well Fed",
         "Cooldown": 120,
         "Log": false
       },

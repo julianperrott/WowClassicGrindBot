@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Libs.GOAP;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
-    public abstract class PullTargetAction : GoapAction
+    public class PullTargetAction : GoapAction
     {
         protected readonly WowProcess wowProcess;
         protected readonly PlayerReader playerReader;
@@ -17,18 +18,18 @@ namespace Libs.Actions
         protected readonly StuckDetector stuckDetector;
         protected readonly ClassConfiguration classConfiguration;
         protected ILogger logger;
-        protected readonly CombatActionBase combatAction;
+        protected readonly CastingHandler castingHandler;
         private DateTime PullStartTime = DateTime.Now;
         private DateTime LastActive = DateTime.Now;
 
-        public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CombatActionBase combatAction, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.npcNameFinder = npcNameFinder;
             this.stopMoving = stopMoving;
             this.logger = logger;
-            this.combatAction = combatAction;
+            this.castingHandler = castingHandler;
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
 
@@ -37,6 +38,8 @@ namespace Libs.Actions
             AddPrecondition(GoapKey.pulled, false);
             AddPrecondition(GoapKey.withinpullrange, true);
             AddEffect(GoapKey.pulled, true);
+
+            this.classConfiguration.Pull.Sequence.Where(k => k != null).ToList().ForEach(key => this.Keys.Add(key));
         }
 
         public override float CostOfPerformingAction { get => 4f; }
@@ -107,16 +110,14 @@ namespace Libs.Actions
             }
         }
 
-        public abstract bool ShouldStopBeforePull { get; }
-
         private async Task Interact()
         {
             if (this.classConfiguration.Interact.SecondsSinceLastClick > 4)
             {
-                await this.combatAction.TapInteractKey("PullTargetAction");
+                await this.castingHandler.TapInteractKey("PullTargetAction");
             }
 
-            await this.combatAction.InteractOnUIError();
+            await this.castingHandler.InteractOnUIError();
         }
 
         protected bool HasPickedUpAnAdd
@@ -130,8 +131,6 @@ namespace Libs.Actions
 
         protected Random random = new Random();
 
-        public abstract Task<bool> Pull();
-
         protected async Task WaitForWithinMelleRange()
         {
             this.logger.LogInformation("Waiting for Mellee range");
@@ -143,6 +142,55 @@ namespace Libs.Actions
                     return; 
                 }
             }
+        }
+
+
+        public bool ShouldStopBeforePull => this.classConfiguration.Pull.Sequence.Count > 0;
+
+        public async Task<bool> Pull()
+        {
+            bool hasCast = false;
+
+            //stop combat
+            await this.wowProcess.KeyPress(ConsoleKey.F10, 300);
+            this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+
+            foreach (var item in this.Keys)
+            {
+                var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast && 500 > item.DelayBeforeCast ? 500 : item.DelayBeforeCast;
+
+                var success = await this.castingHandler.CastIfReady(item, this, sleepBeforeFirstCast);
+                hasCast = hasCast || success;
+
+                if (!this.playerReader.HasTarget)
+                {
+                    return false;
+                }
+
+                if (hasCast && item.WaitForWithinMelleRange)
+                {
+                    await this.WaitForWithinMelleRange();
+                }
+            }
+
+            // Wait for combat
+            if (hasCast)
+            {
+                for (int i = 0; i < 40; i++)
+                {
+                    // wait for combat, for mob to be targetting me or have suffered damage or 2 seconds to have elapsed.
+                    // sometimes after casting a ranged attack, we can be in combat before the attack has landed.
+                    if (this.playerReader.PlayerBitValues.PlayerInCombat &&
+                        (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer || this.playerReader.TargetHealthPercentage < 99 || i > 20))
+                    {
+                        return true;
+                    }
+
+                    await Task.Delay(100);
+                }
+            }
+
+            return this.playerReader.PlayerBitValues.PlayerInCombat;
         }
     }
 }

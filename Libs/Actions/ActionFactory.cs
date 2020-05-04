@@ -34,9 +34,10 @@ namespace Libs
             List<WowPoint> pathPoints, spiritPath;
             GetPaths(addonReader, out pathPoints, out spiritPath, classConfig);
             
-
             var playerDirection = new PlayerDirection(addonReader.PlayerReader, wowProcess, logger);
             var stopMoving = new StopMoving(wowProcess, addonReader.PlayerReader, logger);
+
+            var castingHandler = new CastingHandler(wowProcess, addonReader.PlayerReader, stopMoving, logger, classConfig, playerDirection, npcNameFinder);
 
             var stuckDetector = new StuckDetector(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger);
             var followRouteAction = new FollowRouteAction(addonReader.PlayerReader, wowProcess, playerDirection, pathPoints, stopMoving, npcNameFinder, blacklist, logger, stuckDetector, classConfig);
@@ -59,13 +60,13 @@ namespace Libs
 
             try
             {
-                var genericCombat = new GenericCombatAction(wowProcess, addonReader.PlayerReader, stopMoving, logger, classConfig, playerDirection);
+                var genericCombat = new CombatAction(wowProcess, addonReader.PlayerReader, stopMoving, logger, classConfig, playerDirection, castingHandler);
                 availableActions.Add(genericCombat);
-                availableActions.Add(new GenericPullAction(wowProcess, addonReader.PlayerReader, npcNameFinder, stopMoving, logger, genericCombat, classConfig, stuckDetector));
+                availableActions.Add(new PullTargetAction(wowProcess, addonReader.PlayerReader, npcNameFinder, stopMoving, logger, castingHandler, stuckDetector, classConfig));
 
                 foreach (var item in classConfig.Adhoc.Sequence)
                 {
-                    availableActions.Add(new AdhocAction(wowProcess, addonReader.PlayerReader, stopMoving, item, genericCombat, logger));
+                    availableActions.Add(new AdhocAction(wowProcess, addonReader.PlayerReader, stopMoving, item, castingHandler, logger));
                 }
             }
             catch (Exception ex)
