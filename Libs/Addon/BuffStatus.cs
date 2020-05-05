@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Libs
+﻿namespace Libs
 {
     public class BuffStatus
     {
@@ -28,12 +24,14 @@ namespace Libs
 
         // All
         public bool Eating { get => IsBitSet(0); }
+
         public bool Drinking { get => IsBitSet(1); }
         public bool WellFed { get => IsBitSet(2); }
         public bool ManaRegeneration { get => IsBitSet(3); }
 
         // Priest
         public bool Fortitude { get => IsBitSet(10); }
+
         public bool InnerFire { get => IsBitSet(11); }
         public bool Renew { get => IsBitSet(12); }
         public bool Shield { get => IsBitSet(13); }
@@ -41,15 +39,18 @@ namespace Libs
 
         // Druid
         public bool MarkOfTheWild { get => IsBitSet(10); }
+
         public bool Thorns { get => IsBitSet(11); }
 
         // Paladin
         public bool Aura { get => IsBitSet(10); }
+
         public bool Blessing { get => IsBitSet(11); }
         public bool Seal { get => IsBitSet(12); }
 
         // Mage
         public bool FrostArmor { get => IsBitSet(10); }
+
         public bool ArcaneIntellect { get => IsBitSet(11); }
         public bool IceBarrier { get => IsBitSet(12); }
 

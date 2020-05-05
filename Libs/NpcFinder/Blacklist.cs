@@ -1,13 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Libs
 {
     public class Blacklist
     {
-        private List<string> blacklist = new List<string> { "THORKA", "SHADOW", "DREADM", "DUNEMA", "BONE C", "FLESH", "REDRID", "MOSSHI", "VOIDWA","WAILIN" };
+        private List<string> blacklist = new List<string> { "THORKA", "SHADOW", "DREADM", "DUNEMA", "BONE C", "FLESH", "REDRID", "MOSSHI", "VOIDWA", "WAILIN" };
 
         private readonly PlayerReader playerReader;
         private readonly ILogger logger;
@@ -61,7 +59,7 @@ namespace Libs
                 return true; // ignore if current level - 7
             }
 
-            if(blacklist.Contains(this.playerReader.Target))
+            if (blacklist.Contains(this.playerReader.Target))
             {
                 logger.LogWarning("Blacklisted: Target is in the blacklist");
                 return true;

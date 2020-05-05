@@ -20,7 +20,7 @@ namespace UnitTests.SquareReaderTests
 
             var addonReader = new Mock<IAddonReader>();
             addonReader.Setup(s => s.GetColorAt(cell.index)).Returns(color);
-            var reader = new SquareReader( addonReader.Object);
+            var reader = new SquareReader(addonReader.Object);
 
             // Act
             var result = reader.GetStringAtCell(cell.index);
@@ -28,6 +28,5 @@ namespace UnitTests.SquareReaderTests
             // Assert
             Assert.AreEqual("DOG", result);
         }
-
     }
 }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Libs.GOAP;
+﻿using Libs.GOAP;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -114,6 +111,5 @@ namespace Libs.Actions
 
             lastActive = DateTime.Now;
         }
-
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Libs.Actions;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Libs.GOAP
 {
@@ -14,12 +12,18 @@ namespace Libs.GOAP
     {
         private ILogger logger;
 
-
         public GoapPlanner(ILogger logger)
         {
             this.logger = logger;
         }
 
+        public void RefreshState(IEnumerable<GoapAction> availableActions)
+        {
+            foreach (GoapAction a in availableActions)
+            {
+                a.State = InState(a, a.Preconditions, new HashSet<KeyValuePair<GoapKey, object>>());
+            }
+        }
 
         /**
 		 * Plan what sequence of actions can fulfill the goal.
@@ -202,6 +206,7 @@ namespace Libs.GOAP
         /**
 		 * Apply the stateChange to the currentState
 		 */
+
         private HashSet<KeyValuePair<GoapKey, object>> PopulateState(HashSet<KeyValuePair<GoapKey, object>> currentState, HashSet<KeyValuePair<GoapKey, object>> stateChange)
         {
             HashSet<KeyValuePair<GoapKey, object>> state = new HashSet<KeyValuePair<GoapKey, object>>();

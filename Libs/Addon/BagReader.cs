@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using Libs.Addon;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Libs.Addon;
+using System.Linq;
 
 namespace Libs
 {
@@ -14,8 +13,8 @@ namespace Libs
         private DateTime lastEvent = DateTime.Now;
 
         public List<BagItem> BagItems = new List<BagItem>();
-        
-        public Dictionary<int,Item> itemDictionary= new Dictionary<int, Item>();
+
+        public Dictionary<int, Item> itemDictionary = new Dictionary<int, Item>();
 
         public event EventHandler? DataChanged;
 
@@ -69,7 +68,7 @@ namespace Libs
 
                     if (addItem)
                     {
-                        var item = new Item { Name="Unknown" };
+                        var item = new Item { Name = "Unknown" };
                         if (this.itemDictionary.ContainsKey(itemId))
                         {
                             item = itemDictionary[itemId];
@@ -88,7 +87,7 @@ namespace Libs
                 }
             }
 
-            if (hasChanged || (DateTime.Now-this.lastEvent).TotalSeconds>11)
+            if (hasChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
             {
                 DataChanged?.Invoke(this, new EventArgs());
                 lastEvent = DateTime.Now;

@@ -1,18 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BlazorServer.Data;
+using Libs;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using BlazorServer.Data;
-using Libs;
-using System.Threading;
-using Libs.Looting;
-using Libs.GOAP;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
@@ -56,7 +48,6 @@ namespace BlazorServer
             services.AddSingleton<BotController>(botController);
             services.AddSingleton<AddonReader>(botController.AddonReader);
             //services.AddSingleton<RouteInfo>(botController.WowBot.RouteInfo);
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

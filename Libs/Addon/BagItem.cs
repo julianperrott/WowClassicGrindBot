@@ -1,7 +1,5 @@
 ﻿using Libs.Addon;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Libs
 {
@@ -13,7 +11,6 @@ namespace Libs
         public int Count { get; private set; }
         public Item Item { get; private set; }
         public string LastChangeDescription { get; private set; } = "New";
-
 
         public void UpdateCount(int count)
         {
@@ -31,7 +28,7 @@ namespace Libs
         public DateTime LastUpdated = DateTime.Now;
         public bool WasRecentlyUpdated => (DateTime.Now - LastUpdated).TotalSeconds < 30;
 
-        public BagItem(int bag,int bagIndex, int itemId, int count, Item item)
+        public BagItem(int bag, int bagIndex, int itemId, int count, Item item)
         {
             this.Bag = bag;
             this.BagIndex = bagIndex;

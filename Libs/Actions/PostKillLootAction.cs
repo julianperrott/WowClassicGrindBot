@@ -1,15 +1,12 @@
 ﻿using Libs.GOAP;
-using Libs.Looting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
     public class PostKillLootAction : LootAction
     {
-        public PostKillLootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration) 
+        public PostKillLootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
             : base(wowProcess, playerReader, bagReader, stopMoving, logger, classConfiguration)
         {
         }

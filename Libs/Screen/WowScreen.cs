@@ -8,11 +8,14 @@ namespace Libs
     public class WowScreen : IColorReader
     {
         private readonly ILogger logger;
+
         public delegate void ScreenChangeDelegate(object sender, ScreenChangeEventArgs args);
+
         public event ScreenChangeDelegate? OnScreenChanged;
+
         public int Size { get; set; } = 1024;
 
-        public WowScreen( ILogger logger)
+        public WowScreen(ILogger logger)
         {
             this.logger = logger;
         }
@@ -29,7 +32,7 @@ namespace Libs
 
         public Color GetColorAt(Point pos, Bitmap bmp)
         {
-            var color= bmp.GetPixel(pos.X, pos.Y);
+            var color = bmp.GetPixel(pos.X, pos.Y);
 
             return color;
         }

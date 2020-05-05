@@ -27,13 +27,13 @@ namespace Libs
             this.wowProcess = wowProcess;
         }
 
-        public HashSet<GoapAction> CreateActions(ClassConfiguration classConfig, Blacklist blacklist)    
+        public HashSet<GoapAction> CreateActions(ClassConfiguration classConfig, Blacklist blacklist)
         {
             var availableActions = new HashSet<GoapAction>();
 
             List<WowPoint> pathPoints, spiritPath;
             GetPaths(addonReader, out pathPoints, out spiritPath, classConfig);
-            
+
             var playerDirection = new PlayerDirection(addonReader.PlayerReader, wowProcess, logger);
             var stopMoving = new StopMoving(wowProcess, addonReader.PlayerReader, logger);
 

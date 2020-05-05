@@ -10,15 +10,15 @@ namespace Libs
         public int Width => Max.X - Min.X;
         private int screenMid;
         private int screenMidBuffer;
-        public bool IsAdd => ClickPoint.X < screenMid- screenMidBuffer || ClickPoint.X > screenMid + screenMidBuffer;
+        public bool IsAdd => ClickPoint.X < screenMid - screenMidBuffer || ClickPoint.X > screenMid + screenMidBuffer;
 
-        public Point ClickPoint => new Point(Min.X + (Width / 2), Max.Y + 30+(Height*7));
+        public Point ClickPoint => new Point(Min.X + (Width / 2), Max.Y + 30 + (Height * 7));
 
         public NpcPosition(Point min, Point max, int screenWidth)
         {
             this.Min = min;
             this.Max = max;
-            this.screenMid = screenWidth/2;
+            this.screenMid = screenWidth / 2;
             this.screenMidBuffer = screenWidth / 10;
         }
     }

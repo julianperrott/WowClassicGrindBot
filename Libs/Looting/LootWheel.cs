@@ -1,7 +1,6 @@
 ﻿using Libs.Cursor;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Threading.Tasks;
 

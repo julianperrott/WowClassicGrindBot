@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
-using System.Text;
 
 namespace Libs
 {
     public class WowPoint
     {
-        public double X { get;  set; }
-        public double Y { get;  set; }
-        public Vector2 Vector2() => new Vector2((float) X, (float) Y);
+        public double X { get; set; }
+        public double Y { get; set; }
+
+        public Vector2 Vector2() => new Vector2((float)X, (float)Y);
 
         public WowPoint(double x, double y)
         {
@@ -30,7 +30,7 @@ namespace Libs
             var startPoint = 0;
             for (int i = 0; i < pointsList.Count; i++)
             {
-                if (pointsList[i]== closestPoint.point)
+                if (pointsList[i] == closestPoint.point)
                 {
                     startPoint = i;
                     break;

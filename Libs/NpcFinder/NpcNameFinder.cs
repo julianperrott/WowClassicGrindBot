@@ -1,10 +1,8 @@
 ﻿using Libs.Actions;
-using Libs.GOAP;
 using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +23,8 @@ namespace Libs
         private List<NpcPosition> Npcs { get; set; } = new List<NpcPosition>();
         private DateTime lastNpcFind = DateTime.Now;
 
-        private DirectBitmap screen = new DirectBitmap(1,1);
+        private DirectBitmap screen = new DirectBitmap(1, 1);
+
         public DirectBitmap Screenshot
         {
             get
@@ -42,7 +41,7 @@ namespace Libs
             }
         }
 
-        public NpcNameFinder(WowProcess wowProcess,PlayerReader playerReader ,ILogger logger)
+        public NpcNameFinder(WowProcess wowProcess, PlayerReader playerReader, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.logger = logger;
@@ -108,12 +107,6 @@ namespace Libs
                 lastNpcFind = DateTime.Now;
             }
 
-            //if (Npcs.Count > 0)
-            //{
-            //    var npc = Npcs.First();
-            //    wowProcess.SetCursorPosition(Screenshot.ToScreenCoordinates(npc.ClickPoint.X, npc.ClickPoint.Y));
-            //}
-
             UpdatePotentialAddsExist();
 
             return Npcs;
@@ -178,13 +171,13 @@ namespace Libs
                 }
             }
         }
-        
+
         private void PopulateLinesOfNpcNames()
         {
             npcNameLine = new List<LineOfNpcName>();
 
             bool isEndOfSection;
-            for (int y = 30; y < Screenshot.Height/2; y++)
+            for (int y = 30; y < Screenshot.Height / 2; y++)
             {
                 var lengthStart = -1;
                 var lengthEnd = -1;
@@ -227,22 +220,12 @@ namespace Libs
         private void UpdateScreenshot()
         {
             var rect = wowProcess.GetWindowRect();
-            Screenshot = new DirectBitmap(rect.right, rect.bottom,0,0);
+            Screenshot = new DirectBitmap(rect.right, rect.bottom, 0, 0);
             Screenshot.CaptureScreen();
         }
 
         public void OnActionEvent(object sender, ActionEvent e)
         {
-            //if (e.Key == GoapKey.fighting)
-            //{
-            //    var newValue = (bool)e.Value == false;
-
-            //    if (newValue != this.canFindNpcs)
-            //    {
-            //        this.canFindNpcs = (bool)e.Value == false;
-            //        logger.LogInformation($"{this.GetType().Name}: Can find NPC = {this.canFindNpcs}");
-            //    }
-            //}
         }
     }
 }

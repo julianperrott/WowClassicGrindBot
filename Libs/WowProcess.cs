@@ -109,8 +109,7 @@ namespace Libs
             keyDict[key] = true;
         }
 
-        Dictionary<ConsoleKey, bool> keyDict = new Dictionary<ConsoleKey, bool>();
-
+        private Dictionary<ConsoleKey, bool> keyDict = new Dictionary<ConsoleKey, bool>();
 
         private void KeyUp(ConsoleKey key, bool forceClick, string description)
         {
@@ -136,10 +135,10 @@ namespace Libs
         {
             var rect = GetWindowRect();
 
-            await RightClickMouse(new Point(rect.right / 2, (rect.bottom *2) / 3));
+            await RightClickMouse(new Point(rect.right / 2, (rect.bottom * 2) / 3));
         }
 
-        public async Task KeyPress(ConsoleKey key, int milliseconds, string description="")
+        public async Task KeyPress(ConsoleKey key, int milliseconds, string description = "")
         {
             var keyDescription = string.Empty;
             if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
@@ -212,7 +211,7 @@ namespace Libs
         }
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
+        private static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
 
         public const int KEYEVENTF_KEYDOWN = 0x0000; // New definition
         public const int KEYEVENTF_EXTENDEDKEY = 0x0001; //Key down flag
@@ -222,7 +221,6 @@ namespace Libs
         public const int VK_LEFT_SHIFT = 160;
         public const int VK_LEFT_CONTROL = 162;
         public const int VK_LEFT_ALT = 164;
-
 
         public const int A = 0x41; //A key code
         public const int C = 0x43; //C key code

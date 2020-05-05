@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Libs
+﻿namespace Libs
 {
     public class DebuffStatus
     {
@@ -31,6 +27,7 @@ namespace Libs
 
         // Druid
         public bool Roar { get => IsBitSet(0); }
+
         public bool FaerieFire { get => IsBitSet(1); }
 
         // Paladin

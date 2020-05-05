@@ -1,10 +1,7 @@
 ﻿using Libs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace UnitTests.SquareReaderTests
 {
@@ -17,7 +14,7 @@ namespace UnitTests.SquareReaderTests
             // Arrange
             var cell = new DataFrame(new Point(10, 1), 12);
             var addonReader = new Mock<IAddonReader>();
-            addonReader.Setup(s=>s.GetColorAt(cell.index)).Returns(Color.FromArgb(110, 89, 57));
+            addonReader.Setup(s => s.GetColorAt(cell.index)).Returns(Color.FromArgb(110, 89, 57));
             var reader = new SquareReader(addonReader.Object);
 
             // Act

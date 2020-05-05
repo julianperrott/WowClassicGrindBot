@@ -65,18 +65,19 @@ namespace Libs
             while (this.AddonReader.Active)
             {
                 this.AddonReader.AddonRefresh();
+                this.GoapAgent?.UpdateWorldState();
             }
         }
 
         public void ScreenshotRefreshThread()
         {
-            while (true)//this.WowBot.Active)
+            while (true)
             {
                 this.WowScreen.DoScreenshot(this.npcNameFinder);
             }
         }
 
-        public bool IsBotActive => actionThread == null ? false:  actionThread.Active;
+        public bool IsBotActive => actionThread == null ? false : actionThread.Active;
 
         public void ToggleBotStatus()
         {

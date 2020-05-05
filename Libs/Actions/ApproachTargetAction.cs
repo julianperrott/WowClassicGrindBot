@@ -1,8 +1,6 @@
 ﻿using Libs.GOAP;
-using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -17,7 +15,7 @@ namespace Libs.Actions
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
         private ILogger logger;
-        private bool NeedsToReset=true;
+        private bool NeedsToReset = true;
 
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
@@ -60,8 +58,6 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            //logger.LogInformation($"ApproachTargetAction: Incombat={playerReader.PlayerBitValues.PlayerInCombat}, WasInCombat={playerWasInCombat}");
-
             if (playerReader.PlayerBitValues.IsMounted)
             {
                 await wowProcess.Dismount();
@@ -114,7 +110,7 @@ namespace Libs.Actions
             }
         }
 
-        bool HasPickedUpAnAdd
+        private bool HasPickedUpAnAdd
         {
             get
             {

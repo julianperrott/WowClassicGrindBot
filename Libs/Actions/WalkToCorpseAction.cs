@@ -1,14 +1,12 @@
 ﻿using Libs.GOAP;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Numerics;
-using Newtonsoft.Json;
-using System.IO;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Numerics;
+using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
@@ -24,7 +22,7 @@ namespace Libs.Actions
         private readonly List<WowPoint> routePoints;
         private readonly StuckDetector stuckDetector;
         private Stack<WowPoint> points = new Stack<WowPoint>();
-        
+
         private Random random = new Random();
         private ILogger logger;
         private DateTime LastJump = DateTime.Now;
@@ -36,14 +34,14 @@ namespace Libs.Actions
             return points.Count == 0 ? null : points.Peek();
         }
 
-        public WalkToCorpseAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection,List<WowPoint> spiritWalker,List<WowPoint> routePoints, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
+        public WalkToCorpseAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.routePoints = routePoints.ToList();
-            this.spiritWalkerPath= spiritWalker.ToList();
+            this.spiritWalkerPath = spiritWalker.ToList();
             this.logger = logger;
             this.stuckDetector = stuckDetector;
 
@@ -90,7 +88,7 @@ namespace Libs.Actions
 
             await Task.Delay(200);
 
-            if (!this.playerReader.PlayerBitValues.DeadStatus){ return; }
+            if (!this.playerReader.PlayerBitValues.DeadStatus) { return; }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             double distance = 0;
@@ -170,17 +168,15 @@ namespace Libs.Actions
             return (DateTime.Now - LastActive).TotalSeconds < 2;
         }
 
-
         public async Task Reset()
         {
             logger.LogInformation("Sleeping 2 seconds");
             await Task.Delay(2000);
-            while(new List<double> { playerReader.XCoord, playerReader.YCoord, corpseLocation.X,corpseLocation.Y }.Max()>100)
+            while (new List<double> { playerReader.XCoord, playerReader.YCoord, corpseLocation.X, corpseLocation.Y }.Max() > 100)
             {
                 logger.LogInformation($"Waiting... odd coords read. Player {playerReader.XCoord},{playerReader.YCoord} corpse { corpseLocation.X}{corpseLocation.Y}");
                 await Task.Delay(5000);
             }
-
 
             var closestRouteAndSpiritPathPoints = routePoints.SelectMany(s => spiritWalkerPath.Select(swp => (pathPoint: s, spiritPathPoint: swp, distance: DistanceTo(s, swp))))
                 .OrderBy(s => s.distance)
@@ -203,7 +199,6 @@ namespace Libs.Actions
                 .pathPoint;
 
             //from closestRouteAndSpiritPathPoints to closestRoutePointToCorpse
-
             var pathStartPoint = closestRouteAndSpiritPathPoints.pathPoint;
 
             // see if we can walk forward through the points
@@ -220,7 +215,6 @@ namespace Libs.Actions
 
             var myLocation = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var truncatedRoute = WowPoint.ShortenRouteFromLocation(myLocation, routeToCorpse);
-
 
             for (int i = truncatedRoute.Count - 1; i > -1; i--)
             {
@@ -241,7 +235,7 @@ namespace Libs.Actions
             public List<WowPoint> TruncatedRoute { get; set; } = new List<WowPoint>();
         }
 
-        private static List<WowPoint> FillPathToCorpse( WowPoint closestRoutePointToCorpse, WowPoint pathStartPoint, List<WowPoint> routePoints)
+        private static List<WowPoint> FillPathToCorpse(WowPoint closestRoutePointToCorpse, WowPoint pathStartPoint, List<WowPoint> routePoints)
         {
             var pathToCorpse = new List<WowPoint>();
             var startPathPointIndex = 0;
@@ -294,17 +288,16 @@ namespace Libs.Actions
 
         public static Vector2 GetClosestPointOnLineSegment(Vector2 A, Vector2 B, Vector2 P)
         {
-            Vector2 AP = P - A;       //Vector from A to P   
-            Vector2 AB = B - A;       //Vector from A to B  
+            Vector2 AP = P - A;       //Vector from A to P
+            Vector2 AB = B - A;       //Vector from A to B
 
-            float magnitudeAB = AB.LengthSquared();     //Magnitude of AB vector (it's length squared)     
-            float ABAPproduct = Vector2.Dot(AP, AB);    //The DOT product of a_to_p and a_to_b     
-            float distance = ABAPproduct / magnitudeAB; //The normalized "distance" from a to your closest point  
+            float magnitudeAB = AB.LengthSquared();     //Magnitude of AB vector (it's length squared)
+            float ABAPproduct = Vector2.Dot(AP, AB);    //The DOT product of a_to_p and a_to_b
+            float distance = ABAPproduct / magnitudeAB; //The normalized "distance" from a to your closest point
 
-            if (distance < 0)     //Check if P projection is over vectorAB     
+            if (distance < 0)     //Check if P projection is over vectorAB
             {
                 return A;
-
             }
             else if (distance > 1)
             {

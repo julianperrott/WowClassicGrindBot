@@ -1,9 +1,7 @@
 ﻿using Libs.GOAP;
 using Libs.Looting;
-using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
@@ -39,7 +37,6 @@ namespace Libs.Actions
         }
 
         public override float CostOfPerformingAction { get => 4f; }
-
 
         public override async Task PerformAction()
         {

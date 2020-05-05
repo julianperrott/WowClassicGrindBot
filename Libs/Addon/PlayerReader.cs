@@ -1,10 +1,6 @@
-﻿
-using Libs.Addon;
+﻿using Libs.Addon;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Libs
@@ -49,8 +45,6 @@ namespace Libs
         internal void Updated()
         {
             Sequence++;
-            //logger.LogInformation($"Target is me = {PlayerBitValues.TargetOfTargetIsPlayer}");
-            //logger.LogInformation($"{SpellInRange.Rogue_SinisterStrike}-{SpellInRange.Rogue_Throw}-{SpellInRange.Rogue_ShootGun}");
 
             if (UIErrorMessage > 0)
             {
@@ -75,7 +69,7 @@ namespace Libs
         {
             get
             {
-                if (TargetId>0 && creatureDictionary.ContainsKey(this.TargetId))
+                if (TargetId > 0 && creatureDictionary.ContainsKey(this.TargetId))
                 {
                     return creatureDictionary[this.TargetId].Name;
                 }
@@ -121,20 +115,11 @@ namespace Libs
         public BuffStatus Buffs => new BuffStatus(reader.GetLongAtCell(41));
         public DebuffStatus Debuffs => new DebuffStatus(reader.GetLongAtCell(55));
 
-        //public long SkinningLevel => reader.GetLongAtCell(41);
-        //public long FishingLevel => reader.GetLongAtCell(42);
-
-        //MakePixelSquareArr(integerToColor(self: GetDebuffs("FrostNova")), 43)-- Checks if target is frozen by frost nova debuff
-
         public long TargetLevel => reader.GetLongAtCell(43);
-
-        //public long Gametime => reader.GetLongAtCell(44);// Returns time in the game
-        //public long GossipOptions => reader.GetLongAtCell(45); //  Returns which gossip icons are on display in dialogue box
 
         public PlayerClassEnum PlayerClass => (PlayerClassEnum)reader.GetLongAtCell(46);
 
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
-        //public long ShapeshiftForm => reader.GetLongAtCell(48);
 
         public ShapeshiftForm Druid_ShapeshiftForm => (ShapeshiftForm)reader.GetLongAtCell(48);
 

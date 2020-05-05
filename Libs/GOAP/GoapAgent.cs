@@ -1,111 +1,94 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Libs.Actions;
-using Libs.NpcFinder;
+﻿using Libs.Actions;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Libs.GOAP
 {
-	public sealed class GoapAgent
-	{
-		private GoapPlanner planner;
-		public IEnumerable<GoapAction> AvailableActions { get; set; }
-		private PlayerReader playerReader;
-		private ILogger logger;
+    public sealed class GoapAgent
+    {
+        private GoapPlanner planner;
+        public IEnumerable<GoapAction> AvailableActions { get; set; }
+        private PlayerReader playerReader;
+        private ILogger logger;
 
-		public GoapAction? CurrentAction { get; set; }
-		public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; set; } = new HashSet<KeyValuePair<GoapKey, object>>();
-		private Blacklist blacklist;
+        public GoapAction? CurrentAction { get; set; }
+        public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; set; } = new HashSet<KeyValuePair<GoapKey, object>>();
+        private Blacklist blacklist;
 
-		public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, Blacklist blacklist, ILogger logger)
-		{
-			this.playerReader = playerReader;
-			this.AvailableActions = availableActions.OrderBy(a => a.CostOfPerformingAction);
-			this.blacklist = blacklist;
-			this.logger = logger;
-			this.planner = new GoapPlanner(logger);
-		}
+        public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, Blacklist blacklist, ILogger logger)
+        {
+            this.playerReader = playerReader;
+            this.AvailableActions = availableActions.OrderBy(a => a.CostOfPerformingAction);
+            this.blacklist = blacklist;
+            this.logger = logger;
+            this.planner = new GoapPlanner(logger);
+        }
 
-		public async Task<GoapAction?> GetAction()
-		{
-			WorldState = await GetWorldState(playerReader);
+        public void UpdateWorldState()
+        {
+            WorldState = GetWorldState(playerReader);
+        }
 
-			var goal = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
+        public async Task<GoapAction?> GetAction()
+        {
+            if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
+            {
+                logger.LogInformation("Target is blacklisted");
+                await new WowProcess(logger).KeyPress(ConsoleKey.F3, 400);
+                UpdateWorldState();
+            }
 
-			//Plan
-			Queue<GoapAction> plan = planner.Plan(AvailableActions, WorldState, goal);
-			if (plan != null && plan.Count > 0)
-			{
-				CurrentAction = plan.Peek();
-			}
-			else
-			{
-				logger.LogInformation($"Target Health: {playerReader.TargetHealth}, max {playerReader.TargetMaxHealth}, dead {playerReader.PlayerBitValues.TargetIsDead}");
+            var goal = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
 
-				await new WowProcess(logger).KeyPress(ConsoleKey.Tab, 420);
-			}
+            //Plan
+            Queue<GoapAction> plan = planner.Plan(AvailableActions, WorldState, goal);
+            if (plan != null && plan.Count > 0)
+            {
+                CurrentAction = plan.Peek();
+            }
+            else
+            {
+                logger.LogInformation($"Target Health: {playerReader.TargetHealth}, max {playerReader.TargetMaxHealth}, dead {playerReader.PlayerBitValues.TargetIsDead}");
 
-			return CurrentAction;
-		}
+                await new WowProcess(logger).KeyPress(ConsoleKey.Tab, 420);
+            }
 
-		public async Task<HashSet<KeyValuePair<GoapKey, object>>> GetWorldState(PlayerReader playerReader)
-		{
-			//Debug.WriteLine("TargetOfTargetIsPlayer: " + playerReader.PlayerBitValues.TargetOfTargetIsPlayer);
+            return CurrentAction;
+        }
 
-			if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
-			{
-				logger.LogInformation("Target is blacklisted");
-				await new WowProcess(logger).KeyPress(ConsoleKey.F3, 400);
-			}
+        private HashSet<KeyValuePair<GoapKey, object>> GetWorldState(PlayerReader playerReader)
+        {
+            var state = new HashSet<KeyValuePair<GoapKey, object>>
+            {
+                new KeyValuePair<GoapKey, object>(GoapKey.hastarget,!blacklist.IsTargetBlacklisted() && (!string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0)),
+                new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, !playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0),
+                new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.PlayerBitValues.PlayerInCombat ),
+                new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
+                new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, playerReader.WithInCombatRange),
+                new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
+                new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
+            };
 
-			//var drinkPercentage = 50;
-			//if (this.playerReader.PlayerClass == PlayerClassEnum.Druid) { drinkPercentage = 40; }
+            actionState.ToList().ForEach(kv => state.Add(kv));
 
-			var state = new HashSet<KeyValuePair<GoapKey, object>>
-			{
-				new KeyValuePair<GoapKey, object>(GoapKey.hastarget,!blacklist.IsTargetBlacklisted() && (!string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0)),
-				new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, !playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0),
-				new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.PlayerBitValues.PlayerInCombat ),
-				new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
-				new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, playerReader.WithInCombatRange),
-				new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
-				//new KeyValuePair<GoapKey, object>(GoapKey.shouldheal, playerReader.HealthPercent<60 && !playerReader.PlayerBitValues.DeadStatus),
-				new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
-				//new KeyValuePair<GoapKey, object>(GoapKey.usehealingpotion, playerReader.HealthPercent<7),
-				//new KeyValuePair<GoapKey, object>(GoapKey.shoulddrink, playerReader.ManaPercentage< drinkPercentage && ManaValueIsValid()),
-			};
+            return state;
+        }
 
-			actionState.ToList().ForEach(kv => state.Add(kv));
+        public Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
 
-			return state;
-		}
-
-		//private bool ManaValueIsValid()
-		//{
-		//	if (playerReader.PlayerClass != PlayerClassEnum.Druid)
-		//	{
-		//		return true;
-		//	}
-
-		//	return playerReader.Druid_ShapeshiftForm == ShapeshiftForm.None || playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Travel;
-		//}
-
-		public Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
-
-		public void OnActionEvent(object sender, ActionEvent e)
-		{
-			if (!actionState.ContainsKey(e.Key))
-			{
-				actionState.Add(e.Key, e.Value);
-			}
-			else
-			{
-				actionState[e.Key] = e.Value;
-			}
-		}
-	}
+        public void OnActionEvent(object sender, ActionEvent e)
+        {
+            if (!actionState.ContainsKey(e.Key))
+            {
+                actionState.Add(e.Key, e.Value);
+            }
+            else
+            {
+                actionState[e.Key] = e.Value;
+            }
+        }
+    }
 }

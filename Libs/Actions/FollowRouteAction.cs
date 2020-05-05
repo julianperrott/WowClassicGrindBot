@@ -1,15 +1,10 @@
 ﻿using Libs.GOAP;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Numerics;
-using Libs.NpcFinder;
-using System.Runtime.InteropServices;
-using PInvoke;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
@@ -18,10 +13,11 @@ namespace Libs.Actions
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
         private readonly List<WowPoint> pointsList;
-        private Stack<WowPoint> points=new Stack<WowPoint>();
+        private Stack<WowPoint> points = new Stack<WowPoint>();
+
         public WowPoint? NextPoint()
         {
-            return points.Count==0 ? null: points.Peek();
+            return points.Count == 0 ? null : points.Peek();
         }
 
         private readonly PlayerReader playerReader;
@@ -41,7 +37,7 @@ namespace Libs.Actions
 
         public bool firstLoad = true;
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, Blacklist blacklist, ILogger logger,StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, Blacklist blacklist, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
@@ -66,7 +62,7 @@ namespace Libs.Actions
                 var me = this.playerReader.PlayerLocation;
                 var closest = pointsList.OrderBy(p => WowPoint.DistanceTo(me, p)).FirstOrDefault();
 
-                for (int i = 0; i <pointsList.Count;i++)
+                for (int i = 0; i < pointsList.Count; i++)
                 {
                     points.Push(pointsList[i]);
                     if (pointsList[i] == closest) { break; }
@@ -87,19 +83,10 @@ namespace Libs.Actions
         }
 
         public override float CostOfPerformingAction { get => 20f; }
-        
-
-        public void Dump(string description)
-        {
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = WowPoint.DistanceTo(location, points.Peek());
-            var heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
-            //logger.LogInformation($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
-        }
 
         public override void OnActionEvent(object sender, ActionEvent e)
         {
-            if (sender!=this)
+            if (sender != this)
             {
                 shouldMount = true;
             }
@@ -116,7 +103,7 @@ namespace Libs.Actions
             }
 
             await Task.Delay(200);
-            wowProcess.SetKeyState(ConsoleKey.UpArrow, true,false, "FollowRouteAction");
+            wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
 
             if (this.playerReader.PlayerBitValues.PlayerInCombat) { return; }
 
@@ -143,7 +130,6 @@ namespace Libs.Actions
                 }
             }
 
-
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, points.Peek());
             var heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
@@ -154,7 +140,6 @@ namespace Libs.Actions
             }
             else if (!this.stuckDetector.IsGettingCloser())
             {
-                Dump("Stuck");
                 // stuck so jump
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
                 await Task.Delay(100);
@@ -170,9 +155,6 @@ namespace Libs.Actions
             }
             else // distance closer
             {
-                Dump("Closer");
-                //playerDirection.SetDirection(heading);
-
                 var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
                 var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
@@ -263,12 +245,11 @@ namespace Libs.Actions
                 }
             }
 
-            if( this.playerReader.HasTarget && !blacklist.IsTargetBlacklisted())
+            if (this.playerReader.HasTarget && !blacklist.IsTargetBlacklisted())
             {
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
                     await wowProcess.Dismount();
-                    
                 }
                 await this.TapInteractKey("FollowRouteAction");
                 return true;
@@ -318,7 +299,7 @@ namespace Libs.Actions
                 {
                     logger.LogInformation($"Random jump");
 
-                   await wowProcess.KeyPress(ConsoleKey.Spacebar, 499);
+                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 499);
                 }
             }
             LastJump = DateTime.Now;
@@ -336,17 +317,16 @@ namespace Libs.Actions
 
         public static Vector2 GetClosestPointOnLineSegment(Vector2 A, Vector2 B, Vector2 P)
         {
-            Vector2 AP = P - A;       //Vector from A to P   
-            Vector2 AB = B - A;       //Vector from A to B  
+            Vector2 AP = P - A;       //Vector from A to P
+            Vector2 AB = B - A;       //Vector from A to B
 
-            float magnitudeAB = AB.LengthSquared();     //Magnitude of AB vector (it's length squared)     
-            float ABAPproduct = Vector2.Dot(AP, AB);    //The DOT product of a_to_p and a_to_b     
-            float distance = ABAPproduct / magnitudeAB; //The normalized "distance" from a to your closest point  
+            float magnitudeAB = AB.LengthSquared();     //Magnitude of AB vector (it's length squared)
+            float ABAPproduct = Vector2.Dot(AP, AB);    //The DOT product of a_to_p and a_to_b
+            float distance = ABAPproduct / magnitudeAB; //The normalized "distance" from a to your closest point
 
-            if (distance < 0)     //Check if P projection is over vectorAB     
+            if (distance < 0)     //Check if P projection is over vectorAB
             {
                 return A;
-
             }
             else if (distance > 1)
             {

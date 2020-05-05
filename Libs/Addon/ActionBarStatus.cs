@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 
 namespace Libs
@@ -15,7 +13,7 @@ namespace Libs
             this.value = 0;
         }
 
-            public ActionBarStatus(long value)
+        public ActionBarStatus(long value)
         {
             this.value = value;
         }
@@ -56,24 +54,11 @@ namespace Libs
         internal void Dump()
         {
             var sb = new StringBuilder();
-            for(int i=1;i<12;i++)
+            for (int i = 1; i < 12; i++)
             {
-                sb.Append($"{i}:{IsBitSet(i-1)},");
+                sb.Append($"{i}:{IsBitSet(i - 1)},");
             }
             Debug.WriteLine(sb.ToString());
         }
-
-
-        //local MAIN_MIN = 1
-        //local MAIN_MAX = 12
-        //local BOTTOM_LEFT_MIN = 61
-        //local BOTTOM_LEFT_MAX = 72
-        //MakePixelSquareArr(integerToColor(self: spellStatus()), 34)-- Has global cooldown active
-        //MakePixelSquareArr(integerToColor(self: spellAvailable()), 35)-- Is the spell available to be cast?
-        //MakePixelSquareArr(integerToColor(self: notEnoughMana()), 36)-- Do we have enough mana to cast that spell
-
-        //let castableBinary = reader.getIntAtCell(f[34])
-        //let equippedBinary = reader.getIntAtCell(f[35])
-        //let notEnoughManaBinary = reader.getIntAtCell(f[36])
     }
 }

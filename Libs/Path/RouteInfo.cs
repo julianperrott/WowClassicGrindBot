@@ -128,7 +128,7 @@ namespace Libs
         public string NextPoint()
         {
             var pt = followRouteAction.LastActive > walkToCorpseAction.LastActive ? followRouteAction.NextPoint() : walkToCorpseAction.NextPoint();
-            return pt == null ? string.Empty:$"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '3' />";
+            return pt == null ? string.Empty : $"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '3' />";
         }
     }
 }

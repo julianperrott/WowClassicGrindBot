@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using Libs.GOAP;
-using Libs.NpcFinder;
+﻿using Libs.GOAP;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
@@ -61,7 +58,7 @@ namespace Libs.Actions
                 await this.wowProcess.KeyPress(ConsoleKey.RightArrow, 1000, "Turn after pull timeout");
                 return;
             }
-            
+
             RaiseEvent(new ActionEvent(GoapKey.fighting, true));
 
             if (playerReader.PlayerBitValues.IsMounted)
@@ -89,11 +86,6 @@ namespace Libs.Actions
                     await wowProcess.KeyPress(ConsoleKey.F3, 300); // clear target
                     return;
                 }
-
-                //if (!this.combatAction.IsOnCooldown(ConsoleKey.Spacebar, 10))
-                //{
-                //    await this.combatAction.PressKey(ConsoleKey.Spacebar,"", 500);
-                //}
 
                 if (!this.stuckDetector.IsMoving())
                 {
@@ -137,13 +129,12 @@ namespace Libs.Actions
             for (int i = 0; i < 50; i++)
             {
                 await Task.Delay(100);
-                if (playerReader.WithInCombatRange|| (!this.playerReader.PlayerBitValues.PlayerInCombat && i>20)) 
-                { 
-                    return; 
+                if (playerReader.WithInCombatRange || (!this.playerReader.PlayerBitValues.PlayerInCombat && i > 20))
+                {
+                    return;
                 }
             }
         }
-
 
         public bool ShouldStopBeforePull => this.classConfiguration.Pull.Sequence.Count > 0;
 

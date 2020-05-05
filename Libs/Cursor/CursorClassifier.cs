@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -50,11 +49,10 @@ namespace Libs.Cursor
         private static extern bool GetCursorInfo(out CURSORINFO pci);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern bool DrawIconEx(IntPtr hdc, int xLeft, int yTop, IntPtr hIcon, int cxWidth, int cyHeight, int istepIfAniCur, IntPtr hbrFlickerFreeDraw, int diFlags);
+        private static extern bool DrawIconEx(IntPtr hdc, int xLeft, int yTop, IntPtr hIcon, int cxWidth, int cyHeight, int istepIfAniCur, IntPtr hbrFlickerFreeDraw, int diFlags);
 
         private const Int32 CURSOR_SHOWING = 0x0001;
         private const Int32 DI_NORMAL = 0x0003;
-
 
         public static Bitmap Classify(out CursorClassification classification)
         {
@@ -63,7 +61,7 @@ namespace Libs.Cursor
             {
                 CURSORINFO pci;
                 pci.cbSize = Marshal.SizeOf(typeof(CURSORINFO));
-               
+
                 using (var g = Graphics.FromImage(result))
                 {
                     if (GetCursorInfo(out pci))

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Libs
+﻿namespace Libs
 {
     public class PlayerBitValues
     {
         public long value;
+
         public PlayerBitValues(long value)
         {
             this.value = value;
@@ -25,14 +22,12 @@ namespace Libs
 
         public bool TargetOfTargetIsPlayer { get => IsBitSet(15); }
         public bool PlayerInCombat { get => IsBitSet(14); }
-        
 
         public bool Flying { get => IsBitSet(10); }
         public bool ItemsAreBroken { get => IsBitSet(9); }
 
         public bool HasPet { get => IsBitSet(6); }
-        
-    
+
         public bool TalentPoints { get => IsBitSet(3); }
         public bool DeadStatus { get => IsBitSet(2); }
         public bool TargetIsDead { get => IsBitSet(1); }

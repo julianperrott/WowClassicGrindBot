@@ -13,27 +13,28 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "Fireball",
+        "Name": "Pyroblast",
         "HasCastBar": true,
-        "Key": "2",
-        "MinMana": 45
+        "Key": "=",
+        "MinMana": 125,
+        "DelayAfterCast" : 500
       }
     ]
   },
   "Combat": {
     "Sequence": [
       {
-        "Name": "Fire Blast",
-        "Key": "1",
-        "MinMana": 75,
-        "Cooldown": 8
-      },
-      {
         "Name": "Frost Bolt",
         "HasCastBar": true,
         "Key": "5",
         "MinMana": 50,
         "Cooldown": 6
+      },
+      {
+        "Name": "Fire Blast",
+        "Key": "1",
+        "MinMana": 75,
+        "Cooldown": 8
       },
       {
         "Name": "Fireball",

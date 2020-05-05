@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
@@ -27,7 +25,7 @@ namespace Libs.Actions
         {
             if (XCoord != playerReader.XCoord || YCoord != playerReader.YCoord)
             {
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, false,false, "StopMoving");
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, false, false, "StopMoving");
                 await Task.Delay(1);
             }
 

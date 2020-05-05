@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace Libs
 {
@@ -35,19 +34,19 @@ namespace Libs
             item.CreateCooldownRequirement();
         }
 
-        private void CreateMinRequirement(List<Requirement> RequirementObjects,KeyConfiguration item, string type, int value)
+        private void CreateMinRequirement(List<Requirement> RequirementObjects, KeyConfiguration item, string type, int value)
         {
             if (value > 0)
             {
                 RequirementObjects.Add(new Requirement
                 {
-                    HasRequirement = () =>  playerReader.ManaCurrent >= value,
+                    HasRequirement = () => playerReader.ManaCurrent >= value,
                     LogMessage = () => $"{type} {playerReader.ManaCurrent} >= {value}"
                 });
             }
         }
 
-        private void CreateMinComboPointsRequirement(List<Requirement> RequirementObjects,KeyConfiguration item)
+        private void CreateMinComboPointsRequirement(List<Requirement> RequirementObjects, KeyConfiguration item)
         {
             if (item.MinComboPoints > 0)
             {
@@ -160,8 +159,6 @@ namespace Libs
                 };
             }
 
-
-
             if (requirement.StartsWith("not "))
             {
                 requirement = requirement.Substring(4);
@@ -187,7 +184,6 @@ namespace Libs
                 HasRequirement = () => false,
                 LogMessage = () => $"UNKNOWN REQUIREMENT! {requirementText}"
             };
-
         }
 
         private Requirement GetValueBasedRequirement(string name, string requirement)
@@ -220,7 +216,6 @@ namespace Libs
 
             var valueCheck = valueDictionary[parts[0]];
 
-
             Func<bool> shapeshiftCheck = () => true;
 
             if (this.playerReader.PlayerClass == PlayerClassEnum.Druid && parts[0] == "Mana%")
@@ -240,7 +235,7 @@ namespace Libs
             {
                 return new Requirement
                 {
-                    HasRequirement = () => shapeshiftCheck() &&  valueCheck() <= value,
+                    HasRequirement = () => shapeshiftCheck() && valueCheck() <= value,
                     LogMessage = () => $"{parts[0]} {valueCheck()} < {value}"
                 };
             }

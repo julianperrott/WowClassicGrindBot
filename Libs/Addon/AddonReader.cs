@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -25,11 +24,10 @@ namespace Libs
 
         public event EventHandler? AddonDataChanged;
 
-
         private readonly int width;
         private readonly int height;
         private readonly IColorReader colorReader;
-       
+
         public AddonReader(IColorReader colorReader, List<DataFrame> frames, ILogger logger)
         {
             this.frames = frames;

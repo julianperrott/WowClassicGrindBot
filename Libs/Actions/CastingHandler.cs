@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
@@ -88,7 +86,7 @@ namespace Libs.Actions
 
             if (sleepBeforeCast > 0)
             {
-                item.LogInformation( $" Wait before {sleepBeforeCast}.");
+                item.LogInformation($" Wait before {sleepBeforeCast}.");
                 await Task.Delay(sleepBeforeCast);
             }
 
@@ -98,7 +96,7 @@ namespace Libs.Actions
 
             if (!item.HasCastBar)
             {
-                item.LogInformation( $" ... delay after cast {item.DelayAfterCast}");
+                item.LogInformation($" ... delay after cast {item.DelayAfterCast}");
                 await Task.Delay(item.DelayAfterCast);
             }
             else
@@ -107,18 +105,18 @@ namespace Libs.Actions
                 if (!this.playerReader.IsCasting && this.playerReader.HasTarget)
                 {
                     await this.InteractOnUIError();
-                    item.LogInformation( $"Not casting, pressing it again");
+                    item.LogInformation($"Not casting, pressing it again");
                     await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
                     await Task.Delay(300);
                     if (!this.playerReader.IsCasting && this.playerReader.HasTarget)
                     {
-                        item.LogInformation( $"Still not casting !");
+                        item.LogInformation($"Still not casting !");
                         await this.InteractOnUIError();
                         return false;
                     }
                 }
 
-                item.LogInformation( " waiting for cast bar to end.");
+                item.LogInformation(" waiting for cast bar to end.");
                 for (int i = 0; i < 15000; i += 100)
                 {
                     if (!this.playerReader.IsCasting)
@@ -163,7 +161,6 @@ namespace Libs.Actions
 
             return this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum;
         }
-
 
         public async Task TapInteractKey(string source)
         {
@@ -232,6 +229,5 @@ namespace Libs.Actions
                     break;
             }
         }
-
     }
 }

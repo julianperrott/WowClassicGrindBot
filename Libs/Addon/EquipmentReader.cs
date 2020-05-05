@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Linq;
 
 namespace Libs
 {
@@ -12,7 +9,7 @@ namespace Libs
 
         private long[] equipment = new long[20];
 
-        public EquipmentReader(ISquareReader reader,int cellStart)
+        public EquipmentReader(ISquareReader reader, int cellStart)
         {
             this.cellStart = cellStart;
             this.reader = reader;
@@ -20,7 +17,7 @@ namespace Libs
 
         public long[] Read()
         {
-            var index = reader.GetLongAtCell(cellStart+1) - 1;
+            var index = reader.GetLongAtCell(cellStart + 1) - 1;
             if (index < 20 && index >= 0)
             {
                 equipment[index] = reader.GetLongAtCell(cellStart);

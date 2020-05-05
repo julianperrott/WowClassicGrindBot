@@ -1,9 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Text;
 
 namespace Libs
 {
@@ -21,7 +17,7 @@ namespace Libs
             //logger.LogInformation($"from: ({from.X},{from.Y}) to: ({to.X},{to.Y})");
 
             var target = Math.Atan2(to.X - from.X, to.Y - from.Y);
-            return Math.PI+ target;
+            return Math.PI + target;
         }
     }
 }

@@ -2,7 +2,6 @@
 using Libs.Looting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
@@ -93,7 +92,7 @@ namespace Libs.Actions
                     return;
                 }
 
-                Log(searchForMobs?"Searching for mobs": $"Looting (attempt: {lootAttempt + 1}.");
+                Log(searchForMobs ? "Searching for mobs" : $"Looting (attempt: {lootAttempt + 1}.");
                 var foundSomething = await lootWheel.Loot(searchForMobs, doExtendedLootSearch || foundAddWhileLooting);
 
                 if (foundSomething && lootWheel.Classification == Cursor.CursorClassification.Kill)
@@ -105,7 +104,7 @@ namespace Libs.Actions
                     {
                         Log("Waiting for target to be recognised!");
                         await Task.Delay(100);
-                        if (string.IsNullOrEmpty(playerReader.Target) && playerReader.PlayerBitValues.TargetIsDead && playerReader.TargetHealth==0)
+                        if (string.IsNullOrEmpty(playerReader.Target) && playerReader.PlayerBitValues.TargetIsDead && playerReader.TargetHealth == 0)
                         {
                             await Task.Delay(100);
                             Log($"Waiting for target to be recognised! {playerReader.Target},{playerReader.PlayerBitValues.TargetIsDead},{playerReader.TargetHealth}");
@@ -159,23 +158,20 @@ namespace Libs.Actions
                 lootAttempt++;
             }
 
-
             // wait until we have left combat
             // check for enemies
             // is our health going down.
 
-
-
             //await wowProcess.RightClickMouse(new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width / 2, (Screen.PrimaryScreen.Bounds.Height / 2)));
 
-            RaiseEvent(new ActionEvent(GoapKey.shouldloot,false));
+            RaiseEvent(new ActionEvent(GoapKey.shouldloot, false));
             RaiseEvent(new ActionEvent(GoapKey.postloot, true));
 
             if (bagReader.BagsFull)
             //if (bagReader.bagItems.Count > 52)
             {
                 logger.LogInformation("bags full");
-               //RaiseEvent(new ActionEvent(GoapKey.abort, true));
+                //RaiseEvent(new ActionEvent(GoapKey.abort, true));
             }
 
             Log("End PerformAction");

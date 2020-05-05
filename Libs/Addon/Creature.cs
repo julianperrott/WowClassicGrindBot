@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Libs.Addon
+﻿namespace Libs.Addon
 {
     public class Creature
     {

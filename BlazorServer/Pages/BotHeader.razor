@@ -27,8 +27,8 @@
             @if (!string.IsNullOrEmpty(playerReader.Target))
             {
                 <a href="https://classic.wowhead.com/npc=@playerReader.TargetId"
-                   target="_blank" 
-                   onmousemove="showTooltip(event, '@playerReader.TargetId (GUID: @playerReader.TargetGuid)');" 
+                   target="_blank"
+                   onmousemove="showTooltip(event, '@playerReader.TargetId (GUID: @playerReader.TargetGuid)');"
                    onmouseout="hideTooltip();">
 
                     <div>

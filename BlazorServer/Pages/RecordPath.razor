@@ -56,7 +56,6 @@
             <br />
         }
 
-
         @foreach (var point in @botController.RouteInfo.PathPoints)
         {
             <span class="badge badge-info" @onclick="() => EditPoint(point)">
@@ -106,7 +105,6 @@
             CanvasInitialised = true;
             botController.RouteInfo.SetMargin(20);
             botController.RouteInfo.SetCanvasSize(600);
-
 
             if (botController.RouteInfo.PathPoints.Count > 0)
             {
@@ -199,4 +197,3 @@
         UpdateRoute();
     }
 }
-

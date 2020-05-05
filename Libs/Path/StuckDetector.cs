@@ -2,9 +2,7 @@
 using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Libs
@@ -18,13 +16,12 @@ namespace Libs
         private readonly Random random = new Random();
         private readonly IPlayerDirection playerDirection;
 
-        WowPoint targetLocation = new WowPoint(0, 0);
+        private WowPoint targetLocation = new WowPoint(0, 0);
 
         private Stopwatch LastReachedDestiationTimer = new Stopwatch();
         private Stopwatch LastUnstickAttemptTimer = new Stopwatch();
         private double previousDistanceToTarget = 99999;
         private DateTime timeOfLastSignificantMovement = DateTime.Now;
-
 
         public StuckDetector(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, StopMoving stopMoving, ILogger logger)
         {
@@ -58,6 +55,7 @@ namespace Libs
         }
 
         public delegate void ActionEventHandler(object sender, ActionEvent e);
+
         public event ActionEventHandler? ActionEvent;
 
         public void RaiseEvent(ActionEvent e)
@@ -85,7 +83,7 @@ namespace Libs
             {
                 int strafeDuration = (int)(1000 + (((double)actionDurationSeconds * 1000) / 12));
 
-                if (strafeDuration>5)
+                if (strafeDuration > 5)
                 {
                     strafeDuration = 5;
                 }
@@ -136,14 +134,14 @@ namespace Libs
         {
             var currentDistanceToTarget = WowPoint.DistanceTo(this.playerReader.PlayerLocation, targetLocation);
 
-            if (currentDistanceToTarget < previousDistanceToTarget-5)
+            if (currentDistanceToTarget < previousDistanceToTarget - 5)
             {
                 ResetStuckParameters();
                 previousDistanceToTarget = currentDistanceToTarget;
                 return true;
             }
 
-            if (currentDistanceToTarget> previousDistanceToTarget+5)
+            if (currentDistanceToTarget > previousDistanceToTarget + 5)
             {
                 currentDistanceToTarget = previousDistanceToTarget;
             }

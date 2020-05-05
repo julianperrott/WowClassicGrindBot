@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -74,7 +73,6 @@ namespace Libs.NpcFinder
                 return Convert.ToBase64String(byteImage); // Get Base64
             }
         }
-
 
         public void CaptureScreen()
         {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-
-namespace Libs
+﻿namespace Libs
 {
     public class SquareReader : ISquareReader
     {
@@ -35,7 +30,7 @@ namespace Libs
             if (color != 0)
             {
                 var colorString = color.ToString();
-                if(colorString.Length>6) { return string.Empty; }
+                if (colorString.Length > 6) { return string.Empty; }
                 var colorText = "000000".Substring(0, 6 - colorString.Length) + colorString;
                 return ToChar(colorText, 0) + ToChar(colorText, 2) + ToChar(colorText, 4);
             }

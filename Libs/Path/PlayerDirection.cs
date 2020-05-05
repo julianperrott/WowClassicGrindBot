@@ -1,8 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Libs
@@ -22,7 +19,7 @@ namespace Libs
             this.logger = logger;
         }
 
-        public async Task SetDirection(double desiredDirection,WowPoint point, string source)
+        public async Task SetDirection(double desiredDirection, WowPoint point, string source)
         {
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, point);
@@ -64,7 +61,7 @@ namespace Libs
             return (int)((TurnAmount(desiredDirection) * 1000) / Math.PI);
         }
 
-            private async Task TurnAndReadActualDirection(double desiredDirection, ConsoleKey key)
+        private async Task TurnAndReadActualDirection(double desiredDirection, ConsoleKey key)
         {
             // Press Right
             wowProcess.SetKeyState(key, true, true, "PlayerDirection");
@@ -100,7 +97,7 @@ namespace Libs
             }
         }
 
-        string lastText = string.Empty;
+        private string lastText = string.Empty;
 
         private ConsoleKey GetDirectionKeyToPress(double desiredDirection)
         {

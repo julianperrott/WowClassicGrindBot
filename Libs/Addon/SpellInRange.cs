@@ -22,17 +22,20 @@
 
         // Rogue
         public bool Rogue_SinisterStrike { get => IsBitSet(0); }
+
         public bool Rogue_Throw { get => IsBitSet(1); }
         public bool Rogue_ShootGun { get => IsBitSet(2); }
 
         // Priest
         public bool Priest_ShadowWordPain { get => IsBitSet(0); }
+
         public bool Priest_MindBlast { get => IsBitSet(1); }
         public bool Priest_MindFlay { get => IsBitSet(2); }
         public bool Priest_Shoot { get => IsBitSet(3); }
 
         // Druid
         public bool Druid_Wrath { get => IsBitSet(0); }
+
         public bool Druid_Bash { get => IsBitSet(1); }
 
         //Paladin
@@ -40,14 +43,17 @@
 
         //Mage
         public bool Mage_Fireball { get => IsBitSet(0); }
+
         public bool Mage_Shoot { get => IsBitSet(1); }
 
         //Hunter
         public bool Hunter_RaptorStrike { get => IsBitSet(0); }
+
         public bool Hunter_ShootGun { get => IsBitSet(1); }
 
         // Warlock
         public bool Warlock_ShadowBolt { get => IsBitSet(0); }
+
         public bool Warlock_Shoot { get => IsBitSet(1); }
 
         public bool WithInPullRange(PlayerClassEnum playerClass) => playerClass switch

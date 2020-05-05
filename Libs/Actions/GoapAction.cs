@@ -19,12 +19,12 @@ namespace Libs.Actions
         }
     }
 
-    public class ActionEvent: EventArgs
+    public class ActionEvent : EventArgs
     {
         public GoapKey Key { get; private set; }
         public object Value { get; private set; }
 
-        public ActionEvent(GoapKey key, object value) 
+        public ActionEvent(GoapKey key, object value)
         {
             this.Key = key;
             this.Value = value;
@@ -48,13 +48,14 @@ namespace Libs.Actions
         }
 
         private string name = string.Empty;
+
         public virtual string Name
         {
             get
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    string output = Regex.Replace(this.GetType().Name.Replace("Action",""), @"\p{Lu}", m => " " + m.Value.ToLowerInvariant());
+                    string output = Regex.Replace(this.GetType().Name.Replace("Action", ""), @"\p{Lu}", m => " " + m.Value.ToLowerInvariant());
                     this.name = char.ToUpperInvariant(output[0]) + output.Substring(1);
                 }
                 return name;
@@ -62,6 +63,7 @@ namespace Libs.Actions
         }
 
         public delegate void ActionEventHandler(object sender, ActionEvent e);
+
         public event ActionEventHandler? ActionEvent;
 
         public void RaiseEvent(ActionEvent e)
@@ -71,13 +73,21 @@ namespace Libs.Actions
 
         public Dictionary<string, bool> State { get; set; } = new Dictionary<string, bool>();
 
-        public virtual void ResetBeforePlanning() { }
+        public virtual void ResetBeforePlanning()
+        {
+        }
 
-        public virtual bool CheckIfActionCanRun() { return true; }
+        public virtual bool CheckIfActionCanRun()
+        {
+            return true;
+        }
 
         public abstract Task PerformAction();
 
-        public virtual async Task Abort() { await Task.Delay(0); }
+        public virtual async Task Abort()
+        {
+            await Task.Delay(0);
+        }
 
         public void AddPrecondition(GoapKey key, object value)
         {
@@ -106,12 +116,11 @@ namespace Libs.Actions
 
         public virtual void OnActionEvent(object sender, ActionEvent e)
         {
-
         }
 
         public virtual string Description()
         {
-            return $"{Name} " + (Keys.Count()==1 ? $"[{Keys.First().ConsoleKey}]" : "");
+            return $"{Name} " + (Keys.Count() == 1 ? $"[{Keys.First().ConsoleKey}]" : "");
         }
     }
 }
