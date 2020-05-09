@@ -17,6 +17,10 @@
             <span>Stop Bot</span>
         }
     </button>
+
+    @*<button class="btn btn-primary float-right" @onclick="FindNpc">
+        Find NPC
+    </button>*@
 </h3>
 
 <BotHeader />
@@ -69,4 +73,13 @@
     {
         botController.ToggleBotStatus();
     }
+
+    //private async void FindNpc()
+    //{
+    //    for (int i = 0; i < 200; i++)
+    //    {
+    //        await Task.Delay(1000);
+    //        await this.botController.ActionFactory.NpcNameFinder.FindAndClickNpc(0);
+    //    }
+    //}
 }

@@ -57,7 +57,9 @@ namespace Libs.Actions
 
             // check for targets attacking me
             await wowProcess.KeyPress(ConsoleKey.Tab, 100);
+            
             await Task.Delay(300);
+
             if (this.playerReader.HasTarget)
             {
                 if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
@@ -68,11 +70,11 @@ namespace Libs.Actions
                 await wowProcess.KeyPress(ConsoleKey.F3, 200);
             }
 
-            await wowProcess.KeyPress(ConsoleKey.F9, 100);
+            await wowProcess.KeyPress(ConsoleKey.F9, 100); // stand
 
             var healthAtStartOfLooting = playerReader.HealthPercent;
 
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
 
             bool outOfCombat = false;
 
@@ -118,6 +120,18 @@ namespace Libs.Actions
                     }
 
                     return;
+                }
+
+                if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.PlayerClass == PlayerClassEnum.Warlock)
+                {
+                    // /Target pet
+                    await wowProcess.KeyPress(ConsoleKey.F12, 300);
+
+                    if (this.playerReader.TargetTarget == TargetTargetEnum.PetHasATarget)
+                    {
+                        await wowProcess.KeyPress(ConsoleKey.U, 200); // switch to pet's target /tar targettarget
+                        return;
+                    }
                 }
 
                 if (!foundSomething && !searchForMobs)

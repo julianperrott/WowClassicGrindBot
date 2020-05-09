@@ -3,10 +3,12 @@
   "Loot": true,
   "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\19_LochModan.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\19_LochModan_SpiritHealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\26_Wetlands.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\26_Wetlands_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
+  
+  //"WrongZone": { "ZoneId": 1429, "ExitZoneLocation": { "X":62.5,"Y":90} },
 
   "Blacklist": ["Tunnel","OL' SO","HAREN S","THRAGO"],
 
@@ -15,7 +17,7 @@
       {
         "Name": "Pyroblast",
         "HasCastBar": true,
-        "Key": "=",
+        "Key": "-",
         "MinMana": 125,
         "DelayAfterCast" : 500
       }
@@ -68,7 +70,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "6",
-        "Requirement": "Health%<50",
+        "Requirement": "Health%<70",
         "Log": false,
         "Cost": 3
       },
@@ -77,7 +79,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirement": "Mana%<50",
+        "Requirement": "Mana%<70",
         "Cooldown": 10,
         "Log": false,
         "Cost": 3

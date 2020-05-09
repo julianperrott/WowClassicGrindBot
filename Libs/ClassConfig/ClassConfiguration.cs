@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace Libs
 {
+    public class BadZone
+    {
+        public int ZoneId = -1;
+        public WowPoint ExitZoneLocation = new WowPoint(0, 0);
+    }
+
     public class ClassConfiguration
     {
         public string ClassName { get; set; } = string.Empty;
@@ -13,6 +19,8 @@ namespace Libs
         public string SpiritPathFilename { get; set; } = string.Empty;
         public bool PathThereAndBack = true;
         public bool PathReduceSteps = false;
+
+        public BadZone WrongZone = new BadZone();
 
         public int NPCMaxLevels_Above = 1;
         public int NPCMaxLevels_Below = 7;

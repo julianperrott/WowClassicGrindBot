@@ -3,10 +3,12 @@
   "Loot": true,
   "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\19_LochModan.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\19_LochModan_SpiritHealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\23_Duskwood.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\23_Duskwood_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
+
+  "WrongZone": { "ZoneId": 1429, "ExitZoneLocation": { "X":62.5,"Y":90} },
 
   "Blacklist": ["Tunnel","OL' SO","HAREN S","THRAGO"],
 
@@ -148,7 +150,7 @@
         "Name": "Create Healthstone",
         "Key": "1",
         "HasCastBar": true,
-        "Requirements": ["BagItem:6265:1", "not BagItem:19005:1"]
+        "Requirements": ["BagItem:6265:1", "not BagItem:19007:1"]
       }
     ]
   }

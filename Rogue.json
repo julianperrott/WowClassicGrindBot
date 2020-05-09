@@ -3,8 +3,8 @@
   "Loot": true,
   "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54_SpiritHealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 
@@ -96,7 +96,7 @@
       {
         "Name": "Eat",
         "StopBeforeCast": false,
-        "Key": "7",
+        "Key": "=",
         "Requirement": "Health%<50",
         "Cooldown": 0,
         "DelayAfterCast": 1000,
@@ -108,7 +108,7 @@
         "StopBeforeCast": false,
         "Key": "7",
         "Requirement": "not Well Fed",
-        "Cooldown": 120,
+        "Cooldown": 1200,
         "Log": false
       },
       {

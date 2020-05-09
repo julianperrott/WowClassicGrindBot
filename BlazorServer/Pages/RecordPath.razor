@@ -12,7 +12,8 @@
 
 @if (!recording)
 {
-    <button class="btn btn-primary" @onclick="Record">Record</button>
+    <button class="btn btn-primary" @onclick="Record">Record New</button>
+    <button class="btn btn-primary" @onclick="Edit">Edit</button>
 }
 @if (recording)
 {
@@ -147,12 +148,15 @@
 
     private void Record()
     {
-        if (!recording)
-        {
-            recording = true;
-            botController.RouteInfo.PathPoints.Clear();
-            Message = "Recording...";
-        }
+        recording = true;
+        botController.RouteInfo.PathPoints.Clear();
+        Message = "Recording...";
+    }
+
+    private void Edit()
+    {
+        recording = true;
+        Message = "Recording...";
     }
 
     private void Clear()

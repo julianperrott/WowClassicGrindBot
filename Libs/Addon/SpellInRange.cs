@@ -43,8 +43,8 @@
 
         //Mage
         public bool Mage_Fireball { get => IsBitSet(0); }
-
         public bool Mage_Shoot { get => IsBitSet(1); }
+        public bool Mage_Pyroblast { get => IsBitSet(2); }
 
         //Hunter
         public bool Hunter_RaptorStrike { get => IsBitSet(0); }
@@ -62,7 +62,7 @@
             PlayerClassEnum.Rogue => Rogue_Throw,
             PlayerClassEnum.Priest => Priest_ShadowWordPain,
             PlayerClassEnum.Druid => Druid_Wrath,
-            PlayerClassEnum.Mage => Mage_Fireball,
+            PlayerClassEnum.Mage => Mage_Pyroblast,
             PlayerClassEnum.Hunter => Hunter_ShootGun,
             PlayerClassEnum.Warlock => Warlock_ShadowBolt,
             _ => true

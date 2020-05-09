@@ -22,7 +22,6 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            await Task.Delay(1000);
             await base.PerformAction();
         }
     }

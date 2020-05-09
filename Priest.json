@@ -3,8 +3,8 @@
   "Loot": true,
   "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\Azhara_54_SpiritHealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 

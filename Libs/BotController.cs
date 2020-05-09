@@ -19,7 +19,7 @@ namespace Libs
         public Thread? screenshotThread;
         public Thread addonThread;
         public Thread? botThread;
-        public ActionFactory WowBot;
+        public ActionFactory ActionFactory;
         public GoapAgent? GoapAgent { get; private set; }
         public RouteInfo? RouteInfo { get; private set; }
 
@@ -54,7 +54,7 @@ namespace Libs
             }
 
             npcNameFinder = new NpcNameFinder(wowProcess, AddonReader.PlayerReader, logger);
-            WowBot = new ActionFactory(AddonReader, logger, wowProcess, npcNameFinder);
+            ActionFactory = new ActionFactory(AddonReader, logger, wowProcess, npcNameFinder);
 
             screenshotThread = new Thread(ScreenshotRefreshThread);
             screenshotThread.Start();

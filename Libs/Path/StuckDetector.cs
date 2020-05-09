@@ -77,6 +77,7 @@ namespace Libs
                 // stuck for 4 minutes
                 logger.LogInformation("Stuck for 4 minutes");
                 RaiseEvent(new ActionEvent(GoapKey.abort, true));
+                await Task.Delay(120000);
             }
 
             if (unstickSeconds > 5)

@@ -1,4 +1,5 @@
 ﻿using Libs.Actions;
+using Libs.Cursor;
 using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
@@ -63,20 +64,26 @@ namespace Libs
             {
                 if (npc.Height >= threshold)
                 {
-                    var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X, npc.ClickPoint.Y);
-                    wowProcess.SetCursorPosition(clickPostion);
-                    await this.wowProcess.RightClickMouse(clickPostion);
-                    logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}");
-                    for (int i = 0; i < 6; i++)
+                    var locations = new List<Point> 
+                    { 
+                        new Point(0,0), 
+                        new Point(10,10),
+                        new Point(-10,-10),
+                        new Point(20,20),
+                        new Point(-20,-20),
+                    };
+
+                    foreach (var location in locations)
                     {
-                        if (this.playerReader.HasTarget)
-                        {
-                            break;
-                        }
-                        await this.wowProcess.KeyPress(ConsoleKey.Tab, 100);
-                        clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + 15 - random.Next(30), npc.ClickPoint.Y);
+                        var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                         wowProcess.SetCursorPosition(clickPostion);
-                        await this.wowProcess.LeftClickMouse(clickPostion);
+                        await Task.Delay(100);
+                        CursorClassifier.Classify(out var cls);
+                        if (cls == CursorClassification.Kill)
+                        {
+                            await AquireTargetAtCursor(clickPostion, npc);
+                            return;
+                        }
                     }
                 }
                 else
@@ -88,6 +95,22 @@ namespace Libs
             {
                 logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: No NPC found!");
             }
+        }
+
+        private async Task AquireTargetAtCursor(Point clickPostion, NpcPosition npc)
+        {
+            await this.wowProcess.RightClickMouse(clickPostion);
+            logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}");
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    if (this.playerReader.HasTarget)
+            //    {
+            //        break;
+            //    }
+            //    await this.wowProcess.KeyPress(ConsoleKey.Tab, 100);
+            //    clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + 15 - random.Next(30), npc.ClickPoint.Y);
+            //    wowProcess.SetCursorPosition(clickPostion);
+            //}
         }
 
         public List<NpcPosition> RefreshNpcPositions()
