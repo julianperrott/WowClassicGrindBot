@@ -130,5 +130,11 @@ namespace Libs
             var pt = followRouteAction.LastActive > walkToCorpseAction.LastActive ? followRouteAction.NextPoint() : walkToCorpseAction.NextPoint();
             return pt == null ? string.Empty : $"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '3' />";
         }
+
+        public string DeathImage(WowPoint pt)
+        {
+            var size = this.canvasSize / 25;
+            return pt == null ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X)-size/2}' y = '{ToCanvasPointY(pt.Y)- size / 2}' height='{size}' width='{size}' />";
+        }
     }
 }

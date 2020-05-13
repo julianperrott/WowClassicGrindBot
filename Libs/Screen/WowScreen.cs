@@ -42,24 +42,22 @@ namespace Libs
             try
             {
                 var npcs = npcNameFinder.RefreshNpcPositions();
+                var bitmap = npcNameFinder.Screenshot.Bitmap;
 
-                if (npcs.Count > 0)
+                using (var gr = Graphics.FromImage(bitmap))
                 {
-                    var bitmap = npcNameFinder.Screenshot.Bitmap;
-
-                    using (var gr = Graphics.FromImage(bitmap))
+                    if (npcs.Count > 0)
                     {
                         var margin = 10;
 
-                        using (var redPen = new Pen(Color.Red, 2))
+                        using (var whitePen = new Pen(Color.White, 3))
                         {
-                            npcs.ForEach(n => gr.DrawRectangle(redPen, new Rectangle(n.Min.X - margin, n.Min.Y - margin, margin + n.Max.X - n.Min.X, margin + n.Max.Y - n.Min.Y)));
-
-                            using (var whitePen = new Pen(Color.White, 3))
-                            {
-                                npcs.ForEach(n => gr.DrawEllipse(n.IsAdd ? whitePen : redPen, new Rectangle(n.ClickPoint.X - (margin / 2), n.ClickPoint.Y - (margin / 2), margin, margin)));
-                            }
+                            npcs.ForEach(n => gr.DrawEllipse(whitePen, new Rectangle(n.ClickPoint.X - (margin / 2), n.ClickPoint.Y - (margin / 2), margin, margin)));
                         }
+                    }
+                    using (var blackPen = new SolidBrush(Color.Black))
+                    {
+                        gr.FillRectangle(blackPen, new Rectangle(new Point(bitmap.Width / 15, bitmap.Height / 40), new Size(bitmap.Width / 15, bitmap.Height / 40)));
                     }
                 }
 

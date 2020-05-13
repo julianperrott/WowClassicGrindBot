@@ -87,11 +87,31 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 4f; }
 
+        protected bool HasPickedUpAnAdd
+        {
+            get
+            {
+                logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
+                return this.playerReader.PlayerBitValues.PlayerInCombat && 
+                    !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer
+                    && this.playerReader.TargetHealthPercentage==100;
+            }
+        }
+
         public override async Task PerformAction()
         {
             if (playerReader.PlayerBitValues.IsMounted)
             {
                 await wowProcess.Dismount();
+            }
+
+            if (HasPickedUpAnAdd)
+            {
+                logger.LogInformation($"Add on combat");
+                await this.stopMoving.Stop();
+                await wowProcess.TapStopKey();
+                await wowProcess.KeyPress(ConsoleKey.F3, 300); // clear target
+                return;
             }
 
             if ((DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5)

@@ -4,51 +4,49 @@
 @inject Libs.BotController botController
 @inject IJSRuntime JSRuntime;
 
-<h3>
-    Wowbot - Main
-
-    <button class="btn btn-primary float-right" @onclick="ToggleBot">
-        @if (!botController.IsBotActive)
-        {
-            <span>Start Bot</span>
-        }
-        else
-        {
-            <span>Stop Bot</span>
-        }
-    </button>
-
-    @*<button class="btn btn-primary float-right" @onclick="FindNpc">
-        Find NPC
-    </button>*@
-</h3>
-
-<BotHeader />
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm">
-            <ScreenshotComponent Size="600" />
-            <RouteComponent Size="300" />
-        </div>
-        <div class="col-sm">
-            <table class="table table-sm table-striped">
-                @foreach (var action in botController.GoapAgent.AvailableActions)
-                {
-                    <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
-                }
+            <ScreenshotComponent Size="800" />
+            <table width="100%">
+                <tr>
+                    <td valign="top"><div style="margin-top: 10px"><RouteComponent Size="400" /></div></td>
+                    <td valign="top"> <div style="margin-left: 10px; margin-top: 10px"><BagChanges /></div></td>
+                </tr>
             </table>
+        </div>
+
+        <div class="col-sm">
+            <BotHeader ShowActiveAction="false" />
+
+            <div class="card"  style="margin-top: 10px">
+                <div class="card-header">
+                    Actions
+
+                    <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot">
+                        @if (!botController.IsBotActive)
+                        {
+                            <span>Start Bot</span>
+                        }
+                        else
+                        {
+                            <span>Stop Bot</span>
+                        }
+                    </button>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm table-striped">
+                        @foreach (var action in botController.GoapAgent.AvailableActions)
+                        {
+                            <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
+                        }
+                    </table>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>
-<table>
-    <tr>
-        <td width="100%">
-        </td>
-        <td>
-        </td>
-    </tr>
-</table>
 
 <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
 
@@ -73,13 +71,4 @@
     {
         botController.ToggleBotStatus();
     }
-
-    //private async void FindNpc()
-    //{
-    //    for (int i = 0; i < 200; i++)
-    //    {
-    //        await Task.Delay(1000);
-    //        await this.botController.ActionFactory.NpcNameFinder.FindAndClickNpc(0);
-    //    }
-    //}
 }

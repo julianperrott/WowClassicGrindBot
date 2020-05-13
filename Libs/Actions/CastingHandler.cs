@@ -127,9 +127,12 @@ namespace Libs.Actions
 
                     if (source.GetType() == typeof(PullTargetAction) && this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer && this.playerReader.IsCasting)
                     {
-                        await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 200, "Stop cast as picked up an add, my mob is not targetting me.");
-                        await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
-                        break;
+                        if (!this.playerReader.TargetIsFrostbitten)
+                        {
+                            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 200, "Stop cast as picked up an add, my mob is not targetting me.");
+                            await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
+                            break;
+                        }
                     }
 
                     await Task.Delay(100);

@@ -40,5 +40,7 @@
 
         // Warlock
         public bool CurseofWeakness { get => IsBitSet(0); }
+
+        public bool Frostbite { get => IsBitSet(0); }
     }
 }

@@ -2,71 +2,78 @@
 @inject Libs.AddonReader addonReader
 @inject Libs.BotController botController
 
-<table class="table table-bordered">
-    <tr>
-        <th>Level @playerReader.PlayerLevel (XP: @((int)playerReader.PlayerXpPercentage)%)</th>
-        <th>X Coord,Y Coord:</th>
-        <th>Bag Items:</th>
-        <th>Health:</th>
-        <th>Mana/Rage/Energy:</th>
-        <th>Target:</th>
-        <th>UI Error:</th>
-    </tr>
-    <tr>
-        <td>
-            Time to level: @levelTracker.TimeToLevel<br />
-            at @levelTracker.PredictedLevelTime.ToString("HH:mm:ss")
-        </td>
-        <td>@playerReader.XCoord.ToString("0.00"),@playerReader.YCoord.ToString("0.00")</td>
-        <td>@addonReader.BagReader.BagItems.Count</td>
-        <td>@playerReader.HealthPercent %</td>
-        <td>@playerReader.ManaCurrent (@playerReader.ManaPercentage %) </td>
-        <td>
-            <span class="badge @CombatBadge()">@Libs.GOAP.GoapKeyDescription.ToString(Libs.GOAP.GoapKey.incombat, PlayerInCombat)</span>
 
-            @if (!string.IsNullOrEmpty(playerReader.Target))
-            {
-                <a href="https://classic.wowhead.com/npc=@playerReader.TargetId"
-                   target="_blank"
-                   onmousemove="showTooltip(event, '@playerReader.TargetId (GUID: @playerReader.TargetGuid)');"
-                   onmouseout="hideTooltip();">
+<div class="card">
+    <div class="card-header">
+        Player
+    </div>
+    <div class="card-body" style="padding-bottom: 0">
+        <table class="table table-bordered">
+            <tr>
+                <th>Level @playerReader.PlayerLevel (XP: @((int)playerReader.PlayerXpPercentage)%)</th>
+                <th>Bag Items:</th>
+                <th>Health:</th>
+                <th>Mana / Rage / Energy:</th>
+                <th>Target:</th>
+            </tr>
+            <tr>
+                <td>
+                    Time to level: @levelTracker.TimeToLevel<br />
+                    at @levelTracker.PredictedLevelTime.ToString("HH:mm:ss")
+                </td>
+                <td>@addonReader.BagReader.BagItems.Count</td>
+                <td>@playerReader.HealthPercent %</td>
+                <td>@playerReader.ManaCurrent (@playerReader.ManaPercentage %) </td>
+                <td>
+                    <span class="badge @CombatBadge()">@Libs.GOAP.GoapKeyDescription.ToString(Libs.GOAP.GoapKey.incombat, PlayerInCombat)</span>
 
-                    <div>
-                        @playerReader.Target
-                        (@playerReader.TargetLevel)
-                        @((int)playerReader.TargetHealthPercentage) %
+                    @if (!string.IsNullOrEmpty(playerReader.Target))
+                    {
+                        <a href="https://classic.wowhead.com/npc=@playerReader.TargetId"
+                           target="_blank"
+                           onmousemove="showTooltip(event, '@playerReader.TargetId (GUID: @playerReader.TargetGuid)');"
+                           onmouseout="hideTooltip();">
 
-                        @if (!playerReader.PlayerBitValues.TargetIsNormal)
-                        {
-                            <div>NOT NORMAL</div>
-                        }
-                        else if (playerReader.ComboPoints > 0)
-                        {
-                            <div>Combo Points: @playerReader.ComboPoints</div>
-                        }
-                    </div>
-                    @*<div>Potential Adds: @botController.WowBot.PotentialAddsExist</div>*@
-                    </a>
-            }
-            else
-            {
-                    <div>Kills: @levelTracker.MobsKilled</div>
-            }
-            </td>
-        <td>
-            @playerReader.LastUIErrorMessage.ToString()
-        </td>
-    </tr>
-</table>
+                            <div>
+                                @playerReader.Target
+                                (@playerReader.TargetLevel)
+                                @((int)playerReader.TargetHealthPercentage) %
 
-<table class="table table-sm table-striped">
-    @if (botController.GoapAgent.CurrentAction != null)
-    {
-        <GoapActionView action="botController.GoapAgent.CurrentAction" IsSelected="true" />
-    }
-</table>
+                                @if (!playerReader.PlayerBitValues.TargetIsNormal)
+                                {
+                                    <div>NOT NORMAL</div>
+                                }
+                                else if (playerReader.ComboPoints > 0)
+                                {
+                                    <div>Combo Points: @playerReader.ComboPoints</div>
+                                }
+                            </div>
+                        </a>
+                    }
+                    else
+                    {
+                        <div>Kills: @levelTracker.MobsKilled</div>
+                    }
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+@if (ShowActiveAction)
+{
+    <table class="table table-sm table-striped">
+        @if (botController.GoapAgent.CurrentAction != null)
+        {
+            <GoapActionView action="botController.GoapAgent.CurrentAction" IsSelected="true" />
+        }
+    </table>
+}
 
 @code {
+
+    [Parameter]
+    public bool ShowActiveAction { get; set; } = true;
 
     PlayerReader playerReader => addonReader.PlayerReader;
     LevelTracker levelTracker => addonReader.LevelTracker;

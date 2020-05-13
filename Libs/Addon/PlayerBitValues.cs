@@ -23,7 +23,8 @@
         public bool TargetOfTargetIsPlayer { get => IsBitSet(15); }
         public bool PlayerInCombat { get => IsBitSet(14); }
 
-        public bool Flying { get => IsBitSet(10); }
+        public bool IsSwimming { get => IsBitSet(11); }
+        public bool IsFlying { get => IsBitSet(10); }
         public bool ItemsAreBroken { get => IsBitSet(9); }
 
         public bool HasPet { get => IsBitSet(6); }

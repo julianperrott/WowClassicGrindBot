@@ -29,10 +29,13 @@ namespace Libs
         public KeyConfigurations Pull { get; set; } = new KeyConfigurations();
         public KeyConfigurations Combat { get; set; } = new KeyConfigurations();
         public KeyConfigurations Adhoc { get; set; } = new KeyConfigurations();
+        public KeyConfigurations Parallel { get; set; } = new KeyConfigurations();
+
 
         public List<KeyConfiguration> ShapeshiftForm { get; set; } = new List<KeyConfiguration>();
 
         public KeyConfiguration Interact { get; set; } = new KeyConfiguration();
+        public KeyConfiguration Blink { get; set; } = new KeyConfiguration();
         public string InteractKey { get; set; } = "H";
 
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys = new Dictionary<ShapeshiftForm, ConsoleKey>();
@@ -42,10 +45,12 @@ namespace Libs
             Pull.Initialise(playerReader, requirementFactory, logger);
             Combat.Initialise(playerReader, requirementFactory, logger);
             Adhoc.Initialise(playerReader, requirementFactory, logger);
+            Parallel.Initialise(playerReader, requirementFactory, logger);
             ShapeshiftForm.ForEach(i => i.Initialise(playerReader, requirementFactory, logger));
 
             Interact.Key = InteractKey;
             Interact.Initialise(playerReader, requirementFactory, logger);
+            Blink.Initialise(playerReader, requirementFactory, logger);
         }
     }
 }

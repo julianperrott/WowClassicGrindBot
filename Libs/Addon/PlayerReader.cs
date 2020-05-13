@@ -161,5 +161,8 @@ namespace Libs
         public bool IsCasting => SpellBeingCast != 0;
 
         public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetLongAtCell(59);
+
+
+        public bool TargetIsFrostbitten => this.PlayerClass == PlayerClassEnum.Mage && this.Debuffs.Frostbite;
     }
 }

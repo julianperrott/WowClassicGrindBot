@@ -1,43 +1,71 @@
 ﻿@inject Libs.AddonReader addonReader
 @inject Libs.BotController botController
 @inject IJSRuntime JSRuntime;
+@using System.Linq
+@using Libs
 
-<div id="grid">
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>Route</td>
+                <td>
+                    <div class="float-right">
+                        Player at @addonReader.PlayerReader.XCoord.ToString("0.0") , @addonReader.PlayerReader.YCoord.ToString("0.0")
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
 
-    <svg width="@(Size+2)px" height="@(Size+2)px" style="margin-top:10px">
-        <g class="background">
-        </g>
-        <g class="group2">
-            @{
-                var colour = addonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
+        <div id="grid">
 
-                if (botController.GoapAgent.CurrentAction?.GetType() == typeof(Libs.Actions.FollowRouteAction))
-                {
-                    colour = "blue";
-                }
+            <svg width="@(Size+2)px" height="@(Size+2)px" style="margin-top:0px">
+                <g class="background">
+                </g>
+                <g class="group2">
+                    @{
+                        var colour = addonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
 
-                <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)" cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)" r="4" fill="@colour" />
-            }
+                        if (botController.GoapAgent.CurrentAction?.GetType() == typeof(Libs.Actions.FollowRouteAction))
+                        {
+                            colour = "blue";
+                        }
 
-            <g stroke-width="1" stroke="lightgray">
-                @this.SpiritLines
-            </g>
-            <g fill="gray">
-                @this.SpiritPathPoints
-            </g>
+                        <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)" cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)" r="4" fill="@colour" />
 
-            <g stroke-width="1" stroke="gray">
-                @this.PathLines
-            </g>
-            <g fill="black">
-                @this.PathPoints
-            </g>
+                    }
 
-            <g fill="blue">
-                @((MarkupString)botController.RouteInfo.NextPoint())
-            </g>
-        </g>
-    </svg>
+                    <g stroke-width="1" stroke="lightgray">
+                        @this.SpiritLines
+                    </g>
+                    <g fill="gray">
+                        @this.SpiritPathPoints
+                    </g>
+
+                    <g stroke-width="1" stroke="gray">
+                        @this.PathLines
+                    </g>
+                    <g fill="black">
+                        @this.PathPoints
+                    </g>
+
+                    <g fill="blue">
+                        @((MarkupString)botController.RouteInfo.NextPoint())
+                    </g>
+                    <g>
+                        @foreach (var death in this.Deaths)
+                        {
+                            @((MarkupString)botController.RouteInfo.DeathImage(death))
+                        }
+                    </g>
+
+                </g>
+            </svg>
+        </div>
+
+    </div>
 </div>
 
 @code {
@@ -52,6 +80,8 @@
     private MarkupString SpiritPathPoints = new MarkupString();
 
     private bool CanvasInitialised = false;
+
+    private List<WowPoint> Deaths = new List<WowPoint>();
 
     protected override void OnInitialized()
     {
@@ -83,6 +113,13 @@
 
             this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
             this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
+
+
+            var walkToCorpseAction = botController.GoapAgent.AvailableActions.FirstOrDefault(a => a.GetType() == typeof(Libs.Actions.WalkToCorpseAction)) as Libs.Actions.WalkToCorpseAction;
+            if (walkToCorpseAction != null)
+            {
+                Deaths = walkToCorpseAction.Deaths;
+            }
         }
     }
 

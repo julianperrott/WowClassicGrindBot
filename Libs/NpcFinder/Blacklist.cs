@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Libs
 {
@@ -19,7 +20,7 @@ namespace Libs
             this.above = above;
             this.below = below;
 
-            blacklisted.ForEach(npc => blacklist.Add(npc.ToUpper().Substring(0, 6)));
+            blacklisted.ForEach(npc => blacklist.Add(npc.ToUpper()));
         }
 
         public bool IsTargetBlacklisted()
@@ -58,8 +59,8 @@ namespace Libs
                 logger.LogWarning("Blacklisted: Target is too low a level");
                 return true; // ignore if current level - 7
             }
-
-            if (blacklist.Contains(this.playerReader.Target))
+         
+            if (blacklist.Any(s => this.playerReader.Target.ToUpper().StartsWith(s)))
             {
                 logger.LogWarning("Blacklisted: Target is in the blacklist");
                 return true;

@@ -57,6 +57,11 @@ namespace Libs
                 availableActions.Add(new WrongZoneAction(addonReader.PlayerReader, wowProcess, playerDirection, logger, stuckDetector, classConfig));
             }
 
+            if(classConfig.Parallel.Sequence.Count>0)
+            {
+                availableActions.Add(new ParallelAction(wowProcess, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler, logger));
+            }
+
             if (classConfig.Loot)
             {
                 availableActions.Add(new LootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig));

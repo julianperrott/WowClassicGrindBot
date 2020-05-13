@@ -22,6 +22,7 @@ namespace Libs.Actions
         private readonly List<WowPoint> routePoints;
         private readonly StuckDetector stuckDetector;
         private Stack<WowPoint> points = new Stack<WowPoint>();
+        public List<WowPoint> Deaths { get; }= new List<WowPoint>();
 
         private Random random = new Random();
         private ILogger logger;
@@ -84,6 +85,8 @@ namespace Libs.Actions
 
                 await Reset();
                 this.stuckDetector.SetTargetLocation(points.Peek());
+
+                Deaths.Add(this.corpseLocation);
             }
 
             await Task.Delay(200);

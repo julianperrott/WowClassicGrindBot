@@ -45,6 +45,8 @@
         public bool Mage_Fireball { get => IsBitSet(0); }
         public bool Mage_Shoot { get => IsBitSet(1); }
         public bool Mage_Pyroblast { get => IsBitSet(2); }
+        public bool Mage_Frostbolt { get => IsBitSet(3); }
+        public bool Mage_Fireblast { get => IsBitSet(4); }
 
         //Hunter
         public bool Hunter_RaptorStrike { get => IsBitSet(0); }
@@ -62,7 +64,7 @@
             PlayerClassEnum.Rogue => Rogue_Throw,
             PlayerClassEnum.Priest => Priest_ShadowWordPain,
             PlayerClassEnum.Druid => Druid_Wrath,
-            PlayerClassEnum.Mage => Mage_Pyroblast,
+            PlayerClassEnum.Mage => Mage_Frostbolt,
             PlayerClassEnum.Hunter => Hunter_ShootGun,
             PlayerClassEnum.Warlock => Warlock_ShadowBolt,
             _ => true
@@ -75,7 +77,7 @@
             PlayerClassEnum.Priest => Priest_Shoot,
             PlayerClassEnum.Druid => Druid_Bash,
             PlayerClassEnum.Paladin => Paladin_Judgement,
-            PlayerClassEnum.Mage => Mage_Fireball,
+            PlayerClassEnum.Mage => Mage_Frostbolt,
             PlayerClassEnum.Hunter => Hunter_ShootGun || Hunter_RaptorStrike,
             PlayerClassEnum.Warlock => Warlock_ShadowBolt,
             _ => true

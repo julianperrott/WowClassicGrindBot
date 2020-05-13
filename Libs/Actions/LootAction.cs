@@ -51,13 +51,12 @@ namespace Libs.Actions
         private bool foundAddWhileLooting = false;
         private bool doExtendedLootSearch = true;
 
-        public override async Task PerformAction()
-        {
-            await stopMoving.Stop();
 
+        public async Task<bool> AmIBeingTargetted()
+        {
             // check for targets attacking me
             await wowProcess.KeyPress(ConsoleKey.Tab, 100);
-            
+
             await Task.Delay(300);
 
             if (this.playerReader.HasTarget)
@@ -65,80 +64,75 @@ namespace Libs.Actions
                 if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
                 {
                     await this.TapInteractKey("LootAction");
-                    return;
+                    return true;
                 }
                 await wowProcess.KeyPress(ConsoleKey.F3, 200);
             }
+            return false;
+        }
 
+        bool outOfCombat = false;
+
+        public async Task<bool> CheckIfEnterredCombat()
+        {
+            if (!outOfCombat && !playerReader.PlayerBitValues.PlayerInCombat)
+            {
+                Log("Left combat");
+                outOfCombat = true;
+            }
+
+            if (outOfCombat && playerReader.PlayerBitValues.PlayerInCombat)
+            {
+                Log("Combat detected");
+                return true;
+            }
+
+            if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.PlayerClass == PlayerClassEnum.Warlock)
+            {
+                // /Target pet
+                await wowProcess.KeyPress(ConsoleKey.F12, 300);
+
+                if (this.playerReader.TargetTarget == TargetTargetEnum.PetHasATarget)
+                {
+                    await wowProcess.KeyPress(ConsoleKey.U, 200); // switch to pet's target /tar targettarget
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public override async Task PerformAction()
+        {
             await wowProcess.KeyPress(ConsoleKey.F9, 100); // stand
+            await stopMoving.Stop();
+
+            if (await AmIBeingTargetted()) { return; }
 
             var healthAtStartOfLooting = playerReader.HealthPercent;
 
-            //await Task.Delay(1000);
+            var outOfCombat = !playerReader.PlayerBitValues.PlayerInCombat;
 
-            bool outOfCombat = false;
-
-            bool searchForMobs = true;
+            bool searchForMobs = playerReader.PlayerBitValues.PlayerInCombat;
             var lootAttempt = 0;
             while (lootAttempt < 10)
             {
-                if (!outOfCombat && !playerReader.PlayerBitValues.PlayerInCombat)
-                {
-                    Log("Left combat");
-                    outOfCombat = true;
-                }
-
-                if (outOfCombat && playerReader.PlayerBitValues.PlayerInCombat)
-                {
-                    Log("Combat detected");
-                    return;
-                }
-
+                if (await CheckIfEnterredCombat()) { return; }
+  
                 Log(searchForMobs ? "Searching for mobs" : $"Looting (attempt: {lootAttempt + 1}.");
                 var foundSomething = await lootWheel.Loot(searchForMobs, doExtendedLootSearch || foundAddWhileLooting);
 
                 if (foundSomething && lootWheel.Classification == Cursor.CursorClassification.Kill)
                 {
-                    foundAddWhileLooting = true;
-                    Log("We are being attacked!");
-
-                    for (int i = 0; i < 2000; i += 100)
-                    {
-                        Log("Waiting for target to be recognised!");
-                        await Task.Delay(100);
-                        if (string.IsNullOrEmpty(playerReader.Target) && playerReader.PlayerBitValues.TargetIsDead && playerReader.TargetHealth == 0)
-                        {
-                            await Task.Delay(100);
-                            Log($"Waiting for target to be recognised! {playerReader.Target},{playerReader.PlayerBitValues.TargetIsDead},{playerReader.TargetHealth}");
-                        }
-                        else
-                        {
-                            Log("Target Aquired");
-                            RaiseEvent(new ActionEvent(GoapKey.newtarget, true));
-                            break;
-                        }
-                    }
-
+                    await AquireTarget();
                     return;
-                }
-
-                if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.PlayerClass == PlayerClassEnum.Warlock)
-                {
-                    // /Target pet
-                    await wowProcess.KeyPress(ConsoleKey.F12, 300);
-
-                    if (this.playerReader.TargetTarget == TargetTargetEnum.PetHasATarget)
-                    {
-                        await wowProcess.KeyPress(ConsoleKey.U, 200); // switch to pet's target /tar targettarget
-                        return;
-                    }
                 }
 
                 if (!foundSomething && !searchForMobs)
                 {
                     lootAttempt = 10;
                     foundAddWhileLooting = false;
-                    doExtendedLootSearch = true;
+                    doExtendedLootSearch = false;
                 }
                 else
                 {
@@ -172,23 +166,31 @@ namespace Libs.Actions
                 lootAttempt++;
             }
 
-            // wait until we have left combat
-            // check for enemies
-            // is our health going down.
-
-            //await wowProcess.RightClickMouse(new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width / 2, (Screen.PrimaryScreen.Bounds.Height / 2)));
-
             RaiseEvent(new ActionEvent(GoapKey.shouldloot, false));
             RaiseEvent(new ActionEvent(GoapKey.postloot, true));
+        }
 
-            if (bagReader.BagsFull)
-            //if (bagReader.bagItems.Count > 52)
+        private async Task AquireTarget()
+        {
+            foundAddWhileLooting = true;
+            Log("We are being attacked!");
+
+            for (int i = 0; i < 2000; i += 100)
             {
-                logger.LogInformation("bags full");
-                //RaiseEvent(new ActionEvent(GoapKey.abort, true));
+                Log("Waiting for target to be recognised!");
+                await Task.Delay(100);
+                if (string.IsNullOrEmpty(playerReader.Target) && playerReader.PlayerBitValues.TargetIsDead && playerReader.TargetHealth == 0)
+                {
+                    await Task.Delay(100);
+                    Log($"Waiting for target to be recognised! {playerReader.Target},{playerReader.PlayerBitValues.TargetIsDead},{playerReader.TargetHealth}");
+                }
+                else
+                {
+                    Log("Target Aquired");
+                    RaiseEvent(new ActionEvent(GoapKey.newtarget, true));
+                    break;
+                }
             }
-
-            Log("End PerformAction");
         }
 
         public override bool CheckIfActionCanRun()

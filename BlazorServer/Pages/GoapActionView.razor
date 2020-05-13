@@ -19,7 +19,7 @@
         }
     </td>
 </tr>
-@if ((this.action.Keys.Count > 1 || this.action.GetType().Name == "GenericPullAction") && ShowKeys && this.IsSelected)
+@if ((this.action.Keys.Count > 1 || this.action.GetType().Name == "GenericPullAction") && ShowKeys && (this.IsSelected || this.action.GetType().Name == "ParallelAction"))
 {
     <tr>
         <td colspan="2">
@@ -71,7 +71,7 @@
     {
         if (item == true)
         {
-            return "table-success";
+            return "table-success animate__animated animate__fadeIn";
         }
 
         return "table-default";
