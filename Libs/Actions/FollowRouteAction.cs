@@ -182,7 +182,7 @@ namespace Libs.Actions
                 heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
                 await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
 
-                if (this.classConfiguration.Blink.ConsoleKey != 0 && this.playerReader.ManaPercentage > 90)
+                if (this.classConfiguration.Blink.ConsoleKey != 0 && this.playerReader.ManaPercentage > 90 && this.playerReader.PlayerLevel < 40)
                 {
                     await wowProcess.KeyPress(this.classConfiguration.Blink.ConsoleKey, 120, this.classConfiguration.Blink.Name);
                 }

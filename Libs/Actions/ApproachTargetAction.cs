@@ -45,7 +45,6 @@ namespace Libs.Actions
             this.classConfiguration = classConfiguration;
 
             AddPrecondition(GoapKey.incombatrange, false);
-            AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, true);
 
             var rect = wowProcess.GetWindowRect();

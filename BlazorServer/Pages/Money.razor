@@ -1,0 +1,16 @@
+﻿
+@if (Value != null && Value.Length == 3)
+{
+    for (int i = 0; i < 2; i++)
+    {
+        @if (Value[i] > 0){ @Value[i]<img src="@images[i]"/> }
+    }
+}
+@code {
+    [Parameter]
+    public int[] Value { get; set; } = new int[3] { 0, 0, 0 };
+
+
+    List<string> images = new List<string> { "money-gold.png", "money-silver.png", "money-copper.png" };
+
+}

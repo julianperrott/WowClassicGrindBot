@@ -99,18 +99,25 @@ namespace Libs
 
         internal void SetClicked()
         {
-            if (this.playerReader != null)
+            try
             {
-                LastClickPostion = this.playerReader.PlayerLocation;
-            }
+                if (this.playerReader != null)
+                {
+                    LastClickPostion = this.playerReader.PlayerLocation;
+                }
 
-            if (LastClicked.ContainsKey(this.ConsoleKey))
-            {
-                LastClicked[this.ConsoleKey] = DateTime.Now;
+                if (LastClicked.ContainsKey(this.ConsoleKey))
+                {
+                    LastClicked[this.ConsoleKey] = DateTime.Now;
+                }
+                else
+                {
+                    LastClicked.Add(this.ConsoleKey, DateTime.Now);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                LastClicked.Add(this.ConsoleKey, DateTime.Now);
+                this.logger.LogError(ex, "SetClicked()");
             }
         }
 

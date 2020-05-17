@@ -1,24 +1,23 @@
 ﻿@inject Libs.AddonReader addonReader
 @inject Libs.BotController botController
-@inject IJSRuntime JSRuntime;
+@inject IJSRuntime JSRuntime
+@using Libs.Addon
+@using Libs
+@using Microsoft.AspNetCore.Html
+
 
 <div class="card">
     <div class="card-header">
         Bag Changes
+        <div class="float-right">
+            <Money Value="money" />
+        </div>
     </div>
     <div class="card-body">
         @foreach (var bagItem in NewItems)
         {
-
             <div class="animate__animated animate__backInUp">
-                <a href="https://classic.wowhead.com/item=@bagItem.ItemId" target="_blank" onmousemove="showTooltip(event, '@bagItem.ItemId (@bagItem.Item.ToSellPrice())');" onmouseout="hideTooltip();">
-                    <b>
-                        <span style="color:@BagItemColour(bagItem.Item)">
-                            @bagItem.Item.Name
-                        </span>
-                        <span class="badge badge-info"> @bagItem.LastChangeDescription </span>
-                    </b>
-                </a>
+                <BagItemComponent Item="bagItem" />
                 <hr style="margin:2px" />
             </div>
         }
@@ -26,33 +25,29 @@
 </div>
 @code {
 
-    List<Libs.BagItem> NewItems = new List<Libs.BagItem>();
+        List<Libs.BagItem> NewItems = new List<Libs.BagItem>();
 
-    string eventTime = "";
+        int[] money = new int[0];
 
-    List<string> itemColour = new List<string> { "grey", "black", "green", "blue", "purple", "yellow", "yellow", "yellow" };
-
-    protected string BagItemColour(Libs.Addon.Item item)
-    {
-        if (item.Quality < 0 || item.Quality > 7) { return "black"; }
-        return itemColour[item.Quality];
-    }
-
-    List<string> itemBadge = new List<string> { "badge-secondary", "badge-dark", "badge-success", "badge-primary", "badge-warning", "badge-warning", "badge-warning", "badge-warning" };
-
-    protected string BagItemBadge(Libs.Addon.Item item)
-    {
-        if (item.Quality < 0 || item.Quality > 7) { return "badge-dark"; }
-        return itemBadge[item.Quality];
-    }
+        MarkupString resultString = (MarkupString)"";
 
     protected override void OnInitialized()
     {
         addonReader.BagReader.DataChanged += (o, e) =>
         {
-            this.eventTime = DateTime.Now.ToString("HH:mm:ss");
             this.NewItems = addonReader.BagReader.BagItems.Where(i => i.WasRecentlyUpdated).ToList();
+            money = Item.ToSellPrice(this.NewItems.Sum(ItemValue));
+
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };
+    }
+
+    protected int ItemValue(BagItem item)
+    {
+        if (item.LastChange == 0)
+        {
+            return item.Item.SellPrice;
+        }
+        return item.LastChange * item.Item.SellPrice;
     }
 }

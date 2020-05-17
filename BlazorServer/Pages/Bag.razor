@@ -3,82 +3,58 @@
 @inject Libs.AddonReader addonReader
 @inject Libs.BotController botController
 @inject IJSRuntime JSRuntime;
+@using Libs.Addon
+@using Microsoft.AspNetCore.Html
 
 <BotHeader />
 
-<table class="table table-sm table-striped">
-    <thead class="thead-light">
-        <tr>
-            <th>Bag 1</th>
-            <th>Bag 2</th>
-            <th>Bag 3</th>
-            <th>Bag 4</th>
-            <th>Bag 5</th>
-        </tr>
-    </thead>
-    @for (int bagIndex = 0; bagIndex < 16; bagIndex++)
-    {
-        <tr>
-            @for (int bag = 0; bag < 5; bag++)
-            {
-                <td>
-                    @{ var bagItem = addonReader.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
-                    @if (bagItem != null)
-                    {
-                        <a href="https://classic.wowhead.com/item=@bagItem.ItemId" target="_blank" onmousemove="showTooltip(event, '@bagItem.ItemId (@bagItem.Item.ToSellPrice())');" onmouseout="hideTooltip();">
-                            @if (bagItem.WasRecentlyUpdated)
-                            {
-                                <b>
-                                    <span style="color:@BagItemColour(bagItem.Item)">
-                                        @if (bagItem.Count > 1)
-                                        {@bagItem.Count<span>&nbsp;</span>}
-                                        @bagItem.Item.Name
-                                    </span>
-                                    <span class="badge badge-info"> @bagItem.LastChangeDescription </span>
-                                </b>
+<div class="card">
+    <div class="card-header">
+        Bag Contents
+        <div class="float-right"><Money Value="money" /></div>
+    </div>
+    <div class="card-body" style="padding-bottom: 0">
 
-                            }
-                            else
+        <table class="table table-sm table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>Bag 1</th>
+                    <th>Bag 2</th>
+                    <th>Bag 3</th>
+                    <th>Bag 4</th>
+                    <th>Bag 5</th>
+                </tr>
+            </thead>
+            @for (int bagIndex = 0; bagIndex < 16; bagIndex++)
+            {
+                <tr>
+                    @for (int bag = 0; bag < 5; bag++)
+                    {
+                        <td width="20%">
+                            @{ var bagItem = addonReader.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
+                            @if (bagItem != null)
                             {
-                                <div style="color:@BagItemColour(bagItem.Item)">
-                                    <b>@bagItem.Count @bagItem.Item.Name</b>
-                                </div>
+                                <BagItemComponent Item="bagItem" />
                             }
-                        </a>
+                        </td>
                     }
-                </td>
+                </tr>
             }
-        </tr>
-    }
-</table>
+        </table>
+    </div>
+</div>
 
 <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
 
 @code {
 
-    string eventTime = "";
-
-    List<string> itemColour = new List<string> { "grey", "black", "green", "blue", "purple", "yellow", "yellow", "yellow" };
-
-    protected string BagItemColour(Libs.Addon.Item item)
-    {
-        if (item.Quality < 0 || item.Quality > 7) { return "black"; }
-        return itemColour[item.Quality];
-    }
-
-    List<string> itemBadge = new List<string> { "badge-secondary", "badge-dark", "badge-success", "badge-primary", "badge-warning", "badge-warning", "badge-warning", "badge-warning" };
-
-    protected string BagItemBadge(Libs.Addon.Item item)
-    {
-        if (item.Quality < 0 || item.Quality > 7) { return "badge-dark"; }
-        return itemBadge[item.Quality];
-    }
+    int[] money = new int[0];
 
     protected override void OnInitialized()
     {
         addonReader.BagReader.DataChanged += (o, e) =>
         {
-            this.eventTime = DateTime.Now.ToString("HH:mm:ss");
+            money = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => s.Item.SellPrice* s.Count));
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };
     }

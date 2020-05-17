@@ -6,6 +6,7 @@
 <div class="card">
     <div class="card-header">
         Player
+        <span class="float-right badge @CombatBadge()">@Libs.GOAP.GoapKeyDescription.ToString(Libs.GOAP.GoapKey.incombat, PlayerInCombat)</span>
     </div>
     <div class="card-body" style="padding-bottom: 0">
         <table class="table table-bordered">
@@ -25,8 +26,6 @@
                 <td>@playerReader.HealthPercent %</td>
                 <td>@playerReader.ManaCurrent (@playerReader.ManaPercentage %) </td>
                 <td>
-                    <span class="badge @CombatBadge()">@Libs.GOAP.GoapKeyDescription.ToString(Libs.GOAP.GoapKey.incombat, PlayerInCombat)</span>
-
                     @if (!string.IsNullOrEmpty(playerReader.Target))
                     {
                         <a href="https://classic.wowhead.com/npc=@playerReader.TargetId"
@@ -57,18 +56,21 @@
                 </td>
             </tr>
         </table>
+
+        @if (ShowActiveAction)
+        {
+            <table class="table table-sm table-striped">
+                @if (botController.GoapAgent.CurrentAction != null)
+                {
+                    <GoapActionView action="botController.GoapAgent.CurrentAction" IsSelected="true" />
+                }
+            </table>
+        }
+
     </div>
 </div>
 
-@if (ShowActiveAction)
-{
-    <table class="table table-sm table-striped">
-        @if (botController.GoapAgent.CurrentAction != null)
-        {
-            <GoapActionView action="botController.GoapAgent.CurrentAction" IsSelected="true" />
-        }
-    </table>
-}
+
 
 @code {
 

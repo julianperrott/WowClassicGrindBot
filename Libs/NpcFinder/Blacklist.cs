@@ -59,10 +59,11 @@ namespace Libs
                 logger.LogWarning("Blacklisted: Target is too low a level");
                 return true; // ignore if current level - 7
             }
-         
-            if (blacklist.Any(s => this.playerReader.Target.ToUpper().StartsWith(s)))
+
+            var blacklistMatch = blacklist.Where(s => this.playerReader.Target.ToUpper().StartsWith(s)).FirstOrDefault();
+            if (!string.IsNullOrEmpty(blacklistMatch))
             {
-                logger.LogWarning("Blacklisted: Target is in the blacklist");
+                logger.LogWarning($"Blacklisted: Target is in the blacklist { this.playerReader.Target} starts with {blacklistMatch}");
                 return true;
             }
 

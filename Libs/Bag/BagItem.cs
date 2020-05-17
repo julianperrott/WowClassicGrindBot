@@ -11,6 +11,7 @@ namespace Libs
         public int Count { get; private set; }
         public Item Item { get; private set; }
         public string LastChangeDescription { get; private set; } = "New";
+        public int LastChange { get; private set; } = 0;
 
         public void UpdateCount(int count)
         {
@@ -20,7 +21,8 @@ namespace Libs
             }
 
             LastUpdated = DateTime.Now;
-            LastChangeDescription = (count - Count).ToString();
+            LastChange = count - Count;
+            LastChangeDescription = LastChange.ToString();
             if (!LastChangeDescription.StartsWith("-")) { LastChangeDescription = $"+{LastChangeDescription}"; }
             this.Count = count;
         }
