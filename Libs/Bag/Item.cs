@@ -10,11 +10,7 @@ namespace Libs.Addon
         public string Name { get; set; } = string.Empty;
         public int Quality { get; set; }
         public int SellPrice { get; set; }
-
-        public int[] ToSellPrice()
-        {
-            return ToSellPrice(SellPrice);
-        }
+        public int AHPrice { get; set; }
 
         public static int[] ToSellPrice(int sellPrice)
         {

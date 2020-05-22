@@ -8,6 +8,8 @@ namespace Libs
     public class BagReader
     {
         private int bagItemsDataStart = 20;
+        private int bagInfoDataStart = 60;
+
         private readonly ISquareReader reader;
 
         private DateTime lastEvent = DateTime.Now;
@@ -18,11 +20,15 @@ namespace Libs
 
         public event EventHandler? DataChanged;
 
-        public BagReader(ISquareReader reader, int bagItemsDataStart, List<Item> items)
+        public BagReader(ISquareReader reader, int bagItemsDataStart, List<Item> items, Dictionary<int, int> ahPrices)
         {
             this.bagItemsDataStart = bagItemsDataStart;
             this.reader = reader;
-            items.ForEach(i => itemDictionary.Add(i.Entry, i));
+            items.ForEach(i =>
+            {
+                itemDictionary.Add(i.Entry, i);
+                i.AHPrice = ahPrices.ContainsKey(i.Entry) ? ahPrices[i.Entry] : i.SellPrice;
+            });
         }
 
         public List<BagItem> Read()
@@ -32,14 +38,17 @@ namespace Libs
             for (var bag = 0; bag < 5; bag++)
             {
                 var cellIndex = bagItemsDataStart + (bag * 2);
-
                 var itemCount = reader.Get5Numbers(cellIndex, SquareReader.Part.Left);
 
+                var bagInfoIndex = bagInfoDataStart + bag;
+                var isSoulbound = reader.GetLongAtCell(bagInfoIndex) == 1;
+
+                // get bag and slot
                 var val = reader.GetLongAtCell(cellIndex + 1);
                 var bagNumber = val / 16;
-                var bagIndex = (int)(val - bagNumber * 16);
+                var slot = (int)(val - bagNumber * 16);
 
-                var existingItem = BagItems.Where(b => b.BagIndex == bagIndex).Where(b => b.Bag == bag).FirstOrDefault();
+                var existingItem = BagItems.Where(b => b.BagIndex == slot).Where(b => b.Bag == bag).FirstOrDefault();
 
                 if (itemCount > 0)
                 {
@@ -73,7 +82,7 @@ namespace Libs
                         {
                             item = itemDictionary[itemId];
                         }
-                        BagItems.Add(new BagItem(bag, bagIndex, itemId, itemCount, item));
+                        BagItems.Add(new BagItem(bag, slot, itemId, itemCount, item, isSoulbound));
                         hasChanged = true;
                     }
                 }

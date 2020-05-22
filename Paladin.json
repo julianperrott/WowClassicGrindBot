@@ -1,7 +1,7 @@
 {
   "ClassName": "Paladin30",
   "Loot": true,
-  "NPCMaxLevels_Below": 5,
+  "NPCMaxLevels_Below": 6,
 
   "PathFilename": "D:\\GitHub\\WowPixelBot\\35_ThousandNeedles.json",
   "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\30_ThousandNeedles_SpirirtHealer.json",
@@ -9,7 +9,7 @@
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
-  //"Blacklist": ["Tunnel","OL' SO","HAREN S","THRAGO"],
+  "Blacklist": ["Saltstone Crystalhide"],
 
   "Pull": {
     "Sequence": []

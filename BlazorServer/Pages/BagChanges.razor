@@ -10,14 +10,14 @@
     <div class="card-header">
         Bag Changes
         <div class="float-right">
-            <Money Value="money" />
+            <Money Value="ahmoney" />
         </div>
     </div>
     <div class="card-body">
         @foreach (var bagItem in NewItems)
         {
             <div class="animate__animated animate__backInUp">
-                <BagItemComponent Item="bagItem" />
+                <BagItemComponent Item="bagItem" ShowChangesPrice="true" />
                 <hr style="margin:2px" />
             </div>
         }
@@ -25,11 +25,12 @@
 </div>
 @code {
 
-        List<Libs.BagItem> NewItems = new List<Libs.BagItem>();
+    List<Libs.BagItem> NewItems = new List<Libs.BagItem>();
 
-        int[] money = new int[0];
+    int[] money = new int[0];
+    int[] ahmoney = new int[0];
 
-        MarkupString resultString = (MarkupString)"";
+    MarkupString resultString = (MarkupString)"";
 
     protected override void OnInitialized()
     {
@@ -37,6 +38,7 @@
         {
             this.NewItems = addonReader.BagReader.BagItems.Where(i => i.WasRecentlyUpdated).ToList();
             money = Item.ToSellPrice(this.NewItems.Sum(ItemValue));
+            ahmoney = Item.ToSellPrice(this.NewItems.Sum(ItemAHValue));
 
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };
@@ -49,5 +51,17 @@
             return item.Item.SellPrice;
         }
         return item.LastChange * item.Item.SellPrice;
+    }
+
+    protected int ItemAHValue(BagItem item)
+    {
+        var price = item.Item.AHPrice;
+        if (item.IsSoulbound) { price = item.Item.SellPrice; }
+
+        if (item.LastChange == 0)
+        {
+            return price;
+        }
+        return item.LastChange * price;
     }
 }

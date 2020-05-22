@@ -11,11 +11,13 @@
 <div class="card">
     <div class="card-header">
         Bag Contents
-        <div class="float-right"><Money Value="money" /></div>
+        <div class="float-right">
+            <Money Value="ahMoney" />
+        </div>
     </div>
     <div class="card-body" style="padding-bottom: 0">
 
-        <table class="table table-sm table-striped">
+        <table class="table table-sm table-striped table-no-border">
             <thead class="thead-light">
                 <tr>
                     <th>Bag 1</th>
@@ -37,9 +39,9 @@
                                 <BagItemComponent Item="bagItem" />
                             }
                         </td>
-                    }
+                                }
                 </tr>
-            }
+                                }
         </table>
     </div>
 </div>
@@ -48,13 +50,18 @@
 
 @code {
 
-    int[] money = new int[0];
+        int[] money = new int[0];
+        int[] ahMoney = new int[0];
 
     protected override void OnInitialized()
     {
         addonReader.BagReader.DataChanged += (o, e) =>
         {
-            money = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => s.Item.SellPrice* s.Count));
+            money = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => s.Item.SellPrice * s.Count));
+
+            // ignore if sellprice is 0... bit of a hack, need to check if soulbound
+            ahMoney = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => (s.IsSoulbound ? s.Item.SellPrice : s.Item.AHPrice) * s.Count));
+
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };
     }

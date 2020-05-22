@@ -40,11 +40,60 @@ namespace Libs
             var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("D:\\GitHub\\WowPixelBot\\items.json"));
             var creatures = JsonConvert.DeserializeObject<List<Creature>>(File.ReadAllText("D:\\GitHub\\WowPixelBot\\creatures.json"));
 
-            this.BagReader = new BagReader(squareReader, 20, items);
+            this.BagReader = new BagReader(squareReader, 20, items, ReadAHPrices());
             this.equipmentReader = new EquipmentReader(squareReader, 30);
             this.PlayerReader = new PlayerReader(squareReader, logger, this.BagReader, creatures);
             this.LevelTracker = new LevelTracker(PlayerReader);
         }
+
+        private Dictionary<int, int> ReadAHPrices()
+        {
+            var auctionHouseDictionary = new Dictionary<int, int>();
+
+            try
+            {
+                // file will be something like D:\World of Warcraft Classic\World of Warcraft\_classic_\WTF\Account\XXXXXXX\SavedVariables\Auc-Stat-Simple.lua
+                var filename = File.ReadAllLines(@"D:\GitHub\Auc-Stat-Simple.lua.location").FirstOrDefault();
+                File.ReadAllLines(filename)
+                    .Select(l => l.Trim())
+                    .Where(l => l.StartsWith("["))
+                    .Where(l => l.Contains(";"))
+                    .Where(l => l.Contains("="))
+                    .Select(Process)
+                    .GroupBy(l => l.Key)
+                    .Select(g => g.First())
+                    .ToList()
+                    .ForEach(i => auctionHouseDictionary.Add(i.Key, i.Value));
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError("Failed to read AH prices." + ex.Message);
+            }
+
+            return auctionHouseDictionary;
+        }
+
+        public static KeyValuePair<int, int> Process(string line)
+        {
+            var parts = line.Split("=");
+            var id = int.Parse(parts[0].Replace("[", "").Replace("]", "").Replace("\"", "").Trim());
+            var valueParts = parts[1].Split("\"")[1].Split(";");
+
+            double value = 0;
+            if (valueParts.Length == 3 || valueParts.Length == 6)
+            {
+                value = double.Parse(valueParts[valueParts.Length - 1]);
+            }
+            else if (valueParts.Length == 4 || valueParts.Length == 7)
+            {
+                value = double.Parse(valueParts[valueParts.Length - 2]);
+            }
+
+            return new KeyValuePair<int, int>(id, (int)value);
+        }
+
+
+
 
         private int seq = 0;
 

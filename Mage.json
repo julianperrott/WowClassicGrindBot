@@ -4,8 +4,8 @@
   "NPCMaxLevels_Below": 7,
   "NPCMaxLevels_Above": 1,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\44_Tanaris.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\44_Tanaris_SpiritHealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\52_Tanaris.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\52_Tanaris_SpiritHealer.json",
   "PathThereAndBack": false,
   "PathReduceSteps": true,
   
@@ -129,7 +129,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "9",
-        "Requirement": "not BagItem:8077:4",
+        "Requirement": "not BagItem:8078:4",
         "Cooldown": 30,
         "Log": false
       },

@@ -1,5 +1,7 @@
-# WowPixelBot
+# MasterOfPuppets
 
-A Warrior bot, it is a work in progress.
+WOW Classic Grind Bot, World of Warcraft Grind Bot - No DLL injection or memory watching, just screen capture and mouse and keyboard clicking.
 
-based upon: https://github.com/FreeHongKongMMO/Happy-Pixels
+Uses an addon based upon: https://github.com/FreeHongKongMMO/Happy-Pixels
+
+![Powershell command line and ISE screenshot](screenshot.png)

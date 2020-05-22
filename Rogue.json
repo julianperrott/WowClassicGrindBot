@@ -1,7 +1,7 @@
 {
   "ClassName": "Rogue",
   "Loot": true,
-  "NPCMaxLevels_Below": 6,
+  "NPCMaxLevels_Below": 8,
 
   "PathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara.json",
   "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara_SpiritHealer.json",

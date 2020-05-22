@@ -22,6 +22,7 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
+            RaiseEvent(new ActionEvent(GoapKey.shouldloot, false));
             await base.PerformAction();
         }
     }
