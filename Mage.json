@@ -2,16 +2,16 @@
   "ClassName": "Mage",
   "Loot": true,
   "NPCMaxLevels_Below": 7,
-  "NPCMaxLevels_Above": 1,
+  "NPCMaxLevels_Above": 2,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\52_Tanaris.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\52_Tanaris_SpiritHealer.json",
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara_SpiritHealer.json",
   "PathThereAndBack": false,
   "PathReduceSteps": true,
   
   //"WrongZone": { "ZoneId": 1429, "ExitZoneLocation": { "X":62.5,"Y":90} },
 
-  "Blacklist": ["BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark"],
+  "Blacklist": ["BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast"],
 
   "Blink":{
       "Name": "Blink",
@@ -58,7 +58,7 @@
         "Name": "Cone of Cold",
         "Key": "2",
         "MinMana": 210,
-        "Cooldown": 11,
+        "Cooldown": 300,//11,
         "Requirements": ["TargetHealth%>20","TargetHealth%<70"]
       },
       {
@@ -138,7 +138,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "7",
-        "Requirement": "not BagItem:8075:4",
+        "Requirement": "not BagItem:8076:4",
         "Cooldown": 30,
         "Log": false
       },
@@ -160,6 +160,14 @@
         "Name": "Del2",
         "Key": "D",
         "Cooldown": 300,
+        "Log": false
+      },
+      {
+        "Name": "Open Clam",
+        "Key": "F1",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Cooldown": 30,
         "Log": false
       }
     ]

@@ -128,7 +128,7 @@ local function OnUIErrorMessage(self, event, messageType, message)
     for i = 1, table.getn(ignoreErrorList), 1 do
         if ignoreErrorList[i]==errorName then
             foundMessage=true;
-            UIErrorsFrame:AddMessage(errorName..":"..message, 0.7, 0.7, 0.7) -- show as grey messasge
+            UIErrorsFrame:AddMessage(message, 0.7, 0.7, 0.7) -- show as grey messasge
         end
     end
 
@@ -137,7 +137,7 @@ local function OnUIErrorMessage(self, event, messageType, message)
             if errorList[i]==errorName then
                 uiErrorMessage = i;
                 foundMessage=true;
-                UIErrorsFrame:AddMessage(errorName..":"..message, 0, 1, 0) -- show as green messasge
+                UIErrorsFrame:AddMessage(message, 0, 1, 0) -- show as green messasge
             end
         end
     end
@@ -344,6 +344,7 @@ function DataToColor:CreateFrames(n)
                 MakePixelSquareArr(integerToColor(self:itemName(bagNo, itemNum)), 20 + bagNo * 2) -- 20,22,24,26,28
                 -- Return item slot number
                 MakePixelSquareArr(integerToColor(bagNo * 16 + itemNum), 21 + bagNo * 2) -- 21,23,25,27,29
+                MakePixelSquareArr(integerToColor(self:itemInfo(bagNo, itemNum)), 60 + bagNo ) -- 60,61,62,63,64
             end
             -- Worn inventory start.
             -- Starts at beginning once we have looked at all desired slots.
@@ -402,6 +403,11 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArr(integerToColor(DataToColor:targetNpcId()), 56) -- target id
             MakePixelSquareArr(integerToColor(DataToColor:targetGuid()),57) -- target reasonably uniqueId
+            MakePixelSquareArr(integerToColor(DataToColor:GetBestMap()),58) -- MapId
+
+            MakePixelSquareArr(integerToColor(DataToColor:IsTargetOfTargetPlayerAsNumber()),59) -- IsTargetOfTargetPlayerAsNumber
+
+            -- 60-64 = Bag item info
 
             self:HandleEvents()
         end
@@ -499,7 +505,7 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(0, 8) +
     self:MakeIndexBase2(self:GetInventoryBroken(), 9) + 
     self:MakeIndexBase2(self:IsPlayerFlying(), 10) + 
-    self:MakeIndexBase2(0, 11) +
+    self:MakeIndexBase2(self:IsPlayerSwimming(), 11) +
     self:MakeIndexBase2(0, 12) + 
     self:MakeIndexBase2(0, 13) + 
     self:MakeIndexBase2(self:playerCombatStatus(), 14) +
@@ -537,7 +543,7 @@ function DataToColor:getBuffsForClass()
         self:MakeIndexBase2(self:GetBuffs("Blessing"), 11)+       
         self:MakeIndexBase2(self:GetBuffs("Seal"), 12); 
     elseif CC == "MAGE" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Frost Armor"), 10)+
+        class=class+self:MakeIndexBase2(self:GetBuffs("Armor"), 10)+
         self:MakeIndexBase2(self:GetBuffs("Arcane Intellect"), 11)+       
         self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 12); 
     elseif CC == "ROGUE" then        
@@ -564,7 +570,7 @@ function DataToColor:getDebuffsForTarget()
     elseif CC == "PALADIN" then
         class=0;
     elseif CC == "MAGE" then
-        class=0;
+        class=class+self:MakeIndexBase2(self:GetDebuffs("Frostbite"), 0);
     elseif CC == "ROGUE" then        
         class=0;
     elseif CC == "WARRIOR" then        
@@ -714,6 +720,19 @@ function DataToColor:itemName(bag, slot)
     return tonumber(item)
 end
 
+function DataToColor:itemInfo(bag, slot)
+    local itemCount;
+    _, itemCount, _, _, _, _, _ = GetContainerItemInfo(bag, slot);
+    local value=0;
+    if itemCount ~= nil and itemCount > 0 then 
+        local isSoulBound = C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag,slot));
+        if isSoulBound == true then value=1 end
+    else
+        value=2;
+    end
+    return value;
+end
+
 -- Returns item id from specific index in global items table
 function DataToColor:returnItemFromIndex(index)
     return items[index]
@@ -772,7 +791,10 @@ function DataToColor:areSpellsInRange()
     elseif CC == "MAGE" then
         spellList = {
             "Fireball", --1
-            "Shoot"
+            "Shoot",
+            "Pyroblast",
+            "Frostbolt",
+            "Fire Blast"
         };        
     elseif CC == "HUNTER" then
         spellList = {
@@ -857,6 +879,10 @@ function DataToColor:GetZoneName(partition)
     -- Fail safe to prevent nil
     return 1
 end
+
+function DataToColor:GetBestMap()
+    return C_Map.GetBestMapForUnit("player");
+end 
 
 -- Game time on a 24 hour clock
 function DataToColor:GameTime()
@@ -1075,6 +1101,13 @@ function DataToColor:IsPlayerFlying()
     return 0
 end
 
+function DataToColor:IsPlayerSwimming()
+    if IsSwimming() then
+        return 1
+    end
+    return 0
+end
+
 function DataToColor:IsPlayerMounted()
     local mounted = IsMounted()
     if mounted then
@@ -1113,6 +1146,7 @@ function DataToColor:IsTargetOfTargetPlayerAsNumber()
     if CHARACTER_NAME == UnitName("target") then return 0 end; -- targeting self
     if UnitName("pet") == UnitName("targettarget") then return 4 end; -- targetting my pet
     if CHARACTER_NAME == UnitName("targettarget") then return 1 end; -- targetting me
+    if UnitName("pet") == UnitName("target") and UnitName("targettarget") ~= nil then return 5 end;
     return 3;
 end
 
