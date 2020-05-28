@@ -4,14 +4,14 @@
   "NPCMaxLevels_Below": 7,
   "NPCMaxLevels_Above": 2,
 
-  "PathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara.json",
-  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\54_Azhara_SpiritHealer.json",
-  "PathThereAndBack": false,
+  "PathFilename": "D:\\GitHub\\WowPixelBot\\58_Winterspring.2.json",
+  "SpiritPathFilename": "D:\\GitHub\\WowPixelBot\\58_Winterspring_SpiritHealer.2.json",
+  "PathThereAndBack": true,
   "PathReduceSteps": true,
   
   //"WrongZone": { "ZoneId": 1429, "ExitZoneLocation": { "X":62.5,"Y":90} },
 
-  "Blacklist": ["BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast"],
+  "Blacklist": ["BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror"],
 
   "Blink":{
       "Name": "Blink",
@@ -153,13 +153,7 @@
       {
         "Name": "Del1",
         "Key": "D",
-        "Cooldown": 300,
-        "Log": false
-      },
-      {
-        "Name": "Del2",
-        "Key": "D",
-        "Cooldown": 300,
+        "Cooldown": 999,
         "Log": false
       },
       {
@@ -167,7 +161,7 @@
         "Key": "F1",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Cooldown": 30,
+        "Cooldown": 60,
         "Log": false
       }
     ]
