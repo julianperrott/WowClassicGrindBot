@@ -195,6 +195,12 @@ namespace Libs.Actions
 
         public override bool CheckIfActionCanRun()
         {
+            if (this.playerReader.PlayerLevel==60 && bagReader.BagsFull)
+            {
+                RaiseEvent(new ActionEvent(GoapKey.abort, true));
+                wowProcess?.Hearthstone();
+            }
+
             return !bagReader.BagsFull;
         }
 

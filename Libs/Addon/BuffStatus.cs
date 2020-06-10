@@ -39,12 +39,10 @@
 
         // Druid
         public bool MarkOfTheWild { get => IsBitSet(10); }
-
         public bool Thorns { get => IsBitSet(11); }
 
         // Paladin
         public bool Aura { get => IsBitSet(10); }
-
         public bool Blessing { get => IsBitSet(11); }
         public bool Seal { get => IsBitSet(12); }
 

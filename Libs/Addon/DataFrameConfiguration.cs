@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -17,7 +18,7 @@ namespace Libs
 
         private const string ConfigurationFilename = "config.json";
 
-        public bool ConfigurationExists()
+        public static bool ConfigurationExists()
         {
             return File.Exists(ConfigurationFilename);
         }
@@ -46,8 +47,6 @@ namespace Libs
                 }
                 dataFrames.Add(new DataFrame(point.Value, dataframe));
             }
-
-            SaveConfiguration(dataFrames);
 
             return dataFrames;
         }

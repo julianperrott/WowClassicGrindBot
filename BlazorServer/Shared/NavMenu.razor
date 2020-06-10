@@ -5,30 +5,51 @@
     </button>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Dashboard
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="Screenshot">
-                <span class="oi oi-image" aria-hidden="true"></span> Screenshot
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="Swag">
-                <span class="oi oi-box" aria-hidden="true"></span> Swag
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="RecordPath">
-                <span class="oi oi-media-record" aria-hidden="true"></span> Record Path
-            </NavLink>
-        </li>
-    </ul>
-</div>
+@if (Libs.DataFrameConfiguration.ConfigurationExists())
+{
+
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <ul class="nav flex-column">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Dashboard
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="Screenshot">
+                    <span class="oi oi-image" aria-hidden="true"></span> Screenshot
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="Swag">
+                    <span class="oi oi-box" aria-hidden="true"></span> Swag
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="RecordPath">
+                    <span class="oi oi-media-record" aria-hidden="true"></span> Record Path
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="Configuration">
+                    <span class="oi oi-cog" aria-hidden="true"></span> Addon Configuration
+                </NavLink>
+            </li>
+        </ul>
+    </div>
+}
+else
+{
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <ul class="nav flex-column">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="Configuration" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span>Addon Configuration
+                </NavLink>
+            </li>
+        </ul>
+    </div>
+}
 
 @code {
     private bool collapseNavMenu = true;

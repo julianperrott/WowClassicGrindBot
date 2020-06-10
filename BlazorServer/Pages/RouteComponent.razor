@@ -1,5 +1,5 @@
-﻿@inject Libs.AddonReader addonReader
-@inject Libs.BotController botController
+﻿@inject Libs.IAddonReader addonReader
+@inject Libs.IBotController botController
 @inject IJSRuntime JSRuntime;
 @using System.Linq
 @using Libs
@@ -28,13 +28,15 @@
                     @{
                         var colour = addonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
 
-                        if (botController.GoapAgent.CurrentAction?.GetType() == typeof(Libs.Actions.FollowRouteAction))
+                        if (botController.GoapAgent != null && botController.GoapAgent.CurrentAction?.GetType() == typeof(Libs.Actions.FollowRouteAction))
                         {
                             colour = "blue";
                         }
 
-                        <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)" cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)" r="4" fill="@colour" />
-
+                        @if (botController.RouteInfo != null)
+                        {
+                            <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)" cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)" r="4" fill="@colour" />
+                        }
                     }
 
                     <g stroke-width="1" stroke="lightgray">
@@ -51,15 +53,19 @@
                         @this.PathPoints
                     </g>
 
-                    <g fill="blue">
-                        @((MarkupString)botController.RouteInfo.NextPoint())
-                    </g>
-                    <g>
-                        @foreach (var death in this.Deaths)
-                        {
-                            @((MarkupString)botController.RouteInfo.DeathImage(death))
-                        }
-                    </g>
+                    @if (botController.RouteInfo != null)
+                    {
+                        <g fill="blue">
+                            @((MarkupString)botController.RouteInfo.NextPoint())
+                        </g>
+
+                        <g>
+                            @foreach (var death in this.Deaths)
+                            {
+                                @((MarkupString)botController.RouteInfo.DeathImage(death))
+                            }
+                        </g>
+                    }
 
                 </g>
             </svg>
@@ -85,7 +91,7 @@
 
     protected override void OnInitialized()
     {
-        addonReader.AddonDataChanged += (o, e) =>
+        ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() =>
             {
@@ -115,10 +121,13 @@
             this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
 
 
-            var walkToCorpseAction = botController.GoapAgent.AvailableActions.FirstOrDefault(a => a.GetType() == typeof(Libs.Actions.WalkToCorpseAction)) as Libs.Actions.WalkToCorpseAction;
-            if (walkToCorpseAction != null)
+            if (botController.GoapAgent != null)
             {
-                Deaths = walkToCorpseAction.Deaths;
+                var walkToCorpseAction = botController.GoapAgent.AvailableActions.FirstOrDefault(a => a.GetType() == typeof(Libs.Actions.WalkToCorpseAction)) as Libs.Actions.WalkToCorpseAction;
+                if (walkToCorpseAction != null)
+                {
+                    Deaths = walkToCorpseAction.Deaths;
+                }
             }
         }
     }

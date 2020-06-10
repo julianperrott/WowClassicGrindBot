@@ -125,7 +125,12 @@ namespace Libs.Actions
                         break;
                     }
 
-                    if (source.GetType() == typeof(PullTargetAction) && this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer && this.playerReader.IsCasting)
+                    if (source.GetType() == typeof(PullTargetAction) && 
+                        this.playerReader.PlayerBitValues.PlayerInCombat && 
+                        !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer 
+                        && this.playerReader.IsCasting
+                        && this.playerReader.TargetHealthPercentage>99
+                        )
                     {
                         if (!this.playerReader.TargetIsFrostbitten)
                         {

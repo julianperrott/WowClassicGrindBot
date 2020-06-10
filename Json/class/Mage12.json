@@ -1,0 +1,118 @@
+{
+  "ClassName": "Mage",
+  "Loot": true,
+
+  "PathFilename":  "12_LochModan.json",
+  "SpiritPathFilename": "12_LochModan_Spirithealer.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": false,
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Stop Attack",
+        "Key": "0",
+        "StopBeforeCast": true,
+        "DelayAfterCast" : 600
+      },
+      {
+        "Name": "Fireball",
+        "HasCastBar": true,
+        "Key": "2",
+        "MinMana": 45
+      },
+      {
+        "Name": "Frost Bolt",
+        "DelayBeforeCast" : 600,
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "5",
+        "MinMana": 35
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Fireball",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "2",
+        "MinMana": 45,
+        "DelayAfterCast" : 500
+      },
+      {
+        "Name": "Interact",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": "H",
+        "Cooldown": 3,
+        "Log": false,
+        "DelayAfterCast" : 0
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Frost Armor",
+        "StopBeforeCast": false,
+        "Key": "3",
+        "MinMana": 110,
+        "Requirement": "Frost Armor",
+        "Log": false
+      },
+      {
+        "Name": "Arcane Intellect",
+        "StopBeforeCast": false,
+        "Key": "4",
+        "MinMana": 60,
+        "Requirement": "Arcane Intellect",
+        "Log": false
+      },
+      {
+        "Name": "Low Health",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "6",
+        "Requirement": "Health>50%",
+        "Log": false
+      },
+      {
+        "Name": "Drink",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirement": "Mana>50%",
+        "Cooldown": 10,
+        "Log": false
+      },
+      {
+        "Name": "Conjure Water",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "9",
+        "Requirement": "BagItem:2288",
+        "Cooldown": 300,
+        "Log": false
+      },
+      {
+        "Name": "Conjure Food",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "7",
+        "Requirement": "BagItem:1113",
+        "Cooldown": 300,
+        "Log": false
+      },
+      {
+        "Name": "Well Fed",
+        "StopBeforeCast": true,
+        "Key": "=",
+        "Requirement": "Well Fed",
+        "Cooldown": 120,
+        "Log": false
+      }
+    ]
+  }
+}

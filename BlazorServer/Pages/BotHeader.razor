@@ -1,6 +1,6 @@
 ﻿@using Libs;
-@inject Libs.AddonReader addonReader
-@inject Libs.BotController botController
+@inject Libs.IAddonReader addonReader
+@inject Libs.IBotController botController
 
 
 <div class="card">
@@ -60,7 +60,7 @@
         @if (ShowActiveAction)
         {
             <table class="table table-sm table-striped">
-                @if (botController.GoapAgent.CurrentAction != null)
+                @if (botController.GoapAgent !=null && botController.GoapAgent.CurrentAction != null)
                 {
                     <GoapActionView action="botController.GoapAgent.CurrentAction" IsSelected="true" />
                 }
@@ -89,7 +89,7 @@
 
     protected override void OnInitialized()
     {
-        addonReader.AddonDataChanged += (o, e) =>
+        ((AddonReader)addonReader).AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };

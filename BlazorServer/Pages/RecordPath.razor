@@ -4,8 +4,8 @@
 @using Newtonsoft.Json
 @using System.IO
 
-@inject Libs.AddonReader addonReader
-@inject Libs.BotController botController
+@inject Libs.IAddonReader addonReader
+@inject Libs.IBotController botController
 @inject IJSRuntime JSRuntime
 
 <h3>Path Recording</h3>
@@ -29,9 +29,12 @@
                 <g class="background">
                 </g>
 
-                <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)"
-                        cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)"
-                        r="4" fill="blue" />
+                    @if (botController.RouteInfo != null)
+                    {
+                        <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)"
+                            cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)"
+                            r="4" fill="blue" />
+                    }
 
                 <g class="group2">
                     <g stroke-width="1" stroke="gray">
@@ -50,18 +53,21 @@
         @if (editPoint != null)
         {
             <input type="text" @bind="X" />
-            <input type="text " @bind="Y" />
+            <input type="text" @bind="Y" />
             <button class="btn btn-primary" @onclick="Update">Update</button>
             <button class="btn btn-primary" @onclick="Remove">Remove</button>
             <div>@error</div>
             <br />
         }
 
-        @foreach (var point in @botController.RouteInfo.PathPoints)
+        @if (botController.RouteInfo != null)
         {
-            <span class="badge badge-info" @onclick="() => EditPoint(point)">
-                @point.X.ToString("0.00"),@point.Y.ToString("0.00")&nbsp;
-            </span>
+            foreach (var point in @botController.RouteInfo.PathPoints)
+            {
+                <span class="badge badge-info" @onclick="() => EditPoint(point)">
+                    @point.X.ToString("0.00"),@point.Y.ToString("0.00")&nbsp;
+                </span>
+            }
         }
     </div>
 </div>
@@ -77,14 +83,12 @@
     string error = "";
     string Message = "";
 
-    private bool CanvasInitialised = false;
-
-    WowPoint editPoint = null;
+    WowPoint editPoint = new WowPoint(0,0);
 
     protected override void OnInitialized()
     {
 
-        addonReader.AddonDataChanged += (o, e) =>
+        ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() =>
             {
@@ -103,7 +107,6 @@
         if (botController.RouteInfo != null)
         {
             error = "";
-            CanvasInitialised = true;
             botController.RouteInfo.SetMargin(20);
             botController.RouteInfo.SetCanvasSize(600);
 
@@ -128,10 +131,14 @@
         if (!recording) { return; }
 
         var location = new WowPoint(addonReader.PlayerReader.XCoord, addonReader.PlayerReader.YCoord);
-        if (botController.RouteInfo.PathPoints.Count == 0 || DistanceTo(location, botController.RouteInfo.PathPoints.Last()) > 60 & location.X != 0)
+
+        if (botController.RouteInfo != null)
         {
-            botController.RouteInfo.PathPoints.Add(location);
-            UpdateRoute();
+            if (botController.RouteInfo.PathPoints.Count == 0 || DistanceTo(location, botController.RouteInfo.PathPoints.Last()) > 60 & location.X != 0)
+            {
+                botController.RouteInfo.PathPoints.Add(location);
+                UpdateRoute();
+            }
         }
     }
 
@@ -149,7 +156,10 @@
     private void Record()
     {
         recording = true;
-        botController.RouteInfo.PathPoints.Clear();
+        if (botController.RouteInfo != null)
+        {
+            botController.RouteInfo.PathPoints.Clear();
+        }
         Message = "Recording...";
     }
 
@@ -162,15 +172,21 @@
     private void Clear()
     {
         recording = false;
-        botController.RouteInfo.PathPoints.Clear();
+        if (botController.RouteInfo != null)
+        {
+            botController.RouteInfo.PathPoints.Clear();
+        }
         Message = "Cleared...";
     }
 
     private void Save()
     {
-        var filename = $"Path_{ DateTime.Now.ToString("yyyyMMddHHmmss")}.json";
-        File.WriteAllText($"D:/GitHub/WowPixelBot/{filename}", JsonConvert.SerializeObject(botController.RouteInfo.PathPoints));
-        Message = $"Saved to: {filename}";
+        if (botController.RouteInfo != null)
+        {
+            var filename = $"Path_{ DateTime.Now.ToString("yyyyMMddHHmmss")}.json";
+            File.WriteAllText($"../json/path/{filename}", JsonConvert.SerializeObject(botController.RouteInfo.PathPoints));
+            Message = $"Saved to: {filename}";
+        }
     }
 
     private void EditPoint(WowPoint point)
@@ -196,8 +212,11 @@
 
     private void Remove()
     {
-        botController.RouteInfo.PathPoints.Remove(editPoint);
-        this.editPoint = null;
-        UpdateRoute();
+        if (botController.RouteInfo != null)
+        {
+            botController.RouteInfo.PathPoints.Remove(editPoint);
+            this.editPoint = new WowPoint(0,0);
+            UpdateRoute();
+        }
     }
 }

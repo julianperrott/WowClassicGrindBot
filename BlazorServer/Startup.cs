@@ -1,5 +1,5 @@
-using BlazorServer.Data;
 using Libs;
+using Libs.Addon;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
+using System.Threading;
 
 namespace BlazorServer
 {
@@ -29,7 +30,12 @@ namespace BlazorServer
             Log.Logger = config.CreateLogger();
             Log.Logger.Information("Startup()");
 
-            Log.Information("Hello");
+
+            while(WowProcess.Get()==null)
+            {
+                Log.Information("Unable to find the Wow process is it running ?");
+                Thread.Sleep(1000);
+            }
         }
 
         public IConfiguration Configuration { get; }
@@ -39,14 +45,23 @@ namespace BlazorServer
         public void ConfigureServices(IServiceCollection services)
         {
             var logger = new SerilogLoggerProvider(Log.Logger).CreateLogger(nameof(Program));
-            var botController = new BotController(logger);
-            botController.InitialiseBot();
+
+            if (DataFrameConfiguration.ConfigurationExists())
+            {
+                var botController = new BotController(logger);
+                services.AddSingleton<IBotController>(botController);
+                services.AddSingleton<IAddonReader>(botController.AddonReader);
+                botController.InitialiseBot();
+            }
+            else
+            {
+                services.AddSingleton<IBotController>(new ConfigBotController());
+                services.AddSingleton<IAddonReader>(new ConfigAddonReader());
+            }
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
-            services.AddSingleton<BotController>(botController);
-            services.AddSingleton<AddonReader>(botController.AddonReader);
+
             //services.AddSingleton<RouteInfo>(botController.WowBot.RouteInfo);
         }
 

@@ -89,6 +89,16 @@ namespace Libs
 
         private void GetPaths(AddonReader addonReader, out List<WowPoint> pathPoints, out List<WowPoint> spiritPath, ClassConfiguration classConfig)
         {
+            if (!classConfig.PathFilename.Contains(":"))
+            {
+                classConfig.PathFilename = "../json/path/" + classConfig.PathFilename;
+            }
+
+            if (!classConfig.SpiritPathFilename.Contains(":"))
+            {
+                classConfig.SpiritPathFilename = "../json/path/" + classConfig.SpiritPathFilename;
+            }
+
             string pathText = File.ReadAllText(classConfig.PathFilename);
             bool thereAndBack = classConfig.PathThereAndBack;
             if (string.IsNullOrEmpty(classConfig.SpiritPathFilename))

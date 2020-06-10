@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libs", "Libs\Libs.csproj", "{277C93F8-DF2B-49B8-8A1C-1A64EB347B90}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{E37B9CA5-4DF7-43A6-B048-834E7D76D708}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServer", "BlazorServer\BlazorServer.csproj", "{31DA3032-F0D5-42E0-8F93-AE8622B42C53}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{277C93F8-DF2B-49B8-8A1C-1A64EB347B90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{277C93F8-DF2B-49B8-8A1C-1A64EB347B90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{277C93F8-DF2B-49B8-8A1C-1A64EB347B90}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E37B9CA5-4DF7-43A6-B048-834E7D76D708}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E37B9CA5-4DF7-43A6-B048-834E7D76D708}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E37B9CA5-4DF7-43A6-B048-834E7D76D708}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E37B9CA5-4DF7-43A6-B048-834E7D76D708}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31DA3032-F0D5-42E0-8F93-AE8622B42C53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31DA3032-F0D5-42E0-8F93-AE8622B42C53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31DA3032-F0D5-42E0-8F93-AE8622B42C53}.Release|Any CPU.ActiveCfg = Release|Any CPU

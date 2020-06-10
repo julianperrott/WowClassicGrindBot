@@ -53,7 +53,7 @@ namespace Libs
                 RequirementObjects.Add(new Requirement
                 {
                     HasRequirement = () => playerReader.ComboPoints >= item.MinComboPoints,
-                    LogMessage = () => $"Combo point {playerReader.ComboPoints} >= {item.MinMana}"
+                    LogMessage = () => $"Combo point {playerReader.ComboPoints} >= {item.MinComboPoints}"
                 });
             }
         }

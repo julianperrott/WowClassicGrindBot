@@ -1,7 +1,7 @@
 ﻿@page "/Swag"
 
-@inject Libs.AddonReader addonReader
-@inject Libs.BotController botController
+@inject Libs.IAddonReader addonReader
+@inject Libs.IBotController botController
 @inject IJSRuntime JSRuntime;
 @using Libs.Addon
 @using Microsoft.AspNetCore.Html
@@ -13,6 +13,7 @@
         Bag Contents
         <div class="float-right">
             <Money Value="ahMoney" />
+            (<Money Value="vendMoney" />)
         </div>
     </div>
     <div class="card-body" style="padding-bottom: 0">
@@ -39,9 +40,9 @@
                                 <BagItemComponent Item="bagItem" />
                             }
                         </td>
-                                }
+                    }
                 </tr>
-                                }
+            }
         </table>
     </div>
 </div>
@@ -50,17 +51,17 @@
 
 @code {
 
-        int[] money = new int[0];
-        int[] ahMoney = new int[0];
+    int[] vendMoney = new int[0];
+    int[] ahMoney = new int[0];
 
     protected override void OnInitialized()
     {
         addonReader.BagReader.DataChanged += (o, e) =>
         {
-            money = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => s.Item.SellPrice * s.Count));
+            vendMoney = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => s.Item.SellPrice * s.Count));
 
-            // ignore if sellprice is 0... bit of a hack, need to check if soulbound
-            ahMoney = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => (s.IsSoulbound ? s.Item.SellPrice : s.Item.AHPrice) * s.Count));
+        // ignore if sellprice is 0... bit of a hack, need to check if soulbound
+        ahMoney = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => (s.IsSoulbound ? s.Item.SellPrice : s.Item.AHPrice) * s.Count));
 
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };

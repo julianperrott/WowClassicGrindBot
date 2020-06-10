@@ -1,0 +1,148 @@
+﻿@page "/Configuration"
+
+@using Libs
+@using Microsoft.AspNetCore.Html
+
+<style>
+    h5 {
+        margin-top:20px
+    }
+</style>
+
+@if (saved)
+{
+    <h1>Saved! - Please restart the bot after typing /dc again in the chat window</h1>
+
+    <div class="row col-md-12">
+        <img src="Addon_DC.png" />
+    </div>
+}
+else
+{
+    if (Libs.DataFrameConfiguration.ConfigurationExists())
+    {
+        <h1>Configuration file already exists</h1>
+    }
+    else
+    {
+        <h1>Addon configuration not found !</h1>
+    }
+
+    <h5 class="row col-md-12">Step 1: Please ensure the addon 'DataToColor' found in the addon folders is running. You should see the multi-coloured pixels at the top left of the screen.</h5>
+
+    <div class="row col-md-12">
+        @if (@dataFrames.Count != 100)
+        {
+            <img src="Addon_Normal.png" />
+        }
+    </div>
+
+    <h5 class="row col-md-12">Step 2: Now we are going to put the addon into configuration mode, this will change the addon colours displayed. In the wow chat window: type /dc</h5>
+
+    @if (@dataFrames.Count != 100)
+    {
+        <div class="row col-md-12">
+            <img src="Addon_DC.png" />
+        </div>
+
+        <div class="row col-md-12" style="margin-top:10px">
+            <img src="Addon_Config.png" />
+        </div>
+    }
+
+    @if (@dataFrames.Count > 70)
+    {
+
+        <h5 class="row col-md-12">Step 3:  Click Save</h5>
+
+        <button class="row col-md-1 btn btn-sm btn-primary" @onclick="Configure">
+            <span>Save</span>
+        </button>
+    }
+    <hr />
+    <h5 class="row col-md-12">Your screen:</h5>
+    @if (@dataFrames.Count == 100)
+    {
+        <span class="row col-md-12">I see @dataFrames.Count data frames. This is perfect, just click the Save button.</span>
+    }
+    else
+    {
+        <span class="row col-md-12">I see @dataFrames.Count data frames. I should see 100 if you have typed /dc</span>
+    }
+
+<div class="row col-md-12">
+    @if (@dataFrames.Count != 100)
+    {
+        <img style="border:5px solid red; margin 5px" src="data:image/png;base64, @image" alt="Red dot" />
+    }
+    else
+    {
+        <img style="border:5px solid green; margin 5px" src="data:image/png;base64, @image" alt="Red dot" />
+    }
+</div>
+}
+@code {
+
+    private DataFrameConfiguration? config;
+    private List<DataFrame> dataFrames = new List<DataFrame>();
+
+    private bool saved = false;
+
+    string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+
+    protected override void OnInitialized()
+    {
+        if (config == null)
+        {
+            var logger = new Serilog.Extensions.Logging.SerilogLoggerProvider(Serilog.Log.Logger).CreateLogger(nameof(Program));
+            var wowScreen = new WowScreen(logger);
+            config = new DataFrameConfiguration(wowScreen);
+
+            var screenshotThread = new System.Threading.Thread(ScreenshotRefreshThread);
+            screenshotThread.Start();
+        }
+    }
+
+    private void ScreenshotRefreshThread()
+    {
+        while (true)
+        {
+            var screenshot = WowScreen.GetAddonBitmap();
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            {
+                screenshot.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                byte[] byteImage = ms.ToArray();
+                this.image = Convert.ToBase64String(byteImage); // Get Base64
+
+                if (config != null)
+                {
+                    dataFrames = config.CreateConfiguration(screenshot);
+                }
+
+                InvokeAsync(() =>
+                {
+                    base.StateHasChanged();
+                });
+            }
+            System.Threading.Thread.Sleep(1000);
+        }
+    }
+
+    private async Task Configure()
+    {
+        var screenshot = WowScreen.GetAddonBitmap();
+
+        if (config != null)
+        {
+            var dataFrames = config.CreateConfiguration(screenshot);
+
+            config.SaveConfiguration(dataFrames);
+            saved = true;
+
+            await InvokeAsync(() =>
+            {
+                base.StateHasChanged();
+            });
+        }
+    }
+}

@@ -1,11 +1,15 @@
 ﻿@page "/"
 
-@inject Libs.AddonReader addonReader
-@inject Libs.BotController botController
+@inject Libs.IAddonReader addonReader
+@inject Libs.IBotController botController
 @inject IJSRuntime JSRuntime;
 
 <div class="container-fluid">
     <div class="row">
+
+        @if (Libs.DataFrameConfiguration.ConfigurationExists())
+        {
+
         <div class="col-sm">
             <ScreenshotComponent Size="800" />
             <table width="100%">
@@ -19,7 +23,7 @@
         <div class="col-sm" style="margin-left:10px">
             <BotHeader ShowActiveAction="false" />
 
-            <div class="card"  style="margin-top: 10px">
+            <div class="card" style="margin-top: 10px">
                 <div class="card-header">
                     Actions
 
@@ -36,15 +40,23 @@
                 </div>
                 <div class="card-body">
                     <table class="table table-sm table-striped">
-                        @foreach (var action in botController.GoapAgent.AvailableActions)
+                        @if (botController.GoapAgent != null)
                         {
-                            <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
+                            foreach (var action in botController.GoapAgent.AvailableActions)
+                            {
+                                <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
+                            }
                         }
                     </table>
                 </div>
             </div>
-            
+
         </div>
+        }
+        else
+        {
+            <Configuration/>
+        }
     </div>
 </div>
 
@@ -54,17 +66,21 @@
 
     protected override void OnInitialized()
     {
-        addonReader.AddonDataChanged += (o, e) =>
+        if (Libs.DataFrameConfiguration.ConfigurationExists())
         {
-            base.InvokeAsync(() =>
+
+            ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
             {
-                try
+                base.InvokeAsync(() =>
                 {
-                    StateHasChanged();
-                }
-                catch { }
-            });
-        };
+                    try
+                    {
+                        StateHasChanged();
+                    }
+                    catch { }
+                });
+            };
+        }
     }
 
     private void ToggleBot()

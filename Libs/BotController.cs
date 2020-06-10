@@ -3,6 +3,7 @@ using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,22 +11,22 @@ using System.Threading.Tasks;
 
 namespace Libs
 {
-    public class BotController
+    public class BotController : IBotController
     {
         private readonly WowProcess wowProcess;
         private readonly ILogger logger;
 
         public AddonReader AddonReader { get; set; }
-        public Thread? screenshotThread;
-        public Thread addonThread;
-        public Thread? botThread;
-        public ActionFactory ActionFactory;
-        public GoapAgent? GoapAgent { get; private set; }
-        public RouteInfo? RouteInfo { get; private set; }
+        public Thread? screenshotThread { get; set; }
+        public Thread addonThread { get; set; }
+        public Thread? botThread { get; set; }
+        public ActionFactory ActionFactory { get; set; }
+        public GoapAgent? GoapAgent { get;  set; }
+        public RouteInfo? RouteInfo { get;  set; }
 
         private ActionThread? actionThread;
 
-        public WowScreen WowScreen { get; private set; }
+        public WowScreen WowScreen { get;  set; }
 
         private NpcNameFinder npcNameFinder;
 
@@ -37,9 +38,9 @@ namespace Libs
 
             var config = new DataFrameConfiguration(WowScreen);
 
-            var frames = config.ConfigurationExists()
+            var frames = DataFrameConfiguration.ConfigurationExists()
                 ? config.LoadConfiguration()
-                : config.CreateConfiguration(WowScreen.GetAddonBitmap());
+                : new List<DataFrame>(); //config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
             AddonReader = new AddonReader(WowScreen, frames, logger);
 
@@ -149,7 +150,7 @@ namespace Libs
             ClassConfiguration classConfig;
             var requirementFactory = new RequirementFactory(AddonReader.PlayerReader, AddonReader.BagReader, logger);
 
-            var classFilename = $"D:\\GitHub\\WowPixelBot\\{AddonReader.PlayerReader.PlayerClass.ToString()}.json";
+            var classFilename = $"../json/class/{AddonReader.PlayerReader.PlayerClass.ToString()}.json";
             if (File.Exists(classFilename))
             {
                 classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilename));

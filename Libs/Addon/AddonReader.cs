@@ -17,10 +17,10 @@ namespace Libs
         private readonly ILogger logger;
         private readonly ISquareReader squareReader;
         public PlayerReader PlayerReader { get; set; }
-        public BagReader BagReader { get; private set; }
-        public EquipmentReader equipmentReader { get; private set; }
+        public BagReader BagReader { get;  set; }
+        public EquipmentReader equipmentReader { get;  set; }
         public bool Active { get; set; } = true;
-        public LevelTracker LevelTracker { get; private set; }
+        public LevelTracker LevelTracker { get;  set; }
 
         public event EventHandler? AddonDataChanged;
 
@@ -37,8 +37,8 @@ namespace Libs
             this.height = frames.Max(f => f.point.Y) + 1;
             this.squareReader = new SquareReader(this);
 
-            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("D:\\GitHub\\WowPixelBot\\items.json"));
-            var creatures = JsonConvert.DeserializeObject<List<Creature>>(File.ReadAllText("D:\\GitHub\\WowPixelBot\\creatures.json"));
+            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("../json/data/items.json"));
+            var creatures = JsonConvert.DeserializeObject<List<Creature>>(File.ReadAllText("../json/data/creatures.json"));
 
             this.BagReader = new BagReader(squareReader, 20, items, ReadAHPrices());
             this.equipmentReader = new EquipmentReader(squareReader, 30);
