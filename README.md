@@ -1,7 +1,6 @@
 # MasterOfPuppets - World of Warcraft Classic Grind Bot 
 
-<svg height="16" class="octicon octicon-star" viewBox="0 0 16 16" version="1.1" width="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"></path></svg>
-Star this repo if you think it might be useful to you or other coders.
+Star * this repo if you think it might be useful to you or other coders.
 
 - Uses an Addon to read the game state. 
 
@@ -20,9 +19,9 @@ Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-P
 
 ## 1. Download this repository
 
-Put into into a folder. e.g C:\WowClassicGrindBot-. I am going to refer to this folder from now on, so just substitute your own folder path.
+Put into into a folder. e.g "C:\WowClassicGrindBot". I am going to refer to this folder from now on, so just substitute your own folder path.
 
-## 2. Install Addon
+## 2. Install the Addon
 
 In this repo is a folder Addons e.g.  C:\WowClassicGrindBot\Addons. Copy the contents into your wow classic Addons folder. e.g. c:\World of Warcraft\_classic_\Interface\AddOns.
 
@@ -36,10 +35,14 @@ There are 2 addons:
 
 You will probably already have Visual Studio or Visual Studio Code installed. You need to build the bot. Build this from the IDE or use powershell.
 
+You will need .net core 3.1 installed. https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.301-windows-x64-installer
+
 e.g. from powershell
 
     cd C:\WowClassicGrindBot\BlazorServer
     dotnet build
+
+![Build](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/build.png)
 
 ## 4. Configure the Addon Reader
 
@@ -61,6 +64,8 @@ e.g. from powershell
 5. We need to read the position of the pixel and to do this we need to put the addon into configuration mode by typing /dc. Follow the instructions on the configuration page.
 
 6. Restart the bot and it should not start up and show the dashboard page.
+
+![AddonConfig](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/AddonConfig.png)
 
 ## 5. Configure the Wow Client - Interface Options
 
@@ -149,11 +154,13 @@ The path that the class follows is a json file in C:\WowClassicGrindBot\Json\pat
         "PathThereAndBack": true, // if true walks the path and the walks it backwards.
         "PathReduceSteps": true,  // uses every other coordinate.
 
-## Commands
+### Commands
 
-The rest of the file contains a set of commands e.g.
+The rest of the file contains a set of commands 
 
-    
+e.g.
+
+    {
         "Name": "Slice And Dice",
         "Key": "3",
         "MinEnergy": 25,
@@ -201,26 +208,45 @@ The sequence of commands that are used when trying to kill a mob. The first on t
 These commands are done when not in combat and are not on cooldown.
 
 
-## Requirement:
+## Requirement
 
-A requirement is something that must be true. 
+A requirement is something that must be true for the command to run. Not all commands need a requirement, some just rely on a cooldown. A requirement can be put into a list if there is more than one.
+
+e.g.
+
+      {
+        "Name": "Soul Shard",
+        "Key": "9",
+        "HasCastBar": true,
+        "Requirements": ["TargetHealth%<36", "not BagItem:6265:3"], <--- Requirement List
+        "MinMana": 55
+      },
+      {
+        "Name": "Curse of Weakness",
+        "Key": "6",
+        "Cooldown": 10,
+        "ResetOnNewTarget": true,
+        "Requirement": "not Curse of Weakness", <--- Single Requirement
+        "MinMana": 20,
+        "Log": false
+      },
 
 #### Value base requirements
 
 Value base requirements are made up on a [ Health% or TargetHealth% or Mana%] [< or >] [Numeric Value].
 
-e.g. "Health%>70",
-
-e.g. "TargetHealth% < 10",
-
-e.g. "Mana%<40",
+e.g.
+* "Health%>70",
+* "TargetHealth% < 10",
+* "Mana%<40",
 
 #### npcID requirements
 
 If a particular npc is required then this requirement can be used.
 
-e.g. "not npcID:6195", - don't cast on npcId 6195 https://classic.wowhead.com/npc=6195
-e.g. "npcID:6195", - only cast on npcId 6195 https://classic.wowhead.com/npc=6195
+e.g.
+* "not npcID:6195", - don't cast on npcId 6195 https://classic.wowhead.com/npc=6195
+* "npcID:6195", - only cast on npcId 6195 https://classic.wowhead.com/npc=6195
 
 #### Bag requirements
 
@@ -228,16 +254,18 @@ If an item must be in your bag then you can use this requirement. Useful to dete
 
 It has the format BagItem:[itemid]:[count]
 
-e.g. "BagItem:6265:1 - Must have a soulshard in the bag https://classic.wowhead.com/item=6265
-e.g. "not BagItem:19007:1" - Must have a lesser Healthstone in the bag https://classic.wowhead.com/item=19007
-e.g. "not BagItem:6265:3"- Must not have 3 soulshards in the bag.
+e.g. 
+* "BagItem:6265:1 - Must have a soulshard in the bag https://classic.wowhead.com/item=6265
+* "not BagItem:19007:1" - Must have a lesser Healthstone in the bag https://classic.wowhead.com/item=19007
+* "not BagItem:6265:3"- Must not have 3 soulshards in the bag.
 
 #### Buff / Debuff
 
 Allow requirements about what buffs you have or the target has to be evaluated.
 
-e.g. "not Well Fed" - I am not well fed.
-e.g. "not Thorns" - I don't have the thorns buff.
+e.g.
+* "not Well Fed" - I am not well fed.
+* "not Thorns" - I don't have the thorns buff.
 
 | Class | Buff |
 | --- | --- |
