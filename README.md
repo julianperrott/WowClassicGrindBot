@@ -9,7 +9,7 @@ Please star this repo if you think it might be useful to you or other coders.
 
 - All classes except Hunter are possible.
 
-![Screenshot](https://raw.githubusercontent.com/julianperrott/WowPixelBot/master/images/Screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Screenshot.png)
 
 Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-Pixels
 
@@ -293,13 +293,13 @@ The UI has the following components:
 
 ### Screenshot
 
-![Screenshot Component](https://raw.githubusercontent.com/julianperrott/WowPixelBot/master/images/screenshotComponent.png)
+![Screenshot Component](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/screenshotComponent.png)
 
 ### Player Summary
 
 Show the player state. A hyper link to wowhead appears for the mob you are fighting so you can check out what it drops.
 
-![Player Summary](https://raw.githubusercontent.com/julianperrott/WowPixelBot/master/images/PlayerSummary.png)
+![Player Summary](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/PlayerSummary.png)
 
 ### Route
 
@@ -310,7 +310,7 @@ Shows:
 * Your location
 * The location of any deaths
 
-![Route](https://raw.githubusercontent.com/julianperrott/WowPixelBot/master/images/Route.png)
+![Route](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Route.png)
 
 ### Actions
 
@@ -322,4 +322,4 @@ Some actions (combat,pull target) contain a list of spells which can be cast. Th
 
 The visualisation of the pre-conditions and spell requirements makes it easier to understand what the bot is doing and determine if the class file needs to be tweaked.
 
-![Actions](https://raw.githubusercontent.com/julianperrott/WowPixelBot/master/images/actionsComponent.png)
+![Actions](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/actionsComponent.png)
