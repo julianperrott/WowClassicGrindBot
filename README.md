@@ -2,7 +2,7 @@
 
 Star * this repo if you think it is awesone... or maybe just vaguely useful !
 
-- Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-Pixels to read the game state.
+- Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-Pixels to read the game state. Sorry but the addon is coded for an english wow client and would need to be modified to work with any other languages.
 
 - Uses Blazor Server to show the bot state in a browser, and so can be monitored from your phone or a tablet while you do something else.
 https://docs.microsoft.com/en-us/aspnet/core/blazor
@@ -20,11 +20,11 @@ https://docs.microsoft.com/en-us/aspnet/core/blazor
 
 ## 1. Download this repository
 
-Put into into a folder. e.g "C:\WowClassicGrindBot". I am going to refer to this folder from now on, so just substitute your own folder path.
+Put the contents of the repo into a folder. e.g "C:\WowClassicGrindBot". I am going to refer to this folder from now on, so just substitute your own folder path.
 
 ## 2. Install the Addon
 
-In this repo is a folder Addons e.g.  C:\WowClassicGrindBot\Addons. Copy the contents into your wow classic Addons folder. e.g. c:\World of Warcraft\_classic_\Interface\AddOns.
+In this repo is a folder called Addons e.g.  C:\WowClassicGrindBot\Addons. Copy the contents into your wow classic Addons folder. e.g. c:\World of Warcraft\_classic_\Interface\AddOns. You will need to restart Wow if it is running.
 
 There are 2 addons:
 
@@ -34,11 +34,11 @@ There are 2 addons:
 
 ## 3. Build the bot
 
-You will probably already have Visual Studio or Visual Studio Code installed. You need to build the bot. Build this from the IDE or use powershell.
+You will probably already have Visual Studio or Visual Studio Code installed. You need to build the bot using either one of them, or use powershell.
 
-You will need .net core 3.1 installed. https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.301-windows-x64-installer
+You will need .net core 3.1 SDK installed. https://dotnet.microsoft.com/download/dotnet-core/3.1 
 
-e.g. from powershell
+e.g. Build from powershell
 
     cd C:\WowClassicGrindBot\BlazorServer
     dotnet build
@@ -47,8 +47,10 @@ e.g. from powershell
 
 ## 4. Configure the Addon Reader
 
-1. Delete the existing config.json file found in c:\WowClassicGrindBot\BlazorServer, we are going to recreate it. This is important as your screen may not be 1920 x 1080.
-2. Edit the batch script in c:\WowClassicGrindBot\BlazorServer called run.bat, change it to point at where you have put the addon folder e.g.
+The bot reads the game state using small blocks of colour shown at the top of the screen by an Addon. This needs to be configured.
+
+1. Delete the existing config.json file found in c:\WowClassicGrindBot\BlazorServer, we are going to recreate it. This is important as your screen may not be the same size as mine 1920 x 1080.
+2. Edit the batch script in c:\WowClassicGrindBot\BlazorServer called run.bat, change it to point at where you have put the repo BlazorServer folder e.g.
 
         start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://localhost:5000"
         c:
@@ -56,19 +58,19 @@ e.g. from powershell
         dotnet run
         pause
 
-3. Execute the run.bat. This will start the bot and Chrome.
+3. Execute the run.bat. This will start the bot and Chrome, Wow must be already running. If you get "Unable to find the Wow process is it running ?" in the console window then it can't find wow.exe.
 
-    a. If you get "Unable to find the Wow process is it running ?" in the console window then it can't find wow.exe.
+4. You should see the 'Addon configuration' screen (See screenshot below).
 
-4. You should see the 'Addon configuration' screen.
+5. The bot needs to record the position of the blocks of colour and to do this we need to put the addon into configuration mode by typing /dc. Follow the instructions on the configuration page and Save the configuration.
 
-5. We need to read the position of the pixel and to do this we need to put the addon into configuration mode by typing /dc. Follow the instructions on the configuration page.
-
-6. Restart the bot and it should not start up and show the dashboard page.
+6. Restart the bot and when it starts it should show the dashboard page.
 
 ![AddonConfig](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/AddonConfig.png)
 
 ## 5. Configure the Wow Client - Interface Options
+
+We need to make sure that certain interface options are set. The most important are Click to move and screen flashing on low health. See the list below.
 
 ### Interface Options
 
@@ -85,6 +87,8 @@ From the main menu (ESC) set the following:
 
 ## 6. Configure the Wow Client - Key Bindings:
 
+The "Interact with Target" keybind is super important as it allows the bot to turn towards and approach the target.
+
 From the main menu (ESC) set the following:
 
 Key Bindings:
@@ -93,8 +97,6 @@ Key Bindings:
 | ---- | ---- |
 |  Interact With Target | H  |
 
-
-This is an important key bind !
 
 ## 7. Configure the Wow Client - Bindpad addon
 
@@ -113,7 +115,7 @@ For each of the following click + to add a new key binding. The most important o
 |  F2 | See below | Buff weapon 17 (Melee classes)|
 | * F3 | /cleartarget  | |
 | * F4 | /use Superior Healing Potion | Heal |
-|  F5 | See below  | Delete crap |
+|  F5 | See below  | Delete various crap |
 | F6 | /equipslot 18 Wicked Throwing Dagger | Equip thown (Rogue) |
 | F7 | /cast Desperate Prayer | Heal - Priest only |
 | F8 | /cancelform | Druid |
@@ -140,15 +142,13 @@ For each of the following click + to add a new key binding. The most important o
 
 ## 8. Setting up the class file
 
-Each class has a configuration file in /Json/class e.g. the config for a Rogue is in  C:\WowClassicGrindBot\Json\class\Rogue.json
+Each class has a configuration file in /Json/class e.g. the config for a Rogue it is in file C:\WowClassicGrindBot\Json\class\Rogue.json.
 
-See the other class files for examples. Your class file probably exists and just needs to be edited to set the path file.
-
-BTW hunter is not supported.
+Take a look at the other class files for examples of what you can do (BTW hunter is not supported.). Your class file probably exists and just needs to be edited to set the pathing file name.
 
 ### Path
 
-The path that the class follows is a json file in C:\WowClassicGrindBot\Json\path\ which contains a list of x & y coordinates to walk.
+The path that the class follows is a json file in C:\WowClassicGrindBot\Json\path\ which contains a list of x & y coordinates the bot will traverse while looking for mobs.
 
         "PathFilename": "58_Winterspring.2.json", // the path to walk when alive
         "SpiritPathFilename": "58_Winterspring_SpiritHealer.2.json", // the path from the spirit healer back to the main path.
@@ -170,7 +170,7 @@ e.g.
         "Requirement": "Slice And Dice"
       }, 
 
-Commands have the following parameters
+Commands have the following parameters, only a subset will be used by each command.
 
 | Property Name | Description | Default value |
 | --- | --- | --- |
@@ -196,22 +196,21 @@ Commands have the following parameters
 | Cost | For Adhoc actions the priority | 18 |
 | InCombat | Can it be cast in combat | false |
 
-### Pull 
+### Pull Action
 
 This is the sequence of commands that are used when pulling a mob.
 
-### Combat
+### Combat Action
 
-The sequence of commands that are used when trying to kill a mob. The first on the list is used each time combat is actioned.
+The sequence of commands that are used when in combat and trying to kill a mob. The combat action does the first available command on the list. The action then runs again re-evaluating the list before choosing the first available command again, and so on until the mob is dead.
 
-### Adhoc
+### Adhoc Actions
 
 These commands are done when not in combat and are not on cooldown.
 
-
 ## Requirement
 
-A requirement is something that must be true for the command to run. Not all commands need a requirement, some just rely on a cooldown. A requirement can be put into a list if there is more than one.
+A requirement is something that must be true for the command to run. Not all commands need a requirement, some just rely on a cooldown or a mana amount. A requirement can be put into a list if there is more than one.
 
 e.g.
 
@@ -238,7 +237,7 @@ Value base requirements are made up on a [ Health% or TargetHealth% or Mana%] [<
 
 e.g.
 * "Health%>70",
-* "TargetHealth% < 10",
+* "TargetHealth%<10",
 * "Mana%<40",
 
 #### npcID requirements
@@ -267,6 +266,7 @@ Allow requirements about what buffs you have or the target has to be evaluated.
 e.g.
 * "not Well Fed" - I am not well fed.
 * "not Thorns" - I don't have the thorns buff.
+* "Shooting" - I am out of shooting.
 
 | Class | Buff |
 | --- | --- |
@@ -304,9 +304,9 @@ e.g.
 
 ## Other devices
 
-The user interface runs in a browser. This allows you to view it from another device on your lan.
+The user interface is shown in a browser on port 5000 http://localhost:5000. This allows you to view it from another device on your lan.
 
-You will need to open up port 5000 in your firewall.
+To access you PC port 5000 from another device, you will need to open up port 5000 in your firewall.
 
 Control Panel\System and Security\Windows Defender Firewall - Advanced Settings
 
@@ -335,7 +335,7 @@ Show the player state. A hyper link to wowhead appears for the mob you are fight
 
 ### Route
 
-Shows:
+This component shows:
 
 * The main path
 * The spirit healer path
