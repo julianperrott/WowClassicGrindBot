@@ -140,6 +140,8 @@ namespace Libs
 
                     {  "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
                     {  "Faerie Fire", ()=> playerReader.Debuffs.FaerieFire },
+                    {  "Rend", ()=> playerReader.Debuffs.Rend },
+
                     {  "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },
                     {  "Curse of Weakness", ()=> playerReader.Debuffs.CurseofWeakness },
 

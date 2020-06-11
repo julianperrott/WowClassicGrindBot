@@ -181,18 +181,18 @@ Commands have the following parameters, only a subset will be used by each comma
 | PressDuration | How many milliseconds to press the key for |  250 |
 | ShapeShiftForm | For druids the shapeshift form to be in to cast this spell | None |
 | CastIfAddsVisible | If the bot can "See" any adds | false |
-| Cooldown | The cooldown in milliseconds until the command can be done again | 0 |
+| Cooldown | The cooldown in seconds until the command can be done again | 0 |
 | MinMana | The minimum Mana required to cast the spell | 0 |
-| int MinRage | The minimum Rage required to cast the spell | 0 |
-| int MinEnergy | The minimum Energy required to cast the spell | 0 |
-| int MinComboPoints | The minimum combo points required to cast the spell | 0 |
+| MinRage | The minimum Rage required to cast the spell | 0 |
+| MinEnergy | The minimum Energy required to cast the spell | 0 |
+| MinComboPoints | The minimum combo points required to cast the spell | 0 |
 | Requirement | A single "Requirement" (See below) which must be true | |
 | Requirements | A list of "Requirements" which must be true |  |
 | WaitForWithinMelleRange| Wait after casting for the mob to be in melee range | false |
 | ResetOnNewTarget | Reset the cooldown if the target changes | false |
 | Log | Write to the log when this key is evaluated | true |
 | DelayAfterCast | The delay in milliseconds after the spell is cast | 1500 |
-| int DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
+| DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
 | Cost | For Adhoc actions the priority | 18 |
 | InCombat | Can it be cast in combat | false |
 
@@ -298,7 +298,7 @@ e.g.
 | Warlock | "Demon Skin" |
 | Warlock | "Has Pet" |
 | Warlock | "Curse of Weakness" |
- 
+| Warrior Debuff | "Rend" |
  
 # User Interface
 

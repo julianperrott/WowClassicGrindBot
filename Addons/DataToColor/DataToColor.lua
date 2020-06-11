@@ -602,7 +602,7 @@ function DataToColor:getDebuffsForTarget()
     elseif CC == "ROGUE" then        
         class=0;
     elseif CC == "WARRIOR" then        
-        class=0;
+        class=class+self:MakeIndexBase2(self:GetDebuffs("Rend"), 0);
     elseif CC == "WARLOCK" then        
         class=self:MakeIndexBase2(self:GetDebuffs("Curse of Weakness"), 0);
     end

@@ -37,6 +37,7 @@
         // Rogue
 
         // Warrior
+        public bool Rend { get => IsBitSet(0); }
 
         // Warlock
         public bool CurseofWeakness { get => IsBitSet(0); }
