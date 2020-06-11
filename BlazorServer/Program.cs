@@ -5,9 +5,9 @@ using Serilog;
 
 namespace BlazorServer
 {
-    public class Program
+    public static class Program
     {
-        public static string hostUrl = "http://0.0.0.0:5000";
+        private static string hostUrl = "http://0.0.0.0:5000";
 
         public static void Main(string[] args)
         {

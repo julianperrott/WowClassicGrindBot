@@ -9,7 +9,6 @@ namespace Libs
         private long level = 0;
         private long lastXp = 0;
 
-        private DateTime startTime = DateTime.Now;
         private DateTime levelStartTime = DateTime.Now;
         private long levelStartXP = 0;
 

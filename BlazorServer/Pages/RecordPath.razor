@@ -29,12 +29,12 @@
                 <g class="background">
                 </g>
 
-                    @if (botController.RouteInfo != null)
-                    {
-                        <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)"
+                @if (botController.RouteInfo != null)
+                {
+                    <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)"
                             cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)"
                             r="4" fill="blue" />
-                    }
+                }
 
                 <g class="group2">
                     <g stroke-width="1" stroke="gray">
@@ -83,7 +83,7 @@
     string error = "";
     string Message = "";
 
-    WowPoint editPoint = new WowPoint(0,0);
+    WowPoint editPoint = new WowPoint(0, 0);
 
     protected override void OnInitialized()
     {
@@ -215,7 +215,7 @@
         if (botController.RouteInfo != null)
         {
             botController.RouteInfo.PathPoints.Remove(editPoint);
-            this.editPoint = new WowPoint(0,0);
+            this.editPoint = new WowPoint(0, 0);
             UpdateRoute();
         }
     }

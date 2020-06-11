@@ -11,14 +11,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Threads\**" />
+    <Content Remove="Threads\**" />
+    <EmbeddedResource Remove="Threads\**" />
+    <None Remove="Threads\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Libs\Libs.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Threads\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
     <PackageReference Include="PInvoke.Windows.Core" Version="0.6.6" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />

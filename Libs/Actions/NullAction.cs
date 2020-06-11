@@ -1,15 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
     public class NullAction : GoapAction
     {
-        public override float CostOfPerformingAction => throw new NotImplementedException();
+        public override float CostOfPerformingAction => 0;
 
         public override Task PerformAction()
         {
-            throw new NotImplementedException();
+            return Task.Delay(0);
         }
     }
 }

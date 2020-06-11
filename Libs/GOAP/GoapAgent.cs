@@ -15,7 +15,7 @@ namespace Libs.GOAP
         private ILogger logger;
 
         public GoapAction? CurrentAction { get; set; }
-        public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; set; } = new HashSet<KeyValuePair<GoapKey, object>>();
+        public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
         private Blacklist blacklist;
 
         public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, Blacklist blacklist, ILogger logger)
@@ -77,9 +77,9 @@ namespace Libs.GOAP
             return state;
         }
 
-        public Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
+        private Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
 
-        public void OnActionEvent(object sender, ActionEvent e)
+        public void OnActionEvent(object sender, ActionEventArgs e)
         {
             if (!actionState.ContainsKey(e.Key))
             {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Libs
 {
@@ -11,9 +10,9 @@ namespace Libs
 
         Color GetColorAt(int index);
 
-         BagReader BagReader { get;  set; }
-         EquipmentReader equipmentReader { get;  set; }
-         bool Active { get; set; }
-         LevelTracker LevelTracker { get;  set; }
+        BagReader BagReader { get; set; }
+        EquipmentReader equipmentReader { get; set; }
+        bool Active { get; set; }
+        LevelTracker LevelTracker { get; set; }
     }
 }

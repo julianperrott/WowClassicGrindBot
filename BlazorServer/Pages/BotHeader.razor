@@ -2,7 +2,6 @@
 @inject Libs.IAddonReader addonReader
 @inject Libs.IBotController botController
 
-
 <div class="card">
     <div class="card-header">
         Player
@@ -60,17 +59,14 @@
         @if (ShowActiveAction)
         {
             <table class="table table-sm table-striped">
-                @if (botController.GoapAgent !=null && botController.GoapAgent.CurrentAction != null)
+                @if (botController.GoapAgent != null && botController.GoapAgent.CurrentAction != null)
                 {
                     <GoapActionView action="botController.GoapAgent.CurrentAction" IsSelected="true" />
                 }
             </table>
         }
-
     </div>
 </div>
-
-
 
 @code {
 

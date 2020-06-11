@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Html;
-using System;
-using System.Text;
+﻿using System;
 
 namespace Libs.Addon
 {
@@ -38,7 +36,7 @@ namespace Libs.Addon
 
             copper = value;
 
-            return new int[3] { sign* gold, sign * silver, sign * copper };
+            return new int[3] { sign * gold, sign * silver, sign * copper };
         }
     }
 }

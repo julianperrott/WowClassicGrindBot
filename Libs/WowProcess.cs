@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,14 +11,6 @@ namespace Libs
 {
     public class WowProcess
     {
-        public const UInt32 WM_KEYDOWN = 0x0100;
-        public const UInt32 WM_KEYUP = 0x0101;
-        public const UInt32 WM_LBUTTONDOWN = 0x201;
-        public const UInt32 WM_LBUTTONUP = 0x202;
-        public const UInt32 WM_RBUTTONDOWN = 0x204;
-        public const UInt32 WM_RBUTTONUP = 0x205;
-        public const int VK_RMB = 0x02;
-
         private Random random = new Random();
         private ILogger logger;
 
@@ -85,14 +76,7 @@ namespace Libs
             return null;
         }
 
-        [DllImport("user32.dll")]
-        public static extern bool PostMessage(IntPtr hWnd, UInt32 Msg, int wParam, int lParam);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetCursorPos(int x, int y);
-
-        private void KeyDown(ConsoleKey key, bool forceClick, string description)
+        private void KeyDown(ConsoleKey key)
         {
             if (keyDict.ContainsKey(key))
             {
@@ -104,14 +88,14 @@ namespace Libs
             }
 
             logger.LogInformation($"KeyDown {key}");
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
 
             keyDict[key] = true;
         }
 
         private Dictionary<ConsoleKey, bool> keyDict = new Dictionary<ConsoleKey, bool>();
 
-        private void KeyUp(ConsoleKey key, bool forceClick, string description)
+        private void KeyUp(ConsoleKey key, bool forceClick)
         {
             if (keyDict.ContainsKey(key))
             {
@@ -126,7 +110,7 @@ namespace Libs
             }
 
             logger.LogInformation($"KeyUp {key}");
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
 
             keyDict[key] = false;
         }
@@ -144,9 +128,9 @@ namespace Libs
             if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
             logger.LogInformation($"{keyDescription}[{key}] pressing for {milliseconds}ms");
 
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
             await Delay(milliseconds);
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
         }
 
         public void KeyPressSleep(ConsoleKey key, int milliseconds, string description = "")
@@ -155,9 +139,9 @@ namespace Libs
             if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
             logger.LogInformation($"{keyDescription}[{key}] pressing for {milliseconds}ms");
 
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYDOWN, (int)key, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
             Thread.Sleep(milliseconds);
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_KEYUP, (int)key, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
         }
 
         public async Task TapStopKey()
@@ -167,29 +151,30 @@ namespace Libs
 
         public void SetKeyState(ConsoleKey key, bool pressDown, bool forceClick, string description)
         {
-            if (pressDown) { KeyDown(key, forceClick, description); } else { KeyUp(key, forceClick, description); }
+            Debug.WriteLine("SetKeyState: " + description);
+            if (pressDown) { KeyDown(key); } else { KeyUp(key, forceClick); }
         }
 
-        public void SetCursorPosition(System.Drawing.Point position)
+        public static void SetCursorPosition(System.Drawing.Point position)
         {
-            SetCursorPos(position.X, position.Y);
+            NativeMethods.SetCursorPos(position.X, position.Y);
         }
 
         public async Task RightClickMouse(System.Drawing.Point position)
         {
             SetCursorPosition(position);
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_RBUTTONDOWN, VK_RMB, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_RBUTTONDOWN, NativeMethods.VK_RMB, 0);
             await Delay(101);
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_RBUTTONUP, VK_RMB, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_RBUTTONUP, NativeMethods.VK_RMB, 0);
         }
 
         public async Task LeftClickMouse(System.Drawing.Point position)
         {
             SetCursorPosition(position);
             await Delay(101);
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_LBUTTONDOWN, VK_RMB, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_LBUTTONDOWN, NativeMethods.VK_RMB, 0);
             await Delay(101);
-            PostMessage(WarcraftProcess.MainWindowHandle, WM_LBUTTONUP, VK_RMB, 0);
+            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_LBUTTONUP, NativeMethods.VK_RMB, 0);
             await Delay(101);
         }
 
@@ -198,32 +183,13 @@ namespace Libs
             await Task.Delay(milliseconds + random.Next(1, 200));
         }
 
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
-
         public RECT GetWindowRect()
         {
             var handle = this.WarcraftProcess.MainWindowHandle;
             RECT rect = new RECT();
-            GetWindowRect(handle, ref rect);
+            NativeMethods.GetWindowRect(handle, ref rect);
             return rect;
         }
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
-
-        public const int KEYEVENTF_KEYDOWN = 0x0000; // New definition
-        public const int KEYEVENTF_EXTENDEDKEY = 0x0001; //Key down flag
-        public const int KEYEVENTF_KEYUP = 0x0002; //Key up flag
-        public const int VK_LCONTROL = 0xA2; //Left Control key code
-
-        public const int VK_LEFT_SHIFT = 160;
-        public const int VK_LEFT_CONTROL = 162;
-        public const int VK_LEFT_ALT = 164;
-
-        public const int A = 0x41; //A key code
-        public const int C = 0x43; //C key code
 
         public async Task Hearthstone()
         {

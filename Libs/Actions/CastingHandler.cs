@@ -7,14 +7,14 @@ namespace Libs.Actions
 {
     public class CastingHandler
     {
-        protected readonly WowProcess wowProcess;
-        protected readonly PlayerReader playerReader;
-        protected readonly StopMoving stopMoving;
-        protected readonly ILogger logger;
-        protected ConsoleKey lastKeyPressed = ConsoleKey.Escape;
-        protected readonly ClassConfiguration classConfiguration;
-        protected readonly IPlayerDirection direction;
-        protected readonly NpcNameFinder npcNameFinder;
+        private readonly WowProcess wowProcess;
+        private readonly PlayerReader playerReader;
+        private readonly StopMoving stopMoving;
+        private readonly ILogger logger;
+        private ConsoleKey lastKeyPressed = ConsoleKey.Escape;
+        private readonly ClassConfiguration classConfiguration;
+        private readonly IPlayerDirection direction;
+        private readonly NpcNameFinder npcNameFinder;
 
         public CastingHandler(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, IPlayerDirection direction, NpcNameFinder npcNameFinder)
         {
@@ -125,11 +125,11 @@ namespace Libs.Actions
                         break;
                     }
 
-                    if (source.GetType() == typeof(PullTargetAction) && 
-                        this.playerReader.PlayerBitValues.PlayerInCombat && 
-                        !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer 
+                    if (source.GetType() == typeof(PullTargetAction) &&
+                        this.playerReader.PlayerBitValues.PlayerInCombat &&
+                        !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer
                         && this.playerReader.IsCasting
-                        && this.playerReader.TargetHealthPercentage>99
+                        && this.playerReader.TargetHealthPercentage > 99
                         )
                     {
                         if (!this.playerReader.TargetIsFrostbitten)

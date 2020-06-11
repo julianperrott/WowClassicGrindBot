@@ -6,8 +6,8 @@ namespace Libs
 {
     public class BadZone
     {
-        public int ZoneId = -1;
-        public WowPoint ExitZoneLocation = new WowPoint(0, 0);
+        public int ZoneId { get; set; } = -1;
+        public WowPoint ExitZoneLocation { get; set; } = new WowPoint(0, 0);
     }
 
     public class ClassConfiguration
@@ -17,28 +17,27 @@ namespace Libs
 
         public string PathFilename { get; set; } = string.Empty;
         public string SpiritPathFilename { get; set; } = string.Empty;
-        public bool PathThereAndBack = true;
-        public bool PathReduceSteps = false;
+        public bool PathThereAndBack { get; set; } = true;
+        public bool PathReduceSteps { get; set; } = false;
 
-        public BadZone WrongZone = new BadZone();
+        public BadZone WrongZone { get; set; } = new BadZone();
 
-        public int NPCMaxLevels_Above = 1;
-        public int NPCMaxLevels_Below = 7;
-        public List<string> Blacklist { get; set; } = new List<string>();
+        public int NPCMaxLevels_Above { get; set; } = 1;
+        public int NPCMaxLevels_Below { get; set; } = 7;
+        public List<string> Blacklist { get; } = new List<string>();
 
         public KeyConfigurations Pull { get; set; } = new KeyConfigurations();
         public KeyConfigurations Combat { get; set; } = new KeyConfigurations();
         public KeyConfigurations Adhoc { get; set; } = new KeyConfigurations();
         public KeyConfigurations Parallel { get; set; } = new KeyConfigurations();
 
-
-        public List<KeyConfiguration> ShapeshiftForm { get; set; } = new List<KeyConfiguration>();
+        public List<KeyConfiguration> ShapeshiftForm { get; } = new List<KeyConfiguration>();
 
         public KeyConfiguration Interact { get; set; } = new KeyConfiguration();
         public KeyConfiguration Blink { get; set; } = new KeyConfiguration();
         public string InteractKey { get; set; } = "H";
 
-        public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys = new Dictionary<ShapeshiftForm, ConsoleKey>();
+        public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
 
         public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
         {

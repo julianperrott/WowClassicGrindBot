@@ -4,8 +4,8 @@ namespace Libs
 {
     public class EquipmentReader
     {
-        public readonly int cellStart;
-        public readonly ISquareReader reader;
+        private readonly int cellStart;
+        private readonly ISquareReader reader;
 
         private long[] equipment = new long[20];
 

@@ -6,6 +6,6 @@ namespace Libs
     {
         public Func<bool> HasRequirement { get; set; } = () => false;
         public Func<string> LogMessage { get; set; } = () => "Unknown requirement";
-        public bool VisibleIfHasRequirement = true;
+        public bool VisibleIfHasRequirement { get; set; } = true;
     }
 }

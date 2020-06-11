@@ -28,7 +28,7 @@ namespace Libs
             this.Count = count;
         }
 
-        public DateTime LastUpdated = DateTime.Now;
+        private DateTime LastUpdated = DateTime.Now;
         public bool WasRecentlyUpdated => (DateTime.Now - LastUpdated).TotalSeconds < 30;
 
         public BagItem(int bag, int bagIndex, int itemId, int count, Item item, bool IsSoulbound)

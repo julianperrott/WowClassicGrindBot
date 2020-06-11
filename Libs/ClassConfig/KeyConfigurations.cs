@@ -5,7 +5,7 @@ namespace Libs
 {
     public class KeyConfigurations
     {
-        public List<KeyConfiguration> Sequence { get; set; } = new List<KeyConfiguration>();
+        public List<KeyConfiguration> Sequence { get; } = new List<KeyConfiguration>();
 
         public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
         {

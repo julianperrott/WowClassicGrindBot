@@ -8,15 +8,13 @@ namespace Libs
     public partial class PlayerReader
     {
         private readonly ISquareReader reader;
-        private readonly BagReader bagReader;
-        private ILogger logger;
-        public Dictionary<int, Creature> creatureDictionary = new Dictionary<int, Creature>();
+        private readonly ILogger logger;
+        private readonly Dictionary<int, Creature> creatureDictionary = new Dictionary<int, Creature>();
 
-        public PlayerReader(ISquareReader reader, ILogger logger, BagReader bagReader, List<Creature> creatures)
+        public PlayerReader(ISquareReader reader, ILogger logger, List<Creature> creatures)
         {
             this.reader = reader;
             this.logger = logger;
-            this.bagReader = bagReader;
             creatures.ForEach(i => creatureDictionary.Add(i.Entry, i));
         }
 
@@ -161,7 +159,6 @@ namespace Libs
         public bool IsCasting => SpellBeingCast != 0;
 
         public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetLongAtCell(59);
-
 
         public bool TargetIsFrostbitten => this.PlayerClass == PlayerClassEnum.Mage && this.Debuffs.Frostbite;
     }

@@ -19,7 +19,6 @@ namespace Libs.Actions
 
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
-        private DateTime lastNpcSearch = DateTime.Now;
 
         private bool debug = true;
         private bool playerWasInCombat = false;
@@ -132,7 +131,7 @@ namespace Libs.Actions
 
         private DateTime lastFighting = DateTime.Now;
 
-        public override void OnActionEvent(object sender, ActionEvent e)
+        public override void OnActionEvent(object sender, ActionEventArgs e)
         {
             if (sender != this)
             {

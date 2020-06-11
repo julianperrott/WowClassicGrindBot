@@ -17,10 +17,10 @@ namespace Libs
         private readonly ILogger logger;
         private readonly ISquareReader squareReader;
         public PlayerReader PlayerReader { get; set; }
-        public BagReader BagReader { get;  set; }
-        public EquipmentReader equipmentReader { get;  set; }
+        public BagReader BagReader { get; set; }
+        public EquipmentReader equipmentReader { get; set; }
         public bool Active { get; set; } = true;
-        public LevelTracker LevelTracker { get;  set; }
+        public LevelTracker LevelTracker { get; set; }
 
         public event EventHandler? AddonDataChanged;
 
@@ -42,7 +42,7 @@ namespace Libs
 
             this.BagReader = new BagReader(squareReader, 20, items, ReadAHPrices());
             this.equipmentReader = new EquipmentReader(squareReader, 30);
-            this.PlayerReader = new PlayerReader(squareReader, logger, this.BagReader, creatures);
+            this.PlayerReader = new PlayerReader(squareReader, logger, creatures);
             this.LevelTracker = new LevelTracker(PlayerReader);
         }
 
@@ -91,9 +91,6 @@ namespace Libs
 
             return new KeyValuePair<int, int>(id, (int)value);
         }
-
-
-
 
         private int seq = 0;
 

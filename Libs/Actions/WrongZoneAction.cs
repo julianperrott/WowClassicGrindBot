@@ -13,10 +13,9 @@ namespace Libs.Actions
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StuckDetector stuckDetector;
-        protected readonly ClassConfiguration classConfiguration;
+        private readonly ClassConfiguration classConfiguration;
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
-        private Random random = new Random();
         private ILogger logger;
 
         public WrongZoneAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
@@ -41,7 +40,7 @@ namespace Libs.Actions
         {
             var targetLocation = this.classConfiguration.WrongZone.ExitZoneLocation;
 
-            RaiseEvent(new ActionEvent(GoapKey.fighting, false));
+            SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
             await Task.Delay(200);
             wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
@@ -55,7 +54,7 @@ namespace Libs.Actions
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, targetLocation);
-            var heading = new DirectionCalculator(logger).CalculateHeading(location, targetLocation);
+            var heading = DirectionCalculator.CalculateHeading(location, targetLocation);
 
             if (lastDistance < distance)
             {

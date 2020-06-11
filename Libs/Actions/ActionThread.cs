@@ -11,7 +11,7 @@ namespace Libs.Actions
         private readonly ILogger logger;
         private readonly PlayerReader playerReader;
         private readonly WowProcess wowProcess;
-        public readonly GoapAgent goapAgent;
+        private readonly GoapAgent goapAgent;
 
         private GoapAction? currentAction;
         public bool Active { get; set; }
@@ -24,7 +24,7 @@ namespace Libs.Actions
             this.logger = logger;
         }
 
-        public void OnActionEvent(object sender, ActionEvent e)
+        public void OnActionEvent(object sender, ActionEventArgs e)
         {
             if (e.Key == GoapKey.abort)
             {
@@ -42,7 +42,7 @@ namespace Libs.Actions
             {
                 if (this.playerReader.PlayerBitValues.ItemsAreBroken)
                 {
-                    OnActionEvent(this, new ActionEvent(GoapKey.abort, true));
+                    OnActionEvent(this, new ActionEventArgs(GoapKey.abort, true));
                 }
 
                 var newAction = await this.goapAgent.GetAction();

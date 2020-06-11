@@ -19,12 +19,12 @@ namespace Libs.Actions
         }
     }
 
-    public class ActionEvent : EventArgs
+    public class ActionEventArgs : EventArgs
     {
         public GoapKey Key { get; private set; }
         public object Value { get; private set; }
 
-        public ActionEvent(GoapKey key, object value)
+        public ActionEventArgs(GoapKey key, object value)
         {
             this.Key = key;
             this.Value = value;
@@ -36,7 +36,7 @@ namespace Libs.Actions
         public HashSet<KeyValuePair<GoapKey, GoapPreCondition>> Preconditions { get; private set; } = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
         public HashSet<KeyValuePair<GoapKey, object>> Effects { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
 
-        public List<KeyConfiguration> Keys = new List<KeyConfiguration>();
+        public List<KeyConfiguration> Keys { get; private set; } = new List<KeyConfiguration>();
 
         public bool InRangeOfTarget { get; set; }
 
@@ -55,23 +55,28 @@ namespace Libs.Actions
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    string output = Regex.Replace(this.GetType().Name.Replace("Action", ""), @"\p{Lu}", m => " " + m.Value.ToLowerInvariant());
+                    string output = Regex.Replace(this.GetType().Name.Replace("Action", ""), @"\p{Lu}", m => " " + m.Value.ToUpperInvariant());
                     this.name = char.ToUpperInvariant(output[0]) + output.Substring(1);
                 }
                 return name;
             }
         }
 
-        public delegate void ActionEventHandler(object sender, ActionEvent e);
+        public delegate void ActionEventHandler(object sender, ActionEventArgs e);
 
         public event ActionEventHandler? ActionEvent;
 
-        public void RaiseEvent(ActionEvent e)
+        public void SendActionEvent(ActionEventArgs e)
         {
             ActionEvent?.Invoke(this, e);
         }
 
-        public Dictionary<string, bool> State { get; set; } = new Dictionary<string, bool>();
+        public Dictionary<string, bool> State { get; private set; } = new Dictionary<string, bool>();
+
+        public void SetState(Dictionary<string, bool> newState)
+        {
+            State = newState;
+        }
 
         public virtual void ResetBeforePlanning()
         {
@@ -114,13 +119,13 @@ namespace Libs.Actions
                 .ForEach(o => Effects.Remove(o));
         }
 
-        public virtual void OnActionEvent(object sender, ActionEvent e)
+        public virtual void OnActionEvent(object sender, ActionEventArgs e)
         {
         }
 
         public virtual string Description()
         {
-            return $"{Name} " + (Keys.Count() == 1 ? $"[{Keys.First().ConsoleKey}]" : "");
+            return $"{Name} " + (Keys.Count == 1 ? $"[{Keys.First().ConsoleKey}]" : "");
         }
     }
 }

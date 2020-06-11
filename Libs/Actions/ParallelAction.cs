@@ -1,8 +1,8 @@
 ﻿using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
@@ -14,7 +14,7 @@ namespace Libs.Actions
         private readonly ILogger logger;
         private readonly CastingHandler castingHandler;
 
-        public ParallelAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, List<KeyConfiguration> keys, CastingHandler castingHandler, ILogger logger)
+        public ParallelAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, List<KeyConfiguration> keysConfig, CastingHandler castingHandler, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.stopMoving = stopMoving;
@@ -24,7 +24,7 @@ namespace Libs.Actions
 
             AddPrecondition(GoapKey.incombat, false);
 
-            keys.ForEach(key => this.Keys.Add(key));
+            keysConfig.ForEach(key => this.Keys.Add(key));
         }
 
         public override bool CheckIfActionCanRun()
@@ -32,12 +32,11 @@ namespace Libs.Actions
             return this.Keys.Any(key => key.CanRun());
         }
 
-        public override float CostOfPerformingAction  { get => 3f; }
+        public override float CostOfPerformingAction { get => 3f; }
 
         public override async Task PerformAction()
         {
-           
-            if (this.Keys.Any(k=>k.StopBeforeCast))
+            if (this.Keys.Any(k => k.StopBeforeCast))
             {
                 await this.stopMoving.Stop();
 
@@ -69,9 +68,9 @@ namespace Libs.Actions
                 {
                     if (this.playerReader.ManaPercentage > 98 && this.playerReader.HealthPercent > 98) { break; }
                 }
-                else if(this.playerReader.Buffs.Drinking )
+                else if (this.playerReader.Buffs.Drinking)
                 {
-                    if (this.playerReader.ManaPercentage > 98 ) { break; }
+                    if (this.playerReader.ManaPercentage > 98) { break; }
                 }
                 else if (this.playerReader.Buffs.Eating)
                 {

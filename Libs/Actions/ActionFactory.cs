@@ -32,7 +32,7 @@ namespace Libs
             var availableActions = new HashSet<GoapAction>();
 
             List<WowPoint> pathPoints, spiritPath;
-            GetPaths(addonReader, out pathPoints, out spiritPath, classConfig);
+            GetPaths(out pathPoints, out spiritPath, classConfig);
 
             var playerDirection = new PlayerDirection(addonReader.PlayerReader, wowProcess, logger);
             var stopMoving = new StopMoving(wowProcess, addonReader.PlayerReader, logger);
@@ -57,20 +57,25 @@ namespace Libs
                 availableActions.Add(new WrongZoneAction(addonReader.PlayerReader, wowProcess, playerDirection, logger, stuckDetector, classConfig));
             }
 
-            if(classConfig.Parallel.Sequence.Count>0)
+            if (classConfig.Parallel.Sequence.Count > 0)
             {
                 availableActions.Add(new ParallelAction(wowProcess, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler, logger));
             }
 
             if (classConfig.Loot)
             {
-                availableActions.Add(new LootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig));
-                availableActions.Add(new PostKillLootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig));
+                var lootAction = new LootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
+                lootAction.AddPreconditions();
+                availableActions.Add(lootAction);
+
+                lootAction = new PostKillLootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
+                lootAction.AddPreconditions();
+                availableActions.Add(lootAction);
             }
 
             try
             {
-                var genericCombat = new CombatAction(wowProcess, addonReader.PlayerReader, stopMoving, logger, classConfig, playerDirection, castingHandler);
+                var genericCombat = new CombatAction(wowProcess, addonReader.PlayerReader, stopMoving, logger, classConfig, castingHandler);
                 availableActions.Add(genericCombat);
                 availableActions.Add(new PullTargetAction(wowProcess, addonReader.PlayerReader, NpcNameFinder, stopMoving, logger, castingHandler, stuckDetector, classConfig));
 
@@ -87,7 +92,7 @@ namespace Libs
             return availableActions;
         }
 
-        private void GetPaths(AddonReader addonReader, out List<WowPoint> pathPoints, out List<WowPoint> spiritPath, ClassConfiguration classConfig)
+        private static void GetPaths(out List<WowPoint> pathPoints, out List<WowPoint> spiritPath, ClassConfiguration classConfig)
         {
             if (!classConfig.PathFilename.Contains(":"))
             {

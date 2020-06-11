@@ -8,7 +8,7 @@ namespace Libs.Actions
 {
     public class LootAction : GoapAction
     {
-        protected readonly WowProcess wowProcess;
+        private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         private readonly LootWheel lootWheel;
         private readonly StopMoving stopMoving;
@@ -28,11 +28,9 @@ namespace Libs.Actions
             this.classConfiguration = classConfiguration;
 
             lootWheel = new LootWheel(wowProcess, playerReader, logger);
-
-            AddPreconditions();
         }
 
-        protected virtual void AddPreconditions()
+        public virtual void AddPreconditions()
         {
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, false);
@@ -50,7 +48,6 @@ namespace Libs.Actions
 
         private bool foundAddWhileLooting = false;
         private bool doExtendedLootSearch = true;
-
 
         public async Task<bool> AmIBeingTargetted()
         {
@@ -71,7 +68,7 @@ namespace Libs.Actions
             return false;
         }
 
-        bool outOfCombat = false;
+        private bool outOfCombat = false;
 
         public async Task<bool> CheckIfEnterredCombat()
         {
@@ -118,7 +115,7 @@ namespace Libs.Actions
             while (lootAttempt < 10)
             {
                 if (await CheckIfEnterredCombat()) { return; }
-  
+
                 Log(searchForMobs ? "Searching for mobs" : $"Looting (attempt: {lootAttempt + 1}.");
                 var foundSomething = await lootWheel.Loot(searchForMobs, doExtendedLootSearch || foundAddWhileLooting);
 
@@ -166,8 +163,8 @@ namespace Libs.Actions
                 lootAttempt++;
             }
 
-            RaiseEvent(new ActionEvent(GoapKey.shouldloot, false));
-            RaiseEvent(new ActionEvent(GoapKey.postloot, true));
+            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+            SendActionEvent(new ActionEventArgs(GoapKey.postloot, true));
         }
 
         private async Task AquireTarget()
@@ -187,7 +184,7 @@ namespace Libs.Actions
                 else
                 {
                     Log("Target Aquired");
-                    RaiseEvent(new ActionEvent(GoapKey.newtarget, true));
+                    SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
                     break;
                 }
             }
@@ -195,9 +192,9 @@ namespace Libs.Actions
 
         public override bool CheckIfActionCanRun()
         {
-            if (this.playerReader.PlayerLevel==60 && bagReader.BagsFull)
+            if (this.playerReader.PlayerLevel == 60 && bagReader.BagsFull)
             {
-                RaiseEvent(new ActionEvent(GoapKey.abort, true));
+                SendActionEvent(new ActionEventArgs(GoapKey.abort, true));
                 wowProcess?.Hearthstone();
             }
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Libs
 {
-    public class BotController : IBotController
+    public sealed class BotController : IBotController, IDisposable
     {
         private readonly WowProcess wowProcess;
         private readonly ILogger logger;
@@ -21,12 +21,12 @@ namespace Libs
         public Thread addonThread { get; set; }
         public Thread? botThread { get; set; }
         public ActionFactory ActionFactory { get; set; }
-        public GoapAgent? GoapAgent { get;  set; }
-        public RouteInfo? RouteInfo { get;  set; }
+        public GoapAgent? GoapAgent { get; set; }
+        public RouteInfo? RouteInfo { get; set; }
 
         private ActionThread? actionThread;
 
-        public WowScreen WowScreen { get;  set; }
+        public WowScreen WowScreen { get; set; }
 
         private NpcNameFinder npcNameFinder;
 
@@ -36,10 +36,8 @@ namespace Libs
             this.WowScreen = new WowScreen(logger);
             this.logger = logger;
 
-            var config = new DataFrameConfiguration(WowScreen);
-
             var frames = DataFrameConfiguration.ConfigurationExists()
-                ? config.LoadConfiguration()
+                ? DataFrameConfiguration.LoadConfiguration()
                 : new List<DataFrame>(); //config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
             AddonReader = new AddonReader(WowScreen, frames, logger);
@@ -159,6 +157,11 @@ namespace Libs
             }
 
             throw new ArgumentOutOfRangeException($"Class config file not found {classFilename}");
+        }
+
+        public void Dispose()
+        {
+            npcNameFinder.Dispose();
         }
     }
 }

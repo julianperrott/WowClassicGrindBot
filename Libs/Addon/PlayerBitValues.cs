@@ -2,7 +2,7 @@
 {
     public class PlayerBitValues
     {
-        public long value;
+        private long value;
 
         public PlayerBitValues(long value)
         {

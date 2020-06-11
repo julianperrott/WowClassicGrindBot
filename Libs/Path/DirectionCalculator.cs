@@ -12,7 +12,7 @@ namespace Libs
             this.logger = logger;
         }
 
-        public double CalculateHeading(WowPoint from, WowPoint to)
+        public static double CalculateHeading(WowPoint from, WowPoint to)
         {
             //logger.LogInformation($"from: ({from.X},{from.Y}) to: ({to.X},{to.Y})");
 

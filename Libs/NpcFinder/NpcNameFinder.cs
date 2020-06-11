@@ -10,12 +10,11 @@ using System.Threading.Tasks;
 
 namespace Libs
 {
-    public partial class NpcNameFinder
+    public sealed class NpcNameFinder : IDisposable
     {
         private List<LineOfNpcName> npcNameLine { get; set; } = new List<LineOfNpcName>();
         private List<List<LineOfNpcName>> npcs { get; set; } = new List<List<LineOfNpcName>>();
         private readonly PlayerReader playerReader;
-        private Random random = new Random();
 
         private ILogger logger;
         private readonly WowProcess wowProcess;
@@ -64,9 +63,9 @@ namespace Libs
             {
                 if (npc.Height >= threshold)
                 {
-                    var locations = new List<Point> 
-                    { 
-                        new Point(0,0), 
+                    var locations = new List<Point>
+                    {
+                        new Point(0,0),
                         new Point(10,10),
                         new Point(-10,-10),
                         new Point(20,20),
@@ -76,9 +75,9 @@ namespace Libs
                     foreach (var location in locations)
                     {
                         var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
-                        wowProcess.SetCursorPosition(clickPostion);
+                        WowProcess.SetCursorPosition(clickPostion);
                         await Task.Delay(100);
-                        CursorClassifier.Classify(out var cls);
+                        CursorClassifier.Classify(out var cls).Dispose();
                         if (cls == CursorClassification.Kill)
                         {
                             await AquireTargetAtCursor(clickPostion, npc);
@@ -142,7 +141,7 @@ namespace Libs
         public void UpdatePotentialAddsExist()
         {
             var countAdds = Npcs.Where(c => c.IsAdd).Where(c => c.Height > 2).Count();
-            var MobsVisible = Npcs.Where(c => c.Height > 2).Count() > 0;
+            var MobsVisible = Npcs.Where(c => c.Height > 2).Any();
 
             if (countAdds > 0)
             {
@@ -247,8 +246,16 @@ namespace Libs
             Screenshot.CaptureScreen();
         }
 
-        public void OnActionEvent(object sender, ActionEvent e)
+        public void OnActionEvent(object sender, ActionEventArgs e)
         {
+        }
+
+        public void Dispose()
+        {
+            if (screen != null)
+            {
+                screen.Dispose();
+            }
         }
     }
 }

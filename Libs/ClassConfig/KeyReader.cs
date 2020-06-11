@@ -7,7 +7,7 @@ namespace Libs
 {
     public static class KeyReader
     {
-        public static Dictionary<string, ConsoleKey> KeyMapping = new Dictionary<string, ConsoleKey>()
+        public static Dictionary<string, ConsoleKey> KeyMapping { get; } = new Dictionary<string, ConsoleKey>()
         {
             {"0",ConsoleKey.D0 },
             {"1",ConsoleKey.D1 },

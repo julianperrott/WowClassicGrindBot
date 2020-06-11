@@ -11,7 +11,7 @@ namespace Libs.Cursor
     /// https://github.com/jforshee/ImageHashing
     /// Credit for the AverageHash implementation to David Oftedal of the University of Oslo.
     /// </summary>
-    public class ImageHashing
+    public static class ImageHashing
     {
         /// <summary>
         /// Bitcounts array used for BitCount method (used in Similarity comparisons).
@@ -88,6 +88,8 @@ namespace Libs.Cursor
                 }
             }
 
+            squeezed.Dispose();
+
             return hash;
         }
 
@@ -99,7 +101,9 @@ namespace Libs.Cursor
         public static ulong AverageHash(String path)
         {
             Bitmap bmp = new Bitmap(path);
-            return AverageHash(bmp);
+            var result = AverageHash(bmp);
+            bmp.Dispose();
+            return result;
         }
 
         /// <summary>

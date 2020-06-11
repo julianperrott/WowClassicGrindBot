@@ -2,7 +2,7 @@
 {
     public class DebuffStatus
     {
-        public long value;
+        private long value;
 
         public DebuffStatus(string name)
         {

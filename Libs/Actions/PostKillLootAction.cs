@@ -11,7 +11,7 @@ namespace Libs.Actions
         {
         }
 
-        protected override void AddPreconditions()
+        public override void AddPreconditions()
         {
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.hastarget, false);
@@ -22,7 +22,7 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            RaiseEvent(new ActionEvent(GoapKey.shouldloot, false));
+            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
             await base.PerformAction();
         }
     }

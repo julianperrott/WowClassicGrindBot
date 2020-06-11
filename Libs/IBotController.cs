@@ -15,6 +15,7 @@ namespace Libs
         WowScreen WowScreen { get; set; }
 
         void ToggleBotStatus();
+
         bool IsBotActive { get; }
     }
 }

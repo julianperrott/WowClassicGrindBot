@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Libs.Actions
 {
-    public class WalkToCorpseAction : GoapAction
+    public partial class WalkToCorpseAction : GoapAction
     {
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
@@ -22,7 +22,7 @@ namespace Libs.Actions
         private readonly List<WowPoint> routePoints;
         private readonly StuckDetector stuckDetector;
         private Stack<WowPoint> points = new Stack<WowPoint>();
-        public List<WowPoint> Deaths { get; }= new List<WowPoint>();
+        public List<WowPoint> Deaths { get; } = new List<WowPoint>();
 
         private Random random = new Random();
         private ILogger logger;
@@ -53,17 +53,9 @@ namespace Libs.Actions
 
         private WowPoint corpseLocation = new WowPoint(0, 0);
 
-        public void Dump(string description)
-        {
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = DistanceTo(location, corpseLocation);
-            var heading = new DirectionCalculator(logger).CalculateHeading(location, corpseLocation);
-            //logger.LogInformation($"{description}: Point {index}, Distance: {distance} ({lastDistance}), heading: {playerReader.Direction}, best: {heading}");
-        }
-
         private bool NeedsToReset = true;
 
-        public override void OnActionEvent(object sender, ActionEvent e)
+        public override void OnActionEvent(object sender, ActionEventArgs e)
         {
             NeedsToReset = true;
             points.Clear();
@@ -101,7 +93,7 @@ namespace Libs.Actions
             {
                 points.Push(this.playerReader.CorpseLocation);
                 distance = DistanceTo(location, corpseLocation);
-                heading = new DirectionCalculator(logger).CalculateHeading(location, corpseLocation);
+                heading = DirectionCalculator.CalculateHeading(location, corpseLocation);
                 this.logger.LogInformation("no more points, heading to corpse");
                 await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpse");
@@ -110,7 +102,7 @@ namespace Libs.Actions
             else
             {
                 distance = DistanceTo(location, points.Peek());
-                heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
+                heading = DirectionCalculator.CalculateHeading(location, points.Peek());
             }
 
             if (lastDistance < distance)
@@ -119,7 +111,6 @@ namespace Libs.Actions
             }
             else if (!this.stuckDetector.IsGettingCloser())
             {
-                Dump("Stuck");
                 // stuck so jump
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpseAction");
                 await Task.Delay(100);
@@ -135,9 +126,6 @@ namespace Libs.Actions
             }
             else // distance closer
             {
-                Dump("Closer");
-                //playerDirection.SetDirection(heading);
-
                 var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
                 var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
@@ -156,7 +144,7 @@ namespace Libs.Actions
                 lastDistance = 999;
                 if (points.Count > 0)
                 {
-                    heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
+                    heading = DirectionCalculator.CalculateHeading(location, points.Peek());
                     await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
 
                     this.stuckDetector.SetTargetLocation(points.Peek());
@@ -224,18 +212,14 @@ namespace Libs.Actions
                 points.Push(truncatedRoute[i]);
             }
 
-            var cp = new CorpsePath { MyLocation = myLocation, CorpseLocation = corpseLocation, RouteToCorpse = routeToCorpse, TruncatedRoute = truncatedRoute };
+            var cp = new CorpsePath { MyLocation = myLocation, CorpseLocation = corpseLocation };
+            cp.RouteToCorpse.Clear();
+            cp.RouteToCorpse.AddRange(routeToCorpse);
+            cp.TruncatedRoute.Clear();
+            cp.TruncatedRoute.AddRange(truncatedRoute);
+
             File.WriteAllText($"../../../../CorpsePath_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(cp));
             NeedsToReset = false;
-        }
-
-        public class CorpsePath
-        {
-            public WowPoint MyLocation { get; set; } = new WowPoint(0, 0);
-            public WowPoint CorpseLocation { get; set; } = new WowPoint(0, 0);
-
-            public List<WowPoint> RouteToCorpse { get; set; } = new List<WowPoint>();
-            public List<WowPoint> TruncatedRoute { get; set; } = new List<WowPoint>();
         }
 
         private static List<WowPoint> FillPathToCorpse(WowPoint closestRoutePointToCorpse, WowPoint pathStartPoint, List<WowPoint> routePoints)
@@ -267,12 +251,12 @@ namespace Libs.Actions
             return pathToCorpse;
         }
 
-        public bool IsDone()
+        public static bool IsDone()
         {
             return false;
         }
 
-        private double DistanceTo(WowPoint l1, WowPoint l2)
+        private static double DistanceTo(WowPoint l1, WowPoint l2)
         {
             var x = l1.X - l2.X;
             var y = l1.Y - l2.Y;

@@ -103,7 +103,7 @@ namespace Libs
         public string RenderPathLines(List<WowPoint> path)
         {
             var sb = new StringBuilder();
-            for (var i = 0; i < path.Count() - 1; i++)
+            for (var i = 0; i < path.Count - 1; i++)
             {
                 var pt1 = path[i];
                 var pt2 = path[i + 1];
@@ -134,7 +134,7 @@ namespace Libs
         public string DeathImage(WowPoint pt)
         {
             var size = this.canvasSize / 25;
-            return pt == null ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X)-size/2}' y = '{ToCanvasPointY(pt.Y)- size / 2}' height='{size}' width='{size}' />";
+            return pt == null ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X) - size / 2}' y = '{ToCanvasPointY(pt.Y) - size / 2}' height='{size}' width='{size}' />";
         }
     }
 }

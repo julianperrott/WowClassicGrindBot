@@ -10,52 +10,51 @@
         @if (Libs.DataFrameConfiguration.ConfigurationExists())
         {
 
-        <div class="col-sm">
-            <ScreenshotComponent Size="800" />
-            <table width="100%">
-                <tr>
-                    <td valign="top"><div style="margin-top: 10px"><RouteComponent Size="400" /></div></td>
-                    <td valign="top"> <div style="margin-left: 10px; margin-top: 10px"><BagChanges /></div></td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="col-sm" style="margin-left:10px">
-            <BotHeader ShowActiveAction="false" />
-
-            <div class="card" style="margin-top: 10px">
-                <div class="card-header">
-                    Actions
-
-                    <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot">
-                        @if (!botController.IsBotActive)
-                        {
-                            <span>Start Bot</span>
-                        }
-                        else
-                        {
-                            <span>Stop Bot</span>
-                        }
-                    </button>
-                </div>
-                <div class="card-body">
-                    <table class="table table-sm table-striped">
-                        @if (botController.GoapAgent != null)
-                        {
-                            foreach (var action in botController.GoapAgent.AvailableActions)
-                            {
-                                <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
-                            }
-                        }
-                    </table>
-                </div>
+            <div class="col-sm">
+                <ScreenshotComponent Size="800" />
+                <table width="100%">
+                    <tr>
+                        <td valign="top"><div style="margin-top: 10px"><RouteComponent Size="400" /></div></td>
+                        <td valign="top"> <div style="margin-left: 10px; margin-top: 10px"><BagChanges /></div></td>
+                    </tr>
+                </table>
             </div>
 
-        </div>
+            <div class="col-sm" style="margin-left:10px">
+                <BotHeader ShowActiveAction="false" />
+
+                <div class="card" style="margin-top: 10px">
+                    <div class="card-header">
+                        Actions
+
+                        <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot">
+                            @if (!botController.IsBotActive)
+                            {
+                                <span>Start Bot</span>
+                            }
+                            else
+                            {
+                                <span>Stop Bot</span>
+                            }
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm table-striped">
+                            @if (botController.GoapAgent != null)
+                            {
+                                foreach (var action in botController.GoapAgent.AvailableActions)
+                                {
+                                    <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
+                                }
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
         }
         else
         {
-            <Configuration/>
+            <Configuration />
         }
     </div>
 </div>

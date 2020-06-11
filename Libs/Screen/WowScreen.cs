@@ -9,9 +9,9 @@ namespace Libs
     {
         private readonly ILogger logger;
 
-        public delegate void ScreenChangeDelegate(object sender, ScreenChangeEventArgs args);
+        public delegate void ScreenChangeEventHandler(object sender, ScreenChangeEventArgs args);
 
-        public event ScreenChangeDelegate? OnScreenChanged;
+        public event ScreenChangeEventHandler? OnScreenChanged;
 
         public int Size { get; set; } = 1024;
 

@@ -5,7 +5,7 @@
 
 <style>
     h5 {
-        margin-top:20px
+        margin-top: 20px
     }
 </style>
 
@@ -70,16 +70,16 @@ else
         <span class="row col-md-12">I see @dataFrames.Count data frames. I should see 100 if you have typed /dc</span>
     }
 
-<div class="row col-md-12">
-    @if (@dataFrames.Count != 100)
-    {
-        <img style="border:5px solid red; margin 5px" src="data:image/png;base64, @image" alt="Red dot" />
-    }
-    else
-    {
-        <img style="border:5px solid green; margin 5px" src="data:image/png;base64, @image" alt="Red dot" />
-    }
-</div>
+    <div class="row col-md-12">
+        @if (@dataFrames.Count != 100)
+        {
+            <img style="border:5px solid red; margin: 5px" src="data:image/png;base64, @image" alt="Red dot" />
+        }
+        else
+        {
+            <img style="border:5px solid green; margin: 5px" src="data:image/png;base64, @image" alt="Red dot" />
+        }
+    </div>
 }
 @code {
 
@@ -136,7 +136,7 @@ else
         {
             var dataFrames = config.CreateConfiguration(screenshot);
 
-            config.SaveConfiguration(dataFrames);
+            DataFrameConfiguration.SaveConfiguration(dataFrames);
             saved = true;
 
             await InvokeAsync(() =>

@@ -27,14 +27,14 @@ namespace Libs
                 item.RequirementObjects.Add(GetRequirement(item.Name, requirement));
             }
 
-            CreateMinRequirement(item.RequirementObjects, item, "Mana", item.MinMana);
-            CreateMinRequirement(item.RequirementObjects, item, "Rage", item.MinRage);
-            CreateMinRequirement(item.RequirementObjects, item, "Energy", item.MinEnergy);
+            CreateMinRequirement(item.RequirementObjects, "Mana", item.MinMana);
+            CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
+            CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
             item.CreateCooldownRequirement();
         }
 
-        private void CreateMinRequirement(List<Requirement> RequirementObjects, KeyConfiguration item, string type, int value)
+        private void CreateMinRequirement(List<Requirement> RequirementObjects, string type, int value)
         {
             if (value > 0)
             {
@@ -93,7 +93,7 @@ namespace Libs
             {
                 var parts = requirement.Split(":");
                 var itemId = int.Parse(parts[1]);
-                var count = parts.Count() < 3 ? 1 : int.Parse(parts[2]);
+                var count = parts.Length < 3 ? 1 : int.Parse(parts[2]);
 
                 if (requirement.StartsWith("!") || requirement.StartsWith("not "))
                 {

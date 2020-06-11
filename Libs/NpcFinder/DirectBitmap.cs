@@ -7,17 +7,17 @@ using System.Runtime.InteropServices;
 
 namespace Libs.NpcFinder
 {
-    public class DirectBitmap : IDisposable
+    public sealed class DirectBitmap : IDisposable
     {
         public Bitmap Bitmap { get; private set; }
-        public Int32[] Bits { get; private set; }
+        private Int32[] bits;
         public bool Disposed { get; private set; }
         public int Height { get; private set; }
         public int Width { get; private set; }
         public int TopOffset { get; private set; } = 100;
         public int BottomOffset { get; private set; } = 200;
 
-        protected GCHandle BitsHandle { get; private set; }
+        private GCHandle BitsHandle { get; set; }
 
         public Point ToScreenCoordinates(int x, int y)
         {
@@ -30,8 +30,8 @@ namespace Libs.NpcFinder
             this.BottomOffset = bottomOffset;
             this.Width = width;
             this.Height = height - TopOffset - BottomOffset;
-            this.Bits = new Int32[width * height];
-            this.BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+            this.bits = new Int32[width * height];
+            this.BitsHandle = GCHandle.Alloc(bits, GCHandleType.Pinned);
             this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
 
@@ -39,8 +39,8 @@ namespace Libs.NpcFinder
         {
             this.Width = width;
             this.Height = height - TopOffset - BottomOffset;
-            this.Bits = new Int32[width * height];
-            this.BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+            this.bits = new Int32[width * height];
+            this.BitsHandle = GCHandle.Alloc(bits, GCHandleType.Pinned);
             this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
 
@@ -66,9 +66,10 @@ namespace Libs.NpcFinder
                 graphics.DrawImage(Bitmap, 0, 0, width, height);
             }
 
-            using (System.IO.MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
                 resized.Save(ms, ImageFormat.Jpeg);
+                resized.Dispose();
                 byte[] byteImage = ms.ToArray();
                 return Convert.ToBase64String(byteImage); // Get Base64
             }
@@ -86,13 +87,13 @@ namespace Libs.NpcFinder
         {
             int index = x + (y * Width);
             int col = colour.ToArgb();
-            Bits[index] = col;
+            bits[index] = col;
         }
 
         public Color GetPixel(int x, int y)
         {
             int index = x + (y * Width);
-            int col = Bits[index];
+            int col = bits[index];
             Color result = Color.FromArgb(col);
 
             return result;

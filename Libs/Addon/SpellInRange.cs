@@ -2,7 +2,7 @@
 {
     public class SpellInRange
     {
-        public readonly long value;
+        private readonly long value;
 
         public SpellInRange(long value)
         {
@@ -43,6 +43,7 @@
 
         //Mage
         public bool Mage_Fireball { get => IsBitSet(0); }
+
         public bool Mage_Shoot { get => IsBitSet(1); }
         public bool Mage_Pyroblast { get => IsBitSet(2); }
         public bool Mage_Frostbolt { get => IsBitSet(3); }

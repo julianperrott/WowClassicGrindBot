@@ -17,11 +17,11 @@ namespace Libs.GOAP
             this.logger = logger;
         }
 
-        public void RefreshState(IEnumerable<GoapAction> availableActions)
+        public static void RefreshState(IEnumerable<GoapAction> availableActions)
         {
             foreach (GoapAction a in availableActions)
             {
-                a.State = InState(a, a.Preconditions, new HashSet<KeyValuePair<GoapKey, object>>());
+                a.SetState(InState(a.Preconditions, new HashSet<KeyValuePair<GoapKey, object>>()));
             }
         }
 
@@ -53,7 +53,7 @@ namespace Libs.GOAP
                 }
                 else
                 {
-                    a.State = InState(a, a.Preconditions, start.state);
+                    a.SetState(InState(a.Preconditions, start.state));
                 }
             }
 
@@ -126,8 +126,8 @@ namespace Libs.GOAP
             foreach (GoapAction action in usableActions)
             {
                 // if the parent state has the conditions for this action's preconditions, we can use it here
-                var result = InState(action, action.Preconditions, parent.state);
-                action.State = result;
+                var result = InState(action.Preconditions, parent.state);
+                action.SetState(result);
 
                 if (!result.ContainsValue(false))
                 {
@@ -136,7 +136,7 @@ namespace Libs.GOAP
                     //Debug.Log(GoapAgent.prettyPrint(currentState));
                     var node = new Node(parent, parent.runningCost + action.CostOfPerformingAction, currentState, action);
 
-                    result = InState(action, goal, currentState);
+                    result = InState(goal, currentState);
                     if (!result.ContainsValue(false))
                     {
                         // we found a solution!
@@ -163,7 +163,7 @@ namespace Libs.GOAP
 		 * Create a subset of the actions excluding the removeMe one. Creates a new set.
 		 */
 
-        private HashSet<GoapAction> ActionSubset(HashSet<GoapAction> actions, GoapAction removeMe)
+        private static HashSet<GoapAction> ActionSubset(HashSet<GoapAction> actions, GoapAction removeMe)
         {
             HashSet<GoapAction> subset = new HashSet<GoapAction>();
             foreach (GoapAction a in actions)
@@ -179,7 +179,7 @@ namespace Libs.GOAP
 		 * then this returns false.
 		 */
 
-        private Dictionary<string, bool> InState(GoapAction action, HashSet<KeyValuePair<GoapKey, GoapPreCondition>> test, HashSet<KeyValuePair<GoapKey, object>> state)
+        private static Dictionary<string, bool> InState(HashSet<KeyValuePair<GoapKey, GoapPreCondition>> test, HashSet<KeyValuePair<GoapKey, object>> state)
         {
             var resultState = new Dictionary<string, bool>();
             foreach (KeyValuePair<GoapKey, GoapPreCondition> t in test)
@@ -207,7 +207,7 @@ namespace Libs.GOAP
 		 * Apply the stateChange to the currentState
 		 */
 
-        private HashSet<KeyValuePair<GoapKey, object>> PopulateState(HashSet<KeyValuePair<GoapKey, object>> currentState, HashSet<KeyValuePair<GoapKey, object>> stateChange)
+        private static HashSet<KeyValuePair<GoapKey, object>> PopulateState(HashSet<KeyValuePair<GoapKey, object>> currentState, HashSet<KeyValuePair<GoapKey, object>> stateChange)
         {
             HashSet<KeyValuePair<GoapKey, object>> state = new HashSet<KeyValuePair<GoapKey, object>>();
             // copy the KVPs over as new objects

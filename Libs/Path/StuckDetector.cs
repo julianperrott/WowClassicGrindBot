@@ -54,11 +54,11 @@ namespace Libs
             //logger.LogInformation("ResetStuckParameters()");
         }
 
-        public delegate void ActionEventHandler(object sender, ActionEvent e);
+        public delegate void ActionEventHandler(object sender, ActionEventArgs e);
 
         public event ActionEventHandler? ActionEvent;
 
-        public void RaiseEvent(ActionEvent e)
+        public void SendActionEvent(ActionEventArgs e)
         {
             ActionEvent?.Invoke(this, e);
         }
@@ -76,7 +76,7 @@ namespace Libs
             {
                 // stuck for 4 minutes
                 logger.LogInformation("Stuck for 4 minutes");
-                RaiseEvent(new ActionEvent(GoapKey.abort, true));
+                SendActionEvent(new ActionEventArgs(GoapKey.abort, true));
                 await Task.Delay(120000);
             }
 
@@ -119,7 +119,7 @@ namespace Libs
 
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "StuckDetector");
 
-                var heading = new DirectionCalculator(logger).CalculateHeading(this.playerReader.PlayerLocation, targetLocation);
+                var heading = DirectionCalculator.CalculateHeading(this.playerReader.PlayerLocation, targetLocation);
                 await playerDirection.SetDirection(heading, targetLocation, "Move to next point");
 
                 LastUnstickAttemptTimer.Reset();

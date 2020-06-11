@@ -25,7 +25,7 @@ namespace Libs.Actions
         private readonly StopMoving stopMoving;
         private readonly NpcNameFinder npcNameFinder;
         private readonly StuckDetector stuckDetector;
-        protected readonly ClassConfiguration classConfiguration;
+        private readonly ClassConfiguration classConfiguration;
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private DateTime LastJump = DateTime.Now;
@@ -35,7 +35,7 @@ namespace Libs.Actions
         private bool shouldMount = true;
         private ILogger logger;
 
-        public bool firstLoad = true;
+        private bool firstLoad = true;
 
         public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, Blacklist blacklist, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
@@ -84,7 +84,7 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 20f; }
 
-        public override void OnActionEvent(object sender, ActionEvent e)
+        public override void OnActionEvent(object sender, ActionEventArgs e)
         {
             if (sender != this)
             {
@@ -94,7 +94,7 @@ namespace Libs.Actions
 
         public override async Task PerformAction()
         {
-            RaiseEvent(new ActionEvent(GoapKey.fighting, false));
+            SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
             if (points.Count == 0)
             {
@@ -132,7 +132,7 @@ namespace Libs.Actions
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, points.Peek());
-            var heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
+            var heading = DirectionCalculator.CalculateHeading(location, points.Peek());
 
             if (lastDistance < distance)
             {
@@ -179,7 +179,7 @@ namespace Libs.Actions
 
                 this.stuckDetector.SetTargetLocation(this.points.Peek());
 
-                heading = new DirectionCalculator(logger).CalculateHeading(location, points.Peek());
+                heading = DirectionCalculator.CalculateHeading(location, points.Peek());
                 await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
 
                 if (this.classConfiguration.Blink.ConsoleKey != 0 && this.playerReader.ManaPercentage > 90 && this.playerReader.PlayerLevel < 40)

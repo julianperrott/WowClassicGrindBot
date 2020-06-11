@@ -6,18 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Libs.Cursor
 {
-    public enum CursorClassification
-    {
-        Kill = 10,
-        Loot = 20,
-        None = 30,
-        Skin = 40,
-        Mine = 50,
-        Herb = 60,
-        Unknown = 50
-    }
-
-    public class CursorClassifier
+    public static class CursorClassifier
     {
         private static Dictionary<CursorClassification, ulong> imageHashes = new Dictionary<CursorClassification, ulong>()
         {
@@ -29,47 +18,22 @@ namespace Libs.Cursor
             {CursorClassification.Herb, 4683320813727784960 }
         };
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct CURSORINFO
-        {
-            public Int32 cbSize;
-            public Int32 flags;
-            public IntPtr hCursor;
-            public POINTAPI ptScreenPos;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct POINTAPI
-        {
-            public int x;
-            public int y;
-        }
-
-        [DllImport("user32.dll")]
-        private static extern bool GetCursorInfo(out CURSORINFO pci);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern bool DrawIconEx(IntPtr hdc, int xLeft, int yTop, IntPtr hIcon, int cxWidth, int cyHeight, int istepIfAniCur, IntPtr hbrFlickerFreeDraw, int diFlags);
-
-        private const Int32 CURSOR_SHOWING = 0x0001;
-        private const Int32 DI_NORMAL = 0x0003;
-
         public static Bitmap Classify(out CursorClassification classification)
         {
             var result = new Bitmap(32, 32);
             try
             {
-                CURSORINFO pci;
-                pci.cbSize = Marshal.SizeOf(typeof(CURSORINFO));
+                NativeMethods.CURSORINFO pci;
+                pci.cbSize = Marshal.SizeOf(typeof(NativeMethods.CURSORINFO));
 
                 using (var g = Graphics.FromImage(result))
                 {
-                    if (GetCursorInfo(out pci))
+                    if (NativeMethods.GetCursorInfo(out pci))
                     {
-                        if (pci.flags == CURSOR_SHOWING)
+                        if (pci.flags == NativeMethods.CURSOR_SHOWING)
                         {
                             var hdc = g.GetHdc();
-                            DrawIconEx(hdc, 0, 0, pci.hCursor, 0, 0, 0, IntPtr.Zero, DI_NORMAL);
+                            NativeMethods.DrawIconEx(hdc, 0, 0, pci.hCursor, 0, 0, 0, IntPtr.Zero, NativeMethods.DI_NORMAL);
                             g.ReleaseHdc();
                         }
                     }

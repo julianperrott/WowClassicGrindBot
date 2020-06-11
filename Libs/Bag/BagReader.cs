@@ -14,9 +14,9 @@ namespace Libs
 
         private DateTime lastEvent = DateTime.Now;
 
-        public List<BagItem> BagItems = new List<BagItem>();
+        public List<BagItem> BagItems { get; private set; } = new List<BagItem>();
 
-        public Dictionary<int, Item> itemDictionary = new Dictionary<int, Item>();
+        private Dictionary<int, Item> itemDictionary = new Dictionary<int, Item>();
 
         public event EventHandler? DataChanged;
 

@@ -5,7 +5,7 @@ namespace Libs
 {
     public class ActionBarStatus
     {
-        public long value;
+        private long value;
 
         public ActionBarStatus(string name)
         {

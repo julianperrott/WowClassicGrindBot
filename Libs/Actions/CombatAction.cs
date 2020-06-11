@@ -8,26 +8,22 @@ namespace Libs.Actions
 {
     public class CombatAction : GoapAction
     {
-        protected readonly WowProcess wowProcess;
-        protected readonly PlayerReader playerReader;
-        protected readonly StopMoving stopMoving;
-        protected readonly CastingHandler castingHandler;
-        protected ILogger logger;
-        protected ActionBarStatus actionBar = new ActionBarStatus(0);
-        protected ConsoleKey lastKeyPressed = ConsoleKey.Escape;
+        private readonly WowProcess wowProcess;
+        private readonly PlayerReader playerReader;
+        private readonly StopMoving stopMoving;
+        private readonly CastingHandler castingHandler;
+        private ILogger logger;
         private DateTime lastActive = DateTime.Now;
-        protected readonly ClassConfiguration classConfiguration;
-        protected readonly IPlayerDirection direction;
-        protected DateTime lastPulled = DateTime.Now;
+        private readonly ClassConfiguration classConfiguration;
+        private DateTime lastPulled = DateTime.Now;
 
-        public CombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, IPlayerDirection direction, CastingHandler castingHandler)
+        public CombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, CastingHandler castingHandler)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
             this.logger = logger;
             this.classConfiguration = classConfiguration;
-            this.direction = direction;
             this.castingHandler = castingHandler;
 
             AddPrecondition(GoapKey.incombat, true);
@@ -51,7 +47,7 @@ namespace Libs.Actions
                 pressed = await this.castingHandler.CastIfReady(item, this);
                 if (pressed)
                 {
-                    RaiseEvent(new ActionEvent(GoapKey.shouldloot, true));
+                    SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
                     break;
                 }
             }
@@ -63,7 +59,7 @@ namespace Libs.Actions
             this.lastActive = DateTime.Now;
         }
 
-        public override void OnActionEvent(object sender, ActionEvent e)
+        public override void OnActionEvent(object sender, ActionEventArgs e)
         {
             if (e.Key == GoapKey.newtarget)
             {
@@ -92,9 +88,9 @@ namespace Libs.Actions
             get
             {
                 logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
-                return this.playerReader.PlayerBitValues.PlayerInCombat && 
+                return this.playerReader.PlayerBitValues.PlayerInCombat &&
                     !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer
-                    && this.playerReader.TargetHealthPercentage==100;
+                    && this.playerReader.TargetHealthPercentage == 100;
             }
         }
 
@@ -123,7 +119,7 @@ namespace Libs.Actions
 
             await stopMoving.Stop();
 
-            RaiseEvent(new ActionEvent(GoapKey.fighting, true));
+            SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
 
             await this.castingHandler.InteractOnUIError();
 

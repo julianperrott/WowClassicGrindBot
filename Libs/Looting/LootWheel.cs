@@ -44,12 +44,12 @@ namespace Libs.Looting
 
         public async Task<bool> Loot(bool searchForMobs, bool doExtendedLootSearch)
         {
-            wowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
+            WowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
             await Task.Delay(150);
 
             if (!searchForMobs)
             {
-                wowProcess.SetCursorPosition(this.lastLootFoundAt);
+                WowProcess.SetCursorPosition(this.lastLootFoundAt);
                 await Task.Delay(200);
             }
             if (await CheckForLoot(this.lastLootFoundAt, searchForMobs, false))
@@ -91,7 +91,7 @@ namespace Libs.Looting
                 float y = (float)(circleCentre.Y + (ry * Math.Sin(theta)));
                 var mousePosition = new Point((int)x, (int)y);
 
-                wowProcess.SetCursorPosition(mousePosition);
+                WowProcess.SetCursorPosition(mousePosition);
 
                 if (await CheckForLoot(mousePosition, searchForMobs, ignoreMobs))
                 {
@@ -111,14 +111,14 @@ namespace Libs.Looting
             Classification = CursorClassification.None;
             await Task.Delay(30);
 
-            CursorClassifier.Classify(out var cls);
+            CursorClassifier.Classify(out var cls).Dispose();
 
             if (searchForMobs)
             {
                 if (cls == CursorClassification.Kill)
                 {
                     await Task.Delay(100);
-                    CursorClassifier.Classify(out cls);
+                    CursorClassifier.Classify(out cls).Dispose();
                 }
             }
             else
@@ -127,7 +127,7 @@ namespace Libs.Looting
                 if (cls == CursorClassification.Loot || cls == CursorClassification.Kill || cls == CursorClassification.Skin)
                 {
                     await Task.Delay(200);
-                    CursorClassifier.Classify(out cls);
+                    CursorClassifier.Classify(out cls).Dispose();
                 }
             }
 
@@ -181,7 +181,7 @@ namespace Libs.Looting
                 }
                 if (!this.playerReader.IsCasting)
                 {
-                    CursorClassifier.Classify(out var cls2);
+                    CursorClassifier.Classify(out var cls2).Dispose();
                     if (cls2 != this.Classification)
                     {
                         return;

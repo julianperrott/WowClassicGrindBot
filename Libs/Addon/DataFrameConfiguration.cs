@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -23,12 +22,12 @@ namespace Libs
             return File.Exists(ConfigurationFilename);
         }
 
-        public List<DataFrame> LoadConfiguration()
+        public static List<DataFrame> LoadConfiguration()
         {
             return JsonConvert.DeserializeObject<List<DataFrame>>(File.ReadAllText(ConfigurationFilename));
         }
 
-        public void SaveConfiguration(List<DataFrame> dataFrames)
+        public static void SaveConfiguration(List<DataFrame> dataFrames)
         {
             string output = JsonConvert.SerializeObject(dataFrames);
 

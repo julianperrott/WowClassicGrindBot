@@ -24,7 +24,7 @@ namespace Libs
         public int MinComboPoints { get; set; } = 0;
 
         public string Requirement { get; set; } = string.Empty;
-        public List<string> Requirements { get; set; } = new List<string>();
+        public List<string> Requirements { get; } = new List<string>();
 
         public bool WaitForWithinMelleRange { get; set; } = false;
         public bool ResetOnNewTarget { get; set; } = false;
@@ -37,9 +37,9 @@ namespace Libs
 
         public WowPoint LastClickPostion { get; private set; } = new WowPoint(0, 0);
 
-        public List<Requirement> RequirementObjects { get; set; } = new List<Requirement>();
+        public List<Requirement> RequirementObjects { get; } = new List<Requirement>();
 
-        protected static Dictionary<ConsoleKey, DateTime> LastClicked = new Dictionary<ConsoleKey, DateTime>();
+        protected static Dictionary<ConsoleKey, DateTime> LastClicked { get; } = new Dictionary<ConsoleKey, DateTime>();
 
         private PlayerReader? playerReader;
 
@@ -115,7 +115,7 @@ namespace Libs
                     LastClicked.Add(this.ConsoleKey, DateTime.Now);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 this.logger.LogError(ex, "SetClicked()");
             }

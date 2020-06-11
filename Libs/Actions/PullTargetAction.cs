@@ -8,14 +8,14 @@ namespace Libs.Actions
 {
     public class PullTargetAction : GoapAction
     {
-        protected readonly WowProcess wowProcess;
-        protected readonly PlayerReader playerReader;
-        protected readonly NpcNameFinder npcNameFinder;
-        protected readonly StopMoving stopMoving;
-        protected readonly StuckDetector stuckDetector;
-        protected readonly ClassConfiguration classConfiguration;
-        protected ILogger logger;
-        protected readonly CastingHandler castingHandler;
+        private readonly WowProcess wowProcess;
+        private readonly PlayerReader playerReader;
+        private readonly NpcNameFinder npcNameFinder;
+        private readonly StopMoving stopMoving;
+        private readonly StuckDetector stuckDetector;
+        private readonly ClassConfiguration classConfiguration;
+        private ILogger logger;
+        private readonly CastingHandler castingHandler;
         private DateTime PullStartTime = DateTime.Now;
         private DateTime LastActive = DateTime.Now;
 
@@ -59,7 +59,7 @@ namespace Libs.Actions
                 return;
             }
 
-            RaiseEvent(new ActionEvent(GoapKey.fighting, true));
+            SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
@@ -97,7 +97,7 @@ namespace Libs.Actions
             }
             else
             {
-                this.RaiseEvent(new ActionEvent(GoapKey.pulled, true));
+                this.SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
                 this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
             }
         }
@@ -120,8 +120,6 @@ namespace Libs.Actions
                 return this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer && this.playerReader.HealthPercent > 98;
             }
         }
-
-        protected Random random = new Random();
 
         protected async Task WaitForWithinMelleRange()
         {
