@@ -1,19 +1,20 @@
 # MasterOfPuppets - World of Warcraft Classic Grind Bot 
 
-Star * this repo if you think it might be useful to you or other coders.
+Star * this repo if you think it is awesone... or maybe just vaguely useful !
 
-- Uses an Addon to read the game state. 
+- Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-Pixels to read the game state.
 
 - Uses Blazor Server to show the bot state in a browser, and so can be monitored from your phone or a tablet while you do something else.
 https://docs.microsoft.com/en-us/aspnet/core/blazor
 
-- No DLL injection or memory watching, just screen capture and mouse and keyboard clicking.
+- No DLL injection or memory watching, just screen capture, mouse and keyboard clicking.
 
-- All classes except Hunter are possible.
+- Written from scratch in C#.
+
+- All classes are working except Hunter.
 
 ![Screenshot](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Screenshot.png)
 
-Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-Pixels
 
 # Getting it working
 

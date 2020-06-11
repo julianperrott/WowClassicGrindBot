@@ -6,7 +6,7 @@
   "PathFilename": "58_Winterspring.2.json",
   "SpiritPathFilename": "58_Winterspring_SpiritHealer.2.json",
   "PathThereAndBack": true,
-  "PathReduceSteps": true,
+  "PathReduceSteps": false,
 
 
   "Pull": {
@@ -41,8 +41,7 @@
       {
         "Name": "Approach",
         "Key": "H",
-        "Cooldown": 5,
-        "MinEnergy": 50
+        "Cooldown": 5
       },
       {
         "Name": "Cold Blood",
@@ -67,8 +66,8 @@
         "Key": "3",
         "MinEnergy": 25,
         "MinComboPoints": 2,
-        "Cooldown": 3,
-        "Requirement": "Slice And Dice"
+        "Cooldown": 11,
+        "Requirement": "not Slice And Dice"
       }, 
       {
         "Name": "Eviscerate",
@@ -99,7 +98,7 @@
         "Name": "Eat",
         "StopBeforeCast": false,
         "Key": "=",
-        "Requirement": "Health%<50",
+        "Requirement": "Health%<60",
         "Cooldown": 0,
         "DelayAfterCast": 1000,
         "Log": false,
