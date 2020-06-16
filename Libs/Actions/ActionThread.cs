@@ -40,11 +40,6 @@ namespace Libs.Actions
         {
             if (this.goapAgent != null)
             {
-                if (this.playerReader.PlayerBitValues.ItemsAreBroken)
-                {
-                    OnActionEvent(this, new ActionEventArgs(GoapKey.abort, true));
-                }
-
                 var newAction = await this.goapAgent.GetAction();
 
                 if (newAction != null)

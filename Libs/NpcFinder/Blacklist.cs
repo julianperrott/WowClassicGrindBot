@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Libs
 {
-    public class Blacklist
+    public class Blacklist: IBlacklist
     {
         private List<string> blacklist = new List<string> { "THORKA", "SHADOW", "DREADM", "DUNEMA", "BONE C", "FLESH", "REDRID", "MOSSHI", "VOIDWA", "WAILIN" };
 

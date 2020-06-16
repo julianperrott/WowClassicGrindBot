@@ -20,6 +20,8 @@ namespace Libs
         public bool PathThereAndBack { get; set; } = true;
         public bool PathReduceSteps { get; set; } = false;
 
+        public bool CorpseRunOnly { get; set; } = false;
+
         public BadZone WrongZone { get; set; } = new BadZone();
 
         public int NPCMaxLevels_Above { get; set; } = 1;

@@ -27,7 +27,7 @@ namespace Libs
             this.wowProcess = wowProcess;
         }
 
-        public HashSet<GoapAction> CreateActions(ClassConfiguration classConfig, Blacklist blacklist)
+        public HashSet<GoapAction> CreateActions(ClassConfiguration classConfig, IBlacklist blacklist)
         {
             var availableActions = new HashSet<GoapAction>();
 
@@ -47,46 +47,55 @@ namespace Libs
 
             availableActions.Clear();
 
-            availableActions.Add(followRouteAction);
-            availableActions.Add(walkToCorpseAction);
-            availableActions.Add(new TargetDeadAction(wowProcess, addonReader.PlayerReader, NpcNameFinder, logger));
-            availableActions.Add(new ApproachTargetAction(wowProcess, addonReader.PlayerReader, stopMoving, NpcNameFinder, logger, stuckDetector, classConfig));
-
-            if (classConfig.WrongZone.ZoneId > 0)
+            if (classConfig.CorpseRunOnly)
             {
-                availableActions.Add(new WrongZoneAction(addonReader.PlayerReader, wowProcess, playerDirection, logger, stuckDetector, classConfig));
+                availableActions.Add(new WaitAction(logger));
+                availableActions.Add(new CorpseRunAction(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, stopMoving, logger, stuckDetector));
             }
-
-            if (classConfig.Parallel.Sequence.Count > 0)
+            else
             {
-                availableActions.Add(new ParallelAction(wowProcess, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler, logger));
-            }
+                availableActions.Add(new ItemsBrokenAction(addonReader.PlayerReader, logger));
+                availableActions.Add(followRouteAction);
+                availableActions.Add(walkToCorpseAction);
+                availableActions.Add(new TargetDeadAction(wowProcess, addonReader.PlayerReader, NpcNameFinder, logger));
+                availableActions.Add(new ApproachTargetAction(wowProcess, addonReader.PlayerReader, stopMoving, NpcNameFinder, logger, stuckDetector, classConfig));
 
-            if (classConfig.Loot)
-            {
-                var lootAction = new LootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
-                lootAction.AddPreconditions();
-                availableActions.Add(lootAction);
-
-                lootAction = new PostKillLootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
-                lootAction.AddPreconditions();
-                availableActions.Add(lootAction);
-            }
-
-            try
-            {
-                var genericCombat = new CombatAction(wowProcess, addonReader.PlayerReader, stopMoving, logger, classConfig, castingHandler);
-                availableActions.Add(genericCombat);
-                availableActions.Add(new PullTargetAction(wowProcess, addonReader.PlayerReader, NpcNameFinder, stopMoving, logger, castingHandler, stuckDetector, classConfig));
-
-                foreach (var item in classConfig.Adhoc.Sequence)
+                if (classConfig.WrongZone.ZoneId > 0)
                 {
-                    availableActions.Add(new AdhocAction(wowProcess, addonReader.PlayerReader, stopMoving, item, castingHandler, logger));
+                    availableActions.Add(new WrongZoneAction(addonReader.PlayerReader, wowProcess, playerDirection, logger, stuckDetector, classConfig));
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex.ToString());
+
+                if (classConfig.Parallel.Sequence.Count > 0)
+                {
+                    availableActions.Add(new ParallelAction(wowProcess, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler, logger));
+                }
+
+                if (classConfig.Loot)
+                {
+                    var lootAction = new LootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
+                    lootAction.AddPreconditions();
+                    availableActions.Add(lootAction);
+
+                    lootAction = new PostKillLootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
+                    lootAction.AddPreconditions();
+                    availableActions.Add(lootAction);
+                }
+
+                try
+                {
+                    var genericCombat = new CombatAction(wowProcess, addonReader.PlayerReader, stopMoving, logger, classConfig, castingHandler);
+                    availableActions.Add(genericCombat);
+                    availableActions.Add(new PullTargetAction(wowProcess, addonReader.PlayerReader, NpcNameFinder, stopMoving, logger, castingHandler, stuckDetector, classConfig));
+
+                    foreach (var item in classConfig.Adhoc.Sequence)
+                    {
+                        availableActions.Add(new AdhocAction(wowProcess, addonReader.PlayerReader, stopMoving, item, castingHandler, logger));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex.ToString());
+                }
             }
 
             return availableActions;

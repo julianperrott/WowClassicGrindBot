@@ -16,9 +16,9 @@ namespace Libs.GOAP
 
         public GoapAction? CurrentAction { get; set; }
         public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
-        private Blacklist blacklist;
+        private IBlacklist blacklist;
 
-        public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, Blacklist blacklist, ILogger logger)
+        public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, IBlacklist blacklist, ILogger logger)
         {
             this.playerReader = playerReader;
             this.AvailableActions = availableActions.OrderBy(a => a.CostOfPerformingAction);

@@ -31,13 +31,13 @@ namespace Libs.Actions
         private DateTime LastJump = DateTime.Now;
         private Random random = new Random();
         private DateTime lastTab = DateTime.Now;
-        private readonly Blacklist blacklist;
+        private readonly IBlacklist blacklist;
         private bool shouldMount = true;
         private ILogger logger;
 
         private bool firstLoad = true;
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, Blacklist blacklist, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;

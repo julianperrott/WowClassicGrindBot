@@ -18,7 +18,8 @@
         bagfull = 130,
         abort = 140,
         shoulddrink = 150,
-        classMount = 160
+        classMount = 160,
+        isalive=170
     }
 
     public static class GoapKeyDescription

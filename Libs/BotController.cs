@@ -116,7 +116,7 @@ namespace Libs
             ReadClassConfiguration();
 
             var classConfig = ReadClassConfiguration();
-            var blacklist = new Blacklist(AddonReader.PlayerReader, classConfig.NPCMaxLevels_Above, classConfig.NPCMaxLevels_Below, classConfig.Blacklist, logger);
+            var blacklist = classConfig.CorpseRunOnly ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, classConfig.NPCMaxLevels_Above, classConfig.NPCMaxLevels_Below, classConfig.Blacklist, logger);
 
             //this.currentAction = followRouteAction;
 

@@ -3,10 +3,12 @@
   "Loot": true,
   "NPCMaxLevels_Below": 8,
 
-  "PathFilename": "58_Winterspring.2.json",
-  "SpiritPathFilename": "58_Winterspring_SpiritHealer.2.json",
+  "PathFilename": "ZG_SpiritHealer.json",
+  "SpiritPathFilename": "ZG_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
+
+  "CorpseRunOnly" : true,
 
 
   "Pull": {
