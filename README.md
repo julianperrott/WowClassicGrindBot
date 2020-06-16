@@ -1,6 +1,8 @@
-# MasterOfPuppets - World of Warcraft Classic Grind Bot 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/starme.png" alt="Star this Repo"/>
+</p>
 
-Star * this repo if you like it... or might be vaguely useful !
+# MasterOfPuppets - World of Warcraft Classic Grind Bot 
 
 - Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-Pixels to read the game state. Sorry but the addon is coded for an english wow client and would need to be modified to work with any other languages.
 
