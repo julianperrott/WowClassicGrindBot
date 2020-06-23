@@ -4,10 +4,12 @@
   "NPCMaxLevels_Below": 7,
   "NPCMaxLevels_Above": 2,
 
-  "PathFilename": "60_Silithus_scorpid.2.json",
-  "SpiritPathFilename": "60_Silithus_scorpid_SpiritHealer.json",
+  "PathFilename": "ZG_SpiritHealer.json",
+  "SpiritPathFilename": "ZG_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
+
+  "CorpseRunOnly" : false,
   
   //"WrongZone": { "ZoneId": 1429, "ExitZoneLocation": { "X":62.5,"Y":90} },
 

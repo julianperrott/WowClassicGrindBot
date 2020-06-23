@@ -116,22 +116,27 @@ namespace Libs
         {
             UpdateScreenshot();
 
-            if ((DateTime.Now - lastNpcFind).TotalMilliseconds > 500)
+            if (!this.playerReader.PlayerBitValues.PlayerInCombat)
             {
-                PopulateLinesOfNpcNames();
-                DetermineNpcs();
+                if ((DateTime.Now - lastNpcFind).TotalMilliseconds > 500)
+                {
+                    PopulateLinesOfNpcNames();
+                    DetermineNpcs();
 
-                Npcs = npcs.OrderByDescending(npc => npc.Count)
-                    .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)), new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), Screenshot.Width))
-                    .Where(s => s.Width < 150)
-                    .ToList();
+                    Npcs = npcs.OrderByDescending(npc => npc.Count)
+                        .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)), new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), Screenshot.Width))
+                        .Where(s => s.Width < 150)
+                        .ToList();
 
-                lastNpcFind = DateTime.Now;
+                    lastNpcFind = DateTime.Now;
+                }
+
+                UpdatePotentialAddsExist();
+
+                return Npcs;
             }
 
-            UpdatePotentialAddsExist();
-
-            return Npcs;
+            return new List<NpcPosition>();
         }
 
         public bool MobsVisible { get; private set; }

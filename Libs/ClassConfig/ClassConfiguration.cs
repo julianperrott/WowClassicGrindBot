@@ -39,6 +39,9 @@ namespace Libs
         public KeyConfiguration Blink { get; set; } = new KeyConfiguration();
         public string InteractKey { get; set; } = "H";
 
+        public KeyConfiguration TargetLastTarget { get; set; } = new KeyConfiguration();
+        public string TargetLastTargetKey { get; set; } = "N";
+
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
 
         public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
@@ -52,6 +55,9 @@ namespace Libs
             Interact.Key = InteractKey;
             Interact.Initialise(playerReader, requirementFactory, logger);
             Blink.Initialise(playerReader, requirementFactory, logger);
+
+            TargetLastTarget.Key = TargetLastTargetKey;
+            TargetLastTarget.Initialise(playerReader, requirementFactory, logger);
         }
     }
 }

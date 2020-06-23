@@ -44,6 +44,7 @@ namespace BlazorServer
         public static void ConfigureServices(IServiceCollection services)
         {
             var logger = new SerilogLoggerProvider(Log.Logger).CreateLogger(nameof(Program));
+            services.AddSingleton<Microsoft.Extensions.Logging.ILogger>(logger);
 
             if (DataFrameConfiguration.ConfigurationExists())
             {

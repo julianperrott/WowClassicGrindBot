@@ -4,7 +4,7 @@
   "NPCMaxLevels_Below": 8,
 
   "PathFilename": "56_Felwood.json",
-  "SpiritPathFilename": "56_Felwood.json",
+  "SpiritPathFilename": "56_Felwood_SpirirtHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 
@@ -13,7 +13,7 @@
       {
         "Name": "Mind Blast",
         "Key": "5",
-        "DelayBeforeCast": 1000,
+        "DelayBeforeCast": 500,
         "StopBeforeCast": true,
         "HasCastBar": true
       },
@@ -146,13 +146,13 @@
         "Cooldown": 10,
         "Requirement": "not Divine Spirit",
         "Log": false
-      },
-      {
-        "Name": "Open Clam",
-        "Key": "-",
-        "Cooldown": 30,
-        "Log": false
-      }
+      }//,
+      //{
+        //"Name": "Open Clam",
+        //"Key": "-",
+        //"Cooldown": 30,
+        //"Log": false
+      //}
     ]
   }
 }

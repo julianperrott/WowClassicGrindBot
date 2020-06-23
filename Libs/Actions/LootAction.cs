@@ -2,6 +2,7 @@
 using Libs.Looting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Libs.Actions
@@ -45,9 +46,6 @@ namespace Libs.Actions
         }
 
         public override float CostOfPerformingAction { get => 4f; }
-
-        private bool foundAddWhileLooting = false;
-        private bool doExtendedLootSearch = true;
 
         public async Task<bool> AmIBeingTargetted()
         {
@@ -114,10 +112,18 @@ namespace Libs.Actions
             var lootAttempt = 0;
             while (lootAttempt < 10)
             {
+                if (lootAttempt == 0)
+                {
+                    await this.TapTargetLastTargetKey("lootAttempt 0");
+                    await this.TapInteractKey("lootAttempt 0");
+                    await Task.Delay(1000);
+                }
+
                 if (await CheckIfEnterredCombat()) { return; }
 
                 Log(searchForMobs ? "Searching for mobs" : $"Looting (attempt: {lootAttempt + 1}.");
-                var foundSomething = await lootWheel.Loot(searchForMobs, doExtendedLootSearch || foundAddWhileLooting);
+                SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+                var foundSomething = await lootWheel.Loot(searchForMobs);
 
                 if (foundSomething && lootWheel.Classification == Cursor.CursorClassification.Kill)
                 {
@@ -125,15 +131,25 @@ namespace Libs.Actions
                     return;
                 }
 
-                if (!foundSomething && !searchForMobs)
+                if (this.playerReader.PlayerClass == PlayerClassEnum.Druid && this.playerReader.Druid_ShapeshiftForm!= ShapeshiftForm.None)
+                {
+                    var desiredFormKey = this.classConfiguration.ShapeshiftForm
+                        .Where(s => s.ShapeShiftFormEnum == ShapeshiftForm.None)
+                        .FirstOrDefault();
+                    if (desiredFormKey!=null)
+                    {
+                        await this.wowProcess.KeyPress(desiredFormKey.ConsoleKey, 500, "Cancel form to allow drinking");
+                    }
+
+                }
+
+                if (!foundSomething)// && !searchForMobs)
                 {
                     lootAttempt = 10;
-                    foundAddWhileLooting = false;
-                    doExtendedLootSearch = false;
                 }
                 else
                 {
-                    doExtendedLootSearch = false;
+                    Log($"Found {lootWheel.Classification}");
                     if (searchForMobs)
                     {
                         searchForMobs = false;
@@ -142,7 +158,6 @@ namespace Libs.Actions
                     {
                         if (lootWheel.Classification == Cursor.CursorClassification.Kill)
                         {
-                            foundAddWhileLooting = true;
                             await this.TapInteractKey("LootAction");
                             Log($"Kill something !");
                             return;
@@ -162,14 +177,11 @@ namespace Libs.Actions
 
                 lootAttempt++;
             }
-
-            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
             SendActionEvent(new ActionEventArgs(GoapKey.postloot, true));
         }
 
         private async Task AquireTarget()
         {
-            foundAddWhileLooting = true;
             Log("We are being attacked!");
 
             for (int i = 0; i < 2000; i += 100)
@@ -206,6 +218,13 @@ namespace Libs.Actions
             logger.LogInformation($"Approach target ({source})");
             await this.wowProcess.KeyPress(this.classConfiguration.Interact.ConsoleKey, 99);
             this.classConfiguration.Interact.SetClicked();
+        }
+
+        public async Task TapTargetLastTargetKey(string source)
+        {
+            logger.LogInformation($"Target Last Target ({source})");
+            await this.wowProcess.KeyPress(this.classConfiguration.TargetLastTarget.ConsoleKey, 99);
+            this.classConfiguration.TargetLastTarget.SetClicked();
         }
     }
 }

@@ -3,7 +3,7 @@
   "Loot": true,
   "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "52_Tanaris.json",
+  "PathFilename": "52_Tanaris.2.json",
   "SpiritPathFilename": "52_Tanaris_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
@@ -151,7 +151,8 @@
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,
-        "ShapeShiftForm": "None"
+        "ShapeShiftForm": "None",
+        "Cost": 3
       },
       {
         "Name": "Well Fed",
@@ -170,7 +171,8 @@
         "Requirement": "Mana%<40",
         "Cooldown": 10,
         "Log": false,
-        "ShapeShiftForm": "None"
+        "ShapeShiftForm": "None",
+        "Cost": 3
       },
       {
         "Name": "Thorns",

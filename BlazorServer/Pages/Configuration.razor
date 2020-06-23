@@ -1,4 +1,5 @@
 ﻿@page "/Configuration"
+@inject Microsoft.Extensions.Logging.ILogger logger
 
 @using Libs
 @using Microsoft.AspNetCore.Html
@@ -16,6 +17,8 @@
     <div class="row col-md-12">
         <img src="Addon_DC.png" />
     </div>
+
+    <span class="row col-md-12">@playerClass</span>
 }
 else
 {
@@ -80,13 +83,17 @@ else
             <img style="border:5px solid green; margin: 5px" src="data:image/png;base64, @image" alt="Red dot" />
         }
     </div>
+
+    <span class="row col-md-12">@playerClass</span>
 }
 @code {
 
     private DataFrameConfiguration? config;
     private List<DataFrame> dataFrames = new List<DataFrame>();
+    private AddonReader? addonReader;
 
     private bool saved = false;
+    private string playerClass = "Unable to read player class";
 
     string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
 
@@ -117,6 +124,24 @@ else
                 if (config != null)
                 {
                     dataFrames = config.CreateConfiguration(screenshot);
+
+                    if (dataFrames.Count == 100)
+                    {
+                        addonReader = new AddonReader(new WowScreen(logger), dataFrames, logger);
+                    }
+
+                    if (addonReader != null && dataFrames.Count != 100)
+                    {
+                        addonReader.Refresh();
+                        if (Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(addonReader.PlayerReader.PlayerClass))
+                        {
+                            playerClass = "The class of the character is: " + addonReader.PlayerReader.PlayerClass.ToString();
+                        }
+                        else
+                        {
+                            playerClass = "Still unable to read player class";
+                        }
+                    }
                 }
 
                 InvokeAsync(() =>

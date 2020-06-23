@@ -42,16 +42,22 @@ namespace Libs.Looting
             }
         }
 
-        public async Task<bool> Loot(bool searchForMobs, bool doExtendedLootSearch)
+        public void Reset()
+        {
+            lastLootFoundAt = new Point(0, 0);
+        }
+
+        public async Task<bool> Loot(bool searchForMobs)
         {
             WowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
             await Task.Delay(150);
 
-            if (!searchForMobs)
-            {
-                WowProcess.SetCursorPosition(this.lastLootFoundAt);
-                await Task.Delay(200);
-            }
+            //if (!searchForMobs)
+            //{
+            //    WowProcess.SetCursorPosition(this.lastLootFoundAt);
+            //    await Task.Delay(200);
+            //}
+
             if (await CheckForLoot(this.lastLootFoundAt, searchForMobs, false))
             {
                 logger.LogInformation($"Loot at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
@@ -75,10 +81,11 @@ namespace Libs.Looting
                 return true;
             }
 
-            if (!searchForMobs && doExtendedLootSearch)
+            if (searchForMobs && lastLootFoundAt.X!=0)
             {
-                return await SearchInCircle(radiusLarge / 4, radiusLarge, false, new Point(this.centre.X, (this.centre.Y * 2) / 3), true);
+                await CheckForLoot(lastLootFoundAt, false, true);
             }
+
             return false;
         }
 

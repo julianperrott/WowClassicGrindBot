@@ -8,7 +8,7 @@
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
-  "CorpseRunOnly" : true,
+  "CorpseRunOnly" : false,
 
 
   "Pull": {
