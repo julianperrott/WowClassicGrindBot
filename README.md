@@ -90,14 +90,16 @@ From the main menu (ESC) set the following:
 ## 6. Configure the Wow Client - Key Bindings:
 
 The "Interact with Target" keybind is super important as it allows the bot to turn towards and approach the target.
+The "Target Last Target " keybind helps with looting.
 
 From the main menu (ESC) set the following:
 
-Key Bindings:
+"Targeting" Key Bindings:
 
 | Command |  Key |
 | ---- | ---- |
 |  Interact With Target | H  |
+|  Target Last Target | N |
 
 
 ## 7. Configure the Wow Client - Bindpad addon
