@@ -17,6 +17,13 @@ https://docs.microsoft.com/en-us/aspnet/core/blazor
 
 ![Screenshot](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Screenshot.png)
 
+Video
+
+https://www.youtube.com/watch?v=CIMgbh5LuCc
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CIMgbh5LuCc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+[![Grind Bot Fun YouTube](https://img.youtube.com/vi/CIMgbh5LuCc/0.jpg)](https://www.youtube.com/watch?v=CIMgbh5LuCc)
 
 # Getting it working
 
