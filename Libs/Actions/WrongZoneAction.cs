@@ -43,7 +43,7 @@ namespace Libs.Actions
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
             await Task.Delay(200);
-            wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
+            wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 5");
 
             if (this.playerReader.PlayerBitValues.PlayerInCombat) { return; }
 
@@ -63,7 +63,7 @@ namespace Libs.Actions
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 6");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {

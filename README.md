@@ -69,9 +69,15 @@ The bot reads the game state using small blocks of colour shown at the top of th
 
 4. You should see the 'Addon configuration' screen (See screenshot below).
 
-5. The bot needs to record the position of the blocks of colour and to do this we need to put the addon into configuration mode by typing /dc. Follow the instructions on the configuration page and Save the configuration.
+5. Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
 
-6. Restart the bot and when it starts it should show the dashboard page.
+System>Advanced>Constrast: 50
+System>Advanced>Brightness: 50
+System>Advanced>Gamma from: 1.0
+
+6. The bot needs to record the position of the blocks of colour and to do this we need to put the addon into configuration mode by typing /dc. Follow the instructions on the configuration page and Save the configuration.
+
+7. Restart the bot and when it starts it should show the dashboard page.
 
 ![AddonConfig](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/AddonConfig.png)
 

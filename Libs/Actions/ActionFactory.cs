@@ -52,6 +52,11 @@ namespace Libs
                 availableActions.Add(new WaitAction(logger));
                 availableActions.Add(new CorpseRunAction(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, stopMoving, logger, stuckDetector));
             }
+            else if (classConfig.GatherOnly)
+            {
+                availableActions.Add(followRouteAction);
+                availableActions.Add(new CorpseRunAction(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, stopMoving, logger, stuckDetector));
+            }
             else
             {
                 availableActions.Add(new ItemsBrokenAction(addonReader.PlayerReader, logger));

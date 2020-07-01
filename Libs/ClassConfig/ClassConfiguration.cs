@@ -21,6 +21,7 @@ namespace Libs
         public bool PathReduceSteps { get; set; } = false;
 
         public bool CorpseRunOnly { get; set; } = false;
+        public bool GatherOnly { get; set; } = false;
 
         public BadZone WrongZone { get; set; } = new BadZone();
 

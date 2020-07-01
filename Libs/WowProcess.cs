@@ -76,7 +76,7 @@ namespace Libs
             return null;
         }
 
-        private void KeyDown(ConsoleKey key)
+        private void KeyDown(ConsoleKey key, string description)
         {
             if (keyDict.ContainsKey(key))
             {
@@ -87,7 +87,7 @@ namespace Libs
                 keyDict.Add(key, true);
             }
 
-            logger.LogInformation($"KeyDown {key}");
+            logger.LogInformation($"KeyDown {key} "+ description);
             NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
 
             keyDict[key] = true;
@@ -144,15 +144,16 @@ namespace Libs
             NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
         }
 
-        public async Task TapStopKey()
+        public async Task TapStopKey(string description="")
         {
+            Debug.WriteLine("TapStopKey: " + description);
             await KeyPress(ConsoleKey.UpArrow, 51);
         }
 
         public void SetKeyState(ConsoleKey key, bool pressDown, bool forceClick, string description)
         {
             Debug.WriteLine("SetKeyState: " + description);
-            if (pressDown) { KeyDown(key); } else { KeyUp(key, forceClick); }
+            if (pressDown) { KeyDown(key, description); } else { KeyUp(key, forceClick); }
         }
 
         public static void SetCursorPosition(System.Drawing.Point position)

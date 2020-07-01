@@ -50,7 +50,10 @@ namespace Libs.Actions
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
 
-            AddPrecondition(GoapKey.incombat, false);
+            if (!this.classConfiguration.GatherOnly)
+            {
+                AddPrecondition(GoapKey.incombat, false);
+            }
         }
 
         private void RefillPoints(bool findClosest = false)
@@ -103,9 +106,9 @@ namespace Libs.Actions
             }
 
             await Task.Delay(200);
-            wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
+            wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 1");
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat) { return; }
+            if (this.playerReader.PlayerBitValues.PlayerInCombat && !this.classConfiguration.GatherOnly) { return; }
 
             if ((DateTime.Now - LastActive).TotalSeconds > 10)
             {
@@ -116,16 +119,19 @@ namespace Libs.Actions
 
             await RandomJump();
 
-            // press tab
-            if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
+            if (!this.classConfiguration.GatherOnly)
             {
-                //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
-                if (await LookForTarget())
+                // press tab
+                if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
                 {
-                    if (this.playerReader.HasTarget)
+                    //new PressKeyThread(this.wowProcess, ConsoleKey.Tab);
+                    if (await LookForTarget())
                     {
-                        logger.LogInformation("Has target!");
-                        return;
+                        if (this.playerReader.HasTarget)
+                        {
+                            logger.LogInformation("Has target!");
+                            return;
+                        }
                     }
                 }
             }
@@ -134,6 +140,11 @@ namespace Libs.Actions
             var distance = WowPoint.DistanceTo(location, points.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, points.Peek());
 
+            if (this.classConfiguration.GatherOnly)
+            {
+                await AdjustHeading(heading);
+            }
+
             if (lastDistance < distance)
             {
                 await playerDirection.SetDirection(heading, points.Peek(), "Further away");
@@ -141,7 +152,7 @@ namespace Libs.Actions
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 2");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
@@ -155,13 +166,7 @@ namespace Libs.Actions
             }
             else // distance closer
             {
-                var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
-                var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
-
-                if (Math.Min(diff1, diff2) > 0.3)
-                {
-                    await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
-                }
+                await AdjustHeading(heading);
             }
 
             lastDistance = distance;
@@ -189,11 +194,13 @@ namespace Libs.Actions
             }
 
             // should mount
-            if (shouldMount)
+            if (shouldMount && !this.playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
             {
-                shouldMount = false;
-
-                if (await LookForTarget()) { return; }
+                if (!this.classConfiguration.GatherOnly)
+                {
+                    shouldMount = false;
+                    if (await LookForTarget()) { return; }
+                }
 
                 logger.LogInformation("Mounting if level >=40 (druid 30) and no NPC in sight");
                 if (!this.npcNameFinder.MobsVisible)
@@ -216,10 +223,33 @@ namespace Libs.Actions
                 {
                     logger.LogInformation("Not mounting as can see NPC.");
                 }
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction");
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 3");
             }
 
             LastActive = DateTime.Now;
+        }
+
+        private async Task AdjustHeading(double heading)
+        {
+            var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
+            var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
+
+            var wanderAngle = 0.3;
+
+            if (!this.classConfiguration.GatherOnly)
+            {
+                wanderAngle = 0.05;
+            }
+
+            if (Math.Min(diff1, diff2) > wanderAngle)
+            {
+                logger.LogInformation("Correct direction");
+                await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
+            }
+            else
+            {
+                logger.LogInformation($"Direction ok heading: {heading}, player direction {playerReader.Direction}");
+            }
         }
 
         private int PointReachedDistance()
@@ -256,7 +286,7 @@ namespace Libs.Actions
                 {
                     await wowProcess.Dismount();
                 }
-                await this.TapInteractKey("FollowRouteAction");
+                await this.TapInteractKey("FollowRouteAction 4");
                 return true;
             }
             return false;
