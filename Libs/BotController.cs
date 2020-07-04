@@ -30,6 +30,11 @@ namespace Libs
 
         private NpcNameFinder npcNameFinder;
 
+        private ClassConfiguration? classConfig;
+        private INodeFinder minimapNodeFinder;
+
+        public IImageProvider? MinimapImageFinder { get; set; }
+
         public BotController(ILogger logger)
         {
             wowProcess = new WowProcess(logger);
@@ -41,6 +46,9 @@ namespace Libs
                 : new List<DataFrame>(); //config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
             AddonReader = new AddonReader(WowScreen, frames, logger);
+
+            minimapNodeFinder = new MinimapNodeFinder(new PixelClassifier());
+            MinimapImageFinder = minimapNodeFinder as IImageProvider;
 
             addonThread = new Thread(AddonRefreshThread);
             addonThread.Start();
@@ -70,9 +78,15 @@ namespace Libs
 
         public void ScreenshotRefreshThread()
         {
+            var nodeFound = false;
             while (true)
             {
                 this.WowScreen.DoScreenshot(this.npcNameFinder);
+
+                if (classConfig!=null && classConfig.GatherOnly)
+                {
+                    nodeFound = this.minimapNodeFinder.Find(nodeFound) != null;
+                }
             }
         }
 
@@ -113,9 +127,8 @@ namespace Libs
 
         public void InitialiseBot()
         {
-            ReadClassConfiguration();
+            classConfig = ReadClassConfiguration();
 
-            var classConfig = ReadClassConfiguration();
             var blacklist = classConfig.CorpseRunOnly ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, classConfig.NPCMaxLevels_Above, classConfig.NPCMaxLevels_Below, classConfig.Blacklist, logger);
 
             //this.currentAction = followRouteAction;

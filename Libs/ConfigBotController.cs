@@ -17,6 +17,8 @@ namespace Libs
 
         public bool IsBotActive => throw new NotImplementedException();
 
+        public IImageProvider? MinimapImageFinder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public void ToggleBotStatus()
         {
             throw new NotImplementedException();

@@ -1,0 +1,47 @@
+﻿@page "/Gather"
+@inject Libs.IBotController botController
+@inject IJSRuntime JSRuntime;
+
+<table>
+    <tr>
+        <td><MiniMapComponent Size="400" OnNodeFound="NodeFoundHandler" /></td>
+        <td><RouteComponent Size="400" /></td>
+    </tr>
+</table>
+
+<div id="video-placeholder"></div>
+
+@code {
+
+    protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeAsync<string>("onYouTubeIframeAPIReady2");
+        }
+    }
+
+    protected async void NodeFoundHandler(bool nodeFound)
+    {
+        await base.InvokeAsync(() =>
+        {
+            if (nodeFound)
+            {
+                JSRuntime.InvokeAsync<string>("play");
+            }
+            else
+            {
+                JSRuntime.InvokeAsync<string>("pause");
+            }
+        });
+    }
+
+    private async void Play()
+    {
+        await JSRuntime.InvokeAsync<string>("play");
+    }
+    private async void Pause()
+    {
+        await JSRuntime.InvokeAsync<string>("pause");
+    }
+}

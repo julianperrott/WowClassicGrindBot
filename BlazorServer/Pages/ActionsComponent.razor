@@ -1,0 +1,64 @@
+﻿@using Libs
+@inject Libs.IBotController botController
+@inject Libs.IAddonReader addonReader
+
+<div class="card" style="margin-top: 10px">
+    <div class="card-header">
+        Actions
+
+        <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot">
+            @if (!botController.IsBotActive)
+            {
+                <span>Start Bot</span>
+            }
+            else
+            {
+                <span>Stop Bot</span>
+            }
+        </button>
+    </div>
+    @if (ShowActions)
+    {
+        <div class="card-body">
+            <table class="table table-sm table-striped">
+                @if (botController.GoapAgent != null)
+                {
+                    foreach (var action in botController.GoapAgent.AvailableActions)
+                    {
+                        <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
+                    }
+                }
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public bool ShowActions { get; set; } = true;
+
+    protected override void OnInitialized()
+    {
+        if (Libs.DataFrameConfiguration.ConfigurationExists())
+        {
+
+            ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+            {
+                base.InvokeAsync(() =>
+                {
+                    try
+                    {
+                        StateHasChanged();
+                    }
+                    catch { }
+                });
+            };
+        }
+    }
+
+    private void ToggleBot()
+    {
+        botController.ToggleBotStatus();
+    }
+}

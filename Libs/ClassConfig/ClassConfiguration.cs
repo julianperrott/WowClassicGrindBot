@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Libs
 {
@@ -40,6 +41,9 @@ namespace Libs
         public KeyConfiguration Blink { get; set; } = new KeyConfiguration();
         public string InteractKey { get; set; } = "H";
 
+        public List<KeyConfiguration> GatherFindKeyConfig { get; } = new List<KeyConfiguration>();
+        public List<string> GatherFindKeys { get; } = new List<string>();
+
         public KeyConfiguration TargetLastTarget { get; set; } = new KeyConfiguration();
         public string TargetLastTargetKey { get; set; } = "N";
 
@@ -59,6 +63,12 @@ namespace Libs
 
             TargetLastTarget.Key = TargetLastTargetKey;
             TargetLastTarget.Initialise(playerReader, requirementFactory, logger);
+
+            GatherFindKeys.ForEach(key =>
+            {
+                GatherFindKeyConfig.Add(new KeyConfiguration { Key = key });
+                GatherFindKeyConfig.Last().Initialise(playerReader, requirementFactory, logger);
+            });
         }
     }
 }

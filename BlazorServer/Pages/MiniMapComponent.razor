@@ -1,0 +1,93 @@
+﻿@using Libs
+@inject Libs.IBotController botController
+@inject Libs.IAddonReader addonReader
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    Minimap
+                    <span class="badge @CombatBadge()" style="margin-left:30px">@Libs.GOAP.GoapKeyDescription.ToString(Libs.GOAP.GoapKey.incombat, PlayerInCombat)</span>
+                    <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot">
+                        @if (!botController.IsBotActive)
+                        {
+                            <span>Start Bot</span>
+                        }
+                        else
+                        {
+                            <span>Stop Bot</span>
+                        }
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body">
+        <img src="data:image/png;base64, @image" alt="Red dot" />
+        <img src="data:image/png;base64, @lastnode" alt="Red dot" />
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Size { get; set; } = 1024;
+
+    [Parameter] public EventCallback<bool> OnNodeFound { get; set; }
+
+    public bool PlayerInCombat => this.addonReader.PlayerReader.PlayerBitValues.PlayerInCombat;
+
+    string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+    string eventTime = "";
+    string lastnode = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+
+    bool lastNodeFound = false;
+
+    protected override void OnInitialized()
+    {
+        if (this.botController.MinimapImageFinder != null)
+        {
+            this.botController.MinimapImageFinder.NodeEvent += (s, e) =>
+            {
+                var nodeFound = e.Point != null && e.Point.X > 0 && e.Point.Y > 0;
+
+                if (lastNodeFound != nodeFound)
+                {
+                    if (OnNodeFound.HasDelegate)
+                    {
+                        base.InvokeAsync(() =>
+                        {
+                            OnNodeFound.InvokeAsync(nodeFound);
+                        });
+                    }
+                }
+                lastNodeFound = nodeFound;
+
+                this.image = WowScreen.ToBase64(e.Bitmap, Size);
+                this.eventTime = DateTime.Now.ToString("HH:mm:ss");
+
+                if (nodeFound)
+                {
+                    this.lastnode = this.image;
+                }
+
+                InvokeAsync(() =>
+                {
+                    base.StateHasChanged();
+                });
+            };
+        }
+    }
+
+    private void ToggleBot()
+    {
+        botController.ToggleBotStatus();
+    }
+
+    public string CombatBadge()
+    {
+        return !PlayerInCombat ? "badge-success" : "badge-danger";
+    }
+
+}

@@ -95,9 +95,23 @@ namespace Libs.Actions
             }
         }
 
+        private int lastGatherKey = 0;
+        private DateTime lastGatherClick = DateTime.Now.AddSeconds(-10);
+
         public override async Task PerformAction()
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
+            if (this.classConfiguration.GatherOnly && this.lastGatherClick.AddSeconds(3)<DateTime.Now && this.classConfiguration.GatherFindKeyConfig.Count>0)
+            {
+                lastGatherKey++;
+                if (lastGatherKey>= this.classConfiguration.GatherFindKeyConfig.Count)
+                {
+                    lastGatherKey = 0;
+                }
+
+                await wowProcess.KeyPress(classConfiguration.GatherFindKeyConfig[lastGatherKey].ConsoleKey, 200, "Gatherkey 1");
+                lastGatherClick = DateTime.Now;
+            }
 
             if (points.Count == 0)
             {

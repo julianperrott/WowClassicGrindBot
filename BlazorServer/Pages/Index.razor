@@ -23,33 +23,7 @@
             <div class="col-sm" style="margin-left:10px">
                 <BotHeader ShowActiveAction="false" />
 
-                <div class="card" style="margin-top: 10px">
-                    <div class="card-header">
-                        Actions
-
-                        <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot">
-                            @if (!botController.IsBotActive)
-                            {
-                                <span>Start Bot</span>
-                            }
-                            else
-                            {
-                                <span>Stop Bot</span>
-                            }
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-sm table-striped">
-                            @if (botController.GoapAgent != null)
-                            {
-                                foreach (var action in botController.GoapAgent.AvailableActions)
-                                {
-                                    <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
-                                }
-                            }
-                        </table>
-                    </div>
-                </div>
+                <ActionsComponent />
             </div>
         }
         else
@@ -80,10 +54,5 @@
                 });
             };
         }
-    }
-
-    private void ToggleBot()
-    {
-        botController.ToggleBotStatus();
     }
 }

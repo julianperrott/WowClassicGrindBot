@@ -97,6 +97,18 @@ namespace Libs
             return remaining < 0 ? 0 : remaining;
         }
 
+        internal void SetCooldown(int seconds)
+        {
+            if (LastClicked.ContainsKey(this.ConsoleKey))
+            {
+                LastClicked[this.ConsoleKey] = DateTime.Now.AddSeconds(this.Cooldown - seconds);
+            }
+            else
+            {
+                LastClicked.Add(this.ConsoleKey, DateTime.Now.AddSeconds(this.Cooldown - seconds));
+            }
+        }
+
         internal void SetClicked()
         {
             try
