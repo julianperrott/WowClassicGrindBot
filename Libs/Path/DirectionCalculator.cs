@@ -1,17 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 
 namespace Libs
 {
-    public class DirectionCalculator
+    public static class DirectionCalculator
     {
-        private ILogger logger;
-
-        public DirectionCalculator(ILogger logger)
-        {
-            this.logger = logger;
-        }
-
         public static double CalculateHeading(WowPoint from, WowPoint to)
         {
             //logger.LogInformation($"from: ({from.X},{from.Y}) to: ({to.X},{to.Y})");

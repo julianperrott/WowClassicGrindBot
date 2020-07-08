@@ -8,17 +8,15 @@ namespace Libs.Actions
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
-        private ILogger logger;
 
         private double XCoord = 0;
         private double YCoord = 0;
         private double Direction = 0;
 
-        public StopMoving(WowProcess wowProcess, PlayerReader playerReader, ILogger logger)
+        public StopMoving(WowProcess wowProcess, PlayerReader playerReader)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
-            this.logger = logger;
         }
 
         public async Task Stop()

@@ -13,9 +13,11 @@ namespace Libs
         GoapAgent? GoapAgent { get; set; }
         RouteInfo? RouteInfo { get; set; }
         WowScreen WowScreen { get; set; }
+        ClassConfiguration? ClassConfig { get; set; }
         IImageProvider? MinimapImageFinder { get; set; }
 
         void ToggleBotStatus();
+        void StopBot();
 
         bool IsBotActive { get; }
     }

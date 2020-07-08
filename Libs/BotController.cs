@@ -30,7 +30,7 @@ namespace Libs
 
         private NpcNameFinder npcNameFinder;
 
-        private ClassConfiguration? classConfig;
+        public ClassConfiguration? ClassConfig { get; set; }
         private INodeFinder minimapNodeFinder;
 
         public IImageProvider? MinimapImageFinder { get; set; }
@@ -83,7 +83,7 @@ namespace Libs
             {
                 this.WowScreen.DoScreenshot(this.npcNameFinder);
 
-                if (classConfig!=null && classConfig.GatherOnly)
+                if (ClassConfig != null && this.ClassConfig.Mode == Mode.AttendedGather)
                 {
                     nodeFound = this.minimapNodeFinder.Find(nodeFound) != null;
                 }
@@ -127,17 +127,17 @@ namespace Libs
 
         public void InitialiseBot()
         {
-            classConfig = ReadClassConfiguration();
+            ClassConfig = ReadClassConfiguration();
 
-            var blacklist = classConfig.CorpseRunOnly ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, classConfig.NPCMaxLevels_Above, classConfig.NPCMaxLevels_Below, classConfig.Blacklist, logger);
+            var blacklist = this.ClassConfig.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, ClassConfig.NPCMaxLevels_Above, ClassConfig.NPCMaxLevels_Below, ClassConfig.Blacklist, logger);
 
             //this.currentAction = followRouteAction;
 
             var actionFactory = new ActionFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder);
-            var availableActions = actionFactory.CreateActions(classConfig, blacklist);
+            var availableActions = actionFactory.CreateActions(ClassConfig, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
-            this.GoapAgent = new GoapAgent(AddonReader.PlayerReader, availableActions, blacklist, logger);
+            this.GoapAgent = new GoapAgent(AddonReader.PlayerReader, availableActions, blacklist, logger, ClassConfig);
 
             this.actionThread = new ActionThread(this.AddonReader.PlayerReader, this.wowProcess, GoapAgent, logger);
 
@@ -145,7 +145,6 @@ namespace Libs
             availableActions.ToList().ForEach(a =>
             {
                 a.ActionEvent += this.actionThread.OnActionEvent;
-                a.ActionEvent += npcNameFinder.OnActionEvent;
                 a.ActionEvent += GoapAgent.OnActionEvent;
 
                 // tell other action about my actions
@@ -175,6 +174,14 @@ namespace Libs
         public void Dispose()
         {
             npcNameFinder.Dispose();
+        }
+
+        public void StopBot()
+        {
+            if (actionThread != null)
+            {
+                actionThread.Active = false;
+            }
         }
     }
 }

@@ -9,18 +9,16 @@ namespace Libs.Actions
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
-        private readonly StopMoving stopMoving;
         private readonly ILogger logger;
         private ConsoleKey lastKeyPressed = ConsoleKey.Escape;
         private readonly ClassConfiguration classConfiguration;
         private readonly IPlayerDirection direction;
         private readonly NpcNameFinder npcNameFinder;
 
-        public CastingHandler(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, IPlayerDirection direction, NpcNameFinder npcNameFinder)
+        public CastingHandler(WowProcess wowProcess, PlayerReader playerReader, ILogger logger, ClassConfiguration classConfiguration, IPlayerDirection direction, NpcNameFinder npcNameFinder)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
-            this.stopMoving = stopMoving;
             this.logger = logger;
             this.classConfiguration = classConfiguration;
             this.direction = direction;

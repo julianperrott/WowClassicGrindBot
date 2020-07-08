@@ -35,9 +35,9 @@ namespace Libs
             GetPaths(out pathPoints, out spiritPath, classConfig);
 
             var playerDirection = new PlayerDirection(addonReader.PlayerReader, wowProcess, logger);
-            var stopMoving = new StopMoving(wowProcess, addonReader.PlayerReader, logger);
+            var stopMoving = new StopMoving(wowProcess, addonReader.PlayerReader);
 
-            var castingHandler = new CastingHandler(wowProcess, addonReader.PlayerReader, stopMoving, logger, classConfig, playerDirection, NpcNameFinder);
+            var castingHandler = new CastingHandler(wowProcess, addonReader.PlayerReader, logger, classConfig, playerDirection, NpcNameFinder);
 
             var stuckDetector = new StuckDetector(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger);
             var followRouteAction = new FollowRouteAction(addonReader.PlayerReader, wowProcess, playerDirection, pathPoints, stopMoving, NpcNameFinder, blacklist, logger, stuckDetector, classConfig);
@@ -47,12 +47,12 @@ namespace Libs
 
             availableActions.Clear();
 
-            if (classConfig.CorpseRunOnly)
+            if (classConfig.Mode==Mode.CorpseRun)
             {
                 availableActions.Add(new WaitAction(logger));
                 availableActions.Add(new CorpseRunAction(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, stopMoving, logger, stuckDetector));
             }
-            else if (classConfig.GatherOnly)
+            else if (classConfig.Mode == Mode.AttendedGather)
             {
                 availableActions.Add(followRouteAction);
                 availableActions.Add(new CorpseRunAction(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, stopMoving, logger, stuckDetector));
@@ -60,10 +60,19 @@ namespace Libs
             else
             {
                 availableActions.Add(new ItemsBrokenAction(addonReader.PlayerReader, logger));
-                availableActions.Add(followRouteAction);
-                availableActions.Add(walkToCorpseAction);
-                availableActions.Add(new TargetDeadAction(wowProcess, addonReader.PlayerReader, NpcNameFinder, logger));
-                availableActions.Add(new ApproachTargetAction(wowProcess, addonReader.PlayerReader, stopMoving, NpcNameFinder, logger, stuckDetector, classConfig));
+
+                if (classConfig.Mode == Mode.AttendedGrind)
+                {
+                    classConfig.Loot = false;
+                    availableActions.Add(new WaitAction(logger));
+                }
+                else
+                {
+                    availableActions.Add(followRouteAction);
+                    availableActions.Add(walkToCorpseAction);
+                }
+                availableActions.Add(new TargetDeadAction(wowProcess, logger));
+                availableActions.Add(new ApproachTargetAction(wowProcess, addonReader.PlayerReader, stopMoving, logger, stuckDetector, classConfig));
 
                 if (classConfig.WrongZone.ZoneId > 0)
                 {

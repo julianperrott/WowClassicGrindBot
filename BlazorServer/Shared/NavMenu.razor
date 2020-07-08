@@ -1,4 +1,6 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@inject Libs.IBotController botController
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">MasterOfPuppets</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -32,7 +34,16 @@
             </li>
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="Gather">
-                    <span class="oi oi-basket" aria-hidden="true"></span> Gather
+                    <span class="oi oi-basket" aria-hidden="true"></span>
+                    @if (this.botController.ClassConfig?.Mode == Libs.Mode.AttendedGather)
+                    {
+                        <span>Gather</span>
+                    }
+                    else
+                    {
+                        <s>Gather</s>
+                    }
+
                 </NavLink>
             </li>
             <li class="nav-item px-3">

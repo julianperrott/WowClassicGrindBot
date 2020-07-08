@@ -11,6 +11,15 @@ namespace Libs
         public WowPoint ExitZoneLocation { get; set; } = new WowPoint(0, 0);
     }
 
+    public enum Mode
+    {
+        Grind = 0,
+        CorpseRun = 1,
+        AttendedGather = 2,
+        AttendedGrind = 3
+    }
+
+
     public class ClassConfiguration
     {
         public string ClassName { get; set; } = string.Empty;
@@ -21,8 +30,7 @@ namespace Libs
         public bool PathThereAndBack { get; set; } = true;
         public bool PathReduceSteps { get; set; } = false;
 
-        public bool CorpseRunOnly { get; set; } = false;
-        public bool GatherOnly { get; set; } = false;
+        public Mode Mode { get; set; } = Mode.Grind;
 
         public BadZone WrongZone { get; set; } = new BadZone();
 

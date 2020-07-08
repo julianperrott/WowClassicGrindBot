@@ -33,9 +33,9 @@ namespace Libs
             return bmpScreen;
         }
 
-        public Color GetColorAt(Point pos, Bitmap bmp)
+        public Color GetColorAt(Point point, Bitmap bmp)
         {
-            var color = bmp.GetPixel(pos.X, pos.Y);
+            var color = bmp.GetPixel(point.X, point.Y);
 
             return color;
         }

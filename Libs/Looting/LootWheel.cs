@@ -181,7 +181,7 @@ namespace Libs.Looting
         {
             for (int i = 0; i < delay; i += 100)
             {
-                if (!isInCombat & this.playerReader.PlayerBitValues.PlayerInCombat)
+                if (!isInCombat && this.playerReader.PlayerBitValues.PlayerInCombat)
                 {
                     logger.LogInformation("We have enterred combat, aborting loot");
                     return;

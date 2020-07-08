@@ -53,6 +53,7 @@
 
         public bool ArcaneIntellect { get => IsBitSet(11); }
         public bool IceBarrier { get => IsBitSet(12); }
+        public bool Ward { get => IsBitSet(13); }
 
         // Rogue
         public bool SliceAndDice { get => IsBitSet(10); }

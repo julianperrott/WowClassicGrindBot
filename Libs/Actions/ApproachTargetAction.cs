@@ -11,7 +11,6 @@ namespace Libs.Actions
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
-        private readonly NpcNameFinder npcNameFinder;
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
         private ILogger logger;
@@ -23,8 +22,6 @@ namespace Libs.Actions
         private bool debug = true;
         private bool playerWasInCombat = false;
 
-        private Point mouseLocationOfAdd;
-
         private void Log(string text)
         {
             if (debug)
@@ -33,21 +30,17 @@ namespace Libs.Actions
             }
         }
 
-        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, NpcNameFinder npcNameFinder, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
-            this.npcNameFinder = npcNameFinder;
             this.logger = logger;
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
 
             AddPrecondition(GoapKey.incombatrange, false);
             AddPrecondition(GoapKey.targetisalive, true);
-
-            var rect = wowProcess.GetWindowRect();
-            mouseLocationOfAdd = new Point((int)(rect.right / 2f), (int)((rect.bottom / 20) * 13f));
         }
 
         public override float CostOfPerformingAction { get => 8f; }

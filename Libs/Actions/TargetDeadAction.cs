@@ -9,20 +9,13 @@ namespace Libs.Actions
     public class TargetDeadAction : GoapAction
     {
         private readonly WowProcess wowProcess;
-        private readonly PlayerReader playerReader;
-        private readonly LootWheel lootWheel;
         private bool debug = true;
-        private readonly NpcNameFinder npcFinder;
         private ILogger logger;
 
-        public TargetDeadAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcFinder, ILogger logger)
+        public TargetDeadAction(WowProcess wowProcess, ILogger logger)
         {
             this.wowProcess = wowProcess;
-            this.playerReader = playerReader;
-            this.npcFinder = npcFinder;
             this.logger = logger;
-
-            lootWheel = new LootWheel(wowProcess, playerReader, logger);
 
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, false);

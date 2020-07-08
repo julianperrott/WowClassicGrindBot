@@ -9,6 +9,8 @@
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
+  "Mode": "AttendedGrind",
+
   "Blacklist": ["hive","tortured"],
 
   "Blink":{
@@ -37,6 +39,14 @@
   },
   "Combat": {
     "Sequence": [
+
+//      {
+//        "Name": "Arcane Explosion",
+//        "Key": "0",
+//        "Requirement": "npcID:8257",
+//        "Cooldown": 0,
+//        "Log": false
+//      },
       {
         "Name": "Healing Potion",
         "Key": "F4",
@@ -47,27 +57,37 @@
       {
         "Name": "Ice Barrier",
         "Key": "L",
-        "Requirements": [ "not Ice Barrier","Health%<100"],
+        "Requirements": [ "not Ice Barrier","not npcID:8257"], //"Health%<100",
         "Cooldown": 30,
-        "MinMana": 40,
+        "MinMana": 400,
         "Log": false
       },
       {
-        "Name": "Fire Blast",
-        "Key": "1",
-        "Requirements": ["Health%<50"],
-        "MinMana": 340,
-        "Cooldown": 8
+        "Name": "Fire Ward",
+        "Key": "=",
+        "Requirements": [ "not Ward"],
+        "Cooldown": 30,
+        "MinMana": 400,
+        "Log": false
       },
+//      {
+//        "Name": "Fire Blast",
+//        "Key": "1",
+//        "Requirements": ["Health%<50","not npcID:8257"],
+//        "MinMana": 333340,
+//        "Cooldown": 8
+//      },
       {
         "Name": "Frost Bolt",
         "HasCastBar": true,
         "Key": "5",
+        "Requirement": "not npcID:8257",
         "MinMana": 221,
         "Cooldown": 0
       }
     ]
   },
+
   "Parallel": {
     "Sequence": [
       {

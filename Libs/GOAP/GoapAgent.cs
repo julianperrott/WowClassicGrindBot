@@ -13,18 +13,20 @@ namespace Libs.GOAP
         public IEnumerable<GoapAction> AvailableActions { get; set; }
         private PlayerReader playerReader;
         private ILogger logger;
+        private ClassConfiguration classConfiguration;
 
         public GoapAction? CurrentAction { get; set; }
         public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
         private IBlacklist blacklist;
 
-        public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, IBlacklist blacklist, ILogger logger)
+        public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, IBlacklist blacklist, ILogger logger, ClassConfiguration classConfiguration)
         {
             this.playerReader = playerReader;
             this.AvailableActions = availableActions.OrderBy(a => a.CostOfPerformingAction);
             this.blacklist = blacklist;
             this.logger = logger;
             this.planner = new GoapPlanner(logger);
+            this.classConfiguration = classConfiguration;
         }
 
         public void UpdateWorldState()
@@ -53,7 +55,10 @@ namespace Libs.GOAP
             {
                 logger.LogInformation($"Target Health: {playerReader.TargetHealth}, max {playerReader.TargetMaxHealth}, dead {playerReader.PlayerBitValues.TargetIsDead}");
 
-                await new WowProcess(logger).KeyPress(ConsoleKey.Tab, 420);
+                if (this.classConfiguration.Mode != Mode.AttendedGrind)
+                {
+                    await new WowProcess(logger).KeyPress(ConsoleKey.Tab, 420);
+                }
             }
 
             return CurrentAction;

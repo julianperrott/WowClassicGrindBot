@@ -251,10 +251,6 @@ namespace Libs
             Screenshot.CaptureScreen();
         }
 
-        public void OnActionEvent(object sender, ActionEventArgs e)
-        {
-        }
-
         public void Dispose()
         {
             if (screen != null)

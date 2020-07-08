@@ -50,7 +50,7 @@ namespace Libs.Actions
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
 
-            if (!this.classConfiguration.GatherOnly)
+            if (classConfiguration.Mode != Mode.AttendedGather)
             {
                 AddPrecondition(GoapKey.incombat, false);
             }
@@ -101,7 +101,7 @@ namespace Libs.Actions
         public override async Task PerformAction()
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
-            if (this.classConfiguration.GatherOnly && this.lastGatherClick.AddSeconds(3)<DateTime.Now && this.classConfiguration.GatherFindKeyConfig.Count>0)
+            if (this.classConfiguration.Mode == Mode.AttendedGather && this.lastGatherClick.AddSeconds(3)<DateTime.Now && this.classConfiguration.GatherFindKeyConfig.Count>0)
             {
                 lastGatherKey++;
                 if (lastGatherKey>= this.classConfiguration.GatherFindKeyConfig.Count)
@@ -122,7 +122,7 @@ namespace Libs.Actions
             await Task.Delay(200);
             wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 1");
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat && !this.classConfiguration.GatherOnly) { return; }
+            if (this.playerReader.PlayerBitValues.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
 
             if ((DateTime.Now - LastActive).TotalSeconds > 10)
             {
@@ -133,7 +133,7 @@ namespace Libs.Actions
 
             await RandomJump();
 
-            if (!this.classConfiguration.GatherOnly)
+            if (this.classConfiguration.Mode != Mode.AttendedGather)
             {
                 // press tab
                 if (!this.playerReader.PlayerBitValues.PlayerInCombat && (DateTime.Now - lastTab).TotalMilliseconds > 1100)
@@ -154,7 +154,7 @@ namespace Libs.Actions
             var distance = WowPoint.DistanceTo(location, points.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, points.Peek());
 
-            if (this.classConfiguration.GatherOnly)
+            if (this.classConfiguration.Mode == Mode.AttendedGather)
             {
                 await AdjustHeading(heading);
             }
@@ -210,7 +210,7 @@ namespace Libs.Actions
             // should mount
             if (shouldMount && !this.playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
             {
-                if (!this.classConfiguration.GatherOnly)
+                if (this.classConfiguration.Mode != Mode.AttendedGather)
                 {
                     shouldMount = false;
                     if (await LookForTarget()) { return; }
@@ -225,7 +225,7 @@ namespace Libs.Actions
                         await Task.Delay(500);
                         await wowProcess.Mount(this.playerReader);
                     }
-                    if (this.playerReader.PlayerLevel >= 30 & this.playerReader.PlayerClass == PlayerClassEnum.Druid)
+                    if (this.playerReader.PlayerLevel >= 30 && this.playerReader.PlayerClass == PlayerClassEnum.Druid)
                     {
                         this.classConfiguration.ShapeshiftForm
                           .Where(s => s.ShapeShiftFormEnum == ShapeshiftForm.Druid_Travel)
@@ -250,7 +250,7 @@ namespace Libs.Actions
 
             var wanderAngle = 0.3;
 
-            if (!this.classConfiguration.GatherOnly)
+            if (this.classConfiguration.Mode != Mode.AttendedGather)
             {
                 wanderAngle = 0.05;
             }

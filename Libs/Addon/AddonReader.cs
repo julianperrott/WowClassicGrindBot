@@ -42,7 +42,7 @@ namespace Libs
 
             this.BagReader = new BagReader(squareReader, 20, items, ReadAHPrices());
             this.equipmentReader = new EquipmentReader(squareReader, 30);
-            this.PlayerReader = new PlayerReader(squareReader, logger, creatures);
+            this.PlayerReader = new PlayerReader(squareReader, creatures);
             this.LevelTracker = new LevelTracker(PlayerReader);
         }
 
@@ -133,7 +133,6 @@ namespace Libs
             catch (Exception ex)
             {
                 logger.LogInformation(ex.Message);
-                GC.Collect();
             }
         }
 

@@ -8,13 +8,11 @@ namespace Libs
     public partial class PlayerReader
     {
         private readonly ISquareReader reader;
-        private readonly ILogger logger;
         private readonly Dictionary<int, Creature> creatureDictionary = new Dictionary<int, Creature>();
 
-        public PlayerReader(ISquareReader reader, ILogger logger, List<Creature> creatures)
+        public PlayerReader(ISquareReader reader, List<Creature> creatures)
         {
             this.reader = reader;
-            this.logger = logger;
             creatures.ForEach(i => creatureDictionary.Add(i.Entry, i));
         }
 

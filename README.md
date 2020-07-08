@@ -315,6 +315,33 @@ e.g.
 | Warlock | "Curse of Weakness" |
 | Warrior Debuff | "Rend" |
  
+
+# Modes
+
+The default mode for the bot is to grind, but there are other modes. The mode is set in the root of the class file.
+
+e.g. Rogue.json
+
+    {
+      ...
+
+      "PathFilename": "Herb_EPL.json",
+      "SpiritPathFilename": "Herb_EPL.json",
+
+      "Mode": "AttendedGather", // <---------
+      "GatherFindKeys":  [1,2],
+    }
+
+The available modes are:
+
+| Mode | Description |
+| --- | --- |
+| "Grind" | This is the default mode where the bot will pull mobs and follow a route |
+| "CorpseRun" | This mode only has 2 actions. The "Wait" action waits while you are alive. The "CorpseRun" will run back to your corpse when you die. This can be useful if you are farming an instance and die, the bot will run you back some or all of the way to the instance entrance. |
+| "AttendedGather" | When this mode is active and the Gather tab in the UI is selected, it will run the path and scan the minimap for the yellow nodes which indicate a herb or mining node. When it finds a node it will stop and alert you by playing a youtube video, you will then have to manually pick the herb/mine and then start the bot again. |
+| "AttendedGrind" | This is useful if you want to control the path the bot takes, but want it to pull and kill any targets you select. |
+
+
 # User Interface
 
 ## Other devices

@@ -133,6 +133,7 @@ namespace Libs
                     {  "Frost Armor", ()=> playerReader.Buffs.FrostArmor },
                     {  "Arcane Intellect", ()=> playerReader.Buffs.ArcaneIntellect },
                     {  "Ice Barrier", ()=>playerReader.Buffs.IceBarrier },
+                    {  "Ward", ()=>playerReader.Buffs.Ward },
                     {  "Slice And Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
                     {  "Demon Skin", ()=> playerReader.Buffs.DemonSkin },

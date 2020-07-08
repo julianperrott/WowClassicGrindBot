@@ -19,9 +19,9 @@
         }
 
         // Converts a cell's hexidecimal color to a 6 point decimal
-        public double GetFixedPointAtCell(int index)
+        public double GetFixedPointAtCell(int indexl)
         {
-            return (double)this.GetLongAtCell(index) / 100000;
+            return (double)this.GetLongAtCell(indexl) / 100000;
         }
 
         public string GetStringAtCell(int index)
