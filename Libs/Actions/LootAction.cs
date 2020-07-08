@@ -47,7 +47,16 @@ namespace Libs.Actions
 
         public override float CostOfPerformingAction { get => 4f; }
 
-        public async Task<bool> AmIBeingTargetted()
+
+        private enum TargetResult
+        { 
+            InCombat,
+            NoTarget,
+            TargetNotTargetingMe,
+        }
+
+
+        private async Task<TargetResult> AmIBeingTargetted()
         {
             // check for targets attacking me
             await wowProcess.KeyPress(ConsoleKey.Tab, 100);
@@ -59,11 +68,12 @@ namespace Libs.Actions
                 if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
                 {
                     await this.TapInteractKey("LootAction");
-                    return true;
+                    return TargetResult.InCombat;
                 }
                 await wowProcess.KeyPress(ConsoleKey.F3, 200);
+                return TargetResult.TargetNotTargetingMe;
             }
-            return false;
+            return TargetResult.NoTarget;
         }
 
         private bool outOfCombat = false;
@@ -102,7 +112,8 @@ namespace Libs.Actions
             await wowProcess.KeyPress(ConsoleKey.F9, 100); // stand
             await stopMoving.Stop();
 
-            if (await AmIBeingTargetted()) { return; }
+            var targetResult = await AmIBeingTargetted();
+            if (targetResult== TargetResult.InCombat) { return; }
 
             var healthAtStartOfLooting = playerReader.HealthPercent;
 
@@ -112,7 +123,7 @@ namespace Libs.Actions
             var lootAttempt = 0;
             while (lootAttempt < 10)
             {
-                if (lootAttempt == 0)
+                if (lootAttempt == 0 && targetResult == TargetResult.NoTarget)
                 {
                     await this.TapTargetLastTargetKey("lootAttempt 0");
                     await this.TapInteractKey("lootAttempt 0");
