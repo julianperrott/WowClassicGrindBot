@@ -35,9 +35,11 @@ steps:
 - task: SonarQubePrepare@4
   inputs:
     SonarQube: 'SonarQube'
-    scannerMode: 'MSBuild'
-    projectKey: 'WowClassicGrindBot'
-    projectName: 'WowClassicGrindBot'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'WowClassicGrindBot'
+    cliProjectName: 'WowClassicGrindBot'
+    cliSources: '.'
 
 - task: SonarQubeAnalyze@4
 
