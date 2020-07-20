@@ -130,10 +130,12 @@ namespace Libs
                     {  "Shield", ()=> playerReader.Buffs.Shield },
                     {  "Mark of the Wild", ()=> playerReader.Buffs.MarkOfTheWild },
                     {  "Thorns", ()=> playerReader.Buffs.Thorns },
+                    {  "TigersFury", ()=> playerReader.Buffs.TigersFury },
                     {  "Frost Armor", ()=> playerReader.Buffs.FrostArmor },
                     {  "Arcane Intellect", ()=> playerReader.Buffs.ArcaneIntellect },
                     {  "Ice Barrier", ()=>playerReader.Buffs.IceBarrier },
                     {  "Ward", ()=>playerReader.Buffs.Ward },
+                    {  "Fire Power", ()=>playerReader.Buffs.FirePower },
                     {  "Slice And Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
                     {  "Demon Skin", ()=> playerReader.Buffs.DemonSkin },
@@ -141,6 +143,7 @@ namespace Libs
 
                     {  "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
                     {  "Faerie Fire", ()=> playerReader.Debuffs.FaerieFire },
+                    {  "Rip", ()=> playerReader.Debuffs.Rip },
                     {  "Rend", ()=> playerReader.Debuffs.Rend },
 
                     {  "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },

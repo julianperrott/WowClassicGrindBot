@@ -13,9 +13,12 @@
 @if (!recording)
 {
     <button class="btn btn-primary" @onclick="Record">Record New</button>
+}
+@if (!editing)
+{
     <button class="btn btn-primary" @onclick="Edit">Edit</button>
 }
-@if (recording)
+@if (recording || editing)
 {
     <button class="btn btn-primary" @onclick="Save">Save</button>
     <button class="btn btn-primary" @onclick="Clear">Clear</button>
@@ -43,6 +46,9 @@
                     <g fill="black">
                         @this.PathPoints
                     </g>
+                    <g fill="red">
+                        @this.EditPoints
+                    </g>
                 </g>
             </svg>
         </div>
@@ -64,7 +70,7 @@
         {
             foreach (var point in @botController.RouteInfo.PathPoints)
             {
-                <span class="badge badge-info" @onclick="() => EditPoint(point)">
+                <span class="badge @DisplayBadge(point)" @onclick="() => EditPoint(point)">
                     @point.X.ToString("0.00"),@point.Y.ToString("0.00")&nbsp;
                 </span>
             }
@@ -77,6 +83,7 @@
 @code {
     private MarkupString PathLines = new MarkupString();
     private MarkupString PathPoints = new MarkupString();
+    private MarkupString EditPoints = new MarkupString();
 
     string X = "";
     string Y = "";
@@ -84,6 +91,16 @@
     string Message = "";
 
     WowPoint editPoint = new WowPoint(0, 0);
+
+    public string DisplayBadge(WowPoint point)
+    {
+        if (this.editPoint == point)
+        {
+            return "badge-danger";
+        }
+
+        return "badge-info";
+    }
 
     protected override void OnInitialized()
     {
@@ -113,7 +130,8 @@
             if (botController.RouteInfo.PathPoints.Count > 0)
             {
                 this.PathLines = new MarkupString(botController.RouteInfo.RenderPathLines(botController.RouteInfo.PathPoints));
-                this.PathPoints = new MarkupString(botController.RouteInfo.RenderPathPoints(botController.RouteInfo.PathPoints));
+                this.PathPoints = new MarkupString(botController.RouteInfo.RenderPathPoints(botController.RouteInfo.PathPoints.Where(p => p != this.editPoint).ToList()));
+                this.EditPoints = new MarkupString(botController.RouteInfo.RenderPathPoints(new List<WowPoint> { this.editPoint }));
             }
         }
     }
@@ -152,10 +170,12 @@
     }
 
     private bool recording = false;
+    private bool editing = false;
 
     private void Record()
     {
         recording = true;
+        editing = false;
         if (botController.RouteInfo != null)
         {
             botController.RouteInfo.PathPoints.Clear();
@@ -165,8 +185,10 @@
 
     private void Edit()
     {
-        recording = true;
-        Message = "Recording...";
+        recording = false;
+        Message = "Editing...";
+        UpdateRoute();
+        editing = true;
     }
 
     private void Clear()
@@ -194,6 +216,15 @@
         this.editPoint = point;
         this.X = point.X.ToString("0.00");
         this.Y = point.Y.ToString("0.00");
+
+        UpdateRoute();
+
+        try
+        {
+            AddonDataChanged();
+            StateHasChanged();
+        }
+        catch { }
     }
 
     private void Update()

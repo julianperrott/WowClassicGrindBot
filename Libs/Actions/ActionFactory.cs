@@ -47,7 +47,7 @@ namespace Libs
 
             availableActions.Clear();
 
-            if (classConfig.Mode==Mode.CorpseRun)
+            if (classConfig.Mode == Mode.CorpseRun)
             {
                 availableActions.Add(new WaitAction(logger));
                 availableActions.Add(new CorpseRunAction(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, stopMoving, logger, stuckDetector));
@@ -63,7 +63,6 @@ namespace Libs
 
                 if (classConfig.Mode == Mode.AttendedGrind)
                 {
-                    classConfig.Loot = false;
                     availableActions.Add(new WaitAction(logger));
                 }
                 else
@@ -84,12 +83,12 @@ namespace Libs
                     availableActions.Add(new ParallelAction(wowProcess, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler, logger));
                 }
 
+                var lootAction = new LootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
+                lootAction.AddPreconditions();
+                availableActions.Add(lootAction);
+
                 if (classConfig.Loot)
                 {
-                    var lootAction = new LootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
-                    lootAction.AddPreconditions();
-                    availableActions.Add(lootAction);
-
                     lootAction = new PostKillLootAction(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
                     lootAction.AddPreconditions();
                     availableActions.Add(lootAction);

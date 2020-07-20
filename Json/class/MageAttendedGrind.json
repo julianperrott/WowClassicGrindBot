@@ -1,0 +1,137 @@
+{
+  "ClassName": "Mage",
+  "Loot": true,
+  "NPCMaxLevels_Below": 7,
+  "NPCMaxLevels_Above": 2,
+
+  "PathFilename": "60_Silithus_scorpid.2.json",
+  "SpiritPathFilename": "60_Silithus_scorpid_SpiritHealer.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": false,
+
+  "Mode": "AttendedGrind",
+
+  "Blacklist": ["hive","tortured"],
+
+  "Blink":{
+      "Name": "Blink",
+      "Key": "T"
+    },
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Frost Bolt",
+        "HasCastBar": true,
+        "Key": "5",
+        "MinMana": 90,
+        "Cooldown": 0
+      },
+      {
+        "Name": "Arcane Missiles",
+        "HasCastBar": true,
+        "Key": "-",
+        "MinMana": 235,
+        "Cooldown": 60,
+        "DelaybeforeCast": 1000
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Healing Potion",
+        "Key": "F4",
+        "Requirement": "Health%<10",
+        "Cooldown": 60,
+        "Log": false
+      },
+      {
+        "Name": "Ice Barrier",
+        "Key": "L",
+        "Requirements": [ "not Ice Barrier","not npcID:8257"],
+        "Cooldown": 30,
+        "MinMana": 400,
+        "Log": false
+      },
+      {
+        "Name": "Fire Ward",
+        "Key": "=",
+        "Requirements": [ "not Ward"],
+        "Cooldown": 30,
+        "MinMana": 400,
+        "Log": false
+      },
+      {
+        "Name": "Frost Bolt",
+        "HasCastBar": true,
+        "Key": "5",
+        "Requirement": "not npcID:8257",
+        "MinMana": 221,
+        "Cooldown": 0
+      }
+    ]
+  },
+
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Low Health",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "6",
+        "Requirement": "Health%<90",
+        "Cooldown": 10,
+        "Log": false
+      },
+      {
+        "Name": "Drink",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "7",
+        "Requirement": "Mana%<90",
+        "Cooldown": 10,
+        "Log": false
+      }
+    ]
+    },
+
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Frost Armor",
+        "StopBeforeCast": false,
+        "Key": "3",
+        "MinMana": 110,
+        "Requirement": "not Frost Armor",
+        "Log": false
+      },
+      {
+        "Name": "Arcane Intellect",
+        "StopBeforeCast": false,
+        "Key": "4",
+        "MinMana": 60,
+        "Requirement": "not Arcane Intellect",
+        "Log": false
+      },
+      {
+        "Name": "Conjure Water",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "9",
+        "Requirement": "not BagItem:8079:4",
+        "Cooldown": 30,
+        "Log": false
+      },
+      {
+        "Name": "Conjure Food",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirement": "not BagItem:8076:4",
+        "Cooldown": 30,
+        "Log": false
+      }
+    ]
+  }
+}

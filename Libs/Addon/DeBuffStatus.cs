@@ -27,8 +27,8 @@
 
         // Druid
         public bool Roar { get => IsBitSet(0); }
-
         public bool FaerieFire { get => IsBitSet(1); }
+        public bool Rip { get => IsBitSet(2); }
 
         // Paladin
 

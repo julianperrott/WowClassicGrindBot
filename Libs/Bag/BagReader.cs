@@ -116,7 +116,7 @@ namespace Libs
                 .ToList();
         }
 
-        public bool BagsFull => BagItems.Count >= 76;
+        public bool BagsFull => BagItems.Count >= 80;
 
         public int ItemCount(int itemId) => BagItems.Where(bi => bi.ItemId == itemId).Sum(bi => bi.Count);
     }

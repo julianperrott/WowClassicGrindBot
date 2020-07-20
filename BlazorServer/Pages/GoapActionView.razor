@@ -24,22 +24,28 @@
     <tr>
         <td colspan="2">
             <table style="margin-left: 60px;">
-                @foreach (var key in this.action.Keys)
+
+                @if (this.action.Keys != null)
                 {
-                    <tr>
-                        <td>
-                            <b style="color:@DisplayColour(key.CanRun())">@key.Name [@key.ConsoleKey]</b>
-                        </td>
-                        <td>
-                            @foreach (var requirement in key.RequirementObjects)
-                            {
-                                @if (requirement.VisibleIfHasRequirement || !requirement.HasRequirement())
+                    var lastKeyClicked = Libs.KeyConfiguration.LastKeyClicked();
+
+                    foreach (var key in this.action.Keys)
+                    {
+                        <tr class="@ActionClass(lastKeyClicked==key.ConsoleKey)">
+                            <td>
+                                <b style="color:@DisplayColour(key.CanRun())">@key.Name [@key.ConsoleKey]</b>
+                            </td>
+                            <td>
+                                @foreach (var requirement in key.RequirementObjects)
                                 {
-                                    <span class="badge @Badge(requirement.HasRequirement())">@requirement.LogMessage()</span>
+                                    @if (requirement.VisibleIfHasRequirement || !requirement.HasRequirement())
+                                    {
+                                        <span class="badge @Badge(requirement.HasRequirement())">@requirement.LogMessage()</span>
+                                    }
                                 }
-                            }
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    }
                 }
             </table>
         </td>

@@ -117,13 +117,16 @@ namespace Libs.Actions
 
             var healthAtStartOfLooting = playerReader.HealthPercent;
 
-            var outOfCombat = !playerReader.PlayerBitValues.PlayerInCombat;
-
             bool searchForMobs = playerReader.PlayerBitValues.PlayerInCombat;
             var lootAttempt = 0;
             while (lootAttempt < 10)
             {
-                if (lootAttempt == 0 && targetResult == TargetResult.NoTarget)
+                if (!this.classConfiguration.Loot && !playerReader.PlayerBitValues.PlayerInCombat)
+                {
+                    return;
+                }
+
+                if (lootAttempt == 0 && targetResult == TargetResult.NoTarget && this.classConfiguration.Loot)
                 {
                     await this.TapTargetLastTargetKey("lootAttempt 0");
                     await this.TapInteractKey("lootAttempt 0");
@@ -154,7 +157,7 @@ namespace Libs.Actions
 
                 }
 
-                if (!foundSomething)// && !searchForMobs)
+                if (!foundSomething && lootAttempt>0)// && !searchForMobs)
                 {
                     lootAttempt = 10;
                 }

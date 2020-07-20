@@ -2,8 +2,8 @@
   "ClassName": "Mage",
   "Loot": false,
 
-  "PathFilename": "1_Human.json",
-  "SpiritPathFilename": "1_Human_SpirtHealer.json",
+  "PathFilename": "1_Gnome.json",
+  "SpiritPathFilename": "1_Gnome.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
@@ -13,7 +13,7 @@
         "Name": "Fireball",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": 50,
+        "Key": "2",
         "ManaRequirement": 30
       }
     ]
@@ -24,12 +24,12 @@
         "Name": "Fireball",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": 50,
+        "Key": "2",
         "ManaRequirement": 30
       },
       {
         "Name": "Interact",
-        "Key": 72,
+        "Key": "H",
         "Cooldown": 3
       }
     ]
@@ -39,23 +39,24 @@
       {
         "Name": "Frost Armor",
         "StopBeforeCast": false,
-        "Key": 51,
+        "Key": "3",
         "ManaRequirement": 60,
-        "Requirement": "Frost Armor"
+        "Requirement": "not Frost Armor"
       },
       {
         "Name": "Eat",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": 54,
-        "Requirement": "Health>50%"
+        "Key": "=",
+        "Requirement": "Health%<50",
+        "Cooldown": 60
       },
       {
         "Name": "Drink",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": 56,
-        "Requirement": "Mana>50%",
+        "Key": "-",
+        "Requirement": "Mana%<50",
         "Cooldown": 60
       }
     ]

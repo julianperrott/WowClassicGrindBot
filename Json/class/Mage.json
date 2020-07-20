@@ -1,37 +1,36 @@
 {
   "ClassName": "Mage",
-  "Loot": true,
-  "NPCMaxLevels_Below": 7,
-  "NPCMaxLevels_Above": 2,
+  "Loot": false,
 
-  "PathFilename": "60_Silithus_scorpid.2.json",
-  "SpiritPathFilename": "60_Silithus_scorpid_SpiritHealer.json",
-  "PathThereAndBack": true,
+  "PathFilename": "19_LochModan.json",
+  "SpiritPathFilename": "19_LochModan_SpiritHealer.json",
+  "PathThereAndBack": false,
   "PathReduceSteps": false,
 
-  "Blacklist": ["hive","tortured"],
-
-  "Blink":{
-      "Name": "Blink",
-      "Key": "T"
-    },
+  "Blacklist": ["Loch Crocolisk","Stonesplinter","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
   "Pull": {
     "Sequence": [
       {
-        "Name": "Frost Bolt",
-        "HasCastBar": true,
-        "Key": "5",
-        "MinMana": 90,
-        "Cooldown": 0
+        "Name": "Interact",
+        "Key": "H",
+        "Cooldown": 12,
+        "DelayAfterCast": 0
       },
       {
-        "Name": "Arcane Missiles",
+        "Name": "Frostbolt",
         "HasCastBar": true,
-        "Key": "-",
-        "MinMana": 235,
-        "Cooldown": 60,
-        "DelaybeforeCast": 1000
+        "StopBeforeCast": false,
+        "Key": "5",
+        "ManaRequirement": 35
+      },
+      {
+        "Name": "Fireball",
+        "DelayBeforeCast": 1500,
+        "HasCastBar": true,
+        "StopBeforeCast": false,
+        "Key": "2",
+        "ManaRequirement": 65
       }
     ]
   },
@@ -45,26 +44,25 @@
         "Log": false
       },
       {
-        "Name": "Ice Barrier",
-        "Key": "L",
-        "Requirements": [ "not Ice Barrier","Health%<100"],
-        "Cooldown": 30,
-        "MinMana": 40,
-        "Log": false
+        "Name": "Interact",
+        "Key": "H",
+        "Cooldown": 12,
+        "DelayAfterCast": 0
       },
       {
-        "Name": "Fire Blast",
-        "Key": "1",
-        "Requirements": ["Health%<50"],
-        "MinMana": 340,
-        "Cooldown": 8
+        "Name": "Fireblast",
+        "HasCastBar": false,
+        "StopBeforeCast": false,
+        "Key": "0",
+        "ManaRequirement": 75,
+        "Cooldown": 6
       },
       {
-        "Name": "Frost Bolt",
+        "Name": "Fireball",
         "HasCastBar": true,
-        "Key": "5",
-        "MinMana": 221,
-        "Cooldown": 0
+        "StopBeforeCast": true,
+        "Key": "2",
+        "ManaRequirement": 65
       }
     ]
   },
@@ -97,9 +95,8 @@
         "Name": "Frost Armor",
         "StopBeforeCast": false,
         "Key": "3",
-        "MinMana": 110,
-        "Requirement": "not Frost Armor",
-        "Log": false
+        "ManaRequirement": 60,
+        "Requirement": "not Frost Armor"
       },
       {
         "Name": "Arcane Intellect",
@@ -114,7 +111,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "9",
-        "Requirement": "not BagItem:8079:4",
+        "Requirement": "not BagItem:2288:4",
         "Cooldown": 30,
         "Log": false
       },
@@ -123,21 +120,23 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirement": "not BagItem:8076:4",
+        "Requirement": "not BagItem:1113:4",
         "Cooldown": 30,
         "Log": false
       },
       {
         "Name": "Well Fed",
         "StopBeforeCast": true,
-        "Key": "F5",
+        "Key": "-",
         "Requirement": "not Well Fed",
-        "Cooldown": 99120,
+        "Cooldown": 120,
         "Log": false
       },
       {
-        "Name": "Del1",
-        "Key": "F5",
+        "Name": "Fire Power",
+        "StopBeforeCast": false,
+        "Key": "1",
+        "Requirement": "not Fire Power",
         "Cooldown": 120,
         "Log": false
       }

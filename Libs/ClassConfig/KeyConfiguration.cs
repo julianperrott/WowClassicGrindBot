@@ -41,6 +41,18 @@ namespace Libs
 
         protected static Dictionary<ConsoleKey, DateTime> LastClicked { get; } = new Dictionary<ConsoleKey, DateTime>();
 
+        public static ConsoleKey LastKeyClicked()
+        {
+            if (!LastClicked.Any()) { return ConsoleKey.NoName; }
+
+            var last = LastClicked.OrderByDescending(s => s.Value).First();
+            if ( (DateTime.Now- last.Value).TotalSeconds>2)
+            {
+                return ConsoleKey.NoName;
+            }
+            return last.Key;
+        }
+
         private PlayerReader? playerReader;
 
         private ILogger? logger;

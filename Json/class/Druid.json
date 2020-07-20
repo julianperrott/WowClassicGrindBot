@@ -3,10 +3,10 @@
   "Loot": true,
   "NPCMaxLevels_Below": 8,
 
-  "PathFilename": "52_Ongoro.json",
-  "SpiritPathFilename": "52_Ongoro_SpiritHealer.json",
+  "PathFilename": "56_Felwood.json",
+  "SpiritPathFilename": "56_Felwood_SpirirtHealer.json",
   "PathThereAndBack": true,
-  "PathReduceSteps": true,
+  "PathReduceSteps": false,
 
   "Blacklist": ["BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
@@ -17,9 +17,9 @@
       "ShapeShiftForm": "None"
     },
     {
-      "Name": "Druid_Bear",
+      "Name": "Druid_Cat",
       "Key": "2",
-      "ShapeShiftForm": "Druid_Bear"
+      "ShapeShiftForm": "Druid_Cat"
     },
     {
       "Name": "Druid_Travel",
@@ -60,7 +60,7 @@
         "WaitForWithinMelleRange": true
       },
       {
-        "Name": "Bear form",
+        "Name": "Cat form",
         "Key": "2",
         "ShapeShiftForm": "None",
         "WaitForWithinMelleRange": true
@@ -80,19 +80,21 @@
       {
         "Name": "Heal",
         "Key": "6",
-        "Requirement": "Health%<50",
+        "Requirement": "Health%<40",
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,
         "ShapeShiftForm": "None"
       },
       {
-        "Name": "Enrage",
+        "Name": "Tigers Fury",
+        "Requirement": "not TigersFury",
         "Key": "3",
-        "Cooldown": 15,
+        "MinEnergy": 30,
+        "Cooldown": 6,
         "DelayAfterCast": "200",
         "Log": false,
-        "ShapeShiftForm": "Druid_Bear"
+        "ShapeShiftForm": "Druid_Cat"
       },
       {
         "Name": "Faerie Fire",
@@ -100,35 +102,27 @@
         "Key": "7",
         "MinRage": 10,
         "Cooldown": 10,
-        "ShapeShiftForm": "Druid_Bear",
+        "ShapeShiftForm": "Druid_Cat",
         "Log": false,
         "ResetOnNewTarget": true
       },
       {
-        "Name": "Roar",
-        "Requirement": "not Demoralizing Roar",
-        "Key": "5",
-        "MinRage": 6,
+        "Name": "Rip",
+        "Requirement": "not Rip",
+        "Key": "2",
+        "MinEnergy": 30,
+        "MinComboPoints": 3,
         "Cooldown": 10,
         "Log": false,
-        "ShapeShiftForm": "Druid_Bear"
+        "ShapeShiftForm": "Druid_Cat"
       },
       {
-        "Name": "Bash",
-        "Key": "4",
-        "MinRage": 10,
-        "Cooldown": 31,
+        "Name": "Rake",
+        "Key": "1",
+        "MinRage": 35,
+        "Cooldown": 1,
         "Log": false,
-        "ShapeShiftForm": "Druid_Bear"
-      },
-      {
-        "Name": "Maul",
-        "Key": "2",
-        "MinRage": 10,
-        "Cooldown": 2,
-        "DelayAfterCast": "500",
-        "Log": false,
-        "ShapeShiftForm": "Druid_Bear"
+        "ShapeShiftForm": "Druid_Cat"
       }
     ]
   },
@@ -147,7 +141,7 @@
       {
         "Name": "Heal",
         "Key": "6",
-        "Requirement": "Health%<60",
+        "Requirement": "Health%<80",
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,

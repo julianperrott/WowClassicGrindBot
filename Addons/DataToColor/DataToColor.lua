@@ -229,7 +229,13 @@ end
 function DataToColor:GetPlayerFacing()
     local p = Minimap
     local m = ({p:GetChildren()})[9]
-    return GetPlayerFacing()
+    local facing = GetPlayerFacing()
+
+    if facing ~= nil then
+        return facing
+    else
+        return 0
+    end
 end
 
 -- This function runs when addon is initialized/player logs in
@@ -513,10 +519,14 @@ end
 -- Use Astrolabe function to get current player position
 function DataToColor:GetCurrentPlayerPosition()
     local map = C_Map.GetBestMapForUnit("player")
-    local position = C_Map.GetPlayerMapPosition(map, "player")
-    -- Resets map to correct zone ... removed in 8.0.1, needs to be tested to see if zone auto update
-    -- SetMapToCurrentZone()
-    return position:GetXY()
+    if map ~= nil then
+        local position = C_Map.GetPlayerMapPosition(map, "player")
+        -- Resets map to correct zone ... removed in 8.0.1, needs to be tested to see if zone auto update
+        -- SetMapToCurrentZone()
+        return position:GetXY()
+    else
+        return;
+    end
 end
 
 -- Base 2 converter for up to 24 boolean values to a single pixel square.
@@ -565,7 +575,8 @@ function DataToColor:getBuffsForClass()
         self:MakeIndexBase2(self:GetBuffs("Spirit"), 14);
     elseif CC == "DRUID" then
         class=class+self:MakeIndexBase2(self:GetBuffs("Mark of the Wild"), 10) +
-        self:MakeIndexBase2(self:GetBuffs("Thorns"), 11);
+        self:MakeIndexBase2(self:GetBuffs("Thorns"), 11)+
+        self:MakeIndexBase2(self:GetBuffs("Fury"), 12);
     elseif CC == "PALADIN" then
         class=class+self:MakeIndexBase2(self:GetBuffs("Aura"), 10) +
         self:MakeIndexBase2(self:GetBuffs("Blessing"), 11)+       
@@ -573,7 +584,8 @@ function DataToColor:getBuffsForClass()
     elseif CC == "MAGE" then
         class=class+self:MakeIndexBase2(self:GetBuffs("Armor"), 10)+
         self:MakeIndexBase2(self:GetBuffs("Arcane Intellect"), 11)+       
-        self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 12); 
+        self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 12)+
+        self:MakeIndexBase2(self:GetBuffs("Ward"), 13);
     elseif CC == "ROGUE" then        
         class=class+self:MakeIndexBase2(self:GetBuffs("Slice and Dice"), 10);
     elseif CC == "WARRIOR" then        
@@ -582,6 +594,22 @@ function DataToColor:getBuffsForClass()
         class=class+self:MakeIndexBase2(self:GetBuffs("Demon Skin"), 10);               
     end
     return class;
+end
+
+function DataToColor:delete(items)
+    for b=0,4 do for s=1,GetContainerNumSlots(b) 
+        do local n=GetContainerItemLink(b,s) 
+            if n then
+                for i = 1, table.getn(items), 1 do
+                    if strfind(n,items[i]) then
+                        DataToColor:log("Delete: " .. items[i]);
+                        PickupContainerItem(b,s);
+                        DeleteCursorItem();
+                    end
+                end
+            end
+        end
+    end
 end
 
 
@@ -594,7 +622,8 @@ function DataToColor:getDebuffsForTarget()
         class=class+self:MakeIndexBase2(self:GetDebuffs("Pain"), 0);
     elseif CC == "DRUID" then
         class=class+self:MakeIndexBase2(self:GetDebuffs("Roar"), 0) +
-        self:MakeIndexBase2(self:GetDebuffs("Faerie Fire"), 1);
+        self:MakeIndexBase2(self:GetDebuffs("Faerie Fire"), 1) +
+        self:MakeIndexBase2(self:GetDebuffs("Rip"), 2);
     elseif CC == "PALADIN" then
         class=0;
     elseif CC == "MAGE" then
@@ -909,7 +938,12 @@ function DataToColor:GetZoneName(partition)
 end
 
 function DataToColor:GetBestMap()
-    return C_Map.GetBestMapForUnit("player");
+    local map= C_Map.GetBestMapForUnit("player");
+    if map ~= nil then
+        return map
+    else
+        return 0
+    end
 end 
 
 -- Game time on a 24 hour clock

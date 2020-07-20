@@ -39,8 +39,8 @@
 
         // Druid
         public bool MarkOfTheWild { get => IsBitSet(10); }
-
         public bool Thorns { get => IsBitSet(11); }
+        public bool TigersFury { get => IsBitSet(12); }
 
         // Paladin
         public bool Aura { get => IsBitSet(10); }
@@ -54,6 +54,7 @@
         public bool ArcaneIntellect { get => IsBitSet(11); }
         public bool IceBarrier { get => IsBitSet(12); }
         public bool Ward { get => IsBitSet(13); }
+        public bool FirePower { get => IsBitSet(14); }
 
         // Rogue
         public bool SliceAndDice { get => IsBitSet(10); }
