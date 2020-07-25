@@ -208,18 +208,18 @@ Commands have the following parameters, only a subset will be used by each comma
 | Log | Write to the log when this key is evaluated | true |
 | DelayAfterCast | The delay in milliseconds after the spell is cast | 1500 |
 | DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
-| Cost | For Adhoc actions the priority | 18 |
+| Cost | For Adhoc goals the priority | 18 |
 | InCombat | Can it be cast in combat | false |
 
-### Pull Action
+### Pull Goal
 
 This is the sequence of commands that are used when pulling a mob.
 
-### Combat Action
+### Combat Goal
 
-The sequence of commands that are used when in combat and trying to kill a mob. The combat action does the first available command on the list. The action then runs again re-evaluating the list before choosing the first available command again, and so on until the mob is dead.
+The sequence of commands that are used when in combat and trying to kill a mob. The combat goal does the first available command on the list. The goal then runs again re-evaluating the list before choosing the first available command again, and so on until the mob is dead.
 
-### Adhoc Actions
+### Adhoc Goals
 
 These commands are done when not in combat and are not on cooldown.
 
@@ -337,7 +337,7 @@ The available modes are:
 | Mode | Description |
 | --- | --- |
 | "Grind" | This is the default mode where the bot will pull mobs and follow a route |
-| "CorpseRun" | This mode only has 2 actions. The "Wait" action waits while you are alive. The "CorpseRun" will run back to your corpse when you die. This can be useful if you are farming an instance and die, the bot will run you back some or all of the way to the instance entrance. |
+| "CorpseRun" | This mode only has 2 goals. The "Wait" goal waits while you are alive. The "CorpseRun" will run back to your corpse when you die. This can be useful if you are farming an instance and die, the bot will run you back some or all of the way to the instance entrance. |
 | "AttendedGather" | When this mode is active and the Gather tab in the UI is selected, it will run the path and scan the minimap for the yellow nodes which indicate a herb or mining node. When it finds a node it will stop and alert you by playing a youtube video, you will then have to manually pick the herb/mine and then start the bot again. |
 | "AttendedGrind" | This is useful if you want to control the path the bot takes, but want it to pull and kill any targets you select. |
 
@@ -386,14 +386,14 @@ This component shows:
 
 ![Route](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Route.png)
 
-### Actions
+### Goals
 
 This component contains a button to allow the bot to be enabled and disabled.
 
-This displays the finite state machine. The state is action which can run and has the highest priority. What determines if the action can run are its pre-conditions such as having a target or being in combat. The executing action is allowed to complete before the next action is determined.
+This displays the finite state machine. The state is goal which can run and has the highest priority. What determines if the goal can run are its pre-conditions such as having a target or being in combat. The executing goal is allowed to complete before the next goal is determined.
 
-Some actions (combat,pull target) contain a list of spells which can be cast. The combat task evaluates its spells in order with the first available being cast. The action then gives up control so that a higher priority task can take over (e.g. Healing potion).
+Some goals (combat,pull target) contain a list of spells which can be cast. The combat task evaluates its spells in order with the first available being cast. The goal then gives up control so that a higher priority task can take over (e.g. Healing potion).
 
 The visualisation of the pre-conditions and spell requirements makes it easier to understand what the bot is doing and determine if the class file needs to be tweaked.
 
-![Actions](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/actionsComponent.png)
+![Goals](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/actionsComponent.png)
