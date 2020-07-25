@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Libs
 {
-    public class KeyConfiguration
+    public class KeyAction
     {
         public string Name { get; set; } = string.Empty;
         public bool HasCastBar { get; set; }

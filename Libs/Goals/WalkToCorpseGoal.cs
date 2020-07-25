@@ -8,9 +8,9 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public partial class WalkToCorpseAction : GoapAction
+    public partial class WalkToCorpseGoal : GoapGoal
     {
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
@@ -35,7 +35,7 @@ namespace Libs.Actions
             return points.Count == 0 ? null : points.Peek();
         }
 
-        public WalkToCorpseAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
+        public WalkToCorpseGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;

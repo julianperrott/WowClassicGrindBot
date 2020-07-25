@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
     public class CorpsePath
     {

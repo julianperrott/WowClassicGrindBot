@@ -2,15 +2,15 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class WaitAction : GoapAction
+    public class WaitGoal : GoapGoal
     {
         private readonly ILogger logger;
 
         public override float CostOfPerformingAction => 21;
 
-        public WaitAction(ILogger logger)
+        public WaitGoal(ILogger logger)
         {
             this.logger = logger;
         }

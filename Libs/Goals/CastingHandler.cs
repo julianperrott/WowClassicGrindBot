@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
     public class CastingHandler
     {
@@ -25,7 +25,7 @@ namespace Libs.Actions
             this.npcNameFinder = npcNameFinder;
         }
 
-        protected bool CanRun(KeyConfiguration item)
+        protected bool CanRun(KeyAction item)
         {
             if (!string.IsNullOrEmpty(item.CastIfAddsVisible))
             {
@@ -59,7 +59,7 @@ namespace Libs.Actions
             }
         }
 
-        public async Task<bool> CastIfReady(KeyConfiguration item, GoapAction source, int sleepBeforeCast = 0)
+        public async Task<bool> CastIfReady(KeyAction item, GoapGoal source, int sleepBeforeCast = 0)
         {
             if (!CanRun(item))
             {
@@ -123,7 +123,7 @@ namespace Libs.Actions
                         break;
                     }
 
-                    if (source.GetType() == typeof(PullTargetAction) &&
+                    if (source.GetType() == typeof(PullTargetGoal) &&
                         this.playerReader.PlayerBitValues.PlayerInCombat &&
                         !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer
                         && this.playerReader.IsCasting
@@ -145,7 +145,7 @@ namespace Libs.Actions
             return true;
         }
 
-        protected async Task<bool> SwitchToCorrectShapeShiftForm(KeyConfiguration item)
+        protected async Task<bool> SwitchToCorrectShapeShiftForm(KeyAction item)
         {
             if (this.playerReader.PlayerClass != PlayerClassEnum.Druid || string.IsNullOrEmpty(item.ShapeShiftForm)
                 || this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum)

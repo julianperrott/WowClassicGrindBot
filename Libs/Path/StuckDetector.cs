@@ -1,4 +1,4 @@
-﻿using Libs.Actions;
+﻿using Libs.Goals;
 using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System;

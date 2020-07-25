@@ -1,4 +1,4 @@
-﻿using Libs.Actions;
+﻿using Libs.Goals;
 using Libs.Cursor;
 using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;

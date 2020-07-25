@@ -4,9 +4,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class PullTargetAction : GoapAction
+    public class PullTargetGoal : GoapGoal
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
@@ -19,7 +19,7 @@ namespace Libs.Actions
         private DateTime PullStartTime = DateTime.Now;
         private DateTime LastActive = DateTime.Now;
 
-        public PullTargetAction(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public PullTargetGoal(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;

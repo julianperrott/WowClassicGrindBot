@@ -1,4 +1,4 @@
-﻿using Libs.Actions;
+﻿using Libs.Goals;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
@@ -17,9 +17,9 @@ namespace Libs.GOAP
             this.logger = logger;
         }
 
-        public static void RefreshState(IEnumerable<GoapAction> availableActions)
+        public static void RefreshState(IEnumerable<GoapGoal> availableActions)
         {
-            foreach (GoapAction a in availableActions)
+            foreach (GoapGoal a in availableActions)
             {
                 a.SetState(InState(a.Preconditions, new HashSet<KeyValuePair<GoapKey, object>>()));
             }
@@ -31,12 +31,12 @@ namespace Libs.GOAP
 		 * that must be performed, in order, to fulfill the goal.
 		 */
 
-        public Queue<GoapAction> Plan(IEnumerable<GoapAction> availableActions,
+        public Queue<GoapGoal> Plan(IEnumerable<GoapGoal> availableActions,
                                       HashSet<KeyValuePair<GoapKey, object>> worldState,
                                       HashSet<KeyValuePair<GoapKey, GoapPreCondition>> goal)
         {
             // reset the actions so we can start fresh with them
-            foreach (GoapAction a in availableActions)
+            foreach (GoapGoal a in availableActions)
             {
                 a.ResetBeforePlanning();
             }
@@ -44,8 +44,8 @@ namespace Libs.GOAP
             Node start = new Node(null, 0, worldState, null);
 
             // check what actions can run using their checkProceduralPrecondition
-            HashSet<GoapAction> usableActions = new HashSet<GoapAction>();
-            foreach (GoapAction a in availableActions)
+            HashSet<GoapGoal> usableActions = new HashSet<GoapGoal>();
+            foreach (GoapGoal a in availableActions)
             {
                 if (a.CheckIfActionCanRun())
                 {
@@ -70,7 +70,7 @@ namespace Libs.GOAP
                 // oh no, we didn't get a plan
                 logger.LogInformation("NO PLAN");
 
-                return new Queue<GoapAction>();
+                return new Queue<GoapGoal>();
             }
 
             // get the cheapest leaf
@@ -89,7 +89,7 @@ namespace Libs.GOAP
             }
 
             // get its node and work back through the parents
-            List<GoapAction> result = new List<GoapAction>();
+            List<GoapGoal> result = new List<GoapGoal>();
             Node? n = cheapest;
             while (n != null)
             {
@@ -101,8 +101,8 @@ namespace Libs.GOAP
             }
             // we now have this action list in correct order
 
-            Queue<GoapAction> queue = new Queue<GoapAction>();
-            foreach (GoapAction a in result)
+            Queue<GoapGoal> queue = new Queue<GoapGoal>();
+            foreach (GoapGoal a in result)
             {
                 queue.Enqueue(a);
             }
@@ -118,12 +118,12 @@ namespace Libs.GOAP
 		 * sequence.
 		 */
 
-        private bool BuildGraph(Node parent, List<Node> leaves, HashSet<GoapAction> usableActions, HashSet<KeyValuePair<GoapKey, GoapPreCondition>> goal)
+        private bool BuildGraph(Node parent, List<Node> leaves, HashSet<GoapGoal> usableActions, HashSet<KeyValuePair<GoapKey, GoapPreCondition>> goal)
         {
             bool foundOne = false;
 
             // go through each action available at this node and see if we can use it here
-            foreach (GoapAction action in usableActions)
+            foreach (GoapGoal action in usableActions)
             {
                 // if the parent state has the conditions for this action's preconditions, we can use it here
                 var result = InState(action.Preconditions, parent.state);
@@ -146,7 +146,7 @@ namespace Libs.GOAP
                     else
                     {
                         // not at a solution yet, so test all the remaining actions and branch out the tree
-                        HashSet<GoapAction> subset = ActionSubset(usableActions, action);
+                        HashSet<GoapGoal> subset = ActionSubset(usableActions, action);
                         bool found = BuildGraph(node, leaves, subset, goal);
                         if (found)
                         {
@@ -163,10 +163,10 @@ namespace Libs.GOAP
 		 * Create a subset of the actions excluding the removeMe one. Creates a new set.
 		 */
 
-        private static HashSet<GoapAction> ActionSubset(HashSet<GoapAction> actions, GoapAction removeMe)
+        private static HashSet<GoapGoal> ActionSubset(HashSet<GoapGoal> actions, GoapGoal removeMe)
         {
-            HashSet<GoapAction> subset = new HashSet<GoapAction>();
-            foreach (GoapAction a in actions)
+            HashSet<GoapGoal> subset = new HashSet<GoapGoal>();
+            foreach (GoapGoal a in actions)
             {
                 if (!a.Equals(removeMe))
                     subset.Add(a);
@@ -254,9 +254,9 @@ namespace Libs.GOAP
             public Node? parent;
             public float runningCost;
             public HashSet<KeyValuePair<GoapKey, object>> state;
-            public GoapAction? action;
+            public GoapGoal? action;
 
-            public Node(Node? parent, float runningCost, HashSet<KeyValuePair<GoapKey, object>> state, GoapAction? action)
+            public Node(Node? parent, float runningCost, HashSet<KeyValuePair<GoapKey, object>> state, GoapGoal? action)
             {
                 this.parent = parent;
                 this.runningCost = runningCost;

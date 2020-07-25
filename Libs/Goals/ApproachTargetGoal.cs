@@ -4,9 +4,9 @@ using System;
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class ApproachTargetAction : GoapAction
+    public class ApproachTargetGoal : GoapGoal
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
@@ -30,7 +30,7 @@ namespace Libs.Actions
             }
         }
 
-        public ApproachTargetAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public ApproachTargetGoal(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;

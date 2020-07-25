@@ -1,4 +1,4 @@
-﻿using Libs.Actions;
+﻿using Libs.Goals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,19 +10,19 @@ namespace Libs.GOAP
     public sealed class GoapAgent
     {
         private GoapPlanner planner;
-        public IEnumerable<GoapAction> AvailableActions { get; set; }
+        public IEnumerable<GoapGoal> AvailableGoals { get; set; }
         private PlayerReader playerReader;
         private ILogger logger;
         private ClassConfiguration classConfiguration;
 
-        public GoapAction? CurrentAction { get; set; }
+        public GoapGoal? CurrentGoal { get; set; }
         public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
         private IBlacklist blacklist;
 
-        public GoapAgent(PlayerReader playerReader, HashSet<GoapAction> availableActions, IBlacklist blacklist, ILogger logger, ClassConfiguration classConfiguration)
+        public GoapAgent(PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist, ILogger logger, ClassConfiguration classConfiguration)
         {
             this.playerReader = playerReader;
-            this.AvailableActions = availableActions.OrderBy(a => a.CostOfPerformingAction);
+            this.AvailableGoals = availableGoals.OrderBy(a => a.CostOfPerformingAction);
             this.blacklist = blacklist;
             this.logger = logger;
             this.planner = new GoapPlanner(logger);
@@ -34,7 +34,7 @@ namespace Libs.GOAP
             WorldState = GetWorldState(playerReader);
         }
 
-        public async Task<GoapAction?> GetAction()
+        public async Task<GoapGoal?> GetAction()
         {
             if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
@@ -46,10 +46,10 @@ namespace Libs.GOAP
             var goal = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
 
             //Plan
-            Queue<GoapAction> plan = planner.Plan(AvailableActions, WorldState, goal);
+            Queue<GoapGoal> plan = planner.Plan(AvailableGoals, WorldState, goal);
             if (plan != null && plan.Count > 0)
             {
-                CurrentAction = plan.Peek();
+                CurrentGoal = plan.Peek();
             }
             else
             {
@@ -61,7 +61,7 @@ namespace Libs.GOAP
                 }
             }
 
-            return CurrentAction;
+            return CurrentGoal;
         }
 
         private HashSet<KeyValuePair<GoapKey, object>> GetWorldState(PlayerReader playerReader)

@@ -2,16 +2,16 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class ItemsBrokenAction : GoapAction
+    public class ItemsBrokenGoal : GoapGoal
     {
         private readonly ILogger logger;
         private readonly PlayerReader playerReader;
 
         public override float CostOfPerformingAction => 0;
 
-        public ItemsBrokenAction(PlayerReader playerReader, ILogger logger)
+        public ItemsBrokenGoal(PlayerReader playerReader, ILogger logger)
         {
             this.playerReader = playerReader;
             this.logger = logger;

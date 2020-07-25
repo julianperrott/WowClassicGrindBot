@@ -1,42 +1,49 @@
 ﻿using Libs.GOAP;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class ParallelAction : GoapAction
+    public class AdhocGoal : GoapGoal
     {
         private readonly WowProcess wowProcess;
         private readonly StopMoving stopMoving;
         private readonly PlayerReader playerReader;
         private readonly ILogger logger;
+        private readonly KeyAction key;
         private readonly CastingHandler castingHandler;
 
-        public ParallelAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, List<KeyConfiguration> keysConfig, CastingHandler castingHandler, ILogger logger)
+        public AdhocGoal(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, KeyAction key, CastingHandler castingHandler, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.stopMoving = stopMoving;
             this.playerReader = playerReader;
+            this.key = key;
             this.logger = logger;
             this.castingHandler = castingHandler;
 
-            AddPrecondition(GoapKey.incombat, false);
+            if (key.InCombat == "false")
+            {
+                AddPrecondition(GoapKey.incombat, false);
+            }
+            else if (key.InCombat == "true")
+            {
+                AddPrecondition(GoapKey.incombat, true);
+            }
 
-            keysConfig.ForEach(key => this.Keys.Add(key));
+            this.Keys.Add(key);
         }
 
         public override bool CheckIfActionCanRun()
         {
-            return this.Keys.Any(key => key.CanRun());
+            return this.key.CanRun();
         }
 
-        public override float CostOfPerformingAction { get => 3f; }
+        public override float CostOfPerformingAction { get => key.Cost; }
 
         public override async Task PerformAction()
         {
-            if (this.Keys.Any(k => k.StopBeforeCast))
+            if (key.StopBeforeCast)
             {
                 await this.stopMoving.Stop();
 
@@ -47,12 +54,9 @@ namespace Libs.Actions
                 await Task.Delay(1000);
             }
 
-            this.Keys.ForEach(async key =>
-            {
-                var pressed = await this.castingHandler.CastIfReady(key, this);
-                key.ResetCooldown();
-                key.SetClicked();
-            });
+            await this.castingHandler.CastIfReady(key, this);
+
+            this.key.ResetCooldown();
 
             bool wasDrinkingOrEating = this.playerReader.Buffs.Drinking || this.playerReader.Buffs.Eating;
 
@@ -62,24 +66,24 @@ namespace Libs.Actions
             {
                 await Task.Delay(1000);
                 seconds++;
-                this.logger.LogInformation($"Waiting for {Name}");
+                this.logger.LogInformation($"Waiting for {key.Name}");
 
-                if (this.playerReader.Buffs.Drinking && this.playerReader.Buffs.Eating)
-                {
-                    if (this.playerReader.ManaPercentage > 98 && this.playerReader.HealthPercent > 98) { break; }
-                }
-                else if (this.playerReader.Buffs.Drinking)
+                if (this.playerReader.Buffs.Drinking)
                 {
                     if (this.playerReader.ManaPercentage > 98) { break; }
                 }
-                else if (this.playerReader.Buffs.Eating)
+                else if (this.playerReader.Buffs.Eating && !this.key.Requirement.Contains("Well Fed"))
                 {
                     if (this.playerReader.HealthPercent > 98) { break; }
                 }
-
-                if (seconds > 25)
+                else if (!this.key.CanRun())
                 {
-                    this.logger.LogInformation($"Waited long enough for {Name}");
+                    break;
+                }
+
+                if (seconds > 20)
+                {
+                    this.logger.LogInformation($"Waited long enough for {key.Name}");
                     break;
                 }
             }
@@ -88,8 +92,10 @@ namespace Libs.Actions
             {
                 await wowProcess.TapStopKey(); // stand up
             }
+
+            this.key.SetClicked();
         }
 
-        //public override string Name => this.Keys.Count == 0 ? base.Name : string.Join(", ", this.Keys.Select(k => k.Name));
+        public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
     }
 }

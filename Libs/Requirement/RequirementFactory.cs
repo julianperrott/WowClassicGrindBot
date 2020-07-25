@@ -19,7 +19,7 @@ namespace Libs
             this.logger = logger;
         }
 
-        public void InitialiseRequirements(KeyConfiguration item)
+        public void InitialiseRequirements(KeyAction item)
         {
             item.RequirementObjects.Clear();
             foreach (string requirement in item.Requirements)
@@ -46,7 +46,7 @@ namespace Libs
             }
         }
 
-        private void CreateMinComboPointsRequirement(List<Requirement> RequirementObjects, KeyConfiguration item)
+        private void CreateMinComboPointsRequirement(List<Requirement> RequirementObjects, KeyAction item)
         {
             if (item.MinComboPoints > 0)
             {

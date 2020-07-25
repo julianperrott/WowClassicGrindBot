@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class PostKillLootAction : LootAction
+    public class PostKillLootGoal : LootGoal
     {
-        public PostKillLootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
+        public PostKillLootGoal(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
             : base(wowProcess, playerReader, bagReader, stopMoving, logger, classConfiguration)
         {
         }

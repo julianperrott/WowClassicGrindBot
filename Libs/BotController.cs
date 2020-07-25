@@ -1,4 +1,4 @@
-﻿using Libs.Actions;
+﻿using Libs.Goals;
 using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -20,11 +20,11 @@ namespace Libs
         public Thread? screenshotThread { get; set; }
         public Thread addonThread { get; set; }
         public Thread? botThread { get; set; }
-        public ActionFactory ActionFactory { get; set; }
+        public GoalFactory ActionFactory { get; set; }
         public GoapAgent? GoapAgent { get; set; }
         public RouteInfo? RouteInfo { get; set; }
 
-        private ActionThread? actionThread;
+        private GoalThread? actionThread;
 
         public WowScreen WowScreen { get; set; }
 
@@ -61,7 +61,7 @@ namespace Libs
             }
 
             npcNameFinder = new NpcNameFinder(wowProcess, AddonReader.PlayerReader, logger);
-            ActionFactory = new ActionFactory(AddonReader, logger, wowProcess, npcNameFinder);
+            ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
 
             screenshotThread = new Thread(ScreenshotRefreshThread);
             screenshotThread.Start();
@@ -117,7 +117,7 @@ namespace Libs
 
                 while (this.actionThread.Active)
                 {
-                    await actionThread.GoapPerformAction();
+                    await actionThread.GoapPerformGoal();
                 }
             }
 
@@ -133,13 +133,13 @@ namespace Libs
 
             //this.currentAction = followRouteAction;
 
-            var actionFactory = new ActionFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder);
-            var availableActions = actionFactory.CreateActions(ClassConfig, blacklist);
+            var actionFactory = new GoalFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder);
+            var availableActions = actionFactory.CreateGoals(ClassConfig, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
             this.GoapAgent = new GoapAgent(AddonReader.PlayerReader, availableActions, blacklist, logger, ClassConfig);
 
-            this.actionThread = new ActionThread(this.AddonReader.PlayerReader, this.wowProcess, GoapAgent, logger);
+            this.actionThread = new GoalThread(this.AddonReader.PlayerReader, this.wowProcess, GoapAgent, logger);
 
             // hookup events between actions
             availableActions.ToList().ForEach(a =>

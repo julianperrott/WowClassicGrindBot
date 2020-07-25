@@ -4,15 +4,15 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class TargetDeadAction : GoapAction
+    public class TargetDeadGoal : GoapGoal
     {
         private readonly WowProcess wowProcess;
         private bool debug = true;
         private ILogger logger;
 
-        public TargetDeadAction(WowProcess wowProcess, ILogger logger)
+        public TargetDeadGoal(WowProcess wowProcess, ILogger logger)
         {
             this.wowProcess = wowProcess;
             this.logger = logger;

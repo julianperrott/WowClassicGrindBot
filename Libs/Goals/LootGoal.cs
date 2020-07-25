@@ -5,9 +5,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class LootAction : GoapAction
+    public class LootGoal : GoapGoal
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
@@ -19,7 +19,7 @@ namespace Libs.Actions
 
         private bool debug = true;
 
-        public LootAction(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
+        public LootGoal(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;

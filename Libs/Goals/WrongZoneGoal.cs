@@ -3,9 +3,9 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class WrongZoneAction : GoapAction
+    public class WrongZoneGoal : GoapGoal
     {
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
@@ -18,7 +18,7 @@ namespace Libs.Actions
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private ILogger logger;
 
-        public WrongZoneAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public WrongZoneGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;

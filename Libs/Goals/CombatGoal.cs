@@ -4,9 +4,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class CombatAction : GoapAction
+    public class CombatGoal : GoapGoal
     {
         private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
@@ -17,7 +17,7 @@ namespace Libs.Actions
         private readonly ClassConfiguration classConfiguration;
         private DateTime lastPulled = DateTime.Now;
 
-        public CombatAction(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, CastingHandler castingHandler)
+        public CombatGoal(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, CastingHandler castingHandler)
         {
             this.wowProcess = wowProcess;
             this.playerReader = playerReader;

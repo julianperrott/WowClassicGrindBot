@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Libs
 {
-    public class KeyConfigurations
+    public class KeyActions
     {
-        public List<KeyConfiguration> Sequence { get; } = new List<KeyConfiguration>();
+        public List<KeyAction> Sequence { get; } = new List<KeyAction>();
 
         public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
         {

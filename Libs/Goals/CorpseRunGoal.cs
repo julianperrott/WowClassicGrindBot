@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public partial class CorpseRunAction : GoapAction
+    public partial class CorpseRunGoal : GoapGoal
     {
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
@@ -23,7 +23,7 @@ namespace Libs.Actions
         private ILogger logger;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
-        public CorpseRunAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
+        public CorpseRunGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;

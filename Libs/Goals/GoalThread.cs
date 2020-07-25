@@ -4,19 +4,19 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class ActionThread
+    public class GoalThread
     {
         private readonly ILogger logger;
         private readonly PlayerReader playerReader;
         private readonly WowProcess wowProcess;
         private readonly GoapAgent goapAgent;
 
-        private GoapAction? currentAction;
+        private GoapGoal? currentGoal;
         public bool Active { get; set; }
 
-        public ActionThread(PlayerReader playerReader, WowProcess wowProcess, GoapAgent goapAgent, ILogger logger)
+        public GoalThread(PlayerReader playerReader, WowProcess wowProcess, GoapAgent goapAgent, ILogger logger)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
@@ -36,29 +36,29 @@ namespace Libs.Actions
             }
         }
 
-        public async Task GoapPerformAction()
+        public async Task GoapPerformGoal()
         {
             if (this.goapAgent != null)
             {
-                var newAction = await this.goapAgent.GetAction();
+                var newGoal = await this.goapAgent.GetAction();
 
-                if (newAction != null)
+                if (newGoal != null)
                 {
-                    if (newAction != this.currentAction)
+                    if (newGoal != this.currentGoal)
                     {
-                        this.currentAction?.DoReset();
-                        this.currentAction = newAction;
+                        this.currentGoal?.DoReset();
+                        this.currentGoal = newGoal;
                         logger.LogInformation("---------------------------------");
-                        logger.LogInformation($"New Plan= {newAction.GetType().Name}");
+                        logger.LogInformation($"New Plan= {newGoal.GetType().Name}");
                     }
 
                     try
                     {
-                        await newAction.PerformAction();
+                        await newGoal.PerformAction();
                     }
                     catch (Exception ex)
                     {
-                        logger.LogError(ex, $"PerformAction on {newAction.GetType().Name}");
+                        logger.LogError(ex, $"PerformAction on {newGoal.GetType().Name}");
                     }
                 }
                 else

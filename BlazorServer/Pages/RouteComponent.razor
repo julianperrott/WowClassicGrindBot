@@ -28,7 +28,7 @@
                     @{
                         var colour = addonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
 
-                        if (botController.GoapAgent != null && botController.GoapAgent.CurrentAction?.GetType() == typeof(Libs.Actions.FollowRouteAction))
+                        if (botController.GoapAgent != null && botController.GoapAgent.CurrentGoal?.GetType() == typeof(Libs.Goals.FollowRouteGoal))
                         {
                             colour = "blue";
                         }
@@ -120,10 +120,10 @@
 
             if (botController.GoapAgent != null)
             {
-                var walkToCorpseAction = botController.GoapAgent.AvailableActions.FirstOrDefault(a => a.GetType() == typeof(Libs.Actions.WalkToCorpseAction)) as Libs.Actions.WalkToCorpseAction;
-                if (walkToCorpseAction != null)
+                var walkToCorpseGoal = botController.GoapAgent.AvailableGoals.FirstOrDefault(a => a.GetType() == typeof(Libs.Goals.WalkToCorpseGoal)) as Libs.Goals.WalkToCorpseGoal;
+                if (walkToCorpseGoal != null)
                 {
-                    Deaths = walkToCorpseAction.Deaths;
+                    Deaths = walkToCorpseGoal.Deaths;
                 }
             }
         }

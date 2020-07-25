@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class NullAction : GoapAction
+    public class NullGoal : GoapGoal
     {
         public override float CostOfPerformingAction => 0;
 

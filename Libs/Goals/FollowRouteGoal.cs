@@ -6,9 +6,9 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
-    public class FollowRouteAction : GoapAction
+    public class FollowRouteGoal : GoapGoal
     {
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
@@ -37,7 +37,7 @@ namespace Libs.Actions
 
         private bool firstLoad = true;
 
-        public FollowRouteAction(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public FollowRouteGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;

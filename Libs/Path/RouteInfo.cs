@@ -1,4 +1,4 @@
-﻿using Libs.Actions;
+﻿using Libs.Goals;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,8 +10,8 @@ namespace Libs
     {
         public List<WowPoint> PathPoints { get; private set; }
         public List<WowPoint> SpiritPath { get; private set; }
-        private readonly FollowRouteAction followRouteAction;
-        private readonly WalkToCorpseAction walkToCorpseAction;
+        private readonly FollowRouteGoal followRouteAction;
+        private readonly WalkToCorpseGoal walkToCorpseAction;
 
         private double min;
         private double diff;
@@ -38,7 +38,6 @@ namespace Libs
             {
                 sb.AppendLine(point.X + "," + point.Y + "," + ToCanvasPointX(point.X) + "," + ToCanvasPointY(point.Y));
             }
-            File.WriteAllText(@"out.csv", sb.ToString());
         }
 
         public void CalculatePointToGrid()
@@ -59,7 +58,7 @@ namespace Libs
 
         private double pointToGrid;
 
-        public RouteInfo(List<WowPoint> pathPoints, List<WowPoint> spiritPath, FollowRouteAction followRouteAction, WalkToCorpseAction walkToCorpseAction)
+        public RouteInfo(List<WowPoint> pathPoints, List<WowPoint> spiritPath, FollowRouteGoal followRouteAction, WalkToCorpseGoal walkToCorpseAction)
         {
             this.PathPoints = pathPoints.ToList();
             this.SpiritPath = spiritPath.ToList();

@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
     public class StopMoving
     {

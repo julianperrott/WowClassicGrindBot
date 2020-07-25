@@ -23,7 +23,7 @@ namespace Libs
             {"=",ConsoleKey.OemPlus },
         };
 
-        public static bool ReadKey(ILogger logger, KeyConfiguration key)
+        public static bool ReadKey(ILogger logger, KeyAction key)
         {
             if (string.IsNullOrEmpty(key.Key))
             {

@@ -38,21 +38,21 @@ namespace Libs
         public int NPCMaxLevels_Below { get; set; } = 7;
         public List<string> Blacklist { get; } = new List<string>();
 
-        public KeyConfigurations Pull { get; set; } = new KeyConfigurations();
-        public KeyConfigurations Combat { get; set; } = new KeyConfigurations();
-        public KeyConfigurations Adhoc { get; set; } = new KeyConfigurations();
-        public KeyConfigurations Parallel { get; set; } = new KeyConfigurations();
+        public KeyActions Pull { get; set; } = new KeyActions();
+        public KeyActions Combat { get; set; } = new KeyActions();
+        public KeyActions Adhoc { get; set; } = new KeyActions();
+        public KeyActions Parallel { get; set; } = new KeyActions();
 
-        public List<KeyConfiguration> ShapeshiftForm { get; } = new List<KeyConfiguration>();
+        public List<KeyAction> ShapeshiftForm { get; } = new List<KeyAction>();
 
-        public KeyConfiguration Interact { get; set; } = new KeyConfiguration();
-        public KeyConfiguration Blink { get; set; } = new KeyConfiguration();
+        public KeyAction Interact { get; set; } = new KeyAction();
+        public KeyAction Blink { get; set; } = new KeyAction();
         public string InteractKey { get; set; } = "H";
 
-        public List<KeyConfiguration> GatherFindKeyConfig { get; } = new List<KeyConfiguration>();
+        public List<KeyAction> GatherFindKeyConfig { get; } = new List<KeyAction>();
         public List<string> GatherFindKeys { get; } = new List<string>();
 
-        public KeyConfiguration TargetLastTarget { get; set; } = new KeyConfiguration();
+        public KeyAction TargetLastTarget { get; set; } = new KeyAction();
         public string TargetLastTargetKey { get; set; } = "N";
 
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
@@ -74,7 +74,7 @@ namespace Libs
 
             GatherFindKeys.ForEach(key =>
             {
-                GatherFindKeyConfig.Add(new KeyConfiguration { Key = key });
+                GatherFindKeyConfig.Add(new KeyAction { Key = key });
                 GatherFindKeyConfig.Last().Initialise(playerReader, requirementFactory, logger);
             });
         }

@@ -56,12 +56,12 @@
             </tr>
         </table>
 
-        @if (ShowActiveAction)
+        @if (ShowActiveGoal)
         {
             <table class="table table-sm table-striped">
-                @if (botController.GoapAgent != null && botController.GoapAgent.CurrentAction != null)
+                @if (botController.GoapAgent != null && botController.GoapAgent.CurrentGoal != null)
                 {
-                    <GoapActionView action="botController.GoapAgent.CurrentAction" IsSelected="true" />
+                    <GoapGoalView goal="botController.GoapAgent.CurrentGoal" IsSelected="true" />
                 }
             </table>
         }
@@ -71,7 +71,7 @@
 @code {
 
     [Parameter]
-    public bool ShowActiveAction { get; set; } = true;
+    public bool ShowActiveGoal { get; set; } = true;
 
     PlayerReader playerReader => addonReader.PlayerReader;
     LevelTracker levelTracker => addonReader.LevelTracker;

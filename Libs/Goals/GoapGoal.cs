@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Libs.Actions
+namespace Libs.Goals
 {
     public class GoapPreCondition
     {
@@ -31,12 +31,12 @@ namespace Libs.Actions
         }
     }
 
-    public abstract class GoapAction
+    public abstract class GoapGoal
     {
         public HashSet<KeyValuePair<GoapKey, GoapPreCondition>> Preconditions { get; private set; } = new HashSet<KeyValuePair<GoapKey, GoapPreCondition>>();
         public HashSet<KeyValuePair<GoapKey, object>> Effects { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
 
-        public List<KeyConfiguration> Keys { get; private set; } = new List<KeyConfiguration>();
+        public List<KeyAction> Keys { get; private set; } = new List<KeyAction>();
 
         public bool InRangeOfTarget { get; set; }
 

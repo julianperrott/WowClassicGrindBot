@@ -4,7 +4,7 @@
 
 <div class="card" style="margin-top: 10px">
     <div class="card-header">
-        Actions
+        Goals
 
         <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot">
             @if (!botController.IsBotActive)
@@ -17,15 +17,15 @@
             }
         </button>
     </div>
-    @if (ShowActions)
+    @if (ShowGoals)
     {
         <div class="card-body">
             <table class="table table-sm table-striped">
                 @if (botController.GoapAgent != null)
                 {
-                    foreach (var action in botController.GoapAgent.AvailableActions)
+                    foreach (var goal in botController.GoapAgent.AvailableGoals)
                     {
-                        <GoapActionView action="action" IsSelected="(action == botController.GoapAgent.CurrentAction)" ShowKeys="true" />
+                        <GoapGoalView goal="goal" IsSelected="(goal == botController.GoapAgent.CurrentGoal)" ShowKeys="true" />
                     }
                 }
             </table>
@@ -36,7 +36,7 @@
 @code {
 
     [Parameter]
-    public bool ShowActions { get; set; } = true;
+    public bool ShowGoals { get; set; } = true;
 
     protected override void OnInitialized()
     {
