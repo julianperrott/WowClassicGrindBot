@@ -8,6 +8,7 @@
         Skin = 40,
         Mine = 50,
         Herb = 60,
-        Unknown = 50
+        Vendor = 70,
+        Unknown = 999
     }
 }
