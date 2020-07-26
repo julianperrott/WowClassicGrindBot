@@ -32,17 +32,3 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-- task: SonarQubePrepare@4
-  inputs:
-    SonarQube: 'SonarQube'
-    scannerMode: 'CLI'
-    configMode: 'manual'
-    cliProjectKey: 'WowClassicGrindBot'
-    cliProjectName: 'WowClassicGrindBot'
-    cliSources: '.'
-
-- task: SonarQubeAnalyze@4
-
-- task: SonarQubePublish@4
-  inputs:
-    pollingTimeoutSec: '300'
