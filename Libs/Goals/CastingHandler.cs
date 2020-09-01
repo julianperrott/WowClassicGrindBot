@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -123,6 +124,30 @@ namespace Libs.Goals
                         break;
                     }
 
+                    // wait after cast if the delay is different to the default value
+                    if (item.DelayAfterCast != new KeyAction().DelayAfterCast)
+                    {
+                        item.LogInformation($" ... delay after cast {item.DelayAfterCast}");
+
+                        if (item.DelayUntilCombat) // stop waiting if the mob is targetting me
+                        {
+                            var sw = new Stopwatch();
+                            sw.Start();
+                            while (sw.ElapsedMilliseconds < item.DelayAfterCast)
+                            {
+                                await Task.Delay(10);
+                                if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            await Task.Delay(item.DelayAfterCast);
+                        }
+                    }
+                    
                     if (source.GetType() == typeof(PullTargetGoal) &&
                         this.playerReader.PlayerBitValues.PlayerInCombat &&
                         !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer

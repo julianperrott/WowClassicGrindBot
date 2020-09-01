@@ -1,14 +1,14 @@
 {
   "ClassName": "Druid",
   "Loot": true,
-  "NPCMaxLevels_Below": 8,
+  "NPCMaxLevels_Below": 20,
 
-  "PathFilename": "56_Felwood.json",
-  "SpiritPathFilename": "56_Felwood_SpirirtHealer.json",
+  "PathFilename": "60_Silithus_scorpid.2.json",
+  "SpiritPathFilename": "60_Silithus_scorpid_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
-  "Blacklist": ["BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
+  "Blacklist": ["Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
   "ShapeshiftForm": [
     {
@@ -64,6 +64,15 @@
         "Key": "2",
         "ShapeShiftForm": "None",
         "WaitForWithinMelleRange": true
+      },
+      {
+        "Name": "Heal",
+        "Key": "6",
+        "Requirement": "Health%<40",
+        "Cooldown": 10,
+        "HasCastBar": false,
+        "Log": false,
+        "ShapeShiftForm": "None"
       }
     ]
   },
@@ -79,8 +88,8 @@
       },
       {
         "Name": "Heal",
-        "Key": "6",
-        "Requirement": "Health%<40",
+        "Key": "-",
+        "Requirement": "Health%<50",
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,
@@ -142,6 +151,7 @@
         "Name": "Heal",
         "Key": "6",
         "Requirement": "Health%<80",
+        "StopBeforeCast": true,
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,

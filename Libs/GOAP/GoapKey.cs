@@ -19,7 +19,8 @@
         abort = 140,
         shoulddrink = 150,
         classMount = 160,
-        isalive=170
+        isalive=170,
+        isswimming=180
     }
 
     public static class GoapKeyDescription
@@ -74,6 +75,9 @@
 
                  (GoapKey.classMount, true) => "Should mount",
                  (GoapKey.classMount, false) => "No need to mount",
+
+                 (GoapKey.isswimming, true) => "Swimming",
+                 (GoapKey.isswimming, false) => "Not Swimming",
 
                  (_, _) => "Unknown"
              };

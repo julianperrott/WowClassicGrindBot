@@ -44,6 +44,13 @@ namespace Libs.Goals
             bool pressed = false;
             foreach (var item in this.Keys)
             {
+                bool isFightold=(DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5;
+                if (item.Name == "Interact" && !isFightold) // don't interact at the start of the fight
+                {
+                    item.SetClicked();
+                    continue;
+                }
+
                 pressed = await this.castingHandler.CastIfReady(item, this);
                 if (pressed)
                 {

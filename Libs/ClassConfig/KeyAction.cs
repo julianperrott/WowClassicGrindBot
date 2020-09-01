@@ -31,6 +31,7 @@ namespace Libs
 
         public bool Log { get; set; } = true;
         public int DelayAfterCast { get; set; } = 1500;
+        public bool DelayUntilCombat { get; set; } = false;
         public int DelayBeforeCast { get; set; } = 0;
         public float Cost { get; set; } = 18;
         public string InCombat { get; set; } = "false";

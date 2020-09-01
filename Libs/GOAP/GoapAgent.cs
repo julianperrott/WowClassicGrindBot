@@ -75,6 +75,7 @@ namespace Libs.GOAP
                 new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, playerReader.WithInCombatRange),
                 new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
+                new KeyValuePair<GoapKey, object>(GoapKey.isswimming, playerReader.PlayerBitValues.IsSwimming),
             };
 
             actionState.ToList().ForEach(kv => state.Add(kv));

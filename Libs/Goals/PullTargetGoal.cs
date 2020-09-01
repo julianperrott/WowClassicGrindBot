@@ -34,6 +34,7 @@ namespace Libs.Goals
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.pulled, false);
             AddPrecondition(GoapKey.withinpullrange, true);
+            AddPrecondition(GoapKey.isswimming, false);
             AddEffect(GoapKey.pulled, true);
 
             this.classConfiguration.Pull.Sequence.Where(k => k != null).ToList().ForEach(key => this.Keys.Add(key));

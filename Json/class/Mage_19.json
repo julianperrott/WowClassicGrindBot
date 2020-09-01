@@ -1,21 +1,13 @@
 {
   "ClassName": "Mage",
-  "Loot": true,
+  "Loot": false,
 
-  "PathFilename": "26_Wetlands.json",
-  "SpiritPathFilename": "26_Wetlands_SpiritHealer.json",
+  "PathFilename": "19_LochModan.json",
+  "SpiritPathFilename": "19_LochModan_SpiritHealer.json",
   "PathThereAndBack": false,
   "PathReduceSteps": false,
 
-  "NPCMaxLevels_Below": 7,
-  "NPCMaxLevels_Above": 1,
-
   "Blacklist": ["Loch Crocolisk","Stonesplinter","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
-
-  "Blink":{
-    "Name": "Blink",
-    "Key": "T"
-  },
 
   "Pull": {
     "Sequence": [
@@ -26,16 +18,17 @@
         "DelayAfterCast": 0
       },
       {
-        "Name": "Fireball",
+        "Name": "Frostbolt",
         "HasCastBar": true,
-        "Key": "2",
-        "ManaRequirement": 65,
-        "DelayUntilCombat": true,
-        "DelayAfterCast": 2000
+        "StopBeforeCast": false,
+        "Key": "5",
+        "ManaRequirement": 35
       },
       {
         "Name": "Fireball",
+        "DelayBeforeCast": 1500,
         "HasCastBar": true,
+        "StopBeforeCast": false,
         "Key": "2",
         "ManaRequirement": 65
       }
@@ -62,11 +55,12 @@
         "StopBeforeCast": false,
         "Key": "0",
         "ManaRequirement": 75,
-        "Cooldown": 8
+        "Cooldown": 6
       },
       {
         "Name": "Fireball",
         "HasCastBar": true,
+        "StopBeforeCast": true,
         "Key": "2",
         "ManaRequirement": 65
       }
@@ -79,7 +73,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "6",
-        "Requirement": "Health%<80",
+        "Requirement": "Health%<90",
         "Cooldown": 10,
         "Log": false
       },
@@ -88,7 +82,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "7",
-        "Requirement": "Mana%<65",
+        "Requirement": "Mana%<90",
         "Cooldown": 10,
         "Log": false
       }
@@ -117,7 +111,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "9",
-        "Requirement": "not BagItem:3772:4",
+        "Requirement": "not BagItem:2288:4",
         "Cooldown": 30,
         "Log": false
       },
@@ -126,7 +120,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirement": "not BagItem:1114:4",
+        "Requirement": "not BagItem:1113:4",
         "Cooldown": 30,
         "Log": false
       },
@@ -139,9 +133,9 @@
         "Log": false
       },
       {
-        "Name": "Fire Power Potion",
-        "StopBeforeCast": true,
-        "Key": "=",
+        "Name": "Fire Power",
+        "StopBeforeCast": false,
+        "Key": "1",
         "Requirement": "not Fire Power",
         "Cooldown": 120,
         "Log": false

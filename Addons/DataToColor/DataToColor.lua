@@ -143,7 +143,7 @@ local function OnUIErrorMessage(self, event, messageType, message)
     end
 
     if not foundMessage then
-        DataToColor:log(message .. ":" .. errorName);
+        --DataToColor:log(message .. ":" .. errorName);
         UIErrorsFrame:AddMessage(message, 0, 0, 1) -- show as blue message (unknown message)
     end
   end
@@ -245,6 +245,8 @@ function DataToColor:OnInitialize()
     self:log("We're in")
 
     self:slashCommands();
+
+    LoggingChat(1);
 end
 
 function integerToColor(i)
@@ -585,7 +587,8 @@ function DataToColor:getBuffsForClass()
         class=class+self:MakeIndexBase2(self:GetBuffs("Armor"), 10)+
         self:MakeIndexBase2(self:GetBuffs("Arcane Intellect"), 11)+       
         self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 12)+
-        self:MakeIndexBase2(self:GetBuffs("Ward"), 13);
+        self:MakeIndexBase2(self:GetBuffs("Ward"), 13)+
+        self:MakeIndexBase2(self:GetBuffs("Fire Power"), 14);
     elseif CC == "ROGUE" then        
         class=class+self:MakeIndexBase2(self:GetBuffs("Slice and Dice"), 10);
     elseif CC == "WARRIOR" then        
