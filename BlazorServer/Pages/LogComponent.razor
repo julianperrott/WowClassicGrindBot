@@ -1,0 +1,42 @@
+﻿@using System.Linq;
+
+<style>
+    .log {
+        font-family: "Courier New", Courier, monospace;
+        font-size: small;
+        padding: 0 !important;
+    }
+</style>
+
+<table class="table table-borderless table-dark">
+    @foreach (var evt in LoggerSink.Log.AsEnumerable().Reverse())
+    {
+        <tr>
+            <td class="log">@evt.Timestamp.ToString("HH:mm:ss")</td>
+            <td class="log">@evt.RenderMessage()</td>
+        </tr>
+    }
+</table>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        LoggerSink.OnLogChanged -= this.LogChanged;
+        LoggerSink.OnLogChanged += this.LogChanged;
+    }
+
+    private async void LogChanged(object sender, EventArgs args)
+    {
+        await InvokeAsync(() =>
+        {
+            base.StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        LoggerSink.OnLogChanged -= this.LogChanged;
+    }
+
+}

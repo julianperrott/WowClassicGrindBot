@@ -50,24 +50,31 @@ namespace Libs
         {
             var auctionHouseDictionary = new Dictionary<int, int>();
 
-            try
+            if (File.Exists(@"D:\GitHub\Auc-Stat-Simple.lua.location"))
             {
-                // file will be something like D:\World of Warcraft Classic\World of Warcraft\_classic_\WTF\Account\XXXXXXX\SavedVariables\Auc-Stat-Simple.lua
-                var filename = File.ReadAllLines(@"D:\GitHub\Auc-Stat-Simple.lua.location").FirstOrDefault();
-                File.ReadAllLines(filename)
-                    .Select(l => l.Trim())
-                    .Where(l => l.StartsWith("["))
-                    .Where(l => l.Contains(";"))
-                    .Where(l => l.Contains("="))
-                    .Select(Process)
-                    .GroupBy(l => l.Key)
-                    .Select(g => g.First())
-                    .ToList()
-                    .ForEach(i => auctionHouseDictionary.Add(i.Key, i.Value));
+                try
+                {
+                    // file will contain be something like D:\World of Warcraft Classic\World of Warcraft\_classic_\WTF\Account\XXXXXXX\SavedVariables\Auc-Stat-Simple.lua
+                    var filename = File.ReadAllLines(@"D:\GitHub\Auc-Stat-Simple.lua.location").FirstOrDefault();
+                    File.ReadAllLines(filename)
+                        .Select(l => l.Trim())
+                        .Where(l => l.StartsWith("["))
+                        .Where(l => l.Contains(";"))
+                        .Where(l => l.Contains("="))
+                        .Select(Process)
+                        .GroupBy(l => l.Key)
+                        .Select(g => g.First())
+                        .ToList()
+                        .ForEach(i => auctionHouseDictionary.Add(i.Key, i.Value));
+                }
+                catch (Exception ex)
+                {
+                    this.logger.LogError("Failed to read AH prices." + ex.Message);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                this.logger.LogError("Failed to read AH prices." + ex.Message);
+                this.logger.LogError("AH prices unavailable, don't worry about this message!");
             }
 
             return auctionHouseDictionary;

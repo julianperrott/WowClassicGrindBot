@@ -23,6 +23,7 @@ namespace BlazorServer
                 //.Enrich.FromLogContext()
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .WriteTo.LoggerSink()
                 .WriteTo.File(logfile, rollingInterval: RollingInterval.Day)
                 .WriteTo.Debug(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}");

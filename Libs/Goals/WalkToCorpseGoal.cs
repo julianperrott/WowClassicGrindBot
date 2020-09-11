@@ -218,7 +218,7 @@ namespace Libs.Goals
             cp.TruncatedRoute.Clear();
             cp.TruncatedRoute.AddRange(truncatedRoute);
 
-            File.WriteAllText($"../../../../CorpsePath_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(cp));
+            //File.WriteAllText($"../../../../CorpsePath_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(cp));
             NeedsToReset = false;
         }
 
