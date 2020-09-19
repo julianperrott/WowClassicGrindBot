@@ -62,6 +62,17 @@
             <input type="text" @bind="Y" />
             <button class="btn btn-primary" @onclick="Update">Update</button>
             <button class="btn btn-primary" @onclick="Remove">Remove</button>
+
+            <table>
+                <tr>
+                    <td>
+                        Distance between spots =  @Distance
+                    </td>
+                    <td>
+                        <input class="form-control slider" type="range" min="1" max="100" @bind="Distance" style="width:300px;margin-left:20px">
+                    </td>
+                </tr>
+            </table>
             <div>@error</div>
             <br />
         }
@@ -85,6 +96,7 @@
     private MarkupString PathPoints = new MarkupString();
     private MarkupString EditPoints = new MarkupString();
 
+    int Distance = 60;
     string X = "";
     string Y = "";
     string error = "";
@@ -152,7 +164,7 @@
 
         if (botController.RouteInfo != null)
         {
-            if (botController.RouteInfo.PathPoints.Count == 0 || DistanceTo(location, botController.RouteInfo.PathPoints.Last()) > 60 & location.X != 0)
+            if (botController.RouteInfo.PathPoints.Count == 0 || DistanceTo(location, botController.RouteInfo.PathPoints.Last()) > Distance & location.X != 0)
             {
                 botController.RouteInfo.PathPoints.Add(location);
                 UpdateRoute();
