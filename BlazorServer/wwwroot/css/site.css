@@ -190,3 +190,16 @@ app {
 .table-no-border > tfoot > tr > td {
     border-top: none;
 }
+
+
+/* gray mode*/
+
+/*
+body, table, .card-body {
+    background-color: grey !important
+}
+
+.card-header, .card-header table {
+    background-color: darkgray !important
+}
+*/
