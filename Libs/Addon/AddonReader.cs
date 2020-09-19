@@ -74,7 +74,7 @@ namespace Libs
             }
             else
             {
-                this.logger.LogError("AH prices unavailable, don't worry about this message!");
+                this.logger.LogWarning("AH prices unavailable, don't worry about this message!");
             }
 
             return auctionHouseDictionary;
