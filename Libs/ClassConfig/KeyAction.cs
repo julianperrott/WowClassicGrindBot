@@ -100,14 +100,22 @@ namespace Libs
 
         public int GetCooldownRemaining()
         {
-            if (!LastClicked.ContainsKey(this.ConsoleKey))
+            try
             {
+                if (!LastClicked.ContainsKey(this.ConsoleKey))
+                {
+                    return 0;
+                }
+
+                var remaining = this.Cooldown - ((int)(DateTime.Now - LastClicked[this.ConsoleKey]).TotalSeconds);
+
+                return remaining < 0 ? 0 : remaining;
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e, "GetCooldownRemaining()");
                 return 0;
             }
-
-            var remaining = this.Cooldown - ((int)(DateTime.Now - LastClicked[this.ConsoleKey]).TotalSeconds);
-
-            return remaining < 0 ? 0 : remaining;
         }
 
         internal void SetCooldown(int seconds)

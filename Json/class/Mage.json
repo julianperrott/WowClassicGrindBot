@@ -1,43 +1,29 @@
 {
   "ClassName": "Mage",
   "Loot": true,
+  "NPCMaxLevels_Below": 11,
+  "NPCMaxLevels_Above": 2,
 
-  "PathFilename": "44_Tanaris.json",
-  "SpiritPathFilename": "44_Tanaris_SpiritHealer.json",
-  "PathThereAndBack": false,
+  "PathFilename": "52_Tanaris.2.json",
+  "SpiritPathFilename": "52_Tanaris_SpiritHealer.json",
+  "PathThereAndBack": true,
   "PathReduceSteps": false,
 
-  "NPCMaxLevels_Below": 7,
-  "NPCMaxLevels_Above": 3,
-
-  "Blacklist": ["Loch Crocolisk","Stonesplinter","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
+  "Blacklist": ["Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
   "Blink":{
-    "Name": "Blink",
-    "Key": "T"
-  },
+      "Name": "Blink",
+      "Key": "T"
+    },
 
   "Pull": {
     "Sequence": [
       {
-        "Name": "Interact",
-        "Key": "H",
-        "Cooldown": 12,
-        "DelayAfterCast": 0
-      },
-      {
         "Name": "Fireball",
         "HasCastBar": true,
-        "Key": "2",
-        "ManaRequirement": 65,
-        "DelayUntilCombat": true,
-        "DelayAfterCast": 2000
-      },
-      {
-        "Name": "Fireball",
-        "HasCastBar": true,
-        "Key": "2",
-        "ManaRequirement": 65
+        "Key": "5",
+        "MinMana": 221,
+        "Cooldown": 0
       }
     ]
   },
@@ -51,35 +37,35 @@
         "Log": false
       },
       {
-        "Name": "Interact",
-        "Key": "H",
-        "Cooldown": 12,
-        "DelayAfterCast": 0
-      },
-      {
-        "Name": "Fireblast",
-        "HasCastBar": false,
-        "StopBeforeCast": false,
-        "Key": "0",
-        "ManaRequirement": 75,
+        "Name": "Fire Blast",
+        "Key": "1",
+        "MinMana": 340,
         "Cooldown": 8
       },
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "Key": "2",
-        "ManaRequirement": 65
+        "Key": "5",
+        "MinMana": 350,
+        "Cooldown": 0
       }
     ]
   },
   "Parallel": {
     "Sequence": [
       {
+        "Name": "Combustion",
+        "HasCastBar": false,
+        "Key": "2",
+        "MinMana": 0,
+        "Cooldown": 60
+      },
+      {
         "Name": "Low Health",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "6",
-        "Requirement": "Health%<70",
+        "Requirement": "Health%<50",
         "Cooldown": 10,
         "Log": false
       },
@@ -88,7 +74,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "7",
-        "Requirement": "Mana%<55",
+        "Requirement": "Mana%<50",
         "Cooldown": 10,
         "Log": false
       }
@@ -101,8 +87,9 @@
         "Name": "Frost Armor",
         "StopBeforeCast": false,
         "Key": "3",
-        "ManaRequirement": 60,
-        "Requirement": "not Frost Armor"
+        "MinMana": 110,
+        "Requirement": "not Frost Armor",
+        "Log": false
       },
       {
         "Name": "Arcane Intellect",
@@ -117,7 +104,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "9",
-        "Requirement": "not BagItem:8077:4",
+        "Requirement": "not BagItem:8078:4",
         "Cooldown": 30,
         "Log": false
       },
@@ -126,24 +113,8 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirement": "not BagItem:1487:4",
+        "Requirement": "not BagItem:8076:4",
         "Cooldown": 30,
-        "Log": false
-      },
-      {
-        "Name": "Well Fed",
-        "StopBeforeCast": true,
-        "Key": "-",
-        "Requirement": "not Well Fed",
-        "Cooldown": 120,
-        "Log": false
-      },
-      {
-        "Name": "Fire Power Potion",
-        "StopBeforeCast": true,
-        "Key": "=",
-        "Requirement": "not Fire Power",
-        "Cooldown": 18000,
         "Log": false
       }
     ]
