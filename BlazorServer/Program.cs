@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System;
 
 namespace BlazorServer
 {
@@ -11,11 +12,21 @@ namespace BlazorServer
 
         public static void Main(string[] args)
         {
-            Log.Information("Starting blazor server");
-
-            CreateHostBuilder(args)
-                .Build()
-                .Run();
+            while (true)
+            {
+                Log.Information("Program.Main(): Starting blazor server");
+                try
+                {
+                    CreateHostBuilder(args)
+                        .Build()
+                        .Run();
+                }
+                catch(Exception ex)
+                {
+                    Log.Information($"Program.Main(): {ex.Message}");
+                    Log.Information("");
+                }
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

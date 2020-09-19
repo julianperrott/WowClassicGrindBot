@@ -1,0 +1,18 @@
+﻿@page "/RestartServer"
+
+@inject Microsoft.Extensions.Hosting.IHostApplicationLifetime lifetime
+@inject NavigationManager NavigationManager
+
+<h2>Restarting the server - press reload when prompted...</h2>
+
+<LogComponent />
+
+@code {
+
+    protected override async void OnInitialized()
+    {
+        await Task.Delay(1000);
+        NavigationManager.NavigateTo("/");
+        lifetime.StopApplication();
+    }
+}
