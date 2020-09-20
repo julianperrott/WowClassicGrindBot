@@ -19,6 +19,8 @@ namespace Libs
         void ToggleBotStatus();
         void StopBot();
 
+        void Shutdown();
+
         bool IsBotActive { get; }
     }
 }

@@ -20,6 +20,11 @@ namespace Libs
         public IImageProvider? MinimapImageFinder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClassConfiguration? ClassConfig { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        public void Shutdown()
+        {
+            throw new NotImplementedException();
+        }
+
         public void StopBot()
         {
             throw new NotImplementedException();

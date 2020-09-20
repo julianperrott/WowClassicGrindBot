@@ -2,6 +2,7 @@
 
 @inject Microsoft.Extensions.Hosting.IHostApplicationLifetime lifetime
 @inject NavigationManager NavigationManager
+@inject Libs.IBotController botController
 
 <h2>Restarting the server - press reload when prompted...</h2>
 
@@ -11,6 +12,7 @@
 
     protected override async void OnInitialized()
     {
+        this.botController.Shutdown();
         await Task.Delay(1000);
         NavigationManager.NavigateTo("/");
         lifetime.StopApplication();

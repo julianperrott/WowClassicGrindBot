@@ -35,6 +35,8 @@ namespace Libs
 
         public IImageProvider? MinimapImageFinder { get; set; }
 
+        private bool Enabled = true;
+
         public BotController(ILogger logger)
         {
             wowProcess = new WowProcess(logger);
@@ -69,17 +71,18 @@ namespace Libs
 
         public void AddonRefreshThread()
         {
-            while (this.AddonReader.Active)
+            while (this.AddonReader.Active && this.Enabled)
             {
                 this.AddonReader.AddonRefresh();
                 this.GoapAgent?.UpdateWorldState();
             }
+            this.logger.LogInformation("Addon thread stoppped!");
         }
 
         public void ScreenshotRefreshThread()
         {
             var nodeFound = false;
-            while (true)
+            while (this.Enabled)
             {
                 this.WowScreen.DoScreenshot(this.npcNameFinder);
 
@@ -88,6 +91,7 @@ namespace Libs
                     nodeFound = this.minimapNodeFinder.Find(nodeFound) != null;
                 }
             }
+            this.logger.LogInformation("Screenshot thread stoppped!");
         }
 
         public bool IsBotActive => actionThread == null ? false : actionThread.Active;
@@ -115,7 +119,7 @@ namespace Libs
             {
                 await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
 
-                while (this.actionThread.Active)
+                while (this.actionThread.Active && this.Enabled)
                 {
                     await actionThread.GoapPerformGoal();
                 }
@@ -182,6 +186,11 @@ namespace Libs
             {
                 actionThread.Active = false;
             }
+        }
+
+        public void Shutdown()
+        {
+            this.Enabled = false;
         }
     }
 }
