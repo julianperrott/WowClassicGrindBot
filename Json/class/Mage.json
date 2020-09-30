@@ -1,15 +1,15 @@
 {
   "ClassName": "Mage",
   "Loot": true,
-  "NPCMaxLevels_Below": 11,
+  "NPCMaxLevels_Below": 10,
   "NPCMaxLevels_Above": 2,
 
-  "PathFilename": "52_Tanaris.2.json",
-  "SpiritPathFilename": "52_Tanaris_SpiritHealer.json",
-  "PathThereAndBack": true,
+  "PathFilename": "56_Azshara.json",
+  "SpiritPathFilename": "56_Azshara_SpiritHealer.json",
+  "PathThereAndBack": false,
   "PathReduceSteps": false,
 
-  "Blacklist": ["Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
+  "Blacklist": ["Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
   "Blink":{
       "Name": "Blink",
@@ -54,18 +54,11 @@
   "Parallel": {
     "Sequence": [
       {
-        "Name": "Combustion",
-        "HasCastBar": false,
-        "Key": "2",
-        "MinMana": 0,
-        "Cooldown": 60
-      },
-      {
         "Name": "Low Health",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "6",
-        "Requirement": "Health%<50",
+        "Requirement": "Health%<70",
         "Cooldown": 10,
         "Log": false
       },
@@ -74,7 +67,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "7",
-        "Requirement": "Mana%<50",
+        "Requirement": "Mana%<70",
         "Cooldown": 10,
         "Log": false
       }
@@ -83,6 +76,13 @@
 
   "Adhoc": {
     "Sequence": [
+      {
+        "Name": "Combustion",
+        "HasCastBar": false,
+        "Key": "2",
+        "MinMana": 0,
+        "Cooldown": 60
+      },
       {
         "Name": "Frost Armor",
         "StopBeforeCast": false,

@@ -3,14 +3,12 @@
   "Loot": true,
   "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "23_Duskwood.json",
-  "SpiritPathFilename": "23_Duskwood_SpiritHealer.json",
+  "PathFilename": "25_Wetlands.json",
+  "SpiritPathFilename": "25S_Wetlands_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 
-  "WrongZone": { "ZoneId": 1429, "ExitZoneLocation": { "X":62.5,"Y":90} },
-
-  "Blacklist": ["Tunnel","OL' SO","HAREN S","THRAGO"],
+  "Blacklist": ["Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
   "Pull": {
     "Sequence": [

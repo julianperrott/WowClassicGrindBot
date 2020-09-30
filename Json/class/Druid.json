@@ -3,12 +3,12 @@
   "Loot": true,
   "NPCMaxLevels_Below": 20,
 
-  "PathFilename": "60_Silithus_scorpid.2.json",
-  "SpiritPathFilename": "60_Silithus_scorpid_SpiritHealer.json",
+  "PathFilename": "56_Azshara.json",
+  "SpiritPathFilename": "56_Azshara_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
-  "Blacklist": ["Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
+  "Blacklist": ["Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
   "ShapeshiftForm": [
     {

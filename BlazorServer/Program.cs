@@ -25,6 +25,7 @@ namespace BlazorServer
                 {
                     Log.Information($"Program.Main(): {ex.Message}");
                     Log.Information("");
+                    System.Threading.Thread.Sleep(3000);
                 }
             }
         }
