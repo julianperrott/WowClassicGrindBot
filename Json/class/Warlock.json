@@ -4,7 +4,7 @@
   "NPCMaxLevels_Below": 6,
 
   "PathFilename": "25_Wetlands.json",
-  "SpiritPathFilename": "25S_Wetlands_SpiritHealer.json",
+  "SpiritPathFilename": "25_Wetlands_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 
