@@ -3,12 +3,12 @@
   "Loot": true,
   "NPCMaxLevels_Below": 6,
 
-  "PathFilename": "25_Wetlands.json",
-  "SpiritPathFilename": "25_Wetlands_SpiritHealer.json",
+  "PathFilename": "33_Arathi.json",
+  "SpiritPathFilename": "33_Arathi_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 
-  "Blacklist": ["Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
+  "Blacklist": ["Sailor","Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
   "Pull": {
     "Sequence": [
