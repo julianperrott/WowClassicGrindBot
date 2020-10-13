@@ -36,6 +36,8 @@ namespace Libs
         public float Cost { get; set; } = 18;
         public string InCombat { get; set; } = "false";
 
+        public int StepBackAfterCast {get; set; } = 0;
+
         public WowPoint LastClickPostion { get; private set; } = new WowPoint(0, 0);
 
         public List<Requirement> RequirementObjects { get; } = new List<Requirement>();

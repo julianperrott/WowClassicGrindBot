@@ -210,6 +210,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
 | Cost | For Adhoc goals the priority | 18 |
 | InCombat | Can it be cast in combat | false |
+| StepBackAfterCast | Hero will go back for X sec after casting this spell , usable for spells like Mage Frost Nova | false |
 
 ### Pull Goal
 
