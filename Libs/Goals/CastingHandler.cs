@@ -166,7 +166,9 @@ namespace Libs.Goals
                     await Task.Delay(100);
                 }
             }
-
+            if (item.StepBackAfterCast > 0 ){
+                await this.wowProcess.KeyPress(ConsoleKey.DownArrow, item.StepBackAfterCast * 1000 , "Step back hero");
+            }
             return true;
         }
 
