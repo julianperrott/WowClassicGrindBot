@@ -67,6 +67,11 @@ namespace Libs
 
             Interact.Key = InteractKey;
             Interact.Initialise(playerReader, requirementFactory, logger);
+
+            if (string.IsNullOrEmpty(Blink.Key))
+            {
+                Blink.Key = " ";
+            }
             Blink.Initialise(playerReader, requirementFactory, logger);
 
             TargetLastTarget.Key = TargetLastTargetKey;

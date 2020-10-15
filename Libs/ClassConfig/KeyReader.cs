@@ -21,6 +21,7 @@ namespace Libs
             {"9",ConsoleKey.D9 },
             {"-",ConsoleKey.OemMinus },
             {"=",ConsoleKey.OemPlus },
+            {" ",ConsoleKey.Spacebar },
         };
 
         public static bool ReadKey(ILogger logger, KeyAction key)
