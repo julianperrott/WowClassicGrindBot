@@ -2,8 +2,8 @@
     "ClassName": "Mage",
     "Loot": true,
   
-    "PathFilename": "5_Gnome.json",
-    "SpiritPathFilename": "5_Gnome.json",
+    "PathFilename": "7_Human.json",
+    "SpiritPathFilename": "7_Human.json",
     "PathThereAndBack": true,
     "PathReduceSteps": false,
   
@@ -25,7 +25,7 @@
           "Key": "5",
           "ManaRequirement": 40,
           "Cooldown": 8,
-          "Requirement": "Health%<80"
+          "Requirements": ["Health%<80", "SpellInRange:4"]
         },
         {
           "Name": "Fireball",

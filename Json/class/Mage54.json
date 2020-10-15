@@ -1,0 +1,122 @@
+{
+  "ClassName": "Mage",
+  "Loot": true,
+  "NPCMaxLevels_Below": 10,
+  "NPCMaxLevels_Above": 2,
+
+  "PathFilename": "56_Azshara.json",
+  "SpiritPathFilename": "56_Azshara_SpiritHealer.json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": false,
+
+  "Blacklist": ["Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
+
+  "Blink":{
+      "Name": "Blink",
+      "Key": "T"
+    },
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Fireball",
+        "HasCastBar": true,
+        "Key": "5",
+        "MinMana": 221,
+        "Cooldown": 0
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Healing Potion",
+        "Key": "F4",
+        "Requirement": "Health%<10",
+        "Cooldown": 60,
+        "Log": false
+      },
+      {
+        "Name": "Fire Blast",
+        "Key": "1",
+        "MinMana": 340,
+        "Cooldown": 8
+      },
+      {
+        "Name": "Fireball",
+        "HasCastBar": true,
+        "Key": "5",
+        "MinMana": 350,
+        "Cooldown": 0
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Low Health",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "6",
+        "Requirement": "Health%<70",
+        "Cooldown": 10,
+        "Log": false
+      },
+      {
+        "Name": "Drink",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "7",
+        "Requirement": "Mana%<70",
+        "Cooldown": 10,
+        "Log": false
+      }
+    ]
+    },
+
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Combustion",
+        "HasCastBar": false,
+        "Key": "2",
+        "MinMana": 0,
+        "Cooldown": 60
+      },
+      {
+        "Name": "Frost Armor",
+        "StopBeforeCast": false,
+        "Key": "3",
+        "MinMana": 110,
+        "Requirement": "not Frost Armor",
+        "Log": false
+      },
+      {
+        "Name": "Arcane Intellect",
+        "StopBeforeCast": false,
+        "Key": "4",
+        "MinMana": 60,
+        "Requirement": "not Arcane Intellect",
+        "Log": false
+      },
+      {
+        "Name": "Conjure Water",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "9",
+        "Requirement": "not BagItem:8078:4",
+        "Cooldown": 30,
+        "Log": false
+      },
+      {
+        "Name": "Conjure Food",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirement": "not BagItem:8076:4",
+        "Cooldown": 30,
+        "Log": false
+      }
+    ]
+  }
+}

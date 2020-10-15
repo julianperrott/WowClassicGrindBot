@@ -2,8 +2,8 @@
   "ClassName": "Mage",
   "Loot": true,
 
-  "PathFilename": "5_Gnome.json",
-  "SpiritPathFilename": "5_Gnome.json",
+  "PathFilename": "7_Human.json",
+  "SpiritPathFilename": "7_Human.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
@@ -20,6 +20,13 @@
   },
   "Combat": {
     "Sequence": [
+      {
+        "Name": "Fireblast",
+        "Key": "5",
+        "ManaRequirement": 40,
+        "Cooldown": 8,
+        "Requirement": "Health%<80"
+      },
       {
         "Name": "Fireball",
         "HasCastBar": true,

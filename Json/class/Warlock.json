@@ -4,8 +4,8 @@
   "NPCMaxLevels_Below": 6,
   "NPCMaxLevels_Above": 2,
 
-  "PathFilename": "38_Arathi.json",
-  "SpiritPathFilename": "38_Arathi_SpirirtHealer.json",
+  "PathFilename": "44_Tanaris.json",
+  "SpiritPathFilename": "44_Tanaris_SpiritHealer.json",
   "PathThereAndBack": false,
   "PathReduceSteps": true,
 
