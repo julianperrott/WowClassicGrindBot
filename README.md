@@ -326,7 +326,8 @@ e.g. "Requirements": ["Health%<80", "SpellInRange:4"]
 
 In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tries to get a list of spells unique to each class that are in range. This is read by Libs.SpellInRange.cs.
 
-| Class | Spell | id |    
+| Class | Spell | id |   
+| --- | --- | --- | 
 | ROGUE | Sinister Strike | 0 |
 | ROGUE | Throw | 1 |
 | ROGUE | Shoot Gun | 2 |
