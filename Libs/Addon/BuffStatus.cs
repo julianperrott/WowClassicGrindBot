@@ -64,5 +64,6 @@
 
         // Warlock
         public bool DemonSkin { get => IsBitSet(10); }
+        public bool SoulLink { get => IsBitSet(11); }
     }
 }

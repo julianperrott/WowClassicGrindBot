@@ -71,43 +71,17 @@ namespace Libs
 
             if (requirement.Contains("npcID:"))
             {
-                var parts = requirement.Split(":");
-                var npcId = int.Parse(parts[1]);
-
-                if (requirement.StartsWith("!") || requirement.StartsWith("not "))
-                {
-                    return new Requirement
-                    {
-                        HasRequirement = () => this.playerReader.TargetId != npcId,
-                        LogMessage = () => $"not Target id {this.playerReader.TargetId} = {npcId}"
-                    };
-                }
-                return new Requirement
-                {
-                    HasRequirement = () => this.playerReader.TargetId == npcId,
-                    LogMessage = () => $"Target id {this.playerReader.TargetId} = {npcId}"
-                };
+                return CreateNpcRequirement(requirement);
             }
 
             if (requirement.Contains("BagItem:"))
             {
-                var parts = requirement.Split(":");
-                var itemId = int.Parse(parts[1]);
-                var count = parts.Length < 3 ? 1 : int.Parse(parts[2]);
+                return CreateBagItemRequirement(requirement);
+            }
 
-                if (requirement.StartsWith("!") || requirement.StartsWith("not "))
-                {
-                    return new Requirement
-                    {
-                        HasRequirement = () => this.bagReader.ItemCount(itemId) < count,
-                        LogMessage = () => count == 1 ? $"{itemId} not in bag" : $"{itemId} count < {count}"
-                    };
-                }
-                return new Requirement
-                {
-                    HasRequirement = () => this.bagReader.ItemCount(itemId) >= count,
-                    LogMessage = () => count == 1 ? $"{itemId} in bag" : $"{itemId} count >= {count}"
-                };
+            if (requirement.Contains("SpellInRange:"))
+            {
+                return CreateSpellInRangeRequirement(requirement);
             }
 
             if (BuffDictionary.Count == 0)
@@ -139,6 +113,7 @@ namespace Libs
                     {  "Slice And Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
                     {  "Demon Skin", ()=> playerReader.Buffs.DemonSkin },
+                    {  "Soul Link", ()=> playerReader.Buffs.SoulLink },
                     {  "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
 
                     {  "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
@@ -151,6 +126,8 @@ namespace Libs
 
                     { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
                     { "InCombatRange", ()=> playerReader.WithInCombatRange },
+
+                    { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
 
                     {  "Shooting", ()=> playerReader.IsShooting },
                 };
@@ -189,6 +166,68 @@ namespace Libs
             {
                 HasRequirement = () => false,
                 LogMessage = () => $"UNKNOWN REQUIREMENT! {requirementText}"
+            };
+        }
+
+        private Requirement CreateNpcRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var npcId = int.Parse(parts[1]);
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => this.playerReader.TargetId != npcId,
+                    LogMessage = () => $"not Target id {this.playerReader.TargetId} = {npcId}"
+                };
+            }
+            return new Requirement
+            {
+                HasRequirement = () => this.playerReader.TargetId == npcId,
+                LogMessage = () => $"Target id {this.playerReader.TargetId} = {npcId}"
+            };
+        }
+
+        private Requirement CreateBagItemRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var itemId = int.Parse(parts[1]);
+            var count = parts.Length < 3 ? 1 : int.Parse(parts[2]);
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => this.bagReader.ItemCount(itemId) < count,
+                    LogMessage = () => count == 1 ? $"{itemId} not in bag" : $"{itemId} count < {count}"
+                };
+            }
+            return new Requirement
+            {
+                HasRequirement = () => this.bagReader.ItemCount(itemId) >= count,
+                LogMessage = () => count == 1 ? $"{itemId} in bag" : $"{itemId} count >= {count}"
+            };
+        }
+
+        private Requirement CreateSpellInRangeRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var bitId = int.Parse(parts[1]);
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => !this.playerReader.SpellInRange.IsBitSet(bitId),
+                    LogMessage = () => $"Not Spell In Range {bitId}"
+                };
+            }
+
+            return new Requirement
+            {
+                HasRequirement = () => this.playerReader.SpellInRange.IsBitSet(bitId),
+                LogMessage = () => $"Spell In Range {bitId}"
             };
         }
 
