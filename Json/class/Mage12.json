@@ -46,6 +46,7 @@
         "StopBeforeCast": false,
         "Key": "0",
         "ManaRequirement": 75,
+        "Requirements": ["Health%<80", "SpellInRange:4"],
         "Cooldown": 8
       },
       {
@@ -122,7 +123,7 @@
         "Requirement": "not Well Fed",
         "Cooldown": 120,
         "Log": false
-      },
+      }
     ]
   }
 }

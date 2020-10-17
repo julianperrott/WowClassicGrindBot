@@ -148,10 +148,18 @@ local function OnUIErrorMessage(self, event, messageType, message)
     end
   end
 
+local function OnEvent(self, event)
+	print(CombatLogGetCurrentEventInfo())
+end  
+
 --event handler
 local eventHandler = CreateFrame("Frame");
 eventHandler:SetScript("OnEvent", OnUIErrorMessage);
 eventHandler:RegisterEvent("UI_ERROR_MESSAGE")
+
+local f = CreateFrame("Frame")
+--f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+--f:SetScript("OnEvent", OnEvent)
 
 function DataToColor:OnMerchantShow(self, event, messageType, message)
     
@@ -370,7 +378,7 @@ function DataToColor:CreateFrames(n)
             -- Controls rate at which item frames change.
             globalCounter = globalCounter + 1
 
-            if itemNum >= 17 then
+            if itemNum >= 21 then
                 itemNum = 1
             end
 
@@ -379,7 +387,7 @@ function DataToColor:CreateFrames(n)
                 -- Returns item ID and quantity
                 MakePixelSquareArr(integerToColor(self:itemName(bagNo, itemNum)), 20 + bagNo * 2) -- 20,22,24,26,28
                 -- Return item slot number
-                MakePixelSquareArr(integerToColor(bagNo * 16 + itemNum), 21 + bagNo * 2) -- 21,23,25,27,29
+                MakePixelSquareArr(integerToColor(bagNo * 20 + itemNum), 21 + bagNo * 2) -- 21,23,25,27,29
                 MakePixelSquareArr(integerToColor(self:itemInfo(bagNo, itemNum)), 60 + bagNo ) -- 60,61,62,63,64
             end
             -- Worn inventory start.
