@@ -47,13 +47,13 @@ namespace Libs.Goals
             {
                 await this.stopMoving.Stop();
 
-                if (playerReader.PlayerBitValues.IsMounted)
-                {
-                    await wowProcess.Dismount();
-                }
                 await Task.Delay(1000);
             }
-
+            if (playerReader.PlayerBitValues.IsMounted)
+            {
+                await wowProcess.Dismount();
+            }
+            
             await this.castingHandler.CastIfReady(key, this);
 
             this.key.ResetCooldown();
