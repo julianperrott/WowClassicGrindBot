@@ -45,8 +45,8 @@ namespace Libs
 
                 // get bag and slot
                 var val = reader.GetLongAtCell(cellIndex + 1);
-                var bagNumber = val / 16;
-                var slot = (int)(val - bagNumber * 16);
+                var bagNumber = val / 20;
+                var slot = (int)(val - bagNumber * 20);
 
                 var existingItem = BagItems.Where(b => b.BagIndex == slot).Where(b => b.Bag == bag).FirstOrDefault();
 

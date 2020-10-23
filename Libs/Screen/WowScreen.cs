@@ -23,7 +23,7 @@ namespace Libs
             this.logger = logger;
         }
 
-        public static Bitmap GetAddonBitmap(int width = 500, int height = 200)
+        public static Bitmap GetAddonBitmap(int width = 600, int height = 200)
         {
             var bmpScreen = new Bitmap(width, height);
             using (var graphics = Graphics.FromImage(bmpScreen))
