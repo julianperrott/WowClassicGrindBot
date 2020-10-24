@@ -52,8 +52,6 @@ namespace Libs.Goals
                 }
                 await Task.Delay(1000);
             }
-            
-            
             await this.castingHandler.CastIfReady(key, this);
 
             this.key.ResetCooldown();
