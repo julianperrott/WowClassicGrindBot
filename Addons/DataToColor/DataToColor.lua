@@ -1328,10 +1328,10 @@ function DataToColor:HandleEvents()
     end
     -- Handles train new spells and talents
     if DATA_CONFIG.AUTO_TRAIN_SPELLS then
-        self:CheckTrainer()
+        self:CheckTrainer()  
     end
     -- Resurrect player
-    if DATA_CONFIG.AUTO_RESURRECT then
+    if DATA_CONFIG.AUTO_RESURRECT and self:GetInventoryBroken()==0 then
         self:ResurrectPlayer()
     end
 

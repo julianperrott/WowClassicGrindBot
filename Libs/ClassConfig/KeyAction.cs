@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -42,7 +43,7 @@ namespace Libs
 
         public List<Requirement> RequirementObjects { get; } = new List<Requirement>();
 
-        protected static Dictionary<ConsoleKey, DateTime> LastClicked { get; } = new Dictionary<ConsoleKey, DateTime>();
+        protected static ConcurrentDictionary<ConsoleKey, DateTime> LastClicked { get; } = new ConcurrentDictionary<ConsoleKey, DateTime>();
 
         public static ConsoleKey LastKeyClicked()
         {
@@ -128,7 +129,7 @@ namespace Libs
             }
             else
             {
-                LastClicked.Add(this.ConsoleKey, DateTime.Now.AddSeconds(this.Cooldown - seconds));
+                LastClicked.TryAdd(this.ConsoleKey, DateTime.Now.AddSeconds(this.Cooldown - seconds));
             }
         }
 
@@ -147,7 +148,7 @@ namespace Libs
                 }
                 else
                 {
-                    LastClicked.Add(this.ConsoleKey, DateTime.Now);
+                    LastClicked.TryAdd(this.ConsoleKey, DateTime.Now);
                 }
             }
             catch (Exception ex)
@@ -160,7 +161,7 @@ namespace Libs
 
         internal void ResetCooldown()
         {
-            if (LastClicked.ContainsKey(ConsoleKey)) { LastClicked.Remove(ConsoleKey); }
+            if (LastClicked.ContainsKey(ConsoleKey)) { LastClicked.TryRemove(ConsoleKey, out DateTime value); }
         }
 
         public bool CanRun()

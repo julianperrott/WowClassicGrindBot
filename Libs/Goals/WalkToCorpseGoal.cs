@@ -161,13 +161,15 @@ namespace Libs.Goals
 
         public async Task Reset()
         {
-            logger.LogInformation("Sleeping 2 seconds");
-            await Task.Delay(2000);
+            logger.LogInformation("Sleeping 5 seconds");
+            await Task.Delay(5000);
             while (new List<double> { playerReader.XCoord, playerReader.YCoord, corpseLocation.X, corpseLocation.Y }.Max() > 100)
             {
                 logger.LogInformation($"Waiting... odd coords read. Player {playerReader.XCoord},{playerReader.YCoord} corpse { corpseLocation.X}{corpseLocation.Y}");
                 await Task.Delay(5000);
             }
+
+            logger.LogInformation($"player location {playerReader.XCoord},{playerReader.YCoord}. Corpse {corpseLocation.X},{corpseLocation.Y}.");
 
             var closestRouteAndSpiritPathPoints = routePoints.SelectMany(s => spiritWalkerPath.Select(swp => (pathPoint: s, spiritPathPoint: swp, distance: DistanceTo(s, swp))))
                 .OrderBy(s => s.distance)
@@ -218,7 +220,10 @@ namespace Libs.Goals
             cp.TruncatedRoute.Clear();
             cp.TruncatedRoute.AddRange(truncatedRoute);
 
-            //File.WriteAllText($"../../../../CorpsePath_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(cp));
+#if DEBUG
+            //File.WriteAllText($"CorpsePath_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json", JsonConvert.SerializeObject(cp));
+#endif
+
             NeedsToReset = false;
         }
 
