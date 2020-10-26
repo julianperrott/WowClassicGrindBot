@@ -1,0 +1,128 @@
+﻿@inject IJSRuntime jsRuntime;
+@using PatherPath.Graph
+
+<span class="form-inline">
+
+    <!-- Continent Combo -->
+    <label>Continent:</label>
+    <select disabled="@IsDisabled" class="form-control" @bind="Continent">
+        @foreach (var continent in continents)
+        {
+            <option value="@continent">@continent</option>
+        }
+    </select>
+
+    <!-- From Combo -->
+    <label style="margin-left: 10px">From:</label>
+    <select disabled="@IsDisabled" class="form-control" @bind="From">
+        <option value=""></option>
+        @foreach (var location in locations.Where(l => l.Continent == Continent))
+        {
+            <option value="@location.Description">@location.Description</option>
+        }
+    </select>
+
+    <!-- To Combo -->
+    <label style="margin-left: 10px">To:</label>
+    <select disabled="@IsDisabled" class="form-control" @bind="To">
+        <option value=""></option>
+        @foreach (var location in locations.Where(l => l.Continent == Continent))
+        {
+            <option value="@location.Description">@location.Description</option>
+        }
+    </select>
+
+    <!-- Search Type Combo -->
+    <label style="margin-left: 10px">Search:</label>
+    <select disabled="@IsDisabled" class="form-control" @bind="SearchType">
+        <option value="0">Original</option>
+        <option value="1">A*</option>
+        <option value="2">A* avoid models</option>
+    </select>
+
+    <!-- Search Button -->
+    <button style="margin-left: 10px" type="button" disabled="@IsDisabled" class="form-control btn btn-primary" @onclick="Search">
+        @if (IsDisabled)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        }
+        Search
+    </button>
+</span>
+
+@code {
+
+    [Parameter]
+    public EventCallback<SearchParam> OnSearch { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    string Continent { get; set; } = "Kalimdor";
+    string From { get; set; } = "Durotar, Orgrimmar gates";
+    string To { get; set; }
+    int SearchType { get; set; }
+
+    public async Task Search()
+    {
+        var error = string.Empty;
+        if (string.IsNullOrEmpty(From)) { error += "From is required. "; }
+        if (string.IsNullOrEmpty(To)) { error += "To is required. "; }
+
+        if (!string.IsNullOrEmpty(error))
+        {
+            await jsRuntime.InvokeAsync<object>("showAlert", error);
+            return;
+        }
+
+        var searchParameters = new SearchParam
+        {
+            From = locations.Where(l => l.Description == this.From).FirstOrDefault(),
+            To = locations.Where(l => l.Description == this.To).FirstOrDefault(),
+            SearchType = (PathGraph.eSearchScoreSpot)this.SearchType,
+            Continent = this.Continent
+        };
+
+        await OnSearch.InvokeAsync(searchParameters);
+
+    }
+
+    List<string> continents = new List<string>()
+{
+        "Azeroth",
+        "Kalimdor",
+        "Expansion01",
+        "Northrend"
+     };
+
+    List<Location> locations = new List<Location>()
+{
+        new Location(-7899, -3563, 50, "Tanaris", "Kalimdor"),
+        new Location(-7200, -3770, 8, "Krinkle Goodsteel", "Kalimdor"),
+        new Location(-1863, 5419, -10, "Shattrath", "Expansion01"),
+        new Location(-2623, 4445, 36, "Terrokar,Stonebreaker Hold", "Expansion01"),
+        new Location(-2712, 3743, -2, "Terrokar,Grind spot", "Expansion01"),
+        new Location(-3561.1f, 639.1f, 3.1f, "Shadowmoon Valley", "Expansion01"),
+
+        new Location(-7217,907,-3, "Silithus, The calling", "Kalimdor"),
+        new Location(-6861,754,40, "Silithus, Repair", "Kalimdor"),
+
+        new Location(-8264,-2689,134, "Burning Steppes, Flight path", "Azeroth"),
+        new Location(-7558,-2167,154, "Burning Steppes, Ragged John", "Azeroth"),
+
+
+
+        new Location(1381, -4368, 26, "Durotar, Orgrimmar gates", "Kalimdor"),
+        new Location(-896, -3770, 11, "Barrens,Rachet", "Kalimdor"),
+        new Location(-441, -2596, 96, "Barrens,Crossroads,Barrens", "Kalimdor"),
+        new Location(-2380, -1882, 95, "Barrens,Camp Taurajo,Barrens", "Kalimdor"),
+        new Location(965, 1040, 104, "Stone talon,Sun Rock Retreat", "Kalimdor"),
+        new Location(-1718, 3198, 4, "Desolace,Shadowprey village", "Kalimdor"),
+
+        new Location(5565, 5757, -75, "Sholazar,Nesingwary Base", "Northrend"),
+        new Location(6033, 5520, -77, "Sholazar,Spot 1", "Northrend"),
+        new Location(5649, 5956, -47, "Sholazar,Spot 2", "Northrend"),
+        new Location(5241, 5922, -60, "Sholazar,Spot 3", "Northrend"),
+        new Location(5194, 5709, -85, "Sholazar,Spot 4", "Northrend"),
+    };
+}

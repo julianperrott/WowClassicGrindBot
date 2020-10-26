@@ -217,13 +217,18 @@ namespace PatherPath.Graph
             return false;
         }
 
+        bool saveEnabled = false;
+
         public bool Save(string baseDir)
         {
             if (!modified)
                 return true; // doh
 
-            //don't save
-            return true;
+            if (!saveEnabled)
+            {
+                //don't save
+                return true;
+            }
 
             string fileName = FileName();
             string filename = baseDir + fileName;

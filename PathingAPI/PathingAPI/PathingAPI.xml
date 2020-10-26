@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PathingAPI</name>
+    </assembly>
+    <members>
+        <member name="M:PathingAPI.Controllers.PPatherController.MapRoute(System.Int32,System.Single,System.Single,System.Int32,System.Single,System.Single)">
+            <summary>
+            Allows a route to be calculated from one point to another using minimap coords.
+            </summary>
+            <remarks>
+            map1 and map2 are the map ids. See https://wow.gamepedia.com/API_C_Map.GetBestMapForUnit
+             
+                /dump C_Map.GetBestMapForUnit("player")
+                
+                Dump: value=_Map.GetBestMapForUnit("player")
+                [1]=1451
+                
+            x and y are the map coordinates for the zone (same as the mini map). See https://wowwiki.fandom.com/wiki/API_GetPlayerMapPosition
+            
+                local posX, posY = GetPlayerMapPosition("player");
+            </remarks>
+            <param name="map1">from map e.g. 1451</param>
+            <param name="x1">from X e.g. 46.8</param>
+            <param name="y1">from Y e.g. 54.2</param>
+            <param name="map2">to map e.g. 1451</param>
+            <param name="x2">to X e.g. 51.2</param>
+            <param name="y2">to Y e.g. 38.9</param>
+            <returns>A list of x,y,z and mapid</returns>
+        </member>
+        <member name="M:PathingAPI.Controllers.PPatherController.WorldRoute(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.String)">
+            <summary>
+            Allows a route to be calculated from one point to another using world coords.
+            e.g. -896, -3770, 11, (Barrens,Rachet) to -441, -2596, 96, (Barrens,Crossroads,Barrens)
+            </summary>
+            <param name="x1">from X e.g. -896</param>
+            <param name="y1">from Y e.g. -3770</param>
+            <param name="z1">from Y e.g. 11</param>
+            <param name="x2">to X e.g. -441</param>
+            <param name="y2">to Y e.g. -2596</param>
+            <param name="z2">from Y e.g. 96</param>
+            <param name="continent">from ["Azeroth", "Kalimdor", "Northrend", "Expansion01"] e.g. Kalimdor</param>
+            <returns>A list of x,y,z</returns>
+        </member>
+        <member name="M:PathingAPI.WorldMapArea.Matches(PathingAPI.WorldMapArea,System.String[])">
+            <summary>
+            Fix occurance where Stormwind and Stormwind city didn't match
+            </summary>
+            <param name="area"></param>
+            <param name="s"></param>
+            <returns></returns>
+        </member>
+        <member name="T:WowTriangles.ChunkedTriangleCollection">
+            <summary>
+            A chunked collection of triangles
+            </summary>
+        </member>
+        <member name="T:WowTriangles.TriangleCollection">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="T:WowTriangles.TriangleQuadtree">
+            <summary>
+            Quadtree (splits on x and y)
+            </summary>
+        </member>
+        <member name="T:WowTriangles.Set`1">
+            <summary>
+            Default implementation of ISet.
+            </summary>
+        </member>
+        <member name="T:WowTriangles.PriorityQueueItem`2">
+            <summary>
+            Represents an item stored in a priority queue.
+            </summary>
+            <typeparam name="TValue">The type of object in the queue.</typeparam>
+            <typeparam name="TPriority">The type of the priority field.</typeparam>
+        </member>
+        <member name="P:WowTriangles.PriorityQueueItem`2.Value">
+            <summary>
+            Gets the value of this PriorityQueueItem.
+            </summary>
+        </member>
+        <member name="P:WowTriangles.PriorityQueueItem`2.Priority">
+            <summary>
+            Gets the priority associated with this PriorityQueueItem.
+            </summary>
+        </member>
+        <member name="T:WowTriangles.PriorityQueue`2">
+            <summary>
+            Represents a binary heap priority queue.
+            </summary>
+            <typeparam name="TValue">The type of object in the queue.</typeparam>
+            <typeparam name="TPriority">The type of the priority field.</typeparam>
+        </member>
+        <member name="M:WowTriangles.PriorityQueue`2.Peek">
+            <returns>The object at the beginning of the queue.</returns>
+        </member>
+        <member name="M:WowTriangles.PriorityQueue`2.Clear">
+            <summary>
+            Removes all objects from the queue.
+            </summary>
+        </member>
+        <member name="M:WowTriangles.PriorityQueue`2.TrimExcess">
+            <summary>
+            Sets the capacity to the actual number of elements in the Queue,
+            if that number is less than 90 percent of current capacity.
+            </summary>
+        </member>
+        <member name="M:WowTriangles.PriorityQueue`2.Contains(`0)">
+            <summary>
+            Determines whether an element is in the queue.
+            </summary>
+            <param name="o">The object to locate in the queue.</param>
+            <returns>True if item found in the queue.  False otherwise.</returns>
+        </member>
+    </members>
+</doc>

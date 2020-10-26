@@ -111,7 +111,7 @@ namespace WowTriangles
     internal unsafe class ccode
     {
         // int triBoxOverlap(float boxcenter[3],float boxhalfsize[3],float triverts[3][3]);
-        [DllImport("PPather\\ccode.dll")]
+        [DllImport("MPQ\\ccode.dll")]
         public static extern int triBoxOverlap(
             float* boxcenter,
             float* boxhalfsize,
@@ -1141,7 +1141,7 @@ namespace WowTriangles
         /// <summary>
         /// Determines whether an element is in the queue.
         /// </summary>
-        /// <param name="o">The object to locate in the queue.</param>
+        /// <param name="item">The object to locate in the queue.</param>
         /// <returns>True if item found in the queue.  False otherwise.</returns>
         public bool Contains(TValue item)
         {

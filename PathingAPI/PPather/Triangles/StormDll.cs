@@ -55,46 +55,46 @@ int   WINAPI SFileAddListFile(HANDLE hMpq, const char * szListFile);
 
 		 */
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern uint SFileGetLocale();
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern bool SFileOpenArchive([MarshalAs(UnmanagedType.LPStr)] string szMpqName,
                               uint dwPriority, uint dwFlags,
                               void** phMpq);
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern bool SFileCloseArchive(void* hMpq);
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern bool SFileOpenFileEx(void* hMpq,
                                 [MarshalAs(UnmanagedType.LPStr)] string szFileName,
                                 uint dwSearchScope,
                                 void** phFile);
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern bool SFileCloseFile(void* hFile);
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern uint SFileGetFilePos(void* hFile, uint* pdwFilePosHigh);
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern uint SFileGetFileSize(void* hFile, uint* pdwFileSizeHigh);
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern uint SFileSetFilePointer(void* hFile,
                     int lFilePos, int* pdwFilePosHigh, uint dwMethod);
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern bool SFileReadFile(void* hFile, void* lpBuffer, uint dwToRead,
                            uint* pdwRead, void* lpOverlapped);
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern bool SFileExtractFile(void* hMpq,
                     [MarshalAs(UnmanagedType.LPStr)] string szToExtract,
                     [MarshalAs(UnmanagedType.LPStr)] string szExtracted);
 
-        [DllImport("PPather\\StormLib.dll")]
+        [DllImport("MPQ\\StormLib.dll")]
         public static extern bool SFileHasFile(void* hMpq,
                     [MarshalAs(UnmanagedType.LPStr)] string szFileName);
 

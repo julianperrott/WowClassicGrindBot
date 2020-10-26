@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace PathingAPI
 {
     public class WorldMapArea
@@ -12,13 +14,13 @@ namespace PathingAPI
         public int ID { get; set; }
         public int MapID { get; set; }
         public int AreaID { get; set; }
-        public string AreaName { get; set; }
+        public string AreaName { get; set; } = string.Empty;
         public float LocLeft { get; set; }
         public float LocRight { get; set; }
         public float LocTop { get; set; }
         public float LocBottom { get; set; }
         public int UIMapId { get; set; }
-        public string Continent { get; set; }
+        public string Continent { get; set; } = string.Empty;
 
         public float ToWorldX(float value)
         {

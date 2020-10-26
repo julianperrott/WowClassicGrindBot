@@ -132,5 +132,20 @@ namespace PatherPath.Graph
             float nz = z;
             return new Location(nx, ny, nz);
         }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(x);
+            hash.Add(y);
+            hash.Add(z);
+            hash.Add(description);
+            hash.Add(Description);
+            hash.Add(Continent);
+            hash.Add(X);
+            hash.Add(Y);
+            hash.Add(Z);
+            return hash.ToHashCode();
+        }
     }
 }
