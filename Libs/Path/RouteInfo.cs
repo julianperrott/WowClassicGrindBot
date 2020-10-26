@@ -10,6 +10,20 @@ namespace Libs
     {
         public List<WowPoint> PathPoints { get; private set; }
         public List<WowPoint> SpiritPath { get; private set; }
+
+        public List<WowPoint> RouteToWaypoint
+        {
+            get
+            {
+                var route = this.followRouteAction.RouteToWaypointList();
+                if (route.Any())
+                {
+                    return route;
+                }
+                return this.walkToCorpseAction.CorpseRunPathList();
+            }
+        }
+
         private readonly FollowRouteGoal followRouteAction;
         private readonly WalkToCorpseGoal walkToCorpseAction;
 

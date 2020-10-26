@@ -13,18 +13,20 @@ namespace Libs
         private readonly AddonReader addonReader;
         public NpcNameFinder NpcNameFinder { get; private set; }
         private readonly WowProcess wowProcess;
+        private readonly IPPather pather;
         private ILogger logger;
 
         public bool PotentialAddsExist => NpcNameFinder.PotentialAddsExist;
 
         public RouteInfo? RouteInfo { get; private set; }
 
-        public GoalFactory(AddonReader addonReader, ILogger logger, WowProcess wowProcess, NpcNameFinder npcNameFinder)
+        public GoalFactory(AddonReader addonReader, ILogger logger, WowProcess wowProcess, NpcNameFinder npcNameFinder, IPPather pather)
         {
             this.logger = logger;
             this.addonReader = addonReader;
             this.NpcNameFinder = npcNameFinder;
             this.wowProcess = wowProcess;
+            this.pather = pather;
         }
 
         public HashSet<GoapGoal> CreateGoals(ClassConfiguration classConfig, IBlacklist blacklist)
@@ -40,8 +42,8 @@ namespace Libs
             var castingHandler = new CastingHandler(wowProcess, addonReader.PlayerReader, logger, classConfig, playerDirection, NpcNameFinder);
 
             var stuckDetector = new StuckDetector(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger);
-            var followRouteAction = new FollowRouteGoal(addonReader.PlayerReader, wowProcess, playerDirection, pathPoints, stopMoving, NpcNameFinder, blacklist, logger, stuckDetector, classConfig);
-            var walkToCorpseAction = new WalkToCorpseGoal(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger, stuckDetector);
+            var followRouteAction = new FollowRouteGoal(addonReader.PlayerReader, wowProcess, playerDirection, pathPoints, stopMoving, NpcNameFinder, blacklist, logger, stuckDetector, classConfig, pather);
+            var walkToCorpseAction = new WalkToCorpseGoal(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger, stuckDetector, pather);
 
             this.RouteInfo = new RouteInfo(pathPoints, spiritPath, followRouteAction, walkToCorpseAction);
 

@@ -56,5 +56,10 @@ namespace Libs
             //logger.LogInformation($"distance:{x} {y} {distance.ToString()}");
             return distance;
         }
+
+        public override string ToString()
+        {
+            return $"{X},{Y}";
+        }
     }
 }

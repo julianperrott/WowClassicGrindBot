@@ -13,11 +13,17 @@ namespace Libs.Goals
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
         private readonly List<WowPoint> pointsList;
-        private Stack<WowPoint> points = new Stack<WowPoint>();
+        private Stack<WowPoint> routeToWaypoint = new Stack<WowPoint>();
+        private Stack<WowPoint> wayPoints = new Stack<WowPoint>();
+
+        public List<WowPoint> RouteToWaypointList()
+        {
+            return routeToWaypoint.ToList();
+        }
 
         public WowPoint? NextPoint()
         {
-            return points.Count == 0 ? null : points.Peek();
+            return routeToWaypoint.Count == 0 ? null : routeToWaypoint.Peek();
         }
 
         private readonly PlayerReader playerReader;
@@ -26,6 +32,7 @@ namespace Libs.Goals
         private readonly NpcNameFinder npcNameFinder;
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
+        private readonly IPPather pather;
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private DateTime LastJump = DateTime.Now;
@@ -37,18 +44,21 @@ namespace Libs.Goals
 
         private bool firstLoad = true;
 
-        public FollowRouteGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public FollowRouteGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
+            
             this.pointsList = points;
+
             this.npcNameFinder = npcNameFinder;
             this.blacklist = blacklist;
             this.logger = logger;
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
+            this.pather = pather;
 
             if (classConfiguration.Mode != Mode.AttendedGather)
             {
@@ -56,7 +66,7 @@ namespace Libs.Goals
             }
         }
 
-        private void RefillPoints(bool findClosest = false)
+        private void RefillWaypoints(bool findClosest = false)
         {
             if (firstLoad)
             {
@@ -67,7 +77,7 @@ namespace Libs.Goals
 
                 for (int i = 0; i < pointsList.Count; i++)
                 {
-                    points.Push(pointsList[i]);
+                    wayPoints.Push(pointsList[i]);
                     if (pointsList[i] == closest) { break; }
                 }
             }
@@ -75,12 +85,12 @@ namespace Libs.Goals
             {
                 if (findClosest)
                 {
-                    pointsList.ForEach(p => points.Push(p));
+                    pointsList.ForEach(p => wayPoints.Push(p));
                     AdjustNextPointToClosest();
                 }
                 else
                 {
-                    pointsList.ForEach(p => points.Push(p));
+                    pointsList.ForEach(p => wayPoints.Push(p));
                 }
             }
         }
@@ -92,6 +102,7 @@ namespace Libs.Goals
             if (sender != this)
             {
                 shouldMount = true;
+                this.routeToWaypoint.Clear();
             }
         }
 
@@ -113,22 +124,20 @@ namespace Libs.Goals
                 lastGatherClick = DateTime.Now;
             }
 
-            if (points.Count == 0)
-            {
-                RefillPoints(true);
-                this.stuckDetector.SetTargetLocation(this.points.Peek());
-            }
-
             await Task.Delay(200);
-            wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 1");
-
+            
             if (this.playerReader.PlayerBitValues.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
 
-            if ((DateTime.Now - LastActive).TotalSeconds > 10)
+            if ((DateTime.Now - LastActive).TotalSeconds > 10 || routeToWaypoint.Count == 0)
             {
+                // recalculate next waypoint
                 var pointsRemoved = 0;
-                this.stuckDetector.SetTargetLocation(this.points.Peek());
                 while (AdjustNextPointToClosest() && pointsRemoved < 5) { pointsRemoved++; };
+                await RefillRouteToNextWaypoint(true);
+            }
+            else
+            {
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 1");
             }
 
             await RandomJump();
@@ -151,17 +160,17 @@ namespace Libs.Goals
             }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = WowPoint.DistanceTo(location, points.Peek());
-            var heading = DirectionCalculator.CalculateHeading(location, points.Peek());
+            var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+            var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
 
-            if (this.classConfiguration.Mode == Mode.AttendedGather)
-            {
+            //if (this.classConfiguration.Mode == Mode.AttendedGather)
+            //{
                 await AdjustHeading(heading);
-            }
+            //}
 
             if (lastDistance < distance)
             {
-                await playerDirection.SetDirection(heading, points.Peek(), "Further away");
+                await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Further away");
             }
             else if (!this.stuckDetector.IsGettingCloser())
             {
@@ -189,31 +198,45 @@ namespace Libs.Goals
             {
                 logger.LogInformation($"Move to next point");
 
-                points.Pop();
+                ReduceRoute();
+
                 lastDistance = 999;
-                if (points.Count == 0)
+                if (routeToWaypoint.Count == 0)
                 {
-                    RefillPoints();
+                    wayPoints.Pop();
+
+                    await RefillRouteToNextWaypoint(false);
                 }
 
-                this.stuckDetector.SetTargetLocation(this.points.Peek());
+                this.stuckDetector.SetTargetLocation(this.routeToWaypoint.Peek());
 
-                heading = DirectionCalculator.CalculateHeading(location, points.Peek());
-                await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
+                heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
+                await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Move to next point");
 
-                if (this.classConfiguration.Blink.ConsoleKey != 0 && this.playerReader.ManaPercentage > 90 && this.playerReader.PlayerLevel < 40)
+                distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+
+                if (this.classConfiguration.Blink.ConsoleKey != 0 && this.playerReader.ManaPercentage > 90 && this.playerReader.PlayerLevel < 40
+                    && distance> 200
+                    )
                 {
                     await wowProcess.KeyPress(this.classConfiguration.Blink.ConsoleKey, 120, this.classConfiguration.Blink.Name);
                 }
             }
 
             // should mount
+            await MountIfRequired();
+
+            LastActive = DateTime.Now;
+        }
+
+        private async Task MountIfRequired()
+        {
             if (shouldMount && !this.playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
             {
                 if (this.classConfiguration.Mode != Mode.AttendedGather)
                 {
                     shouldMount = false;
-                    if (await LookForTarget()) { return; }
+                    //if (await LookForTarget()) { return; }
                 }
 
                 logger.LogInformation("Mounting if level >=40 (druid 30) and no NPC in sight");
@@ -239,8 +262,55 @@ namespace Libs.Goals
                 }
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 3");
             }
+        }
 
-            LastActive = DateTime.Now;
+        private void ReduceRoute()
+        {
+            if (routeToWaypoint.Any())
+            {
+                var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+                var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+                while (distance < PointReachedDistance() && routeToWaypoint.Any())
+                {
+                    routeToWaypoint.Pop();
+                    if (routeToWaypoint.Any())
+                    {
+                        distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+                    }
+                }
+            }
+        }
+
+        private async Task RefillRouteToNextWaypoint(bool forceUsePathing)
+        {
+            if (wayPoints.Count == 0)
+            {
+                RefillWaypoints();
+            }
+
+            this.routeToWaypoint.Clear();
+
+            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+            var heading = DirectionCalculator.CalculateHeading(location, wayPoints.Peek());
+            await playerDirection.SetDirection(heading, wayPoints.Peek(), "Reached waypoint").ConfigureAwait(false);
+
+            //Create path back to route
+            var distance = WowPoint.DistanceTo(location, wayPoints.Peek());
+            if (forceUsePathing || distance > 200)
+            {
+                await this.stopMoving.Stop();
+                var path = await this.pather.FindRouteTo(wayPoints.Peek());
+                path.Reverse();
+                path.ForEach(p => this.routeToWaypoint.Push(p));
+            }
+
+            this.ReduceRoute();
+            if (this.routeToWaypoint.Count == 0)
+            {
+                this.routeToWaypoint.Push(this.wayPoints.Peek());
+            }
+
+            this.stuckDetector.SetTargetLocation(this.routeToWaypoint.Peek());
         }
 
         private async Task AdjustHeading(double heading)
@@ -258,7 +328,7 @@ namespace Libs.Goals
             if (Math.Min(diff1, diff2) > wanderAngle)
             {
                 logger.LogInformation("Correct direction");
-                await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
+                await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");
             }
             else
             {
@@ -320,15 +390,15 @@ namespace Libs.Goals
 
         private bool AdjustNextPointToClosest()
         {
-            if (points.Count < 2) { return false; }
+            if (wayPoints.Count < 2) { return false; }
 
-            var A = points.Pop();
-            var B = points.Peek();
+            var A = wayPoints.Pop();
+            var B = wayPoints.Peek();
             var result = GetClosestPointOnLineSegment(A.Vector2(), B.Vector2(), new Vector2((float)this.playerReader.XCoord, (float)this.playerReader.YCoord));
             var newPoint = new WowPoint(result.X, result.Y);
-            if (WowPoint.DistanceTo(newPoint, points.Peek()) >= 4)
+            if (WowPoint.DistanceTo(newPoint, wayPoints.Peek()) >= 4)
             {
-                points.Push(newPoint);
+                wayPoints.Push(newPoint);
                 logger.LogInformation($"Adjusted resume point");
                 return false;
             }

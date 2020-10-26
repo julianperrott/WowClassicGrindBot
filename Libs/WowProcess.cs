@@ -135,6 +135,7 @@ namespace Libs
 
         public void KeyPressSleep(ConsoleKey key, int milliseconds, string description = "")
         {
+            if (milliseconds < 1) { return; }
             var keyDescription = string.Empty;
             if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
             logger.LogInformation($"{keyDescription}[{key}] pressing for {milliseconds}ms");
@@ -189,8 +190,40 @@ namespace Libs
             var handle = this.WarcraftProcess.MainWindowHandle;
             RECT rect = new RECT();
             NativeMethods.GetWindowRect(handle, ref rect);
+
+            if (rect.right == 2048)
+            {
+                scale = 125;
+
+                rect.right = (rect.right * scale) / 100;
+                rect.bottom = (rect.bottom * scale) / 100;
+            }
+
             return rect;
         }
+
+        int scale = 100;
+
+        public int ScaleUp(int value)
+        {
+            if (scale == 100)
+            {
+                return value;
+            }
+
+            return (value * scale) / 100;
+        }
+
+        public int ScaleDown(int value)
+        {
+            if (scale == 100)
+            {
+                return value;
+            }
+
+            return (value * 100) / scale;
+        }
+
 
         public async Task Hearthstone()
         {

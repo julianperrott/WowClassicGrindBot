@@ -53,6 +53,13 @@
                         @this.PathPoints
                     </g>
 
+                    <g stroke-width="1" stroke="black">
+                        @this.RouteToWaypointLines
+                    </g>
+                    <g fill="orange">
+                        @this.RouteToWaypointPoints
+                    </g>
+
                     @if (botController.RouteInfo != null)
                     {
                         <g fill="blue">
@@ -76,6 +83,9 @@
 
     [Parameter]
     public int Size { get; set; } = 1024;
+
+    private MarkupString RouteToWaypointLines = new MarkupString();
+    private MarkupString RouteToWaypointPoints = new MarkupString();
 
     private MarkupString PathLines = new MarkupString();
     private MarkupString PathPoints = new MarkupString();
@@ -105,27 +115,35 @@
 
     private void InitialiseRoute()
     {
-        if (!CanvasInitialised && botController.RouteInfo != null)
+        if (botController.RouteInfo != null)
         {
             var routeinfo = botController.RouteInfo;
 
-            CanvasInitialised = true;
-            routeinfo.SetMargin(10);
-            routeinfo.SetCanvasSize(Size);
-            this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
-            this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
-
-            this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
-            this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
-
-            if (botController.GoapAgent != null)
+            if (!CanvasInitialised)
             {
-                var walkToCorpseGoal = botController.GoapAgent.AvailableGoals.FirstOrDefault(a => a.GetType() == typeof(Libs.Goals.WalkToCorpseGoal)) as Libs.Goals.WalkToCorpseGoal;
-                if (walkToCorpseGoal != null)
+                CanvasInitialised = true;
+                routeinfo.SetMargin(10);
+                routeinfo.SetCanvasSize(Size);
+                this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
+                this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
+
+                this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
+                this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
+
+                if (botController.GoapAgent != null)
                 {
-                    Deaths = walkToCorpseGoal.Deaths;
+                    var walkToCorpseGoal = botController.GoapAgent.AvailableGoals.FirstOrDefault(a => a.GetType() == typeof(Libs.Goals.WalkToCorpseGoal)) as Libs.Goals.WalkToCorpseGoal;
+                    if (walkToCorpseGoal != null)
+                    {
+                        Deaths = walkToCorpseGoal.Deaths;
+                    }
                 }
             }
+
+            var routeToWaypoints = routeinfo.RouteToWaypoint;
+
+            this.RouteToWaypointLines = new MarkupString(routeinfo.RenderPathLines(routeToWaypoints));
+            this.RouteToWaypointPoints = new MarkupString(routeinfo.RenderPathPoints(routeToWaypoints));
         }
     }
 

@@ -20,7 +20,7 @@ namespace Libs
         public Thread? screenshotThread { get; set; }
         public Thread addonThread { get; set; }
         public Thread? botThread { get; set; }
-        public GoalFactory ActionFactory { get; set; }
+        //public GoalFactory ActionFactory { get; set; }
         public GoapAgent? GoapAgent { get; set; }
         public RouteInfo? RouteInfo { get; set; }
 
@@ -63,7 +63,7 @@ namespace Libs
             }
 
             npcNameFinder = new NpcNameFinder(wowProcess, AddonReader.PlayerReader, logger);
-            ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
+            //ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
 
             screenshotThread = new Thread(ScreenshotRefreshThread);
             screenshotThread.Start();
@@ -136,8 +136,9 @@ namespace Libs
             var blacklist = this.ClassConfig.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, ClassConfig.NPCMaxLevels_Above, ClassConfig.NPCMaxLevels_Below, ClassConfig.Blacklist, logger);
 
             //this.currentAction = followRouteAction;
+            var ppather = new PPather(AddonReader.PlayerReader, this.logger);
 
-            var actionFactory = new GoalFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder);
+            var actionFactory = new GoalFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder, ppather);
             var availableActions = actionFactory.CreateGoals(ClassConfig, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 

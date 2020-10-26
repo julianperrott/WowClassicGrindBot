@@ -75,6 +75,10 @@ namespace Libs
                     foreach (var location in locations)
                     {
                         var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
+
+                        clickPostion.X = wowProcess.ScaleDown(clickPostion.X);
+                        clickPostion.Y = wowProcess.ScaleDown(clickPostion.Y);
+
                         WowProcess.SetCursorPosition(clickPostion);
                         await Task.Delay(100);
                         CursorClassifier.Classify(out var cls).Dispose();

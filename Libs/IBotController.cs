@@ -9,7 +9,7 @@ namespace Libs
         Thread? screenshotThread { get; set; }
         Thread addonThread { get; set; }
         Thread? botThread { get; set; }
-        GoalFactory ActionFactory { get; set; }
+        //GoalFactory ActionFactory { get; set; }
         GoapAgent? GoapAgent { get; set; }
         RouteInfo? RouteInfo { get; set; }
         WowScreen WowScreen { get; set; }

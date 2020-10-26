@@ -5,8 +5,8 @@
   "NPCMaxLevels_Below": 6,
   "NPCMaxLevels_Above": 2,
 
-  "PathFilename": "33_Arathi.json",
-  "SpiritPathFilename": "33_Arathi_SpiritHealer.json",
+  "PathFilename": "37_Arathi.json",
+  "SpiritPathFilename": "37_Arathi_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 
@@ -113,7 +113,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirement": "not BagItem:1114:4",
+        "Requirement": "not BagItem:1487:4",
         "Cooldown": 30,
         "Log": false
       },

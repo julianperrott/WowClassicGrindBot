@@ -24,7 +24,7 @@ namespace Libs
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, point);
 
-            logger.LogInformation("===============");
+            //logger.LogInformation("===============");
             logger.LogInformation($"SetDirection:- {source} Desired: {desiredDirection.ToString("0.000")}, Current: {playerReader.Direction.ToString("0.000")}, distance: {distance.ToString("0.000")}");
 
             if (distance < 40)
