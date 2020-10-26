@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:56849",
+      "applicationUrl": "http://localhost:5001",
       "sslPort": 0
     }
   },
@@ -14,9 +14,9 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "ancmHostingModel": "OutOfProcess"
+      "ancmHostingModel": "InProcess"
     },
-    "BlazorServer": {
+    "PathingAPI": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
