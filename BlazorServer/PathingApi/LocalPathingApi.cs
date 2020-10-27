@@ -27,7 +27,7 @@ namespace BlazorServer
         {
             if (!Enabled)
             {
-                logger.LogWarning($"Pathing is disabled.");
+                logger.LogWarning($"Pathing is disabled, please check the messages when the bot started.");
                 return new List<WowPoint>();
             }
 

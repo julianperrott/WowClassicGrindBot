@@ -4,11 +4,12 @@
     .log {
         font-family: "Courier New", Courier, monospace;
         font-size: small;
-        padding: 0 !important;
+        padding: 0 0 5px 0 !important;
+        padding-right: 10px !important;
     }
 </style>
 
-<table class="table table-borderless table-dark">
+<table class="table table-borderless table-dark" cellspacing="20">
     @foreach (var evt in LoggerSink.Log.AsEnumerable().Reverse())
     {
         <tr>
