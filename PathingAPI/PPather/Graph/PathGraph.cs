@@ -57,7 +57,7 @@ namespace PatherPath.Graph
 		*/
 
         public const float CHUNK_BASE = 100000.0f; // Always keep positive
-        public string BaseDir = "PPather\\PathInfo";
+        public string BaseDir = "..\\PathingApi\\PPather\\PathInfo";
         private string Continent;
         private SparseMatrix2D<GraphChunk> chunks;
 

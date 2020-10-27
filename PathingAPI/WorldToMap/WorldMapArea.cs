@@ -44,9 +44,9 @@ namespace PathingAPI
 
         public static List<WorldMapArea> Read()
         {
-            var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(@"WorldToMap\WorldMapArea.json"));
+            var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(@"..\PathingAPI\WorldToMap\WorldMapArea.json"));
 
-            var uimapLines = File.ReadAllLines(@"WorldToMap\uimap.csv").ToList().Select(l => l.Split(","));
+            var uimapLines = File.ReadAllLines(@"..\PathingAPI\WorldToMap\uimap.csv").ToList().Select(l => l.Split(","));
 
             list.ForEach(wmp => PopulateUIMap(wmp, uimapLines));
 

@@ -20,6 +20,7 @@
 
 using PatherPath;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Wmo;
 
@@ -65,6 +66,62 @@ namespace WowTriangles
         {
             this.logger = logger;
 
+            string[] archiveNames = GetArchiveNames(s => logger.WriteLine(s));
+
+            archive = new StormDll.ArchiveSet(this.logger);
+            archive.AddArchives(archiveNames);
+            modelmanager = new ModelManager(archive, 80);
+            wmomanager = new WMOManager(archive, modelmanager, 30);
+
+            archive.ExtractFile("..\\PathingAPI\\DBFilesClient\\AreaTable.dbc", "..\\PathingAPI\\PPather\\AreaTable.dbc");
+            DBC areas = new DBC();
+            DBCFile af = new DBCFile("..\\PathingAPI\\PPather\\AreaTable.dbc", areas, this.logger);
+            for (int i = 0; i < areas.recordCount; i++)
+            {
+                int AreaID = (int)areas.GetUint(i, 0);  //0 	 uint 	 AreaID
+                int WorldID = (int)areas.GetUint(i, 1); //1 	uint 	Continent (refers to a WorldID)
+                int Parent = (int)areas.GetUint(i, 2); //2 	uint 	Region (refers to an AreaID)
+                string Name = areas.GetString(i, 11);
+
+                areaIdToName.Add(AreaID, Name);
+            }
+
+            for (int i = 0; i < areas.recordCount; i++)
+            {
+                int AreaID = (int)areas.GetUint(i, 0);
+                int WorldID = (int)areas.GetUint(i, 1);
+                int Parent = (int)areas.GetUint(i, 2);
+                string Name = areas.GetString(i, 11);
+
+                string TotalName = "";
+                //areaIdToName.Add(AreaID, Name);
+                //areaIdParent.Add(AreaID, Parent);
+                string ParentName = "";
+                if (!areaIdToName.TryGetValue(Parent, out ParentName))
+                {
+                    TotalName = ":" + Name;
+                }
+                else
+                    TotalName = Name + ":" + ParentName;
+                try
+                {
+                    zoneToMapId.Add(TotalName, WorldID);
+                    //logger.WriteLine(TotalName + " => " + WorldID);
+                }
+                catch
+                {
+                    int id;
+                    zoneToMapId.TryGetValue(TotalName, out id);
+                    ////  logger.WriteLine("Duplicate: " + TotalName + " " + WorldID +" " + id);
+                }
+                //0 	 uint 	 AreaID
+                //1 	uint 	Continent (refers to a WorldID)
+                //2 	uint 	Region (refers to an AreaID)
+            }
+        }
+
+        public static string[] GetArchiveNames(Action<string> log)
+        {
             string[] archiveNames = {
                     "patch.MPQ",
                     "enUS\\patch-enUS.MPQ",
@@ -102,75 +159,9 @@ namespace WowTriangles
                     "enGB\\base-enGB.MPQ"
                                     };
 
-            //StormDll.ArchiveSet archive = null;
-
-            archive = new StormDll.ArchiveSet(this.logger);
-            //string regGameDir = archive.SetGameDirFromReg();
-            string regGameDir = "MPQ\\";
-            archive.SetGameDir(regGameDir);
-
-            logger.WriteLine("MPQ dir is " + regGameDir);
-            archive.AddArchives(archiveNames);
-            modelmanager = new ModelManager(archive, 80);
-            wmomanager = new WMOManager(archive, modelmanager, 30);
-
-            archive.ExtractFile("DBFilesClient\\AreaTable.dbc", "PPather\\AreaTable.dbc");
-            DBC areas = new DBC();
-            DBCFile af = new DBCFile("PPather\\AreaTable.dbc", areas, this.logger);
-            for (int i = 0; i < areas.recordCount; i++)
-            {
-                int AreaID = (int)areas.GetUint(i, 0);
-                int WorldID = (int)areas.GetUint(i, 1);
-                int Parent = (int)areas.GetUint(i, 2);
-                string Name = areas.GetString(i, 11);
-
-                areaIdToName.Add(AreaID, Name);
-
-                if (Name.Contains("Thousa"))
-                {
-                }
-
-                if (WorldID != 0 && WorldID != 1 && WorldID != 530)
-                {
-                    ////   logger.WriteLine(String.Format("{0,4} {1,3} {2,3} {3}", AreaID, WorldID, Parent, Name));
-                }
-                //0 	 uint 	 AreaID
-                //1 	uint 	Continent (refers to a WorldID)
-                //2 	uint 	Region (refers to an AreaID)
-            }
-
-            for (int i = 0; i < areas.recordCount; i++)
-            {
-                int AreaID = (int)areas.GetUint(i, 0);
-                int WorldID = (int)areas.GetUint(i, 1);
-                int Parent = (int)areas.GetUint(i, 2);
-                string Name = areas.GetString(i, 11);
-
-                string TotalName = "";
-                //areaIdToName.Add(AreaID, Name);
-                //areaIdParent.Add(AreaID, Parent);
-                string ParentName = "";
-                if (!areaIdToName.TryGetValue(Parent, out ParentName))
-                {
-                    TotalName = ":" + Name;
-                }
-                else
-                    TotalName = Name + ":" + ParentName;
-                try
-                {
-                    zoneToMapId.Add(TotalName, WorldID);
-                    //logger.WriteLine(TotalName + " => " + WorldID);
-                }
-                catch
-                {
-                    int id;
-                    zoneToMapId.TryGetValue(TotalName, out id);
-                    ////  logger.WriteLine("Duplicate: " + TotalName + " " + WorldID +" " + id);
-                }
-                //0 	 uint 	 AreaID
-                //1 	uint 	Continent (refers to a WorldID)
-                //2 	uint 	Region (refers to an AreaID)
-            }
+            string regGameDir = "..\\PathingAPI\\MPQ\\";
+            log("MPQ dir is " + regGameDir);
+            return archiveNames.Select(a => regGameDir + a).ToArray();
         }
 
         public void SetContinent(string continent)
@@ -208,9 +199,9 @@ namespace WowTriangles
                 }
             }
 
-            archive.ExtractFile("DBFilesClient\\Map.dbc", "PPather\\Map.dbc");
+            archive.ExtractFile("..\\PathingAPI\\DBFilesClient\\Map.dbc", "PPather\\Map.dbc");
             DBC maps = new DBC();
-            DBCFile mf = new DBCFile("PPather\\Map.dbc", maps, this.logger);
+            DBCFile mf = new DBCFile("..\\PathingAPI\\PPather\\Map.dbc", maps, this.logger);
 
             for (int i = 0; i < maps.recordCount; i++)
             {

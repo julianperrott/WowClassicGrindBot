@@ -299,7 +299,7 @@ namespace Libs.Goals
             if (forceUsePathing || distance > 200)
             {
                 await this.stopMoving.Stop();
-                var path = await this.pather.FindRouteTo(wayPoints.Peek());
+                var path = await this.pather.FindRouteTo(this.playerReader, wayPoints.Peek());
                 path.Reverse();
                 path.ForEach(p => this.routeToWaypoint.Push(p));
             }

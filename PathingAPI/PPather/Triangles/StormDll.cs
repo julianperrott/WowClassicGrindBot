@@ -122,12 +122,6 @@ int   WINAPI SFileAddListFile(HANDLE hMpq, const char * szListFile);
         }
 
         private List<Archive> archives = new List<Archive>();
-        private string GameDir = ".\\";
-
-        public void SetGameDir(string dir)
-        {
-            GameDir = dir;
-        }
 
         //public string SetGameDirFromReg()
         //{
@@ -144,7 +138,7 @@ int   WINAPI SFileAddListFile(HANDLE hMpq, const char * szListFile);
 
         public bool AddArchive(string file)
         {
-            Archive a = new Archive(GameDir + file, 0, 0, this.logger);
+            Archive a = new Archive(file, 0, 0, this.logger);
             if (a.IsOpen())
             {
                 archives.Add(a);

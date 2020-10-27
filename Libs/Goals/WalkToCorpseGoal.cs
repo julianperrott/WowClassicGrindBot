@@ -203,7 +203,7 @@ namespace Libs.Goals
 
             logger.LogInformation($"player location {playerReader.XCoord},{playerReader.YCoord}. Corpse {corpseLocation.X},{corpseLocation.Y}.");
 
-            var path = await pather.FindRouteTo(corpseLocation);
+            var path = await pather.FindRouteTo(this.playerReader, corpseLocation);
 
             if (path.Any())
             {

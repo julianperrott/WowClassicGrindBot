@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using PatherPath.Graph;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text.Json;
+using WowTriangles;
+using PatherPath;
 
 namespace PathingAPI.Controllers
 {
@@ -21,11 +24,13 @@ namespace PathingAPI.Controllers
     [ApiController]
     public class PPatherController : ControllerBase
     {
-        PPatherService service;
+        private PPatherService service;
+        private Logger logger;
 
-        public PPatherController(PPatherService service)
+        public PPatherController(PPatherService service, Logger logger)
         {
             this.service = service;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -82,11 +87,37 @@ namespace PathingAPI.Controllers
         /// <returns>A list of x,y,z</returns>
         [HttpGet("WorldRoute")]
         [Produces("application/json")]
-        public string WorldRoute(float x1, float y1, float z1, float x2, float y2, float z2, string continent)
+        public JsonResult WorldRoute(float x1, float y1, float z1, float x2, float y2, float z2, string continent)
         {
             service.SetLocations(new Location(x1,y1,z1,"l1",continent), new Location(x2, y2, z2, "l2", continent));
             var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(path);
+            return new JsonResult(path);
+        }
+
+        /// <summary>
+        /// Returns true to indicate that the server is listening.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("SelfTest")]
+        [Produces("application/json")]
+        public JsonResult SelfTest()
+        {
+            var mpqFiles = MPQTriangleSupplier.GetArchiveNames(s => logger.WriteLine(s));
+
+            var countOfMPQFiles = mpqFiles.Where(f => System.IO.File.Exists(f)).Count();
+
+            if (countOfMPQFiles == 0)
+            {
+                logger.WriteLine("Some of these MPQ files should exist!");
+                mpqFiles.ToList().ForEach(l => logger.WriteLine(l));
+                logger.WriteLine("No MPQ files found, refer to the Readme to download them.");
+            }
+            else
+            {
+                logger.WriteLine("MPQ files exist.");
+            }
+
+            return new JsonResult(countOfMPQFiles > 0);
         }
     }
 }

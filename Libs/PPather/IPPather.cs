@@ -5,7 +5,7 @@ namespace Libs
 {
     public interface IPPather
     {
-        Task<List<WowPoint>> FindRoute(long map, WowPoint fromPoint, WowPoint toPoint);
-        Task<List<WowPoint>> FindRouteTo(WowPoint wowPoint);
+        Task<List<WowPoint>> FindRoute(int map, WowPoint fromPoint, WowPoint toPoint);
+        Task<List<WowPoint>> FindRouteTo(PlayerReader playerReader,WowPoint wowPoint);
     }
 }

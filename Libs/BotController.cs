@@ -15,6 +15,7 @@ namespace Libs
     {
         private readonly WowProcess wowProcess;
         private readonly ILogger logger;
+        private readonly IPPather pather;
 
         public AddonReader AddonReader { get; set; }
         public Thread? screenshotThread { get; set; }
@@ -37,11 +38,12 @@ namespace Libs
 
         private bool Enabled = true;
 
-        public BotController(ILogger logger)
+        public BotController(ILogger logger, IPPather pather)
         {
             wowProcess = new WowProcess(logger);
             this.WowScreen = new WowScreen(logger);
             this.logger = logger;
+            this.pather = pather;
 
             var frames = DataFrameConfiguration.ConfigurationExists()
                 ? DataFrameConfiguration.LoadConfiguration()
@@ -136,9 +138,9 @@ namespace Libs
             var blacklist = this.ClassConfig.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, ClassConfig.NPCMaxLevels_Above, ClassConfig.NPCMaxLevels_Below, ClassConfig.Blacklist, logger);
 
             //this.currentAction = followRouteAction;
-            var ppather = new PPather(AddonReader.PlayerReader, this.logger);
 
-            var actionFactory = new GoalFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder, ppather);
+
+            var actionFactory = new GoalFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder, this.pather);
             var availableActions = actionFactory.CreateGoals(ClassConfig, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 

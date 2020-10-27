@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PathingAPI;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
+using System;
 using System.Threading;
 
 namespace BlazorServer
@@ -49,7 +51,8 @@ namespace BlazorServer
 
             if (DataFrameConfiguration.ConfigurationExists())
             {
-                var botController = new BotController(logger);
+                var pather = GetPather(logger);
+                var botController = new BotController(logger, pather);
                 services.AddSingleton<IBotController>(botController);
                 services.AddSingleton<IAddonReader>(botController.AddonReader);
                 botController.InitialiseBot();
@@ -64,6 +67,27 @@ namespace BlazorServer
             services.AddServerSideBlazor();
 
             //services.AddSingleton<RouteInfo>(botController.WowBot.RouteInfo);
+        }
+
+        private static IPPather GetPather(Microsoft.Extensions.Logging.ILogger logger)
+        {
+            var api = new RemotePathingAPI(logger);
+            if (api.PingServer().Result)
+            {
+                Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                Log.Information("Using remote pathing API");
+                Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                return api;
+            }
+
+            Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            Log.Information("Using local pathing API.");
+            Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            var pathingService = new PPatherService();
+            var localApi= new LocalPathingApi(logger, pathingService);
+            localApi.SelfTest();
+            Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            return localApi;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

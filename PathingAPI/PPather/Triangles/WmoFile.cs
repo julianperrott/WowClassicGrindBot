@@ -199,7 +199,7 @@ namespace Wmo
 
         public override WMO Load(String path)
         {
-            string localPath = "PPather\\wmo.tmp";
+            string localPath = "..\\PathingApi\\PPather\\wmo.tmp";
             Dbg.Log(" wmo");
             set.ExtractFile(path, localPath);
             WMO w = new WMO();
@@ -398,7 +398,7 @@ namespace Wmo
             }
 
             //logger.WriteLine("Load model " + path);
-            string localPath = "PPather\\model.tmp";
+            string localPath = "..\\PathingApi\\PPather\\model.tmp";
             Dbg.Log(" m");
             if (set.ExtractFile(file, localPath))
             {
@@ -943,7 +943,7 @@ namespace Wmo
             this.logger = logger;
             string wdtfile = "World\\Maps\\" + name + "\\" + name + ".wdt";
             Dbg.Log(" wdt");
-            if (!archive.ExtractFile(wdtfile, "PPather\\wdt.tmp"))
+            if (!archive.ExtractFile(wdtfile, "..\\PathingAPI\\PPather\\wdt.tmp"))
                 return;
 
             loaded = true;
@@ -953,7 +953,7 @@ namespace Wmo
             this.modelmanager = modelmanager;
             this.archive = archive;
 
-            stream = System.IO.File.OpenRead("PPather\\wdt.tmp");
+            stream = System.IO.File.OpenRead("..\\PathingAPI\\PPather\\wdt.tmp");
             file = new System.IO.BinaryReader(stream);
 
             bool done = false;
@@ -1011,11 +1011,11 @@ namespace Wmo
 
                 string filename = "World\\Maps\\" + name + "\\" + name + "_" + x + "_" + y + ".adt";
                 Dbg.Log(" adt");
-                if (archive.ExtractFile(filename, "PPather\\adt.tmp"))
+                if (archive.ExtractFile(filename, "..\\PathingApi\\PPather\\adt.tmp"))
                 {
                     logger.Debug("Reading adt: " + filename);
                     //PPather.mover.Stop();
-                    MapTileFile f = new MapTileFile("PPather\\adt.tmp", t, wmomanager, modelmanager);
+                    MapTileFile f = new MapTileFile("..\\PathingAPI\\PPather\\adt.tmp", t, wmomanager, modelmanager);
                     if (t.models.Count != 0 || t.wmos.Count != 0)
                     {
                         //logger.WriteLine(name + " " + x + " " + z + " models: " + t.models.Count + " wmos: " + t.wmos.Count);

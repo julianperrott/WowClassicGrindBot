@@ -42,6 +42,12 @@
             <param name="continent">from ["Azeroth", "Kalimdor", "Northrend", "Expansion01"] e.g. Kalimdor</param>
             <returns>A list of x,y,z</returns>
         </member>
+        <member name="M:PathingAPI.Controllers.PPatherController.SelfTest">
+            <summary>
+            Returns true to indicate that the server is listening.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:PathingAPI.WorldMapArea.Matches(PathingAPI.WorldMapArea,System.String[])">
             <summary>
             Fix occurance where Stormwind and Stormwind city didn't match
