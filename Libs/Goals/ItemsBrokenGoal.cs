@@ -1,5 +1,4 @@
-﻿using Libs.GOAP;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace Libs.Goals
@@ -25,7 +24,8 @@ namespace Libs.Goals
         public override Task PerformAction()
         {
             logger.LogInformation("Items are broken");
-            return Task.Delay(1000);
+            SendActionEvent(new ActionEventArgs(GOAP.GoapKey.abort, true));
+            return Task.Delay(10000);
         }
     }
 }

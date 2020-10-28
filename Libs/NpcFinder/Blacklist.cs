@@ -13,6 +13,8 @@ namespace Libs
         private readonly int above;
         private readonly int below;
 
+        private long LastWarningTargetGuid = 0;
+
         public Blacklist(PlayerReader playerReader, int above, int below, List<string> blacklisted, ILogger logger)
         {
             this.playerReader = playerReader;
@@ -27,6 +29,7 @@ namespace Libs
         {
             if (!this.playerReader.HasTarget)
             {
+                LastWarningTargetGuid = 0;
                 return false;
             }
 
@@ -38,36 +41,45 @@ namespace Libs
 
             if (!this.playerReader.PlayerBitValues.TargetIsNormal)
             {
-                logger.LogWarning("Blacklisted: Target is not a normal mob");
+                Warn("Blacklisted: Target is not a normal mob");
                 return true; // ignore elites
             }
 
             if (this.playerReader.PlayerBitValues.IsTagged)
             {
-                logger.LogWarning("Blacklisted: Target is tagged");
+                Warn("Blacklisted: Target is tagged");
                 return true; // ignore tagged mobs
             }
 
             if (this.playerReader.TargetLevel > this.playerReader.PlayerLevel + above)
             {
-                logger.LogWarning("Blacklisted: Target is too high a level");
+                Warn("Blacklisted: Target is too high a level");
                 return true; // ignore if current level + 2
             }
 
             if (this.playerReader.TargetLevel < this.playerReader.PlayerLevel - below)
             {
-                logger.LogWarning("Blacklisted: Target is too low a level");
+                Warn("Blacklisted: Target is too low a level");
                 return true; // ignore if current level - 7
             }
 
             var blacklistMatch = blacklist.Where(s => this.playerReader.Target.ToUpper().StartsWith(s)).FirstOrDefault();
             if (!string.IsNullOrEmpty(blacklistMatch))
             {
-                logger.LogWarning($"Blacklisted: Target is in the blacklist { this.playerReader.Target} starts with {blacklistMatch}");
+                Warn($"Blacklisted: Target is in the blacklist { this.playerReader.Target} starts with {blacklistMatch}");
                 return true;
             }
 
             return false;
+        }
+
+        private void Warn(string message)
+        {
+            if (this.playerReader.TargetGuid != this.LastWarningTargetGuid)
+            {
+                logger.LogWarning(message);
+            }
+            this.LastWarningTargetGuid = this.playerReader.TargetGuid;
         }
     }
 }

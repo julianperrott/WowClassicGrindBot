@@ -92,6 +92,7 @@
 
     private MarkupString SpiritLines = new MarkupString();
     private MarkupString SpiritPathPoints = new MarkupString();
+    private System.Timers.Timer refreshTimer = new System.Timers.Timer();
 
     private bool CanvasInitialised = false;
 
@@ -117,18 +118,11 @@
     {
         if (botController.RouteInfo != null)
         {
-            var routeinfo = botController.RouteInfo;
-
             if (!CanvasInitialised)
             {
                 CanvasInitialised = true;
-                routeinfo.SetMargin(10);
-                routeinfo.SetCanvasSize(Size);
-                this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
-                this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
-
-                this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
-                this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
+                botController.RouteInfo.SetMargin(10);
+                botController.RouteInfo.SetCanvasSize(Size);
 
                 if (botController.GoapAgent != null)
                 {
@@ -140,8 +134,37 @@
                 }
             }
 
-            var routeToWaypoints = routeinfo.RouteToWaypoint;
+            RefreshPathMarkup();
 
+            if (!refreshTimer.Enabled)
+            {
+                refreshTimer.Interval = 10000;
+                refreshTimer.Enabled = true;
+
+                refreshTimer.Elapsed += (s, e) =>
+                {
+                    botController.RouteInfo.CalculatePointToGrid();
+                    RefreshPathMarkup();
+                };
+
+                refreshTimer.Start();
+            }
+        }
+    }
+
+    private void RefreshPathMarkup()
+    {
+        var routeinfo = botController.RouteInfo;
+
+        if (routeinfo != null)
+        {
+            this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
+            this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
+
+            this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
+            this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
+
+            var routeToWaypoints = routeinfo.RouteToWaypoint;
             this.RouteToWaypointLines = new MarkupString(routeinfo.RenderPathLines(routeToWaypoints));
             this.RouteToWaypointPoints = new MarkupString(routeinfo.RenderPathPoints(routeToWaypoints));
         }

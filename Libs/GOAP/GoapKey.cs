@@ -20,7 +20,8 @@
         shoulddrink = 150,
         classMount = 160,
         isalive=170,
-        isswimming=180
+        isswimming=180,
+        itemsbroken=190
     }
 
     public static class GoapKeyDescription
@@ -78,6 +79,9 @@
 
                  (GoapKey.isswimming, true) => "Swimming",
                  (GoapKey.isswimming, false) => "Not Swimming",
+
+                 (GoapKey.itemsbroken, true) => "Gear is red",
+                 (GoapKey.itemsbroken, false) => "Gear is not red",
 
                  (_, _) => "Unknown"
              };

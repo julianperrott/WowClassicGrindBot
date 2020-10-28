@@ -68,7 +68,7 @@ namespace BlazorServer
             }
             else
             {
-                logger.LogInformation("MPQ files exist.");
+                logger.LogInformation("Hooray, MPQ files exist.");
             }
 
             return countOfMPQFiles > 0;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Libs.Goals
 {
-    public class FollowRouteGoal : GoapGoal
+    public class FollowRouteGoal : GoapGoal, IRouteProvider
     {
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
@@ -16,7 +16,7 @@ namespace Libs.Goals
         private Stack<WowPoint> routeToWaypoint = new Stack<WowPoint>();
         private Stack<WowPoint> wayPoints = new Stack<WowPoint>();
 
-        public List<WowPoint> RouteToWaypointList()
+        public List<WowPoint> PathingRoute()
         {
             return routeToWaypoint.ToList();
         }

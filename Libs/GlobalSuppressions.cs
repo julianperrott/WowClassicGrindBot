@@ -14,3 +14,8 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "<Pending>", Scope = "member", Target = "~M:Libs.MinimapNodeFinder.Dispose")]
 [assembly: SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "<Pending>", Scope = "type", Target = "~T:Libs.MinimapNodeFinder")]
 [assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:Libs.LocalPathingApi.PingServer~System.Threading.Tasks.Task{System.Boolean}")]
+[assembly: SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>", Scope = "member", Target = "~F:Libs.Goals.NPCGoal.playerReader")]
+[assembly: SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>", Scope = "member", Target = "~F:Libs.Goals.NPCGoal.classConfiguration")]
+[assembly: SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>", Scope = "member", Target = "~F:Libs.Goals.NPCGoal.bagReader")]
+[assembly: SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>", Scope = "member", Target = "~F:Libs.Goals.NPCGoal.wowProcess")]
+[assembly: SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>", Scope = "member", Target = "~F:Libs.Goals.NPCGoal.logger")]

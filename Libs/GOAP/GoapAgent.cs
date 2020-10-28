@@ -9,6 +9,8 @@ namespace Libs.GOAP
 {
     public sealed class GoapAgent
     {
+        private readonly BagReader bagReader;
+
         private GoapPlanner planner;
         public IEnumerable<GoapGoal> AvailableGoals { get; set; }
         private PlayerReader playerReader;
@@ -19,7 +21,7 @@ namespace Libs.GOAP
         public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
         private IBlacklist blacklist;
 
-        public GoapAgent(PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist, ILogger logger, ClassConfiguration classConfiguration)
+        public GoapAgent(PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist, ILogger logger, ClassConfiguration classConfiguration, BagReader bagReader)
         {
             this.playerReader = playerReader;
             this.AvailableGoals = availableGoals.OrderBy(a => a.CostOfPerformingAction);
@@ -27,6 +29,7 @@ namespace Libs.GOAP
             this.logger = logger;
             this.planner = new GoapPlanner(logger);
             this.classConfiguration = classConfiguration;
+            this.bagReader = bagReader;
         }
 
         public void UpdateWorldState()
@@ -76,7 +79,9 @@ namespace Libs.GOAP
                 new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
                 new KeyValuePair<GoapKey, object>(GoapKey.isswimming, playerReader.PlayerBitValues.IsSwimming),
-            };
+                new KeyValuePair<GoapKey, object>(GoapKey.bagfull, this.bagReader.BagItems.Count >= this.classConfiguration.VendorItemThreshold),
+                new KeyValuePair<GoapKey, object>(GoapKey.itemsbroken,playerReader.PlayerBitValues.ItemsAreBroken),
+        };
 
             actionState.ToList().ForEach(kv => state.Add(kv));
 

@@ -55,6 +55,15 @@ namespace Libs
         public KeyAction TargetLastTarget { get; set; } = new KeyAction();
         public string TargetLastTargetKey { get; set; } = "N";
 
+        public WowPoint RepairLocation { get; set; } = new WowPoint(0, 0);
+        public KeyAction RepairTarget { get; set; } = new KeyAction();
+        public string RepairTargetKey { get; set; } = string.Empty;
+
+        public WowPoint VendorLocation { get; set; } = new WowPoint(0, 0);
+        public KeyAction VendorTarget { get; set; } = new KeyAction();
+        public int VendorItemThreshold { get; set; } = 72;
+        public string VendorTargetKey { get; set; } = string.Empty;
+
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
 
         public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
@@ -73,6 +82,18 @@ namespace Libs
                 Blink.Key = " ";
             }
             Blink.Initialise(playerReader, requirementFactory, logger);
+
+            if (!string.IsNullOrEmpty(VendorTargetKey))
+            {
+                VendorTarget.Key = VendorTargetKey;
+                VendorTarget.Initialise(playerReader, requirementFactory, logger);
+            }
+
+            if (!string.IsNullOrEmpty(RepairTargetKey))
+            {
+                RepairTarget.Key = RepairTargetKey;
+                RepairTarget.Initialise(playerReader, requirementFactory, logger);
+            }
 
             TargetLastTarget.Key = TargetLastTargetKey;
             TargetLastTarget.Initialise(playerReader, requirementFactory, logger);

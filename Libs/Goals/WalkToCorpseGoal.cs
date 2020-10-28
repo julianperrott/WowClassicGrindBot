@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Libs.Goals
 {
-    public partial class WalkToCorpseGoal : GoapGoal
+    public partial class WalkToCorpseGoal : GoapGoal, IRouteProvider
     {
         private double RADIAN = Math.PI * 2;
         private WowProcess wowProcess;
@@ -24,7 +24,7 @@ namespace Libs.Goals
         private readonly IPPather pather;
         private Stack<WowPoint> points = new Stack<WowPoint>();
 
-        public List<WowPoint> CorpseRunPathList()
+        public List<WowPoint> PathingRoute()
         {
             return points.ToList();
         }

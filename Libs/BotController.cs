@@ -41,6 +41,7 @@ namespace Libs
         public BotController(ILogger logger, IPPather pather)
         {
             wowProcess = new WowProcess(logger);
+            wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
             this.WowScreen = new WowScreen(logger);
             this.logger = logger;
             this.pather = pather;
@@ -63,6 +64,8 @@ namespace Libs
                 logger.LogWarning("There is a problem with the addon, I have been unable to read the player class. Is it running ?");
                 Thread.Sleep(100);
             }
+
+            logger.LogWarning($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerClass}.");
 
             npcNameFinder = new NpcNameFinder(wowProcess, AddonReader.PlayerReader, logger);
             //ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
@@ -144,7 +147,7 @@ namespace Libs
             var availableActions = actionFactory.CreateGoals(ClassConfig, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
-            this.GoapAgent = new GoapAgent(AddonReader.PlayerReader, availableActions, blacklist, logger, ClassConfig);
+            this.GoapAgent = new GoapAgent(AddonReader.PlayerReader, availableActions, blacklist, logger, ClassConfig, this.AddonReader.BagReader);
 
             this.actionThread = new GoalThread(this.AddonReader.PlayerReader, this.wowProcess, GoapAgent, logger);
 

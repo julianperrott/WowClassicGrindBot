@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Libs
 {
     public interface IPlayerDirection
     {
-        System.Threading.Tasks.Task SetDirection(double desiredDirection, WowPoint point, string source);
+        Task SetDirection(double desiredDirection, WowPoint point, string source);
+
+        Task SetDirection(double desiredDirection, WowPoint point, string source, int ignoreDistance);
 
         DateTime LastSetDirection { get; }
     }
