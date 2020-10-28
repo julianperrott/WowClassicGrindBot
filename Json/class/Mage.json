@@ -9,7 +9,7 @@
   "RepairTargetKey": "=",
 
   "VendorLocation": {"X":45.8,"Y":46.6},
-  "VendorItemThreshold": 54,
+  "VendorItemThreshold": 80,
   "VendorTargetKey": "=",
   
   "PathFilename": "38_Arathi.json",
