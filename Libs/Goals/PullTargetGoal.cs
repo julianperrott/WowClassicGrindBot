@@ -40,7 +40,7 @@ namespace Libs.Goals
             this.classConfiguration.Pull.Sequence.Where(k => k != null).ToList().ForEach(key => this.Keys.Add(key));
         }
 
-        public override float CostOfPerformingAction { get => 4f; }
+        public override float CostOfPerformingAction { get => 7f; }
 
         public override async Task PerformAction()
         {

@@ -1,0 +1,156 @@
+﻿@page "/Watch"
+
+@using System.Collections.Generic
+@using PathingAPI.Data
+
+@inject IJSRuntime jsRuntime
+@inject PPatherService pPatherService
+
+<div id="canvasText" style="position: relative; z-index: 2; left: 0px;padding-left:10px; top: 20px; height:30px; background-color: black;color:white">
+    ...
+</div>
+<canvas id="renderCanvas" style="background:black">
+</canvas>
+@code {
+
+    private bool initialised = false;
+    System.Threading.Thread RefreshSearchThread;
+
+    [Parameter]
+    public int PathColour { get; set; } = 1;
+
+    [Parameter]
+    public string Name { get; set; } = "path";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            pPatherService.OnLog = Log;
+            await jsRuntime.InvokeVoidAsync("createScene");
+            Initialise();
+        }
+    }
+
+    private void Initialise()
+    {
+        if (!pPatherService.HasInitialised)
+        {
+            InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("log", "Waiting for first search from the API...")).Wait();
+        }
+        else
+        {
+            initialised = true;
+            var chunks = pPatherService.SetNotifyChunkAdded(TriangleWorld_NotifyChunkAdded);
+            this.AddChunks(chunks);
+
+            pPatherService.SetOnPathCreated(DrawFinalPath);
+            RefreshSearchThread = new System.Threading.Thread(new System.Threading.ThreadStart(SearchPathRefresh));
+            RefreshSearchThread.Start();
+            pPatherService.OnReset = () => { InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("clear")).Wait(); ; };
+        }
+    }
+
+    public async Task InvokeAsyncBase(Action action)
+    {
+        await base.InvokeAsync(() =>
+        {
+            try { action(); } catch { }
+        });
+    }
+
+    public void Log(string message)
+    {
+        try
+        {
+            System.Diagnostics.Debug.WriteLine(">" + message);
+            InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("log", message)).Wait();
+            if (!initialised) { Initialise(); }
+        }
+        catch (Exception ex)
+        {
+            Log(ex.Message);
+        }
+    }
+
+    public void DrawFinalPath(PatherPath.Graph.Path spotPath)
+    {
+        if (spotPath != null)
+        {
+            var path = spotPath.locations.Select(s => Vertex.Create(s.X, s.Y, s.Z)).ToList();
+            InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("removeMeshes", Name)).Wait(); ;
+            InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("drawPath", path, PathColour, Name)).Wait(); ;
+
+            System.Threading.Thread.Sleep(1000);
+            InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("removeMeshes", "search")).Wait(); ;
+        }
+        else
+        {
+            Log("No path found");
+        }
+    }
+
+    public void SearchPathRefresh()
+    {
+        while (true)
+        {
+            if (PatherPath.Graph.PathGraph.SearchEnabled)
+            {
+                try
+                {
+                    var spots = pPatherService.GetCurrentSearchPath();
+                    if (spots != null)
+                    {
+                        var path = spots.Where(s => s != null).Select(s => Vertex.Create(s.X, s.Y, s.Z));
+                        if (path.Count() > 0)
+                        {
+                            InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("drawPath", path, 4, "search")).Wait(); ;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log(ex.Message);
+                }
+            }
+            System.Threading.Thread.Sleep(50);
+        }
+    }
+
+    private void TriangleWorld_NotifyChunkAdded(WowTriangles.ChunkAddedEventArgs e)
+    {
+        var triangles = new List<WowTriangles.TriangleCollection> { e.Triangles };
+        AddChunks(triangles);
+    }
+
+    private void AddChunks(List<WowTriangles.TriangleCollection> chunks)
+    {
+        lock (this)
+        {
+            var positions = MeshFactory.CreatePointList(chunks);
+            var water = MeshFactory.CreateTrianglesList(1, chunks);
+            FixMaxWaterHeight(water, positions);
+            var models = new List<int[]>();
+            models.Add(MeshFactory.CreateTrianglesList(0, chunks));
+            models.Add(water);
+            models.Add(MeshFactory.CreateTrianglesList(2, chunks));
+            models.Add(MeshFactory.CreateTrianglesList(4, chunks));
+
+            InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("addModels", models, positions)).Wait();
+        }
+    }
+
+    private void FixMaxWaterHeight(int[] waterPoints, PathingAPI.Data.Vertex[] positions)
+    {
+        var zlist = waterPoints.Select(pt => positions[pt].z).ToList();
+        if (zlist.Count > 1)
+        {
+            var meanz = zlist[zlist.Count / 2];
+            var minz = zlist.Min();
+            waterPoints.ToList().ForEach(pt =>
+            {
+                if (positions[pt].z > minz) { positions[pt].z = minz; }
+            });
+        }
+    }
+}

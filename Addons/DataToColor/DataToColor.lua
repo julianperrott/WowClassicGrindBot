@@ -624,6 +624,42 @@ function DataToColor:delete(items)
     end
 end
 
+function DataToColor:sell(items)
+
+    local target = GetUnitName("target")
+    if target ~= nil then
+        local item= GetMerchantItemLink(1);
+
+        if  item ~= nil then
+            DataToColor:log("Selling items...");
+
+            DataToColor:OnMerchantShow();
+
+            for b=0,4 do for s=1,GetContainerNumSlots(b) 
+                do local CurrentItemLink=GetContainerItemLink(b,s) 
+                    if CurrentItemLink then
+                        for i = 1, table.getn(items), 1 do
+                            if strfind(CurrentItemLink,items[i]) then
+                                _, _, itemRarity, _, _, _, _, _, _, _, itemSellPrice = GetItemInfo(CurrentItemLink);
+                                if (itemRarity<2) then
+                                    DataToColor:log("Selling: " .. items[i]);
+                                    UseContainerItem(b,s);
+                                else
+                                    DataToColor:log("Item is not gray or common, not selling it: " .. items[i]);
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        else
+            DataToColor:log("Merchant is not open to sell to, please approach and open.");
+        end
+    else
+        DataToColor:log("Merchant is not targetted.");
+    end
+end
+
 
 function DataToColor:getDebuffsForTarget()
 
@@ -1331,7 +1367,7 @@ function DataToColor:HandleEvents()
         self:CheckTrainer()  
     end
     -- Resurrect player
-    if DATA_CONFIG.AUTO_RESURRECT and self:GetInventoryBroken()==0 then
+    if DATA_CONFIG.AUTO_RESURRECT then
         self:ResurrectPlayer()
     end
 

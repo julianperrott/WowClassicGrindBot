@@ -29,6 +29,9 @@ namespace Libs.Looting
 
             var rect = wowProcess.GetWindowRect();
 
+            rect.right = wowProcess.ScaleDown(rect.right);
+            rect.bottom = wowProcess.ScaleDown(rect.bottom);
+
             centre = new Point((int)(rect.right / 2f), (int)((rect.bottom / 5) * 3f));
             radiusLarge = rect.bottom / 6;
             dtheta = (float)(2 * Math.PI / num_theta);
@@ -36,9 +39,9 @@ namespace Libs.Looting
 
         private void Log(string text)
         {
-            if (debug)
+            if (debug && !string.IsNullOrEmpty(text))
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                //logger.LogInformation($"{this.GetType().Name}: {text}");
             }
         }
 

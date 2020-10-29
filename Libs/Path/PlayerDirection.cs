@@ -21,13 +21,18 @@ namespace Libs
 
         public async Task SetDirection(double desiredDirection, WowPoint point, string source)
         {
+            await SetDirection(desiredDirection, point, source, 40);
+        }
+
+        public async Task SetDirection(double desiredDirection, WowPoint point, string source, int ignoreDistance)
+        {
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, point);
 
-            logger.LogInformation("===============");
+            //logger.LogInformation("===============");
             logger.LogInformation($"SetDirection:- {source} Desired: {desiredDirection.ToString("0.000")}, Current: {playerReader.Direction.ToString("0.000")}, distance: {distance.ToString("0.000")}");
 
-            if (distance < 40)
+            if (distance < ignoreDistance)
             {
                 logger.LogInformation("Too close, ignoring direction change.");
                 return;

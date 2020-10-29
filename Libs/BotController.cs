@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -15,12 +16,13 @@ namespace Libs
     {
         private readonly WowProcess wowProcess;
         private readonly ILogger logger;
+        private readonly IPPather pather;
 
         public AddonReader AddonReader { get; set; }
         public Thread? screenshotThread { get; set; }
         public Thread addonThread { get; set; }
         public Thread? botThread { get; set; }
-        public GoalFactory ActionFactory { get; set; }
+        //public GoalFactory ActionFactory { get; set; }
         public GoapAgent? GoapAgent { get; set; }
         public RouteInfo? RouteInfo { get; set; }
 
@@ -37,11 +39,13 @@ namespace Libs
 
         private bool Enabled = true;
 
-        public BotController(ILogger logger)
+        public BotController(ILogger logger, IPPather pather)
         {
             wowProcess = new WowProcess(logger);
+            wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
             this.WowScreen = new WowScreen(logger);
             this.logger = logger;
+            this.pather = pather;
 
             var frames = DataFrameConfiguration.ConfigurationExists()
                 ? DataFrameConfiguration.LoadConfiguration()
@@ -56,14 +60,22 @@ namespace Libs
             addonThread.Start();
 
             // wait for addon to read the wow state
+            var sw = new Stopwatch();
+            sw.Start();
             while (AddonReader.PlayerReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.PlayerClass))
             {
-                logger.LogWarning("There is a problem with the addon, I have been unable to read the player class. Is it running ?");
+                if (sw.ElapsedMilliseconds > 5000)
+                {
+                    logger.LogWarning("There is a problem with the addon, I have been unable to read the player class. Is it running ?");
+                    sw.Restart();
+                }
                 Thread.Sleep(100);
             }
 
+            logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerClass}.");
+
             npcNameFinder = new NpcNameFinder(wowProcess, AddonReader.PlayerReader, logger);
-            ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
+            //ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
 
             screenshotThread = new Thread(ScreenshotRefreshThread);
             screenshotThread.Start();
@@ -137,11 +149,12 @@ namespace Libs
 
             //this.currentAction = followRouteAction;
 
-            var actionFactory = new GoalFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder);
+
+            var actionFactory = new GoalFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder, this.pather);
             var availableActions = actionFactory.CreateGoals(ClassConfig, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
-            this.GoapAgent = new GoapAgent(AddonReader.PlayerReader, availableActions, blacklist, logger, ClassConfig);
+            this.GoapAgent = new GoapAgent(AddonReader.PlayerReader, availableActions, blacklist, logger, ClassConfig, this.AddonReader.BagReader);
 
             this.actionThread = new GoalThread(this.AddonReader.PlayerReader, this.wowProcess, GoapAgent, logger);
 

@@ -10,8 +10,21 @@ namespace Libs
     {
         public List<WowPoint> PathPoints { get; private set; }
         public List<WowPoint> SpiritPath { get; private set; }
-        private readonly FollowRouteGoal followRouteAction;
-        private readonly WalkToCorpseGoal walkToCorpseAction;
+
+        public List<WowPoint> RouteToWaypoint
+        {
+            get
+            {
+                var route = pathedRoutes.Select(r => r.PathingRoute())
+                    .Where(r => r.Any())
+                    .FirstOrDefault();
+
+                return route ?? new List<WowPoint>();
+            }
+        }
+
+        private List<IRouteProvider> pathedRoutes = new List<IRouteProvider>();
+        private readonly PlayerReader playerReader;
 
         private double min;
         private double diff;
@@ -58,13 +71,13 @@ namespace Libs
 
         private double pointToGrid;
 
-        public RouteInfo(List<WowPoint> pathPoints, List<WowPoint> spiritPath, FollowRouteGoal followRouteAction, WalkToCorpseGoal walkToCorpseAction)
+        public RouteInfo(List<WowPoint> pathPoints, List<WowPoint> spiritPath, List<IRouteProvider> pathedRoutes, PlayerReader playerReader)
         {
             this.PathPoints = pathPoints.ToList();
             this.SpiritPath = spiritPath.ToList();
 
-            this.followRouteAction = followRouteAction;
-            this.walkToCorpseAction = walkToCorpseAction;
+            this.pathedRoutes = pathedRoutes;
+            this.playerReader = playerReader;
 
             CalculateDiffs();
         }
@@ -73,6 +86,8 @@ namespace Libs
         {
             var allPoints = this.PathPoints.Select(s => s).ToList();
             allPoints.AddRange(this.SpiritPath);
+            allPoints.AddRange(this.RouteToWaypoint);
+            allPoints.Add(this.playerReader.PlayerLocation);
 
             var maxX = allPoints.Max(s => s.X);
             var minX = allPoints.Min(s => s.X);
@@ -126,7 +141,9 @@ namespace Libs
 
         public string NextPoint()
         {
-            var pt = followRouteAction.LastActive > walkToCorpseAction.LastActive ? followRouteAction.NextPoint() : walkToCorpseAction.NextPoint();
+            var route = this.pathedRoutes.OrderByDescending(s => s.LastActive).FirstOrDefault();
+            if (route==null) { return string.Empty; }
+            var pt = route.NextPoint();
             return pt == null ? string.Empty : $"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '3' />";
         }
 

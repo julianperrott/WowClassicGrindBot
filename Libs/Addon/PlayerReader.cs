@@ -152,7 +152,7 @@ namespace Libs
         public int TargetId => (int)reader.GetLongAtCell(56);
         public long TargetGuid => reader.GetLongAtCell(57);
 
-        public long ZoneId => reader.GetLongAtCell(58);
+        public int ZoneId => (int)reader.GetLongAtCell(58);
 
         public bool IsCasting => SpellBeingCast != 0;
 

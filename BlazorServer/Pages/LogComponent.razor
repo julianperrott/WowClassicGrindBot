@@ -4,14 +4,50 @@
     .log {
         font-family: "Courier New", Courier, monospace;
         font-size: small;
-        padding: 0 !important;
+        padding: 0 0 5px 0 !important;
+        padding-right: 10px !important;
     }
+
+    .success {
+        color: #28a745;
+    }
+    .info {
+        color: #17a2b8;
+    }
+    .warning {
+        color: #ffc107;
+    }
+    .danger {
+        color: #dc3545;
+    }
+    .light {
+        color: #f8f9fa;
+    }
+
 </style>
 
-<table class="table table-borderless table-dark">
+<table class="table table-borderless table-dark" cellspacing="20">
     @foreach (var evt in LoggerSink.Log.AsEnumerable().Reverse())
     {
-        <tr>
+        var cls = string.Empty;
+        switch (evt.Level)
+        {
+            case Serilog.Events.LogEventLevel.Error:
+                cls = "danger";
+                break;
+            case Serilog.Events.LogEventLevel.Warning:
+                cls = "warning";
+                break;
+            case Serilog.Events.LogEventLevel.Information:
+                cls = "";
+                break;
+            case Serilog.Events.LogEventLevel.Debug:
+                cls = "success";
+                break;
+
+        };
+
+        <tr class="@cls">
             <td class="log">@evt.Timestamp.ToString("HH:mm:ss")</td>
             <td class="log">@evt.RenderMessage()</td>
         </tr>
@@ -21,22 +57,22 @@
 @code {
 
     protected override void OnInitialized()
-    {
-        LoggerSink.OnLogChanged -= this.LogChanged;
-        LoggerSink.OnLogChanged += this.LogChanged;
-    }
-
-    private async void LogChanged(object sender, EventArgs args)
-    {
-        await InvokeAsync(() =>
         {
-            base.StateHasChanged();
-        });
-    }
+            LoggerSink.OnLogChanged -= this.LogChanged;
+            LoggerSink.OnLogChanged += this.LogChanged;
+        }
 
-    public void Dispose()
-    {
-        LoggerSink.OnLogChanged -= this.LogChanged;
-    }
+        private async void LogChanged(object sender, EventArgs args)
+        {
+            await InvokeAsync(() =>
+            {
+                base.StateHasChanged();
+            });
+        }
 
-}
+        public void Dispose()
+        {
+            LoggerSink.OnLogChanged -= this.LogChanged;
+        }
+
+    }

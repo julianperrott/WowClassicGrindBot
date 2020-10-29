@@ -13,18 +13,20 @@ namespace Libs
         private readonly AddonReader addonReader;
         public NpcNameFinder NpcNameFinder { get; private set; }
         private readonly WowProcess wowProcess;
+        private readonly IPPather pather;
         private ILogger logger;
 
         public bool PotentialAddsExist => NpcNameFinder.PotentialAddsExist;
 
         public RouteInfo? RouteInfo { get; private set; }
 
-        public GoalFactory(AddonReader addonReader, ILogger logger, WowProcess wowProcess, NpcNameFinder npcNameFinder)
+        public GoalFactory(AddonReader addonReader, ILogger logger, WowProcess wowProcess, NpcNameFinder npcNameFinder, IPPather pather)
         {
             this.logger = logger;
             this.addonReader = addonReader;
             this.NpcNameFinder = npcNameFinder;
             this.wowProcess = wowProcess;
+            this.pather = pather;
         }
 
         public HashSet<GoapGoal> CreateGoals(ClassConfiguration classConfig, IBlacklist blacklist)
@@ -40,10 +42,8 @@ namespace Libs
             var castingHandler = new CastingHandler(wowProcess, addonReader.PlayerReader, logger, classConfig, playerDirection, NpcNameFinder);
 
             var stuckDetector = new StuckDetector(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger);
-            var followRouteAction = new FollowRouteGoal(addonReader.PlayerReader, wowProcess, playerDirection, pathPoints, stopMoving, NpcNameFinder, blacklist, logger, stuckDetector, classConfig);
-            var walkToCorpseAction = new WalkToCorpseGoal(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger, stuckDetector);
-
-            this.RouteInfo = new RouteInfo(pathPoints, spiritPath, followRouteAction, walkToCorpseAction);
+            var followRouteAction = new FollowRouteGoal(addonReader.PlayerReader, wowProcess, playerDirection, pathPoints, stopMoving, NpcNameFinder, blacklist, logger, stuckDetector, classConfig, pather);
+            var walkToCorpseAction = new WalkToCorpseGoal(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger, stuckDetector, pather);
 
             availableActions.Clear();
 
@@ -59,8 +59,6 @@ namespace Libs
             }
             else
             {
-                availableActions.Add(new ItemsBrokenGoal(addonReader.PlayerReader, logger));
-
                 if (classConfig.Mode == Mode.AttendedGrind)
                 {
                     availableActions.Add(new WaitGoal(logger));
@@ -109,6 +107,38 @@ namespace Libs
                 {
                     logger.LogError(ex.ToString());
                 }
+
+                var pathProviders = new List<IRouteProvider>
+                {
+                    followRouteAction,
+                    walkToCorpseAction
+                };
+
+                if (classConfig.VendorLocation.X > 0 && !string.IsNullOrEmpty(classConfig.VendorTargetKey))
+                {
+                    var vendorAction = new VendorGoal(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger, stuckDetector, classConfig, pather, this.addonReader.BagReader);
+                    availableActions.Add(vendorAction);
+                    pathProviders.Add(vendorAction);
+                }
+                else
+                {
+                    logger.LogWarning("Vendor location or target key is not defined, so no vendoring when bags are full.");
+                }
+
+
+                if (classConfig.RepairLocation.X > 0 && !string.IsNullOrEmpty(classConfig.RepairTargetKey))
+                {
+                    var repairAction = new RepairGoal(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger, stuckDetector, classConfig, pather, this.addonReader.BagReader);
+                    availableActions.Add(repairAction);
+                    pathProviders.Add(repairAction);
+                }
+                else
+                {
+                    availableActions.Add(new ItemsBrokenGoal(addonReader.PlayerReader, logger));
+                    logger.LogWarning("Repair location or target key is not defined, so bot will stop if gear is red.");
+                }
+
+                this.RouteInfo = new RouteInfo(pathPoints, spiritPath, pathProviders, addonReader.PlayerReader);
             }
 
             return availableActions;
@@ -121,18 +151,14 @@ namespace Libs
                 classConfig.PathFilename = "../json/path/" + classConfig.PathFilename;
             }
 
-            if (!classConfig.SpiritPathFilename.Contains(":"))
+            if (!classConfig.SpiritPathFilename.Contains(":") && !string.IsNullOrEmpty(classConfig.SpiritPathFilename))
             {
                 classConfig.SpiritPathFilename = "../json/path/" + classConfig.SpiritPathFilename;
             }
 
             string pathText = File.ReadAllText(classConfig.PathFilename);
             bool thereAndBack = classConfig.PathThereAndBack;
-            if (string.IsNullOrEmpty(classConfig.SpiritPathFilename))
-            {
-                classConfig.SpiritPathFilename = classConfig.PathFilename;
-            }
-            string spiritText = File.ReadAllText(classConfig.SpiritPathFilename);
+            
             int step = classConfig.PathReduceSteps ? 2 : 1;
 
             var pathPoints2 = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
@@ -154,7 +180,16 @@ namespace Libs
             }
 
             pathPoints.Reverse();
-            spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
+
+            if (string.IsNullOrEmpty(classConfig.SpiritPathFilename))
+            {
+                spiritPath = new List<WowPoint> { pathPoints.First() };
+            }
+            else
+            {
+                string spiritText = File.ReadAllText(classConfig.SpiritPathFilename);
+                spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
+            }
         }
     }
 }
