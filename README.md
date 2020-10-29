@@ -503,6 +503,8 @@ The visualisation of the pre-conditions and spell requirements makes it easier t
 
 # Pathing
 
+Pathing is built into the bot so you don't need to do anything special except download the MPQ files. You can though run it on its own server to visualise routes as they are created by the bot, or to play with route finding.
+
 The bot will try to calculate a path in the following situations:
 
 * Travelling to a vendor or repair.
@@ -515,7 +517,7 @@ https://www.youtube.com/watch?v=Oz_jFZfxSdc&t=254s&ab
 
 [![Pathing Video Youtube](images/PathingApi.png)](https://www.youtube.com/watch?v=Oz_jFZfxSdc&t=254s&ab_channel=JulianPerrott)
 
-## Running on its own.
+## Running on its own server.
 
 In visual studio just set PathingAPI as the startup project or from the command line:
 
@@ -536,7 +538,7 @@ Requests to the API can be done in a new browser tab like this or via the Swagge
 
 Search gives some predefined locations to search from and to.
 
-## With the bot
+## Running it along side the bot
 
 In visual studio right click the solution and set Multiple startup projects to BlazorServer and PathingApi and run.
 
@@ -548,7 +550,7 @@ Or from 2 command lines dotnet run each.
     CD C:\WowClassicGrindBot\PathingAPI
     dotnet run
 
-## As a library
+## As a library used within the bot
 
 The bot will use the PathingAPI to work out routes, these are shown on the route map as green points.
 
