@@ -15,7 +15,6 @@
         usehealingpotion = 100,
         newtarget = 110,
         fighting = 120,
-        bagfull = 130,
         abort = 140,
         shoulddrink = 150,
         classMount = 160,
@@ -64,9 +63,6 @@
 
                  (GoapKey.fighting, true) => "Is fighting",
                  (GoapKey.fighting, false) => "Is not fighting",
-
-                 (GoapKey.bagfull, true) => "Bags are full",
-                 (GoapKey.bagfull, false) => "Bags are not full",
 
                  (GoapKey.abort, true) => "Should abort",
                  (GoapKey.abort, false) => "Should not abort",

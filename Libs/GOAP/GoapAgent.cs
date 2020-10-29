@@ -79,7 +79,6 @@ namespace Libs.GOAP
                 new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
                 new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
                 new KeyValuePair<GoapKey, object>(GoapKey.isswimming, playerReader.PlayerBitValues.IsSwimming),
-                new KeyValuePair<GoapKey, object>(GoapKey.bagfull, this.bagReader.BagItems.Count >= this.classConfiguration.VendorItemThreshold),
                 new KeyValuePair<GoapKey, object>(GoapKey.itemsbroken,playerReader.PlayerBitValues.ItemsAreBroken),
         };
 

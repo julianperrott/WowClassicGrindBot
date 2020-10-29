@@ -86,6 +86,7 @@ namespace Libs
         {
             var allPoints = this.PathPoints.Select(s => s).ToList();
             allPoints.AddRange(this.SpiritPath);
+            allPoints.AddRange(this.RouteToWaypoint);
             allPoints.Add(this.playerReader.PlayerLocation);
 
             var maxX = allPoints.Max(s => s.X);

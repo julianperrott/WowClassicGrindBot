@@ -633,6 +633,8 @@ function DataToColor:sell(items)
         if  item ~= nil then
             DataToColor:log("Selling items...");
 
+            DataToColor:OnMerchantShow();
+
             for b=0,4 do for s=1,GetContainerNumSlots(b) 
                 do local CurrentItemLink=GetContainerItemLink(b,s) 
                     if CurrentItemLink then

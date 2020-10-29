@@ -31,6 +31,7 @@ namespace PathingAPI
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<PPatherService>();
+            services.AddSingleton<PatherPath.Logger>();
             services.AddControllers();
 
             // Register the Swagger generator, defining 1 or more Swagger documents

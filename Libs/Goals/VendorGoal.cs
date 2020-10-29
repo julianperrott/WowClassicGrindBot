@@ -10,7 +10,22 @@ namespace Libs.Goals
             : base(playerReader, wowProcess, playerDirection, stopMoving, logger, stuckDetector, classConfiguration, pather, bagReader)
         {
             AddPrecondition(GoapKey.incombat, false);
-            AddPrecondition(GoapKey.bagfull, true);
+
+            var action = new KeyAction();
+            this.Keys.Add(action);
+
+            action.RequirementObjects.Add(
+                   new Requirement
+                   {
+                       HasRequirement = () => this.bagReader.BagItems.Count >= this.classConfiguration.VendorItemThreshold,
+                       LogMessage = () => $"Bag items {this.bagReader.BagItems.Count} >= {this.classConfiguration.VendorItemThreshold}"
+                   }
+                );
+        }
+
+        public override bool CheckIfActionCanRun()
+        {
+            return this.Keys[0].CanRun();
         }
 
         public override float CostOfPerformingAction { get => 6f; }

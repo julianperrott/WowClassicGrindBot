@@ -72,7 +72,7 @@ namespace Libs
             }
             catch (Exception ex)
             {
-                logger.LogInformation($"INFO: Pathing API is not running remotely, this means the local one will be used. {api} Gave({ex.Message}).");
+                logger.LogWarning($"INFO: Pathing API is not running remotely, this means the local one will be used. {api} Gave({ex.Message}).");
                 return false;
             }
         }

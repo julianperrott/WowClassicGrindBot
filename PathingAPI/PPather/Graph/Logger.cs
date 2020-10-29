@@ -4,6 +4,11 @@ namespace PatherPath
 {
     public class Logger
     {
+        public Logger()
+        {
+
+        }
+
         private Action<string> onWrite;
 
         public Logger(Action<string> onWrite)

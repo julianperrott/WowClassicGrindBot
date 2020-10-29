@@ -23,7 +23,7 @@ namespace BlazorServer
             var logfile = "out.log";
             var config = new LoggerConfiguration()
                 //.Enrich.FromLogContext()
-                .MinimumLevel.Information()
+                .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .WriteTo.LoggerSink()
                 .WriteTo.File(logfile, rollingInterval: RollingInterval.Day)
@@ -31,7 +31,7 @@ namespace BlazorServer
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}");
 
             Log.Logger = config.CreateLogger();
-            Log.Logger.Information("Startup()");
+            Log.Logger.Debug("Startup()");
 
             while (WowProcess.Get() == null)
             {
@@ -75,7 +75,7 @@ namespace BlazorServer
             if (api.PingServer().Result)
             {
                 Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                Log.Information("Using remote pathing API");
+                Log.Debug("Using remote pathing API");
                 Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
                 return api;
             }
