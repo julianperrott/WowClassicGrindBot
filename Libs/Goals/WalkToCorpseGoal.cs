@@ -72,14 +72,24 @@ namespace Libs.Goals
 
         public override async Task PerformAction()
         {
+            // is corpse visible
+            if (this.playerReader.CorpseX < 1 && this.playerReader.CorpseX < 1)
+            {
+                await this.stopMoving.Stop();
+                logger.LogInformation($"Waiting for corpse location to update update before performing action. Corpse is @ {playerReader.CorpseX},{playerReader.CorpseY}");
+                await Task.Delay(5000);
+                NeedsToReset = true;
+                return;
+            }
+
             if (NeedsToReset)
             {
                 await this.stopMoving.Stop();
 
-                while (true && this.playerReader.PlayerBitValues.DeadStatus)
+                while (this.playerReader.PlayerBitValues.DeadStatus)
                 {
                     this.corpseLocation = new WowPoint(playerReader.CorpseX, playerReader.CorpseY);
-                    if (this.corpseLocation.X > 0) { break; }
+                    if (this.corpseLocation.X >= 1 || this.corpseLocation.Y > 0) { break; }
                     logger.LogInformation($"Waiting for corpse location to update {playerReader.CorpseX},{playerReader.CorpseY}");
                     await Task.Delay(1000);
                 }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using PathingAPI;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,6 +34,9 @@ namespace BlazorServer
 
             await Task.Delay(0);
 
+            var sw = new Stopwatch();
+            sw.Start();
+
             service.SetLocations(service.GetWorldLocation(map, (float)fromPoint.X, (float)fromPoint.Y), service.GetWorldLocation(map, (float)toPoint.X, (float)toPoint.Y));
             var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star);
 
@@ -40,6 +44,10 @@ namespace BlazorServer
             {
                 logger.LogWarning($"LocalPathingApi: Failed to find a path from {fromPoint} to {toPoint}");
                 return new List<WowPoint>();
+            }
+            else
+            {
+                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} took {sw.ElapsedMilliseconds} ms.");
             }
 
             var worldLocations = path.locations.Select(s => service.ToMapAreaSpot(s.X, s.Y, s.Z, map));
