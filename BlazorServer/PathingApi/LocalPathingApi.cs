@@ -38,7 +38,7 @@ namespace BlazorServer
             sw.Start();
 
             service.SetLocations(service.GetWorldLocation(map, (float)fromPoint.X, (float)fromPoint.Y), service.GetWorldLocation(map, (float)toPoint.X, (float)toPoint.Y));
-            var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star);
+            var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star_With_Model_Avoidance);
 
             if (path == null)
             {

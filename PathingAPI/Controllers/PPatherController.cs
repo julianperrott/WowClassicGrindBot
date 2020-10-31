@@ -60,7 +60,7 @@ namespace PathingAPI.Controllers
         public JsonResult MapRoute(int map1, float x1, float y1, int map2, float x2, float y2)
         {
             service.SetLocations(service.GetWorldLocation(map1, x1, y1), service.GetWorldLocation(map2, x2, y2));
-            var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star);
+            var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star_With_Model_Avoidance);
 
             //return new JsonResult(path.locations, new JsonSerializerOptions
             //{
@@ -90,7 +90,7 @@ namespace PathingAPI.Controllers
         public JsonResult WorldRoute(float x1, float y1, float z1, float x2, float y2, float z2, string continent)
         {
             service.SetLocations(new Location(x1,y1,z1,"l1",continent), new Location(x2, y2, z2, "l2", continent));
-            var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star);
+            var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star_With_Model_Avoidance);
             return new JsonResult(path);
         }
 

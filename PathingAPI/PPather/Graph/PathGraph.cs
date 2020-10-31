@@ -69,18 +69,6 @@ namespace PatherPath.Graph
 
         public int GetTriangleClosenessScore(Location loc)
         {
-            //if (!triangleWorld.IsCloseToModel(loc.X, loc.Y, loc.Z, 2))
-            //{
-            //    return 0;
-            //}
-
-            //if (!triangleWorld.IsCloseToModel(loc.X, loc.Y, loc.Z, 1))
-            //{
-            //    return 4;
-            //}
-
-            //return 7;
-
             if (!triangleWorld.IsCloseToModel(loc.X, loc.Y, loc.Z, 3))
             {
                 return 0;
@@ -98,6 +86,27 @@ namespace PatherPath.Graph
 
             return 256;
         }
+
+        public int GetTriangleGradiantScore(Location loc, int gradiantMax)
+        {
+            if (triangleWorld.GradiantScore(loc.X, loc.Y, loc.Z, 1) > gradiantMax)
+            {
+                return 256;
+            }
+
+            if (triangleWorld.GradiantScore(loc.X, loc.Y, loc.Z, 2) > gradiantMax)
+            {
+                return 64;
+            }
+
+            if (triangleWorld.GradiantScore(loc.X, loc.Y, loc.Z, 3) > gradiantMax)
+            {
+                return 8;
+            }
+
+            return 0;
+        }
+
 
         private Logger logger;
 
@@ -627,7 +636,7 @@ namespace PatherPath.Graph
                     break;
 
                 case eSearchScoreSpot.A_Star_With_Model_Avoidance:
-                    ScoreSpot_A_Star_With_Model_Avoidance(spotLinkedToCurrent, destinationSpot, currentSearchID, locationHeuristics, prioritySpotQueue);
+                    ScoreSpot_A_Star_With_Model_And_Gradient_Avoidance(spotLinkedToCurrent, destinationSpot, currentSearchID, locationHeuristics, prioritySpotQueue);
                     break;
 
                 case eSearchScoreSpot.OriginalPather:
@@ -656,19 +665,20 @@ namespace PatherPath.Graph
             }
         }
 
-        public void ScoreSpot_A_Star_With_Model_Avoidance(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, PriorityQueue<Spot, float> prioritySpotQueue)
+        public static int gradiantMax = 5;
+
+        public void ScoreSpot_A_Star_With_Model_And_Gradient_Avoidance(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, PriorityQueue<Spot, float> prioritySpotQueue)
         {
             //score spot
             float G_Score = currentSearchSpot.traceBackDistance + currentSearchSpot.GetDistanceTo(spotLinkedToCurrent);//  the movement cost to move from the starting point A to a given square on the grid, following the path generated to get there.
             float H_Score = spotLinkedToCurrent.GetDistanceTo2D(destinationSpot) * heuristicsFactor;// the estimated movement cost to move from that given square on the grid to the final destination, point B. This is often referred to as the heuristic, which can be a bit confusing. The reason why it is called that is because it is a guess. We really don’t know the actual distance until we find the path, because all sorts of things can be in the way (walls, water, etc.). You are given one way to calculate H in this tutorial, but there are many others that you can find in other articles on the web.
             float F_Score = G_Score + H_Score;
 
-            //if (spotLinkedToCurrent.IsFlagSet(Spot.FLAG_WATER)) { F_Score += 30; }
-            //if (spotLinkedToCurrent.IsFlagSet(Spot.FLAG_CLOSETOMODEL)) { F_Score += 50; }
+            if (spotLinkedToCurrent.IsFlagSet(Spot.FLAG_WATER)) { F_Score += 30; }
 
             int score = GetTriangleClosenessScore(spotLinkedToCurrent.location);
+            score += GetTriangleGradiantScore(spotLinkedToCurrent.location, gradiantMax);
             F_Score += score * 2;
-            // logger.WriteLine("Spot scored: " + score);
 
             if (!spotLinkedToCurrent.SearchScoreIsSet(currentSearchID) || F_Score < spotLinkedToCurrent.SearchScoreGet(currentSearchID))
             {
@@ -679,6 +689,7 @@ namespace PatherPath.Graph
                 prioritySpotQueue.Enqueue(spotLinkedToCurrent, -F_Score);
             }
         }
+
 
         public void ScoreSpot_Pather(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, PriorityQueue<Spot, float> prioritySpotQueue)
         {
