@@ -544,10 +544,10 @@ In visual studio right click the solution and set Multiple startup projects to B
 
 Or from 2 command lines dotnet run each.
 
-    CD C:\WowClassicGrindBot\BlazorServer
+    CD C:\WowClassicGrindBot\PathingAPI
     dotnet run
 
-    CD C:\WowClassicGrindBot\PathingAPI
+    CD C:\WowClassicGrindBot\BlazorServer
     dotnet run
 
 ## As a library used within the bot

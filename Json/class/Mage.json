@@ -110,7 +110,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "9",
-        "Requirement": "not BagItem:3772:4",
+        "Requirement": "not BagItem:8077:4",
         "Cooldown": 30,
         "Log": false
       },
