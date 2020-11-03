@@ -117,7 +117,7 @@ namespace Libs.Goals
                 {
                     await this.stopMoving.Stop();
                     distance = WowPoint.DistanceTo(location, this.GetTargetLocation());
-                    if (distance>50)
+                    if (distance > 50)
                     {
                         await FillRouteToDestination();
                     }
@@ -130,6 +130,11 @@ namespace Libs.Goals
                         // we have reached the target location
                         await InteractWithTarget();
                     }
+                }
+
+                if (routeToWaypoint.Count == 0)
+                {
+                    return;
                 }
 
                 this.stuckDetector.SetTargetLocation(this.routeToWaypoint.Peek());
