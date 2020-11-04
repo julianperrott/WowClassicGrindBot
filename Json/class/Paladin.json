@@ -4,16 +4,12 @@
   "NPCMaxLevels_Below": 6,
   "NPCMaxLevels_Above": 2,
 
-  //"PathFilename": "38_Arathi.json",
-  //"SpiritPathFilename": "38_Arathi_SpirirtHealer.json",
-
   "PathFilename": "44_Tanaris.json",
   "SpiritPathFilename": "44_Tanaris_SpiritHealer.json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": true,
 
-  "PathThereAndBack": true,
-  "PathReduceSteps": false,
-
-  "Blacklist": ["BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","tortured","Rock Stalker","Cyclone Warrior","Desert Rumbler"],
+  "Blacklist": ["Kolkar","Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
   "Pull": {
     "Sequence": []
@@ -26,33 +22,24 @@
         "Cooldown": 3
       },
       {
+        "Name": "Healing Potion",
+        "Key": "F4",
+        "Requirement": "Health%<10",
+        "Cooldown": 60,
+        "Log": false
+      },
+      {
         "Name": "Seal of Righteousness",
         "Key": "2",
         "Cooldown": 3,
         "MinMana": 82,
-        "Requirements": [ "not Seal"] //, "Mana%>70"]
+        "Requirements": [ "not Seal"]
       },
-      /*
-      {
-        "Name": "Seal of Wisdon",
-        "Key": "0",
-        "Cooldown": 3,
-        "MinMana": 82,
-        "Requirements": [ "not Seal", "Mana%<70"]
-      },
-      */
       {
         "Name": "Judgement",
         "Key": "3",
         "Cooldown": 12,
         "Requirement":  "Mana%>40",
-        "MinMana": 77
-      },
-      {
-        "Name": "Judgement",
-        "Key": "3",
-        "Cooldown": 25,
-        "Requirement":  "Mana%<40",
         "MinMana": 77
       },
       {
@@ -124,5 +111,23 @@
         "Log": false
       }
     ]
+  },
+  "NPC": {
+      "Sequence": [
+        {
+          "Name": "Repair",
+          "Key": "C",
+          "Requirement": "Items Broken",
+          "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+          "Cost": 6
+        },
+        {
+          "Name": "Sell",
+          "Key": "C",
+          "Requirement": "BagCount>65",
+          "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+          "Cost": 6
+        }
+      ]
   }
 }

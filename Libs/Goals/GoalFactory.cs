@@ -114,28 +114,10 @@ namespace Libs
                     walkToCorpseAction
                 };
 
-                if (classConfig.VendorLocation.X > 0 && !string.IsNullOrEmpty(classConfig.VendorTargetKey))
+                foreach (var item in classConfig.NPC.Sequence)
                 {
-                    var vendorAction = new VendorGoal(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger, stuckDetector, classConfig, pather, this.addonReader.BagReader);
-                    availableActions.Add(vendorAction);
-                    pathProviders.Add(vendorAction);
-                }
-                else
-                {
-                    logger.LogWarning("Vendor location or target key is not defined, so no vendoring when bags are full.");
-                }
-
-
-                if (classConfig.RepairLocation.X > 0 && !string.IsNullOrEmpty(classConfig.RepairTargetKey))
-                {
-                    var repairAction = new RepairGoal(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger, stuckDetector, classConfig, pather, this.addonReader.BagReader);
-                    availableActions.Add(repairAction);
-                    pathProviders.Add(repairAction);
-                }
-                else
-                {
-                    availableActions.Add(new ItemsBrokenGoal(addonReader.PlayerReader, logger));
-                    logger.LogWarning("Repair location or target key is not defined, so bot will stop if gear is red.");
+                    availableActions.Add(new AdhocNPCGoal(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger, stuckDetector, classConfig, pather, item));
+                    item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 
                 this.RouteInfo = new RouteInfo(pathPoints, spiritPath, pathProviders, addonReader.PlayerReader);
@@ -144,21 +126,66 @@ namespace Libs
             return availableActions;
         }
 
+        private static string FixPathFilename(string path)
+        {
+            if (!path.Contains(":") && !string.IsNullOrEmpty(path))
+            {
+                return "../json/path/" + path;
+            }
+            return path;
+        }
+
         private static void GetPaths(out List<WowPoint> pathPoints, out List<WowPoint> spiritPath, ClassConfiguration classConfig)
         {
-            if (!classConfig.PathFilename.Contains(":"))
+            classConfig.PathFilename = FixPathFilename(classConfig.PathFilename);
+            classConfig.SpiritPathFilename = FixPathFilename(classConfig.SpiritPathFilename);
+
+            pathPoints = CreatePathPoints(classConfig);
+            spiritPath = CreateSpiritPathPoints(pathPoints, classConfig);
+        }
+
+        private IEnumerable<WowPoint> ReadPath(string name, string pathFilename)
+        {
+            try
             {
-                classConfig.PathFilename = "../json/path/" + classConfig.PathFilename;
+                if (string.IsNullOrEmpty(pathFilename))
+                {
+                    return new List<WowPoint>();
+                }
+                else
+                {
+                    return JsonConvert.DeserializeObject<List<WowPoint>>(File.ReadAllText(FixPathFilename(pathFilename)));
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Reading path: {name}");
+                throw;
+            }
+        }
+
+        private static List<WowPoint> CreateSpiritPathPoints(List<WowPoint> pathPoints, ClassConfiguration classConfig)
+        {
+            List<WowPoint> spiritPath;
+            if (string.IsNullOrEmpty(classConfig.SpiritPathFilename))
+            {
+                spiritPath = new List<WowPoint> { pathPoints.First() };
+            }
+            else
+            {
+                string spiritText = File.ReadAllText(classConfig.SpiritPathFilename);
+                spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
             }
 
-            if (!classConfig.SpiritPathFilename.Contains(":") && !string.IsNullOrEmpty(classConfig.SpiritPathFilename))
-            {
-                classConfig.SpiritPathFilename = "../json/path/" + classConfig.SpiritPathFilename;
-            }
+            return spiritPath;
+        }
 
+        private static List<WowPoint> CreatePathPoints(ClassConfiguration classConfig)
+        {
+            List<WowPoint> pathPoints;
             string pathText = File.ReadAllText(classConfig.PathFilename);
             bool thereAndBack = classConfig.PathThereAndBack;
-            
+
             int step = classConfig.PathReduceSteps ? 2 : 1;
 
             var pathPoints2 = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
@@ -180,16 +207,7 @@ namespace Libs
             }
 
             pathPoints.Reverse();
-
-            if (string.IsNullOrEmpty(classConfig.SpiritPathFilename))
-            {
-                spiritPath = new List<WowPoint> { pathPoints.First() };
-            }
-            else
-            {
-                string spiritText = File.ReadAllText(classConfig.SpiritPathFilename);
-                spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
-            }
+            return pathPoints;
         }
     }
 }

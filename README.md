@@ -200,37 +200,6 @@ The path that the class follows is a json file in C:\WowClassicGrindBot\Json\pat
 
 Note: The SpiritPathFilename is not really needed anymore as the bot should be able to path from the spirit healer to the corpse.
 
-### Repair (Optional)
-
-This is configured by two parameters:
-
-    "RepairLocation": {"X":45.8,"Y":46.6},
-    "RepairTargetKey": "=",
-
-The RepairLocation should be a location close to the repair NPC, such that when the NPC is targetted and interact occurs the bot will move to the NPC. This will only work for NPCs that are outside!
-
-The RepairTargetKey is a key that is bound to a macro. The macro needs to target the NPC, and if necessary open up the repair page. The bot will click the key and the npc will be targetting. Then it will click the interact button which will cause the bot to move to the NPC and open the NPC options, this may be enough to get the auto repair and auto sell greys to happen. But the bot will click the button again in case there is further steps (e.g. SelectGossipOption).
-
-    /tar Vargus
-    /script SelectGossipOption(1)
-
-### Vendor (Optional)
-
-This is configured by three parameters:
-
-  "VendorLocation": {"X":45.8,"Y":46.6},
-  "VendorItemThreshold": 80,
-  "VendorTargetKey": "=",
-
-The VendorLocation should be a location close to the vendor NPC, such that when the NPC is targetted and interact occurs the bot will move to the NPC. This will only work for NPCs that are outside!
-
-VendorItemThreshold is the maximum items you want to hold before the vendor visit is performed.
-
-The VendorTargetKey is a key that is bound to a macro. The macro needs to target the NPC, and if necessary open up the vendor page. The bot will click the key and the npc will be targeted. Then it will click the interact button which will cause the bot to move to the NPC and open the NPC options, this may be enough to get the vendor and auto sell greys to happen. But the bot will click the button again in case there is further steps (e.g. SelectGossipOption or some custom selling steps). You can either use TSM configured to auto sell some items or use addon sell function as below.
-
-    /tar Jannos Ironwill
-    /run DataToColor:sell({"Light Leather","Cheese","Light Feather"});
-
 
 ### Commands
 
@@ -273,6 +242,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | Cost | For Adhoc goals the priority | 18 |
 | InCombat | Can it be cast in combat | false |
 | StepBackAfterCast | Hero will go back for X sec after casting this spell , usable for spells like Mage Frost Nova | false |
+| PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | "Tanaris_GadgetzanKrinkleGoodsteel.json" |
 
 ### Pull Goal
 
@@ -285,6 +255,57 @@ The sequence of commands that are used when in combat and trying to kill a mob. 
 ### Adhoc Goals
 
 These commands are done when not in combat and are not on cooldown.
+
+### NPC Goals
+
+These command are for vendoring and repair.
+
+e.g.
+
+    "NPC": {
+          "Sequence": [
+            {
+              "Name": "Repair",
+              "Key": "C",
+              "Requirement": "Items Broken",
+              "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+              "Cost": 6
+            },
+            {
+              "Name": "Sell",
+              "Key": "C",
+              "Requirement": "BagCount>65",
+              "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+              "Cost": 6
+            }
+          ]
+      }
+
+The "Key" is a key that is bound to a macro. The macro needs to target the NPC, and if necessary open up the repair or vendor page. The bot will click the key and the npc will be targetted. Then it will click the interact button which will cause the bot to move to the NPC and open the NPC options, this may be enough to get the auto repair and auto sell greys to happen. But the bot will click the button again in case there are further steps (e.g. SelectGossipOption), or you have many greys or items to sell.
+
+Sell macro example bound to the "C" key using BindPad or Key bindings.
+
+    /tar Jannos Ironwill
+    /run DataToColor:sell({"Light Leather","Cheese","Light Feather"});
+
+Repair macro example:
+
+    /tar Vargus
+    /script SelectGossipOption(1)
+
+Because some NPCs are hard to reach, there is the option to add a short path to them e.g. "Tanaris_GadgetzanKrinkleGoodsteel.json". The idea is that the start of the path is easy to get to and is a short distance from the NPC, you record a path from the easy to reach spot to the NPC with a distance between spots of 1. When the bot needs to vend or repair it will path to the first spot in the list, then walk closely through the rest of the spots, once they are walked it will press the defined Key, then walk back through the path.
+
+e.g. Tanaris_GadgetzanKrinkleGoodsteel.json in the Json\path folder looks like this:
+
+    [{"X":51.477,"Y":29.347},{"X":51.486,"Y":29.308},{"X":51.495,"Y":29.266},{"X":51.503,"Y":29.23},{"X":51.513,"Y":29.186},{"X":51.522,"Y":29.147},{"X":51.531,"Y":29.104},{"X":51.54,"Y":29.063},{"X":51.551,"Y":29.017},{"X":51.559,"Y":28.974},{"X":51.568,"Y":28.93},{"X":51.578,"Y":28.889},{"X":51.587,"Y":28.853},{"X":51.597,"Y":28.808}]
+
+If you have an NPC that is easy to get to such as the repair NPC in Arathi Highlands then the path only needs to have one spot in it. e.g.
+
+    [{"X":45.8,"Y":46.6}]
+
+Short Path Example:
+
+![Short Path Example](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/NPCPath.png)
 
 ## Requirement
 
@@ -311,12 +332,13 @@ e.g.
 
 #### Value base requirements
 
-Value base requirements are made up on a [ Health% or TargetHealth% or Mana%] [< or >] [Numeric Value].
+Value base requirements are made up on a [ Health% or TargetHealth% or Mana% or BagCount] [< or >] [Numeric Value].
 
 e.g.
 * "Health%>70",
 * "TargetHealth%<10",
 * "Mana%<40",
+* "BagCount>80",
 
 #### npcID requirements
 
@@ -345,9 +367,11 @@ e.g.
 * "not Well Fed" - I am not well fed.
 * "not Thorns" - I don't have the thorns buff.
 * "Shooting" - I am out of shooting.
+* "Items Broken" - Some of my armor is red.
 
 | Class | Buff |
 | --- | --- |
+| All | "Items Broken" |
 | All | "Well Fed" |
 | All | "Eating" |
 | All | "Drinking" |

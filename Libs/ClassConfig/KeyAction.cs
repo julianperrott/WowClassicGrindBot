@@ -37,6 +37,9 @@ namespace Libs
         public float Cost { get; set; } = 18;
         public string InCombat { get; set; } = "false";
 
+        public string PathFilename { get; set; } = string.Empty;
+        public List<WowPoint> Path { get; } = new List<WowPoint>();
+
         public int StepBackAfterCast {get; set; } = 0;
 
         public WowPoint LastClickPostion { get; private set; } = new WowPoint(0, 0);

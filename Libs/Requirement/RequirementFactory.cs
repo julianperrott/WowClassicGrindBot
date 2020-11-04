@@ -130,6 +130,7 @@ namespace Libs
                     { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
 
                     {  "Shooting", ()=> playerReader.IsShooting },
+                    {  "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
                 };
             }
 
@@ -247,6 +248,7 @@ namespace Libs
                 {  "Health%", ()=> playerReader.HealthPercent },
                 {  "TargetHealth%", ()=> playerReader.TargetHealthPercentage },
                 {  "Mana%", ()=> playerReader.ManaPercentage },
+                {  "BagCount", ()=> bagReader.BagItems.Count },
             };
 
             if (!valueDictionary.Keys.Contains(parts[0]))

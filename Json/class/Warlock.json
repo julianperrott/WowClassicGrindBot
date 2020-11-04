@@ -166,4 +166,23 @@
       }
     ]
   }
+,
+  "NPC": {
+      "Sequence": [
+        {
+          "Name": "Repair",
+          "Key": "C",
+          "Requirement": "Items Broken",
+          "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+          "Cost": 6
+        },
+        {
+          "Name": "Sell",
+          "Key": "C",
+          "Requirement": "BagCount>65",
+          "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+          "Cost": 6
+        }
+      ]
+  }
 }

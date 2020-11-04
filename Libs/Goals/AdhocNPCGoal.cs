@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace Libs.Goals
 {
-    public abstract class NPCGoal : GoapGoal, IRouteProvider
+    public class AdhocNPCGoal : GoapGoal, IRouteProvider
     {
         private double RADIAN = Math.PI * 2;
-        protected readonly WowProcess wowProcess;
-
-        private List<WowPoint> pathToNPC = new List<WowPoint>();
+        private readonly WowProcess wowProcess;
 
         private Stack<WowPoint> routeToWaypoint = new Stack<WowPoint>();
 
@@ -26,33 +24,48 @@ namespace Libs.Goals
             return routeToWaypoint.Count == 0 ? null : routeToWaypoint.Peek();
         }
 
-        protected readonly PlayerReader playerReader;
+        private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
-        protected readonly ClassConfiguration classConfiguration;
+        private readonly ClassConfiguration classConfiguration;
         private readonly IPPather pather;
-        protected readonly BagReader bagReader;
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private bool shouldMount = true;
-        protected readonly ILogger logger;
+        private readonly ILogger logger;
+        private readonly KeyAction key;
 
-        public NPCGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, BagReader bagReader)
+        public AdhocNPCGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
-            this.bagReader = bagReader;
-
             this.logger = logger;
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
             this.pather = pather;
+            this.key = key;
+
+            if (key.InCombat == "false")
+            {
+                AddPrecondition(GoapKey.incombat, false);
+            }
+            else if (key.InCombat == "true")
+            {
+                AddPrecondition(GoapKey.incombat, true);
+            }
+
+            this.Keys.Add(key);
         }
 
-        protected int failedVendorAttempts { get; set; } = 0;
+        public override float CostOfPerformingAction { get => key.Cost; }
+
+        public override bool CheckIfActionCanRun()
+        {
+            return this.key.CanRun();
+        }
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
         {
@@ -60,7 +73,6 @@ namespace Libs.Goals
             {
                 shouldMount = true;
                 this.routeToWaypoint.Clear();
-                failedVendorAttempts = 0;
             }
         }
 
@@ -78,7 +90,7 @@ namespace Libs.Goals
             }
             else
             {
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "VendorGoal 1");
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 1");
             }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
@@ -94,7 +106,7 @@ namespace Libs.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "VendorGoal 2");
+                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 2");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
@@ -130,14 +142,17 @@ namespace Libs.Goals
                         await MoveCloserToPoint(400, StartOfPathToNPC());
                         await MoveCloserToPoint(100, StartOfPathToNPC());
 
-                        // we have reached the start of the path to the vendor
-                        await FollowPathToNPC();
+                        // we have reached the start of the path to the npc
+                        await FollowPath(this.key.Path);
 
+                        // we should be at the correct location now.
                         await InteractWithTarget();
                         wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
 
-                        // walk back to the start of the path to the vendor
-                        await FollowPathFromNPC();
+                        // walk back to the start of the path to the npc
+                        var pathFrom = this.key.Path.ToList();
+                        pathFrom.Reverse();
+                        await FollowPath(pathFrom);
                     }
                 }
 
@@ -158,36 +173,20 @@ namespace Libs.Goals
             LastActive = DateTime.Now;
         }
 
-        private async Task FollowPathToNPC()
+        private async Task FollowPath(List<WowPoint> path)
         {
             // dismount
-            if(this.playerReader.PlayerBitValues.IsMounted)
+            if (this.playerReader.PlayerBitValues.IsMounted)
             {
                 await wowProcess.Dismount();
             }
 
-            foreach(var point in this.pathToNPC)
-            {
-                await MoveCloserToPoint(400, point);
-                await MoveCloserToPoint(100, point);
-            }
-            
-            // we should be at the correct location now.
-        }
-
-        private async Task FollowPathFromNPC()
-        {
-            var pathFrom = this.pathToNPC.ToList();
-            pathFrom.Reverse();
-
-            foreach (var point in pathFrom)
+            foreach (var point in path)
             {
                 await MoveCloserToPoint(400, point);
                 await MoveCloserToPoint(100, point);
             }
         }
-
-        protected abstract Task InteractWithTarget();
 
         private async Task MoveCloserToPoint(int pressDuration, WowPoint target)
         {
@@ -276,13 +275,13 @@ namespace Libs.Goals
 
         private WowPoint StartOfPathToNPC()
         {
-            if (!this.pathToNPC.Any())
+            if (!this.key.Path.Any())
             {
                 this.logger.LogError("Path to target is not defined");
                 throw new Exception("Path to target is not defined");
             }
 
-            return this.pathToNPC[0];
+            return this.key.Path[0];
         }
 
         private async Task AdjustHeading(double heading)
@@ -340,15 +339,37 @@ namespace Libs.Goals
             await this.stopMoving.Stop();
         }
 
-        protected void PopulateTargetLocation(WowPoint location, List<WowPoint> path)
+        public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
+
+
+        private async Task InteractWithTarget()
         {
-            if (path.Any())
+            logger.LogInformation("Interacting with NPC");
+
+            var location = this.playerReader.PlayerLocation;
+
+            for (int i = 0; i < 5; i++)
             {
-                this.pathToNPC.AddRange(path);
+                // Macro runs: targets NPC and does action such as sell
+                await this.wowProcess.KeyPress(key.ConsoleKey, 200);
+
+                // Interact with NPC
+                if (!string.IsNullOrEmpty(this.playerReader.Target))
+                {
+                    await TapInteractKey($"InteractWithTarget {i}");
+                }
+                else
+                {
+                    logger.LogError($"Error: No target has been selected. Key {key.ConsoleKey} should be /tar an NPC.");
+                    break;
+                }
+
+                System.Threading.Thread.Sleep(3000);
             }
-            else
+
+            if(CheckIfActionCanRun())
             {
-                this.pathToNPC.Add(location);
+                logger.LogError("We failed to do anything at the NPC! Aborting.");
             }
         }
     }

@@ -4,13 +4,6 @@
 
   "NPCMaxLevels_Below": 6,
   "NPCMaxLevels_Above": 2,
-
-  "RepairLocation": {"X":45.8,"Y":46.6},
-  "RepairTargetKey": "=",
-
-  "VendorLocation": {"X":45.8,"Y":46.6},
-  "VendorItemThreshold": 80,
-  "VendorTargetKey": "=",
   
   "PathFilename": "38_Arathi.json",
   "PathThereAndBack": true,
