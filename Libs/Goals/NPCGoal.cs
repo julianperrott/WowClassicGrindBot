@@ -129,6 +129,8 @@ namespace Libs.Goals
 
                         // we have reached the target location
                         await InteractWithTarget();
+
+                        wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
                     }
                 }
 
