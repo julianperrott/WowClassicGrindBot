@@ -108,17 +108,16 @@ namespace Libs
                     logger.LogError(ex.ToString());
                 }
 
-                var pathProviders = new List<IRouteProvider>
-                {
-                    followRouteAction,
-                    walkToCorpseAction
-                };
 
                 foreach (var item in classConfig.NPC.Sequence)
                 {
                     availableActions.Add(new AdhocNPCGoal(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger, stuckDetector, classConfig, pather, item));
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
+
+                var pathProviders = availableActions.Where(a => a is IRouteProvider)
+                    .Cast<IRouteProvider>()
+                    .ToList();
 
                 this.RouteInfo = new RouteInfo(pathPoints, spiritPath, pathProviders, addonReader.PlayerReader);
             }

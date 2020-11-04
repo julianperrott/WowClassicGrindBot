@@ -175,6 +175,12 @@ namespace Libs.Goals
 
         private async Task FollowPath(List<WowPoint> path)
         {
+            // show route on map
+            this.routeToWaypoint.Clear();
+            var rpath = path.ToList();
+            rpath.Reverse();
+            rpath.ForEach(p => this.routeToWaypoint.Push(p));
+
             // dismount
             if (this.playerReader.PlayerBitValues.IsMounted)
             {
@@ -184,7 +190,7 @@ namespace Libs.Goals
             foreach (var point in path)
             {
                 await MoveCloserToPoint(400, point);
-                await MoveCloserToPoint(100, point);
+                //await MoveCloserToPoint(100, point);
             }
         }
 
