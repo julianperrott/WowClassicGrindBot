@@ -84,35 +84,36 @@ namespace Libs
             {
                 int strafeDuration = (int)(1000 + (((double)actionDurationSeconds * 1000) / 12));
 
-                if (strafeDuration > 5)
+                if (strafeDuration > 20000)
                 {
-                    strafeDuration = 5;
+                    strafeDuration = 20000;
                 }
 
-                if (actionDurationSeconds > 60)
+                if (actionDurationSeconds > 20)
                 {
-                    // back up a bit
-                    wowProcess.SetKeyState(ConsoleKey.DownArrow, true, false, "StuckDetector");
+                    // back up a bit, added "remove" move forward
+                    wowProcess.SetKeyState(ConsoleKey.DownArrow, true, false, "StuckDetector_back_up");
+					wowProcess.SetKeyState(ConsoleKey.UpArrow, false, false, "StuckDetector");
                     await Task.Delay(strafeDuration);
                     wowProcess.SetKeyState(ConsoleKey.DownArrow, false, false, "StuckDetector");
                 }
                 this.stopMoving?.Stop();
 
-                // stuck for 30 seconds
+                // stuck for 20 seconds
                 var r = random.Next(0, 100);
                 if (r < 50)
                 {
                     logger.LogInformation($"Trying to unstick by strafing left for {strafeDuration}ms");
-                    wowProcess.SetKeyState(ConsoleKey.Q, true, false, "StuckDetector");
+                    wowProcess.SetKeyState(ConsoleKey.A, true, false, "StuckDetector");
                     await Task.Delay(strafeDuration);
-                    wowProcess.SetKeyState(ConsoleKey.Q, false, false, "StuckDetector");
+                    wowProcess.SetKeyState(ConsoleKey.A, false, false, "StuckDetector");
                 }
                 else
                 {
                     logger.LogInformation($"Trying to unstick by strafing right for {strafeDuration}ms");
-                    wowProcess.SetKeyState(ConsoleKey.E, true, false, "StuckDetector");
+                    wowProcess.SetKeyState(ConsoleKey.D, true, false, "StuckDetector");
                     await Task.Delay(strafeDuration);
-                    wowProcess.SetKeyState(ConsoleKey.E, false, false, "StuckDetector");
+                    wowProcess.SetKeyState(ConsoleKey.D, false, false, "StuckDetector");
                 }
 
                 await wowProcess.TapStopKey();
