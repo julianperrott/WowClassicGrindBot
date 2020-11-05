@@ -28,6 +28,12 @@ namespace PathingAPI
             logger = new PatherPath.Logger(Log);
         }
 
+        public PPatherService(Action<string> onWrite)
+        {
+            this.worldMapAreas = WorldMapArea.Read();
+            logger = new PatherPath.Logger(onWrite);
+        }
+
         public void Log(string message)
         {
             try

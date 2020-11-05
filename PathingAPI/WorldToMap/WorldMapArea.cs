@@ -42,9 +42,29 @@ namespace PathingAPI
             return 100-(((value - LocRight) * 100) / (LocLeft- LocRight));
         }
 
+        public static WorldMapArea Create(string[] values)
+        {
+            return new WorldMapArea
+            {
+                ID = int.Parse(values[0]),
+                MapID = int.Parse(values[1]),
+                AreaID = int.Parse(values[2]),
+                AreaName = values[3],
+                LocLeft = float.Parse(values[4]),
+                LocRight = float.Parse(values[5]),
+                LocTop = float.Parse(values[6]),
+                LocBottom = float.Parse(values[7]),
+            };
+        }
+
         public static List<WorldMapArea> Read()
         {
-            var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(@"..\PathingAPI\WorldToMap\WorldMapArea.json"));
+            var list = File.ReadAllLines(@"..\PathingAPI\WorldToMap\WorldMapArea.csv").ToList().Skip(1).Select(l => l.Split(","))
+                .Select(l => Create(l))
+                .ToList();
+
+
+            //var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(@"..\PathingAPI\WorldToMap\WorldMapArea.json"));
 
             var uimapLines = File.ReadAllLines(@"..\PathingAPI\WorldToMap\uimap.csv").ToList().Select(l => l.Split(","));
 
@@ -60,10 +80,10 @@ namespace PathingAPI
             var matches = uimapLines.Where(s => Matches(area, s))
                 .ToList();
 
-            //if (matches.Count>1)
-            //{
-                
-            //}
+            if (matches.Count > 1)
+            {
+
+            }
 
             matches.ForEach(a =>
                 {

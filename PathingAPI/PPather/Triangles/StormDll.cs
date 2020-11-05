@@ -175,7 +175,7 @@ int   WINAPI SFileAddListFile(HANDLE hMpq, const char * szListFile);
             {
                 if (a.HasFile(from))
                 {
-                    logger.Debug("Extract " + from);
+                    logger.Debug("Extract " + from + " from " + a.FileName);
                     bool ok = a.ExtractFile(from, to);
                     if (!ok)
                     {
@@ -216,6 +216,7 @@ int   WINAPI SFileAddListFile(HANDLE hMpq, const char * szListFile);
 
         private bool Open(string file, uint Prio, uint Flags)
         {
+            FileName = file;
             void* h;
             void** hp = &h;
             bool r = StormDll.SFileOpenArchive(file, Prio, Flags, hp);
@@ -232,8 +233,12 @@ int   WINAPI SFileAddListFile(HANDLE hMpq, const char * szListFile);
             return r;
         }
 
+        public string FileName { get; set; } = string.Empty;
+
         public File OpenFile(string szFileName, uint dwSearchScope)
         {
+            FileName = szFileName;
+
             void* h;
             void** hp = &h;
             bool r = StormDll.SFileOpenFileEx(handle, szFileName, dwSearchScope, hp);

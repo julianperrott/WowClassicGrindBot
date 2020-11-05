@@ -83,11 +83,16 @@ namespace BlazorServer
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             Log.Information("Using local pathing API.");
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-            var pathingService = new PPatherService();
-            var localApi= new LocalPathingApi(logger, pathingService);
+            var pathingService = new PPatherService(LogWrite);
+            var localApi = new LocalPathingApi(logger, pathingService);
             localApi.SelfTest();
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             return localApi;
+        }
+
+        public static void LogWrite(string message)
+        {
+            Log.Information(message);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

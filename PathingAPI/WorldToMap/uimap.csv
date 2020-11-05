@@ -2,7 +2,7 @@ Name_lang,ID,ParentUiMapID,Flags,System,Type,LevelRangeMin,LevelRangeMax,BountyS
 Azeroth,947,0,2304,0,1,0,0,0,0,0,0,0
 Durotar,1411,1414,4,0,3,0,0,0,0,0,0,0
 Mulgore,1412,1414,4,0,3,0,0,0,0,0,0,0
-The Barrens,1413,1414,4,0,3,0,0,0,0,0,0,0
+Barrens,1413,1414,4,0,3,0,0,0,0,0,0,0
 Kalimdor,1414,947,4,0,2,0,0,0,0,0,0,0
 Eastern Kingdoms,1415,947,4,0,2,0,0,0,0,0,0,0
 Alterac Mountains,1416,1415,4,0,3,0,0,0,0,0,0,0

@@ -124,7 +124,7 @@
         {
           "Name": "Sell",
           "Key": "C",
-          "Requirement": "BagCount>65",
+          "Requirement": "BagCount>80",
           "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
           "Cost": 6
         }
