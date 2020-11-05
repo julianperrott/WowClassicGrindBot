@@ -70,6 +70,8 @@ You will probably already have Visual Studio or Visual Studio Code installed. Yo
 
 You will need .net core 3.1 SDK installed. https://dotnet.microsoft.com/download/dotnet-core/3.1 
 
+**Note: you need the x86 version ! **
+
 e.g. Build from powershell
 
     cd C:\WowClassicGrindBot
