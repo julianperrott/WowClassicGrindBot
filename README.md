@@ -68,9 +68,9 @@ The folder should look somthing like this:
 
 You will probably already have Visual Studio or Visual Studio Code installed. You need to build the bot using either one of them, or use powershell.
 
-You will need .net core 3.1 SDK installed. https://dotnet.microsoft.com/download/dotnet-core/3.1 
+You will need .net core 3.1 x86 SDK installed. https://dotnet.microsoft.com/download/dotnet-core/3.1 
 
-**Note: you need the x86 version ! **
+Note: you need the x86 version, not the x64 one.
 
 e.g. Build from powershell
 
