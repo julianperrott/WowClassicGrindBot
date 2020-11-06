@@ -57,18 +57,18 @@ namespace PathingAPI
             };
         }
 
-        public static List<WorldMapArea> Read()
+        public static List<WorldMapArea> Read(PatherPath.Logger logger)
         {
-            var list = File.ReadAllLines(@"..\PathingAPI\WorldToMap\WorldMapArea.csv").ToList().Skip(1).Select(l => l.Split(","))
-                .Select(l => Create(l))
-                .ToList();
+            //var list = File.ReadAllLines(@"..\PathingAPI\WorldToMap\WorldMapArea.csv").ToList().Skip(1).Select(l => l.Split(","))
+            //    .Select(l => Create(l))
+            //    .ToList();
 
+            var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(@"..\PathingAPI\WorldToMap\WorldMapArea.json"));
+            //var uimapLines = File.ReadAllLines(@"..\PathingAPI\WorldToMap\uimap.csv").ToList().Select(l => l.Split(","));
+            //list.ForEach(wmp => PopulateUIMap(wmp, uimapLines));
+            //System.IO.File.WriteAllText("WorldMapArea2.json", JsonConvert.SerializeObject(this.worldMapAreas));
 
-            //var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(@"..\PathingAPI\WorldToMap\WorldMapArea.json"));
-
-            var uimapLines = File.ReadAllLines(@"..\PathingAPI\WorldToMap\uimap.csv").ToList().Select(l => l.Split(","));
-
-            list.ForEach(wmp => PopulateUIMap(wmp, uimapLines));
+            logger.WriteLine("Unsupported mini maps areas: " + string.Join(", ", list.Where(l => l.UIMapId == 0).Select(s => s.AreaName).OrderBy(s => s)));
 
             return list;
         }
@@ -81,6 +81,11 @@ namespace PathingAPI
                 .ToList();
 
             if (matches.Count > 1)
+            {
+
+            }
+
+            if (matches.Count == 0)
             {
 
             }

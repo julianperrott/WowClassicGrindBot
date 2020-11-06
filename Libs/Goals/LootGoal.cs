@@ -86,12 +86,6 @@ namespace Libs.Goals
                 outOfCombat = true;
             }
 
-            if (outOfCombat && playerReader.PlayerBitValues.PlayerInCombat)
-            {
-                Log("Combat detected");
-                return true;
-            }
-
             if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.PlayerClass == PlayerClassEnum.Warlock)
             {
                 // /Target pet
@@ -102,7 +96,18 @@ namespace Libs.Goals
                     await wowProcess.KeyPress(ConsoleKey.U, 200); // switch to pet's target /tar targettarget
                     return true;
                 }
+                else
+                {
+                    wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
+                }
             }
+
+            if (outOfCombat && playerReader.PlayerBitValues.PlayerInCombat)
+            {
+                Log("Combat detected");
+                return true;
+            }
+
 
             return false;
         }

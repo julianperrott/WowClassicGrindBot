@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using WowTriangles;
+using Newtonsoft.Json;
 
 namespace PathingAPI
 {
@@ -24,14 +25,14 @@ namespace PathingAPI
 
         public PPatherService()
         {
-            this.worldMapAreas = WorldMapArea.Read();
             logger = new PatherPath.Logger(Log);
+            this.worldMapAreas = WorldMapArea.Read(logger);
         }
 
         public PPatherService(Action<string> onWrite)
         {
-            this.worldMapAreas = WorldMapArea.Read();
             logger = new PatherPath.Logger(onWrite);
+            this.worldMapAreas = WorldMapArea.Read(logger);
         }
 
         public void Log(string message)
@@ -69,6 +70,12 @@ namespace PathingAPI
         public Location GetWorldLocation(int uiMapId, float v1, float v2)
         {
             var worldMapArea = worldMapAreas.Where(i => i.UIMapId == uiMapId).FirstOrDefault();
+            if (worldMapArea == null)
+            {
+                logger.WriteLine($"Unsupported mini map area, UIMapId {uiMapId} not found in WorldMapArea.json");
+                return new Location(0, 0, 0);
+            }
+
             var worldX = worldMapArea.ToWorldX(v2);
             var worldY = worldMapArea.ToWorldY(v1);
 
