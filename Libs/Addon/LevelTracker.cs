@@ -42,9 +42,12 @@ namespace Libs
 
                     TimeToLevel = new TimeSpan(0, 0, (int)secondsLeft).ToString();
 
-                    PredictedLevelTime = DateTime.Now.AddSeconds(secondsLeft);
+                    if (secondsLeft > 0 && secondsLeft < 60 * 60 * 10)
+                    {
+                        PredictedLevelTime = DateTime.Now.AddSeconds(secondsLeft);
 
-                    lastXp = playerReader.PlayerXp;
+                        lastXp = playerReader.PlayerXp;
+                    }
                 }
             }
         }
