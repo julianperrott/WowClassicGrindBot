@@ -190,7 +190,6 @@ namespace Libs.Goals
             foreach (var point in path)
             {
                 await MoveCloserToPoint(400, point);
-                //await MoveCloserToPoint(100, point);
             }
         }
 
@@ -202,6 +201,8 @@ namespace Libs.Goals
             var lastDistance = distance;
             while (distance <= lastDistance && distance > 5)
             {
+                if (this.playerReader.HealthPercent == 0) { return; }
+
                 logger.LogInformation($"Distance to spot = {distance}");
                 lastDistance = distance;
                 var heading = DirectionCalculator.CalculateHeading(playerReader.PlayerLocation, target);
@@ -350,6 +351,8 @@ namespace Libs.Goals
 
         private async Task InteractWithTarget()
         {
+            if (this.playerReader.HealthPercent == 0) { return; }
+
             logger.LogInformation("Interacting with NPC");
 
             var location = this.playerReader.PlayerLocation;
