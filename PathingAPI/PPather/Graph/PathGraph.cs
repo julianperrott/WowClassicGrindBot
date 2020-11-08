@@ -291,6 +291,19 @@ namespace PatherPath.Graph
             return FindClosestSpot(l, max_d, null);
         }
 
+        public Spot FindClosestSpot(string description, Location l, float max_d)
+        {
+            try
+            {
+                return FindClosestSpot(l, max_d, null);
+            }
+            catch (Exception ex)
+            {
+                logger.WriteLine($"Failed to find closest spot to {description}: {l.X},{l.Y} - {ex.Message}");
+                return null;
+            }
+        }
+
         // this can be slow...
         public Spot FindClosestSpot(Location l, float max_d, Set<Spot> Not)
         {
@@ -923,8 +936,8 @@ namespace PatherPath.Graph
             fromLoc = GetBestLocations(fromLoc);
             toLoc = GetBestLocations(toLoc);
 
-            Spot from = FindClosestSpot(fromLoc, MinStepLength);
-            Spot to = FindClosestSpot(toLoc, MinStepLength);
+            Spot from = FindClosestSpot("fromLoc", fromLoc, MinStepLength);
+            Spot to = FindClosestSpot("toLoc", toLoc, MinStepLength);
 
             if (from == null)
             {

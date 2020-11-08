@@ -25,6 +25,19 @@ https://www.youtube.com/watch?v=CIMgbh5LuCc
 
 [![Grind Bot Fun YouTube](https://img.youtube.com/vi/CIMgbh5LuCc/0.jpg)](https://www.youtube.com/watch?v=CIMgbh5LuCc)
 
+# Contributing
+
+You are welcome to create pull requests. Somethings ideas of things that could be improved:
+
+* This readme
+* The stuck detector
+* The route recording and editing
+* More routes
+
+# Issues and Ideas
+
+Create an issue rather than emailing me so that others can comment.
+
 # Getting it working
 
 ## 1. Download this repository
@@ -526,6 +539,80 @@ Some goals (combat,pull target) contain a list of spells which can be cast. The 
 The visualisation of the pre-conditions and spell requirements makes it easier to understand what the bot is doing and determine if the class file needs to be tweaked.
 
 ![Goals](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/actionsComponent.png)
+
+# Recording a path
+
+Various path are needed by the bot:
+
+Path to run when grinding (PathFilename in root of class files)
+
+Path from the spirit healer to the grind path. (SpiritPathFilename in root of class files)
+
+    "PathFilename": "16_LochModan.json",
+    "SpiritPathFilename": "16_LochModan_Spirithealer.json",
+    "PathThereAndBack": true,
+    "PathReduceSteps": false,
+
+Short path to get to the vendor/repairer when there are obstacles close to them (PathFilename withing NPC task)
+
+    {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagCount>80",
+        "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+        "Cost": 6
+    }
+
+## Recording a new path
+
+To record a new path place your character when the start of the path is then click on the 'Record Path' option on the left hand side of the bot's browser window. Then click 'Record New'.
+
+![New Path](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Path_New.png)
+
+Now walk the path the bot should take.
+
+If you make a mistake you can remove spots by clicking on them on the list on the right. Then either enter new values for the spot or click 'Remove'.
+
+For tricky parts you may want to record spots close together by using the 'Distance between spots' slider (Smaller number equals closer together)
+
+Once the path is complete click 'Save'. This path will be saved with a generic filename e.g.  Path_20201108112650.json, you will need to go into your \Json\path and rename it to something sensible.
+
+![Recording Path](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Path_Recording.png)
+
+## Types of paths
+
+### There and back 
+
+"PathThereAndBack": true,
+
+These paths are run from one end to the other and then walked backwards back to the start. So the end does not need to be near the start.
+
+![There and back path](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Path_Thereandback.png)
+
+### Joined up
+
+"PathThereAndBack": false,
+
+These paths are run from one end to the other and then repeated. So the path needs to join up with itself i.e. the end needs to be near the start.
+
+![Circular path](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Path_Circular.png)
+
+## Tips  
+
+Try to avoid the path getting too close to:
+
+* Obstactles like trees, houses.
+* Steep hills or cliffs (falling off one can make the bot get stuck)
+* Camps/groups of mobs
+* Elite mob areas, or solo elite paths.
+
+The best places to grind are:
+
+* Places with non casters i.e. beasts
+* Places where mobs are far apart (so you don't get adds)
+* Places with few obstacles
+* Flat ground
+
 
 # Pathing
 

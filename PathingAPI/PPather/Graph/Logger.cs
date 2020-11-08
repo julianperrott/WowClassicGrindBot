@@ -11,14 +11,17 @@ namespace PatherPath
 
         private Action<string> onWrite;
 
-        public Logger(Action<string> onWrite)
+        public Logger(Action<string> action)
         {
-            this.onWrite = onWrite;
+            this.onWrite = action;
         }
 
         public void WriteLine(string message)
         {
-            onWrite(message);
+            if (onWrite != null)
+            {
+                onWrite(message);
+            }
             System.Diagnostics.Debug.WriteLine(message);
         }
 

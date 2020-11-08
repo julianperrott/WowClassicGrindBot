@@ -25,7 +25,7 @@ namespace PathingAPI
 
         public PPatherService()
         {
-            logger = new PatherPath.Logger(Log);
+            logger = new PatherPath.Logger((s)=>Log(s));
             this.worldMapAreas = WorldMapArea.Read(logger);
         }
 

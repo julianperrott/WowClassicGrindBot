@@ -1,5 +1,6 @@
 ﻿using PatherPath;
 using PatherPath.Graph;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -74,9 +75,15 @@ namespace PathingAPI
             //slow down the search if required.
             PathGraph.sleepMSBetweenSpots = 0;
 
-            var path= PathGraph.CreatePath(locationFrom, locationTo, 5, null);
-
-            return path;
+            try
+            {
+                return PathGraph.CreatePath(locationFrom, locationTo, 5, null);
+            }
+            catch(Exception ex)
+            {
+                logger.WriteLine(ex.Message);
+                return null;
+            }
         }
     }
 }
