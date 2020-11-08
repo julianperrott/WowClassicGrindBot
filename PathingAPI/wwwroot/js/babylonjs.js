@@ -32,17 +32,18 @@
         removeMeshes(name);
         var line1 = [new BABYLON.Vector3(vector.x, vector.z, vector.y), new BABYLON.Vector3(vector.x, vector.z+20, vector.y)];
         var lines1 = BABYLON.MeshBuilder.CreateLines(name, { points: line1 }, scene);
-        if (col == 1) { lines1.color = BABYLON.Color3.Red(); }
-        if (col == 2) { lines1.color = BABYLON.Color3.Green(); }
-        if (col == 3) { lines1.color = BABYLON.Color3.Blue(); }
-        if (col == 4) { lines1.color = BABYLON.Color3.White(); }
+        if (col === 1) { lines1.color = BABYLON.Color3.Red(); }
+        if (col === 2) { lines1.color = BABYLON.Color3.Green(); }
+        if (col === 3) { lines1.color = BABYLON.Color3.Blue(); }
+        if (col === 4) { lines1.color = BABYLON.Color3.White(); }
+        if (col === 5) { lines1.color = BABYLON.Color3.Teal(); }
 
-        if (!cameraPositionSet || name=="start") {
+        if (!cameraPositionSet || name === "start") {
             cameraPositionSet = true;
             camera.setTarget(new BABYLON.Vector3(vector.x, vector.z, vector.y));
             camera.position = new BABYLON.Vector3(vector.x, vector.z + 10, vector.y);
         } else {
-            camera.setTarget(new BABYLON.Vector3(vector.x, vector.z - 30, vector.y));
+            //camera.setTarget(new BABYLON.Vector3(vector.x, vector.z - 30, vector.y));
         }
 
         console.log("drawLine: " + name + " completed.");

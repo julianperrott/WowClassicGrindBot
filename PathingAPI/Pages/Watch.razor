@@ -2,6 +2,7 @@
 
 @using System.Collections.Generic
 @using PathingAPI.Data
+@using PatherPath.Graph
 
 @inject IJSRuntime jsRuntime
 @inject PPatherService pPatherService
@@ -90,6 +91,10 @@
         }
     }
 
+    private Location lastFrom = new Location(0, 0,0);
+    private Location lastTo = new Location(0, 0, 0);
+    private Location lastClosest = new Location(0, 0, 0);
+
     public void SearchPathRefresh()
     {
         while (true)
@@ -107,6 +112,27 @@
                             InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("drawPath", path, 4, "search")).Wait(); ;
                         }
                     }
+
+                    var from = pPatherService.SearchFrom;
+                    var to = pPatherService.SearchTo;
+
+                    if (from != null && to != null && lastFrom.X != from.X || lastTo.X != lastTo.X)
+                    {
+                        jsRuntime.InvokeVoidAsync("drawLine", Vertex.Create(from.X, from.Y, from.Z), 2, "start").ConfigureAwait(false);
+                        jsRuntime.InvokeVoidAsync("drawLine", Vertex.Create(to.X, to.Y, to.Z), 3, "end").ConfigureAwait(false);
+                        lastFrom = from;
+                        lastTo = to;
+                    }
+
+                    if (pPatherService.ClosestLocation != null)
+                    {
+                        if (lastClosest.X != pPatherService.ClosestLocation.X)
+                        {
+                            jsRuntime.InvokeVoidAsync("drawLine", Vertex.Create(pPatherService.ClosestLocation.X, pPatherService.ClosestLocation.Y, pPatherService.ClosestLocation.Z), 5, "closest").ConfigureAwait(false);
+                            lastClosest = pPatherService.ClosestLocation;
+                        }
+                    }
+
                 }
                 catch (Exception ex)
                 {

@@ -57,6 +57,7 @@ namespace PatherPath.Graph
 		*/
 
         public const float CHUNK_BASE = 100000.0f; // Always keep positive
+        public const int MaximumAllowedRangeFromTarget = 100;
         public string BaseDir = "..\\PathingApi\\PPather\\PathInfo";
         private string Continent;
         private SparseMatrix2D<GraphChunk> chunks;
@@ -107,6 +108,8 @@ namespace PatherPath.Graph
             return 0;
         }
 
+        public static int TimeoutSeconds = 20;
+        public static int ProgressTimeoutSeconds = 10;
 
         private Logger logger;
 
@@ -583,8 +586,18 @@ namespace PatherPath.Graph
 
         private float heuristicsFactor = 5f;
 
+        public Spot ClosestSpot = null;
+
         private Spot Search(Spot fromSpot, Spot destinationSpot, float minHowClose, ILocationHeuristics locationHeuristics)
         {
+            var searchDuration = new Stopwatch();
+            searchDuration.Start();
+            var timeSinceProgress = new Stopwatch();
+            timeSinceProgress.Start();
+
+            var closest = 99999f;
+            ClosestSpot = null;
+
             currentSearchStartSpot = fromSpot;
             searchID++;
             int currentSearchID = searchID;
@@ -616,9 +629,27 @@ namespace PatherPath.Graph
                 //if (!searchProgress.CheckProgress(currentSearchSpot)) { break; }
 
                 // are we there?
-                if (currentSearchSpot.location.GetDistanceTo(destinationSpot.location) <= minHowClose)
+
+                var distance = currentSearchSpot.location.GetDistanceTo(destinationSpot.location);
+
+                if (distance <= minHowClose)
                 {
                     return currentSearchSpot; // got there
+                }
+
+                if (distance < closest)
+                {
+                    logger.WriteLine($"Closet spot is {distance} from the target");
+                    closest = distance;
+                    ClosestSpot = currentSearchSpot;
+                    timeSinceProgress.Reset();
+                    timeSinceProgress.Start();
+                }
+
+                if (timeSinceProgress.Elapsed.TotalSeconds > ProgressTimeoutSeconds || searchDuration.Elapsed.TotalSeconds > TimeoutSeconds)
+                {
+                    logger.WriteLine("search failed, 10 seconds since last progress, returning the closest spot.");
+                    return ClosestSpot;
                 }
 
                 //Find spots to link to
@@ -637,7 +668,12 @@ namespace PatherPath.Graph
             //we ran out of spots to search
             //searchProgress.LogStatus("  search failed. ");
 
-            return null; // :(
+            if (ClosestSpot != null && closest < MaximumAllowedRangeFromTarget)
+            {
+                logger.WriteLine("search failed, returning the closest spot.");
+                return ClosestSpot;
+            }
+            return null;
         }
 
         private void ScoreSpot(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, PriorityQueue<Spot, float> prioritySpotQueue)
@@ -702,7 +738,6 @@ namespace PatherPath.Graph
                 prioritySpotQueue.Enqueue(spotLinkedToCurrent, -F_Score);
             }
         }
-
 
         public void ScoreSpot_Pather(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, PriorityQueue<Spot, float> prioritySpotQueue)
         {
@@ -882,11 +917,16 @@ namespace PatherPath.Graph
             Spot newTo = Search(from, to, minHowClose, locationHeuristics);
             if (newTo != null)
             {
-                if (newTo.GetDistanceTo(to) <= minHowClose)
+                if (newTo.GetDistanceTo(to) <= MaximumAllowedRangeFromTarget)
                 {
                     List<Spot> path = FollowTraceBack(from, newTo);
                     LastPath = new Path(path);
                     return LastPath;
+                }
+                else
+                {
+                    logger.WriteLine($"Closest spot is too far from target. {newTo.GetDistanceTo(to)}>{MaximumAllowedRangeFromTarget}");
+                    return null;
                 }
             }
             return null;

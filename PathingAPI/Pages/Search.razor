@@ -80,6 +80,9 @@
         this.name = name;
 
         PatherPath.Graph.PathGraph.SearchEnabled = true;
+        PatherPath.Graph.PathGraph.ProgressTimeoutSeconds = 60;
+        PatherPath.Graph.PathGraph.TimeoutSeconds = 600;
+
         await InvokeAsyncBase(() => StateHasChanged());
 
         searchPathThread = new System.Threading.Thread(new System.Threading.ThreadStart(SearchPathThread));
@@ -97,12 +100,7 @@
             var from = parameters.From;
             var to = parameters.To;
 
-            var hasChangedLocation = pPatherService.SetLocations(from, to);
-            if (hasChangedLocation)
-            {
-                jsRuntime.InvokeVoidAsync("drawLine", Vertex.Create(from.X, from.Y, from.Z), 2, "start").ConfigureAwait(false);
-                jsRuntime.InvokeVoidAsync("drawLine", Vertex.Create(to.X, to.Y, to.Z), 3, "end").ConfigureAwait(false);
-            }
+            pPatherService.SetLocations(from, to);
 
             var patherPath = pPatherService.DoSearch(searchType);
 

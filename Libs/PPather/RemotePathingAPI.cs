@@ -24,7 +24,7 @@ namespace Libs
         {
             try
             {
-                //logger.LogInformation($"Finding route to {toPoint}");
+                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint}...");
                 var url = $"{api}MapRoute?map1={map}&x1={fromPoint.X}&y1={fromPoint.Y}&map2={map}&x2={toPoint.X}&y2={toPoint.Y}";
                 var sw = new Stopwatch();
                 sw.Start();

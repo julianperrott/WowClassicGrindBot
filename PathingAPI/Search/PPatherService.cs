@@ -152,5 +152,11 @@ namespace PathingAPI
 
             return search.PathGraph.CurrentSearchPath();
         }
+
+        public Location SearchFrom => this.search?.locationFrom;
+
+        public Location SearchTo => this.search?.locationTo;
+
+        public Location ClosestLocation => this.search?.PathGraph?.ClosestSpot?.location;
     }
 }

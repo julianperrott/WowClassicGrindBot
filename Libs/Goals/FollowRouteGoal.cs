@@ -116,7 +116,7 @@ namespace Libs.Goals
 
             await SwitchGatherType();
 
-            await Task.Delay(200);
+            //await Task.Delay(200);
 
             if (this.playerReader.PlayerBitValues.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
 
@@ -146,6 +146,8 @@ namespace Libs.Goals
 
             if (lastDistance < distance)
             {
+                AdjustNextPointToClosest();
+
                 await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Further away");
             }
             else if (!this.stuckDetector.IsGettingCloser())
