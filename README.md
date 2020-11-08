@@ -322,6 +322,18 @@ Short Path Example:
 
 ![Short Path Example](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/NPCPath.png)
 
+### Repeatable Quests Handin
+
+In theory if there is a repeatable quest to collect items, you could set up a NPC task as follows. See 'Bag requirements' for Requirements format.
+
+    {
+        "Name": "Handin",
+        "Key": "K",
+        "Requirements": ["BagItem:12622:5","BagItem:12623:5"],
+        "PathFilename": "Path_to_NPC.json",
+        "Cost": 6
+    }
+
 ## Requirement
 
 A requirement is something that must be true for the command to run. Not all commands need a requirement, some just rely on a cooldown or a mana amount. A requirement can be put into a list if there is more than one.
