@@ -105,7 +105,7 @@ namespace Libs.Goals
 
         private async Task Interact()
         {
-            if (this.classConfiguration.Interact.SecondsSinceLastClick > 4)
+            if (this.classConfiguration.Interact.SecondsSinceLastClick > 1)
             {
                 await this.castingHandler.TapInteractKey("PullTargetAction");
             }

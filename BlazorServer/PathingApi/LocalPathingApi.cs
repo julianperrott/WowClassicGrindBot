@@ -66,6 +66,7 @@ namespace BlazorServer
             var mpqFiles = MPQTriangleSupplier.GetArchiveNames(s=>logger.LogInformation(s));
 
             var countOfMPQFiles = mpqFiles.Where(f => File.Exists(f)).Count();
+            //countOfMPQFiles = 0;
 
             if (countOfMPQFiles == 0)
             {

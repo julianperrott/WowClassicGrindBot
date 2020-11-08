@@ -540,20 +540,20 @@ The visualisation of the pre-conditions and spell requirements makes it easier t
 
 ![Goals](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/actionsComponent.png)
 
-# Recording a path
+# Recording a Path
 
 Various path are needed by the bot:
 
-Path to run when grinding (PathFilename in root of class files)
+The path to run when grinding (PathFilename in root of class files).
 
-Path from the spirit healer to the grind path. (SpiritPathFilename in root of class files)
+The path from the spirit healer to the grind path. (SpiritPathFilename in root of class files):
 
     "PathFilename": "16_LochModan.json",
     "SpiritPathFilename": "16_LochModan_Spirithealer.json",
     "PathThereAndBack": true,
     "PathReduceSteps": false,
 
-Short path to get to the vendor/repairer when there are obstacles close to them (PathFilename withing NPC task)
+The short path to get to the vendor/repairer when there are obstacles close to them (PathFilename withing NPC task):
 
     {
         "Name": "Sell",
@@ -565,7 +565,7 @@ Short path to get to the vendor/repairer when there are obstacles close to them 
 
 ## Recording a new path
 
-To record a new path place your character when the start of the path is then click on the 'Record Path' option on the left hand side of the bot's browser window. Then click 'Record New'.
+To record a new path place your character where the start of the path should be, then click on the 'Record Path' option on the left hand side of the bot's browser window. Then click 'Record New'.
 
 ![New Path](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Path_New.png)
 
@@ -573,7 +573,7 @@ Now walk the path the bot should take.
 
 If you make a mistake you can remove spots by clicking on them on the list on the right. Then either enter new values for the spot or click 'Remove'.
 
-For tricky parts you may want to record spots close together by using the 'Distance between spots' slider (Smaller number equals closer together)
+For tricky parts you may want to record spots close together by using the 'Distance between spots' slider (Smaller number equals closer together).
 
 Once the path is complete click 'Save'. This path will be saved with a generic filename e.g.  Path_20201108112650.json, you will need to go into your \Json\path and rename it to something sensible.
 
@@ -602,16 +602,16 @@ These paths are run from one end to the other and then repeated. So the path nee
 Try to avoid the path getting too close to:
 
 * Obstactles like trees, houses.
-* Steep hills or cliffs (falling off one can make the bot get stuck)
-* Camps/groups of mobs
+* Steep hills or cliffs (falling off one can make the bot get stuck).
+* Camps/groups of mobs.
 * Elite mob areas, or solo elite paths.
 
 The best places to grind are:
 
-* Places with non casters i.e. beasts
-* Places where mobs are far apart (so you don't get adds)
-* Places with few obstacles
-* Flat ground
+* Places with non casters i.e. beasts. So that they come to you when agro'd.
+* Places where mobs are far apart (so you don't get adds).
+* Places with few obstacles.
+* Flat ground.
 
 
 # Pathing

@@ -48,13 +48,7 @@ namespace Libs.Goals
 
         public override async Task PerformAction()
         {
-            if (playerReader.HealthPercent > 0)
-            {
-                NeedsToReset = true;
-                await Task.Delay(1000);
-                logger.LogInformation("Waiting to die");
-                return;
-            }
+            if (!await IsDead()) { return; }
 
             if (NeedsToReset)
             {
@@ -63,8 +57,6 @@ namespace Libs.Goals
             }
 
             await Task.Delay(200);
-
-            if (!this.playerReader.PlayerBitValues.DeadStatus) { return; }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             double distance = 0;
@@ -102,13 +94,7 @@ namespace Libs.Goals
             }
             else // distance closer
             {
-                var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
-                var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
-
-                if (Math.Min(diff1, diff2) > 0.3)
-                {
-                    await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
-                }
+                await AdjustHeading(heading);
             }
 
             lastDistance = distance;
@@ -128,6 +114,35 @@ namespace Libs.Goals
             }
 
             LastActive = DateTime.Now;
+        }
+
+        private async Task AdjustHeading(double heading)
+        {
+            var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
+            var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
+
+            if (Math.Min(diff1, diff2) > 0.3)
+            {
+                await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
+            }
+            else
+            {
+                logger.LogInformation($"Direction ok heading: {heading}, player direction {playerReader.Direction}");
+            }
+        }
+
+        private async Task<bool> IsDead()
+        {
+            bool hadNoHealth = true;
+            if (playerReader.HealthPercent > 0)
+            {
+                NeedsToReset = true;
+                await Task.Delay(1000);
+                logger.LogInformation("Waiting to die");
+                hadNoHealth = false;
+            }
+
+            return hadNoHealth && this.playerReader.PlayerBitValues.DeadStatus;
         }
 
         private bool HasBeenActiveRecently()

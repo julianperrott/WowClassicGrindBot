@@ -80,45 +80,42 @@ namespace Libs
                 await Task.Delay(120000);
             }
 
-            if (unstickSeconds > 5)
+            if (unstickSeconds > 2)
             {
-                int strafeDuration = (int)(1000 + (((double)actionDurationSeconds * 1000) / 12));
+                int actionDuration = (int)(1000 + (((double)actionDurationSeconds * 1000) / 8));
 
-                if (strafeDuration > 20000)
+                if (actionDuration > 20000)
                 {
-                    strafeDuration = 20000;
+                    actionDuration = 20000;
                 }
 
-                if (actionDurationSeconds > 20)
+                if (actionDurationSeconds > 10)
                 {
                     // back up a bit, added "remove" move forward
+                    logger.LogInformation($"Trying to unstick by backing up for {actionDuration}ms");
                     wowProcess.SetKeyState(ConsoleKey.DownArrow, true, false, "StuckDetector_back_up");
 					wowProcess.SetKeyState(ConsoleKey.UpArrow, false, false, "StuckDetector");
-                    await Task.Delay(strafeDuration);
+                    await Task.Delay(actionDuration);
                     wowProcess.SetKeyState(ConsoleKey.DownArrow, false, false, "StuckDetector");
                 }
                 this.stopMoving?.Stop();
 
-                // stuck for 20 seconds
-                var r = random.Next(0, 100);
-                if (r < 50)
-                {
-                    logger.LogInformation($"Trying to unstick by strafing left for {strafeDuration}ms");
-                    wowProcess.SetKeyState(ConsoleKey.A, true, false, "StuckDetector");
-                    await Task.Delay(strafeDuration);
-                    wowProcess.SetKeyState(ConsoleKey.A, false, false, "StuckDetector");
-                }
-                else
-                {
-                    logger.LogInformation($"Trying to unstick by strafing right for {strafeDuration}ms");
-                    wowProcess.SetKeyState(ConsoleKey.D, true, false, "StuckDetector");
-                    await Task.Delay(strafeDuration);
-                    wowProcess.SetKeyState(ConsoleKey.D, false, false, "StuckDetector");
-                }
+                // Turn
+                var r = random.Next(0, 2);
+                var key = r == 0 ? ConsoleKey.A : ConsoleKey.D;
+                var turnDuration = random.Next(0, 800) + 200;
+                logger.LogInformation($"Trying to unstick by turning for {turnDuration}ms");
+                wowProcess.SetKeyState(key, true, false, "StuckDetector");
+                await Task.Delay(turnDuration);
+                wowProcess.SetKeyState(key, false, false, "StuckDetector");
 
-                await wowProcess.TapStopKey();
-
+                // Move forward
+                var strafeDuration = random.Next(0, 2000) + actionDurationSeconds;
+                logger.LogInformation($"Trying to unstick by moving forward after turning for {strafeDuration}ms");
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "StuckDetector");
+                await Task.Delay(strafeDuration);
+
+                await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
 
                 var heading = DirectionCalculator.CalculateHeading(this.playerReader.PlayerLocation, targetLocation);
                 await playerDirection.SetDirection(heading, targetLocation, "Move to next point");

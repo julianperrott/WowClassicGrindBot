@@ -1,9 +1,7 @@
 ﻿using Libs.GOAP;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -34,6 +32,8 @@ namespace Libs.Goals
         private Random random = new Random();
         private ILogger logger;
         private DateTime LastJump = DateTime.Now;
+        private DateTime LastReset = DateTime.Now;
+        private DateTime LastEventReceived = DateTime.Now;
 
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
@@ -68,6 +68,7 @@ namespace Libs.Goals
             NeedsToReset = true;
             points.Clear();
             this.corpseLocation = new WowPoint(0, 0);
+            LastEventReceived = DateTime.Now;
         }
 
         public override async Task PerformAction()
@@ -96,9 +97,16 @@ namespace Libs.Goals
                 logger.LogInformation($"Corpse location is {playerReader.CorpseX},{playerReader.CorpseY}");
 
                 await Reset();
-                
 
                 Deaths.Add(this.corpseLocation);
+            }
+
+            var timeSinceResetSeconds = (DateTime.Now - LastReset).TotalSeconds;
+            if (timeSinceResetSeconds > 80)
+            {
+                await this.stopMoving.Stop();
+                logger.LogInformation("We have been dead for over 1 minute, trying to path a new route.");
+                await this.Reset();
             }
 
             await Task.Delay(200);
@@ -142,8 +150,17 @@ namespace Libs.Goals
                 {
                     await stuckDetector.Unstick();
 
-                    await this.stopMoving.Stop();
-                    await this.Reset();
+                    // give up if we have been dead for 10 minutes
+                    var timeDeadSeconds = (DateTime.Now - LastEventReceived).TotalSeconds;
+                    if (timeDeadSeconds > 600)
+                    {
+                        logger.LogInformation("We have been dead for 10 minutes and seem to be stuck.");
+                        SendActionEvent(new ActionEventArgs(GOAP.GoapKey.abort, true));
+                        await Task.Delay(10000);
+                        return;
+                    }
+
+                    distance = DistanceTo(location, points.Peek());
                 }
                 else
                 {
@@ -199,6 +216,8 @@ namespace Libs.Goals
 
         public async Task Reset()
         {
+            LastReset = DateTime.Now;
+
             await this.stopMoving.Stop();
 
             points.Clear();
