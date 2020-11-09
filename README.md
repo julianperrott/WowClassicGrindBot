@@ -27,7 +27,7 @@ https://www.youtube.com/watch?v=CIMgbh5LuCc
 
 # Contributing
 
-You are welcome to create pull requests. Somethings ideas of things that could be improved:
+You are welcome to create pull requests. Some ideas of things that could be improved:
 
 * This readme
 * The stuck detector
