@@ -111,7 +111,7 @@ namespace Libs
 
                 foreach (var item in classConfig.NPC.Sequence)
                 {
-                    availableActions.Add(new AdhocNPCGoal(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger, stuckDetector, classConfig, pather, item));
+                    availableActions.Add(new AdhocNPCGoal(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger, stuckDetector, classConfig, pather, item, blacklist));
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 

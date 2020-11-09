@@ -25,6 +25,14 @@ namespace Libs
             blacklisted.ForEach(npc => blacklist.Add(npc.ToUpper()));
         }
 
+        public void Add(string name)
+        {
+            if (!blacklist.Contains(name))
+            {
+                blacklist.Add(name);
+            }
+        }
+
         public bool IsTargetBlacklisted()
         {
             if (!this.playerReader.HasTarget)

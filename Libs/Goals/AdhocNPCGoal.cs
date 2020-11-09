@@ -29,6 +29,7 @@ namespace Libs.Goals
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
+        private readonly IBlacklist blacklist;
         private readonly IPPather pather;
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
@@ -36,7 +37,7 @@ namespace Libs.Goals
         private readonly ILogger logger;
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key)
+        public AdhocNPCGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
@@ -47,6 +48,7 @@ namespace Libs.Goals
             this.classConfiguration = classConfiguration;
             this.pather = pather;
             this.key = key;
+            this.blacklist = blacklist;
 
             if (key.InCombat == "false")
             {
@@ -365,6 +367,9 @@ namespace Libs.Goals
                 // Interact with NPC
                 if (!string.IsNullOrEmpty(this.playerReader.Target))
                 {
+                    // black list it so we don't get stuck trying to kill it
+                    this.blacklist.Add(this.playerReader.Target);
+
                     await TapInteractKey($"InteractWithTarget {i}");
                 }
                 else
