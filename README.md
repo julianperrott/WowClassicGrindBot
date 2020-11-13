@@ -11,11 +11,13 @@ https://docs.microsoft.com/en-us/aspnet/core/blazor
 
 - No DLL injection or memory watching, just screen capture, mouse and keyboard clicking.
 
-- Written from scratch in C#.
+- The bot was written from scratch in C#. The Pathing calculation is mostly from an old library called [PPather](https://github.com/namreeb/PPather).
 
 - All classes are working except Hunter.
 
 - Pathing to grind route, vendor and repair.
+
+- Further detail about the bot can be found in my [Blog post](http://www.codesin.net/post/wowbot/).
 
 ![Screenshot](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Screenshot.png)
 
