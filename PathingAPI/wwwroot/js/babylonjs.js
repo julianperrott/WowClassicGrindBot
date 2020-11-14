@@ -12,14 +12,14 @@
     removeMeshes = function (name) {
         for (i = scene.meshes.length - 1; i >= 0; i--) {
             var mesh = scene.meshes[i];
-            if (mesh.name == name) { mesh.dispose(); }
+            if (mesh.name === name) { mesh.dispose(); }
         }
     }
 
     clear = function () {
         for (i = scene.meshes.length - 1; i >= 0; i--) {
             var mesh = scene.meshes[i];
-            if (mesh.name != "skyBox") {
+            if (mesh.name !== "skyBox") {
                 console.log("deleting mesh:" + mesh.name);
                 mesh.dispose();
             }
@@ -27,23 +27,30 @@
         cameraPositionSet = false;
     }
 
+    drawSphere = function (vector, col, name) {
+
+        removeMeshes(name);
+        var sphere = BABYLON.Mesh.CreateSphere(name, 10.0, 0.5, scene, false, BABYLON.Mesh.DEFAULTSIDE);
+        var material = new BABYLON.StandardMaterial(scene);
+        material.alpha = 1;
+        material.diffuseColor = getColour(col);
+        sphere.material = material;
+        sphere.position = new BABYLON.Vector3(vector.x, vector.z+0.2, vector.y);
+
+        console.log("drawSphere: " + name + " completed.");
+    }
+
     drawLine = function (vector, col, name) {
         log("drawLine: " + name);
         removeMeshes(name);
-        var line1 = [new BABYLON.Vector3(vector.x, vector.z, vector.y), new BABYLON.Vector3(vector.x, vector.z+20, vector.y)];
+        var line1 = [new BABYLON.Vector3(vector.x, vector.z, vector.y), new BABYLON.Vector3(vector.x, vector.z+10, vector.y)];
         var lines1 = BABYLON.MeshBuilder.CreateLines(name, { points: line1 }, scene);
-        if (col === 1) { lines1.color = BABYLON.Color3.Red(); }
-        if (col === 2) { lines1.color = BABYLON.Color3.Green(); }
-        if (col === 3) { lines1.color = BABYLON.Color3.Blue(); }
-        if (col === 4) { lines1.color = BABYLON.Color3.White(); }
-        if (col === 5) { lines1.color = BABYLON.Color3.Teal(); }
+        lines1.color = getColour(col);
 
         if (!cameraPositionSet || name === "start") {
             cameraPositionSet = true;
             camera.setTarget(new BABYLON.Vector3(vector.x, vector.z, vector.y));
             camera.position = new BABYLON.Vector3(vector.x, vector.z + 10, vector.y);
-        } else {
-            //camera.setTarget(new BABYLON.Vector3(vector.x, vector.z - 30, vector.y));
         }
 
         console.log("drawLine: " + name + " completed.");
@@ -53,23 +60,29 @@
     startedRendering = false;
     modelId = 0;
 
+    function getColour(col)
+    {
+        if (col === 1) { return BABYLON.Color3.Red(); }
+        if (col === 2) { return BABYLON.Color3.Green(); }
+        if (col === 3) { return BABYLON.Color3.Blue(); }
+        if (col === 4) { return BABYLON.Color3.White(); }
+        if (col === 5) { return BABYLON.Color3.Teal(); }
+        if (col === 6) { return new BABYLON.Color3(1, 0.6, 0); } // orange
+        return BABYLON.Color3.White();
+    }
+
     drawPath = function (pathPoints, col, name) {
         log("drawPath: " + name);
         var path = [];
 
         for (i = 0; i < pathPoints.length; i++) {
             var element = pathPoints[i];
-            var height = col == 4 ? 0.1 : 0.11;
+            var height = col === 4 ? 0.1 : 0.11;
             path.push(new BABYLON.Vector3(element.x, element.z + height, element.y));
         }
 
         var lines = BABYLON.MeshBuilder.CreateLines(name, { points: path }, scene);
-        lines.color = BABYLON.Color3.Red();
-
-        if (col == 1) { lines.color = BABYLON.Color3.Magenta(); }
-        if (col == 2) { lines.color = BABYLON.Color3.Teal(); }
-        if (col == 3) { lines.color = BABYLON.Color3.Yellow(); }
-        if (col == 4) { lines.color = BABYLON.Color3.White(); }
+        lines.color = getColour(col);
 
         var camera = scene.activeCamera;
         var startPoint = 0;
@@ -123,7 +136,7 @@
         log("addModels: " + modelId);
         var positions = [];
 
-        if (loadedPositions.length == 0) {
+        if (loadedPositions.length === 0) {
             return;
         }
 

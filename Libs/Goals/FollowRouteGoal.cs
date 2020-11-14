@@ -102,7 +102,7 @@ namespace Libs.Goals
         {
             if (sender != this)
             {
-                shouldMount = true;
+                shouldMount = this.classConfiguration.UseMount;
                 this.routeToWaypoint.Clear();
             }
         }
@@ -116,7 +116,7 @@ namespace Libs.Goals
 
             await SwitchGatherType();
 
-            //await Task.Delay(200);
+            await Task.Delay(200);
 
             if (this.playerReader.PlayerBitValues.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
 

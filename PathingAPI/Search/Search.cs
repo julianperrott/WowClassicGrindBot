@@ -35,17 +35,42 @@ namespace PathingAPI
 
         public Location CreateLocation(float x, float y)
         {
-            float z0,z1;
+            // find model 0 i.e. terrain
+            var z0 = GetZValueAt(x, y, new int[] { 0 });
+
+            // if no z value found then try any model
+            if (z0 == float.MinValue) { z0 = GetZValueAt(x, y, null); }
+
+            if (z0 == float.MinValue) { z0 = 0; }
+
+            return new Location(x, y, z0 - toonHeight, "", continent);
+        }
+
+        private float GetZValueAt(float x, float y, int[] allowedModels)
+        {
+            float z0 = float.MinValue, z1;
             int flags;
-            if (PathGraph.triangleWorld.FindStandableAt1(x, y, -1000, 2000, out z0, out flags, toonHeight, toonSize, true))
+
+            if (allowedModels != null)
             {
+                PathGraph.triangleWorld.FindStandableAt1(x, y, -1000, 2000, out z1, out flags, toonHeight, toonSize, true, null);
+            }
+
+            if (PathGraph.triangleWorld.FindStandableAt1(x, y, -1000, 2000, out z1, out flags, toonHeight, toonSize, true, allowedModels))
+            {
+                z0 = z1;
                 // try to find a standable just under where we are just in case we are on top of a building.
-                if (PathGraph.triangleWorld.FindStandableAt1(x, y, -1000, z0 - toonHeight - 1, out z1, out flags, toonHeight, toonSize, true))
+                if (PathGraph.triangleWorld.FindStandableAt1(x, y, -1000, z0 - toonHeight - 1, out z1, out flags, toonHeight, toonSize, true, allowedModels))
                 {
                     z0 = z1;
                 }
             }
-            return new Location(x, y, z0-toonHeight, "", continent);
+            else
+            {
+                return float.MinValue;
+            }
+
+            return z0;
         }
 
         public void CreatePathGraph(string continent)

@@ -6,6 +6,7 @@
 
 using PatherPath;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Wmo;
 
@@ -195,6 +196,7 @@ namespace WowTriangles
 
             loadedChunks.Add(tc);
             NotifyChunkAdded?.Invoke(new ChunkAddedEventArgs(tc));
+            System.Threading.Thread.Sleep(1000);
 
             chunks.Set(grid_x, grid_y, tc);
 
@@ -613,13 +615,13 @@ namespace WowTriangles
         public bool FindStandableAt(float x, float y, float min_z, float max_z,
                                    out float z0, out int flags, float toonHeight, float toonSize)
         {
-            return FindStandableAt1(x, y, min_z, max_z, out z0, out flags, toonHeight, toonSize, false);
+            return FindStandableAt1(x, y, min_z, max_z, out z0, out flags, toonHeight, toonSize, false, null);
         }
 
         public bool FindStandableAt(float x, float y, float min_z, float max_z,
                                    out float z0, out int flags, float toonHeight, float toonSize, bool IgnoreGradient)
         {
-            bool aheadOk = FindStandableAt1(x, y, min_z, max_z, out z0, out flags, toonHeight, toonSize, IgnoreGradient);
+            bool aheadOk = FindStandableAt1(x, y, min_z, max_z, out z0, out flags, toonHeight, toonSize, IgnoreGradient, null);
 
             if (!aheadOk)
             {
@@ -806,7 +808,7 @@ namespace WowTriangles
         }
 
         public bool FindStandableAt1(float x, float y, float min_z, float max_z,
-                                   out float z0, out int flags, float toonHeight, float toonSize, bool IgnoreGradient)
+                                   out float z0, out int flags, float toonHeight, float toonSize, bool IgnoreGradient, int[] allowedFlags)
         {
             TriangleCollection tc = GetChunkAt(x, y);
             ICollection<int> ts, tsm, tst;
@@ -850,20 +852,23 @@ namespace WowTriangles
                         out vertex1.x, out vertex1.y, out vertex1.z,
                         out vertex2.x, out vertex2.y, out vertex2.z, out t_flags, out sequence);
 
-                Vector normal;
-                Utils.GetTriangleNormal(vertex0, vertex1, vertex2, out normal);
-                float angle_z = (float)Math.Sin(45.0 / 360.0 * Math.PI * 2); //
-                if (Utils.abs(normal.z) > angle_z)
+                if (allowedFlags == null || allowedFlags.Contains(t_flags))
                 {
-                    if (Utils.SegmentTriangleIntersect(s0, s1, vertex0, vertex1, vertex2, out intersect))
+                    Vector normal;
+                    Utils.GetTriangleNormal(vertex0, vertex1, vertex2, out normal);
+                    float angle_z = (float)Math.Sin(45.0 / 360.0 * Math.PI * 2); //
+                    if (Utils.abs(normal.z) > angle_z)
                     {
-                        if (intersect.z > best_z)
+                        if (Utils.SegmentTriangleIntersect(s0, s1, vertex0, vertex1, vertex2, out intersect))
                         {
-                            if (!IsSpotBlocked(intersect.x, intersect.y, intersect.z, toonHeight, toonSize))
+                            if (intersect.z > best_z)
                             {
-                                best_z = intersect.z;
-                                best_flags = t_flags;
-                                found = true;
+                                if (!IsSpotBlocked(intersect.x, intersect.y, intersect.z, toonHeight, toonSize))
+                                {
+                                    best_z = intersect.z;
+                                    best_flags = t_flags;
+                                    found = true;
+                                }
                             }
                         }
                     }

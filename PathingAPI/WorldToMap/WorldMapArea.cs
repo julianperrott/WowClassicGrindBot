@@ -42,8 +42,9 @@ namespace PathingAPI
             return 100-(((value - LocRight) * 100) / (LocLeft- LocRight));
         }
 
-        public static WorldMapArea Create(string[] values)
+        public static WorldMapArea CreateV2(string[] values)
         {
+            //https://wow.tools/dbc/?dbc=worldmaparea&build=2.0.0.5610#page=1&search=eas
             return new WorldMapArea
             {
                 ID = int.Parse(values[0]),
@@ -56,20 +57,44 @@ namespace PathingAPI
                 LocBottom = float.Parse(values[7]),
             };
         }
+        public static WorldMapArea CreateV1(string[] values)
+        {
+            //https://wow.tools/dbc/?dbc=worldmaparea&build=1.13.0.28377
+            return new WorldMapArea
+            {
+                AreaName = values[0],
+                LocLeft = float.Parse(values[1]),
+                LocRight = float.Parse(values[2]),
+                LocTop = float.Parse(values[3]),
+                LocBottom = float.Parse(values[4]),
+
+                MapID = int.Parse(values[6]),
+                AreaID = int.Parse(values[7]),
+
+                ID = int.Parse(values[15]),
+
+            };
+        }
 
         public static List<WorldMapArea> Read(PatherPath.Logger logger)
         {
-            //var list = File.ReadAllLines(@"..\PathingAPI\WorldToMap\WorldMapArea.csv").ToList().Skip(1).Select(l => l.Split(","))
-            //    .Select(l => Create(l))
-            //    .ToList();
+            //CreateWorldMapAreaJson();
 
             var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(@"..\PathingAPI\WorldToMap\WorldMapArea.json"));
-            //var uimapLines = File.ReadAllLines(@"..\PathingAPI\WorldToMap\uimap.csv").ToList().Select(l => l.Split(","));
-            //list.ForEach(wmp => PopulateUIMap(wmp, uimapLines));
-            //System.IO.File.WriteAllText("WorldMapArea2.json", JsonConvert.SerializeObject(this.worldMapAreas));
-
             logger.WriteLine("Unsupported mini maps areas: " + string.Join(", ", list.Where(l => l.UIMapId == 0).Select(s => s.AreaName).OrderBy(s => s)));
 
+            return list;
+        }
+
+        private static List<WorldMapArea> CreateWorldMapAreaJson()
+        {
+            var list = File.ReadAllLines(@"..\PathingAPI\WorldToMap\WorldMapArea.csv").ToList().Skip(1).Select(l => l.Split(","))
+                .Select(l => CreateV1(l))
+                .ToList();
+
+            var uimapLines = File.ReadAllLines(@"..\PathingAPI\WorldToMap\uimap.csv").ToList().Select(l => l.Split(","));
+            list.ForEach(wmp => PopulateUIMap(wmp, uimapLines));
+            System.IO.File.WriteAllText(@"..\PathingAPI\WorldToMap\WorldMapArea2.json", JsonConvert.SerializeObject(list));
             return list;
         }
 

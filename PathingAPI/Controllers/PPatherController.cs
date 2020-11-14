@@ -1,12 +1,12 @@
-﻿using PathingAPI.WorldToMap;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using PatherPath;
 using PatherPath.Graph;
+using PathingAPI.Data;
+using PathingAPI.WorldToMap;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 using System.Text.Json;
 using WowTriangles;
-using PatherPath;
 
 namespace PathingAPI.Controllers
 {
@@ -27,6 +27,9 @@ namespace PathingAPI.Controllers
         private PPatherService service;
         private Logger logger;
 
+        private static bool isBusy = false;
+        private static bool initialised = false;
+
         public PPatherController(PPatherService service, Logger logger)
         {
             this.service = service;
@@ -38,14 +41,14 @@ namespace PathingAPI.Controllers
         /// </summary>
         /// <remarks>
         /// map1 and map2 are the map ids. See https://wow.gamepedia.com/API_C_Map.GetBestMapForUnit
-        ///  
+        ///
         ///     /dump C_Map.GetBestMapForUnit("player")
-        ///     
+        ///
         ///     Dump: value=_Map.GetBestMapForUnit("player")
         ///     [1]=1451
-        ///     
+        ///
         /// x and y are the map coordinates for the zone (same as the mini map). See https://wowwiki.fandom.com/wiki/API_GetPlayerMapPosition
-        /// 
+        ///
         ///     local posX, posY = GetPlayerMapPosition("player");
         /// </remarks>
         /// <param name="map1">from map e.g. 1451</param>
@@ -59,18 +62,13 @@ namespace PathingAPI.Controllers
         [Produces("application/json")]
         public JsonResult MapRoute(int map1, float x1, float y1, int map2, float x2, float y2)
         {
+            isBusy = true;
             service.SetLocations(service.GetWorldLocation(map1, x1, y1), service.GetWorldLocation(map2, x2, y2));
             var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star_With_Model_Avoidance);
 
-            //return new JsonResult(path.locations, new JsonSerializerOptions
-            //{
-            //    WriteIndented=true
-            //});
-
             var worldLocations = path == null ? new List<WorldMapAreaSpot>() : path.locations.Select(s => service.ToMapAreaSpot(s.X, s.Y, s.Z, map1));
-
-            return new JsonResult(worldLocations);
-            //return Newtonsoft.Json.JsonConvert.SerializeObject(worldLocations);
+            isBusy = false;
+            return new JsonResult(worldLocations, new JsonSerializerOptions { WriteIndented = true });
         }
 
         /// <summary>
@@ -89,9 +87,69 @@ namespace PathingAPI.Controllers
         [Produces("application/json")]
         public JsonResult WorldRoute(float x1, float y1, float z1, float x2, float y2, float z2, string continent)
         {
-            service.SetLocations(new Location(x1,y1,z1,"l1",continent), new Location(x2, y2, z2, "l2", continent));
-            var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star_With_Model_Avoidance);
-            return new JsonResult(path);
+            isBusy = true;
+            service.SetLocations(new Location(x1, y1, z1, "l1", continent), new Location(x2, y2, z2, "l2", continent));
+            var path = service.DoSearch(PathGraph.eSearchScoreSpot.A_Star_With_Model_Avoidance);
+            isBusy = false;
+            return new JsonResult(path, new JsonSerializerOptions { WriteIndented = true });
+        }
+
+        /// <summary>
+        /// Draws lines on the landscape
+        /// Used by the client to show the grind path and the spirit healer path.
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <returns></returns>
+        [HttpPost("Drawlines")]
+        [Produces("application/json")]
+        public bool Drawlines(List<Lines> lines)
+        {
+            if (isBusy) { return false; }
+            isBusy = true;
+            lines.ForEach(l =>
+            {
+                var locations = CreateLocations(l);
+                if (service.OnLinesAdded != null)
+                {
+                    service.OnLinesAdded(new LinesEventArgs(l.Name, locations, l.Colour));
+                }
+            });
+            isBusy = false;
+            initialised = true;
+            return true;
+        }
+
+        /// <summary>
+        /// Draws spheres on the landscape.
+        ///  Used by the client to show the player's location.
+        /// </summary>
+        /// <param name="sphere"></param>
+        /// <returns></returns>
+        [HttpPost("DrawSphere")]
+        [Produces("application/json")]
+        public bool DrawSphere(Sphere sphere)
+        {
+            if (isBusy || !initialised) { return false; }
+            isBusy = true;
+            var location = service.GetWorldLocation(sphere.MapId, (float)sphere.Spot.X, (float)sphere.Spot.Y);
+            if (service.OnSphereAdded != null)
+            {
+                service.OnSphereAdded(new SphereEventArgs(sphere.Name, location, sphere.Colour));
+            }
+            isBusy = false;
+            return true;
+        }
+
+        private List<Location> CreateLocations(Lines lines)
+        {
+            var result = new List<Location>();
+            foreach(var s in lines.Spots)
+            {
+                var location = service.GetWorldLocation(lines.MapId, (float)s.X, (float)s.Y);
+                result.Add(location);
+            }
+
+            return result;
         }
 
         /// <summary>

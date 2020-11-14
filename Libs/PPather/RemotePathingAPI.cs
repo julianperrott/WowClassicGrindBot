@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using Libs.PPather;
+using System.Text;
 
 namespace Libs
 {
@@ -15,9 +17,47 @@ namespace Libs
 
         private string api = $"http://localhost:5001/api/PPather/";
 
+        private List<LineArgs> lineArgs = new List<LineArgs>();
+
         public RemotePathingAPI(ILogger logger)
         {
             this.logger = logger;
+        }
+
+        public async Task DrawLines(List<LineArgs> lineArgs)
+        {
+            this.lineArgs = lineArgs;
+
+            using (var handler = new HttpClientHandler())
+            {
+                using (var client = new HttpClient(handler))
+                {
+                    using (var content = new StringContent(JsonConvert.SerializeObject(lineArgs), Encoding.UTF8, "application/json"))
+                    {
+                        logger.LogInformation($"Drawing lines '{string.Join(", ", lineArgs.Select(l => l.MapId))}'...");
+                        await client.PostAsync($"{api}Drawlines", content);
+                    }
+                }
+            }
+        }
+
+        public async Task DrawLines()
+        {
+            await DrawLines(lineArgs);
+        }
+
+        public async Task DrawSphere(SphereArgs args)
+        {
+            using (var handler = new HttpClientHandler())
+            {
+                using (var client = new HttpClient(handler))
+                {
+                    using (var content = new StringContent(JsonConvert.SerializeObject(args), Encoding.UTF8, "application/json"))
+                    {
+                        await client.PostAsync($"{api}DrawSphere", content);
+                    }
+                }
+            }
         }
 
         public async Task<List<WowPoint>> FindRoute(int map, WowPoint fromPoint, WowPoint toPoint)

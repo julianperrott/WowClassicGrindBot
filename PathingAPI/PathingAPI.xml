@@ -5,28 +5,28 @@
     </assembly>
     <members>
         <member name="M:PathingAPI.Controllers.PPatherController.MapRoute(System.Int32,System.Single,System.Single,System.Int32,System.Single,System.Single)">
-            <summary>
-            Allows a route to be calculated from one point to another using minimap coords.
-            </summary>
-            <remarks>
-            map1 and map2 are the map ids. See https://wow.gamepedia.com/API_C_Map.GetBestMapForUnit
-             
-                /dump C_Map.GetBestMapForUnit("player")
-                
-                Dump: value=_Map.GetBestMapForUnit("player")
-                [1]=1451
-                
-            x and y are the map coordinates for the zone (same as the mini map). See https://wowwiki.fandom.com/wiki/API_GetPlayerMapPosition
+             <summary>
+             Allows a route to be calculated from one point to another using minimap coords.
+             </summary>
+             <remarks>
+             map1 and map2 are the map ids. See https://wow.gamepedia.com/API_C_Map.GetBestMapForUnit
             
-                local posX, posY = GetPlayerMapPosition("player");
-            </remarks>
-            <param name="map1">from map e.g. 1451</param>
-            <param name="x1">from X e.g. 46.8</param>
-            <param name="y1">from Y e.g. 54.2</param>
-            <param name="map2">to map e.g. 1451</param>
-            <param name="x2">to X e.g. 51.2</param>
-            <param name="y2">to Y e.g. 38.9</param>
-            <returns>A list of x,y,z and mapid</returns>
+                 /dump C_Map.GetBestMapForUnit("player")
+            
+                 Dump: value=_Map.GetBestMapForUnit("player")
+                 [1]=1451
+            
+             x and y are the map coordinates for the zone (same as the mini map). See https://wowwiki.fandom.com/wiki/API_GetPlayerMapPosition
+            
+                 local posX, posY = GetPlayerMapPosition("player");
+             </remarks>
+             <param name="map1">from map e.g. 1451</param>
+             <param name="x1">from X e.g. 46.8</param>
+             <param name="y1">from Y e.g. 54.2</param>
+             <param name="map2">to map e.g. 1451</param>
+             <param name="x2">to X e.g. 51.2</param>
+             <param name="y2">to Y e.g. 38.9</param>
+             <returns>A list of x,y,z and mapid</returns>
         </member>
         <member name="M:PathingAPI.Controllers.PPatherController.WorldRoute(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.String)">
             <summary>
@@ -41,6 +41,22 @@
             <param name="z2">from Y e.g. 96</param>
             <param name="continent">from ["Azeroth", "Kalimdor", "Northrend", "Expansion01"] e.g. Kalimdor</param>
             <returns>A list of x,y,z</returns>
+        </member>
+        <member name="M:PathingAPI.Controllers.PPatherController.Drawlines(System.Collections.Generic.List{PathingAPI.Data.Lines})">
+            <summary>
+            Draws lines on the landscape
+            Used by the client to show the grind path and the spirit healer path.
+            </summary>
+            <param name="lines"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PathingAPI.Controllers.PPatherController.DrawSphere(PathingAPI.Data.Sphere)">
+            <summary>
+            Draws spheres on the landscape.
+             Used by the client to show the player's location.
+            </summary>
+            <param name="sphere"></param>
+            <returns></returns>
         </member>
         <member name="M:PathingAPI.Controllers.PPatherController.SelfTest">
             <summary>

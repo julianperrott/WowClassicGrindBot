@@ -57,6 +57,7 @@ namespace Libs
         public string TargetLastTargetKey { get; set; } = "N";
 
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
+        public bool UseMount { get; set; } = true;
 
         public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
         {

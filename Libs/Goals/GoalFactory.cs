@@ -1,4 +1,5 @@
 ﻿using Libs.Goals;
+using Libs.PPather;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -120,6 +121,12 @@ namespace Libs
                     .ToList();
 
                 this.RouteInfo = new RouteInfo(pathPoints, spiritPath, pathProviders, addonReader.PlayerReader);
+
+                this.pather.DrawLines(new List<LineArgs>()
+                {
+                      new LineArgs  { Spots = pathPoints, Name = "grindpath", Colour = 2, MapId = addonReader.PlayerReader.ZoneId },
+                      new LineArgs { Spots = spiritPath, Name = "spirithealer", Colour = 3, MapId = addonReader.PlayerReader.ZoneId }
+                });
             }
 
             return availableActions;

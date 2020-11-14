@@ -1,4 +1,5 @@
 ﻿using Libs;
+using Libs.PPather;
 using Microsoft.Extensions.Logging;
 using PathingAPI;
 using System.Collections.Generic;
@@ -22,6 +23,21 @@ namespace BlazorServer
         {
             this.logger = logger;
             this.service = service;
+        }
+
+        public async Task DrawLines(List<LineArgs> lineArgs)
+        {
+            await Task.Delay(0);
+        }
+
+        public async Task DrawLines()
+        {
+            await Task.Delay(0);
+        }
+
+        public async Task DrawSphere(SphereArgs args)
+        {
+            await Task.Delay(0);
         }
 
         public async Task<List<WowPoint>> FindRoute(int map, WowPoint fromPoint, WowPoint toPoint)

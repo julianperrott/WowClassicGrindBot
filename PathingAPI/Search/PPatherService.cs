@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using WowTriangles;
 using Newtonsoft.Json;
+using PathingAPI.Data;
 
 namespace PathingAPI
 {
@@ -19,6 +20,9 @@ namespace PathingAPI
         public Action<string> OnLog { get; set; }
         public Action OnReset { get; set; }
         public Action<ChunkAddedEventArgs> OnChunkAdded { get; set; }
+        public Action<LinesEventArgs> OnLinesAdded { get; set; }
+        public Action<SphereEventArgs> OnSphereAdded { get; set; }
+        
 
         private Path lastPath;
         public bool HasInitialised = false;
@@ -107,6 +111,15 @@ namespace PathingAPI
         }
 
         public void SetOnPathCreated(Action<Path> action)
+        {
+            OnPathCreated = action;
+            if (lastPath != null)
+            {
+                OnPathCreated?.Invoke(lastPath);
+            }
+        }
+
+        public void SetOnLinesAdded(Action<Path> action)
         {
             OnPathCreated = action;
             if (lastPath != null)

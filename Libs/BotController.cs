@@ -41,6 +41,7 @@ namespace Libs
 
         public BotController(ILogger logger, IPPather pather)
         {
+            updatePlayerPostion.Start();
             wowProcess = new WowProcess(logger);
             wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
             this.WowScreen = new WowScreen(logger);
@@ -91,6 +92,8 @@ namespace Libs
             this.logger.LogInformation("Addon thread stoppped!");
         }
 
+        Stopwatch updatePlayerPostion = new Stopwatch();
+
         public void ScreenshotRefreshThread()
         {
             var nodeFound = false;
@@ -102,6 +105,20 @@ namespace Libs
                 {
                     nodeFound = this.minimapNodeFinder.Find(nodeFound) != null;
                 }
+
+                if (updatePlayerPostion.ElapsedMilliseconds > 500)
+                {
+                    this.pather.DrawSphere(new Libs.PPather.SphereArgs
+                    {
+                        Colour = AddonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? 1 : !string.IsNullOrEmpty(AddonReader.PlayerReader.Target)? 6: 2,
+                        Name = "Player",
+                        MapId = this.AddonReader.PlayerReader.ZoneId,
+                        Spot = this.AddonReader.PlayerReader.PlayerLocation
+                    });
+                    updatePlayerPostion.Reset();
+                    updatePlayerPostion.Restart();
+                }
+
             }
             this.logger.LogInformation("Screenshot thread stoppped!");
         }
@@ -114,6 +131,8 @@ namespace Libs
             {
                 if (!actionThread.Active)
                 {
+                    this.pather.DrawLines();
+
                     actionThread.Active = true;
                     botThread = new Thread(() => Task.Factory.StartNew(() => BotThread()));
                     botThread.Start();

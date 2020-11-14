@@ -49,6 +49,9 @@
             RefreshSearchThread = new System.Threading.Thread(new System.Threading.ThreadStart(SearchPathRefresh));
             RefreshSearchThread.Start();
             pPatherService.OnReset = () => { InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("clear")).Wait(); ; };
+
+            pPatherService.OnLinesAdded = Drawlines;
+            pPatherService.OnSphereAdded = DrawSphere;
         }
     }
 
@@ -84,6 +87,8 @@
 
             System.Threading.Thread.Sleep(1000);
             InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("removeMeshes", "search")).Wait(); ;
+            InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("removeMeshes", "closest")).Wait(); ;
+            InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("removeMeshes", "end")).Wait(); ;
         }
         else
         {
@@ -118,7 +123,7 @@
 
                     if (from != null && to != null && lastFrom.X != from.X || lastTo.X != lastTo.X)
                     {
-                        jsRuntime.InvokeVoidAsync("drawLine", Vertex.Create(from.X, from.Y, from.Z), 2, "start").ConfigureAwait(false);
+                        jsRuntime.InvokeVoidAsync("drawLine", Vertex.Create(from.X, from.Y, from.Z), 2, "start2").ConfigureAwait(false);
                         jsRuntime.InvokeVoidAsync("drawLine", Vertex.Create(to.X, to.Y, to.Z), 3, "end").ConfigureAwait(false);
                         lastFrom = from;
                         lastTo = to;
@@ -141,6 +146,17 @@
             }
             System.Threading.Thread.Sleep(50);
         }
+    }
+
+    private void DrawSphere(SphereEventArgs e)
+    {
+        InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("drawSphere", e.Vertex, e.Colour, e.Name)).Wait(); ;
+    }
+
+
+    private void Drawlines(LinesEventArgs e)
+    {
+        InvokeAsyncBase(() => jsRuntime.InvokeVoidAsync("drawPath", e.Lines, e.Colour, e.Name)).Wait(); ;
     }
 
     private void TriangleWorld_NotifyChunkAdded(WowTriangles.ChunkAddedEventArgs e)
