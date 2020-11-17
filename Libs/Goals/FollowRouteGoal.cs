@@ -393,7 +393,7 @@ namespace Libs.Goals
             {
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
-                    await wowProcess.Dismount();
+                    //await wowProcess.Dismount();
                 }
                 await this.TapInteractKey("FollowRouteAction 4");
                 return true;

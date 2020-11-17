@@ -217,6 +217,7 @@ namespace Libs
             if (actionThread != null)
             {
                 actionThread.Active = false;
+                this.GoapAgent?.AvailableGoals.ToList().ForEach(goal => goal.OnActionEvent(this, new ActionEventArgs(GoapKey.abort, true)));
             }
         }
 

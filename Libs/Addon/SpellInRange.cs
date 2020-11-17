@@ -1,4 +1,6 @@
-﻿namespace Libs
+﻿using System;
+
+namespace Libs
 {
     public class SpellInRange
     {
@@ -35,8 +37,8 @@
 
         // Druid
         public bool Druid_Wrath { get => IsBitSet(0); }
-
         public bool Druid_Bash { get => IsBitSet(1); }
+        public bool Druid_Rip { get => IsBitSet(2); }
 
         //Paladin
         public bool Paladin_Judgement { get => IsBitSet(0); }
@@ -59,24 +61,24 @@
 
         public bool Warlock_Shoot { get => IsBitSet(1); }
 
-        public bool WithInPullRange(PlayerClassEnum playerClass) => playerClass switch
+        public bool WithinPullRange(PlayerReader playerReader, PlayerClassEnum playerClass) => playerClass switch
         {
             PlayerClassEnum.Warrior => Warrior_Charge,
             PlayerClassEnum.Rogue => Rogue_Throw,
             PlayerClassEnum.Priest => Priest_ShadowWordPain,
-            PlayerClassEnum.Druid => Druid_Wrath,
+            PlayerClassEnum.Druid => playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Bear ? Druid_Bash : playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Cat ? Druid_Rip : Druid_Wrath,
             PlayerClassEnum.Mage => Mage_Frostbolt && Mage_Fireball,
             PlayerClassEnum.Hunter => Hunter_ShootGun,
             PlayerClassEnum.Warlock => Warlock_ShadowBolt,
             _ => true
         };
 
-        public bool WithInCombatRange(PlayerClassEnum playerClass) => playerClass switch
+        public bool WithinCombatRange(PlayerReader playerReader, PlayerClassEnum playerClass) => playerClass switch
         {
             PlayerClassEnum.Warrior => Warrior_Rend,
             PlayerClassEnum.Rogue => Rogue_SinisterStrike,
             PlayerClassEnum.Priest => Priest_Shoot,
-            PlayerClassEnum.Druid => Druid_Bash,
+            PlayerClassEnum.Druid => playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Bear ? Druid_Bash : playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Cat ? Druid_Rip : Druid_Wrath,
             PlayerClassEnum.Paladin => Paladin_Judgement,
             PlayerClassEnum.Mage => Mage_Frostbolt || Mage_Fireball,
             PlayerClassEnum.Hunter => Hunter_ShootGun || Hunter_RaptorStrike,

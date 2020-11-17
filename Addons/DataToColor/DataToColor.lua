@@ -874,7 +874,8 @@ function DataToColor:areSpellsInRange()
     elseif CC == "DRUID" then
         spellList = {
             "Wrath", --1
-            "Bash" --2
+            "Bash", --2
+            "Rip" --3
         };
     elseif CC == "WARRIOR" then
         spellList = {
