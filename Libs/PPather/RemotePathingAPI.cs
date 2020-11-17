@@ -19,6 +19,8 @@ namespace Libs
 
         private List<LineArgs> lineArgs = new List<LineArgs>();
 
+        private int targetMapId = 0;
+
         public RemotePathingAPI(ILogger logger)
         {
             this.logger = logger;
@@ -62,10 +64,15 @@ namespace Libs
 
         public async Task<List<WowPoint>> FindRoute(int map, WowPoint fromPoint, WowPoint toPoint)
         {
+            if (targetMapId == 0)
+            {
+                targetMapId = map;
+            }
+
             try
             {
-                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint}...");
-                var url = $"{api}MapRoute?map1={map}&x1={fromPoint.X}&y1={fromPoint.Y}&map2={map}&x2={toPoint.X}&y2={toPoint.Y}";
+                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} map {targetMapId}...");
+                var url = $"{api}MapRoute?map1={map}&x1={fromPoint.X}&y1={fromPoint.Y}&map2={targetMapId}&x2={toPoint.X}&y2={toPoint.Y}";
                 var sw = new Stopwatch();
                 sw.Start();
 
