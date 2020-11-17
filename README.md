@@ -47,7 +47,7 @@ Create an issue rather than emailing me so that others can comment.
 Put the contents of the repo into a folder. e.g "C:\WowClassicGrindBot". I am going to refer to this folder from now on, so just substitute your own folder path.
 
 ## 2. Install the Addon
-
+W
 In this repo is a folder called Addons e.g.  C:\WowClassicGrindBot\Addons. Copy the contents into your wow classic Addons folder. e.g. c:\World of Warcraft\_classic_\Interface\AddOns. You will need to restart Wow if it is running.
 
 There are 2 addons:
@@ -57,27 +57,11 @@ There are 2 addons:
 
 ## 3. Download the MPQ route files
 
-These files are required to find paths from where you are to the grind area, vendor and repair.
+You only need the common-2.MPQ (1.7Gb) file which you can get here: https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing
 
-Download the MPQ files 12Gb from https://drive.google.com/file/d/1oxKzOkw-bVRV2JL8GGOimtNpT6QEmlDz/view?usp=sharing
+This file is required to find paths from where you are to the grind area, vendor and repair.
 
-Extract them into the \PathingAPI\MPQ folder (e.g. C:\WowClassicGrindBot\PathingAPI\MPQ)
-
-The folder should look somthing like this:
-
-      26/10/2020  16:10             8,704 ccode.dll
-      23/12/2009  15:55     1,810,430,608 common-2.MPQ
-      23/12/2009  16:13     2,881,154,863 common.MPQ
-      26/10/2020  16:08    <DIR>          enGB
-      23/12/2009  16:43     1,921,219,945 expansion.MPQ
-      23/12/2009  17:01     2,577,893,261 lichking.MPQ (ignore this file!)
-      23/12/2009  21:15     1,401,729,059 patch-2.MPQ
-      10/04/2010  09:42       479,482,227 patch-3.MPQ
-      23/12/2009  19:44     4,004,713,057 patch.MPQ
-      27/10/2020  18:07               189 readme.txt
-      24/10/2020  18:10           290,816 StormLib.dll
-                    11 File(s) 15,076,922,729 bytes
-
+Copy it into the \PathingAPI\MPQ folder (e.g. C:\WowClassicGrindBot\PathingAPI\MPQ)
 
 ## 4. Build the bot
 
