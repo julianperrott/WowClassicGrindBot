@@ -182,8 +182,8 @@ function DataToColor:OnMerchantShow(self, event, messageType, message)
                     _, _, itemRarity, _, _, _, _, _, _, _, itemSellPrice = GetItemInfo(CurrentItemLink)
                     _, itemCount = GetContainerItemInfo(myBags, bagSlots)
                     if itemRarity == 0 and itemSellPrice ~= 0 then
-                        TotalPrice = TotalPrice + (itemSellPrice * itemCount)
-                        print("Sold: ".. CurrentItemLink .. " for " .. GetCoinTextureString(itemSellPrice * itemCount))
+                        TotalPrice = TotalPrice + (itemSellPrice * itemCount);
+                        DataToColor:log("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
                         UseContainerItem(myBags, bagSlots)
                     end
                 end
@@ -646,6 +646,8 @@ function DataToColor:sell(items)
 
             DataToColor:OnMerchantShow();
 
+            TotalPrice = 0
+
             for b=0,4 do for s=1,GetContainerNumSlots(b) 
                 do local CurrentItemLink=GetContainerItemLink(b,s) 
                     if CurrentItemLink then
@@ -653,7 +655,9 @@ function DataToColor:sell(items)
                             if strfind(CurrentItemLink,items[i]) then
                                 _, _, itemRarity, _, _, _, _, _, _, _, itemSellPrice = GetItemInfo(CurrentItemLink);
                                 if (itemRarity<2) then
-                                    DataToColor:log("Selling: " .. items[i]);
+                                    _, itemCount = GetContainerItemInfo(b, s);
+                                    TotalPrice = TotalPrice + (itemSellPrice * itemCount);
+                                    DataToColor:log("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
                                     UseContainerItem(b,s);
                                 else
                                     DataToColor:log("Item is not gray or common, not selling it: " .. items[i]);
@@ -663,6 +667,13 @@ function DataToColor:sell(items)
                     end
                 end
             end
+
+            if TotalPrice ~= 0 then
+                print("Total Price for all items: " .. GetCoinTextureString(TotalPrice))
+            else
+                print("No grey items were sold.")
+            end
+
         else
             DataToColor:log("Merchant is not open to sell to, please approach and open.");
         end
