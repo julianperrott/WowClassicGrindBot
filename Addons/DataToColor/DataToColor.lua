@@ -156,10 +156,10 @@ local function OnCombatEvent(self, event)
         lastCombatCreature=0;
     elseif string.find(sourceGUID, "Creature") then
         lastCombatCreature=tonumber(string.sub(sourceGUID, -6),16);
-        print(sourceGUID.." "..lastCombatCreature);
+        --print(sourceGUID.." "..lastCombatCreature);
     else
         lastCombatCreature=0;
-        print("Other "..eventType);
+        --print("Other "..eventType);
     end
 end  
 
