@@ -45,6 +45,11 @@
                                 {
                                     <div>Combo Points: @playerReader.ComboPoints</div>
                                 }
+                                @if (playerReader.CombatCreatureCount > 1)
+                                {
+                                    <div>Fighting @playerReader.CombatCreatureCount Mobs</div>
+                                }
+
                             </div>
                         </a>
                     }

@@ -249,6 +249,7 @@ namespace Libs
                 {  "TargetHealth%", ()=> playerReader.TargetHealthPercentage },
                 {  "Mana%", ()=> playerReader.ManaPercentage },
                 {  "BagCount", ()=> bagReader.BagItems.Count },
+                {  "MobCount", ()=> playerReader.CombatCreatureCount },
             };
 
             if (!valueDictionary.Keys.Contains(parts[0]))

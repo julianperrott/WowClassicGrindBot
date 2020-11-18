@@ -84,6 +84,7 @@ DataToColor.r = 0
 -- Character's name
 local CHARACTER_NAME = UnitName("player")
 local uiErrorMessage=0;
+local lastCombatCreature=0;
 
 -- List of possible subzones to which a player's hearthstone may be bound
 local HearthZoneList = {"CENARION HOLD", "VALLEY OF TRIALS", "THE CROSSROADS", "RAZOR HILL", "DUROTAR", "ORGRIMMAR", "CAMP TAURAJO", "FREEWIND POST", "GADGETZAN", "SHADOWPREY VILLAGE", "THUNDER BLUFF", "UNDERCITY", "CAMP MOJACHE", "COLDRIDGE VALLEY", "DUN MOROGH", "THUNDERBREW DISTILLERY", "IRONFORGE", "STOUTLAGER INN", "STORMWIND CITY", "SOUTHSHORE", "LAKESHIRE", "STONETALON PEAK", "GOLDSHIRE", "SENTINEL HILL", "DEEPWATER TAVERN", "THERAMORE ISLE", "DOLANAAR", "ASTRANAAR", "NIJEL'S POINT", "CRAFTSMEN'S TERRACE", "AUBERDINE", "FEATHERMOON STRONGHOLD", "BOOTY BAY", "WILDHAMMER KEEP", "DARKSHIRE", "EVERLOOK", "RATCHET", "LIGHT'S HOPE CHAPEL"}
@@ -148,8 +149,18 @@ local function OnUIErrorMessage(self, event, messageType, message)
     end
   end
 
-local function OnEvent(self, event)
-	print(CombatLogGetCurrentEventInfo())
+local function OnCombatEvent(self, event)
+    local timestamp, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, spellName, spellSchool = CombatLogGetCurrentEventInfo();
+    if eventType=="SPELL_PERIODIC_DAMAGE" then
+        --print("PERIODIC");
+        lastCombatCreature=0;
+    elseif string.find(sourceGUID, "Creature") then
+        lastCombatCreature=tonumber(string.sub(sourceGUID, -6),16);
+        print(sourceGUID.." "..lastCombatCreature);
+    else
+        lastCombatCreature=0;
+        print("Other "..eventType);
+    end
 end  
 
 --event handler
@@ -158,8 +169,8 @@ eventHandler:SetScript("OnEvent", OnUIErrorMessage);
 eventHandler:RegisterEvent("UI_ERROR_MESSAGE")
 
 local f = CreateFrame("Frame")
---f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
---f:SetScript("OnEvent", OnEvent)
+f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+f:SetScript("OnEvent", OnCombatEvent)
 
 function DataToColor:OnMerchantShow(self, event, messageType, message)
     
@@ -450,8 +461,8 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(DataToColor:GetBestMap()),58) -- MapId
 
             MakePixelSquareArr(integerToColor(DataToColor:IsTargetOfTargetPlayerAsNumber()),59) -- IsTargetOfTargetPlayerAsNumber
-
             -- 60-64 = Bag item info
+            MakePixelSquareArr(integerToColor(lastCombatCreature),65) -- Combat message creature
 
             self:HandleEvents()
         end

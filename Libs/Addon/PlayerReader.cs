@@ -159,5 +159,12 @@ namespace Libs
         public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetLongAtCell(59);
 
         public bool TargetIsFrostbitten => this.PlayerClass == PlayerClassEnum.Mage && this.Debuffs.Frostbite;
+
+        private List<CombatCreature> CombatCreatures = new List<CombatCreature>();
+        public int CombatCreatureCount => CombatCreatures.Count;
+        public void UpdateCombatCreatureCount()
+        {
+            CombatCreature.UpdateCombatCreatureCount((int)reader.GetLongAtCell(65), CombatCreatures);
+        }
     }
 }

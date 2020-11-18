@@ -113,6 +113,8 @@ namespace Libs
 
             LevelTracker.Update();
 
+            this.PlayerReader.UpdateCombatCreatureCount();
+
             seq++;
 
             if (seq >= 10)

@@ -352,6 +352,7 @@ e.g.
 * "TargetHealth%<10",
 * "Mana%<40",
 * "BagCount>80",
+* "MobCount>1"
 
 #### npcID requirements
 
@@ -360,6 +361,12 @@ If a particular npc is required then this requirement can be used.
 e.g.
 * "not npcID:6195", - don't cast on npcId 6195 https://classic.wowhead.com/npc=6195
 * "npcID:6195", - only cast on npcId 6195 https://classic.wowhead.com/npc=6195
+
+#### Mob count requirements
+
+If you only want to cast a spell if there is more than one mob fighting you e.g. Frost nova, or Cleave etc.
+
+e.g. "Requirement": "MobCount>1",
 
 #### Bag requirements
 
