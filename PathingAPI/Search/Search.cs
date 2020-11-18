@@ -22,6 +22,8 @@ namespace PathingAPI
         private const float toonHeight = 2.0f;
         private const float toonSize = 0.5f;
 
+        private static DateTime startTime = DateTime.Now;
+
 
         public Search(string continent, Logger logger)
         {
@@ -82,12 +84,14 @@ namespace PathingAPI
             triangleWorld.AddSupplier(mpq);
             PathGraph = new PathGraph(continent, triangleWorld, null, this.logger);
             this.continent = continent;
+            startTime = DateTime.Now;
         }
 
         public Path DoSearch(PathGraph.eSearchScoreSpot searchType)
         {
             //create a new path graph if required
-            if (PathGraph == null || this.continent != locationFrom.Continent)
+            const int ResetAfterMinutes = 15;
+            if (PathGraph == null || this.continent != locationFrom.Continent || (DateTime.Now - startTime).TotalMinutes >= ResetAfterMinutes)
             {
                 CreatePathGraph(locationFrom.Continent);
             }
