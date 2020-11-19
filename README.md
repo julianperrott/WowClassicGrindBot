@@ -58,7 +58,7 @@ There are 2 addons:
 
 ## 3. Download the MPQ route files
 
-You only need the common-2.MPQ (1.7Gb) file which you can get here: https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing
+You only need the common-2.MPQ (1.7Gb) file.
 
 This file is required to find paths from where you are to the grind area, vendor and repair.
 
