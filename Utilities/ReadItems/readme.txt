@@ -1,1 +1,0 @@
-DB file is here: https://github.com/cmangos/classic-db/tree/master/Full_DB

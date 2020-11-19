@@ -1,6 +1,7 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/starme.png" alt="Star this Repo"/>
-</p>
+
+# Source code not available.
+
+I no longer have time to work on this bot and have deleted the source code to avoid any confusion. I have left this readme to indicate what is possible with a pixel bot.
 
 # MasterOfPuppets - World of Warcraft Classic Grind Bot - Now Includes Pathing
 
