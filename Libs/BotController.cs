@@ -164,12 +164,17 @@ namespace Libs
 
         public void InitialiseBot(string profile)
         {
-            ClassConfig = ReadClassConfiguration(profile);
+            try
+            {
+                ClassConfig = ReadClassConfiguration(profile);
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e.Message);
+                return;
+            }
 
             var blacklist = this.ClassConfig.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, ClassConfig.NPCMaxLevels_Above, ClassConfig.NPCMaxLevels_Below, ClassConfig.Blacklist, logger);
-
-            //this.currentAction = followRouteAction;
-
 
             var actionFactory = new GoalFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder, this.pather);
             var availableActions = actionFactory.CreateGoals(ClassConfig, blacklist);
@@ -200,8 +205,7 @@ namespace Libs
 
             if(!profile.ToLower().Contains(AddonReader.PlayerReader.PlayerClass.ToString().ToLower()))
             {
-                throw new ArgumentOutOfRangeException($"Not allowed to load other classes profile." + 
-                    "As you are a {AddonReader.PlayerReader.PlayerClass.ToString()}");
+                throw new Exception("Not allowed to load other class profile!");
             }
 
             var classFilename = $"../json/class/{profile}";
