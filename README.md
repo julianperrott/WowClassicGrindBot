@@ -19,7 +19,7 @@ https://docs.microsoft.com/en-us/aspnet/core/blazor
 
 - Further detail about the bot can be found in my [Blog post](http://www.codesin.net/post/wowbot/).
 
-![Screenshot](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/Xian55/WowClassicGrindBot/main/images/Screenshot.png)
 
 # Video
 
@@ -35,6 +35,11 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 * The stuck detector
 * The route recording and editing
 * More routes
+
+# Contribution
+
+* Runtime Profile picker
+* Frontend Dark mode
 
 # Issues and Ideas
 
