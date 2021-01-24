@@ -193,13 +193,22 @@ app {
 
 
 /* gray mode*/
-
-/*
 body, table, .card-body {
-    background-color: grey !important
+    background-color: #333 !important
 }
 
 .card-header, .card-header table {
-    background-color: darkgray !important
+    background-color: darkslateblue !important
 }
-*/
+
+.card-header {
+    color: white;
+}
+
+.table-dark {
+    background-color: #343a40 !important;
+}
+
+.table {
+    color: gray;
+}
