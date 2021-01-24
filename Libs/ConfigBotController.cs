@@ -21,6 +21,8 @@ namespace Libs
         public IImageProvider? MinimapImageFinder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClassConfiguration? ClassConfig { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        public event EventHandler? ProfileLoaded;
+
         public void Shutdown()
         {
             throw new NotImplementedException();
@@ -38,6 +40,7 @@ namespace Libs
 
         public void LoadClassProfile(string profile)
         {
+            ProfileLoaded?.Invoke(this, EventArgs.Empty);
             throw new NotImplementedException();
         }
 

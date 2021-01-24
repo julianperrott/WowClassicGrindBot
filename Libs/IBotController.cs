@@ -17,6 +17,8 @@ namespace Libs
         ClassConfiguration? ClassConfig { get; set; }
         IImageProvider? MinimapImageFinder { get; set; }
 
+        event System.EventHandler? ProfileLoaded;
+
         void ToggleBotStatus();
         void StopBot();
 
