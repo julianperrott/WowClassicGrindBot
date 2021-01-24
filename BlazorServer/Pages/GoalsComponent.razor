@@ -6,7 +6,7 @@
     <div class="card-header">
         Goals
 
-        <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot">
+        <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot" disabled="@(disableButton ? "disabled" : null)">
             @if (!botController.IsBotActive)
             {
                 <span>Start Bot</span>
@@ -35,6 +35,8 @@
 
 @code {
 
+    bool disableButton = false;
+
     [Parameter]
     public bool ShowGoals { get; set; } = true;
 
@@ -42,6 +44,10 @@
     {
         if (Libs.DataFrameConfiguration.ConfigurationExists())
         {
+            ValidateButton();
+
+            botController.ProfileLoaded -= OnProfileLoaded;
+            botController.ProfileLoaded += OnProfileLoaded;
 
             ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
             {
@@ -60,5 +66,15 @@
     private void ToggleBot()
     {
         botController.ToggleBotStatus();
+    }
+
+    private void OnProfileLoaded(object? sender, EventArgs e)
+    {
+        ValidateButton();
+    }
+
+    private void ValidateButton()
+    {
+        disableButton = string.IsNullOrEmpty(botController.SelectedClassProfile);
     }
 }
