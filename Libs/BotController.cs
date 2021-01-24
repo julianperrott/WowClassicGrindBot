@@ -39,6 +39,8 @@ namespace Libs
 
         private bool Enabled = true;
 
+        public event EventHandler? ProfileLoaded;
+
         public BotController(ILogger logger, IPPather pather)
         {
             updatePlayerPostion.Start();
@@ -236,6 +238,8 @@ namespace Libs
         {
             StopBot();
             InitialiseBot(profile);
+
+            ProfileLoaded?.Invoke(this, EventArgs.Empty);
         }
 
         public List<string> FileList()

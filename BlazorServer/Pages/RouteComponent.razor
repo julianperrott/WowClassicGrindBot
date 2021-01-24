@@ -10,11 +10,6 @@
             <tr>
                 <td>Route</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" @onclick="ReInitialize">
-                        <span>Reload</span>
-                    </button>
-                </td>
-                <td>
                     <div class="float-right">
                         Player at @addonReader.PlayerReader.XCoord.ToString("0.0") , @addonReader.PlayerReader.YCoord.ToString("0.0") on map @addonReader.PlayerReader.ZoneId
                     </div>
@@ -105,6 +100,9 @@
 
     protected override void OnInitialized()
     {
+        botController.ProfileLoaded -= OnProfileLoaded;
+        botController.ProfileLoaded += OnProfileLoaded;
+
         ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() =>
@@ -183,7 +181,7 @@
         }
     }
 
-    private void ReInitialize()
+    private void OnProfileLoaded(object? sender, EventArgs e)
     {
         CanvasInitialised = false;
     }
