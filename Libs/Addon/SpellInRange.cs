@@ -67,7 +67,7 @@ namespace Libs
             PlayerClassEnum.Rogue => Rogue_Throw,
             PlayerClassEnum.Priest => Priest_ShadowWordPain,
             PlayerClassEnum.Druid => playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Bear ? Druid_Bash : playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Cat ? Druid_Rip : Druid_Wrath,
-            PlayerClassEnum.Mage => Mage_Frostbolt && Mage_Fireball,
+            PlayerClassEnum.Mage => (playerReader.PlayerLevel >= 4 && Mage_Frostbolt) || Mage_Fireball,
             PlayerClassEnum.Hunter => Hunter_ShootGun,
             PlayerClassEnum.Warlock => Warlock_ShadowBolt,
             _ => true
