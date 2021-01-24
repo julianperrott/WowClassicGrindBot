@@ -160,9 +160,9 @@ namespace Libs
             logger.LogInformation("Stopped!");
         }
 
-        public void InitialiseBot()
+        public void InitialiseBot(string profile)
         {
-            ClassConfig = ReadClassConfiguration();
+            ClassConfig = ReadClassConfiguration(profile);
 
             var blacklist = this.ClassConfig.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, ClassConfig.NPCMaxLevels_Above, ClassConfig.NPCMaxLevels_Below, ClassConfig.Blacklist, logger);
 
@@ -191,12 +191,18 @@ namespace Libs
             });
         }
 
-        private ClassConfiguration ReadClassConfiguration()
+        private ClassConfiguration ReadClassConfiguration(string profile)
         {
             ClassConfiguration classConfig;
             var requirementFactory = new RequirementFactory(AddonReader.PlayerReader, AddonReader.BagReader, logger);
 
-            var classFilename = $"../json/class/{AddonReader.PlayerReader.PlayerClass.ToString()}.json";
+            if(!profile.ToLower().Contains(AddonReader.PlayerReader.PlayerClass.ToString().ToLower()))
+            {
+                throw new ArgumentOutOfRangeException($"Not allowed to load other classes profile." + 
+                    "As you are a {AddonReader.PlayerReader.PlayerClass.ToString()}");
+            }
+
+            var classFilename = $"../json/class/{profile}";
             if (File.Exists(classFilename))
             {
                 classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilename));
@@ -224,6 +230,18 @@ namespace Libs
         public void Shutdown()
         {
             this.Enabled = false;
+        }
+
+        public void LoadClassProfile(string profile)
+        {
+            StopBot();
+            InitialiseBot(profile);
+        }
+
+        public List<string> FileList()
+        {
+            DirectoryInfo directory = new DirectoryInfo("../Json/class/");
+            return directory.GetFiles().Select(i => i.Name).ToList();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Libs.GOAP;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Libs
@@ -31,6 +32,16 @@ namespace Libs
         }
 
         public void ToggleBotStatus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LoadClassProfile(string profile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> FileList()
         {
             throw new NotImplementedException();
         }

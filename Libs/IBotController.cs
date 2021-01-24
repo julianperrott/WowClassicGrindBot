@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Libs
@@ -22,5 +23,9 @@ namespace Libs
         void Shutdown();
 
         bool IsBotActive { get; }
+
+        List<string> FileList();
+
+        void LoadClassProfile(string profile);
     }
 }
