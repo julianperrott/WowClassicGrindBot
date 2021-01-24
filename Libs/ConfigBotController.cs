@@ -16,6 +16,9 @@ namespace Libs
         public RouteInfo? RouteInfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public WowScreen WowScreen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        public string? SelectedClassProfile { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string? SelectedPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public bool IsBotActive => throw new NotImplementedException();
 
         public IImageProvider? MinimapImageFinder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -38,14 +41,25 @@ namespace Libs
             throw new NotImplementedException();
         }
 
-        public void LoadClassProfile(string profile)
+        public void LoadClassProfile(string classProfileFileName)
         {
             ProfileLoaded?.Invoke(this, EventArgs.Empty);
             throw new NotImplementedException();
         }
 
-        public List<string> FileList()
+        public List<string> ClassFileList()
         {
+            throw new NotImplementedException();
+        }
+
+        public List<string> PathFileList()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LoadPathProfile(string pathProfileFileName)
+        {
+            ProfileLoaded?.Invoke(this, EventArgs.Empty);
             throw new NotImplementedException();
         }
     }
