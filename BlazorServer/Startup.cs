@@ -55,7 +55,6 @@ namespace BlazorServer
                 var botController = new BotController(logger, pather);
                 services.AddSingleton<IBotController>(botController);
                 services.AddSingleton<IAddonReader>(botController.AddonReader);
-                botController.InitialiseBot();
             }
             else
             {

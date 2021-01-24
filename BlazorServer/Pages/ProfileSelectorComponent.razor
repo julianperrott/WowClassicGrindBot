@@ -1,0 +1,58 @@
+﻿@using Libs
+@inject Libs.IBotController botController
+@inject Libs.IAddonReader addonReader
+
+<div class="card" style="margin-top: 10px">
+    <div class="card-header">
+        Profile
+
+        <select name="listbox" id="listbox" @onchange="OnChange" runat="server">
+            @foreach (var item in botController.FileList())
+            {
+                <option value="@item">
+                    @item
+                </option>
+            }
+        </select>
+
+        <button class="btn btn-sm btn-primary float-right" @onclick="LoadClassProfile">
+            <span>Load Profile</span>
+        </button>
+    </div>
+</div>
+
+@code {
+
+    string selectedProfile = String.Empty;
+
+    protected override void OnInitialized()
+    {
+        if (Libs.DataFrameConfiguration.ConfigurationExists())
+        {
+
+            ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+            {
+                base.InvokeAsync(() =>
+                {
+                    try
+                    {
+                        StateHasChanged();
+                    }
+                    catch { }
+                });
+            };
+        }
+    }
+
+    private void LoadClassProfile()
+    {
+        if(!string.IsNullOrEmpty(selectedProfile))
+            botController.LoadClassProfile(selectedProfile);
+    }
+
+    private void OnChange(ChangeEventArgs changeEventArgs)
+    {
+        selectedProfile = (string)changeEventArgs.Value;
+    }
+
+}
