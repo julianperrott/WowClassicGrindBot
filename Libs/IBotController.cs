@@ -17,6 +17,9 @@ namespace Libs
         ClassConfiguration? ClassConfig { get; set; }
         IImageProvider? MinimapImageFinder { get; set; }
 
+        string? SelectedClassProfile { get; set; }
+        string? SelectedPath { get; set; }
+
         event System.EventHandler? ProfileLoaded;
 
         void ToggleBotStatus();
@@ -26,8 +29,12 @@ namespace Libs
 
         bool IsBotActive { get; }
 
-        List<string> FileList();
+        List<string> ClassFileList();
 
-        void LoadClassProfile(string profile);
+        void LoadClassProfile(string classProfileFileName);
+
+        List<string> PathFileList();
+
+        void LoadPathProfile(string pathProfileFileName);
     }
 }

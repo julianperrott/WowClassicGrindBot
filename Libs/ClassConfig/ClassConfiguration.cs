@@ -86,5 +86,10 @@ namespace Libs
                 GatherFindKeyConfig.Last().Initialise(playerReader, requirementFactory, logger);
             });
         }
+
+        public void OverrideBasePathFile(string pathFile)
+        {
+            PathFilename = pathFile;
+        }
     }
 }

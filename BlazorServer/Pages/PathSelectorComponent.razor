@@ -8,7 +8,7 @@
             <span class="glyphicon glyphicon-refresh"></span>
         </button>
 
-        Class Profile
+        Path Profile
 
         <select name="listbox" id="listbox" @onchange="OnListBoxChanged" runat="server">
             @foreach (var item in files)
@@ -19,8 +19,8 @@
             }
         </select>
 
-        <button class="btn btn-sm btn-primary float-right" @onclick="LoadClassProfile" disabled="@(disableButton ? "disabled" : null)">
-            <span>Load Profile</span>
+        <button class="btn btn-sm btn-primary float-right" @onclick="LoadPath" disabled="@(disableButton ? "disabled" : null)">
+            <span>Load Path</span>
         </button>
     </div>
 </div>
@@ -29,7 +29,7 @@
 
     List<string> files = new List<string> { string.Empty };
 
-    string selectedProfile = String.Empty;
+    string selectedPath = String.Empty;
     bool disableButton = true;
 
     protected override void OnInitialized()
@@ -37,6 +37,11 @@
         if (Libs.DataFrameConfiguration.ConfigurationExists())
         {
             RefreshData();
+
+            ValidateButton();
+
+            botController.ProfileLoaded -= OnProfileLoaded;
+            botController.ProfileLoaded += OnProfileLoaded;
 
             ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
             {
@@ -52,22 +57,36 @@
         }
     }
 
-    private void LoadClassProfile()
+    private void LoadPath()
     {
-        if(!string.IsNullOrEmpty(selectedProfile)) {
-            botController.LoadClassProfile(selectedProfile);
-        }
+        //if(!string.IsNullOrEmpty(selectedPath))
+        botController.LoadPathProfile(selectedPath);
     }
 
     private void OnListBoxChanged(ChangeEventArgs changeEventArgs)
     {
-        selectedProfile = (string)changeEventArgs.Value;
-        disableButton = string.IsNullOrEmpty(selectedProfile);
+        selectedPath = (string)changeEventArgs.Value;
+        if(selectedPath.Contains("Use Class Profile Default"))
+        {
+            selectedPath = string.Empty;
+        }
+
+        ValidateButton();
+    }
+
+    private void OnProfileLoaded(object? sender, EventArgs e)
+    {
+        ValidateButton();
+    }
+
+    private void ValidateButton()
+    {
+        disableButton = string.IsNullOrEmpty(botController.SelectedClassProfile);
     }
 
     private void RefreshData()
     {
-        files = botController.ClassFileList();
+        files = botController.PathFileList();
     }
 
 }

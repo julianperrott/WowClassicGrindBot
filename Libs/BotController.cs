@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Libs.Utils;
 
 namespace Libs
 {
@@ -17,6 +18,9 @@ namespace Libs
         private readonly WowProcess wowProcess;
         private readonly ILogger logger;
         private readonly IPPather pather;
+
+        public string? SelectedClassProfile { get; set; }
+        public string? SelectedPath { get; set; }
 
         public AddonReader AddonReader { get; set; }
         public Thread? screenshotThread { get; set; }
@@ -162,11 +166,14 @@ namespace Libs
             logger.LogInformation("Stopped!");
         }
 
-        public void InitialiseBot(string profile)
+        public void InitialiseBot(string? classProfile, string? pathProfile)
         {
+            SelectedClassProfile = classProfile;
+            SelectedPath = pathProfile;
+
             try
             {
-                ClassConfig = ReadClassConfiguration(profile);
+                ClassConfig = ReadClassConfiguration(classProfile, pathProfile);
             }
             catch(Exception e)
             {
@@ -198,21 +205,44 @@ namespace Libs
             });
         }
 
-        private ClassConfiguration ReadClassConfiguration(string profile)
+        private ClassConfiguration ReadClassConfiguration(string? classProfileFile, string? pathProfileFile)
         {
+            if(string.IsNullOrEmpty(classProfileFile))
+            {
+                throw new Exception("Class profile cannot be null!");
+            }
+
             ClassConfiguration classConfig;
             var requirementFactory = new RequirementFactory(AddonReader.PlayerReader, AddonReader.BagReader, logger);
 
-            if(!profile.ToLower().Contains(AddonReader.PlayerReader.PlayerClass.ToString().ToLower()))
+            if(!classProfileFile.ToLower().Contains(AddonReader.PlayerReader.PlayerClass.ToString().ToLower()))
             {
                 throw new Exception("Not allowed to load other class profile!");
             }
 
-            var classFilename = $"../json/class/{profile}";
+            var classFilename = $"../json/class/{classProfileFile}";
             if (File.Exists(classFilename))
             {
                 classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilename));
                 classConfig.Initialise(AddonReader.PlayerReader, requirementFactory, logger);
+                
+                if(!string.IsNullOrEmpty(pathProfileFile))
+                {
+                    classConfig.OverrideBasePathFile(pathProfileFile);
+                }
+
+                if (!File.Exists($"../json/path/{classConfig.PathFilename}"))
+                {
+                    if (!string.IsNullOrEmpty(pathProfileFile))
+                        throw new Exception($"The `{classConfig.PathFilename}` path file does not exists!");
+                    else
+                        throw new Exception($"The `{classProfileFile}` contains not existing `{classConfig.PathFilename}` path file!");
+                }
+                else
+                {
+                    logger.LogDebug($"Loaded Class Profile `{classProfileFile}` with Path Profile `{classConfig.PathFilename}`.");
+                }
+
                 return classConfig;
             }
 
@@ -238,18 +268,38 @@ namespace Libs
             this.Enabled = false;
         }
 
-        public void LoadClassProfile(string profile)
+        public void LoadClassProfile(string classProfileFileName)
         {
             StopBot();
-            InitialiseBot(profile);
+            InitialiseBot(classProfileFileName, SelectedPath);
 
             ProfileLoaded?.Invoke(this, EventArgs.Empty);
         }
 
-        public List<string> FileList()
+        public List<string> ClassFileList()
         {
             DirectoryInfo directory = new DirectoryInfo("../Json/class/");
-            return directory.GetFiles().Select(i => i.Name).ToList();
+            var list = directory.GetFiles().Select(i => i.Name).ToList();
+            list.Sort(new NaturalStringComparer());
+            list.Insert(0, String.Empty);
+            return list;
+        }
+
+        public List<string> PathFileList()
+        {
+            DirectoryInfo directory = new DirectoryInfo("../Json/path/");
+            var list = directory.GetFiles().Select(i => i.Name).ToList();
+            list.Sort(new NaturalStringComparer());
+            list.Insert(0, "Use Class Profile Default");
+            return list;
+        }
+
+        public void LoadPathProfile(string pathProfileFileName)
+        {
+            StopBot();
+            InitialiseBot(SelectedClassProfile, pathProfileFileName);
+
+            ProfileLoaded?.Invoke(this, EventArgs.Empty);
         }
     }
 }
