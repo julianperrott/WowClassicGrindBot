@@ -10,6 +10,11 @@
             <tr>
                 <td>Route</td>
                 <td>
+                    <button class="btn btn-sm btn-primary" @onclick="ReInitialize">
+                        <span>Reload</span>
+                    </button>
+                </td>
+                <td>
                     <div class="float-right">
                         Player at @addonReader.PlayerReader.XCoord.ToString("0.0") , @addonReader.PlayerReader.YCoord.ToString("0.0") on map @addonReader.PlayerReader.ZoneId
                     </div>
@@ -176,5 +181,10 @@
         {
             await JSRuntime.InvokeAsync<string>("draw");
         }
+    }
+
+    private void ReInitialize()
+    {
+        CanvasInitialised = false;
     }
 }
