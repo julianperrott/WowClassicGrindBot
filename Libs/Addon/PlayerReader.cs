@@ -90,6 +90,14 @@ namespace Libs
                 await Task.Delay(100);
             }
         }
+        public async Task WaitForNUpdate(int n)
+        {
+            var s = this.Sequence;
+            while (this.Sequence <= s + n)
+            {
+                await Task.Delay(100);
+            }
+        }
 
         // 32 - 33
         public long Gold => reader.GetLongAtCell(32) + reader.GetLongAtCell(33) * 1000000;
