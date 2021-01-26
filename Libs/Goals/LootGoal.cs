@@ -117,12 +117,25 @@ namespace Libs.Goals
             await wowProcess.KeyPress(ConsoleKey.F9, 100); // stand
             await stopMoving.Stop();
 
-            var targetResult = await AmIBeingTargetted();
-            if (targetResult== TargetResult.InCombat) { return; }
+            // when the target is dead
+            // the player lose the target
+            // ?? wait till losing combat maximum 10 updates
+            await WaitTilDropCombat(10);
 
+            TargetResult targetResult = TargetResult.NoTarget;
+            bool searchForMobs = playerReader.PlayerBitValues.PlayerInCombat;
+            if (searchForMobs)
+            {
+                if(playerReader.PlayerBitValues.PlayerInCombat)
+                {
+                    targetResult = await AmIBeingTargetted();
+                    if (targetResult == TargetResult.InCombat) { return; }
+                }
+            }
+
+            searchForMobs = playerReader.PlayerBitValues.PlayerInCombat;
             var healthAtStartOfLooting = playerReader.HealthPercent;
 
-            bool searchForMobs = playerReader.PlayerBitValues.PlayerInCombat;
             var lootAttempt = 0;
             while (lootAttempt < 10)
             {
@@ -131,11 +144,32 @@ namespace Libs.Goals
                     return;
                 }
 
-                if (lootAttempt == 0 && targetResult == TargetResult.NoTarget && this.classConfiguration.Loot)
+                // Fast loot - only applicabe for single mob combat
+                // after leaving combat using 'targetlasttarget' targets the corpse
+                // use 'interact' on him makes you run towards him and loot if close enough
+                if (this.classConfiguration.Loot && lootAttempt == 0 && targetResult == TargetResult.NoTarget)
                 {
-                    await this.TapTargetLastTargetKey("lootAttempt 0");
-                    await this.TapInteractKey("lootAttempt 0");
-                    await Task.Delay(1000);
+                    WowPoint lastPosition = playerReader.PlayerLocation;
+                    
+                    await this.TapTargetLastTargetKey("lootAttempt 0 - fast loot");
+                    await this.TapInteractKey("lootAttempt 0 - fast loot");
+
+                    logger.LogInformation("wait till the player become stil!");
+                    while (IsPlayerMoving(lastPosition))
+                    {
+                        lastPosition = playerReader.PlayerLocation;
+                        await playerReader.WaitForNUpdate(1);
+                        if (playerReader.PlayerBitValues.PlayerInCombat)
+                            return;
+                    }
+
+                    // wait grabbing the loot
+                    await playerReader.WaitForNUpdate(2);
+
+                    logger.LogDebug("Fast Loot Successfull");
+                    SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+                    SendActionEvent(new ActionEventArgs(GoapKey.postloot, false));
+                    return;
                 }
 
                 if (await CheckIfEnterredCombat()) { return; }
@@ -244,6 +278,23 @@ namespace Libs.Goals
             logger.LogInformation($"Target Last Target ({source})");
             await this.wowProcess.KeyPress(this.classConfiguration.TargetLastTarget.ConsoleKey, 99);
             this.classConfiguration.TargetLastTarget.SetClicked();
+        }
+
+        private bool IsPlayerMoving(WowPoint lastPos)
+        {
+            var distance = WowPoint.DistanceTo(lastPos, playerReader.PlayerLocation);
+            return distance > 0.5f;
+        }
+
+        private async Task WaitTilDropCombat(int maxNSequence)
+        {
+            int n = 0;
+            while (playerReader.PlayerBitValues.PlayerInCombat && n < maxNSequence)
+            {
+                await playerReader.WaitForNUpdate(1);
+                n++;
+            }
+            logger.LogInformation($"Dropped combat after {n}th update");
         }
     }
 }
