@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Libs
@@ -27,6 +28,9 @@ namespace Libs
 
         public string PathFilename { get; set; } = string.Empty;
         public string SpiritPathFilename { get; set; } = string.Empty;
+
+        public string? OverridePathFilename { get; set; } = string.Empty;
+
         public bool PathThereAndBack { get; set; } = true;
         public bool PathReduceSteps { get; set; } = false;
 
@@ -59,7 +63,7 @@ namespace Libs
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
         public bool UseMount { get; set; } = true;
 
-        public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger)
+        public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger, string? overridePathProfileFile)
         {
             Pull.Initialise(playerReader, requirementFactory, logger);
             Combat.Initialise(playerReader, requirementFactory, logger);
@@ -85,11 +89,20 @@ namespace Libs
                 GatherFindKeyConfig.Add(new KeyAction { Key = key });
                 GatherFindKeyConfig.Last().Initialise(playerReader, requirementFactory, logger);
             });
-        }
 
-        public void OverrideBasePathFile(string pathFile)
-        {
-            PathFilename = pathFile;
+            OverridePathFilename = overridePathProfileFile;
+            if (!string.IsNullOrEmpty(OverridePathFilename))
+            {
+                PathFilename = OverridePathFilename;
+            }
+
+            if (!File.Exists($"../json/path/{PathFilename}"))
+            {
+                if (!string.IsNullOrEmpty(OverridePathFilename))
+                    throw new Exception($"The `{OverridePathFilename}` path file does not exists!");
+                else
+                    throw new Exception($"The loaded class config contains not existing `{PathFilename}` path file!");
+            }
         }
     }
 }

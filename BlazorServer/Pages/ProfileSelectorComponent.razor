@@ -13,7 +13,7 @@
         <select name="listbox" id="listbox" @onchange="OnListBoxChanged" runat="server">
             @foreach (var item in files)
             {
-                <option value="@item">
+                <option value="@item" selected="@(selectedProfile == @item ? "selected" : null)">
                     @item
                 </option>
             }
@@ -52,6 +52,11 @@
         }
     }
 
+    public void OnGet()
+    {
+        RefreshData();
+    }
+
     private void LoadClassProfile()
     {
         if(!string.IsNullOrEmpty(selectedProfile)) {
@@ -68,6 +73,7 @@
     private void RefreshData()
     {
         files = botController.ClassFileList();
+        selectedProfile = botController.SelectedClassFilename;
     }
 
 }

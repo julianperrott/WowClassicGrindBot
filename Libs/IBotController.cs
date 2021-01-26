@@ -17,8 +17,8 @@ namespace Libs
         ClassConfiguration? ClassConfig { get; set; }
         IImageProvider? MinimapImageFinder { get; set; }
 
-        string? SelectedClassProfile { get; set; }
-        string? SelectedPath { get; set; }
+        string SelectedClassFilename { get; set; }
+        string? SelectedPathFilename { get; set; }
 
         event System.EventHandler? ProfileLoaded;
 
@@ -31,10 +31,10 @@ namespace Libs
 
         List<string> ClassFileList();
 
-        void LoadClassProfile(string classProfileFileName);
+        void LoadClassProfile(string classFilename);
 
         List<string> PathFileList();
 
-        void LoadPathProfile(string pathProfileFileName);
+        void LoadPathProfile(string pathFilename);
     }
 }
