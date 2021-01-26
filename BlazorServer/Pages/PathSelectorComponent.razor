@@ -13,7 +13,7 @@
         <select name="listbox" id="listbox" @onchange="OnListBoxChanged" runat="server">
             @foreach (var item in files)
             {
-                <option value="@item">
+                <option value="@item" selected="@(selectedPath == @item ? "selected" : null)">
                     @item
                 </option>
             }
@@ -37,7 +37,6 @@
         if (Libs.DataFrameConfiguration.ConfigurationExists())
         {
             RefreshData();
-
             ValidateButton();
 
             botController.ProfileLoaded -= OnProfileLoaded;
@@ -57,9 +56,13 @@
         }
     }
 
+    public void OnGet()
+    {
+        RefreshData();
+    }
+
     private void LoadPath()
     {
-        //if(!string.IsNullOrEmpty(selectedPath))
         botController.LoadPathProfile(selectedPath);
     }
 
@@ -81,12 +84,13 @@
 
     private void ValidateButton()
     {
-        disableButton = string.IsNullOrEmpty(botController.SelectedClassProfile);
+        disableButton = string.IsNullOrEmpty(botController.SelectedClassFilename);
     }
 
     private void RefreshData()
     {
         files = botController.PathFileList();
+        selectedPath = botController.SelectedPathFilename ?? string.Empty;
     }
 
 }

@@ -19,8 +19,8 @@ namespace Libs
         private readonly ILogger logger;
         private readonly IPPather pather;
 
-        public string? SelectedClassProfile { get; set; }
-        public string? SelectedPath { get; set; }
+        public string SelectedClassFilename { get; set; } = String.Empty;
+        public string? SelectedPathFilename { get; set; }
 
         public AddonReader AddonReader { get; set; }
         public Thread? screenshotThread { get; set; }
@@ -166,19 +166,16 @@ namespace Libs
             logger.LogInformation("Stopped!");
         }
 
-        public void InitialiseBot(string? classProfile, string? pathProfile)
+        public bool TryInitialiseBot(string classFile, string? pathFile)
         {
-            SelectedClassProfile = classProfile;
-            SelectedPath = pathProfile;
-
             try
             {
-                ClassConfig = ReadClassConfiguration(classProfile, pathProfile);
+                ClassConfig = ReadClassConfiguration(classFile, pathFile);
             }
             catch(Exception e)
             {
                 logger.LogError(e.Message);
-                return;
+                return false;
             }
 
             var blacklist = this.ClassConfig.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, ClassConfig.NPCMaxLevels_Above, ClassConfig.NPCMaxLevels_Below, ClassConfig.Blacklist, logger);
@@ -203,45 +200,27 @@ namespace Libs
                     if (b != a) { a.ActionEvent += b.OnActionEvent; }
                 });
             });
+
+            return true;
         }
 
-        private ClassConfiguration ReadClassConfiguration(string? classProfileFile, string? pathProfileFile)
+        private ClassConfiguration ReadClassConfiguration(string classFilename, string? pathFilename)
         {
-            if(string.IsNullOrEmpty(classProfileFile))
-            {
-                throw new Exception("Class profile cannot be null!");
-            }
-
-            ClassConfiguration classConfig;
-            var requirementFactory = new RequirementFactory(AddonReader.PlayerReader, AddonReader.BagReader, logger);
-
-            if(!classProfileFile.ToLower().Contains(AddonReader.PlayerReader.PlayerClass.ToString().ToLower()))
+            if(!classFilename.ToLower().Contains(AddonReader.PlayerReader.PlayerClass.ToString().ToLower()))
             {
                 throw new Exception("Not allowed to load other class profile!");
             }
 
-            var classFilename = $"../json/class/{classProfileFile}";
-            if (File.Exists(classFilename))
-            {
-                classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilename));
-                classConfig.Initialise(AddonReader.PlayerReader, requirementFactory, logger);
-                
-                if(!string.IsNullOrEmpty(pathProfileFile))
-                {
-                    classConfig.OverrideBasePathFile(pathProfileFile);
-                }
+            var requirementFactory = new RequirementFactory(AddonReader.PlayerReader, AddonReader.BagReader, logger);
 
-                if (!File.Exists($"../json/path/{classConfig.PathFilename}"))
-                {
-                    if (!string.IsNullOrEmpty(pathProfileFile))
-                        throw new Exception($"The `{classConfig.PathFilename}` path file does not exists!");
-                    else
-                        throw new Exception($"The `{classProfileFile}` contains not existing `{classConfig.PathFilename}` path file!");
-                }
-                else
-                {
-                    logger.LogDebug($"Loaded Class Profile `{classProfileFile}` with Path Profile `{classConfig.PathFilename}`.");
-                }
+            ClassConfiguration classConfig;
+            var classFilePath = $"../json/class/{classFilename}";
+            if (File.Exists(classFilePath))
+            {
+                classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilePath));
+                classConfig.Initialise(AddonReader.PlayerReader, requirementFactory, logger, pathFilename);
+
+                logger.LogDebug($"Loaded `{classFilename}` with Path Profile `{classConfig.PathFilename}`.");
 
                 return classConfig;
             }
@@ -268,10 +247,13 @@ namespace Libs
             this.Enabled = false;
         }
 
-        public void LoadClassProfile(string classProfileFileName)
+        public void LoadClassProfile(string classFilename)
         {
             StopBot();
-            InitialiseBot(classProfileFileName, SelectedPath);
+            if(TryInitialiseBot(classFilename, SelectedPathFilename))
+            {
+                SelectedClassFilename = classFilename;
+            }
 
             ProfileLoaded?.Invoke(this, EventArgs.Empty);
         }
@@ -294,10 +276,13 @@ namespace Libs
             return list;
         }
 
-        public void LoadPathProfile(string pathProfileFileName)
+        public void LoadPathProfile(string pathFilename)
         {
             StopBot();
-            InitialiseBot(SelectedClassProfile, pathProfileFileName);
+            if(TryInitialiseBot(SelectedClassFilename, pathFilename))
+            {
+                SelectedPathFilename = pathFilename;
+            }
 
             ProfileLoaded?.Invoke(this, EventArgs.Empty);
         }
