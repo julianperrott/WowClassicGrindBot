@@ -19,8 +19,12 @@
             }
         </select>
 
-        <button class="btn btn-sm btn-primary float-right" @onclick="LoadClassProfile" disabled="@(disableButton ? "disabled" : null)">
+        <button class="btn btn-sm btn-primary " @onclick="LoadClassProfile" disabled="@(disableButton ? "disabled" : null)">
             <span>Load Profile</span>
+        </button>
+
+        <button class="btn btn-sm btn-primary float-right" @onclick="SyncActionBar" disabled="@(string.IsNullOrEmpty(botController.SelectedClassFilename) ? "disabled" : null)">
+            <span>Populate Action bar</span>
         </button>
     </div>
 </div>
@@ -74,6 +78,12 @@
     {
         files = botController.ClassFileList();
         selectedProfile = botController.SelectedClassFilename;
+    }
+
+    private async Task SyncActionBar()
+    {
+        if (botController.ActionBarPopulator == null) return;
+        await botController.ActionBarPopulator.Execute();
     }
 
 }

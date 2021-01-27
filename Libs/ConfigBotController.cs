@@ -24,6 +24,8 @@ namespace Libs
         public IImageProvider? MinimapImageFinder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClassConfiguration? ClassConfig { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        public ActionBarPopulator? ActionBarPopulator { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public event EventHandler? ProfileLoaded;
 
         public void Shutdown()
