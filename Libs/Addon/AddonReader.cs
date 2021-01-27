@@ -129,7 +129,7 @@ namespace Libs
         {
             try
             {
-                using (var bitMap = WowScreen.GetAddonBitmap(this.width, this.height))
+                using (var bitMap = colorReader.GetBitmap(this.width, this.height))
                 {
                     frames.ForEach(frame => FrameColor[frame.index] = colorReader.GetColorAt(frame.point, bitMap));
                 }

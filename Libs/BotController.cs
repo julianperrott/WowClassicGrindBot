@@ -50,7 +50,7 @@ namespace Libs
             updatePlayerPostion.Start();
             wowProcess = new WowProcess(logger);
             wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
-            this.WowScreen = new WowScreen(logger);
+            this.WowScreen = new WowScreen(wowProcess, logger);
             this.logger = logger;
             this.pather = pather;
 

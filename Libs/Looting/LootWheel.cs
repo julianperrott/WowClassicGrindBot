@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
 using System.Threading.Tasks;
+using Libs.Extensions;
 
 namespace Libs.Looting
 {
@@ -27,13 +28,10 @@ namespace Libs.Looting
             this.playerReader = playerReader;
             this.logger = logger;
 
-            var rect = wowProcess.GetWindowRect();
+            wowProcess.GetWindowRect(out var rect);
 
-            rect.right = wowProcess.ScaleDown(rect.right);
-            rect.bottom = wowProcess.ScaleDown(rect.bottom);
-
-            centre = new Point((int)(rect.right / 2f), (int)((rect.bottom / 5) * 3f));
-            radiusLarge = rect.bottom / 6;
+            centre = new Point(rect.Centre().X, (int)((rect.Bottom / 5) * 3f));
+            radiusLarge = rect.Bottom / 6;
             dtheta = (float)(2 * Math.PI / num_theta);
         }
 

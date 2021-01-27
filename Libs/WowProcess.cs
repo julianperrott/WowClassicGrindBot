@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using PInvoke;
 using System;
 using System.Collections.Generic;
@@ -117,9 +117,9 @@ namespace Libs
 
         public async void RightClickMouseBehindPlayer()
         {
-            var rect = GetWindowRect();
+            GetWindowRect(out var rect);
 
-            await RightClickMouse(new Point(rect.right / 2, (rect.bottom * 2) / 3));
+            await RightClickMouse(new Point(rect.Right / 2, (rect.Bottom * 2) / 3));
         }
 
         public async Task KeyPress(ConsoleKey key, int milliseconds, string description = "")
@@ -185,21 +185,10 @@ namespace Libs
             await Task.Delay(milliseconds + random.Next(1, 200));
         }
 
-        public RECT GetWindowRect()
+        public void GetWindowRect(out Rectangle rect)
         {
             var handle = this.WarcraftProcess.MainWindowHandle;
-            RECT rect = new RECT();
-            NativeMethods.GetWindowRect(handle, ref rect);
-
-            if (rect.right == 2048)
-            {
-                scale = 125;
-
-                rect.right = (rect.right * scale) / 100;
-                rect.bottom = (rect.bottom * scale) / 100;
-            }
-
-            return rect;
+            NativeMethods.GetWindowRect(handle, out rect);
         }
 
         int scale = 100;
