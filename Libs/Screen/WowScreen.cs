@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -16,19 +17,26 @@ namespace Libs
 
         public event ScreenChangeEventHandler? OnScreenChanged;
 
+        private WowProcess wowProcess;
+
         public int Size { get; set; } = 1024;
 
-        public WowScreen(ILogger logger)
+        public WowScreen(WowProcess wowProcess, ILogger logger)
         {
             this.logger = logger;
+            this.wowProcess = wowProcess;
         }
 
-        public static Bitmap GetAddonBitmap(int width = 600, int height = 200)
+        public Bitmap GetBitmap(int width, int height)
         {
             var bmpScreen = new Bitmap(width, height);
+            var rect = Rectangle.Empty;
+
+            NativeMethods.GetWindowRect(wowProcess.WarcraftProcess.MainWindowHandle, out rect);
+
             using (var graphics = Graphics.FromImage(bmpScreen))
             {
-                graphics.CopyFromScreen(0, 0, 0, 0, bmpScreen.Size);
+                graphics.CopyFromScreen(rect.X, rect.Y, 0, 0, bmpScreen.Size);
             }
             return bmpScreen;
         }

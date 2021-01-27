@@ -1,5 +1,6 @@
 ﻿using PInvoke;
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace Libs
@@ -48,7 +49,7 @@ namespace Libs
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
+        private static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
@@ -64,5 +65,24 @@ namespace Libs
 
         public const int A = 0x41; //A key code
         public const int C = 0x43; //C key code
+
+        public static void GetWindowRect(IntPtr hWnd, out Rectangle rect)
+        {
+            RECT nativeRect = new RECT();
+            if (GetWindowRect(hWnd, ref nativeRect))
+            {
+                rect = new Rectangle
+                {
+                    X = nativeRect.left,
+                    Y = nativeRect.top,
+                    Width = (nativeRect.right - nativeRect.left),
+                    Height = (nativeRect.bottom - nativeRect.top)
+                };
+            }
+            else
+            {
+                rect = Rectangle.Empty;
+            }
+        }
     }
 }

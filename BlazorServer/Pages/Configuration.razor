@@ -92,6 +92,12 @@ else
     private List<DataFrame> dataFrames = new List<DataFrame>();
     private AddonReader? addonReader;
 
+    private int ConfigWidth = 600;
+    private int ConfigHeight = 200;
+
+    private WowProcess? wowProcess;
+    private WowScreen? wowScreen;
+
     private bool saved = false;
     private string playerClass = "Unable to read player class";
 
@@ -101,8 +107,8 @@ else
     {
         if (config == null)
         {
-            var logger = new Serilog.Extensions.Logging.SerilogLoggerProvider(Serilog.Log.Logger).CreateLogger(nameof(Program));
-            var wowScreen = new WowScreen(logger);
+            wowProcess = new WowProcess(logger);
+            wowScreen = new WowScreen(wowProcess, logger);
             config = new DataFrameConfiguration(wowScreen);
 
             var screenshotThread = new System.Threading.Thread(ScreenshotRefreshThread);
@@ -114,7 +120,10 @@ else
     {
         while (true)
         {
-            var screenshot = WowScreen.GetAddonBitmap();
+            if (wowProcess == null) return;
+
+            var screenshot = wowScreen?.GetBitmap(ConfigWidth, ConfigHeight);
+            if (screenshot == null) return;
             using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
             {
                 screenshot.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
@@ -127,7 +136,7 @@ else
 
                     if (dataFrames.Count == 100)
                     {
-                        addonReader = new AddonReader(new WowScreen(logger), dataFrames, logger);
+                        addonReader = new AddonReader(new WowScreen(wowProcess, logger), dataFrames, logger);
                     }
 
                     if (addonReader != null && dataFrames.Count != 100)
@@ -155,9 +164,8 @@ else
 
     private async Task Configure()
     {
-        var screenshot = WowScreen.GetAddonBitmap();
-
-        if (config != null)
+        var screenshot = wowScreen?.GetBitmap(ConfigWidth, ConfigHeight);
+        if (config != null && screenshot != null)
         {
             var dataFrames = config.CreateConfiguration(screenshot);
 

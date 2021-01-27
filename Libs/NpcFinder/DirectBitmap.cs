@@ -12,36 +12,35 @@ namespace Libs.NpcFinder
         public Bitmap Bitmap { get; private set; }
         private Int32[] bits;
         public bool Disposed { get; private set; }
-        public int Height { get; private set; }
-        public int Width { get; private set; }
-        public int TopOffset { get; private set; } = 100;
-        public int BottomOffset { get; private set; } = 200;
+
+        public Rectangle Rect { get; private set; }
+
+        public int Width => Rect.Width;
+        public int Height => Rect.Height;
+
 
         private GCHandle BitsHandle { get; set; }
 
         public Point ToScreenCoordinates(int x, int y)
         {
-            return new Point(x, y + this.TopOffset);
+            return new Point(x, y + Rect.Top);
         }
 
-        public DirectBitmap(int width, int height, int topOffset, int bottomOffset)
-        {
-            this.TopOffset = topOffset;
-            this.BottomOffset = bottomOffset;
-            this.Width = width;
-            this.Height = height - TopOffset - BottomOffset;
-            this.bits = new Int32[width * height];
-            this.BitsHandle = GCHandle.Alloc(bits, GCHandleType.Pinned);
-            this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
-        }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        public DirectBitmap(Rectangle rect) => Init(rect);
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
-        public DirectBitmap(int width, int height)
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        public DirectBitmap() => Init(new Rectangle(0, 0, 1, 1));
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
+        private void Init(Rectangle rect)
         {
-            this.Width = width;
-            this.Height = height - TopOffset - BottomOffset;
-            this.bits = new Int32[width * height];
+            Rect = rect;
+
+            this.bits = new Int32[Rect.Width * Rect.Height];
             this.BitsHandle = GCHandle.Alloc(bits, GCHandleType.Pinned);
-            this.Bitmap = new Bitmap(width, Height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+            this.Bitmap = new Bitmap(Rect.Width, Rect.Height, Rect.Width * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
 
         public string ToBase64(int size)
@@ -79,20 +78,20 @@ namespace Libs.NpcFinder
         {
             using (var graphics = Graphics.FromImage(Bitmap))
             {
-                graphics.CopyFromScreen(0, TopOffset, 0, 0, Bitmap.Size);
+                graphics.CopyFromScreen(Rect.Left, Rect.Top, 0, 0, Bitmap.Size);
             }
         }
 
         public void SetPixel(int x, int y, Color colour)
         {
-            int index = x + (y * Width);
+            int index = x + (y * Rect.Width);
             int col = colour.ToArgb();
             bits[index] = col;
         }
 
         public Color GetPixel(int x, int y)
         {
-            int index = x + (y * Width);
+            int index = x + (y * Rect.Width);
             int col = bits[index];
             Color result = Color.FromArgb(col);
 

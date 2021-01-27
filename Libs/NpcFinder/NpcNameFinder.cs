@@ -23,7 +23,7 @@ namespace Libs
         private List<NpcPosition> Npcs { get; set; } = new List<NpcPosition>();
         private DateTime lastNpcFind = DateTime.Now;
 
-        private DirectBitmap screen = new DirectBitmap(1, 1);
+        private DirectBitmap screen;
 
         public DirectBitmap Screenshot
         {
@@ -46,6 +46,7 @@ namespace Libs
             this.wowProcess = wowProcess;
             this.logger = logger;
             this.playerReader = playerReader;
+            this.screen = new DirectBitmap();
         }
 
         public async Task FindAndClickNpc(int threshold)
@@ -250,8 +251,8 @@ namespace Libs
 
         private void UpdateScreenshot()
         {
-            var rect = wowProcess.GetWindowRect();
-            Screenshot = new DirectBitmap(rect.right, rect.bottom, 0, 0);
+            wowProcess.GetWindowRect(out var rect);
+            Screenshot = new DirectBitmap(rect);
             Screenshot.CaptureScreen();
         }
 
