@@ -20,7 +20,7 @@ namespace Libs
         {
             get
             {
-                if ((DateTime.Now - LastIntialised).TotalSeconds > 10) // refresh every 10 seconds
+                if (this._warcraftProcess == null)
                 {
                     var process = Get();
                     if (process == null)
@@ -32,11 +32,7 @@ namespace Libs
 
                 return this._warcraftProcess;
             }
-
-            private set { _warcraftProcess = value; }
         }
-
-        private DateTime LastIntialised = DateTime.Now.AddHours(-1);
 
         public WowProcess(ILogger logger)
         {
@@ -49,7 +45,6 @@ namespace Libs
             }
 
             this._warcraftProcess = process;
-            LastIntialised = DateTime.Now;
         }
 
         public bool IsWowClassic()
