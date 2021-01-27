@@ -117,6 +117,27 @@ namespace Libs
             await RightClickMouse(new Point(rect.Right / 2, (rect.Bottom * 2) / 3));
         }
 
+        public void SendKeys(string payload)
+        {
+            try {
+                Process p = new Process();
+                p.StartInfo.FileName = "SendKeys.exe";
+                string args = $"-pid:{_warcraftProcess.Id} \"{payload}\"";
+                p.StartInfo.Arguments = args;
+
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                p.Start();
+
+                p.WaitForExit();
+                p.Dispose();
+            } 
+            catch(Exception e)
+            {
+                logger.LogDebug(e.Message);
+            }
+        }
+
         public async Task KeyPress(ConsoleKey key, int milliseconds, string description = "")
         {
             var keyDescription = string.Empty;

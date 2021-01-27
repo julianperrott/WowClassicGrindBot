@@ -41,6 +41,8 @@ namespace Libs
 
         public IImageProvider? MinimapImageFinder { get; set; }
 
+        public ActionBarPopulator? ActionBarPopulator { get; set; }
+
         private bool Enabled = true;
 
         public event EventHandler? ProfileLoaded;
@@ -177,6 +179,8 @@ namespace Libs
                 logger.LogError(e.Message);
                 return false;
             }
+
+            ActionBarPopulator = new ActionBarPopulator(ClassConfig, wowProcess);
 
             var blacklist = this.ClassConfig.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, ClassConfig.NPCMaxLevels_Above, ClassConfig.NPCMaxLevels_Below, ClassConfig.Blacklist, logger);
 

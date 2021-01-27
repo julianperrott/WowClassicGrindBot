@@ -17,6 +17,8 @@ namespace Libs
         ClassConfiguration? ClassConfig { get; set; }
         IImageProvider? MinimapImageFinder { get; set; }
 
+        ActionBarPopulator? ActionBarPopulator { get; set; }
+
         string SelectedClassFilename { get; set; }
         string? SelectedPathFilename { get; set; }
 
