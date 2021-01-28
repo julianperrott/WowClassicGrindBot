@@ -2,8 +2,7 @@
   "ClassName": "Mage",
   "Loot": true,
 
-  "PathFilename": "7_Human.json",
-  "SpiritPathFilename": "7_Human.json",
+  "PathFilename": "1-5_Gnome.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
@@ -20,13 +19,6 @@
   },
   "Combat": {
     "Sequence": [
-      {
-        "Name": "Fireblast",
-        "Key": "5",
-        "ManaRequirement": 40,
-        "Cooldown": 8,
-        "Requirement": "Health%<80"
-      },
       {
         "Name": "Fireball",
         "HasCastBar": true,
@@ -48,16 +40,16 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "6",
-        "Requirement": "Health%<90",
+        "Requirement": "Health%<30",
         "Cooldown": 10,
         "Log": false
       },
       {
-        "Name": "Drink",
+        "Name": "Water",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "7",
-        "Requirement": "Mana%<90",
+        "Requirement": "Mana%<30",
         "Cooldown": 10,
         "Log": false
       }
@@ -90,5 +82,23 @@
         "Cooldown": 30,
         "Log": false
       }
-    ]}
+    ]},
+    "NPC": {
+      "Sequence": [
+        {
+          "Name": "Repair",
+          "Key": "C",
+          "Requirement": "Items Broken",
+          "PathFilename": "1_Gnome_Vendor.json",
+          "Cost": 6
+        },
+        {
+          "Name": "Sell",
+          "Key": "C",
+          "Requirement": "BagCount>16",
+          "PathFilename": "1_Gnome_Vendor.json",
+          "Cost": 6
+        }
+      ]
+    }
 }
