@@ -12,6 +12,32 @@ namespace Libs
 {
     public sealed class NpcNameFinder : IDisposable
     {
+        public enum NPCType
+        {
+            Enemy,
+            Friendly,
+            Signature,
+            Corpse
+        }
+
+        private NPCType _NPCType = NPCType.Enemy;
+
+        private bool ColorMatch(Color pixel)
+        {
+            switch(_NPCType)
+            {
+                case NPCType.Friendly:
+                    return pixel.R == 0 && pixel.G > 250 && pixel.B == 0;
+                case NPCType.Signature:
+                    return pixel.R > 250 && pixel.G > 250 && pixel.B == 0;
+                case NPCType.Corpse:
+                    return pixel.R == 128 && pixel.G == 128 && pixel.B == 128;
+                case NPCType.Enemy:
+                default:
+                    return pixel.R > 240 && pixel.G <= 35 && pixel.B <= 35;
+            }
+        }
+
         private List<LineOfNpcName> npcNameLine { get; set; } = new List<LineOfNpcName>();
         private List<List<LineOfNpcName>> npcs { get; set; } = new List<List<LineOfNpcName>>();
         private readonly PlayerReader playerReader;
@@ -47,6 +73,11 @@ namespace Libs
             this.logger = logger;
             this.playerReader = playerReader;
             this.screen = new DirectBitmap();
+        }
+
+        public void ChangeNpcType(NPCType type)
+        {
+            _NPCType = type;
         }
 
         public async Task FindAndClickNpc(int threshold)
@@ -88,6 +119,11 @@ namespace Libs
                             await AquireTargetAtCursor(clickPostion, npc);
                             return;
                         }
+                        else if(cls == CursorClassification.Vendor)
+                        {
+                            await AquireTargetAtCursor(clickPostion, npc);
+                            return;
+                        }
                     }
                 }
                 else
@@ -99,6 +135,44 @@ namespace Libs
             {
                 logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: No NPC found!");
             }
+        }
+
+        public async Task<bool> FindNpcByCursorType(CursorClassification cursor)
+        {
+            if (this.playerReader.HasTarget)
+                return false;
+
+            var locations = new List<Point>
+            {
+                new Point(0,0),
+                new Point(10,10),
+                new Point(-10,-10),
+                new Point(20,20),
+                new Point(-20,-20),
+                new Point(0, -30),
+                new Point(0, -50)
+            };
+
+            foreach (var npc in Npcs)
+            {
+                foreach (var location in locations)
+                {
+                    var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
+
+                    clickPostion.X = wowProcess.ScaleDown(clickPostion.X);
+                    clickPostion.Y = wowProcess.ScaleDown(clickPostion.Y);
+
+                    WowProcess.SetCursorPosition(clickPostion);
+                    await Task.Delay(100);
+                    CursorClassifier.Classify(out var cls).Dispose();
+                    if (cls == cursor)
+                    {
+                        await AquireTargetAtCursor(clickPostion, npc);
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private async Task AquireTargetAtCursor(Point clickPostion, NpcPosition npc)
@@ -216,9 +290,9 @@ namespace Libs
                 for (int x = 0; x < Screenshot.Width; x++)
                 {
                     var pixel = Screenshot.GetPixel(x, y);
-                    var isRedPixel = pixel.R > 240 && pixel.G <= 35 && pixel.B <= 35;
+                    var isTargetColor = ColorMatch(pixel);
 
-                    if (isRedPixel)
+                    if (isTargetColor)
                     {
                         var isSameSection = lengthStart > -1 && (x - lengthEnd) < 22;
 
