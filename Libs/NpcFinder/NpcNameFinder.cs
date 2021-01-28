@@ -16,7 +16,8 @@ namespace Libs
         {
             Enemy,
             Friendly,
-            Signature,
+            Neutral,
+            FriendlyOrNeutral,
             Corpse
         }
 
@@ -26,9 +27,12 @@ namespace Libs
         {
             switch(_NPCType)
             {
+                case NPCType.FriendlyOrNeutral:
+                    return (pixel.R == 0 && pixel.G > 250 && pixel.B == 0) ||
+                        (pixel.R > 250 && pixel.G > 250 && pixel.B == 0);
                 case NPCType.Friendly:
                     return pixel.R == 0 && pixel.G > 250 && pixel.B == 0;
-                case NPCType.Signature:
+                case NPCType.Neutral:
                     return pixel.R > 250 && pixel.G > 250 && pixel.B == 0;
                 case NPCType.Corpse:
                     return pixel.R == 128 && pixel.G == 128 && pixel.B == 128;

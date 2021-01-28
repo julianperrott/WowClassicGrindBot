@@ -152,7 +152,7 @@ namespace Libs.Goals
                         await this.stopMoving.Stop();
                         await wowProcess.KeyPress(ConsoleKey.F3, 400);
 
-                        npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Friendly);
+                        npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.FriendlyOrNeutral);
                         await playerReader.WaitForNUpdate(10);
                         var foundVendor = await npcNameFinder.FindNpcByCursorType(Cursor.CursorClassification.Vendor);
                         npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
