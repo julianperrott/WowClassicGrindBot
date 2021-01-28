@@ -29,6 +29,7 @@ namespace Libs.Goals
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
+        private readonly NpcNameFinder npcNameFinder;
         private readonly IBlacklist blacklist;
         private readonly IPPather pather;
         private double lastDistance = 999;
@@ -37,12 +38,13 @@ namespace Libs.Goals
         private readonly ILogger logger;
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
+        public AdhocNPCGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
         {
             this.playerReader = playerReader;
             this.wowProcess = wowProcess;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
+            this.npcNameFinder = npcNameFinder;
             this.logger = logger;
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
@@ -147,7 +149,14 @@ namespace Libs.Goals
                         // we have reached the start of the path to the npc
                         await FollowPath(this.key.Path);
 
-                        // we should be at the correct location now.
+                        await this.stopMoving.Stop();
+                        await wowProcess.KeyPress(ConsoleKey.F3, 400);
+
+                        npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Friendly);
+                        await playerReader.WaitForNUpdate(10);
+                        var foundVendor = await npcNameFinder.FindNpcByCursorType(Cursor.CursorClassification.Vendor);
+                        npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
+
                         await InteractWithTarget();
                         wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
 
@@ -323,7 +332,7 @@ namespace Libs.Goals
                 return 50;
             }
 
-            return (this.playerReader.PlayerBitValues.IsMounted ? 50 : 40);
+            return (this.playerReader.PlayerBitValues.IsMounted ? 50 : 20);
         }
 
         public async Task TapInteractKey(string source)
