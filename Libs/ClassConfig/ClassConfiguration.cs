@@ -65,6 +65,8 @@ namespace Libs
 
         public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger, string? overridePathProfileFile)
         {
+            SpiritPathFilename = string.Empty;
+
             Pull.Initialise(playerReader, requirementFactory, logger);
             Combat.Initialise(playerReader, requirementFactory, logger);
             Adhoc.Initialise(playerReader, requirementFactory, logger);
