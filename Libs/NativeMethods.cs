@@ -1,4 +1,4 @@
-﻿using PInvoke;
+using PInvoke;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -68,22 +68,46 @@ namespace Libs
         public const int A = 0x41; //A key code
         public const int C = 0x43; //C key code
 
-        public static void GetWindowRect(IntPtr hWnd, out Rectangle rect)
+        // should be calculated from the metrics
+        public const int WindowBarHeight = 31;
+        public const int WindowBorderThick = 8;
+
+        private static bool IsWindowedMode(Rectangle rect)
         {
-            RECT nativeRect = new RECT();
-            if (GetWindowRect(hWnd, ref nativeRect))
+            return rect.X != 0 || rect.Y != 0;
+        }
+
+        private static void GetNativeWindowRect(IntPtr hWnd, out Rectangle rect)
+        {
+            RECT nRect = new RECT();
+            if (GetWindowRect(hWnd, ref nRect))
             {
                 rect = new Rectangle
                 {
-                    X = nativeRect.left,
-                    Y = nativeRect.top,
-                    Width = (nativeRect.right - nativeRect.left),
-                    Height = (nativeRect.bottom - nativeRect.top)
+                    X = nRect.left,
+                    Y = nRect.top,
+                    Width = (nRect.right - nRect.left),
+                    Height = (nRect.bottom - nRect.top)
                 };
             }
             else
             {
                 rect = Rectangle.Empty;
+            }
+        }
+
+        public static void GetWindowRect(IntPtr hWnd, out Rectangle rect)
+        {
+            GetNativeWindowRect(hWnd, out rect);
+
+            if(IsWindowedMode(rect))
+            {
+                int border = WindowBorderThick;
+                int header = WindowBarHeight;
+
+                rect.Inflate(-border, 0);
+                rect.Offset(0, header);
+                rect.Height -= header;
             }
         }
 
