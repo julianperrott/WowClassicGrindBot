@@ -109,12 +109,7 @@ namespace Libs
         public ActionBarStatus ActionBarUseable_49To72 => new ActionBarStatus(reader.GetLongAtCell(36));
         public ActionBarStatus ActionBarUseable_73To96 => new ActionBarStatus(reader.GetLongAtCell(42));
 
-        // 37- 40 Bag Slots
-        public long BagSlot1Slots => reader.GetLongAtCell(37);
-
-        public long BagSlot2Slots => reader.GetLongAtCell(38);
-        public long BagSlot3Slots => reader.GetLongAtCell(39);
-        public long BagSlot4Slots => reader.GetLongAtCell(40);
+        // 37- 40 Bag Slots - BadReader handles it
 
         public BuffStatus Buffs => new BuffStatus(reader.GetLongAtCell(41));
         public DebuffStatus Debuffs => new DebuffStatus(reader.GetLongAtCell(55));

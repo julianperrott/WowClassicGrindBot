@@ -131,6 +131,7 @@ namespace Libs
 
                     {  "Shooting", ()=> playerReader.IsShooting },
                     {  "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
+                    {  "BagFull", ()=> bagReader.BagsFull }
                 };
             }
 

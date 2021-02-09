@@ -281,7 +281,7 @@ e.g.
             {
               "Name": "Sell",
               "Key": "C",
-              "Requirement": "BagCount>65",
+              "Requirement": "BagFull",
               "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
               "Cost": 6
             }
@@ -394,6 +394,7 @@ e.g.
 * "not Thorns" - I don't have the thorns buff.
 * "Shooting" - I am out of shooting.
 * "Items Broken" - Some of my armor is red.
+* "BagFull" - player inventory is full.
 
 | Class | Buff |
 | --- | --- |
@@ -569,7 +570,7 @@ The short path to get to the vendor/repairer when there are obstacles close to t
     {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagCount>80",
+        "Requirement": "BagFull",
         "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
         "Cost": 6
     }
