@@ -84,7 +84,9 @@ DataToColor.r = 0
 -- Character's name
 local CHARACTER_NAME = UnitName("player")
 local uiErrorMessage=0;
+local lastCombatDamageDealerCreature=0;
 local lastCombatCreature=0;
+local lastCombatCreatureDied=0;
 
 -- List of possible subzones to which a player's hearthstone may be bound
 local HearthZoneList = {"CENARION HOLD", "VALLEY OF TRIALS", "THE CROSSROADS", "RAZOR HILL", "DUROTAR", "ORGRIMMAR", "CAMP TAURAJO", "FREEWIND POST", "GADGETZAN", "SHADOWPREY VILLAGE", "THUNDER BLUFF", "UNDERCITY", "CAMP MOJACHE", "COLDRIDGE VALLEY", "DUN MOROGH", "THUNDERBREW DISTILLERY", "IRONFORGE", "STOUTLAGER INN", "STORMWIND CITY", "SOUTHSHORE", "LAKESHIRE", "STONETALON PEAK", "GOLDSHIRE", "SENTINEL HILL", "DEEPWATER TAVERN", "THERAMORE ISLE", "DOLANAAR", "ASTRANAAR", "NIJEL'S POINT", "CRAFTSMEN'S TERRACE", "AUBERDINE", "FEATHERMOON STRONGHOLD", "BOOTY BAY", "WILDHAMMER KEEP", "DARKSHIRE", "EVERLOOK", "RATCHET", "LIGHT'S HOPE CHAPEL"}
@@ -156,7 +158,11 @@ local function OnCombatEvent(self, event)
         lastCombatCreature=0;
     elseif string.find(sourceGUID, "Creature") then
         lastCombatCreature=tonumber(string.sub(sourceGUID, -6),16);
+        lastCombatDamageDealerCreature = lastCombatCreature;
         --print(sourceGUID.." "..lastCombatCreature);
+    elseif eventType=="PARTY_KILL" then
+        --print(CombatLogGetCurrentEventInfo());
+        lastCombatCreatureDied=tonumber(string.sub(destGUID, -6),16);
     else
         lastCombatCreature=0;
         --print("Other "..eventType);
@@ -463,6 +469,8 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(DataToColor:IsTargetOfTargetPlayerAsNumber()),59) -- IsTargetOfTargetPlayerAsNumber
             -- 60-64 = Bag item info
             MakePixelSquareArr(integerToColor(lastCombatCreature),65) -- Combat message creature
+            MakePixelSquareArr(integerToColor(lastCombatDamageDealerCreature),66) -- Combat message last damage dealer creature
+            MakePixelSquareArr(integerToColor(lastCombatCreatureDied),67) -- Last Killed Unit
 
             self:HandleEvents()
         end
