@@ -160,13 +160,17 @@ local function OnCombatEvent(self, event)
         lastCombatCreature=tonumber(string.sub(sourceGUID, -6),16);
         lastCombatDamageDealerCreature = lastCombatCreature;
         --print(sourceGUID.." "..lastCombatCreature);
-    elseif eventType=="PARTY_KILL" then
-        --print(CombatLogGetCurrentEventInfo());
-        lastCombatCreatureDied=tonumber(string.sub(destGUID, -6),16);
     else
         lastCombatCreature=0;
         --print("Other "..eventType);
     end
+
+    if eventType=="PARTY_KILL" or eventType=="UNIT_DIED" then
+        lastCombatCreatureDied=tonumber(string.sub(destGUID, -6),16);
+        --print("killing blow on " .. lastCombatCreatureDied)
+    end
+
+    --print(CombatLogGetCurrentEventInfo());
 end  
 
 --event handler
