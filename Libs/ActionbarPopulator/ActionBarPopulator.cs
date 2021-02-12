@@ -68,7 +68,7 @@ namespace Libs
         {
             foreach(var a in sources)
             {
-                NativeMethods.SetClipboardText(Template(a));
+                NativeMethods.SetClipboardText(ScriptBuilder(a));
                 await Task.Delay(50);
                 
                 await WowProcess.KeyPress(ConsoleKey.Enter, 50);
@@ -110,31 +110,27 @@ namespace Libs
 
         #region Macro tempaltes
 
-        private static string Template(ActionBarSource a)
+        private static string ScriptBuilder(ActionBarSource a)
         {
-            return a.Item ? TemplateItem(a) : TemplateSpell(a);
-        }
-
-        private static string TemplateSpell(ActionBarSource a)
-        {
-            string name = $"\"{a.Name}\"";
+            string nameOrId = $"\"{a.Name}\"";
             if (int.TryParse(a.Name, out int id))
             {
-                name = id.ToString();
+                nameOrId = id.ToString();
             }
 
-            return $"/run PickupSpellBookItem({name})PlaceAction({a.Key})ClearCursor()";
+            string func = GetFunction(a);
+            return $"/run {func}({nameOrId})PlaceAction({a.Key})ClearCursor()--";
         }
 
-        private static string TemplateItem(ActionBarSource a)
+        private static string GetFunction(ActionBarSource a)
         {
-            string name = $"\"{a.Name}\"";
-            if (int.TryParse(a.Name, out int id))
-            {
-                name = id.ToString();
-            }
+            if (a.Item)
+                return "PickupItem";
 
-            return $"/run PickupItem({name})PlaceAction({a.Key})ClearCursor()";
+            if (char.IsLower(a.Name[0]))
+                return "PickupMacro";
+            else
+                return "PickupSpellBookItem";
         }
 
         #endregion

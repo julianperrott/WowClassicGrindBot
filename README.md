@@ -41,6 +41,7 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 * Runtime Profile picker
 * Frontend Dark mode
 * Fast Loot for single target combat
+* Actionbar populator based on class config
 
 # Issues and Ideas
 
