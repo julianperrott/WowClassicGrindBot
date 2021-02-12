@@ -164,7 +164,25 @@ namespace Libs
         public async Task TapStopKey(string description="")
         {
             Debug.WriteLine("TapStopKey: " + description);
-            await KeyPress(ConsoleKey.UpArrow, 51);
+            await KeyPress(ConsoleKey.UpArrow, 50);
+        }
+
+        public async Task TapStandUpKey(string desc="")
+        {
+            logger.LogInformation($"TapStandUpKey: {desc}");
+            await KeyPress(ConsoleKey.F9, 50);
+        }
+
+        public async Task TapClearTarget(string desc = "")
+        {
+            logger.LogInformation($"TapClearTarget: {desc}");
+            await KeyPress(ConsoleKey.F3, 50);
+        }
+
+        public async Task TapStopAttack(string desc = "")
+        {
+            logger.LogInformation($"TapStopAttack: {desc}");
+            await KeyPress(ConsoleKey.F10, 50);
         }
 
         public void SetKeyState(ConsoleKey key, bool pressDown, bool forceClick, string description)
