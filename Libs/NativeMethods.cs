@@ -30,6 +30,9 @@ namespace Libs
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool DrawIconEx(IntPtr hdc, int xLeft, int yTop, IntPtr hIcon, int cxWidth, int cyHeight, int istepIfAniCur, IntPtr hbrFlickerFreeDraw, int diFlags);
+        
+        [DllImport("user32.dll")]
+        public static extern bool DrawIcon(IntPtr hDC, int x, int y, IntPtr hIcon);
 
         public const Int32 CURSOR_SHOWING = 0x0001;
         public const Int32 DI_NORMAL = 0x0003;
