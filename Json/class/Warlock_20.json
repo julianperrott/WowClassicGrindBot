@@ -1,0 +1,167 @@
+{
+  "ClassName": "Warlock",
+  "Loot": true,
+  "Skin": true,
+  "NPCMaxLevels_Above": 2,
+
+  "PathFilename": "17_Redridge.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+
+  "Blacklist": ["Murloc Hunter", "Murloc Oracle", "Murloc Tidehunter"],
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "pull",
+        "Key": "5",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "ResetOnNewTarget": true,
+        "MinMana": 90,
+        "Log": false
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Minor Healthstone",
+        "Key": "NumPad3",
+        "Requirements": ["Health%<50", "BagItem:19005:1"],
+        "Cooldown": 60,
+        "InCombat": "true",
+        "Log": false
+      },
+      {
+        "Name": "Drain Soul",
+        "Key": "9",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["TargetHealth%<20", "not BagItem:6265:3"],
+        "MinMana": 55
+      },
+      {
+        "Name": "Drain Life",
+        "Key": "NumPad4",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["Health%<30"]
+      },
+      {
+        "Name": "Curse of Agony",
+        "Key": "2",
+        "Cooldown": 24,
+        "ResetOnNewTarget": true,
+        "MinMana": 25,
+        "Log": false,
+        "DelayAfterCast": 1500
+      },
+      {
+        "Name": "Corruption",
+        "Key": "7",
+        "HasCastBar": true,
+        "Cooldown": 12,
+        "ResetOnNewTarget": true,
+        "MinMana": 25,
+        "Log": false,
+        "DelayAfterCast": 1500
+      },
+      {
+        "Name": "Interact",
+        "Key": "H",
+        "Cooldown": 3,
+        "Log": false
+      },
+      {
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "Requirement": "not Shooting",
+        "Log": false
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Low Health",
+        "StopBeforeCast": true,
+        "Key": "NumPad1",
+        "Requirement": "Health%<50",
+        "Cooldown": 20,
+        "Log": false
+      },
+      {
+        "Name": "Drink",
+        "StopBeforeCast": true,
+        "Key": "NumPad2",
+        "Requirement": "Mana%<50",
+        "Cooldown": 20,
+        "Log": false
+      }
+    ]
+    },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Demon Skin",
+        "Key": "3",
+        "MinMana": 50,
+        "Requirement": "not Demon Skin",
+        "Log": false
+      },
+      {
+        "Name": "Summon Voidwalker",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "4",
+        "MinMana": 122,
+        "Requirements": ["BagItem:6265:1", "not Has Pet"],
+        "Log": false,
+        "Cooldown": 60
+      },
+      {
+        "Name": "Life Tap",
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirements": ["Health%>70","Mana%<60"],
+        "Cooldown": 0,
+        "Log": false
+      },
+      {
+        "Name": "Life Tap 2",
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirements": ["Health%>80","Mana%<80"],
+        "Cooldown": 0,
+        "Log": false
+      },
+      {
+        "Name": "Create Healthstone (Minor)",
+        "Key": "NumPad3",
+        "HasCastBar": true,
+        "Requirements": ["BagItem:6265:1", "not BagItem:19005:1"]
+      }
+    ]
+  }
+,
+  "NPC": {
+      "Sequence": [
+        {
+          "Name": "Repair",
+          "Key": "C",
+          "Requirement": "Items Broken",
+          "PathFilename": "17_Redridge_Vendor.json",
+          "Cost": 6
+        },
+        {
+          "Name": "Sell",
+          "Key": "C",
+          "Requirement": "BagCount>70",
+          "PathFilename": "17_Redridge_Vendor.json",
+          "Cost": 6
+        }
+      ]
+  }
+}
