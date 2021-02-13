@@ -15,13 +15,15 @@ namespace Libs
             public string Requirement;
         }
 
-        private ClassConfiguration Config { get; set; }
-        private WowProcess WowProcess { get; set; }
+        private readonly ClassConfiguration config;
+        private readonly WowProcess wowProcess;
+        private readonly AddonReader addonReader;
 
-        public ActionBarPopulator(ClassConfiguration config, WowProcess process)
+        public ActionBarPopulator(ClassConfiguration config, WowProcess wowProcess, AddonReader addonReader)
         {
-            Config = config;
-            WowProcess = process;
+            this.config = config;
+            this.wowProcess = wowProcess;
+            this.addonReader = addonReader;
         }
 
         private List<ActionBarSource> sources = new List<ActionBarSource>();
@@ -35,22 +37,21 @@ namespace Libs
 
         private void CollectKeyActions()
         {
-            Config.Adhoc.Sequence.ForEach(k => AddIfNotExists(k));
-            Config.Parallel.Sequence.ForEach(k => AddIfNotExists(k));
-            Config.Pull.Sequence.ForEach(k => AddIfNotExists(k));
-            Config.Combat.Sequence.ForEach(k => AddIfNotExists(k));
-            Config.NPC.Sequence.ForEach(k => AddIfNotExists(k));
+            config.Adhoc.Sequence.ForEach(k => AddUnique(k));
+            config.Parallel.Sequence.ForEach(k => AddUnique(k));
+            config.Pull.Sequence.ForEach(k => AddUnique(k));
+            config.Combat.Sequence.ForEach(k => AddUnique(k));
+            config.NPC.Sequence.ForEach(k => AddUnique(k));
 
-            TryToResolveConsumables();
+            ResolveConsumables();
 
-            sources.Sort((a, b) => int.Parse(a.Key).CompareTo(int.Parse(b.Key)));
+            sources.Sort((a, b) => a.Key.CompareTo(b.Key));
         }
 
 
-        private void AddIfNotExists(KeyAction a)
+        private void AddUnique(KeyAction a)
         {
-            // Only adding those which can be converted to ConsoleKeys
-            if (!int.TryParse(a.Key, out int key)) return;
+            if (!KeyReader.KeyMapping.ContainsKey(a.Key)) return;
             if (sources.Any(i => i.Key == a.Key)) return;
 
             var source = new ActionBarSource
@@ -71,44 +72,45 @@ namespace Libs
                 NativeMethods.SetClipboardText(ScriptBuilder(a));
                 await Task.Delay(50);
                 
-                await WowProcess.KeyPress(ConsoleKey.Enter, 50);
+                // Open chat inputbox
+                await wowProcess.KeyPress(ConsoleKey.Enter, 50);
 
-                WowProcess.SendKeys("^{v}");
+                // Send Paste keys
+                wowProcess.SendKeys("^{v}");
                 await Task.Delay(250);
 
-                await WowProcess.KeyPress(ConsoleKey.Enter, 50);
-
+                //
+                await wowProcess.KeyPress(ConsoleKey.Enter, 50);
                 await Task.Delay(250);
             }
         }
 
 
-        #region Consumable Matching
+        #region Consumable
 
-        private void TryToResolveConsumables()
+        private void ResolveConsumables()
         {
-            TryToMatchConjureSpellToItem("Water");
-            TryToMatchConjureSpellToItem("Food");
+            ReplaceIfExists("Water", 
+                addonReader.BagReader.HighestQuantityOfWaterId().ToString());
+
+            ReplaceIfExists("Food",
+                addonReader.BagReader.HighestQuantityOfFoodId().ToString());
         }
 
-        private void TryToMatchConjureSpellToItem(string key)
+        private void ReplaceIfExists(string key, string val)
         {
-            var index = sources.FindIndex(i => i.Name == key);
-            if (index == -1) return;
-            var itemsToBeResolved = sources.Single(i => i.Name == key);
-
-            if (!sources.Any(i => i.Name != key && i.Name.Contains(key))) return;
-            var match = sources.Single(i => i.Name != key && i.Name.Contains(key));
-
-            itemsToBeResolved.Name = match.Requirement.Split(":")[1];
-            itemsToBeResolved.Item = true;
-            sources[index] = itemsToBeResolved;
+            int index = sources.FindIndex(i => i.Name == key);
+            if (index != -1)
+            {
+                var item = sources[index];
+                item.Item = true;
+                item.Name = val;
+                sources[index] = item;
+            }
         }
 
         #endregion
 
-
-        #region Macro tempaltes
 
         private static string ScriptBuilder(ActionBarSource a)
         {
@@ -119,7 +121,9 @@ namespace Libs
             }
 
             string func = GetFunction(a);
-            return $"/run {func}({nameOrId})PlaceAction({a.Key})ClearCursor()--";
+            string slot = GetActionBarSlotHotkey(a);
+            string script = $"/run {func}({nameOrId})PlaceAction({slot})ClearCursor()--";
+            return script;
         }
 
         private static string GetFunction(ActionBarSource a)
@@ -129,11 +133,33 @@ namespace Libs
 
             if (char.IsLower(a.Name[0]))
                 return "PickupMacro";
-            else
-                return "PickupSpellBookItem";
+
+            return "PickupSpellBookItem";
+        }
+        
+        private static string GetActionBarSlotHotkey(ActionBarSource a)
+        {
+            if(a.Key.StartsWith(KeyReader.BR))
+                return CalculateActionNumber(a.Key, KeyReader.BR, KeyReader.BRIdx);
+
+            return CalculateActionNumber(a.Key, "",  0);
         }
 
-        #endregion
+        private static string CalculateActionNumber(string key, string prefix,  int offset)
+        {
+            if(!string.IsNullOrEmpty(prefix))
+                key = key.Replace(prefix, "");
+
+            if (int.TryParse(key, out var hotkey))
+            {
+                if (hotkey == 0)
+                    return (offset + 10).ToString();
+
+                return (offset + hotkey).ToString();
+            }
+
+            return key;
+        }
 
     }
 }

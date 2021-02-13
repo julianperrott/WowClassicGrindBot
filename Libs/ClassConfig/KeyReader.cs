@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +7,10 @@ namespace Libs
 {
     public static class KeyReader
     {
+        // Bottom Right Action Bar
+        public const string BR = "N";
+        public const int BRIdx = 48; //49 - 1
+
         public static Dictionary<string, ConsoleKey> KeyMapping { get; } = new Dictionary<string, ConsoleKey>()
         {
             {"0",ConsoleKey.D0 },
@@ -22,6 +26,16 @@ namespace Libs
             {"-",ConsoleKey.OemMinus },
             {"=",ConsoleKey.OemPlus },
             {" ",ConsoleKey.Spacebar },
+            {BR + "0",ConsoleKey.NumPad0 },
+            {BR + "1",ConsoleKey.NumPad1 },
+            {BR + "2",ConsoleKey.NumPad2 },
+            {BR + "3",ConsoleKey.NumPad3 },
+            {BR + "4",ConsoleKey.NumPad4 },
+            {BR + "5",ConsoleKey.NumPad5 },
+            {BR + "6",ConsoleKey.NumPad6 },
+            {BR + "7",ConsoleKey.NumPad7 },
+            {BR + "8",ConsoleKey.NumPad8 },
+            {BR + "9",ConsoleKey.NumPad9 },
         };
 
         public static bool ReadKey(ILogger logger, KeyAction key)

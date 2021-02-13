@@ -1,4 +1,4 @@
-﻿using Libs.Goals;
+using Libs.Goals;
 using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -180,7 +180,7 @@ namespace Libs
                 return false;
             }
 
-            ActionBarPopulator = new ActionBarPopulator(ClassConfig, wowProcess);
+            ActionBarPopulator = new ActionBarPopulator(ClassConfig, wowProcess, AddonReader);
 
             var blacklist = this.ClassConfig.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, ClassConfig.NPCMaxLevels_Above, ClassConfig.NPCMaxLevels_Below, ClassConfig.Blacklist, logger);
 
