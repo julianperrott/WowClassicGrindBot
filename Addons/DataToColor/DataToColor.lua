@@ -629,7 +629,8 @@ function DataToColor:getBuffsForClass()
         class=class+self:MakeIndexBase2(self:GetBuffs("Battle Shout"), 10);        
     elseif CC == "WARLOCK" then        
         class=class+self:MakeIndexBase2(self:GetBuffs("Demon "), 10) +
-        self:MakeIndexBase2(self:GetBuffs("Soul Link"), 11);        
+        self:MakeIndexBase2(self:GetBuffs("Soul Link"), 11) +
+        self:MakeIndexBase2(self:GetBuffs("Soulstone Resurrection"), 12);
     end
     return class;
 end

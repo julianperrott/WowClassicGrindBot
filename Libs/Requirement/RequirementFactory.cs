@@ -114,6 +114,7 @@ namespace Libs
                     {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
                     {  "Demon Skin", ()=> playerReader.Buffs.DemonSkin },
                     {  "Soul Link", ()=> playerReader.Buffs.SoulLink },
+                    {  "Soulstone Resurrection", ()=> playerReader.Buffs.SoulstoneResurrection },
                     {  "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
 
                     {  "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
