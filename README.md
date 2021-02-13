@@ -428,6 +428,9 @@ e.g.
 | Warlock | "Demon Skin" |
 | Warlock | "Has Pet" |
 | Warlock | "Curse of Weakness" |
+| Warlock | "Curse of Agony" |
+| Warlock | "Corruption" |
+| Warlock | "Immolate" |
 | Warrior Debuff | "Rend" |
  
 #### Range
