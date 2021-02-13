@@ -1,4 +1,4 @@
-﻿using Libs.Addon;
+using Libs.Addon;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -169,5 +169,13 @@ namespace Libs
         {
             CombatCreature.UpdateCombatCreatureCount((int)reader.GetLongAtCell(65), CombatCreatures);
         }
+
+        public int LastDamageDealerGuid => (int)reader.GetLongAtCell(66);
+
+        public int LastKilledGuid => (int)reader.GetLongAtCell(67);
+
+        public int PetGuid => (int)reader.GetLongAtCell(68);
+        public int PetTargetGuid => (int)reader.GetLongAtCell(69);
+        public bool PetHasTarget => PetTargetGuid != 0;
     }
 }

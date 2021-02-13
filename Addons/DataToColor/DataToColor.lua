@@ -476,6 +476,9 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(lastCombatDamageDealerCreature),66) -- Combat message last damage dealer creature
             MakePixelSquareArr(integerToColor(lastCombatCreatureDied),67) -- Last Killed Unit
 
+            MakePixelSquareArr(integerToColor(DataToColor:petGuid()),68) -- pet guid
+            MakePixelSquareArr(integerToColor(DataToColor:petTargetGuid()),69) -- pet target
+
             self:HandleEvents()
         end
         if SETUP_SEQUENCE then
@@ -831,6 +834,22 @@ function DataToColor:targetGuid()
     local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("target") or ''); 
     if npcID ~= nil then
         return tonumber(string.sub(guid, -6),16); -- last 6 hex chars e.g. 00002D3C4A becomes 2D3C4A, not perfect, but should be good enough.
+    end
+    return 0;
+end
+
+function DataToColor:petGuid()
+    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("pet") or ''); 
+    if npcID ~= nil then
+        return tonumber(string.sub(guid, -6),16);
+    end
+    return 0;
+end
+
+function DataToColor:petTargetGuid()
+    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("pettarget") or ''); 
+    if npcID ~= nil then
+        return tonumber(string.sub(guid, -6),16);
     end
     return 0;
 end
