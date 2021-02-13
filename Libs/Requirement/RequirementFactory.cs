@@ -122,7 +122,12 @@ namespace Libs
                     {  "Rend", ()=> playerReader.Debuffs.Rend },
 
                     {  "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },
+
                     {  "Curse of Weakness", ()=> playerReader.Debuffs.CurseofWeakness },
+                    {  "Curse of Agony", ()=> playerReader.Debuffs.CurseofAgony },
+                    {  "Corruption", ()=> playerReader.Debuffs.Corruption },
+                    {  "Immolate", ()=> playerReader.Debuffs.Immolate },
+
 
                     { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
                     { "InCombatRange", ()=> playerReader.WithInCombatRange },

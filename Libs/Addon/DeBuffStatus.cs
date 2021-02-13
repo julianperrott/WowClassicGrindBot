@@ -33,6 +33,7 @@
         // Paladin
 
         // Mage
+        public bool Frostbite { get => IsBitSet(0); }
 
         // Rogue
 
@@ -41,7 +42,8 @@
 
         // Warlock
         public bool CurseofWeakness { get => IsBitSet(0); }
-
-        public bool Frostbite { get => IsBitSet(0); }
+        public bool CurseofAgony { get => IsBitSet(1); }
+        public bool Corruption { get => IsBitSet(2); }
+        public bool Immolate { get => IsBitSet(3); }
     }
 }
