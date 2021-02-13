@@ -32,18 +32,15 @@ namespace Libs.Cursor
             var result = new Bitmap(32, 32);
             try
             {
-                NativeMethods.CURSORINFO pci;
-                pci.cbSize = Marshal.SizeOf(typeof(NativeMethods.CURSORINFO));
-
-                using (var g = Graphics.FromImage(result))
+                var cursorInfo = new NativeMethods.CURSORINFO();
+                cursorInfo.cbSize = Marshal.SizeOf(cursorInfo);
+                if(NativeMethods.GetCursorInfo(out cursorInfo))
                 {
-                    if (NativeMethods.GetCursorInfo(out pci))
+                    using (Graphics g = Graphics.FromImage(result))
                     {
-                        if (pci.flags == NativeMethods.CURSOR_SHOWING)
+                        if (cursorInfo.flags == NativeMethods.CURSOR_SHOWING)
                         {
-                            var hdc = g.GetHdc();
-                            NativeMethods.DrawIconEx(hdc, 0, 0, pci.hCursor, 0, 0, 0, IntPtr.Zero, NativeMethods.DI_NORMAL);
-                            g.ReleaseHdc();
+                            NativeMethods.DrawIcon(g.GetHdc(), 0, 0, cursorInfo.hCursor);
                         }
                     }
                 }
@@ -51,9 +48,10 @@ namespace Libs.Cursor
                 var hash = ImageHashing.AverageHash(result);
 
                 //var filename = hash + ".bmp";
-                //if (!File.Exists(filename))
+                //var path = Path.Join("../Cursors/", filename);
+                //if (!File.Exists(path))
                 //{
-                //    result.Save(filename);
+                //    result.Save(path);
                 //}
 
                 var matching = imageHashes.SelectMany(i => i.Value.Select(v=> (similarity: ImageHashing.Similarity(hash, v), imagehash: i)))
@@ -62,7 +60,7 @@ namespace Libs.Cursor
                     .FirstOrDefault();
 
                 classification = matching.imagehash.Key;
-                Debug.WriteLine(classification.ToString() + " " + matching.similarity);
+                Debug.WriteLine($"[CursorClassifier.Classify] {classification} - {matching.similarity}");
 
                 if (classification == 0)
                 {
