@@ -21,9 +21,12 @@ namespace Libs
 
         private Dictionary<int, Item> itemDictionary = new Dictionary<int, Item>();
 
+        private List<ItemId> foods = new List<ItemId>();
+        private List<ItemId> waters = new List<ItemId>();
+
         public event EventHandler? DataChanged;
 
-        public BagReader(ISquareReader reader, int bagItemsDataStart, List<Item> items, Dictionary<int, int> ahPrices)
+        public BagReader(ISquareReader reader, int bagItemsDataStart, List<Item> items, List<ItemId> foods, List<ItemId> waters, Dictionary<int, int> ahPrices)
         {
             this.bagItemsDataStart = bagItemsDataStart;
             this.reader = reader;
@@ -32,6 +35,9 @@ namespace Libs
                 itemDictionary.Add(i.Entry, i);
                 i.AHPrice = ahPrices.ContainsKey(i.Entry) ? ahPrices[i.Entry] : i.SellPrice;
             });
+
+            this.foods = foods;
+            this.waters = waters;
         }
 
         public List<BagItem> Read()
@@ -129,5 +135,22 @@ namespace Libs
         public bool BagsFull => BagItems.Count == SlotCount;
 
         public int ItemCount(int itemId) => BagItems.Where(bi => bi.ItemId == itemId).Sum(bi => bi.Count);
+
+        public int HighestQuantityOfWaterId()
+        {
+            return waters.
+                OrderByDescending(c => ItemCount(c.Id)).
+                Select(x => x.Id).
+                FirstOrDefault();
+        }
+
+        public int HighestQuantityOfFoodId()
+        {
+            return foods.
+                OrderByDescending(c => ItemCount(c.Id)).
+                Select(x => x.Id).
+                FirstOrDefault();
+        }
+
     }
 }

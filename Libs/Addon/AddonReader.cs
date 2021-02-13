@@ -40,7 +40,10 @@ namespace Libs
             var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("../json/data/items.json"));
             var creatures = JsonConvert.DeserializeObject<List<Creature>>(File.ReadAllText("../json/data/creatures.json"));
 
-            this.BagReader = new BagReader(squareReader, 20, items, ReadAHPrices());
+            var foods = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText("../json/data/foods.json"));
+            var waters = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText("../json/data/waters.json"));
+
+            this.BagReader = new BagReader(squareReader, 20, items, foods, waters, ReadAHPrices());
             this.equipmentReader = new EquipmentReader(squareReader, 30);
             this.PlayerReader = new PlayerReader(squareReader, creatures);
             this.LevelTracker = new LevelTracker(PlayerReader);
