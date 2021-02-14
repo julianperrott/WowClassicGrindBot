@@ -83,6 +83,7 @@ DataToColor.r = 0
 
 -- Character's name
 local CHARACTER_NAME = UnitName("player")
+local CHARACTER_GUID = UnitGUID("player")
 local uiErrorMessage=0;
 local lastCombatDamageDealerCreature=0;
 local lastCombatCreature=0;
@@ -166,8 +167,12 @@ local function OnCombatEvent(self, event)
     end
 
     if eventType=="PARTY_KILL" or eventType=="UNIT_DIED" then
-        lastCombatCreatureDied=tonumber(string.sub(destGUID, -6),16);
-        --print("killing blow on " .. lastCombatCreatureDied)
+        if destGUID ~= CHARACTER_GUID and destGUID ~= UnitGUID("pet") then
+            lastCombatCreatureDied=tonumber(string.sub(destGUID, -6),16);
+            --print("killing blow\n" .. lastCombatCreatureDied)
+        else
+            --print("ignore killing blow\n" .. tonumber(string.sub(destGUID, -6),16))
+        end
     end
 
     --print(CombatLogGetCurrentEventInfo());
