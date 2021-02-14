@@ -20,17 +20,17 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Interact",
-        "Key": "H",
-        "Requirement": "Mana%<10",
-        "Cooldown": 3
-      },
-      {
         "Name": "Fireball",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "2",
-        "ManaRequirement": 65
+        "ManaRequirement": 30,
+        "Requirement": "TargetHealth%>10"
+      },
+      {
+        "Name": "Interact",
+        "Key": "H",
+        "Cooldown": 2
       }
     ]
   },
@@ -44,7 +44,7 @@
         "Requirement": "not Frost Armor"
       },
       {
-        "Name": "Low Health",
+        "Name": "Food",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "-",
@@ -56,7 +56,7 @@
         "Name": "Water",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "=",
+        "Key": "0",
         "Requirement": "Mana%<30",
         "Cooldown": 15,
         "Log": false
@@ -75,7 +75,7 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagCount>16",
+        "Requirement": "BagFull",
         "PathFilename": "1_Gnome_Vendor.json",
         "Cost": 6
       }

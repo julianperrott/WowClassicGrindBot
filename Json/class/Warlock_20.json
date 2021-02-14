@@ -26,8 +26,8 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Minor Healthstone",
-        "Key": "NumPad3",
+        "Name": "heal",
+        "Key": "N3",
         "Requirements": ["Health%<50", "BagItem:19005:1"],
         "Cooldown": 60,
         "InCombat": "true",
@@ -38,34 +38,43 @@
         "Key": "9",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Requirements": ["TargetHealth%<20", "not BagItem:6265:3"],
+        "Requirements": ["TargetHealth%<25", "not BagItem:6265:3"],
         "MinMana": 55
       },
       {
         "Name": "Drain Life",
-        "Key": "NumPad4",
+        "Key": "N4",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Requirements": ["Health%<30"]
+        "Requirements": ["Health%<30"],
+        "MinMana": 55
+      },
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "Requirement": "not Immolate",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "ResetOnNewTarget": true,
+        "MinMana": 90,
+        "Log": false
       },
       {
         "Name": "Curse of Agony",
         "Key": "2",
-        "Cooldown": 24,
         "ResetOnNewTarget": true,
-        "MinMana": 25,
-        "Log": false,
-        "DelayAfterCast": 1500
+        "Requirement": "not Curse of Agony",
+        "MinMana": 50,
+        "Log": false
       },
       {
         "Name": "Corruption",
         "Key": "7",
-        "HasCastBar": true,
-        "Cooldown": 12,
+        "Requirement": "not Corruption",
         "ResetOnNewTarget": true,
-        "MinMana": 25,
+        "MinMana": 55,
         "Log": false,
-        "DelayAfterCast": 1500
+        "DelayAfterCast": 0
       },
       {
         "Name": "Interact",
@@ -85,17 +94,17 @@
   "Parallel": {
     "Sequence": [
       {
-        "Name": "Low Health",
+        "Name": "Food",
         "StopBeforeCast": true,
-        "Key": "NumPad1",
+        "Key": "N1",
         "Requirement": "Health%<50",
         "Cooldown": 20,
         "Log": false
       },
       {
-        "Name": "Drink",
+        "Name": "Water",
         "StopBeforeCast": true,
-        "Key": "NumPad2",
+        "Key": "N2",
         "Requirement": "Mana%<50",
         "Cooldown": 20,
         "Log": false
@@ -138,10 +147,24 @@
         "Log": false
       },
       {
-        "Name": "Create Healthstone (Minor)",
-        "Key": "NumPad3",
+        "Name": "heal",
+        "Key": "N3",
         "HasCastBar": true,
         "Requirements": ["BagItem:6265:1", "not BagItem:19005:1"]
+      },
+      {
+        "Name": "ss",
+        "Key": "N5",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["BagItem:6265:1", "not BagItem:5232:1"]
+      },
+      {
+        "Name": "ss",
+        "Key": "N5",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["BagItem:5232:1", "not Soulstone Resurrection"]
       }
     ]
   }
@@ -158,8 +181,7 @@
         {
           "Name": "Sell",
           "Key": "C",
-          "Requirement": "BagCount>70",
-          "PathFilename": "17_Redridge_Vendor.json",
+          "Requirement": "BagFull",
           "Cost": 6
         }
       ]

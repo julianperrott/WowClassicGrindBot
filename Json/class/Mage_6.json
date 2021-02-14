@@ -1,7 +1,8 @@
 {
     "ClassName": "Mage",
     "Loot": true,
-    "PathFilename": "1-5_Gnome.json",
+    "Skin": true,
+    "PathFilename": "5_Gnome.json",
     "PathThereAndBack": true,
     "PathReduceSteps": false,
   
@@ -19,22 +20,24 @@
     "Combat": {
       "Sequence": [
         {
+          "Name": "Fire Blast",
+          "Key": "5",
+          "ManaRequirement": 40,
+          "Cooldown": 8,
+          "Requirements": ["TargetHealth%<45", "SpellInRange:4"],
+          "DelayAfterCast": 0
+        },
+        {
           "Name": "Fireball",
           "HasCastBar": true,
           "StopBeforeCast": true,
           "Key": "2",
-          "ManaRequirement": 30
-        },
-        {
-          "Name": "Fire Blast",
-          "Key": "5",
-          "ManaRequirement": 40,
-          "Cooldown": 8
+          "ManaRequirement": 45
         },
         {
           "Name": "Interact",
           "Key": "H",
-          "Cooldown": 3
+          "Cooldown": 2
         }
       ]
     },
@@ -45,7 +48,7 @@
           "HasCastBar": true,
           "StopBeforeCast": true,
           "Key": "6",
-          "Requirement": "Health%<30",
+          "Requirement": "Health%<50",
           "Cooldown": 10,
           "Log": false
         },
@@ -54,7 +57,7 @@
           "HasCastBar": true,
           "StopBeforeCast": true,
           "Key": "7",
-          "Requirement": "Mana%<30",
+          "Requirement": "Mana%<50",
           "Cooldown": 10,
           "Log": false
         }
@@ -103,14 +106,14 @@
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "1_Gnome_Vendor.json",
+        "PathFilename": "5_Gnome_Vendor.json",
         "Cost": 6
       },
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagCount>16",
-        "PathFilename": "1_Gnome_Vendor.json",
+        "Requirement": "BagFull",
+        "PathFilename": "5_Gnome_Vendor.json",
         "Cost": 6
       }
     ]
