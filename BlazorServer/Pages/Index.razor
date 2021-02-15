@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 
 @inject Libs.IAddonReader addonReader
 @inject Libs.IBotController botController
@@ -21,10 +21,10 @@
             </div>
 
             <div class="col-sm" style="margin-left:10px">
-                <BotHeader ShowActiveGoal="false" />
+                <BotHeader ShowActiveGoal="false" Hide="@(botController.IsBotActive)" />
 
-                <ProfileSelectorComponent />
-                <PathSelectorComponent />
+                <ProfileSelectorComponent Hide="@(botController.IsBotActive)" />
+                <PathSelectorComponent Hide="@(botController.IsBotActive)" />
                 <GoalsComponent />
             </div>
         }

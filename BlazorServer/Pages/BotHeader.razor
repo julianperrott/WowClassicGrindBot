@@ -2,7 +2,7 @@
 @inject Libs.IAddonReader addonReader
 @inject Libs.IBotController botController
 
-<div class="card">
+<div class="card @(Hide ? "hide" : "")">
     <div class="card-header">
         Player
         <span class="float-right badge @CombatBadge()">@Libs.GOAP.GoapKeyDescription.ToString(Libs.GOAP.GoapKey.incombat, PlayerInCombat)</span>
@@ -74,6 +74,9 @@
 </div>
 
 @code {
+
+    [Parameter]
+    public bool Hide { get; set; } = false;
 
     [Parameter]
     public bool ShowActiveGoal { get; set; } = true;

@@ -2,7 +2,7 @@
 @inject Libs.IBotController botController
 @inject Libs.IAddonReader addonReader
 
-<div class="card" style="margin-top: 10px">
+<div class="card @(Hide ? "hide" : "")" style="margin-top: 10px">
     <div class="card-header">
         <button class="btn btn-sm btn-primary" @onclick="RefreshData">
             <span class="glyphicon glyphicon-refresh"></span>
@@ -26,6 +26,9 @@
 </div>
 
 @code {
+
+    [Parameter]
+    public bool Hide { get; set; } = false;
 
     List<string> files = new List<string> { string.Empty };
 
