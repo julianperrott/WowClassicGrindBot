@@ -155,10 +155,9 @@ local function OnUIErrorMessage(self, event, messageType, message)
 local function OnCombatEvent(self, event)
     local timestamp, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, spellName, spellSchool = CombatLogGetCurrentEventInfo();
     if eventType=="SPELL_PERIODIC_DAMAGE" then
-        --print("PERIODIC");
         lastCombatCreature=0;
     elseif string.find(sourceGUID, "Creature") then
-        lastCombatCreature=tonumber(string.sub(sourceGUID, -6),16);
+        lastCombatCreature = DataToColor:getGuidFromUUID(sourceGUID);
         lastCombatDamageDealerCreature = lastCombatCreature;
         --print(sourceGUID.." "..lastCombatCreature);
     else
@@ -166,12 +165,12 @@ local function OnCombatEvent(self, event)
         --print("Other "..eventType);
     end
 
-    if eventType=="PARTY_KILL" or eventType=="UNIT_DIED" then
-        if destGUID ~= CHARACTER_GUID and destGUID ~= UnitGUID("pet") then
-            lastCombatCreatureDied=tonumber(string.sub(destGUID, -6),16);
-            --print("killing blow\n" .. lastCombatCreatureDied)
+    if eventType=="UNIT_DIED" then
+        if string.find(destGUID, "Creature") then
+            lastCombatCreatureDied = DataToColor:getGuidFromUUID(destGUID);
+            --print("v_killing blow " .. destGUID .. " " .. lastCombatCreatureDied .. " " .. destName)
         else
-            --print("ignore killing blow\n" .. tonumber(string.sub(destGUID, -6),16))
+            --print("i_killing blow " .. destGUID .. " " .. destName)
         end
     end
 
@@ -283,6 +282,7 @@ function DataToColor:OnInitialize()
     LoggingChat(1);
 end
 
+-- This function is able to pass numbers in range 0 to 16777215
 function integerToColor(i)
     if i ~= math.floor(i) then
         error("The number passed to 'integerToColor' must be an integer")
@@ -472,7 +472,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(DataToColor:getDebuffsForTarget()), 55) -- target debuffs
 
             MakePixelSquareArr(integerToColor(DataToColor:targetNpcId()), 56) -- target id
-            MakePixelSquareArr(integerToColor(DataToColor:targetGuid()),57) -- target reasonably uniqueId
+            MakePixelSquareArr(integerToColor(DataToColor:getGuid("target")),57) -- target reasonably uniqueId
             MakePixelSquareArr(integerToColor(DataToColor:GetBestMap()),58) -- MapId
 
             MakePixelSquareArr(integerToColor(DataToColor:IsTargetOfTargetPlayerAsNumber()),59) -- IsTargetOfTargetPlayerAsNumber
@@ -481,8 +481,8 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(lastCombatDamageDealerCreature),66) -- Combat message last damage dealer creature
             MakePixelSquareArr(integerToColor(lastCombatCreatureDied),67) -- Last Killed Unit
 
-            MakePixelSquareArr(integerToColor(DataToColor:petGuid()),68) -- pet guid
-            MakePixelSquareArr(integerToColor(DataToColor:petTargetGuid()),69) -- pet target
+            MakePixelSquareArr(integerToColor(DataToColor:getGuid("pet")),68) -- pet guid
+            MakePixelSquareArr(integerToColor(DataToColor:getGuid("pettarget")),69) -- pet target
 
             self:HandleEvents()
         end
@@ -839,28 +839,38 @@ function DataToColor:targetNpcId()
     return 0;
 end
 
-function DataToColor:targetGuid()
-    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("target") or ''); 
+function DataToColor:getGuid(src)
+    local unitType, _, _, _, _, npcID, spawnUID = strsplit('-', UnitGUID(src) or ''); 
     if npcID ~= nil then
-        return tonumber(string.sub(guid, -6),16); -- last 6 hex chars e.g. 00002D3C4A becomes 2D3C4A, not perfect, but should be good enough.
+        return self:uniqueGuid(npcID, spawnUID);
     end
     return 0;
 end
 
-function DataToColor:petGuid()
-    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("pet") or ''); 
-    if npcID ~= nil then
-        return tonumber(string.sub(guid, -6),16);
-    end
-    return 0;
+function DataToColor:getGuidFromUUID(uuid)
+    local unitType, _, _, _, _, npcID, spawnUID = strsplit('-', uuid or ''); 
+    return self:uniqueGuid(npcID, spawnUID);
 end
 
-function DataToColor:petTargetGuid()
-    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("pettarget") or ''); 
-    if npcID ~= nil then
-        return tonumber(string.sub(guid, -6),16);
-    end
-    return 0;
+function DataToColor:uniqueGuid(npcId, spawn)
+    local spawnEpochOffset = bit.band(tonumber(string.sub(spawn, 5), 16), 0x7fffff)
+    local spawnIndex = bit.band(tonumber(string.sub(spawn, 1, 5), 16), 0xffff8)
+
+    local dd = date("*t", spawnEpochOffset)
+    local num = 
+    self:sum24(
+        dd.day +
+        dd.hour +
+        dd.min +
+        dd.sec +
+        npcId +
+        spawnIndex
+    );
+    return tonumber(num, 16);
+end
+
+function DataToColor:sum24(num)
+    return num % 0x1000000
 end
 
 -- A function used to check which items we have.
