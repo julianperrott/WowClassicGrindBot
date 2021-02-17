@@ -29,7 +29,7 @@
         "Name": "heal",
         "Key": "N3",
         "Requirements": ["Health%<50", "BagItem:19005:1"],
-        "Cooldown": 60,
+        "Cooldown": 120,
         "InCombat": "true",
         "Log": false
       },
@@ -52,7 +52,7 @@
       {
         "Name": "Immolate",
         "Key": "5",
-        "Requirement": "not Immolate",
+        "Requirements": ["TargetHealth%>35", "not Immolate"],
         "HasCastBar": true,
         "StopBeforeCast": true,
         "ResetOnNewTarget": true,
@@ -63,18 +63,28 @@
         "Name": "Curse of Agony",
         "Key": "2",
         "ResetOnNewTarget": true,
-        "Requirement": "not Curse of Agony",
+        "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
         "MinMana": 50,
         "Log": false
       },
       {
         "Name": "Corruption",
         "Key": "7",
-        "Requirement": "not Corruption",
+        "Requirements": ["TargetHealth%>35", "not Corruption"],
         "ResetOnNewTarget": true,
         "MinMana": 55,
+        "Log": false
+      },
+      {
+        "Name": "Shadow Bolt",
+        "Key": "1",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "ResetOnNewTarget": true,
+        "MinMana": 110,
+        "Requirement": "TargetHealth%>35",
         "Log": false,
-        "DelayAfterCast": 0
+        "Cooldown": 8
       },
       {
         "Name": "Interact",
@@ -151,20 +161,6 @@
         "Key": "N3",
         "HasCastBar": true,
         "Requirements": ["BagItem:6265:1", "not BagItem:19005:1"]
-      },
-      {
-        "Name": "ss",
-        "Key": "N5",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
-        "Requirements": ["BagItem:6265:1", "not BagItem:5232:1"]
-      },
-      {
-        "Name": "ss",
-        "Key": "N5",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
-        "Requirements": ["BagItem:5232:1", "not Soulstone Resurrection"]
       }
     ]
   }
