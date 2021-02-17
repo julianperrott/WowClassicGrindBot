@@ -1,15 +1,8 @@
 {
   "ClassName": "Warlock",
-  "Loot": false,
+  "Loot": true,
   "NPCMaxLevels_Below": 3,
-
-  // 6-7
-  "PathFilename": "Human5_3.json",
-  "SpiritPathFilename": "Human5_2_spiritHealer.json",
-
-  // 1-5
-  //"PathFilename": "1_Human.json",
-  //"SpiritPathFilename": "1_Human_SpirtHealer.json",
+  "PathFilename": "1_Gnome.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
@@ -47,26 +40,42 @@
         "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "Demon Skin",
-        "Log": false
+        "Requirement": "not Demon Skin"
       },
       {
-        "Name": "Eat",
+        "Name": "Food",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "=",
-        "Requirement": "Health>50%",
-        "Log": false
+        "Key": "N1",
+        "Requirement": "Health%<50",
+        "Cooldown": 60
       },
       {
-        "Name": "Drink",
+        "Name": "Water",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "-",
-        "Requirement": "Mana>50%",
-        "Cooldown": 60,
-        "Log": false
+        "Key": "N2",
+        "Requirement": "Mana%<50",
+        "Cooldown": 60
       }
     ]
-  }
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+}
 }
