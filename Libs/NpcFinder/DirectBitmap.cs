@@ -23,7 +23,7 @@ namespace Libs.NpcFinder
 
         public Point ToScreenCoordinates(int x, int y)
         {
-            return new Point(x, y + Rect.Top);
+            return new Point(Rect.X + x, y + Rect.Top);
         }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
