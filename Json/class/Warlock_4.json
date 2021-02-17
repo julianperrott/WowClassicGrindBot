@@ -1,7 +1,7 @@
 {
   "ClassName": "Warlock",
-  "Loot": true,
-  "NPCMaxLevels_Below": 3,
+  "Loot": false,
+  "NPCMaxLevels_Below": 4,
   "PathFilename": "1_Gnome.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
@@ -20,16 +20,39 @@
   "Combat": {
     "Sequence": [
       {
+        "Name": "Immolate",
+        "HasCastBar": true,
+        "Key": "5",
+        "Requirements": ["TargetHealth%>35", "not Immolate"], 
+        "ResetOnNewTarget": true,
+        "MinMana": 25
+      },
+      {
+        "Name": "Corruption",
+        "HasCastBar": true,
+        "Key": "7",
+        "Requirements": ["TargetHealth%>35", "not Corruption"], 
+        "ResetOnNewTarget": true,
+        "MinMana": 25
+      },
+      {
         "Name": "Shadow Bolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
-        "MinMana": 25
+        "MinMana": 25,
+        "Cooldown": 8
       },
       {
         "Name": "Interact",
         "Key": "H",
         "Cooldown": 3
+      },
+      {
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "Requirement": "not Shooting",
+        "Log": false
       }
     ]
   },
@@ -37,10 +60,19 @@
     "Sequence": [
       {
         "Name": "Demon Skin",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "not Demon Skin"
+        "Requirement": "not Demon Skin",
+        "Log": false
+      },
+      {
+        "Name": "Summon Imp",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "4",
+        "MinMana": 122,
+        "Requirement": "not Has Pet",
+        "Log": false
       },
       {
         "Name": "Food",
@@ -77,5 +109,5 @@
         "Cost": 6
       }
     ]
-}
+  }
 }
