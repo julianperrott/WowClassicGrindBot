@@ -273,11 +273,14 @@ namespace Libs
 
         public List<string> PathFileList()
         {
-            DirectoryInfo directory = new DirectoryInfo("../Json/path/");
-            var list = directory.GetFiles().Select(i => i.Name).ToList();
-            list.Sort(new NaturalStringComparer());
-            list.Insert(0, "Use Class Profile Default");
-            return list;
+            var root = "../Json/path/";
+
+            var files = Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories)
+                .Select(path => path.Replace(root, "")).ToList();
+
+            files.Sort(new NaturalStringComparer());
+            files.Insert(0, "Use Class Profile Default");
+            return files;
         }
 
         public void LoadPathProfile(string pathFilename)
