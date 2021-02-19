@@ -1,0 +1,150 @@
+{
+  "ClassName": "Warlock",
+  "Loot": true,
+  "NPCMaxLevels_Below": 4,
+  "PathFilename": "5_Gnome.json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": false,
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "pull",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "5",
+        "MinMana": 25
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Drain Soul",
+        "Key": "9",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["TargetHealth%<25", "not BagItem:6265:3"],
+        "MinMana": 55
+      },
+      {
+        "Name": "Immolate",
+        "HasCastBar": true,
+        "Key": "5",
+        "Requirements": ["TargetHealth%>35", "not Immolate"], 
+        "ResetOnNewTarget": true,
+        "MinMana": 25
+      },
+      {
+        "Name": "Curse of Agony",
+        "Key": "2",
+        "ResetOnNewTarget": true,
+        "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
+        "MinMana": 25,
+        "Log": false
+      },
+      {
+        "Name": "Corruption",
+        "HasCastBar": true,
+        "Key": "7",
+        "Requirements": ["TargetHealth%>35", "not Corruption"], 
+        "ResetOnNewTarget": true,
+        "MinMana": 25
+      },
+      {
+        "Name": "Shadow Bolt",
+        "HasCastBar": true,
+        "Key": "2",
+        "MinMana": 25,
+        "Cooldown": 8
+      },
+      {
+        "Name": "Interact",
+        "Key": "H",
+        "Cooldown": 3
+      },
+      {
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "Requirement": "not Shooting",
+        "Log": false
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "StopBeforeCast": true,
+        "Key": "N1",
+        "Requirement": "Health%<50",
+        "Cooldown": 20,
+        "Log": false
+      },
+      {
+        "Name": "Water",
+        "StopBeforeCast": true,
+        "Key": "N2",
+        "Requirement": "Mana%<50",
+        "Cooldown": 20,
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Demon Skin",
+        "Key": "3",
+        "MinMana": 50,
+        "Requirement": "not Demon Skin",
+        "Log": false
+      },
+      {
+        "Name": "Summon Voidwalker",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "4",
+        "MinMana": 122,
+        "Requirements": ["BagItem:6265:1", "not Has Pet"],
+        "Log": false,
+        "Cooldown": 60
+      },
+      {
+        "Name": "Life Tap",
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirements": ["Health%>70","Mana%<60"],
+        "Cooldown": 0,
+        "Log": false
+      },
+      {
+        "Name": "Life Tap 2",
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirements": ["Health%>80","Mana%<80"],
+        "Cooldown": 0,
+        "Log": false
+      },
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}
