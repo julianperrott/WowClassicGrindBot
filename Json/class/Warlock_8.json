@@ -2,8 +2,8 @@
   "ClassName": "Warlock",
   "Loot": true,
   "NPCMaxLevels_Below": 4,
-  "PathFilename": "1_Gnome.json",
-  "PathThereAndBack": true,
+  "PathFilename": "5_Gnome.json",
+  "PathThereAndBack": false,
   "PathReduceSteps": false,
 
   "Pull": {
@@ -26,6 +26,14 @@
         "Requirements": ["TargetHealth%>35", "not Immolate"], 
         "ResetOnNewTarget": true,
         "MinMana": 25
+      },
+      {
+        "Name": "Curse of Agony",
+        "Key": "2",
+        "ResetOnNewTarget": true,
+        "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
+        "MinMana": 25,
+        "Log": false
       },
       {
         "Name": "Corruption",
@@ -56,6 +64,26 @@
       }
     ]
   },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "StopBeforeCast": true,
+        "Key": "N1",
+        "Requirement": "Health%<50",
+        "Cooldown": 20,
+        "Log": false
+      },
+      {
+        "Name": "Water",
+        "StopBeforeCast": true,
+        "Key": "N2",
+        "Requirement": "Mana%<50",
+        "Cooldown": 20,
+        "Log": false
+      }
+    ]
+  },
   "Adhoc": {
     "Sequence": [
       {
@@ -75,21 +103,21 @@
         "Log": false
       },
       {
-        "Name": "Food",
-        "HasCastBar": true,
+        "Name": "Life Tap",
         "StopBeforeCast": true,
-        "Key": "N1",
-        "Requirement": "Health%<50",
-        "Cooldown": 60
+        "Key": "8",
+        "Requirements": ["Health%>70","Mana%<60"],
+        "Cooldown": 0,
+        "Log": false
       },
       {
-        "Name": "Water",
-        "HasCastBar": true,
+        "Name": "Life Tap 2",
         "StopBeforeCast": true,
-        "Key": "N2",
-        "Requirement": "Mana%<50",
-        "Cooldown": 60
-      }
+        "Key": "8",
+        "Requirements": ["Health%>80","Mana%<80"],
+        "Cooldown": 0,
+        "Log": false
+      },
     ]
   },
   "NPC": {
@@ -98,14 +126,14 @@
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "1_Gnome_Vendor.json",
+        "PathFilename": "5_Gnome_Vendor.json",
         "Cost": 6
       },
       {
         "Name": "Sell",
         "Key": "C",
         "Requirement": "BagFull",
-        "PathFilename": "1_Gnome_Vendor.json",
+        "PathFilename": "5_Gnome_Vendor.json",
         "Cost": 6
       }
     ]
