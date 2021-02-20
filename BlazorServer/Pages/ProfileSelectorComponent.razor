@@ -81,6 +81,7 @@
     {
         files = botController.ClassFileList();
         selectedProfile = botController.SelectedClassFilename;
+        disableButton = string.IsNullOrEmpty(selectedProfile);
     }
 
     private async Task SyncActionBar()
