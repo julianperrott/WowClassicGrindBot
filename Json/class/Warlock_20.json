@@ -1,7 +1,6 @@
 {
   "ClassName": "Warlock",
   "Loot": true,
-  "Skin": true,
   "NPCMaxLevels_Above": 2,
 
   "PathFilename": "17_Redridge.json",
@@ -61,7 +60,7 @@
       },
       {
         "Name": "Curse of Agony",
-        "Key": "2",
+        "Key": "1",
         "ResetOnNewTarget": true,
         "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
         "MinMana": 50,
@@ -77,7 +76,7 @@
       },
       {
         "Name": "Shadow Bolt",
-        "Key": "1",
+        "Key": "2",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "ResetOnNewTarget": true,
@@ -171,13 +170,14 @@
           "Name": "Repair",
           "Key": "C",
           "Requirement": "Items Broken",
-          "PathFilename": "17_Redridge_Vendor.json",
+          "PathFilename": "23_Duskwood_Vendor.json",
           "Cost": 6
         },
         {
           "Name": "Sell",
           "Key": "C",
           "Requirement": "BagFull",
+          "PathFilename": "23_Duskwood_Vendor.json",
           "Cost": 6
         }
       ]

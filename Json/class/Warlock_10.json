@@ -30,6 +30,7 @@
       {
         "Name": "Immolate",
         "HasCastBar": true,
+        "StopBeforeCast": true,
         "Key": "5",
         "Requirements": ["TargetHealth%>35", "not Immolate"], 
         "ResetOnNewTarget": true,
@@ -37,7 +38,7 @@
       },
       {
         "Name": "Curse of Agony",
-        "Key": "2",
+        "Key": "1",
         "ResetOnNewTarget": true,
         "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
         "MinMana": 25,
@@ -46,6 +47,7 @@
       {
         "Name": "Corruption",
         "HasCastBar": true,
+        "StopBeforeCast": true,
         "Key": "7",
         "Requirements": ["TargetHealth%>35", "not Corruption"], 
         "ResetOnNewTarget": true,
@@ -54,6 +56,7 @@
       {
         "Name": "Shadow Bolt",
         "HasCastBar": true,
+        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 25,
         "Cooldown": 8
