@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Libs
         public bool StopBeforeCast { get; set; } = false;
         public ConsoleKey ConsoleKey { get; set; } = 0;
         public string Key { get; set; } = string.Empty;
-        public int PressDuration { get; set; } = 75;
+        public int PressDuration { get; set; } = 100;
         public string ShapeShiftForm { get; set; } = string.Empty;
         public ShapeshiftForm ShapeShiftFormEnum { get; set; } = ShapeshiftForm.None;
         public string CastIfAddsVisible { get; set; } = "";
