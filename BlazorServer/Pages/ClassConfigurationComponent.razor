@@ -1,0 +1,110 @@
+﻿@using Libs
+@inject Libs.IBotController botController
+@inject Libs.IAddonReader addonReader
+
+@if (classConfig != null)
+{
+    <div class="card">
+        <div class="card-header">
+            Class Configuration
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <table class="table table-bordered">
+                @foreach (var property in classConfig.GetType().GetProperties())
+                {
+                    if (property.Name.Contains("ClassName") ||
+                        property.Name.Contains("PathFilename") ||
+                        property.Name.Contains("SpiritPathFilename") ||
+                        property.Name.Contains("OverridePathFilename")
+                        )
+                        continue;
+                <tr>
+                    @switch (property.PropertyType.FullName)
+                    {
+                        case "System.String":
+                            <td>@(property.Name)</td>
+                            <td>
+                                <input value="@property.GetValue(classConfig)?.ToString()"
+                                       @onchange="c => { property.SetValue(classConfig, c.Value); Update(); }" />
+                            </td>
+                            break;
+
+                        case "System.Int32":
+                            <td>@(property.Name)</td>
+                            <td>
+                                <input value="@property.GetValue(classConfig)?.ToString()"
+                                       @onchange="c => { int n = System.Convert.ToInt32(c.Value); property.SetValue(classConfig, n); Update(); }" />
+                            </td>
+                            break;
+                        case "System.Boolean":
+                            <td>@(property.Name)</td>
+                            <td>
+                                <input type="checkbox" checked="@(CBool(property.GetValue(classConfig)))"
+                                       @onchange="c => { property.SetValue(classConfig, c.Value); Update(); }" />
+                            </td>
+                            break;
+                        default: /*Unsuported/Not implemented editing*/
+                            <!--<input Text="@property.GetValue(classConfig)?.ToString()" Disabled="true" />-->
+                            break;
+                    }
+                </tr>
+                }
+            </table>
+        </div>
+    </div>
+    }
+
+@code {
+
+    private ClassConfiguration? classConfig;
+
+    protected override void OnInitialized()
+    {
+        if (Libs.DataFrameConfiguration.ConfigurationExists())
+        {
+            RefreshData();
+
+            botController.ProfileLoaded -= OnProfileLoaded;
+            botController.ProfileLoaded += OnProfileLoaded;
+
+            ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+            {
+                base.InvokeAsync(() =>
+                {
+                    try
+                    {
+                        StateHasChanged();
+                    }
+                    catch { }
+                });
+            };
+        }
+    }
+
+    public void OnGet()
+    {
+        RefreshData();
+    }
+
+    private void OnProfileLoaded(object? sender, EventArgs e)
+    {
+        RefreshData();
+    }
+
+    private void RefreshData()
+    {
+        classConfig = botController.ClassConfig;
+    }
+
+    private void Update()
+    {
+        if(classConfig != null)
+            botController.OverrideClassConfig(classConfig);
+    }
+
+    private bool CBool(object? o)
+    {
+        bool? b = (bool?)o;
+        return b.HasValue && b.Value;
+    }
+}
