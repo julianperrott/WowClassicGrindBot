@@ -1,4 +1,5 @@
 ﻿using Libs.GOAP;
+using Libs.Path;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,12 @@ namespace Libs.Goals
 {
     public partial class WalkToCorpseGoal : GoapGoal, IRouteProvider
     {
-        private double RADIAN = Math.PI * 2;
-        private WowProcess wowProcess;
+        public override float CostOfPerformingAction { get => 1f; }
+
+        private readonly ILogger logger;
+        private readonly WowProcess wowProcess;
+        private readonly WowInput wowInput;
+
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
@@ -20,7 +25,9 @@ namespace Libs.Goals
         private readonly List<WowPoint> routePoints;
         private readonly StuckDetector stuckDetector;
         private readonly IPPather pather;
+
         private Stack<WowPoint> points = new Stack<WowPoint>();
+        private double RADIAN = Math.PI * 2;
 
         public List<WowPoint> PathingRoute()
         {
@@ -30,38 +37,39 @@ namespace Libs.Goals
         public List<WowPoint> Deaths { get; } = new List<WowPoint>();
 
         private Random random = new Random();
-        private ILogger logger;
+        
         private DateTime LastJump = DateTime.Now;
         private DateTime LastReset = DateTime.Now;
         private DateTime LastEventReceived = DateTime.Now;
 
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
+        private WowPoint corpseLocation = new WowPoint(0, 0);
+
+        private bool NeedsToReset = true;
+
         public WowPoint? NextPoint()
         {
             return points.Count == 0 ? null : points.Peek();
         }
 
-        public WalkToCorpseGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, IPPather pather)
+        public WalkToCorpseGoal(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather)
         {
-            this.playerReader = playerReader;
+            this.logger = logger;
             this.wowProcess = wowProcess;
+            this.wowInput = wowInput;
+
+            this.playerReader = playerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.routePoints = routePoints.ToList();
             this.spiritWalkerPath = spiritWalker.ToList();
-            this.logger = logger;
+            
             this.stuckDetector = stuckDetector;
             this.pather = pather;
 
             AddPrecondition(GoapKey.isdead, true);
         }
-
-        public override float CostOfPerformingAction { get => 1f; }
-
-        private WowPoint corpseLocation = new WowPoint(0, 0);
-
-        private bool NeedsToReset = true;
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
         {
@@ -214,6 +222,13 @@ namespace Libs.Goals
             return (DateTime.Now - LastActive).TotalSeconds < 2;
         }
 
+        private void SimplyfyRouteToWaypoint()
+        {
+            var simple = PathSimplify.Simplify(points.ToArray(), 0.1f);
+            simple.Reverse();
+            points = new Stack<WowPoint>(simple);
+        }
+
         public async Task Reset()
         {
             LastReset = DateTime.Now;
@@ -336,11 +351,6 @@ namespace Libs.Goals
             return pathToCorpse;
         }
 
-        public static bool IsDone()
-        {
-            return false;
-        }
-
         private static double DistanceTo(WowPoint l1, WowPoint l2)
         {
             var x = l1.X - l2.X;
@@ -389,7 +399,7 @@ namespace Libs.Goals
                 {
                     logger.LogInformation($"Random jump");
 
-                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 499);
+                    await wowInput.TapJump();
                 }
             }
             LastJump = DateTime.Now;
