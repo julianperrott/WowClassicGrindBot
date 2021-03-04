@@ -213,6 +213,10 @@ body, table, .card-body {
     color: gray;
 }
 
+td {
+    color: #999;
+}
+
 .hide {
     display: none;
 }
