@@ -1,4 +1,4 @@
-﻿using PathingAPI.WorldToMap;
+using PathingAPI.WorldToMap;
 using PatherPath.Graph;
 using System;
 using System.Collections.Generic;
@@ -108,6 +108,11 @@ namespace PathingAPI
             OnPathCreated?.Invoke(path);
             lastPath = path;
             return path;
+        }
+
+        public void Save()
+        {
+            search.PathGraph.Save();
         }
 
         public void SetOnPathCreated(Action<Path> action)
