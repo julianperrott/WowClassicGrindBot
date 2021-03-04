@@ -26,6 +26,7 @@ namespace Libs
             {"-",ConsoleKey.OemMinus },
             {"=",ConsoleKey.OemPlus },
             {" ",ConsoleKey.Spacebar },
+            {"Space",ConsoleKey.Spacebar },
             {BR + "0",ConsoleKey.NumPad0 },
             {BR + "1",ConsoleKey.NumPad1 },
             {BR + "2",ConsoleKey.NumPad2 },
