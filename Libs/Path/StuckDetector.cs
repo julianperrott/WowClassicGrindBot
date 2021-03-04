@@ -9,10 +9,14 @@ namespace Libs
 {
     public class StuckDetector
     {
-        private readonly PlayerReader playerReader;
-        private readonly WowProcess wowProcess;
-        private readonly StopMoving stopMoving;
         private readonly ILogger logger;
+        private readonly WowProcess wowProcess;
+        private readonly WowInput wowInput;
+
+        private readonly PlayerReader playerReader;
+        
+        private readonly StopMoving stopMoving;
+        
         private readonly Random random = new Random();
         private readonly IPlayerDirection playerDirection;
 
@@ -23,12 +27,14 @@ namespace Libs
         private double previousDistanceToTarget = 99999;
         private DateTime timeOfLastSignificantMovement = DateTime.Now;
 
-        public StuckDetector(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, StopMoving stopMoving, ILogger logger)
+        public StuckDetector(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving)
         {
-            this.playerReader = playerReader;
-            this.wowProcess = wowProcess;
-            this.stopMoving = stopMoving;
             this.logger = logger;
+            this.wowProcess = wowProcess;
+            this.wowInput = wowInput;
+
+            this.playerReader = playerReader;
+            this.stopMoving = stopMoving;
             this.playerDirection = playerDirection;
 
             ResetStuckParameters();
@@ -68,7 +74,7 @@ namespace Libs
 
         public async Task Unstick()
         {
-            await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+            await wowInput.TapJump();
 
             logger.LogInformation($"Stuck for {actionDurationSeconds}s, last tried to unstick {unstickSeconds}s ago. Unstick seconds={unstickSeconds}.");
 
@@ -115,7 +121,7 @@ namespace Libs
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "StuckDetector");
                 await Task.Delay(strafeDuration);
 
-                await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+                await wowInput.TapJump();
 
                 var heading = DirectionCalculator.CalculateHeading(this.playerReader.PlayerLocation, targetLocation);
                 await playerDirection.SetDirection(heading, targetLocation, "Move to next point");
@@ -125,7 +131,7 @@ namespace Libs
             }
             else
             {
-                await wowProcess.KeyPress(ConsoleKey.Spacebar, 500);
+                await wowInput.TapJump();
             }
         }
 

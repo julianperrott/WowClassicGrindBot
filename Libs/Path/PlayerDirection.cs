@@ -6,22 +6,28 @@ namespace Libs
 {
     public class PlayerDirection : IPlayerDirection
     {
-        private double RADIAN = Math.PI * 2;
-        private WowProcess wowProcess;
+        private readonly ILogger logger;
+        private readonly WowProcess wowProcess;
         private readonly PlayerReader playerReader;
-        public DateTime LastSetDirection { get; private set; } = DateTime.Now.AddDays(-1);
-        private ILogger logger;
 
-        public PlayerDirection(PlayerReader playerReader, WowProcess wowProcess, ILogger logger)
+        public DateTime LastSetDirection { get; private set; } = DateTime.Now.AddDays(-1);
+        private double RADIAN = Math.PI * 2;
+
+        private const int DefaultIgnoreDistance = 15;
+
+
+        private bool debug = false;
+
+        public PlayerDirection(ILogger logger, WowProcess wowProcess, PlayerReader playerReader)
         {
-            this.playerReader = playerReader;
-            this.wowProcess = wowProcess;
             this.logger = logger;
+            this.wowProcess = wowProcess;
+            this.playerReader = playerReader;
         }
 
         public async Task SetDirection(double desiredDirection, WowPoint point, string source)
         {
-            await SetDirection(desiredDirection, point, source, 40);
+            await SetDirection(desiredDirection, point, source, DefaultIgnoreDistance);
         }
 
         public async Task SetDirection(double desiredDirection, WowPoint point, string source, int ignoreDistance)
@@ -29,12 +35,12 @@ namespace Libs
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, point);
 
-            //logger.LogInformation("===============");
-            logger.LogInformation($"SetDirection:- {source} Desired: {desiredDirection.ToString("0.000")}, Current: {playerReader.Direction.ToString("0.000")}, distance: {distance.ToString("0.000")}");
+            if(!string.IsNullOrEmpty(source))
+                Log($"SetDirection:- {source} Desired: {desiredDirection.ToString("0.000")}, Current: {playerReader.Direction.ToString("0.000")}, distance: {distance.ToString("0.000")}");
 
             if (distance < ignoreDistance)
             {
-                logger.LogInformation("Too close, ignoring direction change.");
+                Log("Too close, ignoring direction change.");
                 return;
             }
 
@@ -87,7 +93,7 @@ namespace Libs
 
                 if (closeEnoughToDesiredDirection)
                 {
-                    logger.LogInformation("Close enough, stopping turn");
+                    Log("Close enough, stopping turn");
                     wowProcess.SetKeyState(key, false, true, "PlayerDirection");
                     break;
                 }
@@ -95,7 +101,7 @@ namespace Libs
                 bool goingTheWrongWay = GetDirectionKeyToPress(desiredDirection) != key;
                 if (goingTheWrongWay)
                 {
-                    logger.LogInformation("GOING THE WRONG WAY! Stop turn");
+                    Log("GOING THE WRONG WAY! Stop turn");
                     wowProcess.SetKeyState(key, false, true, "PlayerDirection");
                     break;
                 }
@@ -113,11 +119,19 @@ namespace Libs
 
             if (text != lastText)
             {
-                //logger.LogInformation(text);
+                //Log(text);
             }
 
             lastText = text;
             return result;
+        }
+
+        private void Log(string text)
+        {
+            if (debug)
+            {
+                logger.LogInformation($"{this.GetType().Name}: {text}");
+            }
         }
     }
 }

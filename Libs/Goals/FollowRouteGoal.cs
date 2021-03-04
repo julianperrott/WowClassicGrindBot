@@ -1,17 +1,39 @@
-﻿using Libs.GOAP;
+using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Libs.Path;
 
 namespace Libs.Goals
 {
     public class FollowRouteGoal : GoapGoal, IRouteProvider
     {
+        public override float CostOfPerformingAction { get => 20f; }
+
         private double RADIAN = Math.PI * 2;
-        private WowProcess wowProcess;
+
+        private readonly ILogger logger;
+        private readonly WowProcess wowProcess;
+        private readonly WowInput wowInput;
+
+        private readonly PlayerReader playerReader;
+        private readonly IPlayerDirection playerDirection;
+        private readonly StopMoving stopMoving;
+        private readonly NpcNameFinder npcNameFinder;
+        private readonly StuckDetector stuckDetector;
+        private readonly ClassConfiguration classConfiguration;
+        private readonly IPPather pather;
+        private double lastDistance = 999;
+        public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
+
+        private Random random = new Random();
+
+        private readonly IBlacklist blacklist;
+        private bool shouldMount = true;
+
         private readonly List<WowPoint> pointsList;
         private Stack<WowPoint> routeToWaypoint = new Stack<WowPoint>();
         private Stack<WowPoint> wayPoints = new Stack<WowPoint>();
@@ -27,28 +49,19 @@ namespace Libs.Goals
             return routeToWaypoint.Count == 0 ? null : routeToWaypoint.Peek();
         }
 
-        private readonly PlayerReader playerReader;
-        private readonly IPlayerDirection playerDirection;
-        private readonly StopMoving stopMoving;
-        private readonly NpcNameFinder npcNameFinder;
-        private readonly StuckDetector stuckDetector;
-        private readonly ClassConfiguration classConfiguration;
-        private readonly IPPather pather;
-        private double lastDistance = 999;
-        public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
-        private DateTime LastJump = DateTime.Now;
-        private Random random = new Random();
-        private DateTime lastTab = DateTime.Now;
-        private readonly IBlacklist blacklist;
-        private bool shouldMount = true;
-        private ILogger logger;
 
+        private bool debug = false;
+
+        private double avgDistance = 0;
         private bool firstLoad = true;
 
-        public FollowRouteGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather)
+        public FollowRouteGoal(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader,  IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather)
         {
-            this.playerReader = playerReader;
+            this.logger = logger;
             this.wowProcess = wowProcess;
+            this.wowInput = wowInput;
+
+            this.playerReader = playerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
 
@@ -56,7 +69,7 @@ namespace Libs.Goals
 
             this.npcNameFinder = npcNameFinder;
             this.blacklist = blacklist;
-            this.logger = logger;
+            
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
             this.pather = pather;
