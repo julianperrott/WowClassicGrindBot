@@ -12,9 +12,12 @@
         isdead = 80,
         shouldloot = 90,
         postloot = 91,
+        shouldskin = 92,
         usehealingpotion = 100,
         newtarget = 110,
         fighting = 120,
+        producedcorpse = 130,
+        consumecorpse = 131,
         abort = 140,
         shoulddrink = 150,
         classMount = 160,
@@ -55,6 +58,9 @@
                  (GoapKey.shouldloot, true) => "Need to loot",
                  (GoapKey.shouldloot, false) => "No need to loot",
 
+                 (GoapKey.shouldskin, true) => "Need to skin",
+                 (GoapKey.shouldskin, false) => "No need to skin",
+
                  (GoapKey.usehealingpotion, true) => "Use healing pot",
                  (GoapKey.usehealingpotion, false) => "My health is ok",
 
@@ -63,6 +69,12 @@
 
                  (GoapKey.fighting, true) => "Is fighting",
                  (GoapKey.fighting, false) => "Is not fighting",
+
+                 (GoapKey.producedcorpse, true) => "Kill credit",
+                 (GoapKey.producedcorpse, false) => "No kill",
+
+                 (GoapKey.consumecorpse, true) => "Corpse nearby",
+                 (GoapKey.consumecorpse, false) => "No corpse",
 
                  (GoapKey.abort, true) => "Should abort",
                  (GoapKey.abort, false) => "Should not abort",

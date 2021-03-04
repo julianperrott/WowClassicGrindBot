@@ -1,4 +1,4 @@
-using Libs.Goals;
+﻿using Libs.Goals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -88,6 +88,8 @@ namespace Libs.GOAP
                 new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
                 new KeyValuePair<GoapKey, object>(GoapKey.isswimming, playerReader.PlayerBitValues.IsSwimming),
                 new KeyValuePair<GoapKey, object>(GoapKey.itemsbroken,playerReader.PlayerBitValues.ItemsAreBroken),
+                new KeyValuePair<GoapKey, object>(GoapKey.producedcorpse, playerReader.LastCombatKillCount>0),
+                new KeyValuePair<GoapKey, object>(GoapKey.consumecorpse, playerReader.ShouldConsumeCorpse)
         };
 
             actionState.ToList().ForEach(kv => state.Add(kv));
