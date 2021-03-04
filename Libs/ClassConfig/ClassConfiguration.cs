@@ -26,6 +26,7 @@ namespace Libs
         public string ClassName { get; set; } = string.Empty;
         public bool Loot { get; set; } = true;
         public bool Skin { get; set; } = false;
+        public bool UseMount { get; set; } = true;
 
         public string PathFilename { get; set; } = string.Empty;
         public string SpiritPathFilename { get; set; } = string.Empty;
@@ -81,7 +82,6 @@ namespace Libs
         public string TargetTargetOfTargetKey { get; set; } = "F";
 
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
-        public bool UseMount { get; set; } = true;
 
         public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger, string? overridePathProfileFile)
         {
