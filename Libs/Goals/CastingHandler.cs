@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -8,20 +8,26 @@ namespace Libs.Goals
 {
     public class CastingHandler
     {
-        private readonly WowProcess wowProcess;
-        private readonly PlayerReader playerReader;
         private readonly ILogger logger;
+        private readonly WowProcess wowProcess;
+        private readonly WowInput wowInput;
+
+        private readonly PlayerReader playerReader;
+        
         private ConsoleKey lastKeyPressed = ConsoleKey.Escape;
-        private readonly ClassConfiguration classConfiguration;
+        private readonly ClassConfiguration classConfig;
         private readonly IPlayerDirection direction;
         private readonly NpcNameFinder npcNameFinder;
 
-        public CastingHandler(WowProcess wowProcess, PlayerReader playerReader, ILogger logger, ClassConfiguration classConfiguration, IPlayerDirection direction, NpcNameFinder npcNameFinder)
+        public CastingHandler(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder)
         {
-            this.wowProcess = wowProcess;
-            this.playerReader = playerReader;
             this.logger = logger;
-            this.classConfiguration = classConfiguration;
+            this.wowProcess = wowProcess;
+            this.wowInput = wowInput;
+
+            this.playerReader = playerReader;
+            
+            this.classConfig = classConfig;
             this.direction = direction;
             this.npcNameFinder = npcNameFinder;
         }
@@ -60,7 +66,7 @@ namespace Libs.Goals
             }
         }
 
-        public async Task<bool> CastIfReady(KeyAction item, GoapGoal source, int sleepBeforeCast = 0)
+        public async Task<bool> CastIfReady(KeyAction item, int sleepBeforeCast = 0)
         {
             if (!CanRun(item))
             {
@@ -79,7 +85,7 @@ namespace Libs.Goals
 
             if (this.playerReader.IsShooting)
             {
-                await TapInteractKey("Stop casting shoot");
+                await wowInput.TapInteractKey("Stop casting shoot");
                 await Task.Delay(1500); // wait for shooting to end
             }
 
@@ -100,13 +106,13 @@ namespace Libs.Goals
             }
             else
             {
-                await Task.Delay(300);
+                await playerReader.WaitForNUpdate(1);
                 if (!this.playerReader.IsCasting && this.playerReader.HasTarget)
                 {
                     await this.InteractOnUIError();
                     item.LogInformation($"Not casting, pressing it again");
                     await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
-                    await Task.Delay(300);
+                    await playerReader.WaitForNUpdate(1);
                     if (!this.playerReader.IsCasting && this.playerReader.HasTarget)
                     {
                         item.LogInformation($"Still not casting !");
@@ -120,7 +126,7 @@ namespace Libs.Goals
                 {
                     if (!this.playerReader.IsCasting)
                     {
-                        await Task.Delay(100);
+                        await playerReader.WaitForNUpdate(1);
                         break;
                     }
 
@@ -148,26 +154,12 @@ namespace Libs.Goals
                         }
                     }
                     
-                    if (source.GetType() == typeof(PullTargetGoal) &&
-                        this.playerReader.PlayerBitValues.PlayerInCombat &&
-                        !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer
-                        && this.playerReader.IsCasting
-                        && this.playerReader.TargetHealthPercentage > 99
-                        )
-                    {
-                        if (!this.playerReader.TargetIsFrostbitten)
-                        {
-                            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 200, "Stop cast as picked up an add, my mob is not targetting me.");
-                            await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
-                            break;
-                        }
-                    }
-
-                    await Task.Delay(100);
+                    //await playerReader.WaitForNUpdate(1);
                 }
             }
-            if (item.StepBackAfterCast > 0 ){
-                await this.wowProcess.KeyPress(ConsoleKey.DownArrow, item.StepBackAfterCast * 1000 , "Step back hero");
+            if (item.StepBackAfterCast > 0)
+            {
+                await this.wowProcess.KeyPress(ConsoleKey.DownArrow, item.StepBackAfterCast , $"Step back for {item.StepBackAfterCast}ms");
             }
             return true;
         }
@@ -180,7 +172,7 @@ namespace Libs.Goals
                 return true;
             }
 
-            var desiredFormKey = this.classConfiguration.ShapeshiftForm
+            var desiredFormKey = this.classConfig.ShapeshiftForm
                 .Where(s => s.ShapeShiftFormEnum == item.ShapeShiftFormEnum)
                 .FirstOrDefault();
 
@@ -195,25 +187,18 @@ namespace Libs.Goals
             return this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum;
         }
 
-        public async Task TapInteractKey(string source)
+        public async Task PressKey(ConsoleKey key, string description = "", int duration = 50)
         {
-            logger.LogInformation($"Approach target ({source})");
-            await this.wowProcess.KeyPress(this.classConfiguration.Interact.ConsoleKey, 99);
-            this.classConfiguration.Interact.SetClicked();
-        }
-
-        public async Task PressKey(ConsoleKey key, string description = "", int duration = 300)
-        {
-            if (lastKeyPressed == classConfiguration.Interact.ConsoleKey)
+            if (lastKeyPressed == classConfig.Interact.ConsoleKey)
             {
-                var distance = WowPoint.DistanceTo(classConfiguration.Interact.LastClickPostion, this.playerReader.PlayerLocation);
+                var distance = WowPoint.DistanceTo(classConfig.Interact.LastClickPostion, this.playerReader.PlayerLocation);
 
                 if (distance > 1)
                 {
                     logger.LogInformation($"Stop moving: We have moved since the last interact: {distance}");
-                    await wowProcess.TapStopKey();
-                    classConfiguration.Interact.SetClicked();
-                    await Task.Delay(300);
+                    await wowInput.TapStopKey();
+                    classConfig.Interact.SetClicked();
+                    await playerReader.WaitForNUpdate(1);
                 }
             }
 
@@ -233,22 +218,22 @@ namespace Libs.Goals
                 case UI_ERROR.ERR_BADATTACKPOS:
                 case UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR:
 
-                    await this.wowProcess.KeyPress(ConsoleKey.F10, 500, $"Stop attack {this.playerReader.LastUIErrorMessage}");
+                    await wowInput.TapStopAttack(this.playerReader.LastUIErrorMessage.ToString());
 
                     logger.LogInformation($"Interact due to: this.playerReader.LastUIErrorMessage: {this.playerReader.LastUIErrorMessage}");
                     var facing = this.playerReader.Direction;
                     var location = this.playerReader.PlayerLocation;
 
-                    if (this.classConfiguration.Interact.SecondsSinceLastClick > 4)
+                    if (this.classConfig.Interact.SecondsSinceLastClick > 4)
                     {
-                        await this.TapInteractKey("CombatActionBase InteractOnUIError 1");
-                        await Task.Delay(500);
+                        await wowInput.TapInteractKey("CombatActionBase InteractOnUIError 1");
+                        await Task.Delay(50);
                     }
 
                     if (lastError == UI_ERROR.ERR_SPELL_FAILED_S)
                     {
-                        await this.TapInteractKey("CombatActionBase InteractOnUIError 2");
-                        await Task.Delay(1000);
+                        await wowInput.TapInteractKey("CombatActionBase InteractOnUIError 2");
+                        await playerReader.WaitForNUpdate(3);
                         if (this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_BADATTACKPOS && this.playerReader.Direction == facing)
                         {
                             logger.LogInformation("Turning 180 as I have not moved!");
