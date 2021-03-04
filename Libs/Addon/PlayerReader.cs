@@ -1,4 +1,4 @@
-using Libs.Addon;
+﻿using Libs.Addon;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,6 +17,8 @@ namespace Libs
         }
 
         public int Sequence { get; private set; } = 0;
+        public List<CombatCreature> TargetHistory { get; } = new List<CombatCreature>();
+        public List<CombatCreature> CombatCreatures { get; } = new List<CombatCreature>();
 
         public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord);
 
@@ -37,16 +39,6 @@ namespace Libs
 
         // Player health and mana
         public long HealthMax => reader.GetLongAtCell(10); // Maximum amount of health of player
-
-        internal void Updated()
-        {
-            Sequence++;
-
-            if (UIErrorMessage > 0)
-            {
-                LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
-            }
-        }
 
         public long HealthCurrent => reader.GetLongAtCell(11); // Current amount of health of player
         public long HealthPercent => HealthMax == 0 || HealthCurrent == 1 ? 0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
@@ -81,23 +73,6 @@ namespace Libs
         public long TargetHealth => reader.GetLongAtCell(19);
 
         public bool HasTarget => !string.IsNullOrEmpty(Target) || TargetHealth > 0;
-
-        internal async Task WaitForUpdate()
-        {
-            var s = this.Sequence;
-            while (this.Sequence == s)
-            {
-                await Task.Delay(100);
-            }
-        }
-        public async Task WaitForNUpdate(int n)
-        {
-            var s = this.Sequence;
-            while (this.Sequence <= s + n)
-            {
-                await Task.Delay(100);
-            }
-        }
 
         // 32 - 33
         public long Gold => reader.GetLongAtCell(32) + reader.GetLongAtCell(33) * 1000000;
@@ -163,13 +138,6 @@ namespace Libs
 
         public bool TargetIsFrostbitten => this.PlayerClass == PlayerClassEnum.Mage && this.Debuffs.Frostbite;
 
-        private List<CombatCreature> CombatCreatures = new List<CombatCreature>();
-        public int CombatCreatureCount => CombatCreatures.Count;
-        public void UpdateCombatCreatureCount()
-        {
-            CombatCreature.UpdateCombatCreatureCount((int)reader.GetLongAtCell(65), CombatCreatures);
-        }
-
         public int LastDamageDealerGuid => (int)reader.GetLongAtCell(66);
 
         public int LastKilledGuid => (int)reader.GetLongAtCell(67);
@@ -177,5 +145,90 @@ namespace Libs
         public int PetGuid => (int)reader.GetLongAtCell(68);
         public int PetTargetGuid => (int)reader.GetLongAtCell(69);
         public bool PetHasTarget => PetTargetGuid != 0;
+
+        #region Combat Creatures
+        public int CombatCreatureCount => CombatCreatures.Count;
+
+        public void UpdateCreatureLists()
+        {
+            CombatCreature.UpdateCombatCreatureCount((int)reader.GetLongAtCell(65), CombatCreatures);
+            CombatCreature.UpdateCombatCreatureCount((int)TargetGuid, TargetHistory);
+        }
+
+        #endregion
+
+
+        #region Last Combat Kill Count
+
+        private int lastCombatKillCount;
+        public int LastCombatKillCount => lastCombatKillCount;
+
+        public void IncrementKillCount()
+        {
+            lastCombatKillCount++;
+        }
+
+        public void DecrementKillCount()
+        {
+            lastCombatKillCount--;
+            if(lastCombatKillCount < 0)
+            {
+                ResetKillCount();
+            }
+        }
+
+        public void ResetKillCount()
+        {
+            lastCombatKillCount = 0;
+        }
+
+        #endregion
+
+
+        #region Corpse Consumption
+
+        private bool shouldConsumeCorpse;
+        public bool ShouldConsumeCorpse => shouldConsumeCorpse;
+
+        public void ProduceCorpse()
+        {
+            shouldConsumeCorpse = true;
+        }
+
+        public void ConsumeCorpse()
+        {
+            shouldConsumeCorpse = false;
+        }
+
+        #endregion
+
+
+        internal void Updated()
+        {
+            Sequence++;
+
+            if (UIErrorMessage > 0)
+            {
+                LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
+            }
+        }
+
+        internal async Task WaitForUpdate()
+        {
+            var s = this.Sequence;
+            while (this.Sequence == s)
+            {
+                await Task.Delay(100);
+            }
+        }
+        public async Task WaitForNUpdate(int n)
+        {
+            var s = this.Sequence;
+            while (this.Sequence <= s + n)
+            {
+                await Task.Delay(100);
+            }
+        }
+
     }
 }

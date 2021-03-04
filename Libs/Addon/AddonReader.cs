@@ -116,7 +116,7 @@ namespace Libs
 
             LevelTracker.Update();
 
-            this.PlayerReader.UpdateCombatCreatureCount();
+            this.PlayerReader.UpdateCreatureLists();
 
             seq++;
 
