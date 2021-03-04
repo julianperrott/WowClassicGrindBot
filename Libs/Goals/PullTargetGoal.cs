@@ -8,24 +8,30 @@ namespace Libs.Goals
 {
     public class PullTargetGoal : GoapGoal
     {
-        private readonly WowProcess wowProcess;
+        public override float CostOfPerformingAction { get => 7f; }
+
+        private ILogger logger;
+        private readonly WowInput wowInput;
+
         private readonly PlayerReader playerReader;
         private readonly NpcNameFinder npcNameFinder;
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
-        private ILogger logger;
+        
         private readonly CastingHandler castingHandler;
         private DateTime PullStartTime = DateTime.Now;
         private DateTime LastActive = DateTime.Now;
 
-        public PullTargetGoal(WowProcess wowProcess, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, ILogger logger, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public PullTargetGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
-            this.wowProcess = wowProcess;
+            this.logger = logger;
+            this.wowInput = wowInput;
+
             this.playerReader = playerReader;
             this.npcNameFinder = npcNameFinder;
             this.stopMoving = stopMoving;
-            this.logger = logger;
+            
             this.castingHandler = castingHandler;
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
@@ -40,11 +46,9 @@ namespace Libs.Goals
             this.classConfiguration.Pull.Sequence.Where(k => k != null).ToList().ForEach(key => this.Keys.Add(key));
         }
 
-        public override float CostOfPerformingAction { get => 7f; }
-
         public override async Task PerformAction()
         {
-            await this.wowProcess.KeyPress(ConsoleKey.F10, 300);
+            await wowInput.TapStopAttack();
             this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
             if ((DateTime.Now - LastActive).TotalSeconds > 5)
@@ -53,27 +57,30 @@ namespace Libs.Goals
             }
             LastActive = DateTime.Now;
 
+            /*
             if ((DateTime.Now - PullStartTime).TotalSeconds > 30)
             {
-                await wowProcess.KeyPress(ConsoleKey.F3, 300); // clear target
+                //await wowProcess.KeyPress(ConsoleKey.F3, 50); // clear target
+                await wowProcess.TapClearTarget();
                 await this.wowProcess.KeyPress(ConsoleKey.RightArrow, 1000, "Turn after pull timeout");
-                return;
+                return; 
             }
+            */
 
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
                 logger.LogInformation($"Dismount");
-                await wowProcess.Dismount();
+                await wowInput.Dismount();
             }
 
             if (ShouldStopBeforePull)
             {
                 logger.LogInformation($"Stop approach");
                 await this.stopMoving.Stop();
-                await Interact();
-                await wowProcess.TapStopKey();
+                await wowInput.TapStopAttack();
+                await wowInput.TapStopKey();
             }
 
             bool pulled = await Pull();
@@ -81,12 +88,28 @@ namespace Libs.Goals
             {
                 if (HasPickedUpAnAdd)
                 {
+                    logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
                     logger.LogInformation($"Add on approach");
+
                     await this.stopMoving.Stop();
-                    await wowProcess.TapStopKey();
-                    await wowProcess.KeyPress(ConsoleKey.F3, 300); // clear target
+                    await wowInput.TapStopKey();
+
+                    //await wowProcess.KeyPress(ConsoleKey.F3, 50); // clear target
+                    //await wowProcess.TapClearTarget();
+
+                    await wowInput.TapNearestTarget();
+                    if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
+                    {
+                        if (this.playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe)
+                        {
+                            return;
+                        }
+                    }
+
+                    await wowInput.TapClearTarget();
                     return;
                 }
+                
 
                 if (!this.stuckDetector.IsMoving())
                 {
@@ -107,7 +130,7 @@ namespace Libs.Goals
         {
             if (this.classConfiguration.Interact.SecondsSinceLastClick > 1)
             {
-                await this.castingHandler.TapInteractKey("PullTargetAction");
+                await wowInput.TapInteractKey("PullTargetAction");
             }
 
             await this.castingHandler.InteractOnUIError();
@@ -117,7 +140,6 @@ namespace Libs.Goals
         {
             get
             {
-                logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
                 return this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer && this.playerReader.HealthPercent > 98;
             }
         }
@@ -142,14 +164,15 @@ namespace Libs.Goals
             bool hasCast = false;
 
             //stop combat
-            await this.wowProcess.KeyPress(ConsoleKey.F10, 300);
+            //await this.wowProcess.KeyPress(ConsoleKey.F10, 50);
+            await wowInput.TapStopAttack();
             this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
             foreach (var item in this.Keys)
             {
-                var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast && 500 > item.DelayBeforeCast ? 500 : item.DelayBeforeCast;
+                var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast && 150 > item.DelayBeforeCast ? 150 : item.DelayBeforeCast;
 
-                var success = await this.castingHandler.CastIfReady(item, this, sleepBeforeFirstCast);
+                var success = await this.castingHandler.CastIfReady(item, sleepBeforeFirstCast);
                 hasCast = hasCast || success;
 
                 if (!this.playerReader.HasTarget)
