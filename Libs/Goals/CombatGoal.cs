@@ -8,34 +8,49 @@ namespace Libs.Goals
 {
     public class CombatGoal : GoapGoal
     {
-        private readonly WowProcess wowProcess;
+        public override float CostOfPerformingAction { get => 4f; }
+
+        private readonly ILogger logger;
+        private readonly WowInput wowInput;
+
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private readonly CastingHandler castingHandler;
-        private ILogger logger;
+        
         private DateTime lastActive = DateTime.Now;
         private readonly ClassConfiguration classConfiguration;
         private DateTime lastPulled = DateTime.Now;
 
-        public CombatGoal(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration, CastingHandler castingHandler)
+        private int lastKilledGuid;
+
+        public CombatGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, CastingHandler castingHandler)
         {
-            this.wowProcess = wowProcess;
+            this.logger = logger;
+            this.wowInput = wowInput;
+
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
-            this.logger = logger;
+            
             this.classConfiguration = classConfiguration;
             this.castingHandler = castingHandler;
 
+            lastKilledGuid = playerReader.LastKilledGuid;
+
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
+            AddPrecondition(GoapKey.targetisalive, true);
             AddPrecondition(GoapKey.incombatrange, true);
+
+            AddEffect(GoapKey.producedcorpse, true);
+            AddEffect(GoapKey.targetisalive, false);
+            AddEffect(GoapKey.hastarget, false);
 
             this.classConfiguration.Combat.Sequence.Where(k => k != null).ToList().ForEach(key => this.Keys.Add(key));
         }
 
         protected async Task Fight()
         {
-            logger.LogInformation("-");
+            //logger.LogInformation("-");
             if ((DateTime.Now - lastActive).TotalSeconds > 5)
             {
                 classConfiguration.Interact.ResetCooldown();
@@ -51,16 +66,15 @@ namespace Libs.Goals
                     continue;
                 }
 
-                pressed = await this.castingHandler.CastIfReady(item, this);
+                pressed = await this.castingHandler.CastIfReady(item);
                 if (pressed)
                 {
-                    SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
                     break;
                 }
             }
             if (!pressed)
             {
-                await Task.Delay(500);
+                await Task.Delay(20);
             }
 
             this.lastActive = DateTime.Now;
@@ -72,14 +86,7 @@ namespace Libs.Goals
             {
                 logger.LogInformation("?Reset cooldowns");
 
-                this.classConfiguration.Combat.Sequence
-                    .Where(i => i.ResetOnNewTarget)
-                    .ToList()
-                    .ForEach(item =>
-                    {
-                        logger.LogInformation($"Reset cooldown on {item.Name}");
-                        item.ResetCooldown();
-                    });
+                ResetCooldowns();
             }
 
             if (e.Key == GoapKey.pulled)
@@ -88,13 +95,22 @@ namespace Libs.Goals
             }
         }
 
-        public override float CostOfPerformingAction { get => 4f; }
+        private void ResetCooldowns()
+        {
+            this.classConfiguration.Combat.Sequence
+            .Where(i => i.ResetOnNewTarget)
+            .ToList()
+            .ForEach(item =>
+            {
+                logger.LogInformation($"Reset cooldown on {item.Name}");
+                item.ResetCooldown();
+            });
+        }
 
         protected bool HasPickedUpAnAdd
         {
             get
             {
-                logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
                 return this.playerReader.PlayerBitValues.PlayerInCombat &&
                     !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer
                     && this.playerReader.TargetHealthPercentage == 100;
@@ -105,23 +121,26 @@ namespace Libs.Goals
         {
             if (playerReader.PlayerBitValues.IsMounted)
             {
-                await wowProcess.Dismount();
+                await wowInput.Dismount();
             }
 
+            /*
             if (HasPickedUpAnAdd)
             {
+                logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayerOrPet}");
                 logger.LogInformation($"Add on combat");
                 await this.stopMoving.Stop();
                 await wowProcess.TapStopKey();
-                await wowProcess.KeyPress(ConsoleKey.F3, 300); // clear target
+                await wowProcess.TapClearTarget();
                 return;
             }
+            */
 
             if ((DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5)
             {
                 logger.LogInformation("Interact and stop");
-                await this.castingHandler.TapInteractKey("CombatActionBase PerformAction");
-                await this.castingHandler.PressKey(ConsoleKey.UpArrow, "", 57);
+                await wowInput.TapInteractKey("CombatActionBase PerformAction");
+                //await this.castingHandler.PressKey(ConsoleKey.UpArrow, "", 57);
             }
 
             await stopMoving.Stop();
@@ -131,8 +150,78 @@ namespace Libs.Goals
             await this.castingHandler.InteractOnUIError();
 
             await Fight();
-
+            await KillCheck();
             lastActive = DateTime.Now;
+        }
+
+        private async Task KillCheck()
+        {
+            if (DidKilledACreature())
+            {
+                if (!await CreatureTargetMeOrMyPet())
+                {
+                    logger.LogInformation("Exit CombatGoal!!!");
+                }
+            }
+            await Task.Delay(0);
+        }
+
+        private bool DidKilledACreature()
+        {
+            if (lastKilledGuid != playerReader.LastKilledGuid)
+            {
+                logger.LogInformation($"----- A mob just died {playerReader.LastKilledGuid}");
+
+                if ((playerReader.CombatCreatures.Any(x => x.CreatureId == playerReader.LastKilledGuid) || // creature dealt damage to me or my pet
+                playerReader.TargetHistory.Any(x => x.CreatureId == playerReader.LastKilledGuid)))     // has ever targeted by the player)
+                {
+                    lastKilledGuid = playerReader.LastKilledGuid;
+
+                    playerReader.IncrementKillCount();
+                    logger.LogInformation($"----- Killed a mob! Current: {playerReader.LastCombatKillCount} - " + 
+                        $"CombatCreature: {playerReader.CombatCreatures.Any(x => x.CreatureId == playerReader.LastKilledGuid)} - " + 
+                        $"TargetHistory: {playerReader.TargetHistory.Any(x => x.CreatureId == playerReader.LastKilledGuid)}");
+
+                    SendActionEvent(new ActionEventArgs(GoapKey.producedcorpse, true));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private async Task<bool> CreatureTargetMeOrMyPet()
+        {
+            if (playerReader.PetHasTarget &&
+                playerReader.LastKilledGuid != playerReader.PetTargetGuid)
+            {
+                logger.LogWarning("---- My pet has a target!");
+                ResetCooldowns();
+
+                await wowInput.TapTargetPet();
+                await wowInput.TapTargetOfTarget();
+                
+                return playerReader.HasTarget;
+            }
+
+            // check for targets attacking me
+            await wowInput.TapNearestTarget();
+            if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
+            {
+                if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                {
+                    ResetCooldowns();
+
+                    logger.LogWarning("---- Somebody is attacking me or my pet!");
+                    await wowInput.TapInteractKey("Found new target to attack");
+                    return true;
+                }
+            }
+
+            await wowInput.TapClearTarget();
+            logger.LogWarning("---- No Threat has been found!");
+
+            return false;
         }
     }
 }
