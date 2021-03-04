@@ -8,50 +8,59 @@ namespace Libs.Goals
 {
     public class ApproachTargetGoal : GoapGoal
     {
+        public override float CostOfPerformingAction { get => 8f; }
+
+        private ILogger logger;
         private readonly WowProcess wowProcess;
+        private readonly WowInput wowInput;
+
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
-        private readonly ClassConfiguration classConfiguration;
-        private ILogger logger;
-        private bool NeedsToReset = true;
 
-        private DateTime LastJump = DateTime.Now;
+        private bool debug = false;
+
         private Random random = new Random();
+        private DateTime LastJump = DateTime.Now;
 
-        private bool debug = true;
+        private bool NeedsToReset = true;
         private bool playerWasInCombat = false;
 
-        private void Log(string text)
+        private DateTime lastFighting = DateTime.Now;
+
+        private int SecondsSinceLastFighting => (int)(DateTime.Now - this.lastFighting).TotalSeconds;
+
+        private bool HasPickedUpAnAdd
         {
-            if (debug)
+            get
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                return this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer;
             }
         }
 
-        public ApproachTargetGoal(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public ApproachTargetGoal(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, StopMoving stopMoving,  StuckDetector stuckDetector)
         {
+            this.logger = logger;
             this.wowProcess = wowProcess;
+            this.wowInput = wowInput;
+
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
-            this.logger = logger;
+            
             this.stuckDetector = stuckDetector;
-            this.classConfiguration = classConfiguration;
 
-            AddPrecondition(GoapKey.incombatrange, false);
+            AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, true);
+            AddPrecondition(GoapKey.incombatrange, false);
+
+            AddEffect(GoapKey.incombatrange, true);
         }
-
-        public override float CostOfPerformingAction { get => 8f; }
-
-        private int SecondsSinceLastFighting => (int)(DateTime.Now - this.lastFighting).TotalSeconds;
 
         public override async Task PerformAction()
         {
             if (playerReader.PlayerBitValues.IsMounted)
             {
-                await wowProcess.Dismount();
+                await wowInput.Dismount();
             }
 
             if (NeedsToReset)
@@ -70,65 +79,55 @@ namespace Libs.Goals
                 // we are in combat
                 if (!playerWasInCombat && HasPickedUpAnAdd)
                 {
-                    logger.LogInformation("Looks like we have an add on approach");
+                    logger.LogInformation("WARN Bodypull -- Looks like we have an add on approach");
+                    logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
+                    
                     await this.stopMoving.Stop();
-                    await wowProcess.TapStopKey();
-                    await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
-                    return;
+                    await wowInput.TapClearTarget();
+                    await wowInput.TapStopKey();
+
+                    if(playerReader.PetHasTarget)
+                    {
+                        await this.wowInput.TapTargetPet();
+                        await this.wowInput.TapTargetOfTarget();
+                    }
                 }
+
                 playerWasInCombat = true;
             }
 
             await this.TapInteractKey("ApproachTargetAction 1");
-            await Task.Delay(500);
+            await this.playerReader.WaitForNUpdate(1);
 
             var newLocation = playerReader.PlayerLocation;
-            if ((location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5) || this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
+            if ((location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5) ||
+                this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "ApproachTargetAction");
-                await Task.Delay(2000);
-                await wowProcess.KeyPress(ConsoleKey.Spacebar, 498);
+                await Wait(100);
+                await wowInput.TapJump();
                 this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
             }
+
             await RandomJump();
 
+            //
             int approachSeconds = (int)(this.stuckDetector.actionDurationSeconds);
             if (approachSeconds > 20)
             {
                 await this.stuckDetector.Unstick();
                 await this.TapInteractKey("ApproachTargetAction unstick");
-                await Task.Delay(500);
+                await Task.Delay(250);
             }
         }
-
-        private bool HasPickedUpAnAdd
-        {
-            get
-            {
-                logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
-                return this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer;
-            }
-        }
-
-        private async Task RandomJump()
-        {
-            if ((DateTime.Now - LastJump).TotalSeconds > 10)
-            {
-                if (random.Next(1) == 0)
-                {
-                    await wowProcess.KeyPress(ConsoleKey.Spacebar, 498);
-                }
-                LastJump = DateTime.Now;
-            }
-        }
-
-        private DateTime lastFighting = DateTime.Now;
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
         {
             if (sender != this)
             {
                 NeedsToReset = true;
+                playerWasInCombat = false;
+
                 if (e.Key == GoapKey.fighting)
                 {
                     lastFighting = DateTime.Now;
@@ -136,13 +135,33 @@ namespace Libs.Goals
             }
         }
 
+        private async Task RandomJump()
+        {
+            if ((DateTime.Now - LastJump).TotalSeconds > 7)
+            {
+                if (random.Next(1) == 0)
+                {
+                    await wowInput.TapJump();
+                }
+                LastJump = DateTime.Now;
+            }
+        }
+
+
         public async Task TapInteractKey(string source)
         {
-            await this.wowProcess.KeyPress(ConsoleKey.F10, 300);
-            logger.LogInformation($"Approach target ({source})");
-            await this.wowProcess.KeyPress(this.classConfiguration.Interact.ConsoleKey, 99);
-            this.classConfiguration.Interact.SetClicked();
+            await wowInput.TapInteractKey($"Approach target ({source})");
             this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+            await wowInput.TapStopAttack();
         }
+
+        private void Log(string text)
+        {
+            if (debug)
+            {
+                logger.LogInformation($"{this.GetType().Name}: {text}");
+            }
+        }
+
     }
 }
