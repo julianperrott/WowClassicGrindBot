@@ -6,20 +6,22 @@ namespace Libs.Goals
 {
     public class AdhocGoal : GoapGoal
     {
-        private readonly WowProcess wowProcess;
+        private readonly ILogger logger;
+        private readonly WowInput wowInput;
+
         private readonly StopMoving stopMoving;
         private readonly PlayerReader playerReader;
-        private readonly ILogger logger;
+        
         private readonly KeyAction key;
         private readonly CastingHandler castingHandler;
 
-        public AdhocGoal(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, KeyAction key, CastingHandler castingHandler, ILogger logger)
+        public AdhocGoal(ILogger logger, WowInput wowInput, KeyAction key, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler)
         {
-            this.wowProcess = wowProcess;
+            this.logger = logger;
+            this.wowInput = wowInput;
             this.stopMoving = stopMoving;
             this.playerReader = playerReader;
             this.key = key;
-            this.logger = logger;
             this.castingHandler = castingHandler;
 
             if (key.InCombat == "false")
@@ -48,11 +50,11 @@ namespace Libs.Goals
                 await this.stopMoving.Stop();
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
-                    await wowProcess.Dismount();
+                    await wowInput.Dismount();
                 }
                 await Task.Delay(1000);
             }
-            await this.castingHandler.CastIfReady(key, this);
+            await this.castingHandler.CastIfReady(key);
 
             this.key.ResetCooldown();
 
@@ -88,7 +90,7 @@ namespace Libs.Goals
 
             if (wasDrinkingOrEating)
             {
-                await wowProcess.TapStopKey(); // stand up
+                await wowInput.TapStopKey(); // stand up
             }
 
             this.key.SetClicked();
