@@ -38,6 +38,9 @@ namespace Libs
         public const Int32 DI_NORMAL = 0x0003;
 
         [DllImport("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
         public static extern bool PostMessage(IntPtr hWnd, UInt32 Msg, int wParam, int lParam);
 
         [DllImport("user32.dll")]
