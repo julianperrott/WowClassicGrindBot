@@ -58,7 +58,7 @@ namespace PatherPath.Graph
 
         public const float CHUNK_BASE = 100000.0f; // Always keep positive
         public const int MaximumAllowedRangeFromTarget = 100;
-        public string BaseDir = "..\\PathingApi\\PPather\\PathInfo";
+        public string BaseDir = string.Empty;
         private string Continent;
         private SparseMatrix2D<GraphChunk> chunks;
 
@@ -112,15 +112,18 @@ namespace PatherPath.Graph
         public static int ProgressTimeoutSeconds = 10;
 
         private Logger logger;
+        private DataConfig dataConfig;
 
         public PathGraph(string continent,
                          ChunkedTriangleCollection triangles,
-                         TriangleCollection paint, Logger logger)
+                         TriangleCollection paint, Logger logger, DataConfig dataConfig)
         {
             this.logger = logger;
             this.Continent = continent;
             this.triangleWorld = triangles;
             this.paint = paint;
+            this.dataConfig = dataConfig;
+            BaseDir = dataConfig.PathInfo;
             Clear();
         }
 

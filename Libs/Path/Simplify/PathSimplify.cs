@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Libs.Path
+namespace Libs
 {
     public static class PathSimplify
     {

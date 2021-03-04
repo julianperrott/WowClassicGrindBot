@@ -23,6 +23,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Wmo;
+using System.IO;
 
 namespace WowTriangles
 {
@@ -62,11 +63,11 @@ namespace WowTriangles
 
         private Logger logger;
 
-        public MPQTriangleSupplier(Logger logger)
+        public MPQTriangleSupplier(Logger logger, DataConfig dataConfig)
         {
             this.logger = logger;
 
-            string[] archiveNames = GetArchiveNames(s => logger.WriteLine(s));
+            string[] archiveNames = GetArchiveNames(dataConfig, s => logger.WriteLine(s));
 
             archive = new StormDll.ArchiveSet(this.logger);
             archive.AddArchives(archiveNames);
@@ -120,7 +121,7 @@ namespace WowTriangles
             }
         }
 
-        public static string[] GetArchiveNames(Action<string> log)
+        public static string[] GetArchiveNames(DataConfig dataConfig, Action<string> log)
         {
             string[] archiveNames = {
                     "patch.MPQ",
@@ -159,9 +160,9 @@ namespace WowTriangles
                     "enGB\\base-enGB.MPQ"
                                     };
 
-            string regGameDir = "..\\PathingAPI\\MPQ\\";
+            string regGameDir = dataConfig.MPQ;
             log("MPQ dir is " + regGameDir);
-            return archiveNames.Select(a => regGameDir + a).ToArray();
+            return archiveNames.Select(a => Path.Join(regGameDir, a)).ToArray();
         }
 
         public void SetContinent(string continent)

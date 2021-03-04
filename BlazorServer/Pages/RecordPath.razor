@@ -218,7 +218,7 @@
         if (botController.RouteInfo != null)
         {
             var filename = $"Path_{ DateTime.Now.ToString("yyyyMMddHHmmss")}.json";
-            File.WriteAllText($"../json/path/{filename}", JsonConvert.SerializeObject(botController.RouteInfo.PathPoints));
+            File.WriteAllText(Path.Join(botController.DataConfig.Path, filename), JsonConvert.SerializeObject(botController.RouteInfo.PathPoints));
             Message = $"Saved to: {filename}";
         }
     }

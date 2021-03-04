@@ -83,7 +83,7 @@ namespace Libs
 
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
 
-        public void Initialise(PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger, string? overridePathProfileFile)
+        public void Initialise(DataConfig dataConfig, PlayerReader playerReader, RequirementFactory requirementFactory, ILogger logger, string? overridePathProfileFile)
         {
             SpiritPathFilename = string.Empty;
 
@@ -133,7 +133,7 @@ namespace Libs
                 PathFilename = OverridePathFilename;
             }
 
-            if (!File.Exists($"../json/path/{PathFilename}"))
+            if (!File.Exists(Path.Join(dataConfig.Path, PathFilename)))
             {
                 if (!string.IsNullOrEmpty(OverridePathFilename))
                     throw new Exception($"The `{OverridePathFilename}` path file does not exists!");

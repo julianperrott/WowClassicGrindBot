@@ -88,6 +88,7 @@ else
 }
 @code {
 
+    private DataConfig? dataConfig;
     private DataFrameConfiguration? config;
     private List<DataFrame> dataFrames = new List<DataFrame>();
     private AddonReader? addonReader;
@@ -110,6 +111,7 @@ else
             wowProcess = new WowProcess(logger);
             wowScreen = new WowScreen(wowProcess, logger);
             config = new DataFrameConfiguration(wowScreen);
+            dataConfig = DataConfig.Load();
 
             var screenshotThread = new System.Threading.Thread(ScreenshotRefreshThread);
             screenshotThread.Start();
@@ -130,13 +132,13 @@ else
                 byte[] byteImage = ms.ToArray();
                 this.image = Convert.ToBase64String(byteImage); // Get Base64
 
-                if (config != null)
+                if (config != null && dataConfig != null)
                 {
                     dataFrames = config.CreateConfiguration(screenshot);
 
                     if (dataFrames.Count == 100)
                     {
-                        addonReader = new AddonReader(new WowScreen(wowProcess, logger), dataFrames, logger);
+                        addonReader = new AddonReader(dataConfig, new WowScreen(wowProcess, logger), dataFrames, logger);
                     }
 
                     if (addonReader != null && dataFrames.Count != 100)

@@ -16,6 +16,7 @@ namespace PathingAPI
         private readonly List<WorldMapArea> worldMapAreas;
         private Search search { get; set; }
         private readonly PatherPath.Logger logger;
+        private readonly DataConfig dataConfig;
         private Action<Path> OnPathCreated;
         public Action<string> OnLog { get; set; }
         public Action OnReset { get; set; }
@@ -30,13 +31,15 @@ namespace PathingAPI
         public PPatherService()
         {
             logger = new PatherPath.Logger((s)=>Log(s));
-            this.worldMapAreas = WorldMapArea.Read(logger);
+            dataConfig = DataConfig.Load();
+            this.worldMapAreas = WorldMapArea.Read(logger, dataConfig);
         }
 
-        public PPatherService(Action<string> onWrite)
+        public PPatherService(Action<string> onWrite, DataConfig dataConfig)
         {
+            this.dataConfig = dataConfig;
             logger = new PatherPath.Logger(onWrite);
-            this.worldMapAreas = WorldMapArea.Read(logger);
+            this.worldMapAreas = WorldMapArea.Read(logger, dataConfig);
         }
 
         public void Log(string message)
@@ -64,7 +67,7 @@ namespace PathingAPI
             {
                 HasInitialised = true;
                 PathGraph.SearchEnabled = false;
-                search = new Search(continent, logger);
+                search = new Search(continent, logger, dataConfig);
                 search.PathGraph.triangleWorld.NotifyChunkAdded = (e) => OnChunkAdded?.Invoke(e);
                 OnReset?.Invoke();
                 return true;

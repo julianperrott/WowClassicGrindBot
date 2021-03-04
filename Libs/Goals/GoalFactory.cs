@@ -14,6 +14,7 @@ namespace Libs
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
         private readonly WowInput wowInput;
+        private readonly DataConfig dataConfig;
 
         private readonly AddonReader addonReader;
         private readonly NpcNameFinder npcNameFinder;
@@ -21,12 +22,13 @@ namespace Libs
 
         public RouteInfo? RouteInfo { get; private set; }
 
-        public GoalFactory(ILogger logger, AddonReader addonReader, WowProcess wowProcess, WowInput wowInput, NpcNameFinder npcNameFinder, IPPather pather)
+        public GoalFactory(ILogger logger, AddonReader addonReader, WowProcess wowProcess, WowInput wowInput, DataConfig dataConfig, NpcNameFinder npcNameFinder, IPPather pather)
         {
             this.logger = logger;
             this.addonReader = addonReader;
             this.wowProcess = wowProcess;
             this.wowInput = wowInput;
+            this.dataConfig = dataConfig;
             this.npcNameFinder = npcNameFinder;
             this.pather = pather;
         }
@@ -136,16 +138,16 @@ namespace Libs
             return availableActions;
         }
 
-        private static string FixPathFilename(string path)
+        private string FixPathFilename(string path)
         {
-            if (!path.Contains(":") && !string.IsNullOrEmpty(path) && !path.Contains("../json/path/"))
+            if (!path.Contains(":") && !string.IsNullOrEmpty(path) && !path.Contains(dataConfig.Path))
             {
-                return "../json/path/" + path;
+                return Path.Join(dataConfig.Path, path);
             }
             return path;
         }
 
-        private static void GetPaths(out List<WowPoint> pathPoints, out List<WowPoint> spiritPath, ClassConfiguration classConfig)
+        private void GetPaths(out List<WowPoint> pathPoints, out List<WowPoint> spiritPath, ClassConfiguration classConfig)
         {
             classConfig.PathFilename = FixPathFilename(classConfig.PathFilename);
             classConfig.SpiritPathFilename = FixPathFilename(classConfig.SpiritPathFilename);

@@ -7,6 +7,7 @@ namespace Libs
 {
     public class ConfigBotController : IBotController
     {
+        public DataConfig DataConfig { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AddonReader AddonReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Thread? screenshotThread { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Thread addonThread { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

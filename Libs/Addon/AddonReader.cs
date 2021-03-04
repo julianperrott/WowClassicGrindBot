@@ -16,6 +16,7 @@ namespace Libs
 
         private readonly ILogger logger;
         private readonly ISquareReader squareReader;
+        private readonly DataConfig dataConfig;
         public PlayerReader PlayerReader { get; set; }
         public BagReader BagReader { get; set; }
         public EquipmentReader equipmentReader { get; set; }
@@ -28,8 +29,9 @@ namespace Libs
         private readonly int height;
         private readonly IColorReader colorReader;
 
-        public AddonReader(IColorReader colorReader, List<DataFrame> frames, ILogger logger)
+        public AddonReader(DataConfig dataConfig, IColorReader colorReader, List<DataFrame> frames, ILogger logger)
         {
+            this.dataConfig = dataConfig;
             this.frames = frames;
             this.logger = logger;
             this.colorReader = colorReader;
@@ -37,11 +39,11 @@ namespace Libs
             this.height = frames.Max(f => f.point.Y) + 1;
             this.squareReader = new SquareReader(this);
 
-            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("../json/data/items.json"));
-            var creatures = JsonConvert.DeserializeObject<List<Creature>>(File.ReadAllText("../json/data/creatures.json"));
+            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "items.json")));
+            var creatures = JsonConvert.DeserializeObject<List<Creature>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "creatures.json")));
 
-            var foods = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText("../json/data/foods.json"));
-            var waters = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText("../json/data/waters.json"));
+            var foods = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "foods.json")));
+            var waters = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "waters.json")));
 
             this.BagReader = new BagReader(squareReader, 20, items, foods, waters, ReadAHPrices());
             this.equipmentReader = new EquipmentReader(squareReader, 30);

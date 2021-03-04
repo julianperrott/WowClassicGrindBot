@@ -22,6 +22,7 @@ namespace Libs
         public string SelectedClassFilename { get; set; } = String.Empty;
         public string? SelectedPathFilename { get; set; }
 
+        public DataConfig DataConfig { get; set; }
         public AddonReader AddonReader { get; set; }
         public Thread? screenshotThread { get; set; }
         public Thread addonThread { get; set; }
@@ -49,10 +50,11 @@ namespace Libs
         public event EventHandler? ProfileLoaded;
         public event EventHandler<bool>? StatusChanged;
 
-        public BotController(ILogger logger, IPPather pather)
+        public BotController(ILogger logger, IPPather pather, DataConfig dataConfig)
         {
             this.logger = logger;
             this.pather = pather;
+            this.DataConfig = dataConfig;
 
             updatePlayerPostion.Start();
             wowProcess = new WowProcess(logger);
@@ -62,7 +64,7 @@ namespace Libs
                 ? DataFrameConfiguration.LoadConfiguration()
                 : new List<DataFrame>(); //config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
-            AddonReader = new AddonReader(WowScreen, frames, logger);
+            AddonReader = new AddonReader(DataConfig, WowScreen, frames, logger);
 
             minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
@@ -194,7 +196,7 @@ namespace Libs
 
             var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.Blacklist, logger);
 
-            var actionFactory = new GoalFactory(logger, AddonReader, wowProcess, WowInput, npcNameFinder, pather);
+            var actionFactory = new GoalFactory(logger, AddonReader, wowProcess, WowInput, DataConfig, npcNameFinder, pather);
             var availableActions = actionFactory.CreateGoals(config, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
@@ -226,11 +228,11 @@ namespace Libs
             var requirementFactory = new RequirementFactory(AddonReader.PlayerReader, AddonReader.BagReader, logger);
 
             ClassConfiguration classConfig;
-            var classFilePath = $"../json/class/{classFilename}";
+            var classFilePath = Path.Join(DataConfig.Class, classFilename);
             if (File.Exists(classFilePath))
             {
                 classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilePath));
-                classConfig.Initialise(AddonReader.PlayerReader, requirementFactory, logger, pathFilename);
+                classConfig.Initialise(DataConfig, AddonReader.PlayerReader, requirementFactory, logger, pathFilename);
 
                 logger.LogDebug($"Loaded `{classFilename}` with Path Profile `{classConfig.PathFilename}`.");
 
@@ -274,7 +276,7 @@ namespace Libs
 
         public List<string> ClassFileList()
         {
-            DirectoryInfo directory = new DirectoryInfo("../Json/class/");
+            DirectoryInfo directory = new DirectoryInfo(DataConfig.Class);
             var list = directory.GetFiles().Select(i => i.Name).ToList();
             list.Sort(new NaturalStringComparer());
             list.Insert(0, String.Empty);
@@ -283,7 +285,7 @@ namespace Libs
 
         public List<string> PathFileList()
         {
-            var root = "../Json/path/";
+            var root = DataConfig.Path;
 
             var files = Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories)
                 .Select(path => path.Replace(root, "")).ToList();

@@ -1,4 +1,4 @@
-﻿using Libs;
+using Libs;
 using Libs.PPather;
 using Microsoft.Extensions.Logging;
 using PathingAPI;
@@ -86,7 +86,7 @@ namespace BlazorServer
 
         public bool SelfTest()
         {
-            var mpqFiles = MPQTriangleSupplier.GetArchiveNames(s=>logger.LogInformation(s));
+            var mpqFiles = MPQTriangleSupplier.GetArchiveNames(DataConfig.Load(), s => logger.LogInformation(s));
 
             var countOfMPQFiles = mpqFiles.Where(f => File.Exists(f)).Count();
             //countOfMPQFiles = 0;

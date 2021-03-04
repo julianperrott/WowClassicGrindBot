@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataConfig\DataConfig.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="WorldToMap\WorldMapArea.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

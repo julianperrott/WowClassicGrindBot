@@ -160,7 +160,7 @@ namespace PathingAPI.Controllers
         [Produces("application/json")]
         public JsonResult SelfTest()
         {
-            var mpqFiles = MPQTriangleSupplier.GetArchiveNames(s => logger.WriteLine(s));
+            var mpqFiles = MPQTriangleSupplier.GetArchiveNames(DataConfig.Load(), s => logger.WriteLine(s));
 
             var countOfMPQFiles = mpqFiles.Where(f => System.IO.File.Exists(f)).Count();
 

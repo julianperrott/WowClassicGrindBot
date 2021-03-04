@@ -14,6 +14,7 @@ namespace PathingAPI
         public PathGraph PathGraph { get; set; }
         public string continent;
 
+        private readonly DataConfig dataConfig;
         private Logger logger;
 
         public Location locationFrom { get; set; }
@@ -25,10 +26,12 @@ namespace PathingAPI
         private static DateTime startTime = DateTime.Now;
 
 
-        public Search(string continent, Logger logger)
+        public Search(string continent, Logger logger, DataConfig dataConfig)
         {
             this.logger = logger;
             this.continent = continent;
+            this.dataConfig = dataConfig;
+
             if (PathGraph == null)
             {
                 CreatePathGraph(continent);
@@ -77,12 +80,12 @@ namespace PathingAPI
 
         public void CreatePathGraph(string continent)
         {
-            MPQTriangleSupplier mpq = new MPQTriangleSupplier(this.logger);
+            MPQTriangleSupplier mpq = new MPQTriangleSupplier(this.logger, dataConfig);
             mpq.SetContinent(continent);
             var triangleWorld = new ChunkedTriangleCollection(512, this.logger);
             triangleWorld.SetMaxCached(512);
             triangleWorld.AddSupplier(mpq);
-            PathGraph = new PathGraph(continent, triangleWorld, null, this.logger);
+            PathGraph = new PathGraph(continent, triangleWorld, null, this.logger, dataConfig);
             this.continent = continent;
             startTime = DateTime.Now;
         }

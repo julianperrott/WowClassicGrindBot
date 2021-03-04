@@ -6,6 +6,7 @@ namespace Libs
 {
     public interface IBotController
     {
+        DataConfig DataConfig { get; set; }
         AddonReader AddonReader { get; set; }
         Thread? screenshotThread { get; set; }
         Thread addonThread { get; set; }

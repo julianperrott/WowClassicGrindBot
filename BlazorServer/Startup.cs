@@ -48,11 +48,12 @@ namespace BlazorServer
         {
             var logger = new SerilogLoggerProvider(Log.Logger).CreateLogger(nameof(Program));
             services.AddSingleton<Microsoft.Extensions.Logging.ILogger>(logger);
+            var dataConfig = DataConfig.Load();
 
             if (DataFrameConfiguration.ConfigurationExists())
             {
-                var pather = GetPather(logger);
-                var botController = new BotController(logger, pather);
+                var pather = GetPather(logger, dataConfig);
+                var botController = new BotController(logger, pather, dataConfig);
                 services.AddSingleton<IBotController>(botController);
                 services.AddSingleton<IAddonReader>(botController.AddonReader);
             }
@@ -68,7 +69,7 @@ namespace BlazorServer
             //services.AddSingleton<RouteInfo>(botController.WowBot.RouteInfo);
         }
 
-        private static IPPather GetPather(Microsoft.Extensions.Logging.ILogger logger)
+        private static IPPather GetPather(Microsoft.Extensions.Logging.ILogger logger, DataConfig dataConfig)
         {
             var api = new RemotePathingAPI(logger);
             if (api.PingServer().Result)
@@ -82,7 +83,7 @@ namespace BlazorServer
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             Log.Information("Using local pathing API.");
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-            var pathingService = new PPatherService(LogWrite);
+            var pathingService = new PPatherService(LogWrite, dataConfig);
             var localApi = new LocalPathingApi(logger, pathingService);
             localApi.SelfTest();
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
