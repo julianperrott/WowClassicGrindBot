@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathingAPI", "PathingAPI\Pa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibsTests", "LibsTests\LibsTests.csproj", "{36189519-32D6-4650-87CC-A525D99A0363}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataConfig", "DataConfig\DataConfig.csproj", "{841D6DAD-AB21-47CF-98C2-F1DE3CABF59A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataConfig", "DataConfig\DataConfig.csproj", "{841D6DAD-AB21-47CF-98C2-F1DE3CABF59A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +36,14 @@ Global
 		{1FCAB55D-8AA5-4E68-9502-6C27D9BEF252}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FCAB55D-8AA5-4E68-9502-6C27D9BEF252}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FCAB55D-8AA5-4E68-9502-6C27D9BEF252}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36189519-32D6-4650-87CC-A525D99A0363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36189519-32D6-4650-87CC-A525D99A0363}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36189519-32D6-4650-87CC-A525D99A0363}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36189519-32D6-4650-87CC-A525D99A0363}.Release|Any CPU.Build.0 = Release|Any CPU
+		{841D6DAD-AB21-47CF-98C2-F1DE3CABF59A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{841D6DAD-AB21-47CF-98C2-F1DE3CABF59A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{841D6DAD-AB21-47CF-98C2-F1DE3CABF59A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{841D6DAD-AB21-47CF-98C2-F1DE3CABF59A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

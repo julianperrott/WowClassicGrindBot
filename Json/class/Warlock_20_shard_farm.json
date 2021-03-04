@@ -1,19 +1,30 @@
 {
   "ClassName": "Warlock",
   "Loot": true,
-  "NPCMaxLevels_Below": 5,
-  "PathFilename": "5_Gnome.json",
+  "NPCMaxLevels_Above": 2,
+  "NPCMaxLevels_Below": 6,
+  "PathFilename": "23_Duskwood.json",
   "PathThereAndBack": false,
   "PathReduceSteps": true,
+
+  "Blacklist": ["Murloc Hunter", "Murloc Oracle", "Murloc Tidehunter"],
+
+  "ImmunityBlacklist": {
+    "1043": [
+      "Shadow"
+    ]
+  },
 
   "Pull": {
     "Sequence": [
       {
         "Name": "pull",
+        "Key": "5",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "5",
-        "MinMana": 25
+        "ResetOnNewTarget": true,
+        "MinMana": 90,
+        "Log": false
       }
     ]
   },
@@ -22,55 +33,66 @@
       {
         "Name": "Drain Soul",
         "Key": "9",
+        "School": "Shadow",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Requirements": ["TargetHealth%<25", "not BagItem:6265:3"],
+        "Requirements": ["TargetHealth%<40", "not BagItem:6265:72"],
+        "MinMana": 55
+      },
+      {
+        "Name": "Drain Life",
+        "Key": "N4",
+        "School": "Shadow",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["Health%<30"],
         "MinMana": 55
       },
       {
         "Name": "Immolate",
+        "Key": "5",
+        "Requirements": ["TargetHealth%>35", "not Immolate"],
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "5",
-        "Requirements": ["TargetHealth%>35", "not Immolate"], 
         "ResetOnNewTarget": true,
-        "DelayAfterCast": 200,
-        "MinMana": 25
+        "MinMana": 90,
+        "Log": false
       },
       {
         "Name": "Curse of Agony",
         "Key": "1",
+        "School": "Shadow",
         "ResetOnNewTarget": true,
         "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
-        "MinMana": 25,
-        "StepBackAfterCast": 50,
+        "MinMana": 50,
         "Log": false
       },
       {
         "Name": "Corruption",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
-        "DelayAfterCast": 200,
         "Key": "7",
-        "Requirements": ["TargetHealth%>35", "not Corruption"], 
+        "School": "Shadow",
+        "Requirements": ["TargetHealth%>35", "not Corruption"],
         "ResetOnNewTarget": true,
-        "MinMana": 25
+        "MinMana": 55,
+        "Log": false
       },
       {
         "Name": "Shadow Bolt",
+        "Key": "2",
+        "School": "Shadow",
         "HasCastBar": true,
         "StopBeforeCast": true,
+        "ResetOnNewTarget": true,
+        "MinMana": 110,
         "Requirement": "TargetHealth%>35",
-        "DelayAfterCast": 0,
-        "Key": "2",
-        "MinMana": 25,
-        "Cooldown": 8,
-        "Log": false
+        "Log": false,
+        "Cooldown": 8
       },
       {
         "Name": "Interact",
         "Key": "H",
-        "Cooldown": 3
+        "Cooldown": 3,
+        "Log": false
       },
       {
         "Name": "shoot",
@@ -100,7 +122,7 @@
         "Log": false
       }
     ]
-  },
+    },
   "Adhoc": {
     "Sequence": [
       {
@@ -135,23 +157,24 @@
         "Log": false
       }
     ]
-  },
+  }
+,
   "NPC": {
-    "Sequence": [
-      {
-        "Name": "Repair",
-        "Key": "C",
-        "Requirement": "Items Broken",
-        "PathFilename": "5_Gnome_Vendor.json",
-        "Cost": 6
-      },
-      {
-        "Name": "Sell",
-        "Key": "C",
-        "Requirement": "BagFull",
-        "PathFilename": "5_Gnome_Vendor.json",
-        "Cost": 6
-      }
-    ]
+      "Sequence": [
+        {
+          "Name": "Repair",
+          "Key": "C",
+          "Requirement": "Items Broken",
+          "PathFilename": "23_Duskwood_Vendor.json",
+          "Cost": 6
+        },
+        {
+          "Name": "Sell",
+          "Key": "C",
+          "Requirement": "BagFull",
+          "PathFilename": "23_Duskwood_Vendor.json",
+          "Cost": 6
+        }
+      ]
   }
 }
