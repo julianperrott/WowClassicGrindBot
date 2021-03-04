@@ -136,6 +136,8 @@ namespace Libs
 
         public int ItemCount(int itemId) => BagItems.Where(bi => bi.ItemId == itemId).Sum(bi => bi.Count);
 
+        public bool HasItem(int itemId) => ItemCount(itemId) != 0;
+
         public int HighestQuantityOfWaterId()
         {
             return waters.
