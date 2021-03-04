@@ -13,12 +13,12 @@ namespace Libs
         public bool StopBeforeCast { get; set; } = false;
         public ConsoleKey ConsoleKey { get; set; } = 0;
         public string Key { get; set; } = string.Empty;
-        public int PressDuration { get; set; } = 100;
+        public int PressDuration { get; set; } = 50;
         public string ShapeShiftForm { get; set; } = string.Empty;
         public ShapeshiftForm ShapeShiftFormEnum { get; set; } = ShapeshiftForm.None;
         public string CastIfAddsVisible { get; set; } = "";
         public int Cooldown { get; set; } = 0;
-
+        public SchoolMask School { get; set; } = SchoolMask.None;
         public int MinMana { get; set; } = 0;
         public int MinRage { get; set; } = 0;
         public int MinEnergy { get; set; } = 0;
