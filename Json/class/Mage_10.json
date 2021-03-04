@@ -1,9 +1,7 @@
 {
     "ClassName": "Mage",
     "Loot": true,
-  
-    "PathFilename": "10_Human.json",
-    "SpiritPathFilename": "10_Human_SpiritHealer.json",
+    "PathFilename": "10_Gnome.json",
     "PathThereAndBack": true,
     "PathReduceSteps": false,
   
@@ -21,11 +19,11 @@
     "Combat": {
       "Sequence": [
         {
-          "Name": "Fireblast",
+          "Name": "Fire Blast",
           "Key": "5",
           "ManaRequirement": 40,
           "Cooldown": 8,
-          "Requirements": ["Health%<80", "SpellInRange:4"]
+          "Requirements": ["Health%<50", "SpellInRange:4"]
         },
         {
           "Name": "Fireball",
@@ -44,20 +42,20 @@
     "Parallel": {
       "Sequence": [
         {
-          "Name": "Low Health",
+          "Name": "Food",
           "HasCastBar": true,
           "StopBeforeCast": true,
           "Key": "6",
-          "Requirement": "Health%<90",
+          "Requirement": "Health%<60",
           "Cooldown": 10,
           "Log": false
         },
         {
-          "Name": "Drink",
+          "Name": "Water",
           "HasCastBar": true,
           "StopBeforeCast": true,
           "Key": "7",
-          "Requirement": "Mana%<90",
+          "Requirement": "Mana%<60",
           "Cooldown": 10,
           "Log": false
         }
@@ -86,7 +84,7 @@
           "HasCastBar": true,
           "StopBeforeCast": true,
           "Key": "9",
-          "Requirement": "not BagItem:5350:4",
+          "Requirement": "not BagItem:2288:4",
           "Cooldown": 30,
           "Log": false
         },
@@ -99,6 +97,24 @@
           "Cooldown": 30,
           "Log": false
         }
-      ]}
+      ]},
+      "NPC": {
+        "Sequence": [
+          {
+            "Name": "Repair",
+            "Key": "C",
+            "Requirement": "Items Broken",
+            "PathFilename": "10_Gnome_Vendor.json",
+            "Cost": 6
+          },
+          {
+            "Name": "Sell",
+            "Key": "C",
+            "Requirement": "BagFull",
+            "PathFilename": "10_Gnome_Vendor.json",
+            "Cost": 6
+          }
+        ]
+      }
   }
   
