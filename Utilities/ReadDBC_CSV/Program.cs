@@ -103,7 +103,7 @@ namespace ReadDBC_CSV
 
         static void Main(string[] args)
         {
-            var path = "../../../data/";
+            var path = "../../../dbc/";
 
             var spell = Path.Join(path, "spell.csv");
             var foods = Spell.Extract(spell, "Restores $o1 health over $d");
