@@ -1,4 +1,4 @@
-using Libs.GOAP;
+﻿using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
@@ -33,7 +33,7 @@ namespace Libs.Goals
                 logger.LogInformation($"Abort from: {sender.GetType().Name}");
 
                 var location = this.playerReader.PlayerLocation;
-                wowProcess?.Hearthstone();
+                wowInput?.Hearthstone();
                 Active = false;
             }
         }
@@ -66,7 +66,7 @@ namespace Libs.Goals
                 else
                 {
                     logger.LogInformation($"New Plan= NULL");
-                    Thread.Sleep(500);
+                    Thread.Sleep(50);
                 }
             }
         }
