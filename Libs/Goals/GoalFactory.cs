@@ -1,4 +1,4 @@
-using Libs.Goals;
+﻿using Libs.Goals;
 using Libs.PPather;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -38,14 +38,14 @@ namespace Libs
             List<WowPoint> pathPoints, spiritPath;
             GetPaths(out pathPoints, out spiritPath, classConfig);
 
-            var playerDirection = new PlayerDirection(addonReader.PlayerReader, wowProcess, logger);
+            var playerDirection = new PlayerDirection(logger, wowProcess, addonReader.PlayerReader);
             var stopMoving = new StopMoving(wowProcess, addonReader.PlayerReader);
 
-            var castingHandler = new CastingHandler(wowProcess, addonReader.PlayerReader, logger, classConfig, playerDirection, NpcNameFinder);
+            var castingHandler = new CastingHandler(logger, wowProcess, wowInput, addonReader.PlayerReader, classConfig, playerDirection, npcNameFinder);
 
-            var stuckDetector = new StuckDetector(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, logger);
-            var followRouteAction = new FollowRouteGoal(addonReader.PlayerReader, wowProcess, playerDirection, pathPoints, stopMoving, NpcNameFinder, blacklist, logger, stuckDetector, classConfig, pather);
-            var walkToCorpseAction = new WalkToCorpseGoal(addonReader.PlayerReader, wowProcess, playerDirection, spiritPath, pathPoints, stopMoving, logger, stuckDetector, pather);
+            var stuckDetector = new StuckDetector(logger, wowProcess, wowInput, addonReader.PlayerReader, playerDirection, stopMoving);
+            var followRouteAction = new FollowRouteGoal(logger, wowProcess, wowInput, addonReader.PlayerReader,  playerDirection, pathPoints, stopMoving, npcNameFinder, blacklist, stuckDetector, classConfig, pather);
+            var walkToCorpseAction = new WalkToCorpseGoal(logger, wowProcess, wowInput, addonReader.PlayerReader,  playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
 
             availableActions.Clear();
 
@@ -70,8 +70,7 @@ namespace Libs
                     availableActions.Add(followRouteAction);
                     availableActions.Add(walkToCorpseAction);
                 }
-                availableActions.Add(new TargetDeadGoal(wowProcess, logger));
-                availableActions.Add(new ApproachTargetGoal(wowProcess, addonReader.PlayerReader, stopMoving, logger, stuckDetector, classConfig));
+                availableActions.Add(new ApproachTargetGoal(logger, wowProcess, wowInput, addonReader.PlayerReader, stopMoving,  stuckDetector));
 
                 if (classConfig.WrongZone.ZoneId > 0)
                 {
@@ -80,29 +79,33 @@ namespace Libs
 
                 if (classConfig.Parallel.Sequence.Count > 0)
                 {
-                    availableActions.Add(new ParallelGoal(wowProcess, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler, logger));
+                    availableActions.Add(new ParallelGoal(logger, wowInput, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler));
                 }
-
-                var lootAction = new LootGoal(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
-                lootAction.AddPreconditions();
-                availableActions.Add(lootAction);
 
                 if (classConfig.Loot)
                 {
-                    lootAction = new PostKillLootGoal(wowProcess, addonReader.PlayerReader, addonReader.BagReader, stopMoving, logger, classConfig);
+                    var lootAction = new LootGoal(logger, wowInput, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder);
                     lootAction.AddPreconditions();
                     availableActions.Add(lootAction);
+
+                    if (classConfig.Skin)
+                    {
+                        availableActions.Add(new SkinningGoal(logger, wowInput, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder));
+                    }
                 }
 
                 try
                 {
-                    var genericCombat = new CombatGoal(wowProcess, addonReader.PlayerReader, stopMoving, logger, classConfig, castingHandler);
+                    var genericCombat = new CombatGoal(logger, wowInput, addonReader.PlayerReader, stopMoving, classConfig, castingHandler);
                     availableActions.Add(genericCombat);
-                    availableActions.Add(new PullTargetGoal(wowProcess, addonReader.PlayerReader, NpcNameFinder, stopMoving, logger, castingHandler, stuckDetector, classConfig));
+                    availableActions.Add(new PullTargetGoal(logger, wowInput, addonReader.PlayerReader, npcNameFinder, stopMoving, castingHandler, stuckDetector, classConfig));
+
+                    availableActions.Add(new CreatureKilledGoal(logger, addonReader.PlayerReader, classConfig));
+                    availableActions.Add(new ConsumeCorpse(logger, addonReader.PlayerReader));
 
                     foreach (var item in classConfig.Adhoc.Sequence)
                     {
-                        availableActions.Add(new AdhocGoal(wowProcess, addonReader.PlayerReader, stopMoving, item, castingHandler, logger));
+                        availableActions.Add(new AdhocGoal(logger, wowInput, item, addonReader.PlayerReader, stopMoving, castingHandler));
                     }
                 }
                 catch (Exception ex)
@@ -113,7 +116,7 @@ namespace Libs
 
                 foreach (var item in classConfig.NPC.Sequence)
                 {
-                    availableActions.Add(new AdhocNPCGoal(addonReader.PlayerReader, wowProcess, playerDirection, stopMoving, NpcNameFinder, logger, stuckDetector, classConfig, pather, item, blacklist));
+                    availableActions.Add(new AdhocNPCGoal(logger, wowProcess, wowInput, addonReader.PlayerReader,  playerDirection, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, item, blacklist));
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 
@@ -135,7 +138,7 @@ namespace Libs
 
         private static string FixPathFilename(string path)
         {
-            if (!path.Contains(":") && !string.IsNullOrEmpty(path))
+            if (!path.Contains(":") && !string.IsNullOrEmpty(path) && !path.Contains("../json/path/"))
             {
                 return "../json/path/" + path;
             }
