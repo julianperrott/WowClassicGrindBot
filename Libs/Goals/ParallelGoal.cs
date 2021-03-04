@@ -8,18 +8,24 @@ namespace Libs.Goals
 {
     public class ParallelGoal : GoapGoal
     {
-        private readonly WowProcess wowProcess;
+        public override float CostOfPerformingAction { get => 3f; }
+
+        private readonly ILogger logger;
+        private readonly WowInput wowInput;
+
         private readonly StopMoving stopMoving;
         private readonly PlayerReader playerReader;
-        private readonly ILogger logger;
+        
         private readonly CastingHandler castingHandler;
 
-        public ParallelGoal(WowProcess wowProcess, PlayerReader playerReader, StopMoving stopMoving, List<KeyAction> keysConfig, CastingHandler castingHandler, ILogger logger)
+        public ParallelGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, StopMoving stopMoving, List<KeyAction> keysConfig, CastingHandler castingHandler)
         {
-            this.wowProcess = wowProcess;
+            this.logger = logger;
+            this.wowInput = wowInput;
+
             this.stopMoving = stopMoving;
             this.playerReader = playerReader;
-            this.logger = logger;
+            
             this.castingHandler = castingHandler;
 
             AddPrecondition(GoapKey.incombat, false);
@@ -32,8 +38,6 @@ namespace Libs.Goals
             return this.Keys.Any(key => key.CanRun());
         }
 
-        public override float CostOfPerformingAction { get => 3f; }
-
         public override async Task PerformAction()
         {
             if (this.Keys.Any(k => k.StopBeforeCast))
@@ -42,27 +46,28 @@ namespace Libs.Goals
 
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
-                    await wowProcess.Dismount();
+                    await wowInput.Dismount();
                 }
-                await Task.Delay(1000);
+                if (!await Wait(1000, playerReader.PlayerBitValues.PlayerInCombat)) return;
             }
 
             this.Keys.ForEach(async key =>
             {
-                var pressed = await this.castingHandler.CastIfReady(key, this);
+                var pressed = await this.castingHandler.CastIfReady(key);
                 key.ResetCooldown();
                 key.SetClicked();
             });
 
+            if (!await Wait(400, playerReader.PlayerBitValues.PlayerInCombat)) return;
+
             bool wasDrinkingOrEating = this.playerReader.Buffs.Drinking || this.playerReader.Buffs.Eating;
+            int ticks = 0;
 
-            int seconds = 0;
-
+            this.logger.LogInformation($"Waiting for {Name}");
             while ((this.playerReader.Buffs.Drinking || this.playerReader.Buffs.Eating || this.playerReader.IsCasting) && !this.playerReader.PlayerBitValues.PlayerInCombat)
             {
-                await Task.Delay(1000);
-                seconds++;
-                this.logger.LogInformation($"Waiting for {Name}");
+                if (!await Wait(100, playerReader.PlayerBitValues.PlayerInCombat)) return;
+                ticks++;
 
                 if (this.playerReader.Buffs.Drinking && this.playerReader.Buffs.Eating)
                 {
@@ -77,7 +82,7 @@ namespace Libs.Goals
                     if (this.playerReader.HealthPercent > 98) { break; }
                 }
 
-                if (seconds > 25)
+                if (ticks > 250)
                 {
                     this.logger.LogInformation($"Waited long enough for {Name}");
                     break;
@@ -86,10 +91,8 @@ namespace Libs.Goals
 
             if (wasDrinkingOrEating)
             {
-                await wowProcess.TapStopKey(); // stand up
+                await wowInput.TapStandUpKey(); // stand up
             }
         }
-
-        //public override string Name => this.Keys.Count == 0 ? base.Name : string.Join(", ", this.Keys.Select(k => k.Name));
     }
 }
