@@ -1,4 +1,4 @@
-using PathingAPI.WorldToMap;
+﻿using PathingAPI.WorldToMap;
 using PatherPath.Graph;
 using System;
 using System.Collections.Generic;
