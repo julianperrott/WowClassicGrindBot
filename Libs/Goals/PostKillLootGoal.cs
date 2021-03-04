@@ -6,8 +6,10 @@ namespace Libs.Goals
 {
     public class PostKillLootGoal : LootGoal
     {
-        public PostKillLootGoal(WowProcess wowProcess, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ILogger logger, ClassConfiguration classConfiguration)
-            : base(wowProcess, playerReader, bagReader, stopMoving, logger, classConfiguration)
+        public override float CostOfPerformingAction { get => 4.5f; }
+
+        public PostKillLootGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
+            : base(logger, wowInput, playerReader, bagReader, stopMoving, classConfiguration, npcNameFinder)
         {
         }
 
@@ -17,8 +19,6 @@ namespace Libs.Goals
             AddPrecondition(GoapKey.hastarget, false);
             AddPrecondition(GoapKey.shouldloot, true);
         }
-
-        public override float CostOfPerformingAction { get => 5f; }
 
         public override async Task PerformAction()
         {
