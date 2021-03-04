@@ -1,4 +1,4 @@
-using Libs.Goals;
+﻿using Libs.Goals;
 using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -26,19 +26,20 @@ namespace Libs
         public Thread? screenshotThread { get; set; }
         public Thread addonThread { get; set; }
         public Thread? botThread { get; set; }
-        //public GoalFactory ActionFactory { get; set; }
+
         public GoapAgent? GoapAgent { get; set; }
         public RouteInfo? RouteInfo { get; set; }
 
         private GoalThread? actionThread;
 
         public WowScreen WowScreen { get; set; }
+        public WowInput? WowInput { get; set; }
 
         private NpcNameFinder npcNameFinder;
 
         public ClassConfiguration? ClassConfig { get; set; }
-        private INodeFinder minimapNodeFinder;
 
+        private INodeFinder minimapNodeFinder;
         public IImageProvider? MinimapImageFinder { get; set; }
 
         public ActionBarPopulator? ActionBarPopulator { get; set; }
@@ -46,15 +47,16 @@ namespace Libs
         private bool Enabled = true;
 
         public event EventHandler? ProfileLoaded;
+        public event EventHandler<bool>? StatusChanged;
 
         public BotController(ILogger logger, IPPather pather)
         {
-            updatePlayerPostion.Start();
-            wowProcess = new WowProcess(logger);
-            wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
-            this.WowScreen = new WowScreen(wowProcess, logger);
             this.logger = logger;
             this.pather = pather;
+
+            updatePlayerPostion.Start();
+            wowProcess = new WowProcess(logger);
+            WowScreen = new WowScreen(wowProcess, logger);
 
             var frames = DataFrameConfiguration.ConfigurationExists()
                 ? DataFrameConfiguration.LoadConfiguration()
@@ -62,7 +64,7 @@ namespace Libs
 
             AddonReader = new AddonReader(WowScreen, frames, logger);
 
-            minimapNodeFinder = new MinimapNodeFinder(new PixelClassifier());
+            minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
 
             addonThread = new Thread(AddonRefreshThread);
@@ -83,7 +85,7 @@ namespace Libs
 
             logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerClass}.");
 
-            npcNameFinder = new NpcNameFinder(wowProcess, AddonReader.PlayerReader, logger);
+            npcNameFinder = new NpcNameFinder(logger, wowProcess);
             //ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
 
             screenshotThread = new Thread(ScreenshotRefreshThread);
@@ -149,6 +151,8 @@ namespace Libs
                 {
                     actionThread.Active = false;
                 }
+
+                StatusChanged?.Invoke(this, actionThread.Active);
             }
         }
 
@@ -156,19 +160,17 @@ namespace Libs
         {
             if (this.actionThread != null)
             {
-                await wowProcess.KeyPress(ConsoleKey.F3, 400); // clear target
-
                 while (this.actionThread.Active && this.Enabled)
                 {
                     await actionThread.GoapPerformGoal();
                 }
             }
 
-            await this.wowProcess.KeyPress(ConsoleKey.UpArrow, 500);
+            await new StopMoving(wowProcess, AddonReader.PlayerReader).Stop();
             logger.LogInformation("Stopped!");
         }
 
-        public bool TryInitialiseBot(string classFile, string? pathFile)
+        public bool InitialiseFromFile(string classFile, string? pathFile)
         {
             try
             {
@@ -180,17 +182,25 @@ namespace Libs
                 return false;
             }
 
-            ActionBarPopulator = new ActionBarPopulator(ClassConfig, wowProcess, AddonReader);
+            Initialize(ClassConfig);
 
-            var blacklist = this.ClassConfig.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, ClassConfig.NPCMaxLevels_Above, ClassConfig.NPCMaxLevels_Below, ClassConfig.Blacklist, logger);
+            return true;
+        }
 
-            var actionFactory = new GoalFactory(AddonReader, this.logger, this.wowProcess, npcNameFinder, this.pather);
-            var availableActions = actionFactory.CreateGoals(ClassConfig, blacklist);
+        private void Initialize(ClassConfiguration config)
+        {
+            ActionBarPopulator = new ActionBarPopulator(logger, wowProcess, config, AddonReader);
+            WowInput = new WowInput(logger, wowProcess, config);
+
+            var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.Blacklist, logger);
+
+            var actionFactory = new GoalFactory(logger, AddonReader, wowProcess, WowInput, npcNameFinder, pather);
+            var availableActions = actionFactory.CreateGoals(config, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
-            this.GoapAgent = new GoapAgent(AddonReader.PlayerReader, availableActions, blacklist, logger, ClassConfig, this.AddonReader.BagReader);
+            this.GoapAgent = new GoapAgent(logger, wowProcess, WowInput, AddonReader.PlayerReader, availableActions, blacklist, config, AddonReader.BagReader);
 
-            this.actionThread = new GoalThread(this.AddonReader.PlayerReader, this.wowProcess, GoapAgent, logger);
+            this.actionThread = new GoalThread(logger, WowInput, AddonReader.PlayerReader, GoapAgent);
 
             // hookup events between actions
             availableActions.ToList().ForEach(a =>
@@ -204,8 +214,6 @@ namespace Libs
                     if (b != a) { a.ActionEvent += b.OnActionEvent; }
                 });
             });
-
-            return true;
         }
 
         private ClassConfiguration ReadClassConfiguration(string classFilename, string? pathFilename)
@@ -243,6 +251,8 @@ namespace Libs
             {
                 actionThread.Active = false;
                 this.GoapAgent?.AvailableGoals.ToList().ForEach(goal => goal.OnActionEvent(this, new ActionEventArgs(GoapKey.abort, true)));
+
+                StatusChanged?.Invoke(this, actionThread.Active);
             }
         }
 
@@ -254,7 +264,7 @@ namespace Libs
         public void LoadClassProfile(string classFilename)
         {
             StopBot();
-            if(TryInitialiseBot(classFilename, SelectedPathFilename))
+            if(InitialiseFromFile(classFilename, SelectedPathFilename))
             {
                 SelectedClassFilename = classFilename;
             }
@@ -286,12 +296,18 @@ namespace Libs
         public void LoadPathProfile(string pathFilename)
         {
             StopBot();
-            if(TryInitialiseBot(SelectedClassFilename, pathFilename))
+            if(InitialiseFromFile(SelectedClassFilename, pathFilename))
             {
                 SelectedPathFilename = pathFilename;
             }
 
             ProfileLoaded?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OverrideClassConfig(ClassConfiguration classConfiguration)
+        {
+            this.ClassConfig = classConfiguration;
+            Initialize(this.ClassConfig);
         }
     }
 }

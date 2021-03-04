@@ -14,6 +14,7 @@ namespace Libs
         GoapAgent? GoapAgent { get; set; }
         RouteInfo? RouteInfo { get; set; }
         WowScreen WowScreen { get; set; }
+        WowInput? WowInput { get; set; }
         ClassConfiguration? ClassConfig { get; set; }
         IImageProvider? MinimapImageFinder { get; set; }
 
@@ -23,6 +24,7 @@ namespace Libs
         string? SelectedPathFilename { get; set; }
 
         event System.EventHandler? ProfileLoaded;
+        event System.EventHandler<bool> StatusChanged;
 
         void ToggleBotStatus();
         void StopBot();
@@ -38,5 +40,7 @@ namespace Libs
         List<string> PathFileList();
 
         void LoadPathProfile(string pathFilename);
+
+        void OverrideClassConfig(ClassConfiguration classConfiguration);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Libs.GOAP;
+using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
@@ -9,19 +9,21 @@ namespace Libs.Goals
     public class GoalThread
     {
         private readonly ILogger logger;
+        private readonly WowInput wowInput;
+
         private readonly PlayerReader playerReader;
-        private readonly WowProcess wowProcess;
         private readonly GoapAgent goapAgent;
 
         private GoapGoal? currentGoal;
         public bool Active { get; set; }
 
-        public GoalThread(PlayerReader playerReader, WowProcess wowProcess, GoapAgent goapAgent, ILogger logger)
+        public GoalThread(ILogger logger, WowInput wowInput, PlayerReader playerReader, GoapAgent goapAgent)
         {
-            this.playerReader = playerReader;
-            this.wowProcess = wowProcess;
-            this.goapAgent = goapAgent;
             this.logger = logger;
+            this.wowInput = wowInput;
+            this.playerReader = playerReader;
+            this.goapAgent = goapAgent;
+            
         }
 
         public void OnActionEvent(object sender, ActionEventArgs e)

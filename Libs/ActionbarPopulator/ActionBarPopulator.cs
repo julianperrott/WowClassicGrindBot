@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Libs
@@ -15,18 +15,20 @@ namespace Libs
             public string Requirement;
         }
 
-        private readonly ClassConfiguration config;
+        private readonly ILogger logger;
         private readonly WowProcess wowProcess;
+        private readonly ClassConfiguration config;
         private readonly AddonReader addonReader;
 
-        public ActionBarPopulator(ClassConfiguration config, WowProcess wowProcess, AddonReader addonReader)
+        public ActionBarPopulator(ILogger logger, WowProcess wowProcess, ClassConfiguration config, AddonReader addonReader)
         {
-            this.config = config;
+            this.logger = logger;
             this.wowProcess = wowProcess;
+            this.config = config;
             this.addonReader = addonReader;
         }
 
-        private List<ActionBarSource> sources = new List<ActionBarSource>();
+        private readonly List<ActionBarSource> sources = new List<ActionBarSource>();
 
 
         public async Task Execute()
@@ -37,6 +39,8 @@ namespace Libs
 
         private void CollectKeyActions()
         {
+            sources.Clear();
+
             config.Adhoc.Sequence.ForEach(k => AddUnique(k));
             config.Parallel.Sequence.ForEach(k => AddUnique(k));
             config.Pull.Sequence.ForEach(k => AddUnique(k));
@@ -67,9 +71,13 @@ namespace Libs
 
         private async Task Run()
         {
+            wowProcess.SetForegroundWindow();
             foreach(var a in sources)
             {
-                NativeMethods.SetClipboardText(ScriptBuilder(a));
+                var content = ScriptBuilder(a);
+                logger.LogInformation(content);
+
+                NativeMethods.SetClipboardText(content);
                 await Task.Delay(50);
                 
                 // Open chat inputbox
@@ -122,8 +130,7 @@ namespace Libs
 
             string func = GetFunction(a);
             string slot = GetActionBarSlotHotkey(a);
-            string script = $"/run {func}({nameOrId})PlaceAction({slot})ClearCursor()--";
-            return script;
+            return $"/run {func}({nameOrId})PlaceAction({slot})ClearCursor()--";
         }
 
         private static string GetFunction(ActionBarSource a)

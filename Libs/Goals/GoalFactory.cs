@@ -1,4 +1,4 @@
-﻿using Libs.Goals;
+using Libs.Goals;
 using Libs.PPather;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -11,22 +11,23 @@ namespace Libs
 {
     public class GoalFactory
     {
-        private readonly AddonReader addonReader;
-        public NpcNameFinder NpcNameFinder { get; private set; }
+        private readonly ILogger logger;
         private readonly WowProcess wowProcess;
-        private readonly IPPather pather;
-        private ILogger logger;
+        private readonly WowInput wowInput;
 
-        public bool PotentialAddsExist => NpcNameFinder.PotentialAddsExist;
+        private readonly AddonReader addonReader;
+        private readonly NpcNameFinder npcNameFinder;
+        private readonly IPPather pather;
 
         public RouteInfo? RouteInfo { get; private set; }
 
-        public GoalFactory(AddonReader addonReader, ILogger logger, WowProcess wowProcess, NpcNameFinder npcNameFinder, IPPather pather)
+        public GoalFactory(ILogger logger, AddonReader addonReader, WowProcess wowProcess, WowInput wowInput, NpcNameFinder npcNameFinder, IPPather pather)
         {
             this.logger = logger;
             this.addonReader = addonReader;
-            this.NpcNameFinder = npcNameFinder;
             this.wowProcess = wowProcess;
+            this.wowInput = wowInput;
+            this.npcNameFinder = npcNameFinder;
             this.pather = pather;
         }
 

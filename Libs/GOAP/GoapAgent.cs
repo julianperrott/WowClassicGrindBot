@@ -1,4 +1,4 @@
-﻿using Libs.Goals;
+using Libs.Goals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,24 +9,32 @@ namespace Libs.GOAP
 {
     public sealed class GoapAgent
     {
+        private ILogger logger;
+        private WowProcess wowProcess;
+        private WowInput wowInput;
+
         private readonly BagReader bagReader;
 
         private GoapPlanner planner;
         public IEnumerable<GoapGoal> AvailableGoals { get; set; }
+        
         private PlayerReader playerReader;
-        private ILogger logger;
         private ClassConfiguration classConfiguration;
 
         public GoapGoal? CurrentGoal { get; set; }
         public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
         private IBlacklist blacklist;
 
-        public GoapAgent(PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist, ILogger logger, ClassConfiguration classConfiguration, BagReader bagReader)
+        public GoapAgent(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist,  ClassConfiguration classConfiguration, BagReader bagReader)
         {
+            this.logger = logger;
+            this.wowProcess = wowProcess;
+            this.wowInput = wowInput;
+
             this.playerReader = playerReader;
             this.AvailableGoals = availableGoals.OrderBy(a => a.CostOfPerformingAction);
             this.blacklist = blacklist;
-            this.logger = logger;
+
             this.planner = new GoapPlanner(logger);
             this.classConfiguration = classConfiguration;
             this.bagReader = bagReader;

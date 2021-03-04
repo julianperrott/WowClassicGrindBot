@@ -15,6 +15,7 @@ namespace Libs
         public GoapAgent? GoapAgent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public RouteInfo? RouteInfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public WowScreen WowScreen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public WowInput? WowInput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public string SelectedClassFilename { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string? SelectedPathFilename { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -27,6 +28,7 @@ namespace Libs
         public ActionBarPopulator? ActionBarPopulator { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public event EventHandler? ProfileLoaded;
+        public event EventHandler<bool>? StatusChanged;
 
         public void Shutdown()
         {
@@ -35,6 +37,7 @@ namespace Libs
 
         public void StopBot()
         {
+            StatusChanged?.Invoke(this, false);
             throw new NotImplementedException();
         }
 
@@ -62,6 +65,11 @@ namespace Libs
         public void LoadPathProfile(string pathFilename)
         {
             ProfileLoaded?.Invoke(this, EventArgs.Empty);
+            throw new NotImplementedException();
+        }
+
+        public void OverrideClassConfig(ClassConfiguration classConfiguration)
+        {
             throw new NotImplementedException();
         }
     }

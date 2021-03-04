@@ -1,4 +1,3 @@
-﻿using Libs.Goals;
 using Libs.Cursor;
 using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;
@@ -23,6 +22,7 @@ namespace Libs
 
         private NPCType _NPCType = NPCType.Enemy;
 
+        private const int tick = 50;
         private bool ColorMatch(Color pixel)
         {
             switch(_NPCType)
@@ -44,15 +44,9 @@ namespace Libs
 
         private List<LineOfNpcName> npcNameLine { get; set; } = new List<LineOfNpcName>();
         private List<List<LineOfNpcName>> npcs { get; set; } = new List<List<LineOfNpcName>>();
-        private readonly PlayerReader playerReader;
 
-        private ILogger logger;
-        private readonly WowProcess wowProcess;
-        //private bool canFindNpcs = true;
-
-        private List<NpcPosition> Npcs { get; set; } = new List<NpcPosition>();
-        private DateTime lastNpcFind = DateTime.Now;
-
+        private readonly ILogger logger;
+        private readonly IRectProvider rectProvider;
         private DirectBitmap screen;
 
         public DirectBitmap Screenshot
@@ -71,17 +65,27 @@ namespace Libs
             }
         }
 
-        public NpcNameFinder(WowProcess wowProcess, PlayerReader playerReader, ILogger logger)
+        private List<NpcPosition> Npcs { get; set; } = new List<NpcPosition>();
+        public int NpcCount => npcs.Count;
+
+        public int Sequence { get; private set; } = 0;
+
+        private DateTime lastNpcFind = DateTime.Now;
+
+        public NpcNameFinder(ILogger logger, IRectProvider rectProvider)
         {
-            this.wowProcess = wowProcess;
             this.logger = logger;
-            this.playerReader = playerReader;
+            this.rectProvider = rectProvider;
             this.screen = new DirectBitmap();
         }
 
         public void ChangeNpcType(NPCType type)
         {
-            _NPCType = type;
+            if(_NPCType != type)
+            {
+                _NPCType = type;
+                lastNpcFind = DateTime.Now.AddMilliseconds(-200);
+            }
         }
 
         public async Task FindAndClickNpc(int threshold)
@@ -329,7 +333,7 @@ namespace Libs
 
         private void UpdateScreenshot()
         {
-            wowProcess.GetWindowRect(out var rect);
+            rectProvider.GetWindowRect(out var rect);
             Screenshot = new DirectBitmap(rect);
             Screenshot.CaptureScreen();
         }
