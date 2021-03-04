@@ -10,7 +10,19 @@ namespace Libs.Goals
     public class AdhocNPCGoal : GoapGoal, IRouteProvider
     {
         private double RADIAN = Math.PI * 2;
+
+        private readonly ILogger logger;
         private readonly WowProcess wowProcess;
+        private readonly WowInput wowInput;
+
+        private readonly PlayerReader playerReader;
+        private readonly IPlayerDirection playerDirection;
+        private readonly StopMoving stopMoving;
+        private readonly StuckDetector stuckDetector;
+        private readonly ClassConfiguration classConfiguration;
+        private readonly NpcNameFinder npcNameFinder;
+        private readonly IBlacklist blacklist;
+        private readonly IPPather pather;
 
         private Stack<WowPoint> routeToWaypoint = new Stack<WowPoint>();
 
@@ -24,28 +36,22 @@ namespace Libs.Goals
             return routeToWaypoint.Count == 0 ? null : routeToWaypoint.Peek();
         }
 
-        private readonly PlayerReader playerReader;
-        private readonly IPlayerDirection playerDirection;
-        private readonly StopMoving stopMoving;
-        private readonly StuckDetector stuckDetector;
-        private readonly ClassConfiguration classConfiguration;
-        private readonly NpcNameFinder npcNameFinder;
-        private readonly IBlacklist blacklist;
-        private readonly IPPather pather;
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private bool shouldMount = true;
-        private readonly ILogger logger;
+        
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
+        public AdhocNPCGoal(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader,  IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
         {
-            this.playerReader = playerReader;
+            this.logger = logger;
             this.wowProcess = wowProcess;
+            this.wowInput = wowInput;
+            this.playerReader = playerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.npcNameFinder = npcNameFinder;
-            this.logger = logger;
+            
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
             this.pather = pather;
@@ -150,15 +156,14 @@ namespace Libs.Goals
                         await FollowPath(this.key.Path);
 
                         await this.stopMoving.Stop();
-                        await wowProcess.KeyPress(ConsoleKey.F3, 400);
+                        await wowInput.TapClearTarget();
 
                         npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.FriendlyOrNeutral);
-                        await playerReader.WaitForNUpdate(10);
-                        var foundVendor = await npcNameFinder.FindNpcByCursorType(Cursor.CursorClassification.Vendor);
-                        npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
+                        await npcNameFinder.WaitForNUpdate(2);
+                        var foundVendor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Vendor);
 
                         await InteractWithTarget();
-                        wowProcess.KeyPress(ConsoleKey.F3, 400).Wait(); // clear target
+                        await wowInput.TapClearTarget();
 
                         // walk back to the start of the path to the npc
                         var pathFrom = this.key.Path.ToList();
@@ -195,7 +200,7 @@ namespace Libs.Goals
             // dismount
             if (this.playerReader.PlayerBitValues.IsMounted)
             {
-                await wowProcess.Dismount();
+                await wowInput.Dismount();
             }
 
             foreach (var point in path)
@@ -235,9 +240,9 @@ namespace Libs.Goals
 
                 if (this.playerReader.PlayerLevel >= 40 && this.playerReader.PlayerClass != PlayerClassEnum.Druid)
                 {
-                    await wowProcess.TapStopKey();
+                    await wowInput.TapStopKey();
                     await Task.Delay(500);
-                    await wowProcess.Mount(this.playerReader);
+                    await wowInput.Mount(this.playerReader);
                 }
                 if (this.playerReader.PlayerLevel >= 30 && this.playerReader.PlayerClass == PlayerClassEnum.Druid)
                 {
@@ -335,13 +340,6 @@ namespace Libs.Goals
             return (this.playerReader.PlayerBitValues.IsMounted ? 50 : 20);
         }
 
-        public async Task TapInteractKey(string source)
-        {
-            logger.LogInformation($"Approach target ({source})");
-            await this.wowProcess.KeyPress(this.classConfiguration.Interact.ConsoleKey, 99);
-            this.classConfiguration.Interact.SetClicked();
-        }
-
         private bool HasBeenActiveRecently()
         {
             return (DateTime.Now - LastActive).TotalSeconds < 2;
@@ -371,7 +369,7 @@ namespace Libs.Goals
             for (int i = 0; i < 5; i++)
             {
                 // Macro runs: targets NPC and does action such as sell
-                await this.wowProcess.KeyPress(key.ConsoleKey, 200);
+                await this.wowProcess.KeyPress(key.ConsoleKey, 100);
 
                 // Interact with NPC
                 if (!string.IsNullOrEmpty(this.playerReader.Target))
@@ -379,7 +377,7 @@ namespace Libs.Goals
                     // black list it so we don't get stuck trying to kill it
                     this.blacklist.Add(this.playerReader.Target);
 
-                    await TapInteractKey($"InteractWithTarget {i}");
+                    await wowInput.TapInteractKey($"InteractWithTarget {i}");
                 }
                 else
                 {
@@ -387,7 +385,8 @@ namespace Libs.Goals
                     break;
                 }
 
-                System.Threading.Thread.Sleep(3000);
+                System.Threading.Thread.Sleep(2000);
+                await this.wowProcess.KeyPress(ConsoleKey.Escape, 100);
             }
 
             if(CheckIfActionCanRun())
