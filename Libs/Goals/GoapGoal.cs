@@ -127,5 +127,35 @@ namespace Libs.Goals
         {
             return $"{Name} " + (Keys.Count == 1 ? $"[{Keys.First().ConsoleKey}]" : "");
         }
+
+        public static async Task<bool> Wait(int durationMs, bool exit = false)
+        {
+            int elapsedMs = 0;
+            while (elapsedMs <= durationMs)
+            {
+                if (exit)
+                    return false;
+
+                await Task.Delay(50);
+                elapsedMs += 50;
+            }
+
+            return true;
+        }
+
+        public static async Task<bool> Wait(int durationMs, Task<bool> exit)
+        {
+            int elapsedMs = 0;
+            while (elapsedMs <= durationMs)
+            {
+                if (await exit)
+                    return false;
+
+                await Task.Delay(50);
+                elapsedMs += 50;
+            }
+
+            return true;
+        }
     }
 }
