@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace Libs
 {
-    public class WowPoint
+    public class WowPoint : IEquatable<WowPoint>
     {
         public double X { get; set; }
         public double Y { get; set; }
@@ -60,6 +60,26 @@ namespace Libs
         public override string ToString()
         {
             return $"{X},{Y}";
+        }
+
+        public bool Equals(WowPoint other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return other.X.Equals(X) && other.Y.Equals(Y);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals((WowPoint)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (X.GetHashCode() * 397) ^ Y.GetHashCode();
+            }
         }
     }
 }
