@@ -1,4 +1,4 @@
-using Libs.Cursor;
+﻿using Libs.Cursor;
 using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
@@ -90,15 +90,7 @@ namespace Libs
 
         public async Task FindAndClickNpc(int threshold)
         {
-            //if (!canFindNpcs) { return; }
-
-            if (this.playerReader.HasTarget)
-            {
-                return;
-            }
-
             var npc = GetClosestNpc();
-
             if (npc != null)
             {
                 if (npc.Height >= threshold)
@@ -115,10 +107,6 @@ namespace Libs
                     foreach (var location in locations)
                     {
                         var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
-
-                        clickPostion.X = wowProcess.ScaleDown(clickPostion.X);
-                        clickPostion.Y = wowProcess.ScaleDown(clickPostion.Y);
-
                         WowProcess.SetCursorPosition(clickPostion);
                         await Task.Delay(100);
                         CursorClassifier.Classify(out var cls).Dispose();
@@ -141,24 +129,21 @@ namespace Libs
             }
             else
             {
-                logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: No NPC found!");
+                //logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: No NPC found!");
             }
         }
 
-        public async Task<bool> FindNpcByCursorType(CursorClassification cursor)
+        public async Task<bool> FindByCursorType(CursorClassification cursor)
         {
-            if (this.playerReader.HasTarget)
-                return false;
-
             var locations = new List<Point>
             {
-                new Point(0,0),
-                new Point(10,10),
-                new Point(-10,-10),
-                new Point(20,20),
-                new Point(-20,-20),
-                new Point(0, -30),
-                new Point(0, -50)
+                new Point(0, 0),
+                new Point(0, -25),
+                new Point(-5, 10),
+                new Point(5, 35),
+                new Point(-5, 75),
+                new Point(0, 125),
+                new Point(0, 160),
             };
 
             foreach (var npc in Npcs)
@@ -166,10 +151,6 @@ namespace Libs
                 foreach (var location in locations)
                 {
                     var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
-
-                    clickPostion.X = wowProcess.ScaleDown(clickPostion.X);
-                    clickPostion.Y = wowProcess.ScaleDown(clickPostion.Y);
-
                     WowProcess.SetCursorPosition(clickPostion);
                     await Task.Delay(100);
                     CursorClassifier.Classify(out var cls).Dispose();
@@ -185,45 +166,30 @@ namespace Libs
 
         private async Task AquireTargetAtCursor(Point clickPostion, NpcPosition npc)
         {
-            await this.wowProcess.RightClickMouse(clickPostion);
+            await rectProvider.RightClickMouse(clickPostion);
             logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}");
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    if (this.playerReader.HasTarget)
-            //    {
-            //        break;
-            //    }
-            //    await this.wowProcess.KeyPress(ConsoleKey.Tab, 100);
-            //    clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + 15 - random.Next(30), npc.ClickPoint.Y);
-            //    wowProcess.SetCursorPosition(clickPostion);
-            //}
         }
 
         public List<NpcPosition> RefreshNpcPositions()
         {
             UpdateScreenshot();
 
-            if (!this.playerReader.PlayerBitValues.PlayerInCombat)
+            if ((DateTime.Now - lastNpcFind).TotalMilliseconds > tick) //150
             {
-                if ((DateTime.Now - lastNpcFind).TotalMilliseconds > 500)
-                {
-                    PopulateLinesOfNpcNames();
-                    DetermineNpcs();
+                PopulateLinesOfNpcNames();
+                DetermineNpcs();
 
-                    Npcs = npcs.OrderByDescending(npc => npc.Count)
-                        .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)), new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), Screenshot.Width))
-                        .Where(s => s.Width < 150)
-                        .ToList();
+                Npcs = npcs.OrderByDescending(npc => npc.Count)
+                    .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)), new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), Screenshot.Width))
+                    .Where(s => s.Width < 250) // 150 - fine // 200 - fine // 250 fine
+                    .ToList();
 
-                    lastNpcFind = DateTime.Now;
-                }
-
-                UpdatePotentialAddsExist();
-
-                return Npcs;
+                lastNpcFind = DateTime.Now;
+                Sequence++;
             }
 
-            return new List<NpcPosition>();
+            UpdatePotentialAddsExist();
+            return Npcs;
         }
 
         public bool MobsVisible { get; private set; }
@@ -252,7 +218,8 @@ namespace Libs
         public NpcPosition? GetClosestNpc()
         {
             var info = string.Join(", ", Npcs.Select(n => n.Height.ToString() + $"({n.Min.X},{n.Min.Y})"));
-            logger.LogInformation($"> NPCs found: {info}");
+            if(!string.IsNullOrEmpty(info))
+                logger.LogInformation($"> NPCs found: {info}");
 
             return Npcs.Count == 0 ? null : Npcs.First();
         }
@@ -272,7 +239,7 @@ namespace Libs
                     {
                         var laterNpcLine = this.npcNameLine[j];
                         if (laterNpcLine.Y > npcLine.Y + 10) { break; }
-                        if (laterNpcLine.Y > lastY + 2) { break; }
+                        if (laterNpcLine.Y > lastY + 5) { break; } // 2
 
                         if (laterNpcLine.XStart <= npcLine.X && laterNpcLine.XEnd >= npcLine.X && laterNpcLine.Y > lastY)
                         {
@@ -290,6 +257,10 @@ namespace Libs
         {
             npcNameLine = new List<LineOfNpcName>();
 
+            const int minLength = 12; // original 22 // 18 fine
+            const int lengthDiff = 3;
+            const int minEndLength = minLength - lengthDiff; // original 18
+
             bool isEndOfSection;
             for (int y = 30; y < Screenshot.Height / 2; y++)
             {
@@ -302,7 +273,7 @@ namespace Libs
 
                     if (isTargetColor)
                     {
-                        var isSameSection = lengthStart > -1 && (x - lengthEnd) < 22;
+                        var isSameSection = lengthStart > -1 && (x - lengthEnd) < minLength;
 
                         if (isSameSection)
                         {
@@ -310,7 +281,7 @@ namespace Libs
                         }
                         else
                         {
-                            isEndOfSection = lengthStart > -1 && lengthEnd - lengthStart > 18;
+                            isEndOfSection = lengthStart > -1 && lengthEnd - lengthStart > minEndLength;
 
                             if (isEndOfSection)
                             {
@@ -323,7 +294,7 @@ namespace Libs
                     }
                 }
 
-                isEndOfSection = lengthStart > -1 && lengthEnd - lengthStart > 18;
+                isEndOfSection = lengthStart > -1 && lengthEnd - lengthStart > minEndLength;
                 if (isEndOfSection)
                 {
                     npcNameLine.Add(new LineOfNpcName(lengthStart, lengthEnd, y));
@@ -336,6 +307,15 @@ namespace Libs
             rectProvider.GetWindowRect(out var rect);
             Screenshot = new DirectBitmap(rect);
             Screenshot.CaptureScreen();
+        }
+
+        public async Task WaitForNUpdate(int n)
+        {
+            var s = this.Sequence;
+            while (this.Sequence <= s + n)
+            {
+                await Task.Delay(tick);
+            }
         }
 
         public void Dispose()
