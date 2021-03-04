@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -30,9 +30,7 @@ namespace Libs
         public Bitmap GetBitmap(int width, int height)
         {
             var bmpScreen = new Bitmap(width, height);
-            var rect = Rectangle.Empty;
-
-            NativeMethods.GetWindowRect(wowProcess.WarcraftProcess.MainWindowHandle, out rect);
+            NativeMethods.GetWindowRect(wowProcess.WarcraftProcess.MainWindowHandle, out var rect);
 
             using (var graphics = Graphics.FromImage(bmpScreen))
             {
@@ -117,22 +115,20 @@ namespace Libs
             return tmp;
         }
 
-        public static Bitmap GetCroppedMinimapBitmap(bool highlight)
+        public Bitmap GetCroppedMinimapBitmap(bool highlight)
         {
             return CropImage(GetMinimapBitmap(), highlight);
         }
 
-        private static Bitmap GetMinimapBitmap()
+        private Bitmap GetMinimapBitmap()
         {
-            int Width = 155;
-            int Height = 155;
-            int X = 1730;
-            int Y = 38;
+            NativeMethods.GetWindowRect(wowProcess.WarcraftProcess.MainWindowHandle, out var rect);
 
-            var bmpScreen = new Bitmap(Width, Height);
+            int Size = 200;
+            var bmpScreen = new Bitmap(Size, Size);
             using (var graphics = Graphics.FromImage(bmpScreen))
             {
-                graphics.CopyFromScreen(X, Y, 0, 0, bmpScreen.Size);
+                graphics.CopyFromScreen(rect.Right - Size, rect.Top, 0, 0, bmpScreen.Size);
             }
             return bmpScreen;
         }

@@ -9,21 +9,23 @@ namespace Libs
 {
     public class MinimapNodeFinder : INodeFinder, IImageProvider
     {
+        private readonly WowScreen wowScreen;
         private readonly IPixelClassifier pixelClassifier;
 
         private Bitmap bitmap = new Bitmap(1, 1);
 
         public event EventHandler<NodeEventArgs> NodeEvent;
 
-        public MinimapNodeFinder(IPixelClassifier pixelClassifier)
+        public MinimapNodeFinder(WowScreen wowScreen, IPixelClassifier pixelClassifier)
         {
+            this.wowScreen = wowScreen;
             this.pixelClassifier = pixelClassifier;
             NodeEvent += (s, e) => { };
         }
 
         public Point? Find(bool highlight)
         {
-            this.bitmap = WowScreen.GetCroppedMinimapBitmap(highlight);
+            this.bitmap = wowScreen.GetCroppedMinimapBitmap(highlight);
 
             Score? best = Score.ScorePoints(FindYellowPoints());
 
