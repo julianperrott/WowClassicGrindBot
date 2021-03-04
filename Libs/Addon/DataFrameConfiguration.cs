@@ -15,7 +15,7 @@ namespace Libs
             this.colorReader = colorReader;
         }
 
-        private const string ConfigurationFilename = "config.json";
+        private const string ConfigurationFilename = "frame_config.json";
 
         public static bool ConfigurationExists()
         {
