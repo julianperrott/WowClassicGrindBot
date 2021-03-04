@@ -49,8 +49,8 @@ namespace Libs.GOAP
         {
             if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
-                logger.LogInformation("Target is blacklisted");
-                await new WowProcess(logger).KeyPress(ConsoleKey.F3, 400);
+                logger.LogWarning("Target is blacklisted");
+                await wowInput.TapClearTarget();
                 UpdateWorldState();
             }
 
@@ -68,7 +68,7 @@ namespace Libs.GOAP
 
                 if (this.classConfiguration.Mode != Mode.AttendedGrind)
                 {
-                    await new WowProcess(logger).KeyPress(ConsoleKey.Tab, 420);
+                    await wowInput.TapNearestTarget();
                 }
             }
 
