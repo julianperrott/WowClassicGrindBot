@@ -6,7 +6,7 @@ namespace Libs
 {
     public class Blacklist: IBlacklist
     {
-        private List<string> blacklist = new List<string> { "THORKA", "SHADOW", "DREADM", "DUNEMA", "BONE C", "FLESH", "REDRID", "MOSSHI", "VOIDWA", "WAILIN" };
+        private List<string> blacklist = new List<string>();
 
         private readonly PlayerReader playerReader;
         private readonly ILogger logger;
