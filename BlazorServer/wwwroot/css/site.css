@@ -197,6 +197,10 @@ body, table, .card-body {
     background-color: #333 !important
 }
 
+body {
+    color: #AAA;
+}
+
 .card-header, .card-header table {
     background-color: darkslateblue !important
 }
