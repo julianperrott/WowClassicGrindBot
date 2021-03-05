@@ -8,6 +8,12 @@ namespace Libs
 {
     public class DataFrameConfiguration
     {
+        private class DataFrameConfig
+        {
+            public Rectangle rect;
+            public List<DataFrame> frames = new List<DataFrame>();
+        }
+
         private readonly IColorReader colorReader;
 
         public DataFrameConfiguration(IColorReader colorReader)
@@ -22,16 +28,38 @@ namespace Libs
             return File.Exists(ConfigurationFilename);
         }
 
-        public static List<DataFrame> LoadConfiguration()
+        public static bool IsValid(Rectangle rect)
         {
-            return JsonConvert.DeserializeObject<List<DataFrame>>(File.ReadAllText(ConfigurationFilename));
+            if (!ConfigurationExists()) return false;
+
+            var config = JsonConvert.DeserializeObject<DataFrameConfig>(File.ReadAllText(ConfigurationFilename));
+            return config.rect.Width == rect.Width && config.rect.Height == rect.Height;
         }
 
-        public static void SaveConfiguration(List<DataFrame> dataFrames)
+        public static List<DataFrame> LoadConfiguration()
         {
-            string output = JsonConvert.SerializeObject(dataFrames);
+            var config = JsonConvert.DeserializeObject<DataFrameConfig>(File.ReadAllText(ConfigurationFilename));
+            return config.frames;
+        }
+
+        public static void SaveConfiguration(Rectangle rect, List<DataFrame> dataFrames)
+        {
+            var config = new DataFrameConfig
+            {
+                rect = rect,
+                frames = dataFrames
+            };
+            string output = JsonConvert.SerializeObject(config);
 
             File.WriteAllText(ConfigurationFilename, output);
+        }
+
+        public static void RemoveConfiguration()
+        {
+            if(ConfigurationExists())
+            {
+                File.Delete(ConfigurationFilename);
+            }
         }
 
         public List<DataFrame> CreateConfiguration(Bitmap bmp)

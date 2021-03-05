@@ -50,6 +50,15 @@ namespace BlazorServer
             services.AddSingleton<Microsoft.Extensions.Logging.ILogger>(logger);
             var dataConfig = DataConfig.Load();
 
+
+            var wowProcess = new WowProcess(logger);
+            wowProcess.GetWindowRect(out var rect);
+            if(DataFrameConfiguration.ConfigurationExists() && !DataFrameConfiguration.IsValid(rect))
+            {
+                // At this point the webpage never loads so fallback to configuration page
+                DataFrameConfiguration.RemoveConfiguration();
+            }
+
             if (DataFrameConfiguration.ConfigurationExists())
             {
                 var pather = GetPather(logger, dataConfig);

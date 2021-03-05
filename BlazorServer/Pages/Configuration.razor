@@ -1,5 +1,8 @@
 ﻿@page "/Configuration"
 @inject Microsoft.Extensions.Logging.ILogger logger
+@inject Microsoft.Extensions.Hosting.IHostApplicationLifetime lifetime
+@inject NavigationManager NavigationManager
+@inject Libs.IBotController botController
 
 @using Libs
 @using Microsoft.AspNetCore.Html
@@ -12,7 +15,7 @@
 
 @if (saved)
 {
-    <h1>Saved! - Please restart the bot after typing /dc again in the chat window</h1>
+    <h1>Saved! - Please wait until restart! And press <b>Reload</b> when it prompts!</h1>
 
     <div class="row col-md-12">
         <img src="Addon_DC.png" />
@@ -31,6 +34,13 @@ else
         <h1>Addon configuration not found !</h1>
     }
 
+    <h4 class="row col-md-12">Use Auto config: It will automatically setup the necessary stuffs.</h4>
+    <button class="row col-md-1 btn btn-sm btn-primary" @onclick="AutoConfigure">
+        <span>Auto Configure and Restart</span>
+    </button>
+
+    <hr />
+    <h4 class="row col-md-12">Manually:</h4>
     <h5 class="row col-md-12">Step 1: Please ensure the addon 'DataToColor' found in the addon folders is running. You should see the multi-coloured pixels at the top left of the screen.</h5>
 
     <div class="row col-md-12">
@@ -167,11 +177,13 @@ else
     private async Task Configure()
     {
         var screenshot = wowScreen?.GetBitmap(ConfigWidth, ConfigHeight);
-        if (config != null && screenshot != null)
+        if (config != null && screenshot != null && wowProcess != null)
         {
             var dataFrames = config.CreateConfiguration(screenshot);
 
-            DataFrameConfiguration.SaveConfiguration(dataFrames);
+            wowProcess.GetWindowRect(out var rect);
+
+            DataFrameConfiguration.SaveConfiguration(rect, dataFrames);
             saved = true;
 
             await InvokeAsync(() =>
@@ -179,5 +191,50 @@ else
                 base.StateHasChanged();
             });
         }
+    }
+
+    private async Task AutoConfigure()
+    {
+        await ToggleInGameConfiguration();
+        await Task.Delay(500);
+
+        var screenshot = wowScreen?.GetBitmap(ConfigWidth, ConfigHeight);
+        if (config != null && screenshot != null && wowProcess != null)
+        {
+            var dataFrames = config.CreateConfiguration(screenshot);
+
+            wowProcess.GetWindowRect(out var rect);
+
+            DataFrameConfiguration.SaveConfiguration(rect, dataFrames);
+            saved = true;
+
+            await ToggleInGameConfiguration();
+
+            await InvokeAsync(() =>
+            {
+                base.StateHasChanged();
+            });
+
+            await RestartServer();
+        }
+    }
+
+    private async Task ToggleInGameConfiguration()
+    {
+        if (wowProcess != null)
+        {
+            wowProcess.SetForegroundWindow();
+            await wowProcess.KeyPress(ConsoleKey.Enter, 100);
+            wowProcess.SendKeys("/dc");
+            await wowProcess.KeyPress(ConsoleKey.Enter, 100);
+        }
+    }
+
+    private async Task RestartServer()
+    {
+        this.botController.Shutdown();
+        await Task.Delay(1000);
+        NavigationManager.NavigateTo("/");
+        lifetime.StopApplication();
     }
 }

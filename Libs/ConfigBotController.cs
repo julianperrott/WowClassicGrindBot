@@ -33,7 +33,7 @@ namespace Libs
 
         public void Shutdown()
         {
-            throw new NotImplementedException();
+
         }
 
         public void StopBot()
