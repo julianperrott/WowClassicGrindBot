@@ -78,7 +78,7 @@ You only need the common-2.MPQ (1.7Gb) file which you can get here: https://driv
 
 This file is required to find paths from where you are to the grind area, vendor and repair.
 
-Copy it into the \PathingAPI\MPQ folder (e.g. C:\WowClassicGrindBot\PathingAPI\MPQ)
+Copy it into the \Json\MPQ folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
 
 ## 4. Build the bot
 
@@ -100,7 +100,7 @@ e.g. Build from powershell
 
 The bot reads the game state using small blocks of colour shown at the top of the screen by an Addon. This needs to be configured.
 
-1. Delete the existing config.json file found in c:\WowClassicGrindBot\BlazorServer, we are going to recreate it. This is important as your screen may not be the same size as mine 1920 x 1080.
+1. Delete the existing frame_config.json file found in c:\WowClassicGrindBot\BlazorServer, we are going to recreate it. This is important as your screen may not be the same size as mine 1920 x 1080.
 2. Edit the batch script in c:\WowClassicGrindBot\BlazorServer called run.bat, change it to point at where you have put the repo BlazorServer folder e.g.
 
         start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://localhost:5000"
