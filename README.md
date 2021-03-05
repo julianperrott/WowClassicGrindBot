@@ -40,8 +40,18 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 
 * Runtime Profile picker
 * Frontend Dark mode
-* Fast Loot for single target combat
+* Improved Loot Goals
+* Introduced a concept of Produce/Consume corpses. In short killing multiple enemies in a single combat, can loot and skin them all.
 * Actionbar populator based on class config
+* DataConfig: change where the external data(DBC, MPQ, profiles) can be found
+* Added Skinning ability
+* Edit the loaded profile from frontend
+* Navigation Path simplification
+* NPCNameFinder: extended to friendly/neutral units
+* Support game windowed mode
+* Remap default keybindings such as Stand, StopAttack
+* Updated low level Warlock/Mage profiles
+* Added Warlock shard farming profile
 
 # Issues and Ideas
 
@@ -155,6 +165,12 @@ For each of the following click + to add a new key binding. The most important o
 
 |  Key |  Command | Description |
 | ---- | ---- | --- |
+| ---- | Mandatory | --- |
+| * F9 | /stand |  |
+| * F10 | /stopattack | |
+| * F3 | /cleartarget  | |
+| * F12 | /tar pet | Warlock only |
+| ---- | Optional | --- |
 |  i |  /use hearthstone | |
 |  o |  /use Chestnut Mare Bridle | Your mount here|
 |  u | /tar targettarget | Warlock only |
@@ -162,18 +178,13 @@ For each of the following click + to add a new key binding. The most important o
 |  t | /cast blink | Mage only |
 |  F1 | See below | Buff weapon 16 (Melee classes) |
 |  F2 | See below | Buff weapon 17 (Melee classes)|
-| * F3 | /cleartarget  | |
 | * F4 | /use Superior Healing Potion | Heal |
 |  F5 | See below  | Delete various crap |
 | F6 | /equipslot 18 Wicked Throwing Dagger | Equip thown (Rogue) |
 | F7 | /cast Desperate Prayer | Heal - Priest only |
 | F8 | /cancelform | Druid |
-| * F9 | /stand |  |
-| * F10 | /stopattack | |
 | F11 | /cast Power Infusion | Priest only |
-| F12 | /tar pet | Warlock only |
 | L | /cast Ice Barrier | Mage only |
-
 
     Rogue weapon buff (use 17 for second weapon):
         /use Instant Poison V 
@@ -202,12 +213,8 @@ Take a look at the class files in /Json/class for examples of what you can do (B
 The path that the class follows is a json file in C:\WowClassicGrindBot\Json\path\ which contains a list of x & y coordinates the bot will traverse while looking for mobs.
 
         "PathFilename": "58_Winterspring.2.json", // the path to walk when alive
-        "SpiritPathFilename": "58_Winterspring_SpiritHealer.2.json", // the path from the spirit healer back to the main path.
         "PathThereAndBack": true, // if true walks the path and the walks it backwards.
         "PathReduceSteps": true,  // uses every other coordinate.
-
-Note: The SpiritPathFilename is not really needed anymore as the bot should be able to path from the spirit healer to the corpse.
-
 
 ### Commands
 
@@ -249,7 +256,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
 | Cost | For Adhoc goals the priority | 18 |
 | InCombat | Can it be cast in combat | false |
-| StepBackAfterCast | Hero will go back for X sec after casting this spell , usable for spells like Mage Frost Nova | false |
+| StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | false |
 | PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | "Tanaris_GadgetzanKrinkleGoodsteel.json" |
 
 ### Pull Goal
@@ -480,8 +487,6 @@ e.g. Rogue.json
       ...
 
       "PathFilename": "Herb_EPL.json",
-      "SpiritPathFilename": "Herb_EPL.json",
-
       "Mode": "AttendedGather", // <---------
       "GatherFindKeys":  [1,2],
     }
@@ -562,10 +567,7 @@ Various path are needed by the bot:
 
 The path to run when grinding (PathFilename in root of class files).
 
-The path from the spirit healer to the grind path. (SpiritPathFilename in root of class files):
-
     "PathFilename": "16_LochModan.json",
-    "SpiritPathFilename": "16_LochModan_Spirithealer.json",
     "PathThereAndBack": true,
     "PathReduceSteps": false,
 
