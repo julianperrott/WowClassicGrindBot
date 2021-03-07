@@ -113,6 +113,7 @@ namespace Libs
                     {  "Slice And Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
                     {  "Demon Skin", ()=> playerReader.Buffs.DemonSkin },
+                    {  "Demon Armor", ()=> playerReader.Buffs.DemonArmor },
                     {  "Soul Link", ()=> playerReader.Buffs.SoulLink },
                     {  "Soulstone Resurrection", ()=> playerReader.Buffs.SoulstoneResurrection },
                     {  "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
