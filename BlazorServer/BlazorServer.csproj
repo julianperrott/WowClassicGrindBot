@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>8.0</LangVersion>
     <nullable>enable</nullable>
+    <UserSecretsId>84fcf2b0-dc89-4b31-b09b-fdd65679d1d2</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -22,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Libs\Libs.csproj" />
     <ProjectReference Include="..\PathingAPI\PathingAPI.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
