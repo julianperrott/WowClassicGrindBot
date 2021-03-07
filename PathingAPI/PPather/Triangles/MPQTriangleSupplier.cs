@@ -41,6 +41,7 @@ namespace WowTriangles
         private WDTFile wdtf;
         private ModelManager modelmanager;
         private WMOManager wmomanager;
+        private DataConfig dataConfig;
 
         private Dictionary<String, int> zoneToMapId = new Dictionary<string, int>();
         private Dictionary<int, String> mapIdToFile = new Dictionary<int, string>();
@@ -66,17 +67,20 @@ namespace WowTriangles
         public MPQTriangleSupplier(Logger logger, DataConfig dataConfig)
         {
             this.logger = logger;
+            this.dataConfig = dataConfig;
 
             string[] archiveNames = GetArchiveNames(dataConfig, s => logger.WriteLine(s));
 
             archive = new StormDll.ArchiveSet(this.logger);
             archive.AddArchives(archiveNames);
-            modelmanager = new ModelManager(archive, 80);
-            wmomanager = new WMOManager(archive, modelmanager, 30);
+            modelmanager = new ModelManager(archive, 80, dataConfig);
+            wmomanager = new WMOManager(archive, modelmanager, 30, dataConfig);
 
-            archive.ExtractFile("..\\PathingAPI\\DBFilesClient\\AreaTable.dbc", "..\\PathingAPI\\PPather\\AreaTable.dbc");
+            var path = Path.Join(dataConfig.PPather, "AreaTable.dbc");
+
+            archive.ExtractFile("..\\PathingAPI\\DBFilesClient\\AreaTable.dbc", path);
             DBC areas = new DBC();
-            DBCFile af = new DBCFile("..\\PathingAPI\\PPather\\AreaTable.dbc", areas, this.logger);
+            DBCFile af = new DBCFile(path, areas, this.logger);
             for (int i = 0; i < areas.recordCount; i++)
             {
                 int AreaID = (int)areas.GetUint(i, 0);  //0 	 uint 	 AreaID
@@ -171,7 +175,7 @@ namespace WowTriangles
 
             wdt = new WDT();
 
-            wdtf = new WDTFile(archive, continentFile, wdt, wmomanager, modelmanager, this.logger);
+            wdtf = new WDTFile(archive, continentFile, wdt, wmomanager, modelmanager, this.logger, dataConfig);
             if (!wdtf.loaded)
             {
                 wdt = null; // bad
@@ -200,9 +204,11 @@ namespace WowTriangles
                 }
             }
 
+            var path = Path.Join(dataConfig.PPather, "Map.dbc");
+
             archive.ExtractFile("..\\PathingAPI\\DBFilesClient\\Map.dbc", "PPather\\Map.dbc");
             DBC maps = new DBC();
-            DBCFile mf = new DBCFile("..\\PathingAPI\\PPather\\Map.dbc", maps, this.logger);
+            DBCFile mf = new DBCFile(path, maps, this.logger);
 
             for (int i = 0; i < maps.recordCount; i++)
             {

@@ -189,17 +189,19 @@ namespace Wmo
     {
         private StormDll.ArchiveSet set;
         private ModelManager modelmanager;
+        private DataConfig dataConfig;
 
-        public WMOManager(StormDll.ArchiveSet set, ModelManager modelmanager, int maxItems)
+        public WMOManager(StormDll.ArchiveSet set, ModelManager modelmanager, int maxItems, DataConfig dataConfig)
             : base(maxItems)
         {
             this.set = set;
             this.modelmanager = modelmanager;
+            this.dataConfig = dataConfig;
         }
 
         public override WMO Load(String path)
         {
-            string localPath = "..\\PathingApi\\PPather\\wmo.tmp";
+            string localPath = Path.Join(dataConfig.PPather, "wmo.tmp");
             Dbg.Log(" wmo");
             set.ExtractFile(path, localPath);
             WMO w = new WMO();
@@ -375,11 +377,13 @@ namespace Wmo
     public class ModelManager : Manager<Model>
     {
         private StormDll.ArchiveSet set;
+        private DataConfig dataConfig;
 
-        public ModelManager(StormDll.ArchiveSet set, int maxModels)
+        public ModelManager(StormDll.ArchiveSet set, int maxModels, DataConfig dataConfig)
             : base(maxModels)
         {
             this.set = set;
+            this.dataConfig = dataConfig;
         }
 
         public override Model Load(String path)
@@ -398,7 +402,7 @@ namespace Wmo
             }
 
             //logger.WriteLine("Load model " + path);
-            string localPath = "..\\PathingApi\\PPather\\model.tmp";
+            string localPath = Path.Join(dataConfig.PPather, "model.tmp");
             Dbg.Log(" m");
             if (set.ExtractFile(file, localPath))
             {
@@ -744,6 +748,7 @@ namespace Wmo
         private StormDll.ArchiveSet archive;
 
         private Logger logger;
+        private DataConfig dataConfig;
 
         //Alterac Valley> ZonePath :” world\\maps\\PVPZone01\\PVPZone01”
 
@@ -938,12 +943,14 @@ namespace Wmo
         // 58.
         //WailingCarverns
 
-        public WDTFile(StormDll.ArchiveSet archive, string name, WDT wdt, WMOManager wmomanager, ModelManager modelmanager, Logger logger)
+        public WDTFile(StormDll.ArchiveSet archive, string name, WDT wdt, WMOManager wmomanager, ModelManager modelmanager, Logger logger, DataConfig dataConfig)
         {
             this.logger = logger;
+            this.dataConfig = dataConfig;
             string wdtfile = "World\\Maps\\" + name + "\\" + name + ".wdt";
             Dbg.Log(" wdt");
-            if (!archive.ExtractFile(wdtfile, "..\\PathingAPI\\PPather\\wdt.tmp"))
+            var path = Path.Join(dataConfig.PPather, "wdt.tmp");
+            if (!archive.ExtractFile(wdtfile, path))
                 return;
 
             loaded = true;
@@ -953,7 +960,7 @@ namespace Wmo
             this.modelmanager = modelmanager;
             this.archive = archive;
 
-            stream = System.IO.File.OpenRead("..\\PathingAPI\\PPather\\wdt.tmp");
+            stream = System.IO.File.OpenRead(path);
             file = new System.IO.BinaryReader(stream);
 
             bool done = false;
@@ -1011,11 +1018,12 @@ namespace Wmo
 
                 string filename = "World\\Maps\\" + name + "\\" + name + "_" + x + "_" + y + ".adt";
                 Dbg.Log(" adt");
-                if (archive.ExtractFile(filename, "..\\PathingApi\\PPather\\adt.tmp"))
+                var path = Path.Join(dataConfig.PPather, "adt.tmp");
+                if (archive.ExtractFile(filename, path))
                 {
                     logger.Debug("Reading adt: " + filename);
                     //PPather.mover.Stop();
-                    MapTileFile f = new MapTileFile("..\\PathingAPI\\PPather\\adt.tmp", t, wmomanager, modelmanager);
+                    MapTileFile f = new MapTileFile(path, t, wmomanager, modelmanager);
                     if (t.models.Count != 0 || t.wmos.Count != 0)
                     {
                         //logger.WriteLine(name + " " + x + " " + z + " models: " + t.models.Count + " wmos: " + t.wmos.Count);
