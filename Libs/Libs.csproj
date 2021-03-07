@@ -48,6 +48,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataConfig\DataConfig.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>
