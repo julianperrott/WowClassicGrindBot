@@ -5,7 +5,6 @@
   "NPCMaxLevels_Above": 2,
 
   "PathFilename": "47_Tanaris.json",
-  "SpiritPathFilename": "47_Tanaris_SpiritHealer.json",
   "PathThereAndBack": false,
   "PathReduceSteps": true,
 
@@ -14,66 +13,92 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "Curse of Weakness",
-        "Key": "6",
-        "Cooldown": 10,
+        "Name": "pull",
+        "Key": "5",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
-        "Requirement": "not Curse of Weakness",
-        "MinMana": 20,
-        "Log": false,
-        "DelayAfterCast": 3000
+        "MinMana": 289,
+        "School": "Fire",
+        "Log": false
       }
     ]
   },
   "Combat": {
     "Sequence": [
       {
-        "Name": "Minor Healthstone",
-        "Key": "F4",
-        "Requirement": "Health%<10",
-        "Cooldown": 60,
+        "Name": "heal",
+        "Key": "N3",
+        "Requirements": ["Health%<50", "BagItem:19005:1"],
+        "Cooldown": 120,
         "InCombat": "true",
         "Log": false
       },
       {
-        "Name": "Soul Shard",
+        "Name": "Drain Soul",
         "Key": "9",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%<18", "not BagItem:6265:3"],
-        "MinMana": 55
+        "StopBeforeCast": true,
+        "Requirements": ["TargetHealth%<25", "not BagItem:6265:3"],
+        "School": "Shadow",
+        "MinMana": 290
       },
       {
-        "Name": "Curse of Weakness",
-        "Key": "6",
-        "Cooldown": 10,
-        "ResetOnNewTarget": true,
-        "Requirement": "not Curse of Weakness",
-        "MinMana": 20,
-        "Log": false
+        "Name": "Drain Life",
+        "Key": "N4",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["Health%<30"],
+        "MinMana": 240
       },
       {
         "Name": "Immolate",
-        "HasCastBar": true,
         "Key": "5",
-        "Cooldown": 15,
+        "Requirements": ["TargetHealth%>35", "not Immolate"],
+        "HasCastBar": true,
+        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
-        "MinMana": 25,
+        "MinMana": 289,
+        "School": "Fire",
+        "Log": false
+      },
+      {
+        "Name": "Curse of Agony",
+        "Key": "1",
+        "School": "Shadow",
+        "ResetOnNewTarget": true,
+        "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
+        "MinMana": 50,
         "Log": false
       },
       {
         "Name": "Corruption",
-        "HasCastBar": true,
         "Key": "7",
-        "Cooldown": 12,
+        "Requirements": ["TargetHealth%>35", "not Corruption"],
         "ResetOnNewTarget": true,
-        "MinMana": 25,
+        "MinMana": 225,
+        "School": "Shadow",
         "Log": false
       },
       {
         "Name": "Shadow Bolt",
-        "HasCastBar": true,
         "Key": "2",
-        "MinMana": 25,
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "ResetOnNewTarget": true,
+        "MinMana": 309,
+        "Requirement": "TargetHealth%>35",
+        "School": "Shadow",
+        "Log": false,
+        "Cooldown": 8
+      },
+      {
+        "Name": "Death Coil",
+        "Key": "N5",
+        "ResetOnNewTarget": true,
+        "MinMana": 495,
+        "Cooldown": 120,
+        "School": "Shadow",
         "Log": false
       },
       {
@@ -81,25 +106,30 @@
         "Key": "H",
         "Cooldown": 3,
         "Log": false
+      },
+      {
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "Requirement": "not Shooting",
+        "Log": false
       }
     ]
   },
   "Parallel": {
     "Sequence": [
       {
-        "Name": "Low Health",
-        "HasCastBar": true,
+        "Name": "Food",
         "StopBeforeCast": true,
-        "Key": "=",
-        "Requirement": "Health%<70",
+        "Key": "N1",
+        "Requirement": "Health%<50",
         "Cooldown": 20,
         "Log": false
       },
       {
-        "Name": "Drink",
-        "HasCastBar": true,
+        "Name": "Water",
         "StopBeforeCast": true,
-        "Key": "-",
+        "Key": "N2",
         "Requirement": "Mana%<50",
         "Cooldown": 20,
         "Log": false
@@ -109,25 +139,24 @@
   "Adhoc": {
     "Sequence": [
       {
-        "Name": "Demon Skin",
+        "Name": "Demon Armor",
         "Key": "3",
-        "MinMana": 50,
-        "Requirement": "not Demon Skin",
+        "MinMana": 800,
+        "Requirement": "not Demon Armor",
         "Log": false
       },
       {
-        "Name": "Has Pet",
+        "Name": "Summon Voidwalker",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "4",
-        "MinMana": 122,
-        "Requirement": "not Has Pet",
+        "MinMana": 736,
+        "Requirements": ["BagItem:6265:1", "not Has Pet"],
         "Log": false,
         "Cooldown": 60
       },
       {
         "Name": "Life Tap",
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirements": ["Health%>70","Mana%<60"],
         "Cooldown": 0,
@@ -135,34 +164,16 @@
       },
       {
         "Name": "Life Tap 2",
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirements": ["Health%>80","Mana%<80"],
         "Cooldown": 0,
         "Log": false
       },
       {
-        "Name": "Well Fed",
-        "StopBeforeCast": true,
-        "Key": "0",
-        "Requirement": "not Well Fed",
-        "Cooldown": 120,
-        "Log": false
-      },
-      {
-        "Name": "Create Healthstone",
-        "Key": "1",
+        "Name": "heal",
+        "Key": "N3",
         "HasCastBar": true,
-        "Requirements": ["BagItem:6265:1", "not BagItem:19009:1"],
-        "Cooldown": 120
-      },
-      {
-        "Name": "Cast Soul Link",
-        "Key": "Y",
-        "MinMana": 185,
-        "Requirement": "not Soul Link",
-        "Cooldown": 120,
-        "Log": false
+        "Requirements": ["BagItem:6265:1", "not BagItem:19011:1"]
       }
     ]
   }
@@ -179,7 +190,7 @@
         {
           "Name": "Sell",
           "Key": "C",
-          "Requirement": "BagCount>80",
+          "Requirement": "BagFull",
           "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
           "Cost": 6
         }
