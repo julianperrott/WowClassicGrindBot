@@ -4,13 +4,13 @@ using Newtonsoft.Json;
 
 public static class DataConfigVersion
 {
-    public static int Version = 3;
+    public static int Version = 6;
 }
 
 public class DataConfig
 {
     public int Version = DataConfigVersion.Version;
-    public string Root { get; } = "../json/";
+    public string Root { get; set; } = "../json/";
 
     public string Class => System.IO.Path.Join(Root, "class/");
     public string Path => System.IO.Path.Join(Root, "path/");
@@ -18,6 +18,8 @@ public class DataConfig
     public string WorldToMap => System.IO.Path.Join(Root, "WorldToMap/");
     public string PathInfo => System.IO.Path.Join(Root, "PathInfo/");
     public string MPQ => System.IO.Path.Join(Root, "MPQ/");
+    public string Area => System.IO.Path.Join(Root, "area/");
+    public string PPather => System.IO.Path.Join(Root, "PPather/");
 
     [NonSerialized]
     public const string DefaultFileName = "data_config.json";
