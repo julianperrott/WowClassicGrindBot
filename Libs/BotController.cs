@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Libs.Utils;
+using Libs.Database;
 
 namespace Libs
 {
@@ -38,6 +39,8 @@ namespace Libs
 
         private NpcNameFinder npcNameFinder;
 
+        private AreaDB areaDb;
+
         public ClassConfiguration? ClassConfig { get; set; }
 
         private INodeFinder minimapNodeFinder;
@@ -55,6 +58,7 @@ namespace Libs
             this.logger = logger;
             this.pather = pather;
             this.DataConfig = dataConfig;
+            this.areaDb = new AreaDB(logger, dataConfig);
 
             updatePlayerPostion.Start();
             wowProcess = new WowProcess(logger);
@@ -64,7 +68,7 @@ namespace Libs
                 ? DataFrameConfiguration.LoadConfiguration()
                 : new List<DataFrame>(); //config.CreateConfiguration(WowScreen.GetAddonBitmap());
 
-            AddonReader = new AddonReader(DataConfig, WowScreen, frames, logger);
+            AddonReader = new AddonReader(DataConfig, WowScreen, frames, logger, areaDb);
 
             minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
@@ -129,6 +133,9 @@ namespace Libs
                     });
                     updatePlayerPostion.Reset();
                     updatePlayerPostion.Restart();
+
+                    if(RouteInfo != null)
+                        RouteInfo.CurrentArea = areaDb?.CurrentArea;
                 }
 
             }

@@ -1,4 +1,4 @@
-﻿using Libs.Addon;
+﻿using Libs.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,12 +8,12 @@ namespace Libs
     public partial class PlayerReader
     {
         private readonly ISquareReader reader;
-        private readonly Dictionary<int, Creature> creatureDictionary = new Dictionary<int, Creature>();
+        private readonly CreatureDB creatureDb;
 
-        public PlayerReader(ISquareReader reader, List<Creature> creatures)
+        public PlayerReader(ISquareReader reader, CreatureDB creatureDb)
         {
             this.reader = reader;
-            creatures.ForEach(i => creatureDictionary.Add(i.Entry, i));
+            this.creatureDb = creatureDb;
         }
 
         public int Sequence { get; private set; } = 0;
@@ -57,9 +57,9 @@ namespace Libs
         {
             get
             {
-                if (TargetId > 0 && creatureDictionary.ContainsKey(this.TargetId))
+                if (TargetId > 0 && creatureDb.Entries.ContainsKey(this.TargetId))
                 {
-                    return creatureDictionary[this.TargetId].Name;
+                    return creatureDb.Entries[this.TargetId].Name;
                 }
                 return reader.GetStringAtCell(16) + (reader.GetStringAtCell(17));
             }

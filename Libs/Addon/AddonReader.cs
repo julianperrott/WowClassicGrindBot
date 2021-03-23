@@ -1,10 +1,8 @@
-﻿using Libs.Addon;
+﻿using Libs.Database;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 
 namespace Libs
@@ -29,7 +27,12 @@ namespace Libs
         private readonly int height;
         private readonly IColorReader colorReader;
 
-        public AddonReader(DataConfig dataConfig, IColorReader colorReader, List<DataFrame> frames, ILogger logger)
+        private readonly AreaDB? areaDb;
+        private readonly WorldMapAreaDB worldMapAreaDb;
+        private readonly ItemDB itemDb;
+        private readonly CreatureDB creatureDb;
+
+        public AddonReader(DataConfig dataConfig, IColorReader colorReader, List<DataFrame> frames, ILogger logger, AreaDB? areaDb)
         {
             this.dataConfig = dataConfig;
             this.frames = frames;
@@ -39,69 +42,16 @@ namespace Libs
             this.height = frames.Max(f => f.point.Y) + 1;
             this.squareReader = new SquareReader(this);
 
-            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "items.json")));
-            var creatures = JsonConvert.DeserializeObject<List<Creature>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "creatures.json")));
+            this.itemDb = new ItemDB(logger, dataConfig);
+            this.creatureDb = new CreatureDB(logger, dataConfig);
 
-            var foods = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "foods.json")));
-            var waters = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "waters.json")));
-
-            this.BagReader = new BagReader(squareReader, 20, items, foods, waters, ReadAHPrices());
+            this.BagReader = new BagReader(squareReader, 20, itemDb);
             this.equipmentReader = new EquipmentReader(squareReader, 30);
-            this.PlayerReader = new PlayerReader(squareReader, creatures);
+            this.PlayerReader = new PlayerReader(squareReader, creatureDb);
             this.LevelTracker = new LevelTracker(PlayerReader);
-        }
 
-        private Dictionary<int, int> ReadAHPrices()
-        {
-            var auctionHouseDictionary = new Dictionary<int, int>();
-
-            if (File.Exists(@"D:\GitHub\Auc-Stat-Simple.lua.location"))
-            {
-                try
-                {
-                    // file will contain be something like D:\World of Warcraft Classic\World of Warcraft\_classic_\WTF\Account\XXXXXXX\SavedVariables\Auc-Stat-Simple.lua
-                    var filename = File.ReadAllLines(@"D:\GitHub\Auc-Stat-Simple.lua.location").FirstOrDefault();
-                    File.ReadAllLines(filename)
-                        .Select(l => l.Trim())
-                        .Where(l => l.StartsWith("["))
-                        .Where(l => l.Contains(";"))
-                        .Where(l => l.Contains("="))
-                        .Select(Process)
-                        .GroupBy(l => l.Key)
-                        .Select(g => g.First())
-                        .ToList()
-                        .ForEach(i => auctionHouseDictionary.Add(i.Key, i.Value));
-                }
-                catch (Exception ex)
-                {
-                    this.logger.LogError("Failed to read AH prices." + ex.Message);
-                }
-            }
-            else
-            {
-                this.logger.LogWarning("AH prices unavailable, don't worry about this message!");
-            }
-
-            return auctionHouseDictionary;
-        }
-
-        public static KeyValuePair<int, int> Process(string line)
-        {
-            var parts = line.Split("=");
-            var id = int.Parse(parts[0].Replace("[", "").Replace("]", "").Replace("\"", "").Trim());
-            var valueParts = parts[1].Split("\"")[1].Split(";");
-
-            double value = 0;
-            if (valueParts.Length == 3 || valueParts.Length == 6)
-            {
-                value = double.Parse(valueParts[valueParts.Length - 1]);
-            }
-            else if (valueParts.Length == 4 || valueParts.Length == 7)
-            {
-                value = double.Parse(valueParts[valueParts.Length - 2]);
-            }
-
-            return new KeyValuePair<int, int>(id, (int)value);
+            this.areaDb = areaDb;
+            this.worldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
         }
 
         private int seq = 0;
@@ -119,6 +69,9 @@ namespace Libs
             LevelTracker.Update();
 
             this.PlayerReader.UpdateCreatureLists();
+
+            int? areaId = worldMapAreaDb.GetAreaId(PlayerReader.ZoneId);
+            areaDb?.Update(areaId);
 
             seq++;
 

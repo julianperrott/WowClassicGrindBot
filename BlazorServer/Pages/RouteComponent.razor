@@ -72,6 +72,13 @@
                                 @((MarkupString)botController.RouteInfo.DeathImage(death))
                             }
                         </g>
+
+                        <g>
+                            @foreach (var poi in this.botController.RouteInfo.PoiList)
+                            {
+                                @((MarkupString)botController.RouteInfo.DrawPoi(poi))
+                            }
+                        </g>
                     }
                 </g>
             </svg>

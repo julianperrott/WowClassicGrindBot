@@ -1,4 +1,5 @@
 ﻿using Libs.Addon;
+using Libs.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Libs
         private int bagSlotCountStart = 37; // 37 38 39 40
 
         private readonly ISquareReader reader;
+        private readonly ItemDB itemDb;
 
         private DateTime lastEvent = DateTime.Now;
 
@@ -19,25 +21,13 @@ namespace Libs
 
         private readonly long[] bagSlotsCount = new long[] { 16, 0, 0, 0, 0 };
 
-        private Dictionary<int, Item> itemDictionary = new Dictionary<int, Item>();
-
-        private List<ItemId> foods = new List<ItemId>();
-        private List<ItemId> waters = new List<ItemId>();
-
         public event EventHandler? DataChanged;
 
-        public BagReader(ISquareReader reader, int bagItemsDataStart, List<Item> items, List<ItemId> foods, List<ItemId> waters, Dictionary<int, int> ahPrices)
+        public BagReader(ISquareReader reader, int bagItemsDataStart, ItemDB itemDb)
         {
             this.bagItemsDataStart = bagItemsDataStart;
             this.reader = reader;
-            items.ForEach(i =>
-            {
-                itemDictionary.Add(i.Entry, i);
-                i.AHPrice = ahPrices.ContainsKey(i.Entry) ? ahPrices[i.Entry] : i.SellPrice;
-            });
-
-            this.foods = foods;
-            this.waters = waters;
+            this.itemDb = itemDb;
         }
 
         public List<BagItem> Read()
@@ -93,9 +83,9 @@ namespace Libs
                     if (addItem)
                     {
                         var item = new Item { Name = "Unknown" };
-                        if (this.itemDictionary.ContainsKey(itemId))
+                        if (itemDb.Items.ContainsKey(itemId))
                         {
-                            item = itemDictionary[itemId];
+                            item = itemDb.Items[itemId];
                         }
                         BagItems.Add(new BagItem(bag, slot, itemId, itemCount, item, isSoulbound));
                         hasChanged = true;
@@ -140,17 +130,15 @@ namespace Libs
 
         public int HighestQuantityOfWaterId()
         {
-            return waters.
-                OrderByDescending(c => ItemCount(c.Id)).
-                Select(x => x.Id).
+            return itemDb.WaterIds.
+                OrderByDescending(c => ItemCount(c)).
                 FirstOrDefault();
         }
 
         public int HighestQuantityOfFoodId()
         {
-            return foods.
-                OrderByDescending(c => ItemCount(c.Id)).
-                Select(x => x.Id).
+            return itemDb.FoodIds.
+                OrderByDescending(c => ItemCount(c)).
                 FirstOrDefault();
         }
 

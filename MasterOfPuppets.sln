@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibsTests", "LibsTests\Libs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataConfig", "DataConfig\DataConfig.csproj", "{841D6DAD-AB21-47CF-98C2-F1DE3CABF59A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowheadDB", "WowheadDB\WowheadDB.csproj", "{95EC76B4-B82B-472A-97C4-7257246A5B41}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{3C787F5D-0F6C-44F3-A9DA-8AF80EFCB6E1}"
 EndProject
 Global

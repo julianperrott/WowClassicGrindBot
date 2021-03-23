@@ -1,11 +1,27 @@
-﻿using Libs.Goals;
+﻿using Libs.Database;
+using Libs.Goals;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using WowheadDB;
 
 namespace Libs
 {
+    public class RouteInfoPoi
+    {
+        public WowPoint Location { get; }
+        public string Name { get; }
+        public string Color { get; }
+
+        public RouteInfoPoi(NPC npc, string color)
+        {
+            Location = npc.points.First();
+            Name = npc.name;
+            Color = color;
+        }
+    }
+
     public class RouteInfo
     {
         public List<WowPoint> PathPoints { get; private set; }
@@ -25,6 +41,29 @@ namespace Libs
 
         private List<IRouteProvider> pathedRoutes = new List<IRouteProvider>();
         private readonly PlayerReader playerReader;
+
+        public List<RouteInfoPoi> PoiList { get; } = new List<RouteInfoPoi>();
+
+        private Area? currentArea;
+        public Area? CurrentArea {
+            get => currentArea;
+            set
+            {
+                //rebuild poi list
+                if(value != null && value != currentArea)
+                {
+                    PoiList.Clear();
+                    currentArea = value;
+                    /*
+                    // Visualize the zone pois
+                    currentArea.vendor?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "green")));
+                    currentArea.repair?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "purple")));
+                    currentArea.innkeeper?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "blue")));
+                    currentArea.flightmaster?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "orange")));
+                    */
+                }
+            }
+        }
 
         private double min;
         private double diff;
@@ -151,6 +190,12 @@ namespace Libs
         {
             var size = this.canvasSize / 25;
             return pt == null ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X) - size / 2}' y = '{ToCanvasPointY(pt.Y) - size / 2}' height='{size}' width='{size}' />";
+        }
+
+        public string DrawPoi(RouteInfoPoi pt)
+        {
+            var size = 4;
+            return $"<circle onmousemove=\"showTooltip(evt, '{pt.Name}');\" onmouseout=\"hideTooltip();\" cx='{ToCanvasPointX(pt.Location.X) - size / 2}' cy='{ToCanvasPointY(pt.Location.Y) - size / 2}' r='{4}' fill='{pt.Color}' />";
         }
     }
 }

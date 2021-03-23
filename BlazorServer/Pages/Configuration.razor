@@ -148,7 +148,7 @@ else
 
                     if (dataFrames.Count == 100)
                     {
-                        addonReader = new AddonReader(dataConfig, new WowScreen(wowProcess, logger), dataFrames, logger);
+                        addonReader = new AddonReader(dataConfig, new WowScreen(wowProcess, logger), dataFrames, logger, null);
                     }
 
                     if (addonReader != null && dataFrames.Count != 100)

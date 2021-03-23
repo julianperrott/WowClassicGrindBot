@@ -49,6 +49,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DataConfig\DataConfig.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\WowheadDB\WowheadDB.csproj" />
   </ItemGroup>
 
 </Project>
