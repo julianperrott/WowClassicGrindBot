@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -41,6 +41,17 @@ namespace Libs.Goals
                 {
                     item.LogInformation($"Only cast if adds exist = {item.CastIfAddsVisible} and it is {npcNameFinder.PotentialAddsExist}");
                     return false;
+                }
+            }
+
+            if(item.School != SchoolMask.None)
+            {
+                if(classConfig.ImmunityBlacklist.TryGetValue(playerReader.TargetId, out var list))
+                {
+                    if(list.Contains(item.School))
+                    {
+                        return false;
+                    }
                 }
             }
 

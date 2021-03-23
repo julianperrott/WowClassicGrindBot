@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +43,8 @@ namespace Libs
         public int NPCMaxLevels_Above { get; set; } = 1;
         public int NPCMaxLevels_Below { get; set; } = 7;
         public List<string> Blacklist { get; } = new List<string>();
+
+        public Dictionary<int, List<SchoolMask>> ImmunityBlacklist { get; } = new Dictionary<int, List<SchoolMask>>();
 
         public KeyActions Pull { get; set; } = new KeyActions();
         public KeyActions Combat { get; set; } = new KeyActions();

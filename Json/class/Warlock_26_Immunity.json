@@ -1,0 +1,193 @@
+{
+  "ClassName": "Warlock",
+  "Loot": true,
+  "NPCMaxLevels_Above": 2,
+
+  "PathFilename": "24_33_Wetflands_Crimson_Hill.json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": true,
+
+  "ImmunityBlacklist": {
+    "1043": [
+      "Shadow"
+    ]
+  },
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "pull",
+        "Key": "5",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "ResetOnNewTarget": true,
+        "MinMana": 90,
+        "School": "Fire",
+        "Log": false
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "heal",
+        "Key": "N3",
+        "Requirements": ["Health%<50", "BagItem:19005:1"],
+        "Cooldown": 120,
+        "InCombat": "true",
+        "Log": false
+      },
+      {
+        "Name": "Drain Soul",
+        "Key": "9",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["TargetHealth%<25", "not BagItem:6265:3"],
+        "School": "Shadow",
+        "MinMana": 55
+      },
+      {
+        "Name": "Drain Life",
+        "Key": "N4",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["Health%<30"],
+        "MinMana": 55
+      },
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "Requirements": ["TargetHealth%>35", "not Immolate"],
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "ResetOnNewTarget": true,
+        "MinMana": 90,
+        "School": "Fire",
+        "Log": false
+      },
+      {
+        "Name": "Curse of Agony",
+        "Key": "1",
+        "ResetOnNewTarget": true,
+        "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
+        "MinMana": 50,
+        "School": "Shadow",
+        "Log": false
+      },
+      {
+        "Name": "Corruption",
+        "Key": "7",
+        "Requirements": ["TargetHealth%>35", "not Corruption"],
+        "ResetOnNewTarget": true,
+        "MinMana": 55,
+        "School": "Shadow",
+        "Log": false
+      },
+      {
+        "Name": "Shadow Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "ResetOnNewTarget": true,
+        "MinMana": 110,
+        "Requirement": "TargetHealth%>35",
+        "School": "Shadow",
+        "Log": false,
+        "Cooldown": 8
+      },
+      {
+        "Name": "Interact",
+        "Key": "H",
+        "Cooldown": 3,
+        "Log": false
+      },
+      {
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "Requirement": "not Shooting",
+        "Log": false
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "StopBeforeCast": true,
+        "Key": "N1",
+        "Requirement": "Health%<50",
+        "Cooldown": 20,
+        "Log": false
+      },
+      {
+        "Name": "Water",
+        "StopBeforeCast": true,
+        "Key": "N2",
+        "Requirement": "Mana%<50",
+        "Cooldown": 20,
+        "Log": false
+      }
+    ]
+    },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Demon Skin",
+        "Key": "3",
+        "MinMana": 50,
+        "Requirement": "not Demon Skin",
+        "Log": false
+      },
+      {
+        "Name": "Summon Voidwalker",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "4",
+        "MinMana": 122,
+        "Requirements": ["BagItem:6265:1", "not Has Pet"],
+        "Log": false,
+        "Cooldown": 60
+      },
+      {
+        "Name": "Life Tap",
+        "Key": "8",
+        "Requirements": ["Health%>70","Mana%<60"],
+        "Cooldown": 0,
+        "Log": false
+      },
+      {
+        "Name": "Life Tap 2",
+        "Key": "8",
+        "Requirements": ["Health%>80","Mana%<80"],
+        "Cooldown": 0,
+        "Log": false
+      },
+      {
+        "Name": "heal",
+        "Key": "N3",
+        "HasCastBar": true,
+        "Requirements": ["BagItem:6265:1", "not BagItem:19005:1"]
+      }
+    ]
+  }
+,
+  "NPC": {
+      "Sequence": [
+        {
+          "Name": "Repair",
+          "Key": "C",
+          "Requirement": "Items Broken",
+          "PathFilename": "23_Duskwood_Vendor.json",
+          "Cost": 6
+        },
+        {
+          "Name": "Sell",
+          "Key": "C",
+          "Requirement": "BagFull",
+          "PathFilename": "23_Duskwood_Vendor.json",
+          "Cost": 6
+        }
+      ]
+  }
+}
