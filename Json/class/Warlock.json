@@ -99,6 +99,7 @@
         "MinMana": 495,
         "Cooldown": 120,
         "School": "Shadow",
+        "Requirements": ["Health%<80"],
         "Log": false
       },
       {
