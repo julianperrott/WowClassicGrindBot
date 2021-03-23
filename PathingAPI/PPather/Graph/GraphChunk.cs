@@ -217,7 +217,7 @@ namespace PatherPath.Graph
             return false;
         }
 
-        bool saveEnabled = false;
+        bool saveEnabled = true;
 
         public bool Save(string baseDir)
         {

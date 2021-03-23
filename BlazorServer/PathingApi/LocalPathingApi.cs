@@ -1,4 +1,4 @@
-using Libs;
+﻿using Libs;
 using Libs.PPather;
 using Microsoft.Extensions.Logging;
 using PathingAPI;
@@ -71,6 +71,7 @@ namespace BlazorServer
             else
             {
                 logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} took {sw.ElapsedMilliseconds} ms.");
+                service.Save();
             }
 
             var worldLocations = path.locations.Select(s => service.ToMapAreaSpot(s.X, s.Y, s.Z, map));
