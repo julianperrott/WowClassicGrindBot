@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -57,11 +57,9 @@ namespace Libs
                 {
                     if (npcs.Count > 0)
                     {
-                        var margin = 10;
-
                         using (var whitePen = new Pen(Color.White, 3))
                         {
-                            npcs.ForEach(n => gr.DrawEllipse(whitePen, new Rectangle(n.ClickPoint.X - (margin / 2), n.ClickPoint.Y - (margin / 2), margin, margin)));
+                            npcs.ForEach(n => gr.DrawRectangle(whitePen, new Rectangle(n.Min, new Size(n.Width, n.Height))));
                         }
                     }
                     using (var blackPen = new SolidBrush(Color.Black))
