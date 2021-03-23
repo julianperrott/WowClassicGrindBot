@@ -154,7 +154,7 @@ namespace Libs.Goals
                         }
                     }
                     
-                    //await playerReader.WaitForNUpdate(1);
+                    await playerReader.WaitForNUpdate(1);
                 }
             }
             if (item.StepBackAfterCast > 0)
