@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 public static class DataConfigVersion
 {
-    public static int Version = 6;
+    public static int Version = 7;
 }
 
 public class DataConfig
@@ -12,13 +12,21 @@ public class DataConfig
     public int Version = DataConfigVersion.Version;
     public string Root { get; set; } = "../json/";
 
+    [JsonIgnore]
     public string Class => System.IO.Path.Join(Root, "class/");
+    [JsonIgnore]
     public string Path => System.IO.Path.Join(Root, "path/");
+    [JsonIgnore]
     public string Dbc => System.IO.Path.Join(Root, "dbc/");
+    [JsonIgnore]
     public string WorldToMap => System.IO.Path.Join(Root, "WorldToMap/");
+    [JsonIgnore]
     public string PathInfo => System.IO.Path.Join(Root, "PathInfo/");
+    [JsonIgnore]
     public string MPQ => System.IO.Path.Join(Root, "MPQ/");
+    [JsonIgnore]
     public string Area => System.IO.Path.Join(Root, "area/");
+    [JsonIgnore]
     public string PPather => System.IO.Path.Join(Root, "PPather/");
 
     [NonSerialized]
