@@ -248,7 +248,7 @@ namespace Libs.Goals
         {
             if (this.classConfiguration.Mode != Mode.AttendedGather)
             {
-                if (!this.playerReader.PlayerBitValues.PlayerInCombat && classConfiguration.TargetNearestTarget.SecondsSinceLastClick > 1)
+                if (!this.playerReader.PlayerBitValues.PlayerInCombat && classConfiguration.TargetNearestTarget.MillisecondsSinceLastClick > 1000)
                 {
                     if (await LookForTarget())
                     {
@@ -457,7 +457,7 @@ namespace Libs.Goals
 
         private async Task RandomJump()
         {
-            if (classConfiguration.Jump.SecondsSinceLastClick > 10)
+            if (classConfiguration.Jump.MillisecondsSinceLastClick > 10000)
             {
                 if (random.Next(1) == 0 /*&& HasBeenActiveRecently()*/)
                 {

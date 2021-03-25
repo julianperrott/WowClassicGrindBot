@@ -235,7 +235,7 @@ namespace Libs.Goals
                     var facing = this.playerReader.Direction;
                     var location = this.playerReader.PlayerLocation;
 
-                    if (this.classConfig.Interact.SecondsSinceLastClick > 4)
+                    if (this.classConfig.Interact.MillisecondsSinceLastClick > 4000)
                     {
                         await wowInput.TapInteractKey("CombatActionBase InteractOnUIError 1");
                         await Task.Delay(50);

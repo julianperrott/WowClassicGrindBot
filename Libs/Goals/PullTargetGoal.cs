@@ -1,4 +1,4 @@
-﻿using Libs.GOAP;
+using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -128,7 +128,7 @@ namespace Libs.Goals
 
         private async Task Interact()
         {
-            if (this.classConfiguration.Interact.SecondsSinceLastClick > 1)
+            if (this.classConfiguration.Interact.MillisecondsSinceLastClick > 500)
             {
                 await wowInput.TapInteractKey("PullTargetAction");
             }

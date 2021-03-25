@@ -160,7 +160,7 @@ namespace Libs
             }
         }
 
-        public double SecondsSinceLastClick => LastClicked.ContainsKey(this.ConsoleKey) ? (DateTime.Now - LastClicked[this.ConsoleKey]).TotalSeconds : 999;
+        public double MillisecondsSinceLastClick => LastClicked.ContainsKey(this.ConsoleKey) ? (DateTime.Now - LastClicked[this.ConsoleKey]).TotalMilliseconds : double.MaxValue;
 
         internal void ResetCooldown()
         {
