@@ -22,7 +22,7 @@ namespace Libs
 
         private NPCType _NPCType = NPCType.Enemy;
 
-        private const int tick = 50;
+        private const int tick = 150;
         private bool ColorMatch(Color pixel)
         {
             switch(_NPCType)
@@ -172,10 +172,10 @@ namespace Libs
 
         public List<NpcPosition> RefreshNpcPositions()
         {
-            UpdateScreenshot();
-
             if ((DateTime.Now - lastNpcFind).TotalMilliseconds > tick) //150
             {
+                UpdateScreenshot();
+
                 PopulateLinesOfNpcNames();
                 DetermineNpcs();
 

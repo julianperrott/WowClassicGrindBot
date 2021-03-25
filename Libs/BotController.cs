@@ -138,6 +138,7 @@ namespace Libs
                         RouteInfo.CurrentArea = areaDb?.CurrentArea;
                 }
 
+                Thread.Sleep(10);
             }
             this.logger.LogInformation("Screenshot thread stoppped!");
         }

@@ -74,7 +74,6 @@ namespace Libs
             {
                 logger.LogError(ex.Message);
             }
-            Thread.Sleep(1);
         }
 
         private static Bitmap CropImage(Bitmap img, bool highlight)
