@@ -119,6 +119,17 @@ namespace Libs.Goals
                 await this.TapInteractKey("ApproachTargetAction unstick");
                 await Task.Delay(250);
             }
+
+            if(playerReader.WithInCombatRange && (
+                playerReader.PlayerClass == PlayerClassEnum.Rogue ||
+                playerReader.PlayerClass == PlayerClassEnum.Warrior ||
+                playerReader.PlayerClass == PlayerClassEnum.Paladin))
+            {
+                Log("WithInCombatRange -- Strictly melee -- Wait a moment");
+                await stopMoving.Stop();
+                await this.TapInteractKey("ApproachTargetAction engage");
+                await Task.Delay(200);
+            }
         }
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
