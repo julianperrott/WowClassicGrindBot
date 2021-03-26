@@ -2,6 +2,30 @@
 
 namespace Libs
 {
+    public enum InventorySlotId
+    {
+        ammo,
+        head,
+        neck,
+        shoulder,
+        shirt,
+        chest,
+        waist,
+        legs,
+        feet,
+        wrist,
+        hands,
+        finger_1,
+        finger_2,
+        trinket_1,
+        trinket_2,
+        back,
+        main_hand,
+        off_hand,
+        ranged,
+        tabard
+    }
+
     public class EquipmentReader
     {
         private readonly int cellStart;
@@ -28,6 +52,11 @@ namespace Libs
         public string ToStringList()
         {
             return string.Join(", ", equipment.Where(i => i > 0));
+        }
+
+        public bool HasRanged()
+        {
+            return equipment[(int)InventorySlotId.ranged] != 0;
         }
     }
 }

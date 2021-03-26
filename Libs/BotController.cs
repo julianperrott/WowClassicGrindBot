@@ -233,7 +233,7 @@ namespace Libs
                 throw new Exception("Not allowed to load other class profile!");
             }
 
-            var requirementFactory = new RequirementFactory(AddonReader.PlayerReader, AddonReader.BagReader, logger);
+            var requirementFactory = new RequirementFactory(AddonReader.PlayerReader, AddonReader.BagReader, AddonReader.equipmentReader,  logger);
 
             ClassConfiguration classConfig;
             var classFilePath = Path.Join(DataConfig.Class, classFilename);

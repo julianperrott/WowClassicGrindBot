@@ -52,6 +52,7 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 * Remap default keybindings such as Stand, StopAttack
 * Updated low level Warlock/Mage profiles
 * Added Warlock shard farming profile
+* Added a new input system to handle modifier keys
 
 # Issues and Ideas
 
@@ -403,10 +404,12 @@ e.g.
 * "Shooting" - I am out of shooting.
 * "Items Broken" - Some of my armor is red.
 * "BagFull" - player inventory is full.
+* "HasRangedWeapon" - player has an item equipped at the ranged slot.
 
 | Class | Buff |
 | --- | --- |
 | All | "Items Broken" |
+| All | "HasRangedWeapon" |
 | All | "Well Fed" |
 | All | "Eating" |
 | All | "Drinking" |

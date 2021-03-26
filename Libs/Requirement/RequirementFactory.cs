@@ -9,13 +9,15 @@ namespace Libs
     {
         private readonly PlayerReader playerReader;
         private readonly BagReader bagReader;
+        private readonly EquipmentReader equipmentReader;
         private readonly ILogger logger;
         private Dictionary<string, Func<bool>> BuffDictionary = new Dictionary<string, Func<bool>>();
 
-        public RequirementFactory(PlayerReader playerReader, BagReader bagReader, ILogger logger)
+        public RequirementFactory(PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, ILogger logger)
         {
             this.playerReader = playerReader;
             this.bagReader = bagReader;
+            this.equipmentReader = equipmentReader;
             this.logger = logger;
         }
 
@@ -136,9 +138,10 @@ namespace Libs
 
                     { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
 
-                    {  "Shooting", ()=> playerReader.IsShooting },
-                    {  "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
-                    {  "BagFull", ()=> bagReader.BagsFull }
+                    { "Shooting", ()=> playerReader.IsShooting },
+                    { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
+                    { "BagFull", ()=> bagReader.BagsFull },
+                    { "HasRangedWeapon", ()=> equipmentReader.HasRanged() }
                 };
             }
 
