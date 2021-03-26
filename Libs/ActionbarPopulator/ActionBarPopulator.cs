@@ -77,14 +77,14 @@ namespace Libs
                 var content = ScriptBuilder(a);
                 logger.LogInformation(content);
 
-                NativeMethods.SetClipboardText(content);
+                wowProcess.SetClipboard(content);
                 await Task.Delay(50);
                 
                 // Open chat inputbox
                 await wowProcess.KeyPress(ConsoleKey.Enter, 50);
 
                 // Send Paste keys
-                wowProcess.SendKeys("^{v}");
+                wowProcess.PasteFromClipboard();
                 await Task.Delay(250);
 
                 //

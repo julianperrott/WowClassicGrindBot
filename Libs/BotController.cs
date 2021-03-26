@@ -91,7 +91,7 @@ namespace Libs
 
             logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerClass}.");
 
-            npcNameFinder = new NpcNameFinder(logger, wowProcess);
+            npcNameFinder = new NpcNameFinder(logger, wowProcess, wowProcess);
             //ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
 
             screenshotThread = new Thread(ScreenshotRefreshThread);
