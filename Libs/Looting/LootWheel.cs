@@ -50,7 +50,7 @@ namespace Libs.Looting
 
         public async Task<bool> Loot(bool searchForMobs)
         {
-            WowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
+            wowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
             await Task.Delay(150);
 
             //if (!searchForMobs)
@@ -99,7 +99,7 @@ namespace Libs.Looting
                 float y = (float)(circleCentre.Y + (ry * Math.Sin(theta)));
                 var mousePosition = new Point((int)x, (int)y);
 
-                WowProcess.SetCursorPosition(mousePosition);
+                wowProcess.SetCursorPosition(mousePosition);
 
                 if (await CheckForLoot(mousePosition, searchForMobs, ignoreMobs))
                 {

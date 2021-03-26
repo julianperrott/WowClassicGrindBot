@@ -225,7 +225,7 @@ else
         {
             wowProcess.SetForegroundWindow();
             await wowProcess.KeyPress(ConsoleKey.Enter, 100);
-            wowProcess.SendKeys("/dc");
+            await wowProcess.SendText("/dc");
             await wowProcess.KeyPress(ConsoleKey.Enter, 100);
         }
     }

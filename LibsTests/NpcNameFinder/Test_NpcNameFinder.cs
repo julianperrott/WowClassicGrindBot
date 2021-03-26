@@ -17,7 +17,8 @@ namespace LibsTests
             this.logger = logger;
 
             IRectProvider rectProvider = new RectProvider();
-            npcNameFinder = new NpcNameFinder(logger, rectProvider);
+            MockWoWProcess mockWoWProcess = new MockWoWProcess();
+            npcNameFinder = new NpcNameFinder(logger, rectProvider, mockWoWProcess);
         }
 
         public void Execute()

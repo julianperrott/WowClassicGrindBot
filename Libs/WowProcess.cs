@@ -1,23 +1,22 @@
 using Microsoft.Extensions.Logging;
-using PInvoke;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Threading;
 using System.Threading.Tasks;
+using TextCopy;
 
 namespace Libs
 {
-    public class WowProcess : IRectProvider
+    public class WowProcess : IRectProvider, IMouseInput
     {
-        private Random random = new Random();
-        private ILogger logger;
+        private readonly ILogger logger;
+        private readonly IInput nativeInput;
+        private readonly IInput simulatorInput;
 
         private bool debug = true;
 
         private Process _warcraftProcess;
-
         public Process WarcraftProcess
         {
             get
@@ -36,6 +35,8 @@ namespace Libs
             }
         }
 
+        private readonly Dictionary<ConsoleKey, bool> keyDict = new Dictionary<ConsoleKey, bool>();
+
         public WowProcess(ILogger logger)
         {
             this.logger = logger;
@@ -47,6 +48,9 @@ namespace Libs
             }
 
             this._warcraftProcess = process;
+
+            this.nativeInput = new InputWindowsNative(process);
+            this.simulatorInput = new InputSimulator(process);
         }
 
         public bool IsWowClassic()
@@ -87,12 +91,9 @@ namespace Libs
             if(!string.IsNullOrEmpty(description))
                 Log($"KeyDown {key} "+ description);
 
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
-
+            nativeInput.KeyDown((int)key);
             keyDict[key] = true;
         }
-
-        private Dictionary<ConsoleKey, bool> keyDict = new Dictionary<ConsoleKey, bool>();
 
         private void KeyUp(ConsoleKey key, bool forceClick)
         {
@@ -109,7 +110,7 @@ namespace Libs
             }
 
             Log($"KeyUp {key}");
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
+            nativeInput.KeyUp((int)key);
 
             keyDict[key] = false;
         }
@@ -126,25 +127,21 @@ namespace Libs
             NativeMethods.SetForegroundWindow(WarcraftProcess.MainWindowHandle);
         }
 
-        public void SendKeys(string payload)
+        public async Task SendText(string payload)
         {
-            try {
-                Process p = new Process();
-                p.StartInfo.FileName = "SendKeys.exe";
-                string args = $"-pid:{_warcraftProcess.Id} \"{payload}\"";
-                p.StartInfo.Arguments = args;
+            await simulatorInput.SendText(payload);
+        }
 
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                p.Start();
+#pragma warning disable CA1822 // Mark members as static
+        public void SetClipboard(string text)
+#pragma warning restore CA1822 // Mark members as static
+        {
+            ClipboardService.SetText(text);
+        }
 
-                p.WaitForExit();
-                p.Dispose();
-            } 
-            catch(Exception e)
-            {
-                logger.LogDebug(e.Message);
-            }
+        public void PasteFromClipboard()
+        {
+            simulatorInput.PasteFromClipboard();
         }
 
         public async Task KeyPress(ConsoleKey key, int milliseconds, string description = "")
@@ -153,9 +150,7 @@ namespace Libs
             if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
             Log($"{keyDescription}[{key}] pressing for {milliseconds}ms");
 
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
-            await Delay(milliseconds);
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
+            await nativeInput.KeyPress((int)key, milliseconds);
         }
 
         public void KeyPressSleep(ConsoleKey key, int milliseconds, string description = "")
@@ -165,9 +160,7 @@ namespace Libs
             if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
             Log($"{keyDescription}[{key}] pressing for {milliseconds}ms");
 
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
-            Thread.Sleep(milliseconds);
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
+            nativeInput.KeyPressSleep((int)key, milliseconds);
         }
 
         public void SetKeyState(ConsoleKey key, bool pressDown, bool forceClick, string description = "")
@@ -178,60 +171,24 @@ namespace Libs
             if (pressDown) { KeyDown(key, description); } else { KeyUp(key, forceClick); }
         }
 
-        public static void SetCursorPosition(System.Drawing.Point position)
+        public void SetCursorPosition(Point position)
         {
-            NativeMethods.SetCursorPos(position.X, position.Y);
+            nativeInput.SetCursorPosition(position);
         }
 
-        public async Task RightClickMouse(System.Drawing.Point position)
+        public async Task RightClickMouse(Point position)
         {
-            SetCursorPosition(position);
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_RBUTTONDOWN, NativeMethods.VK_RMB, 0);
-            await Delay(75);
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_RBUTTONUP, NativeMethods.VK_RMB, 0);
+            await nativeInput.RightClickMouse(position);
         }
 
-        public async Task LeftClickMouse(System.Drawing.Point position)
+        public async Task LeftClickMouse(Point position)
         {
-            SetCursorPosition(position);
-            await Delay(75);
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_LBUTTONDOWN, NativeMethods.VK_RMB, 0);
-            await Delay(75);
-            NativeMethods.PostMessage(WarcraftProcess.MainWindowHandle, NativeMethods.WM_LBUTTONUP, NativeMethods.VK_RMB, 0);
-            await Delay(75);
-        }
-
-        public async Task Delay(int milliseconds)
-        {
-            await Task.Delay(milliseconds + random.Next(1, 200));
+            await nativeInput .LeftClickMouse(position);
         }
 
         public void GetWindowRect(out Rectangle rect)
         {
-            var handle = this.WarcraftProcess.MainWindowHandle;
-            NativeMethods.GetWindowRect(handle, out rect);
-        }
-
-        int scale = 100;
-
-        public int ScaleUp(int value)
-        {
-            if (scale == 100)
-            {
-                return value;
-            }
-
-            return (value * scale) / 100;
-        }
-
-        public int ScaleDown(int value)
-        {
-            if (scale == 100)
-            {
-                return value;
-            }
-
-            return (value * 100) / scale;
+            NativeMethods.GetWindowRect(WarcraftProcess.MainWindowHandle, out rect);
         }
 
         private void Log(string text)

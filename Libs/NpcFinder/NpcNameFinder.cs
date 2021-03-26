@@ -47,6 +47,7 @@ namespace Libs
 
         private readonly ILogger logger;
         private readonly IRectProvider rectProvider;
+        private readonly IMouseInput mouseInput;
         private DirectBitmap screen;
 
         public DirectBitmap Screenshot
@@ -72,10 +73,11 @@ namespace Libs
 
         private DateTime lastNpcFind = DateTime.Now;
 
-        public NpcNameFinder(ILogger logger, IRectProvider rectProvider)
+        public NpcNameFinder(ILogger logger, IRectProvider rectProvider, IMouseInput mouseInput)
         {
             this.logger = logger;
             this.rectProvider = rectProvider;
+            this.mouseInput = mouseInput;
             this.screen = new DirectBitmap();
         }
 
@@ -107,7 +109,7 @@ namespace Libs
                     foreach (var location in locations)
                     {
                         var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
-                        WowProcess.SetCursorPosition(clickPostion);
+                        mouseInput.SetCursorPosition(clickPostion);
                         await Task.Delay(100);
                         CursorClassifier.Classify(out var cls).Dispose();
                         if (cls == CursorClassification.Kill)
@@ -151,7 +153,7 @@ namespace Libs
                 foreach (var location in locations)
                 {
                     var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
-                    WowProcess.SetCursorPosition(clickPostion);
+                    mouseInput.SetCursorPosition(clickPostion);
                     await Task.Delay(100);
                     CursorClassifier.Classify(out var cls).Dispose();
                     if (cls == cursor)
@@ -166,7 +168,7 @@ namespace Libs
 
         private async Task AquireTargetAtCursor(Point clickPostion, NpcPosition npc)
         {
-            await rectProvider.RightClickMouse(clickPostion);
+            await mouseInput.RightClickMouse(clickPostion);
             logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}");
         }
 
