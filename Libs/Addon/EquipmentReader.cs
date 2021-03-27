@@ -4,26 +4,26 @@ namespace Libs
 {
     public enum InventorySlotId
     {
-        ammo,
-        head,
-        neck,
-        shoulder,
-        shirt,
-        chest,
-        waist,
-        legs,
-        feet,
-        wrist,
-        hands,
-        finger_1,
-        finger_2,
-        trinket_1,
-        trinket_2,
-        back,
-        main_hand,
-        off_hand,
-        ranged,
-        tabard
+        Ammo = 0,
+        Head = 1,
+        Neck = 2,
+        Shoulder = 3,
+        Shirt = 4,
+        Chest = 5,
+        Waist = 6,
+        Legs = 7,
+        Feet = 8,
+        Wrist = 9,
+        Hands = 10,
+        Finger_1 = 11,
+        Finger_2 = 12,
+        Trinket_1 = 13,
+        Trinket_2 = 14,
+        Back = 15,
+        Main_hand = 16,
+        Off_hand = 17,
+        Ranged = 18,
+        Tabard = 19
     }
 
     public class EquipmentReader
@@ -41,7 +41,7 @@ namespace Libs
 
         public long[] Read()
         {
-            var index = reader.GetLongAtCell(cellStart + 1) - 1;
+            var index = reader.GetLongAtCell(cellStart + 1);
             if (index < 20 && index >= 0)
             {
                 equipment[index] = reader.GetLongAtCell(cellStart);
@@ -56,7 +56,7 @@ namespace Libs
 
         public bool HasRanged()
         {
-            return equipment[(int)InventorySlotId.ranged] != 0;
+            return equipment[(int)InventorySlotId.Ranged] != 0;
         }
     }
 }
