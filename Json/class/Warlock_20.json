@@ -95,7 +95,7 @@
         "Name": "shoot",
         "Key": "0",
         "Cooldown": 3,
-        "Requirement": "not Shooting",
+        "Requirements": ["HasRangedWeapon", "not Shooting"],
         "Log": false
       }
     ]

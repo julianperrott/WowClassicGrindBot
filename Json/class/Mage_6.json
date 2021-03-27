@@ -38,6 +38,13 @@
           "Name": "Interact",
           "Key": "H",
           "Cooldown": 2
+        },
+        {
+          "Name": "shoot",
+          "Key": "0",
+          "Cooldown": 3,
+          "Requirements": ["HasRangedWeapon", "not Shooting"],
+          "Log": false
         }
       ]
     },
