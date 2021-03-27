@@ -57,31 +57,34 @@ namespace Libs
         public List<string> GatherFindKeys { get; } = new List<string>();
 
         public KeyAction Jump { get; set; } = new KeyAction();
-        public string JumpKey { get; set; } = "Space";
+        public string JumpKey { get; set; } = "Spacebar";
 
         public KeyAction Interact { get; set; } = new KeyAction();
-        public string InteractKey { get; set; } = "H";
+        public string InteractKey { get; set; } = "I";
 
         public KeyAction TargetLastTarget { get; set; } = new KeyAction();
-        public string TargetLastTargetKey { get; set; } = "N";
+        public string TargetLastTargetKey { get; set; } = "G";
 
         public KeyAction StandUp { get; set; } = new KeyAction();
-        public string StandUpKey { get; set; } = "F9";
+        public string StandUpKey { get; set; } = "X";
 
         public KeyAction ClearTarget { get; set; } = new KeyAction();
-        public string ClearTargetKey { get; set; } = "F3";
+        public string ClearTargetKey { get; set; } = "Insert";
 
         public KeyAction StopAttack { get; set; } = new KeyAction();
-        public string StopAttackKey { get; set; } = "F10";
+        public string StopAttackKey { get; set; } = "Delete";
 
         public KeyAction TargetNearestTarget { get; set; } = new KeyAction();
         public string TargetNearestTargetKey { get; set; } = "Tab";
 
-        public KeyAction TargetPet { get; set; } = new KeyAction();
-        public string TargetPetKey { get; set; } = "F12";
-
         public KeyAction TargetTargetOfTarget { get; set; } = new KeyAction();
         public string TargetTargetOfTargetKey { get; set; } = "F";
+        public KeyAction TargetPet { get; set; } = new KeyAction();
+        public string TargetPetKey { get; set; } = "Multiply";
+
+        public KeyAction PetAttack { get; set; } = new KeyAction();
+        public string PetAttackKey { get; set; } = "Subtract";
+
 
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
 
@@ -122,6 +125,9 @@ namespace Libs
 
             TargetTargetOfTarget.Key = TargetTargetOfTargetKey;
             TargetTargetOfTarget.Initialise(playerReader, requirementFactory, logger);
+
+            PetAttack.Key = PetAttackKey;
+            PetAttack.Initialise(playerReader, requirementFactory, logger);
 
             GatherFindKeys.ForEach(key =>
             {

@@ -132,16 +132,16 @@ We need to make sure that certain interface options are set. The most important 
 
 ### Interface Options
 
-From the main menu (ESC) set the following:
+From the main menu (ESC) set the following under Interface Options:
 
-* Interface Options - Controls - Auto Loot - Ticked.
-* Interface Options - Controls - Interact on Left click - Not ticked.
-* Interface Options - Combat - Do Not Flash Screen at Low Health - Ticked.
-* Interface Options - Combat - Auto Self Cast - Ticked.
-* Interface Options - Camera - Auto-Follow Speed - Fast
-* Interface Options - Camera - Camera Following Style - Always
-* Interface Options - Mouse - Click-to-Move - Ticked
-* Interface Options - Mouse - Click-to-Move Camera Style - Always
+* Controls - Auto Loot - Ticked.
+* Controls - Interact on Left click - Not ticked.
+* Combat - Do Not Flash Screen at Low Health - Ticked.
+* Combat - Auto Self Cast - Ticked.
+* Camera - Auto-Follow Speed - Fast
+* Camera - Camera Following Style - Always
+* Mouse - Click-to-Move - Ticked
+* Mouse - Click-to-Move Camera Style - Always
 
 ## 7. Configure the Wow Client - Key Bindings:
 
@@ -150,42 +150,33 @@ The "Target Last Target " keybind helps with looting.
 
 From the main menu (ESC) set the following:
 
+"Movement Keys" Key Bindings:
+| Command | Key | ClassConfiguration KeyAction | Desciption |
+| ---- | ---- | ---- | ---- |
+| Jump | Spacebar | JumpKey | ---- |
+| Sit/Move Down | X | StandUpKey | Used after drinking or eating |
+
 "Targeting" Key Bindings:
 
-| Command |  Key |
-| ---- | ---- |
-|  Interact With Target | H  |
-|  Target Last Target | N |
-
+| Command | Key | ClassConfiguration KeyAction | Desciption |
+| ---- | ---- | ---- | ---- |
+| Target Nearest Enemy | Tab | TargetNearestTargetKey | ---- |
+| Target Pet | Multiply | TargetPetKey | Only pet based class |
+| Target Last Target | G | TargetLastTargetKey | ---- |
+| Interact With Target | I | InteractKey | ---- |
+| Assist Target | F | TargetTargetOfTargetKey | ---- |
+| Pet attack | Subtract | PetAttackKey | Only pet based class |
 
 ## 8. Configure the Wow Client - Bindpad addon
 
 Bindpad allows keys to be easily bound to commands and macros. Type /bindpad to show it.
 
-For each of the following click + to add a new key binding. The most important ones are marked with a *.
+For each of the following click + to add a new key binding.
 
-|  Key |  Command | Description |
-| ---- | ---- | --- |
-| ---- | Mandatory | --- |
-| * F9 | /stand |  |
-| * F10 | /stopattack | |
-| * F3 | /cleartarget  | |
-| * F12 | /tar pet | Warlock only |
-| ---- | Optional | --- |
-|  i |  /use hearthstone | |
-|  o |  /use Chestnut Mare Bridle | Your mount here|
-|  u | /tar targettarget | Warlock only |
-|  y | /cast counterspell | Mage only |
-|  t | /cast blink | Mage only |
-|  F1 | See below | Buff weapon 16 (Melee classes) |
-|  F2 | See below | Buff weapon 17 (Melee classes)|
-| * F4 | /use Superior Healing Potion | Heal |
-|  F5 | See below  | Delete various crap |
-| F6 | /equipslot 18 Wicked Throwing Dagger | Equip thown (Rogue) |
-| F7 | /cast Desperate Prayer | Heal - Priest only |
-| F8 | /cancelform | Druid |
-| F11 | /cast Power Infusion | Priest only |
-| L | /cast Ice Barrier | Mage only |
+|  Key |  Command |
+| ---- | ---- |
+| Delete | /stopattack /stopcasting /petfollow |
+| Insert | /cleartarget |
 
     Rogue weapon buff (use 17 for second weapon):
         /use Instant Poison V 
