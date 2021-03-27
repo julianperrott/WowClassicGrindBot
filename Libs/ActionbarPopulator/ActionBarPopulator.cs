@@ -149,6 +149,9 @@ namespace Libs
             if(a.Key.StartsWith(KeyReader.BR))
                 return CalculateActionNumber(a.Key, KeyReader.BR, KeyReader.BRIdx);
 
+            if (a.Key.StartsWith(KeyReader.BL))
+                return CalculateActionNumber(a.Key, KeyReader.BL, KeyReader.BLIdx);
+
             return CalculateActionNumber(a.Key, "",  0);
         }
 
