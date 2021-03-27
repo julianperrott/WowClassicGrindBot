@@ -401,6 +401,7 @@ Allow requirements about what buffs you have or the target has to be evaluated.
 e.g.
 * "not Well Fed" - I am not well fed.
 * "not Thorns" - I don't have the thorns buff.
+* "AutoAttacking" - Attack spell enabled.
 * "Shooting" - I am out of shooting.
 * "Items Broken" - Some of my armor is red.
 * "BagFull" - player inventory is full.
@@ -416,6 +417,7 @@ e.g.
 | All | "Mana Regeneration" |
 | All | "OutOfCombatRange" |
 | All | "InCombatRange" |
+| All | "AutoAttacking" |
 | All | "Shooting" |
 | Priest | "Fortitude" |
 | Priest | "InnerFire" |

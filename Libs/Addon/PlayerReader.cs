@@ -122,6 +122,7 @@ namespace Libs
         public bool WithInPullRange => SpellInRange.WithinPullRange(this, this.PlayerClass);
         public bool WithInCombatRange => SpellInRange.WithinCombatRange(this, this.PlayerClass);
 
+        public bool IsAutoAttacking => PlayerBitValues.IsAutoRepeatSpellOn_AutoAttack;
         public bool IsShooting => PlayerBitValues.IsAutoRepeatSpellOn_Shoot;
 
         public long SpellBeingCast => reader.GetLongAtCell(53);

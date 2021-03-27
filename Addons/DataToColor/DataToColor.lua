@@ -593,7 +593,7 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:ProcessExitStatus(), 17)+
     self:MakeIndexBase2(self:IsPlayerMounted(), 18)+
     self:MakeIndexBase2(self:IsAutoRepeatSpellOn("Shoot"), 19)+
-    self:MakeIndexBase2(0, 20)+
+    self:MakeIndexBase2(self:IsCurrentSpell(6603), 20)+ -- AutoAttack enabled
     self:MakeIndexBase2(self:targetIsNormal(), 21)+
     self:MakeIndexBase2(self:IsTagged(), 22);
 end
@@ -1354,6 +1354,13 @@ end
 
 function DataToColor:IsAutoRepeatSpellOn(spell)
     if IsAutoRepeatSpell(spell)  then
+        return 1
+    else return 0
+    end
+end
+
+function DataToColor:IsCurrentSpell(spell)
+    if IsCurrentSpell(spell) then
         return 1
     else return 0
     end

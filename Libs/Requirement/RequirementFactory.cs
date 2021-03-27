@@ -138,6 +138,7 @@ namespace Libs
 
                     { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
 
+                    { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
                     { "Shooting", ()=> playerReader.IsShooting },
                     { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
                     { "BagFull", ()=> bagReader.BagsFull },
