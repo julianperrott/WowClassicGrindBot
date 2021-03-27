@@ -168,6 +168,11 @@ namespace Libs.Goals
             await wowInput.TapStopAttack();
             this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
+            if(playerReader.PlayerBitValues.HasPet)
+            {
+                await wowInput.TapPetAttack();
+            }
+
             foreach (var item in this.Keys)
             {
                 var sleepBeforeFirstCast = item.StopBeforeCast && !hasCast && 150 > item.DelayBeforeCast ? 150 : item.DelayBeforeCast;

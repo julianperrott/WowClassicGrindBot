@@ -90,6 +90,12 @@ namespace Libs
             this.classConfig.Jump.SetClicked();
         }
 
+        public async Task TapPetAttack(string source = "")
+        {
+            Log($"TapPetAttack ({source})");
+            await wowProcess.KeyPress(classConfig.PetAttack.ConsoleKey, defaultKeyPress);
+            this.classConfig.PetAttack.SetClicked();
+        }
 
         public async Task Hearthstone()
         {
