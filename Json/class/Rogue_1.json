@@ -13,8 +13,7 @@
         "Name": "Eviscerate",
         "Key": "3",
         "MinEnergy": 35,
-        "MinComboPoints": 3,
-        "Cooldown": 10
+        "MinComboPoints": 2
       },
       {
         "Name": "Sinister Strike",
