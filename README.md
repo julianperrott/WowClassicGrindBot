@@ -119,6 +119,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
 * System>Advanced>Constrast: 50
 * System>Advanced>Brightness: 50
 * System>Advanced>Gamma from: 1.0
+* Disable Glow effect - type in the chat `/console ffxGlow 0` - to keep/save this settings make sure to properly shutdown the game.
 
 6. The bot needs to record the position of the blocks of colour and to do this we need to put the addon into configuration mode by typing /dc. Follow the instructions on the configuration page and Save the configuration.
 
