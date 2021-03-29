@@ -11,8 +11,11 @@ namespace Libs
         public const string BR = "N";
         public const int BRIdx = 48; //49 - 1
 
+        // Bottom Left Action Bar
         public const string BL = "F";
         public const int BLIdx = 60; //61 - 1
+
+        private static readonly IEnumerable<ConsoleKey> consoleKeys = (IEnumerable<ConsoleKey>)Enum.GetValues(typeof(ConsoleKey));
 
         public static Dictionary<string, ConsoleKey> KeyMapping { get; } = new Dictionary<string, ConsoleKey>()
         {
@@ -71,10 +74,7 @@ namespace Libs
             }
             else
             {
-                var values = Enum.GetValues(typeof(ConsoleKey)) as IEnumerable<ConsoleKey>;
-                if (values == null) { return false; }
-                var consoleKey = values.FirstOrDefault(k => k.ToString() == key.Key);
-
+                var consoleKey = consoleKeys.FirstOrDefault(k => k.ToString() == key.Key);
                 if (consoleKey == 0)
                 {
                     logger.LogError($"You must specify a valid 'KeyName' (ConsoleKey enum name) for { key.Name}");
