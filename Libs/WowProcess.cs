@@ -61,7 +61,7 @@ namespace Libs
         //Get the wow-process, if success returns the process else null
         public static Process? Get(string name = "")
         {
-            var names = string.IsNullOrEmpty(name) ? new List<string> { "Wow", "WowClassic", "Wow-64" } : new List<string> { name };
+            var names = string.IsNullOrEmpty(name) ? new List<string> { "Wow", "WowClassic", "WowClassicT", "Wow-64" } : new List<string> { name };
 
             var processList = Process.GetProcesses();
             foreach (var p in processList)
@@ -88,8 +88,8 @@ namespace Libs
                 keyDict.Add(key, true);
             }
 
-            if(!string.IsNullOrEmpty(description))
-                Log($"KeyDown {key} "+ description);
+            if (!string.IsNullOrEmpty(description))
+                Log($"KeyDown {key} " + description);
 
             nativeInput.KeyDown((int)key);
             keyDict[key] = true;
@@ -165,7 +165,7 @@ namespace Libs
 
         public void SetKeyState(ConsoleKey key, bool pressDown, bool forceClick, string description = "")
         {
-            if(!string.IsNullOrEmpty(description))
+            if (!string.IsNullOrEmpty(description))
                 Log($"SetKeyState: {description}");
 
             if (pressDown) { KeyDown(key, description); } else { KeyUp(key, forceClick); }
@@ -183,7 +183,7 @@ namespace Libs
 
         public async Task LeftClickMouse(Point position)
         {
-            await nativeInput .LeftClickMouse(position);
+            await nativeInput.LeftClickMouse(position);
         }
 
         public void GetWindowRect(out Rectangle rect)
