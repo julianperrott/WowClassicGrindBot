@@ -9,6 +9,7 @@
 *.sln.docstates
 *.mpq
 *.bin
+BlazorServer/frame_config.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
