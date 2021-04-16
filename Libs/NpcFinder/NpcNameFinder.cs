@@ -1,4 +1,4 @@
-﻿using Libs.Cursor;
+using Libs.Cursor;
 using Libs.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
@@ -71,7 +71,7 @@ namespace Libs
 
         public int Sequence { get; private set; } = 0;
 
-        private DateTime lastNpcFind = DateTime.Now;
+        private DateTime lastNpcFind = DateTime.Now.AddMilliseconds(-tick);
 
         public NpcNameFinder(ILogger logger, IRectProvider rectProvider, IMouseInput mouseInput)
         {
