@@ -9,4 +9,12 @@ namespace Libs.Extensions
             return new Point(r.Left + r.Width / 2, r.Top + r.Height / 2);
         }
     }
+
+    public static class PointExt
+    {
+        public static Point Scale(this Point p, float scale)
+        {
+            return p.Scale(scale);
+        }
+    }
 }

@@ -1,5 +1,6 @@
-using Libs.Cursor;
+﻿using Libs.Cursor;
 using Libs.NpcFinder;
+using Libs.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,8 @@ namespace Libs
         private readonly IMouseInput mouseInput;
         private DirectBitmap screen;
 
+        private float ScaleToRef = 1;
+
         public DirectBitmap Screenshot
         {
             get
@@ -63,6 +66,8 @@ namespace Libs
                     screen.Dispose();
                 }
                 screen = value;
+
+                ScaleToRef = Scale(1);
             }
         }
 
@@ -79,6 +84,12 @@ namespace Libs
             this.rectProvider = rectProvider;
             this.mouseInput = mouseInput;
             this.screen = new DirectBitmap();
+        }
+
+        private float Scale(int value)
+        {
+            const int refWidth = 1920;
+            return value * (screen.Width / refWidth);
         }
 
         public void ChangeNpcType(NPCType type)
@@ -99,11 +110,11 @@ namespace Libs
                 {
                     var locations = new List<Point>
                     {
-                        new Point(0,0),
-                        new Point(10,10),
-                        new Point(-10,-10),
-                        new Point(20,20),
-                        new Point(-20,-20),
+                        new Point(0, 0).Scale(ScaleToRef),
+                        new Point(10, 10).Scale(ScaleToRef),
+                        new Point(-10, -10).Scale(ScaleToRef),
+                        new Point(20, 20).Scale(ScaleToRef),
+                        new Point(-20, -20).Scale(ScaleToRef),
                     };
 
                     foreach (var location in locations)
@@ -139,13 +150,13 @@ namespace Libs
         {
             var locations = new List<Point>
             {
-                new Point(0, 0),
-                new Point(0, -25),
-                new Point(-5, 10),
-                new Point(5, 35),
-                new Point(-5, 75),
-                new Point(0, 125),
-                new Point(0, 160),
+                new Point(0, 0).Scale(ScaleToRef),
+                new Point(0, -25).Scale(ScaleToRef),
+                new Point(-5, 10).Scale(ScaleToRef),
+                new Point(5, 35).Scale(ScaleToRef),
+                new Point(-5, 75).Scale(ScaleToRef),
+                new Point(0, 125).Scale(ScaleToRef),
+                new Point(0, 160).Scale(ScaleToRef),
             };
 
             foreach (var npc in Npcs)
@@ -183,7 +194,7 @@ namespace Libs
 
                 Npcs = npcs.OrderByDescending(npc => npc.Count)
                     .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)), new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), Screenshot.Width))
-                    .Where(s => s.Width < 250) // 150 - fine // 200 - fine // 250 fine
+                    .Where(s => s.Width < Scale(250)) // 150 - fine // 200 - fine // 250 fine
                     .ToList();
 
                 lastNpcFind = DateTime.Now;
@@ -200,8 +211,8 @@ namespace Libs
 
         public void UpdatePotentialAddsExist()
         {
-            var countAdds = Npcs.Where(c => c.IsAdd).Where(c => c.Height > 2).Count();
-            var MobsVisible = Npcs.Where(c => c.Height > 2).Any();
+            var countAdds = Npcs.Where(c => c.IsAdd).Where(c => c.Height > Scale(2)).Count();
+            var MobsVisible = Npcs.Where(c => c.Height > Scale(2)).Any();
 
             if (countAdds > 0)
             {
@@ -240,8 +251,8 @@ namespace Libs
                     for (int j = i + 1; j < this.npcNameLine.Count; j++)
                     {
                         var laterNpcLine = this.npcNameLine[j];
-                        if (laterNpcLine.Y > npcLine.Y + 10) { break; }
-                        if (laterNpcLine.Y > lastY + 5) { break; } // 2
+                        if (laterNpcLine.Y > npcLine.Y + Scale(10)) { break; }
+                        if (laterNpcLine.Y > lastY + Scale(5)) { break; } // 2
 
                         if (laterNpcLine.XStart <= npcLine.X && laterNpcLine.XEnd >= npcLine.X && laterNpcLine.Y > lastY)
                         {
@@ -259,12 +270,12 @@ namespace Libs
         {
             npcNameLine = new List<LineOfNpcName>();
 
-            const int minLength = 12; // original 22 // 18 fine
-            const int lengthDiff = 3;
-            const int minEndLength = minLength - lengthDiff; // original 18
+            float minLength = Scale(12); // original 22 // 18 fine
+            float lengthDiff = Scale(3);
+            float minEndLength = minLength - lengthDiff; // original 18
 
             bool isEndOfSection;
-            for (int y = 30; y < Screenshot.Height / 2; y++)
+            for (int y = (int)Scale(30); y < Screenshot.Height / 2; y++)
             {
                 var lengthStart = -1;
                 var lengthEnd = -1;
