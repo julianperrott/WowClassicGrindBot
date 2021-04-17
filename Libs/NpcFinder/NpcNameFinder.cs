@@ -52,6 +52,8 @@ namespace Libs
         private DirectBitmap screen;
 
         private float ScaleToRef = 1;
+        private readonly List<Point> locFindAndClickNpc;
+        private readonly List<Point> locFindByCursorType;
 
         public DirectBitmap Screenshot
         {
@@ -84,6 +86,26 @@ namespace Libs
             this.rectProvider = rectProvider;
             this.mouseInput = mouseInput;
             this.screen = new DirectBitmap();
+
+            locFindAndClickNpc = new List<Point>
+            {
+                new Point(0, 0),
+                new Point(10, 10).Scale(ScaleToRef),
+                new Point(-10, -10).Scale(ScaleToRef),
+                new Point(20, 20).Scale(ScaleToRef),
+                new Point(-20, -20).Scale(ScaleToRef),
+            };
+
+            locFindByCursorType = new List<Point>
+            {
+                new Point(0, 0),
+                new Point(0, -25).Scale(ScaleToRef),
+                new Point(-5, 10).Scale(ScaleToRef),
+                new Point(5, 35).Scale(ScaleToRef),
+                new Point(-5, 75).Scale(ScaleToRef),
+                new Point(0, 125).Scale(ScaleToRef),
+                new Point(0, 160).Scale(ScaleToRef),
+            };
         }
 
         private float Scale(int value)
@@ -108,16 +130,7 @@ namespace Libs
             {
                 if (npc.Height >= threshold)
                 {
-                    var locations = new List<Point>
-                    {
-                        new Point(0, 0).Scale(ScaleToRef),
-                        new Point(10, 10).Scale(ScaleToRef),
-                        new Point(-10, -10).Scale(ScaleToRef),
-                        new Point(20, 20).Scale(ScaleToRef),
-                        new Point(-20, -20).Scale(ScaleToRef),
-                    };
-
-                    foreach (var location in locations)
+                    foreach (var location in locFindAndClickNpc)
                     {
                         var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                         mouseInput.SetCursorPosition(clickPostion);
@@ -148,20 +161,9 @@ namespace Libs
 
         public async Task<bool> FindByCursorType(CursorClassification cursor)
         {
-            var locations = new List<Point>
-            {
-                new Point(0, 0).Scale(ScaleToRef),
-                new Point(0, -25).Scale(ScaleToRef),
-                new Point(-5, 10).Scale(ScaleToRef),
-                new Point(5, 35).Scale(ScaleToRef),
-                new Point(-5, 75).Scale(ScaleToRef),
-                new Point(0, 125).Scale(ScaleToRef),
-                new Point(0, 160).Scale(ScaleToRef),
-            };
-
             foreach (var npc in Npcs)
             {
-                foreach (var location in locations)
+                foreach (var location in locFindByCursorType)
                 {
                     var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                     mouseInput.SetCursorPosition(clickPostion);
