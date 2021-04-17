@@ -14,7 +14,7 @@ namespace Libs.Extensions
     {
         public static Point Scale(this Point p, float scale)
         {
-            return p.Scale(scale);
+            return new Point((int)(p.X * scale), (int)(p.Y * scale));
         }
     }
 }
