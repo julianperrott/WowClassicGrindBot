@@ -49,10 +49,11 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 * Navigation Path simplification
 * NPCNameFinder: extended to friendly/neutral units
 * Support game windowed mode
-* Remap default keybindings such as Stand, StopAttack
+* Remap essential keybindings and support more action bar slots up to 36
 * Updated low level Warlock/Mage profiles
 * Added Warlock shard farming profile
 * Added a new input system to handle modifier keys
+* Support more 4:3 aspect ratio based resolution
 
 # Issues and Ideas
 
@@ -119,6 +120,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
 * System>Advanced>Constrast: 50
 * System>Advanced>Brightness: 50
 * System>Advanced>Gamma from: 1.0
+* System>Render Scale: 100%
 * Disable Glow effect - type in the chat `/console ffxGlow 0` - to keep/save this settings make sure to properly shutdown the game.
 
 6. The bot needs to record the position of the blocks of colour and to do this we need to put the addon into configuration mode by typing /dc. Follow the instructions on the configuration page and Save the configuration.
@@ -139,6 +141,7 @@ From the main menu (ESC) set the following under Interface Options:
 * Controls - Interact on Left click - Not ticked.
 * Combat - Do Not Flash Screen at Low Health - Ticked.
 * Combat - Auto Self Cast - Ticked.
+* Names - Enemy Units (V) - Not ticked.
 * Camera - Auto-Follow Speed - Fast
 * Camera - Camera Following Style - Always
 * Mouse - Click-to-Move - Ticked
