@@ -75,7 +75,7 @@ namespace Libs.Goals
             bool skinSuccess = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Skin);
             if (skinSuccess)
             {
-                await Wait(100);
+                await Wait(100, () => false);
                 if (IsPlayerMoving(lastPosition)) 
                     Log("Goto corpse - Wait till the player become stil!");
 
@@ -100,7 +100,7 @@ namespace Libs.Goals
                 } while (playerReader.IsCasting);
 
                 // Wait for to update the LastUIErrorMessage
-                await Wait(100);
+                await Wait(100, () => false);
 
                 var lastError = this.playerReader.LastUIErrorMessage;
                 if (lastError != UI_ERROR.ERR_SPELL_FAILED_S)

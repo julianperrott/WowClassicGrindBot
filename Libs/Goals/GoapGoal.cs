@@ -128,12 +128,12 @@ namespace Libs.Goals
             return $"{Name} " + (Keys.Count == 1 ? $"[{Keys.First().ConsoleKey}]" : "");
         }
 
-        public static async Task<bool> Wait(int durationMs, bool exit = false)
+        public static async Task<bool> Wait(int durationMs, Func<bool> exit)
         {
             int elapsedMs = 0;
             while (elapsedMs <= durationMs)
             {
-                if (exit)
+                if (exit())
                     return false;
 
                 await Task.Delay(50);

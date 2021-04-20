@@ -112,8 +112,9 @@ namespace Libs.Goals
 
             if (!item.HasCastBar)
             {
-                item.LogInformation($" ... delay after cast {item.DelayAfterCast}");
-                await Task.Delay(item.DelayAfterCast);
+                var result = await WaitInterrupt(item.DelayAfterCast,
+                    () => playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealthPercentage < 5);
+                item.LogInformation($" ... no castbar delay after cast {result.Item2}ms");
             }
             else
             {
@@ -161,7 +162,9 @@ namespace Libs.Goals
                         }
                         else
                         {
-                            await Task.Delay(item.DelayAfterCast);
+                            var result = await WaitInterrupt(item.DelayAfterCast,
+                                () => playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealthPercentage < 5);
+                            item.LogInformation($" ... castbar delay after cast {result.Item2}ms");
                         }
                     }
                     
@@ -257,6 +260,21 @@ namespace Libs.Goals
                     this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
             }
+        }
+
+        protected async Task<Tuple<bool, int>> WaitInterrupt(int durationMs, Func<bool> exit)
+        {
+            int elapsedMs = 0;
+            while (elapsedMs <= durationMs)
+            {
+                await playerReader.WaitForNUpdate(1);
+                elapsedMs += 100;
+
+                if (exit())
+                    return Tuple.Create(false, elapsedMs);
+            }
+
+            return Tuple.Create(true, elapsedMs);
         }
     }
 }
