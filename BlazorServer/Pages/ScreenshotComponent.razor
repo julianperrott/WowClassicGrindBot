@@ -13,8 +13,17 @@
     protected override void OnInitialized()
     {
         this.botController.WowScreen.Size = Size;
-        this.botController.WowScreen.OnScreenChanged -= this.ImageChanged;
-        this.botController.WowScreen.OnScreenChanged += this.ImageChanged;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // execute conditionally for loading data, otherwise this will load
+        // every time the page refreshes
+        if (firstRender)
+        {
+            this.botController.WowScreen.OnScreenChanged -= this.ImageChanged;
+            this.botController.WowScreen.OnScreenChanged += this.ImageChanged;
+        }
     }
 
     private async void ImageChanged(object sender, Libs.ScreenChangeEventArgs args)

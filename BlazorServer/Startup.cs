@@ -11,6 +11,7 @@ using Serilog.Events;
 using Serilog.Extensions.Logging;
 using System;
 using System.Threading;
+using MatBlazor;
 
 namespace BlazorServer
 {
@@ -65,6 +66,7 @@ namespace BlazorServer
                 var botController = new BotController(logger, pather, dataConfig);
                 services.AddSingleton<IBotController>(botController);
                 services.AddSingleton<IAddonReader>(botController.AddonReader);
+                services.AddMatBlazor();
             }
             else
             {

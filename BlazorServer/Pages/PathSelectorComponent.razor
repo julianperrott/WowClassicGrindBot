@@ -1,27 +1,23 @@
 ﻿@using Libs
+@using MatBlazor
 @inject Libs.IBotController botController
 @inject Libs.IAddonReader addonReader
 
 <div class="card @(Hide ? "hide" : "")" style="margin-top: 10px">
     <div class="card-header">
-        <button class="btn btn-sm btn-primary" @onclick="RefreshData">
+        <button class="btn btn-sm btn-primary float-left" @onclick="RefreshData">
             <span class="glyphicon glyphicon-refresh"></span>
         </button>
 
         Path Profile
 
-        <select name="listbox" id="listbox" @onchange="OnListBoxChanged" runat="server">
-            @foreach (var item in files)
-            {
-                <option value="@item" selected="@(selectedPath == @item ? "selected" : null)">
-                    @item
-                </option>
-            }
-        </select>
-
         <button class="btn btn-sm btn-primary float-right" @onclick="LoadPath" disabled="@(disableButton ? "disabled" : null)">
             <span>Load Path</span>
         </button>
+
+        <MatAutocompleteList Class="dark-ples" Items="@files" TItem="string" Label="Path" ValueChanged="OnSelectedPathChanged"
+                             ShowClearButton="true" FullWidth="true" NumberOfElementsInPopup="@num" OnTextChanged="OnTextChanged">
+        </MatAutocompleteList>
     </div>
 </div>
 
@@ -31,6 +27,8 @@
     public bool Hide { get; set; } = false;
 
     List<string> files = new List<string> { string.Empty };
+
+    public int num = 10;
 
     string selectedPath = String.Empty;
     bool disableButton = true;
@@ -69,17 +67,6 @@
         botController.LoadPathProfile(selectedPath);
     }
 
-    private void OnListBoxChanged(ChangeEventArgs changeEventArgs)
-    {
-        selectedPath = (string)changeEventArgs.Value;
-        if(selectedPath.Contains("Use Class Profile Default"))
-        {
-            selectedPath = string.Empty;
-        }
-
-        ValidateButton();
-    }
-
     private void OnProfileLoaded(object? sender, EventArgs e)
     {
         ValidateButton();
@@ -94,6 +81,23 @@
     {
         files = botController.PathFileList();
         selectedPath = botController.SelectedPathFilename ?? string.Empty;
+    }
+
+
+    private void OnSelectedPathChanged(string eventCallback)
+    {
+        selectedPath = eventCallback;
+        if (string.IsNullOrEmpty(selectedPath) || selectedPath.Contains("Use Class Profile Default"))
+        {
+            selectedPath = string.Empty;
+        }
+
+        ValidateButton();
+    }
+
+    private void OnTextChanged(string text)
+    {
+        num = string.IsNullOrEmpty(text) ? 10 : 50;
     }
 
 }
