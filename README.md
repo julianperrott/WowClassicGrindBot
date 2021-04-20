@@ -38,7 +38,8 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 
 # Contribution
 
-* Runtime Profile picker
+* Runtime Class Profile picker
+* Runtime Path Profile autocomplete search
 * Frontend Dark mode
 * Improved Loot Goals
 * Introduced a concept of Produce/Consume corpses. In short killing multiple enemies in a single combat, can loot and skin them all.
@@ -54,6 +55,7 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 * Added Warlock shard farming profile
 * Added a new input system to handle modifier keys
 * Support more 4:3 aspect ratio based resolution
+* Added lot path profiles including TBC
 
 # Issues and Ideas
 
