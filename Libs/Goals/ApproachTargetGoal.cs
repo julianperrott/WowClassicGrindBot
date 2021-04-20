@@ -104,7 +104,7 @@ namespace Libs.Goals
                 this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "ApproachTargetAction");
-                await Wait(100);
+                await Wait(100, () => false);
                 await wowInput.TapJump();
                 this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
             }

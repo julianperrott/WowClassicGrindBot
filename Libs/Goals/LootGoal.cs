@@ -67,7 +67,7 @@ namespace Libs.Goals
             if (lootSuccess)
             {
                 Log("Found corpse - interact with it");
-                await Wait(100);
+                await Wait(100, () => false);
 
                 bool hadToMove = false;
                 if (IsPlayerMoving(lastPosition))

@@ -48,7 +48,7 @@ namespace Libs.Goals
                 {
                     await wowInput.Dismount();
                 }
-                if (!await Wait(1000, playerReader.PlayerBitValues.PlayerInCombat)) return;
+                if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return;
             }
 
             this.Keys.ForEach(async key =>
@@ -58,7 +58,7 @@ namespace Libs.Goals
                 key.SetClicked();
             });
 
-            if (!await Wait(400, playerReader.PlayerBitValues.PlayerInCombat)) return;
+            if (!await Wait(400, () => playerReader.PlayerBitValues.PlayerInCombat)) return;
 
             bool wasDrinkingOrEating = this.playerReader.Buffs.Drinking || this.playerReader.Buffs.Eating;
             int ticks = 0;
@@ -66,7 +66,7 @@ namespace Libs.Goals
             this.logger.LogInformation($"Waiting for {Name}");
             while ((this.playerReader.Buffs.Drinking || this.playerReader.Buffs.Eating || this.playerReader.IsCasting) && !this.playerReader.PlayerBitValues.PlayerInCombat)
             {
-                if (!await Wait(100, playerReader.PlayerBitValues.PlayerInCombat)) return;
+                if (!await Wait(100, () => playerReader.PlayerBitValues.PlayerInCombat)) return;
                 ticks++;
 
                 if (this.playerReader.Buffs.Drinking && this.playerReader.Buffs.Eating)
