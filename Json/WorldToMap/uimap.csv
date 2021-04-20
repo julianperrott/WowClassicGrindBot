@@ -1,8 +1,34 @@
-Name_lang,ID,ParentUiMapID,Flags,System,Type,LevelRangeMin,LevelRangeMax,BountySetID,BountyDisplayLocation,VisibilityPlayerConditionID,HelpTextPosition,BkgAtlasID
-Azeroth,947,0,2304,0,1,0,0,0,0,0,0,0
+Name_lang,ID,ParentUiMapID,Flags,System,Type,Field_2_5_1_38043_006,Field_2_5_1_38043_007,Field_2_5_1_38043_008,HelpTextPosition,Field_2_5_1_38043_010,Field_2_5_1_38043_011,Field_2_5_1_38043_012
+The Shattered Halls,246,1944,0,0,4,0,0,0,0,0,0,0
+Auchenai Crypts,256,1952,0,0,4,0,0,0,0,0,0,0
+Auchenai Crypts,257,1952,0,0,4,0,0,0,0,0,0,0
+Sethekk Halls,258,1952,0,0,4,0,0,0,0,0,0,0
+Sethekk Halls,259,1952,0,0,4,0,0,0,0,0,0,0
+Shadow Labyrinth,260,1952,0,0,4,0,0,0,0,0,0,0
+The Blood Furnace,261,1944,0,0,4,0,0,0,0,0,0,0
+The Underbog,262,1946,0,0,4,0,0,0,0,0,0,0
+The Steamvault,263,1946,0,0,4,0,0,0,0,0,0,0
+The Steamvault,264,1946,0,0,4,0,0,0,0,0,0,0
+The Slave Pens,265,1946,0,0,4,0,0,0,0,0,0,0
+The Botanica,266,1953,0,0,4,0,0,0,0,0,0,0
+The Mechanar,267,1953,0,0,4,0,0,0,0,0,0,0
+The Mechanar,268,1953,0,0,4,0,0,0,0,0,0,0
+The Arcatraz,269,1953,0,0,4,0,0,0,0,0,0,0
+The Arcatraz,270,1953,0,0,4,0,0,0,0,0,0,0
+The Arcatraz,271,1953,0,0,4,0,0,0,0,0,0,0
+Mana-Tombs,272,1952,0,0,4,0,0,0,0,0,0,0
+Gruul's Lair,330,1949,0,0,4,0,0,0,0,0,0,0
+Magtheridon's Lair,331,1944,0,0,4,0,0,0,0,0,0,0
+Serpentshrine Cavern,332,1946,0,0,4,0,0,0,0,0,0,0
+Tempest Keep,334,1953,0,0,4,0,0,0,0,0,0,0
+Black Temple,339,1948,0,0,4,0,0,0,0,0,0,0
+Hellfire Ramparts,347,1944,0,0,4,0,0,0,0,0,0,0
+Cosmic,946,0,2432,0,0,0,0,0,0,0,0,0
+Azeroth,947,946,2304,0,1,0,0,0,0,0,0,0
+Outland,987,0,2052,1,2,0,0,0,0,0,0,0
 Durotar,1411,1414,4,0,3,0,0,0,0,0,0,0
 Mulgore,1412,1414,4,0,3,0,0,0,0,0,0,0
-Barrens,1413,1414,4,0,3,0,0,0,0,0,0,0
+The Barrens,1413,1414,4,0,3,0,0,0,0,0,0,0
 Kalimdor,1414,947,4,0,2,0,0,0,0,0,0,0
 Eastern Kingdoms,1415,947,4,0,2,0,0,0,0,0,0,0
 Alterac Mountains,1416,1415,4,0,3,0,0,0,0,0,0,0
@@ -13,8 +39,8 @@ Tirisfal Glades,1420,1415,4,0,3,0,0,0,0,0,0,0
 Silverpine Forest,1421,1415,4,0,3,0,0,0,0,0,0,0
 Western Plaguelands,1422,1415,4,0,3,0,0,0,0,0,0,0
 Eastern Plaguelands,1423,1415,4,0,3,0,0,0,0,0,0,0
-Hilsbrad Foothills,1424,1415,4,0,3,0,0,0,0,0,0,0
-Hinterlands,1425,1415,4,0,3,0,0,0,0,0,0,0
+Hillsbrad Foothills,1424,1415,4,0,3,0,0,0,0,0,0,0
+The Hinterlands,1425,1415,4,0,3,0,0,0,0,0,0,0
 Dun Morogh,1426,1415,4,0,3,0,0,0,0,0,0,0
 Searing Gorge,1427,1415,4,0,3,0,0,0,0,0,0,0
 Burning Steppes,1428,1415,4,0,3,0,0,0,0,0,0,0
@@ -48,5 +74,27 @@ Ironforge,1455,1415,4,0,3,0,0,0,0,0,0,0
 Thunder Bluff,1456,1414,4,0,3,0,0,0,0,0,0,0
 Darnassus,1457,1414,4,0,3,0,0,0,0,0,0,0
 Undercity,1458,1415,4,0,3,0,0,0,0,0,0,0
+Alterac Valley,1459,947,4,0,3,0,0,0,0,0,0,0
+Warsong Gulch,1460,947,4,0,3,0,0,0,0,0,0,0
+Arathi Basin,1461,947,4,0,3,0,0,0,0,0,0,0
 Eastern Kingdoms,1463,0,0,1,2,0,0,0,0,0,0,0
 Kalimdor,1464,0,0,1,2,0,0,0,0,0,0,0
+Serpentshrine Cavern,1554,1946,0,0,4,0,0,0,0,0,0,0
+Tempest Keep,1555,1953,0,0,4,0,0,0,0,0,0,0
+Eversong Woods,1941,1415,4,0,3,0,0,0,0,0,0,0
+Ghostlands,1942,1415,4,0,3,0,0,0,0,0,0,0
+Azuremyst Isle,1943,1414,4,0,3,0,0,0,0,0,0,0
+Hellfire Peninsula,1944,1945,4,0,3,0,0,0,0,0,0,0
+Outland,1945,946,4,0,2,0,0,0,0,0,0,0
+Zangarmarsh,1946,1945,4,0,3,0,0,0,0,0,0,0
+The Exodar,1947,1414,4,0,3,0,0,0,0,0,0,0
+Shadowmoon Valley,1948,1945,4,0,3,0,0,0,0,0,0,0
+Blade's Edge Mountains,1949,1945,4,0,3,0,0,0,0,0,0,0
+Bloodmyst Isle,1950,1414,4,0,3,0,0,0,0,0,0,0
+Nagrand,1951,1945,4,0,3,0,0,0,0,0,0,0
+Terokkar Forest,1952,1945,4,0,3,0,0,0,0,0,0,0
+Netherstorm,1953,1945,4,0,3,0,0,0,0,0,0,0
+Silvermoon City,1954,1415,4,0,3,0,0,0,0,0,0,0
+Shattrath City,1955,1945,4,0,3,0,0,0,0,0,0,0
+Eye of the Storm,1956,1953,4,0,3,0,0,0,0,0,0,0
+Isle of Quel'Danas,1957,1415,4,0,3,0,0,0,0,0,0,0
