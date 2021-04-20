@@ -29,7 +29,7 @@ namespace ReadDBC_CSV
                 var items = new List<Spell>();
                 Action<string> extractLine = line =>
                 {
-                    var values = splitLine(line);
+                    var values = line.Split(",");
                     if(values.Length > entryIndex && values.Length > descIndex &&
                         values[descIndex].Contains(descLang))
                     {
@@ -75,7 +75,7 @@ namespace ReadDBC_CSV
                 var items = new List<Consumable>();
                 Action<string> extractLine = line =>
                 {
-                    var values = splitLine(line);
+                    var values = line.Split(",");
                     if (values.Length > entryIndex && 
                         values.Length > spellIdIndex &&
                         values.Length > ParentItemIDIndex)
@@ -103,6 +103,11 @@ namespace ReadDBC_CSV
 
         static void Main(string[] args)
         {
+            GenerateConsumables();
+        }
+
+        private static void GenerateConsumables()
+        {
             var path = "../../../dbc/";
 
             var spell = Path.Join(path, "spell.csv");
@@ -112,11 +117,6 @@ namespace ReadDBC_CSV
             var itemEffect = Path.Join(path, "itemeffect.csv");
             Consumable.Extract(itemEffect, foods, Path.Join(path, "foods.json"));
             Consumable.Extract(itemEffect, waters, Path.Join(path, "waters.json"));
-        }
-
-        private static string[] splitLine(string line)
-        {
-            return line.Split(",");
         }
 
         private static int FindIndex(List<string> columnIndexs, string v)
