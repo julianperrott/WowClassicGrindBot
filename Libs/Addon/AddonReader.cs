@@ -70,8 +70,7 @@ namespace Libs
 
             this.PlayerReader.UpdateCreatureLists();
 
-            int? areaId = worldMapAreaDb.GetAreaId(PlayerReader.ZoneId);
-            areaDb?.Update(areaId);
+            areaDb?.Update(worldMapAreaDb.GetAreaId(PlayerReader.ZoneId));
 
             seq++;
 

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Shared;
-using System.Linq;
 
 namespace Libs.Database
 {
@@ -26,14 +23,14 @@ namespace Libs.Database
             });
         }
 
-        public int? GetAreaId(int uiMapId)
+        public int GetAreaId(int uiMapId)
         {
             if(areas.TryGetValue(uiMapId, out var map))
             {
                 return map.AreaID;
             }
 
-            return null;
+            return -1;
         }
     }
 }

@@ -19,12 +19,12 @@ namespace Libs.Database
             this.dataConfig = dataConfig;
         }
 
-        public void Update(int? areaId)
+        public void Update(int areaId)
         {
-            if(areaId != null && this.areaId != areaId)
+            if(areaId != -1 && this.areaId != areaId)
             {
                 CurrentArea = JsonConvert.DeserializeObject<Area>(File.ReadAllText(Path.Join(dataConfig.Area, $"{areaId}.json")));
-                this.areaId = areaId.Value;
+                this.areaId = areaId;
             }
         }
         
