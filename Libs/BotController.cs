@@ -295,7 +295,7 @@ namespace Libs
         {
             var root = DataConfig.Path;
 
-            var files = Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories)
+            var files = Directory.EnumerateFiles(root, "*.json*", SearchOption.AllDirectories)
                 .Select(path => path.Replace(root, "")).ToList();
 
             files.Sort(new NaturalStringComparer());
