@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using WowheadDB;
@@ -21,9 +22,16 @@ namespace Libs.Database
 
         public void Update(int areaId)
         {
-            if(areaId != -1 && this.areaId != areaId)
+            if(areaId > 0 && this.areaId != areaId)
             {
-                CurrentArea = JsonConvert.DeserializeObject<Area>(File.ReadAllText(Path.Join(dataConfig.Area, $"{areaId}.json")));
+                try
+                { 
+                    CurrentArea = JsonConvert.DeserializeObject<Area>(File.ReadAllText(Path.Join(dataConfig.Area, $"{areaId}.json")));
+                }
+                catch(Exception e)
+                {
+                    logger.LogError(e.Message, e.StackTrace);
+                }
                 this.areaId = areaId;
             }
         }
