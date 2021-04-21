@@ -61,7 +61,7 @@ namespace Libs
         //Get the wow-process, if success returns the process else null
         public static Process? Get(string name = "")
         {
-            var names = string.IsNullOrEmpty(name) ? new List<string> { "Wow", "WowClassic", "WowClassicT", "Wow-64" } : new List<string> { name };
+            var names = string.IsNullOrEmpty(name) ? new List<string> { "Wow", "WowClassic", "WowClassicT", "Wow-64", "WowClassicB" } : new List<string> { name };
 
             var processList = Process.GetProcesses();
             foreach (var p in processList)
