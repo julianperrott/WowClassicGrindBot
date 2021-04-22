@@ -4,9 +4,8 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Approach",
-        "Key": "H",
-        "Cooldown": 1,
+        "Name": "Interact",
+        "Cooldown": 0.2,
         "DelayAfterCast": 0
       },
       {
