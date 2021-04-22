@@ -64,13 +64,13 @@ namespace Libs.Goals
             // TODO: have to wait for the cursor to switch from loot -> skinning
             // sometimes takes a lot of time
             await npcNameFinder.WaitForNUpdate(1);
-            if (!await Wait(500, DiDEnteredCombat()))
+            if (await DiDEnteredCombat())
             {
                 await AquireTarget();
                 return;
             }
 
-            Log("Should found corpses Count:" + npcNameFinder.NpcCount);
+            Log("Found corpses: " + npcNameFinder.NpcCount);
             WowPoint lastPosition = playerReader.PlayerLocation;
             bool skinSuccess = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Skin);
             if (skinSuccess)
@@ -92,7 +92,8 @@ namespace Libs.Goals
                 await wowInput.TapInteractKey("Skinning Attempt...");
                 do
                 {
-                    if (!await Wait(100, DiDEnteredCombat()))
+                    await playerReader.WaitForNUpdate(1);
+                    if (await DiDEnteredCombat())
                     {
                         await AquireTarget();
                         return;
@@ -100,8 +101,7 @@ namespace Libs.Goals
                 } while (playerReader.IsCasting);
 
                 // Wait for to update the LastUIErrorMessage
-                await Wait(100, () => false);
-
+                await playerReader.WaitForNUpdate(1);
                 var lastError = this.playerReader.LastUIErrorMessage;
                 if (lastError != UI_ERROR.ERR_SPELL_FAILED_S)
                 {
