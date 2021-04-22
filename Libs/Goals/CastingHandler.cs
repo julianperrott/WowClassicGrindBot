@@ -115,6 +115,7 @@ namespace Libs.Goals
                 var result = await WaitInterrupt(item.DelayAfterCast,
                     () => playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealthPercentage < 5);
                 item.LogInformation($" ... no castbar delay after cast {result.Item2}ms");
+                await InteractOnUIError();
             }
             else
             {
@@ -238,7 +239,7 @@ namespace Libs.Goals
                     var facing = this.playerReader.Direction;
                     var location = this.playerReader.PlayerLocation;
 
-                    if (this.classConfig.Interact.MillisecondsSinceLastClick > 4000)
+                    if (this.classConfig.Interact.MillisecondsSinceLastClick > 1000)
                     {
                         await wowInput.TapInteractKey("CombatActionBase InteractOnUIError 1");
                         await Task.Delay(50);
@@ -247,7 +248,7 @@ namespace Libs.Goals
                     if (lastError == UI_ERROR.ERR_SPELL_FAILED_S)
                     {
                         await wowInput.TapInteractKey("CombatActionBase InteractOnUIError 2");
-                        await playerReader.WaitForNUpdate(3);
+                        await playerReader.WaitForNUpdate(1); //3
                         if (this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_BADATTACKPOS && this.playerReader.Direction == facing)
                         {
                             logger.LogInformation("Turning 180 as I have not moved!");
