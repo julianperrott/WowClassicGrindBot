@@ -115,11 +115,13 @@ namespace Libs.Goals
                 // challlange:
                 // - the mob might have no loot at all so cant check inventory change
                 // - loot window could be checked
+                /*
                 if (!await Wait(400, DiDEnteredCombat()))
                 {
                     await AquireTarget();
                     return;
                 }
+                */
                 Log("Loot Successfull");
 
                 await GoalExit();
