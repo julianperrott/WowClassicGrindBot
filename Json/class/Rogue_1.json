@@ -4,11 +4,6 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Interact",
-        "Cooldown": 0.2,
-        "DelayAfterCast": 0
-      },
-      {
         "Name": "Eviscerate",
         "Key": "3",
         "MinEnergy": 35,
@@ -18,6 +13,10 @@
         "Name": "Sinister Strike",
         "Key": "2",
         "MinEnergy": 45
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 1
       }
     ]
   },
