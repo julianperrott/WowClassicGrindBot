@@ -17,7 +17,7 @@ namespace Libs
         public string ShapeShiftForm { get; set; } = string.Empty;
         public ShapeshiftForm ShapeShiftFormEnum { get; set; } = ShapeshiftForm.None;
         public string CastIfAddsVisible { get; set; } = "";
-        public int Cooldown { get; set; } = 0;
+        public float Cooldown { get; set; } = 0;
         public SchoolMask School { get; set; } = SchoolMask.None;
         public int MinMana { get; set; } = 0;
         public int MinRage { get; set; } = 0;
@@ -104,7 +104,7 @@ namespace Libs
             }
         }
 
-        public int GetCooldownRemaining()
+        public float GetCooldownRemaining()
         {
             try
             {

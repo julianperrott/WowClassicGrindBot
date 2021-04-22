@@ -117,7 +117,7 @@ namespace Libs.Goals
                 }
 
                 await Interact();
-                await Task.Delay(501);
+                await this.playerReader.WaitForNUpdate(1);
             }
             else
             {
@@ -128,7 +128,7 @@ namespace Libs.Goals
 
         private async Task Interact()
         {
-            if (this.classConfiguration.Interact.MillisecondsSinceLastClick > 500)
+            if (this.classConfiguration.Interact.GetCooldownRemaining() == 0)
             {
                 await wowInput.TapInteractKey("PullTargetAction");
             }
