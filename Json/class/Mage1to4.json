@@ -28,8 +28,16 @@
         "ManaRequirement": 30
       },
       {
-        "Name": "Interact",
-        "Cooldown": 3
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "Requirements": ["HasRangedWeapon", "not Shooting"],
+        "Log": false
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 3,
+        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       }
     ]
   },

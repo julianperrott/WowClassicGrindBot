@@ -10,11 +10,6 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "Interact",
-        "Cooldown": 12,
-        "DelayAfterCast": 0
-      },
-      {
         "Name": "Frostbolt",
         "HasCastBar": true,
         "StopBeforeCast": true,
@@ -28,6 +23,18 @@
         "MinMana": 140,
         "Cooldown": 60,
         "DelaybeforeCast": 1000
+      },
+      {
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "Requirements": ["HasRangedWeapon", "not Shooting"],
+        "Log": false
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 3,
+        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       }
     ]
   },

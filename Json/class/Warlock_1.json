@@ -26,14 +26,17 @@
         "Key": "2",
         "MinMana": 25
       },
-			{
-				"Name": "aa",
-				"Key": "1",
-				"Requirement": "Mana%<25"
-			},
       {
-        "Name": "Interact",
-        "Cooldown": 3
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "Requirements": ["HasRangedWeapon", "not Shooting"],
+        "Log": false
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 3,
+        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       }
     ]
   },

@@ -50,11 +50,6 @@
         "Log": false
       },
       {
-        "Name": "Interact",
-        "Cooldown": 12,
-        "DelayAfterCast": 0
-      },
-      {
         "Name": "Fireblast",
         "HasCastBar": false,
         "StopBeforeCast": false,
@@ -67,6 +62,18 @@
         "HasCastBar": true,
         "Key": "2",
         "ManaRequirement": 65
+      },
+      {
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "Requirements": ["HasRangedWeapon", "not Shooting"],
+        "Log": false
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 3,
+        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       }
     ]
   },
