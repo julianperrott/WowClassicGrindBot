@@ -91,7 +91,7 @@ namespace ReadDBC_CSV_WorldMapArea
             matches.ForEach(a =>
             {
                 area.UIMapId = int.Parse(a[1]);
-                area.Continent = a[2] == outland ? "Outland" : (a[2] == kalidor ? "Kalimdor" : "Azeroth");
+                area.Continent = a[2] == outland ? "Expansion01" : (a[2] == kalidor ? "Kalimdor" : "Azeroth");
             });
         }
 
