@@ -105,6 +105,7 @@ namespace Libs
 
             AutoAttack.Key = InteractKey;
             AutoAttack.Name = "AutoAttack";
+            AutoAttack.DelayAfterCast = 0;
             AutoAttack.Initialise(playerReader, requirementFactory, logger);
 
             InitializeKeyActions(Pull, Interact, Approach, AutoAttack);
