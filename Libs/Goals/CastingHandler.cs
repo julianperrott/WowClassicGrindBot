@@ -265,7 +265,7 @@ namespace Libs.Goals
         protected async Task<Tuple<bool, int>> WaitInterrupt(int durationMs, Func<bool> exit)
         {
             int elapsedMs = 0;
-            while (elapsedMs <= durationMs)
+            while (elapsedMs < durationMs)
             {
                 await playerReader.WaitForNUpdate(1);
                 elapsedMs += 100;
