@@ -10,7 +10,7 @@ namespace Libs
         private readonly WowProcess wowProcess;
         private readonly ClassConfiguration classConfig;
 
-        private const int defaultKeyPress = 75;
+        private const int defaultKeyPress = 50;
 
         private bool debug = false;
 
