@@ -62,6 +62,9 @@ namespace Libs
         public KeyAction Interact { get; set; } = new KeyAction();
         public string InteractKey { get; set; } = "I";
 
+        public KeyAction Approach { get; set; } = new KeyAction();
+        public KeyAction AutoAttack { get; set; } = new KeyAction();
+
         public KeyAction TargetLastTarget { get; set; } = new KeyAction();
         public string TargetLastTargetKey { get; set; } = "G";
 
@@ -104,6 +107,12 @@ namespace Libs
 
             Interact.Key = InteractKey;
             Interact.Initialise(playerReader, requirementFactory, logger);
+
+            Approach.Key = InteractKey;
+            Approach.Initialise(playerReader, requirementFactory, logger);
+
+            AutoAttack.Key = InteractKey;
+            AutoAttack.Initialise(playerReader, requirementFactory, logger);
 
             TargetLastTarget.Key = TargetLastTargetKey;
             TargetLastTarget.Initialise(playerReader, requirementFactory, logger);
