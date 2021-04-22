@@ -95,6 +95,21 @@ namespace Libs
         {
             SpiritPathFilename = string.Empty;
 
+            Interact.Key = InteractKey;
+            Interact.Name = "Interact";
+            Interact.Initialise(playerReader, requirementFactory, logger);
+
+            Approach.Key = InteractKey;
+            Approach.Name = "Approach";
+            Approach.Initialise(playerReader, requirementFactory, logger);
+
+            AutoAttack.Key = InteractKey;
+            AutoAttack.Name = "AutoAttack";
+            AutoAttack.Initialise(playerReader, requirementFactory, logger);
+
+            InitializeKeyActions(Pull, Interact, Approach, AutoAttack);
+            InitializeKeyActions(Combat, Interact, Approach, AutoAttack);
+
             Pull.Initialise(playerReader, requirementFactory, logger);
             Combat.Initialise(playerReader, requirementFactory, logger);
             Adhoc.Initialise(playerReader, requirementFactory, logger);
@@ -104,15 +119,6 @@ namespace Libs
 
             Jump.Key = JumpKey;
             Jump.Initialise(playerReader, requirementFactory, logger);
-
-            Interact.Key = InteractKey;
-            Interact.Initialise(playerReader, requirementFactory, logger);
-
-            Approach.Key = InteractKey;
-            Approach.Initialise(playerReader, requirementFactory, logger);
-
-            AutoAttack.Key = InteractKey;
-            AutoAttack.Initialise(playerReader, requirementFactory, logger);
 
             TargetLastTarget.Key = TargetLastTargetKey;
             TargetLastTarget.Initialise(playerReader, requirementFactory, logger);
@@ -157,6 +163,21 @@ namespace Libs
                 else
                     throw new Exception($"The loaded class config contains not existing `{PathFilename}` path file!");
             }
+        }
+
+        private static void InitializeKeyActions(KeyActions keyActions, params KeyAction[] listKeyAction)
+        {
+            var list = listKeyAction.ToList();
+            keyActions.Sequence.ForEach(a =>
+            {
+                list.ForEach(l =>
+                {
+                    if(a.Name == l.Name)
+                    {
+                        a.Key = l.Key;
+                    }
+                });
+            });
         }
     }
 }
