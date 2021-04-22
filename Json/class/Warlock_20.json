@@ -87,7 +87,6 @@
       },
       {
         "Name": "Interact",
-        "Key": "H",
         "Cooldown": 3,
         "Log": false
       },
@@ -123,10 +122,10 @@
   "Adhoc": {
     "Sequence": [
       {
-        "Name": "Demon Skin",
+        "Name": "Demon Armor",
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "not Demon Skin",
+        "Requirement": "not Demon Armor",
         "Log": false
       },
       {
