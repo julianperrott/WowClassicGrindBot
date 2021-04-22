@@ -40,4 +40,10 @@
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="frame_config.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
