@@ -506,7 +506,7 @@ function DataToColor:CreateFrames(n)
     end
     
     local function genFrame(name, x, y)
-        local f = CreateFrame("Frame", name, UIParent)
+        local f = CreateFrame("Frame", name, UIParent, BackdropTemplateMixin and "BackdropTemplate") or CreateFrame("Frame", name, UIParent)
         f:SetPoint("TOPLEFT", x * (CELL_SIZE + CELL_SPACING), -y * (CELL_SIZE + CELL_SPACING))
         f:SetHeight(CELL_SIZE)
         f:SetWidth(CELL_SIZE) -- Change this to make white box wider
