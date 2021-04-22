@@ -30,7 +30,6 @@
       },
       {
         "Name": "Approach",
-        "Key": "H",
         "DelayAfterCast": 1000,
         "Requirement": "npcID:6195",
         "WaitForWithinMelleRange": false
@@ -42,7 +41,6 @@
     "Sequence": [
       {
         "Name": "Approach",
-        "Key": "H",
         "Cooldown": 5
       },
       {

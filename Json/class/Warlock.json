@@ -104,7 +104,6 @@
       },
       {
         "Name": "Interact",
-        "Key": "H",
         "Cooldown": 3,
         "Log": false
       },

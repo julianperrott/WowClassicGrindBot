@@ -42,7 +42,6 @@
       },
       {
         "Name": "AutoAttack",
-        "Key": "H",
         "Cooldown": 3,
         "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       }

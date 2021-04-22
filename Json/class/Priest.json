@@ -82,7 +82,6 @@
       },
       {
         "Name": "Approach",
-        "Key": "H",
         "Cooldown": 10,
         "Log": false,
         "DelayAfterCast": "200"

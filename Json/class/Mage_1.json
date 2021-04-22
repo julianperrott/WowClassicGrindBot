@@ -29,7 +29,6 @@
       },
       {
         "Name": "Interact",
-        "Key": "H",
         "Cooldown": 2
       }
     ]

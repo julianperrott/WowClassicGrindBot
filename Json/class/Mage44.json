@@ -21,7 +21,6 @@
     "Sequence": [
       {
         "Name": "Interact",
-        "Key": "H",
         "Cooldown": 12,
         "DelayAfterCast": 0
       },
@@ -52,7 +51,6 @@
       },
       {
         "Name": "Interact",
-        "Key": "H",
         "Cooldown": 12,
         "DelayAfterCast": 0
       },
