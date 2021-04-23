@@ -51,7 +51,9 @@ namespace Libs
         private readonly IMouseInput mouseInput;
         private DirectBitmap screen;
 
-        private float ScaleToRef = 1;
+        private float scaleToRefWidth = 1;
+        private float scaleToRefHeight = 1;
+
         private readonly List<Point> locFindAndClickNpc;
         private readonly List<Point> locFindByCursorType;
 
@@ -69,7 +71,8 @@ namespace Libs
                 }
                 screen = value;
 
-                ScaleToRef = Scale(1);
+                scaleToRefWidth = ScaleWidth(1);
+                scaleToRefHeight = ScaleHeight(1);
             }
         }
 
@@ -90,28 +93,34 @@ namespace Libs
             locFindAndClickNpc = new List<Point>
             {
                 new Point(0, 0),
-                new Point(10, 10).Scale(ScaleToRef),
-                new Point(-10, -10).Scale(ScaleToRef),
-                new Point(20, 20).Scale(ScaleToRef),
-                new Point(-20, -20).Scale(ScaleToRef),
+                new Point(10, 10).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(-10, -10).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(20, 20).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(-20, -20).Scale(scaleToRefWidth, scaleToRefHeight)
             };
 
             locFindByCursorType = new List<Point>
             {
                 new Point(0, 0),
-                new Point(0, -25).Scale(ScaleToRef),
-                new Point(-5, 10).Scale(ScaleToRef),
-                new Point(5, 35).Scale(ScaleToRef),
-                new Point(-5, 75).Scale(ScaleToRef),
-                new Point(0, 125).Scale(ScaleToRef),
-                new Point(0, 160).Scale(ScaleToRef),
+                new Point(0, -25).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(-5, 10).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(5, 35).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(-5, 75).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(0, 125).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(0, 160).Scale(scaleToRefWidth, scaleToRefHeight),
             };
         }
 
-        private float Scale(int value)
+        private float ScaleWidth(int value)
         {
-            const int refWidth = 1920;
+            const float refWidth = 1920;
             return value * (screen.Width / refWidth);
+        }
+
+        private float ScaleHeight(int value)
+        {
+            const float refHeight = 1080;
+            return value * (screen.Height/ refHeight);
         }
 
         public void ChangeNpcType(NPCType type)
@@ -196,7 +205,7 @@ namespace Libs
 
                 Npcs = npcs.OrderByDescending(npc => npc.Count)
                     .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)), new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), Screenshot.Width))
-                    .Where(s => s.Width < Scale(250)) // 150 - fine // 200 - fine // 250 fine
+                    .Where(s => s.Width < ScaleWidth(250)) // 150 - fine // 200 - fine // 250 fine
                     .ToList();
 
                 lastNpcFind = DateTime.Now;
@@ -213,8 +222,8 @@ namespace Libs
 
         public void UpdatePotentialAddsExist()
         {
-            var countAdds = Npcs.Where(c => c.IsAdd).Where(c => c.Height > Scale(2)).Count();
-            var MobsVisible = Npcs.Where(c => c.Height > Scale(2)).Any();
+            var countAdds = Npcs.Where(c => c.IsAdd).Where(c => c.Height > ScaleHeight(2)).Count();
+            var MobsVisible = Npcs.Where(c => c.Height > ScaleHeight(2)).Any();
 
             if (countAdds > 0)
             {
@@ -253,8 +262,8 @@ namespace Libs
                     for (int j = i + 1; j < this.npcNameLine.Count; j++)
                     {
                         var laterNpcLine = this.npcNameLine[j];
-                        if (laterNpcLine.Y > npcLine.Y + Scale(10)) { break; }
-                        if (laterNpcLine.Y > lastY + Scale(5)) { break; } // 2
+                        if (laterNpcLine.Y > npcLine.Y + ScaleHeight(10)) { break; }
+                        if (laterNpcLine.Y > lastY + ScaleHeight(5)) { break; } // 2
 
                         if (laterNpcLine.XStart <= npcLine.X && laterNpcLine.XEnd >= npcLine.X && laterNpcLine.Y > lastY)
                         {
@@ -272,12 +281,12 @@ namespace Libs
         {
             npcNameLine = new List<LineOfNpcName>();
 
-            float minLength = Scale(12); // original 22 // 18 fine
-            float lengthDiff = Scale(3);
+            float minLength = ScaleWidth(15); // original 22 // 18 fine
+            float lengthDiff = ScaleWidth(4);
             float minEndLength = minLength - lengthDiff; // original 18
 
             bool isEndOfSection;
-            for (int y = (int)Scale(30); y < Screenshot.Height / 2; y++)
+            for (int y = (int)ScaleHeight(30); y < Screenshot.Height / 2; y++)
             {
                 var lengthStart = -1;
                 var lengthEnd = -1;

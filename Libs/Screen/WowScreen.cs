@@ -27,6 +27,11 @@ namespace Libs
             this.wowProcess = wowProcess;
         }
 
+        public void GetRectangle(out Rectangle rect)
+        {
+            NativeMethods.GetWindowRect(wowProcess.WarcraftProcess.MainWindowHandle, out rect);
+        }
+
         public Bitmap GetBitmap(int width, int height)
         {
             var bmpScreen = new Bitmap(width, height);
