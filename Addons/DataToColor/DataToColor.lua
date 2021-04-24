@@ -1341,8 +1341,7 @@ function DataToColor:IsTargetOfTargetPlayer()
 end
 
 function DataToColor:IsTagged()
-    local x = self:IsTargetOfTargetPlayerAsNumber();
-    if x==3 then return 1 else return 0 end;
+    if UnitIsTapDenied("target") then return 1 else return 0 end;
 end
 
 function DataToColor:IsAutoRepeatActionOn(actionSlot)
