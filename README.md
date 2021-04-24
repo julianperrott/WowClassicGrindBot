@@ -106,6 +106,7 @@ e.g. Build from powershell
 ## 4.b Windows gui scale
 
 Make sure to use windows GUI scale at 100 %
+
 Windows 10 - Right click at the desktop -> Display Settings -> Scale and layout to 100 %
 
 ## 5. Configure the Addon Reader
