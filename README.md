@@ -73,8 +73,8 @@ In this repo is a folder called Addons e.g.  C:\WowClassicGrindBot\Addons. Copy 
 
 There are 2 addons:
 
-* Bindpad - This makes it easier to bind keys to commands or macros. e.g. F1-F12
-* DataToColor - This is the addon which reads and displays the game state.
+* `Bindpad` - This makes it easier to bind keys to commands or macros.
+* `DataToColor` - This is the addon which reads and displays the game state.
 
 ## 3. Download the MPQ route files
 
@@ -87,7 +87,7 @@ Copy it into the \Json\MPQ folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
 For TBC you have to download expansion.MPQ (1.8Gb) can get here: https://mega.nz/file/7ZwAVaQI#L0qvvU1uuRPFY5jGBErKaVpzmJQ4JhOv3nOrkQ-ppbQ
 and copy next to the common-2.MPQ file. 
 
-## 4. Build the bot
+## 4.a Build the bot
 
 You will probably already have Visual Studio or Visual Studio Code installed. You need to build the bot using either one of them, or use powershell.
 
@@ -102,6 +102,11 @@ e.g. Build from powershell
 
 
 ![Build](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/build.png)
+
+## 4.b Windows gui scale
+
+Make sure to use windows GUI scale at 100 %
+Windows 10 - Right click at the desktop -> Display Settings -> Scale and layout to 100 %
 
 ## 5. Configure the Addon Reader
 
@@ -146,6 +151,7 @@ From the main menu (ESC) set the following under Interface Options:
 * Controls - Interact on Left click - Not ticked.
 * Combat - Do Not Flash Screen at Low Health - Ticked.
 * Combat - Auto Self Cast - Ticked.
+* Names - NPC Names - Ticked.
 * Names - Enemy Units (V) - Not ticked.
 * Camera - Auto-Follow Speed - Fast
 * Camera - Camera Following Style - Always
