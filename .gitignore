@@ -10,6 +10,7 @@
 *.mpq
 *.bin
 BlazorServer/frame_config.json
+BlazorServer/addon_config.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
