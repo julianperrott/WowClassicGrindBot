@@ -48,20 +48,19 @@ namespace BlazorServer
         public static void ConfigureServices(IServiceCollection services)
         {
             var logger = new SerilogLoggerProvider(Log.Logger).CreateLogger(nameof(Program));
-            services.AddSingleton<Microsoft.Extensions.Logging.ILogger>(logger);
-            var dataConfig = DataConfig.Load();
-
+            services.AddSingleton(logger);
 
             var wowProcess = new WowProcess(logger);
             wowProcess.GetWindowRect(out var rect);
-            if(DataFrameConfiguration.ConfigurationExists() && !DataFrameConfiguration.IsValid(rect))
+            if(DataFrameConfiguration.Exists() && !DataFrameConfiguration.IsValid(rect))
             {
                 // At this point the webpage never loads so fallback to configuration page
                 DataFrameConfiguration.RemoveConfiguration();
             }
 
-            if (DataFrameConfiguration.ConfigurationExists())
+            if (DataFrameConfiguration.Exists())
             {
+                var dataConfig = DataConfig.Load();
                 var pather = GetPather(logger, dataConfig);
                 var botController = new BotController(logger, pather, dataConfig);
                 services.AddSingleton<IBotController>(botController);
@@ -76,8 +75,6 @@ namespace BlazorServer
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
-
-            //services.AddSingleton<RouteInfo>(botController.WowBot.RouteInfo);
         }
 
         private static IPPather GetPather(Microsoft.Extensions.Logging.ILogger logger, DataConfig dataConfig)

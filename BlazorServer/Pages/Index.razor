@@ -7,7 +7,7 @@
 <div class="container-fluid">
     <div class="row">
 
-        @if (Libs.DataFrameConfiguration.ConfigurationExists())
+        @if (Libs.DataFrameConfiguration.Exists())
         {
 
             <div class="col-sm">
@@ -42,7 +42,7 @@
 
     protected override void OnInitialized()
     {
-        if (Libs.DataFrameConfiguration.ConfigurationExists())
+        if (Libs.DataFrameConfiguration.Exists())
         {
 
             ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>

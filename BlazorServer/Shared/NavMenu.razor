@@ -8,7 +8,7 @@
     </button>
 </div>
 
-@if (Libs.DataFrameConfiguration.ConfigurationExists())
+@if (Libs.DataFrameConfiguration.Exists())
 {
 
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
@@ -99,7 +99,7 @@ else
 
     protected override void OnInitialized()
     {
-        if (Libs.DataFrameConfiguration.ConfigurationExists())
+        if (Libs.DataFrameConfiguration.Exists())
         {
             botController.ProfileLoaded += (o, e) =>
             {
