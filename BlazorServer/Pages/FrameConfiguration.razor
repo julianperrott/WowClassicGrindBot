@@ -1,4 +1,4 @@
-﻿@page "/Configuration"
+﻿@page "/FrameConfiguration"
 @inject Microsoft.Extensions.Logging.ILogger logger
 @inject Microsoft.Extensions.Hosting.IHostApplicationLifetime lifetime
 @inject NavigationManager NavigationManager
@@ -31,7 +31,7 @@ else
     }
     else
     {
-        <h1>Addon configuration not found !</h1>
+        <h1>Frame configuration not found !</h1>
     }
 
     <h4 class="row col-md-12">Use Auto config: It will automatically setup the necessary stuffs.</h4>
