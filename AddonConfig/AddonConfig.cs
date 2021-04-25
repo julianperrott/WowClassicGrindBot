@@ -22,7 +22,7 @@ public class AddonConfig
 
     public static AddonConfig Load()
     {
-        if (File.Exists(DefaultFileName))
+        if (Exists())
         {
             var loaded = JsonConvert.DeserializeObject<AddonConfig>(File.ReadAllText(DefaultFileName));
             if (loaded.Version == AddonConfigVersion.Version)
@@ -30,6 +30,11 @@ public class AddonConfig
         }
 
         return new AddonConfig().Save();
+    }
+
+    public static bool Exists()
+    {
+        return File.Exists(DefaultFileName);
     }
 
     private AddonConfig Save()
