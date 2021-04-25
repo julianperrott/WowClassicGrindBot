@@ -141,8 +141,6 @@ The bot reads the game state using small blocks of colour shown at the top of th
 
 5. Restart the bot and when it starts it should show the dashboard page.
 
-![AddonConfig](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/AddonConfig.png)
-
 ## 6. Configure the Wow Client - Interface Options
 
 We need to make sure that certain interface options are set. The most important are Click to move and screen flashing on low health. See the list below.
