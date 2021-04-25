@@ -120,11 +120,11 @@ The bot reads the game state using small blocks of colour shown at the top of th
 
 3. Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
 
-* System>Advanced>Constrast: 50
-* System>Advanced>Brightness: 50
-* System>Advanced>Gamma from: 1.0
-* System>Render Scale: 100%
-* Disable Glow effect - type in the chat `/console ffxGlow 0` - to keep/save this settings make sure to properly shutdown the game.
+  * System>Advanced>Constrast: 50
+  * System>Advanced>Brightness: 50
+  * System>Advanced>Gamma from: 1.0
+  * System>Render Scale: 100%
+  * Disable Glow effect - type in the chat `/console ffxGlow 0` - to keep/save this settings make sure to properly shutdown the game.
 
 4. When running the BlazorServer for the first time you will have to follow a setup process:
     1.  The game should already running with a character logged in.  
@@ -139,7 +139,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
     11. Click `5. Frame Configuration`
     12. Click `Auto Configure and Restart`
 
-5. The bot should restart and when it starts it should show the dashboard page.
+## 5. The bot should restart and when it starts it should show the dashboard page.
 
 ## 6. Configure the Wow Client - Interface Options
 
