@@ -7,7 +7,7 @@
 <div class="container-fluid">
     <div class="row">
 
-        @if (Libs.DataFrameConfiguration.Exists())
+        @if (AddonConfig.Exists() && Libs.DataFrameConfiguration.Exists())
         {
 
             <div class="col-sm">
@@ -28,7 +28,11 @@
                 <GoalsComponent />
             </div>
         }
-        else
+        else if (!AddonConfig.Exists())
+        {
+            <!--<AddonConfiguration />-->
+        }
+        else if (!Libs.DataFrameConfiguration.Exists())
         {
             <FrameConfiguration />
         }
@@ -42,7 +46,7 @@
 
     protected override void OnInitialized()
     {
-        if (Libs.DataFrameConfiguration.Exists())
+        if (AddonConfig.Exists() && Libs.DataFrameConfiguration.Exists())
         {
 
             ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
