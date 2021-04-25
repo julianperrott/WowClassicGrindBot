@@ -42,6 +42,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="addon_config.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="data_config.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
     <Content Update="frame_config.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
