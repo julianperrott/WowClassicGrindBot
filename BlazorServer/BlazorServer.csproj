@@ -42,20 +42,12 @@
     <PackageReference Include="System.Management" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="addon_config.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="data_config.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="frame_config.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /s /Y /i &quot;$(SolutionDir)Addons&quot; &quot;$(TargetDir)Addons&quot;" />
+    <Exec Command="xcopy /s /Y /i &quot;$(ProjectDir)..\Addons&quot; &quot;$(TargetDir)Addons&quot;" />
+  </Target>
+
+  <Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">
+    <Exec Command="xcopy /s /Y /i &quot;$(ProjectDir)..\Addons&quot; &quot;$(PublishDir)Addons&quot;" />
   </Target>
 
 </Project>
