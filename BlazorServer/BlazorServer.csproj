@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AddonConfig\AddonConfig.csproj" />
     <ProjectReference Include="..\Libs\Libs.csproj" />
     <ProjectReference Include="..\PathingAPI\PathingAPI.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
