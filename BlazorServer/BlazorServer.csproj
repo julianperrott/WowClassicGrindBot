@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AddonConfig\AddonConfig.csproj" />
     <ProjectReference Include="..\Libs\Libs.csproj" />
     <ProjectReference Include="..\PathingAPI\PathingAPI.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
@@ -38,12 +39,23 @@
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.1.3" />
     <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="System.Management" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="addon_config.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="data_config.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
     <Content Update="frame_config.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /s /Y /i &quot;$(SolutionDir)Addons&quot; &quot;$(TargetDir)Addons&quot;" />
+  </Target>
 
 </Project>

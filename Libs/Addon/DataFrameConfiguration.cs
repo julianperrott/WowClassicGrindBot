@@ -23,17 +23,18 @@ namespace Libs
 
         private const string ConfigurationFilename = "frame_config.json";
 
-        public static bool ConfigurationExists()
+        public static bool Exists()
         {
             return File.Exists(ConfigurationFilename);
         }
 
         public static bool IsValid(Rectangle rect)
         {
-            if (!ConfigurationExists()) return false;
+            if (!Exists()) return false;
 
             var config = JsonConvert.DeserializeObject<DataFrameConfig>(File.ReadAllText(ConfigurationFilename));
-            return config.rect.Width == rect.Width && config.rect.Height == rect.Height;
+            var sameRect = config.rect.Width == rect.Width && config.rect.Height == rect.Height;
+            return sameRect && config.frames.Count > 1;
         }
 
         public static List<DataFrame> LoadConfiguration()
@@ -56,7 +57,7 @@ namespace Libs
 
         public static void RemoveConfiguration()
         {
-            if(ConfigurationExists())
+            if(Exists())
             {
                 File.Delete(ConfigurationFilename);
             }

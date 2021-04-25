@@ -95,7 +95,6 @@ local EnchantmentStrings = {}
 
 function DataToColor:slashCommands()
     SLASH_DC1 = "/dc";
-    SLASH_DC2 = "/datatocolor";
     SlashCmdList["DC"] = StartSetup;
 end
 

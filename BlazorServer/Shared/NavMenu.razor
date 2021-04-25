@@ -8,7 +8,7 @@
     </button>
 </div>
 
-@if (Libs.DataFrameConfiguration.ConfigurationExists())
+@if (AddonConfig.Exists() && Libs.DataFrameConfiguration.Exists())
 {
 
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
@@ -53,8 +53,13 @@
                 </NavLink>
             </li>
             <li class="nav-item px-3">
-                <NavLink class="nav-link" href="Configuration">
+                <NavLink class="nav-link" href="AddonConfiguration">
                     <span class="oi oi-cog" aria-hidden="true"></span> Addon Configuration
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="FrameConfiguration">
+                    <span class="oi oi-cog" aria-hidden="true"></span> Frame Configuration
                 </NavLink>
             </li>
             <li class="nav-item px-3">
@@ -74,11 +79,41 @@ else
 {
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
         <ul class="nav flex-column">
+
             <li class="nav-item px-3">
-                <NavLink class="nav-link" href="Configuration" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span>Addon Configuration
+                <NavLink class="nav-link" Disabled="disabled">
+                    <span class="oi oi-cog" aria-hidden="true"></span>1. Restart Game
                 </NavLink>
             </li>
+
+            @if (WoWProcessRunning)
+            {
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="AddonConfiguration" Disabled="disabled">
+                        <span class="oi oi-cog" aria-hidden="true"></span>2. Addon Configuration
+                    </NavLink>
+                </li>
+
+                @if (AddonConfigExists)
+                {
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" Disabled="disabled">
+                            <span class="oi oi-cog" aria-hidden="true"></span>3. Restart Game
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" Disabled="disabled">
+                            <span class="oi oi-cog" aria-hidden="true"></span>4. Enter world
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="FrameConfiguration">
+                            <span class="oi oi-cog" aria-hidden="true"></span>5. Frame Configuration
+                        </NavLink>
+                    </li>
+                }
+            }
+
         </ul>
     </div>
 }
@@ -86,11 +121,17 @@ else
 
 
 @code {
+
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : string.Empty;
 
     private bool HideClassConfig => botController.IsBotActive || botController.ClassConfig == null;
+
+    private bool WoWProcessRunning => Libs.WowProcess.Get() != null;
+
+    private bool AddonConfigExists => AddonConfig.Exists();
+
 
     private void ToggleNavMenu()
     {
@@ -99,7 +140,7 @@ else
 
     protected override void OnInitialized()
     {
-        if (Libs.DataFrameConfiguration.ConfigurationExists())
+        if (Libs.DataFrameConfiguration.Exists())
         {
             botController.ProfileLoaded += (o, e) =>
             {
