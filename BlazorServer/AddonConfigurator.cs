@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Management;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace BlazorServer
 {
@@ -16,11 +17,12 @@ namespace BlazorServer
         private readonly WowProcess wowProcess;
 
         private const string DefaultAddonName = "DataToColor";
+        private const string AddonSourcePath = @".\Addons\";
 
-        private const string AddonSourcePath = @".\Addons\" + DefaultAddonName;
+        private string AddonBasePath => Path.Join(addonConfig.InstallPath, "Interface", "AddOns");
 
-        private string DefaultAddonPath => Path.Join(addonConfig.InstallPath, "Interface", "AddOns", DefaultAddonName);
-        private string FinalAddonPath => Path.Join(addonConfig.InstallPath, "Interface", "AddOns", addonConfig.Title);
+        private string DefaultAddonPath => Path.Join(AddonBasePath, DefaultAddonName);
+        private string FinalAddonPath => Path.Join(AddonBasePath, addonConfig.Title);
 
         public AddonConfigurator(ILogger logger, AddonConfig addonConfig)
         {
@@ -81,7 +83,8 @@ namespace BlazorServer
             {
                 DeleteExisting();
 
-                CopyFiles();
+                CopyAllAddons();
+                RenameAddon();
                 bool success = MakeUnique();
 
                 logger.LogInformation($"AddonConfigurator.Install {(success ? "successful" : "Failed")}");
@@ -103,11 +106,11 @@ namespace BlazorServer
             }
         }
 
-        private void CopyFiles()
+        private void CopyAllAddons()
         {
             try
             {
-                DirectoryCopy(AddonSourcePath, FinalAddonPath, true);
+                CopyFolder("");
                 logger.LogInformation("AddonConfigurator.CopyFiles - success");
             }
             catch (Exception e)
@@ -115,10 +118,19 @@ namespace BlazorServer
                 logger.LogError(e.Message);
 
                 // This only should be happen when running from IDE
-                string parentFolder = ".";
-                DirectoryCopy(parentFolder + AddonSourcePath, FinalAddonPath, true);
+                CopyFolder(".");
                 logger.LogInformation("AddonConfigurator.CopyFiles - success");
             }
+        }
+
+        private void CopyFolder(string parentFolder)
+        {
+            DirectoryCopy(Path.Join(parentFolder + AddonSourcePath), AddonBasePath, true);
+        }
+
+        private void RenameAddon()
+        {
+            Directory.Move(Path.Join(AddonBasePath, DefaultAddonName), FinalAddonPath);
         }
 
         private bool MakeUnique()
