@@ -33,7 +33,8 @@ namespace Libs
             if (!Exists()) return false;
 
             var config = JsonConvert.DeserializeObject<DataFrameConfig>(File.ReadAllText(ConfigurationFilename));
-            return config.rect.Width == rect.Width && config.rect.Height == rect.Height;
+            var sameRect = config.rect.Width == rect.Width && config.rect.Height == rect.Height;
+            return sameRect && config.frames.Count > 1;
         }
 
         public static List<DataFrame> LoadConfiguration()
