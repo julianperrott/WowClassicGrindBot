@@ -17,10 +17,6 @@
 {
     <h1>Saved! - Please wait until restart! And press <b>Reload</b> when it prompts!</h1>
 
-    <div class="row col-md-12">
-        <img src="Addon_DC.png" />
-    </div>
-
     <span class="row col-md-12">@playerClass</span>
 }
 else
@@ -41,7 +37,7 @@ else
 
     <hr />
     <h4 class="row col-md-12">Manually:</h4>
-    <h5 class="row col-md-12">Step 1: Please ensure the addon 'DataToColor' found in the addon folders is running. You should see the multi-coloured pixels at the top left of the screen.</h5>
+    <h5 class="row col-md-12">Step 1: Please ensure the addon '<b>/@addonConfig?.Title</b>' found in the addon folders is running. You should see the multi-coloured pixels at the top left of the screen.</h5>
 
     <div class="row col-md-12">
         @if (@dataFrames.Count != 100)
@@ -50,14 +46,10 @@ else
         }
     </div>
 
-    <h5 class="row col-md-12">Step 2: Now we are going to put the addon into configuration mode, this will change the addon colours displayed. In the wow chat window: type /dc</h5>
+    <h5 class="row col-md-12">Step 2: Now we are going to put the addon into configuration mode, this will change the addon colours displayed. In the wow chat window: type  <b>/@addonConfig?.Command</b></h5>
 
     @if (@dataFrames.Count != 100)
     {
-        <div class="row col-md-12">
-            <img src="Addon_DC.png" />
-        </div>
-
         <div class="row col-md-12" style="margin-top:10px">
             <img src="Addon_Config.png" />
         </div>
@@ -114,6 +106,8 @@ else
 
     string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
 
+    private AddonConfig addonConfig = AddonConfig.Load();
+
     protected override void OnInitialized()
     {
         if (config == null)
@@ -125,6 +119,11 @@ else
 
             var screenshotThread = new System.Threading.Thread(ScreenshotRefreshThread);
             screenshotThread.Start();
+        }
+
+        if(addonConfig.IsDefault())
+        {
+            //isValidAddonConfig = false;
         }
     }
 
@@ -196,7 +195,7 @@ else
     private async Task AutoConfigure()
     {
         await ToggleInGameConfiguration();
-        await Task.Delay(500);
+        await Task.Delay(1000);
 
         var screenshot = wowScreen?.GetBitmap(ConfigWidth, ConfigHeight);
         if (config != null && screenshot != null && wowProcess != null)
@@ -225,7 +224,7 @@ else
         {
             wowProcess.SetForegroundWindow();
             await wowProcess.KeyPress(ConsoleKey.Enter, 100);
-            await wowProcess.SendText("/dc");
+            await wowProcess.SendText("/" + addonConfig?.Command);
             await wowProcess.KeyPress(ConsoleKey.Enter, 100);
         }
     }
