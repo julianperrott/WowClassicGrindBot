@@ -110,26 +110,26 @@ The bot reads the game state using small blocks of colour shown at the top of th
 
 1. Edit the batch script in c:\WowClassicGrindBot\BlazorServer called run.bat, change it to point at where you have put the repo BlazorServer folder e.g.
 
-    start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://localhost:5000"
-    c:
-    cd C:\WowClassicGrindBot\BlazorServer
-    dotnet run
-    pause
+        start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://localhost:5000"
+        c:
+        cd C:\WowClassicGrindBot\BlazorServer
+        dotnet run
+        pause
 
 2. Execute the `run.bat`. This will start the bot and Chrome, Wow must be already running. If you get "Unable to find the Wow process is it running ?" in the console window then it can't find wow.exe.
 
 3. When running the BlazorServer for the first time you will have to follow a setup process:
-    1.  Just start the game and wait in the character selection screen.
-    2.  Click `2. Addon Configuration`
-    3.  Click `Find InstallPath` -> `InstallPath` should be filled otherwise, fill out manually
-    4.  Fill the `Author`
-    5.  Fill the `Title`
-    6.  Then press `Install` button -> Log should see `AddonConfigurator.Install successful`
-    8.  Click `Save` button
-    9.  Required to restart the Game 
-    10. Enter world with your desired character
-    11. Click `5. Frame Configuration`
-    12. Click `Auto Configure and Restart`
+        1.  Just start the game and wait in the character selection screen.
+        2.  Click `2. Addon Configuration`
+        3.  Click `Find InstallPath` -> `InstallPath` should be filled otherwise, fill out manually
+        4.  Fill the `Author`
+        5.  Fill the `Title`
+        6.  Then press `Install` button -> Log should see `AddonConfigurator.Install successful`
+        8.  Click `Save` button
+        9.  Required to restart the Game 
+        10. Enter world with your desired character
+        11. Click `5. Frame Configuration`
+        12. Click `Auto Configure and Restart`
 
 4. Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
 
