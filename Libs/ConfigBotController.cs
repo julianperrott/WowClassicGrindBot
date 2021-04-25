@@ -21,10 +21,10 @@ namespace Libs
         public string SelectedClassFilename { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string? SelectedPathFilename { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public bool IsBotActive => throw new NotImplementedException();
+        public bool IsBotActive => false;
 
         public IImageProvider? MinimapImageFinder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ClassConfiguration? ClassConfig { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ClassConfiguration? ClassConfig { get => null; set => throw new NotImplementedException(); }
 
         public ActionBarPopulator? ActionBarPopulator { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
