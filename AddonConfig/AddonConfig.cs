@@ -11,14 +11,23 @@ public class AddonConfig
 {
     public int Version = AddonConfigVersion.Version;
 
-    public string InstallPath;
+    public string InstallPath { get; set; }
+    public string Author { get; set; }
+    public string Title { get; set; }
 
-    public string GameVersion;
-    public string Author;
-    public string Title;
+    public string Command { get; set; }
+
+    public bool IsDefault()
+    {
+        return !string.IsNullOrEmpty(InstallPath) &&
+            !string.IsNullOrEmpty(Author) &&
+            !string.IsNullOrEmpty(Title);
+    }
 
     [NonSerialized]
     public const string DefaultFileName = "addon_config.json";
+
+    private AddonConfig() { }
 
     public static AddonConfig Load()
     {
@@ -29,7 +38,7 @@ public class AddonConfig
                 return loaded;
         }
 
-        return new AddonConfig().Save();
+        return new AddonConfig();
     }
 
     public static bool Exists()
@@ -37,7 +46,15 @@ public class AddonConfig
         return File.Exists(DefaultFileName);
     }
 
-    private AddonConfig Save()
+    public static void Delete()
+    {
+        if (Exists())
+        {
+            File.Delete(DefaultFileName);
+        }
+    }
+
+    public AddonConfig Save()
     {
         File.WriteAllText(DefaultFileName, JsonConvert.SerializeObject(this));
         return this;
