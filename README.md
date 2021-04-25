@@ -67,16 +67,17 @@ Create an issue rather than emailing me so that others can comment.
 
 Put the contents of the repo into a folder. e.g "C:\WowClassicGrindBot". I am going to refer to this folder from now on, so just substitute your own folder path.
 
-## 2. Install the Addon
-W
-In this repo is a folder called Addons e.g.  C:\WowClassicGrindBot\Addons. Copy the contents into your wow classic Addons folder. e.g. c:\World of Warcraft\_classic_\Interface\AddOns. You will need to restart Wow if it is running.
+## 2.a Windows gui scale
 
-There are 2 addons:
+Make sure to use windows GUI scale at 100 %
 
-* `Bindpad` - This makes it easier to bind keys to commands or macros.
-* `DataToColor` - This is the addon which reads and displays the game state.
+Windows 10 - Right click at the desktop -> Display Settings -> Scale and layout to 100 %
 
-## 3. Download the MPQ route files
+## 2.b Nvidia Control panel
+
+Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings and Program Settings(for WoW) settings is set to `Sharpening Off, Scaling disabled`!
+
+## 3 Download the MPQ route files
 
 You only need the common-2.MPQ (1.7Gb) file which you can get here: https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing
 
@@ -87,7 +88,7 @@ Copy it into the \Json\MPQ folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
 For TBC you have to download expansion.MPQ (1.8Gb) can get here: https://mega.nz/file/7ZwAVaQI#L0qvvU1uuRPFY5jGBErKaVpzmJQ4JhOv3nOrkQ-ppbQ
 and copy next to the common-2.MPQ file. 
 
-## 4.a Build the bot
+## 4 Build the bot
 
 You will probably already have Visual Studio or Visual Studio Code installed. You need to build the bot using either one of them, or use powershell.
 
@@ -103,30 +104,34 @@ e.g. Build from powershell
 
 ![Build](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/build.png)
 
-## 4.b Windows gui scale
-
-Make sure to use windows GUI scale at 100 %
-
-Windows 10 - Right click at the desktop -> Display Settings -> Scale and layout to 100 %
-
-## 5. Configure the Addon Reader
+## 5. Configuration process
 
 The bot reads the game state using small blocks of colour shown at the top of the screen by an Addon. This needs to be configured.
 
-1. Delete the existing frame_config.json file found in c:\WowClassicGrindBot\BlazorServer, we are going to recreate it. This is important as your screen may not be the same size as mine 1920 x 1080.
-2. Edit the batch script in c:\WowClassicGrindBot\BlazorServer called run.bat, change it to point at where you have put the repo BlazorServer folder e.g.
+1. Edit the batch script in c:\WowClassicGrindBot\BlazorServer called run.bat, change it to point at where you have put the repo BlazorServer folder e.g.
 
-        start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://localhost:5000"
-        c:
-        cd C:\WowClassicGrindBot\BlazorServer
-        dotnet run
-        pause
+    start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://localhost:5000"
+    c:
+    cd C:\WowClassicGrindBot\BlazorServer
+    dotnet run
+    pause
 
-3. Execute the run.bat. This will start the bot and Chrome, Wow must be already running. If you get "Unable to find the Wow process is it running ?" in the console window then it can't find wow.exe.
+2. Execute the `run.bat`. This will start the bot and Chrome, Wow must be already running. If you get "Unable to find the Wow process is it running ?" in the console window then it can't find wow.exe.
 
-4. You should see the 'Addon configuration' screen (See screenshot below).
+3. When running the BlazorServer for the first time you will have to follow a setup process:
+    1.  Just start the game and wait in the character selection screen.
+    2.  Click `2. Addon Configuration`
+    3.  Click `Find InstallPath` -> `InstallPath` should be filled otherwise, fill out manually
+    4.  Fill the `Author`
+    5.  Fill the `Title`
+    6.  Then press `Install` button -> Log should see `AddonConfigurator.Install successful`
+    8.  Click `Save` button
+    9.  Required to restart the Game 
+    10. Enter world with your desired character
+    11. Click `5. Frame Configuration`
+    12. Click `Auto Configure and Restart`
 
-5. Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
+4. Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
 
 * System>Advanced>Constrast: 50
 * System>Advanced>Brightness: 50
@@ -134,9 +139,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
 * System>Render Scale: 100%
 * Disable Glow effect - type in the chat `/console ffxGlow 0` - to keep/save this settings make sure to properly shutdown the game.
 
-6. The bot needs to record the position of the blocks of colour and to do this we need to put the addon into configuration mode by typing /dc. Follow the instructions on the configuration page and Save the configuration.
-
-7. Restart the bot and when it starts it should show the dashboard page.
+5. Restart the bot and when it starts it should show the dashboard page.
 
 ![AddonConfig](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/AddonConfig.png)
 
