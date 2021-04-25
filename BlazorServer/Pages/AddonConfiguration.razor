@@ -1,0 +1,152 @@
+﻿@page "/AddonConfiguration"
+@inject Microsoft.Extensions.Logging.ILogger logger
+@inject Microsoft.Extensions.Hosting.IHostApplicationLifetime lifetime
+@inject NavigationManager NavigationManager
+@inject Libs.IBotController botController
+
+<style>
+    h5 {
+        margin-top: 20px
+    }
+</style>
+
+<h1>Addon configuration file @(AddonConfig.Exists()? "already exists" : "not exists") and @(addonConfig.IsDefault() ? "valid" : "not valid")</h1>
+<br>
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-1">
+            <h3><b>1.</b></h3>
+        </div>
+        <div class="col">
+            <h5>In case something goes wrong, delete the previous <b>AddonConfig</b> file<br>Also use this when the addons needs to be updated:</h5>
+        </div>
+        <div class="col">
+            <button class="btn btn-sm btn-danger" @onclick="Delete">
+                <span>Delete current configuration</span>
+            </button>
+        </div>
+        <div class="w-100"></div>
+        <div class="col-1">
+            <h3><b>2.</b></h3>
+        </div>
+        <div class="col">
+            <h5>Find the <b>InstallPath</b> by running game instance:</h5>
+        </div>
+        <div class="col">
+            <button class="btn btn-sm btn-primary" @onclick="FindPathByExe">
+                <span>Find InstallPath</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3">
+    <div class="card">
+        <div class="card-header">
+            Addon Configuration
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <table class="table table-bordered">
+                @foreach (var property in addonConfig.GetType().GetProperties())
+                {
+                    <tr>
+                        @switch (property.PropertyType.FullName)
+                        {
+                            case "System.String":
+                                <td>@(property.Name)</td>
+                                <td>
+                                    <input value="@property.GetValue(addonConfig)?.ToString()" style="width:100%" disabled="@(property.Name.Contains("Command") ? "disabled" : null)"
+                                           @onchange="c => { property.SetValue(addonConfig, c.Value); Update(); }" />
+                                </td>
+                                break;
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-1">
+            <h3><b>3.</b></h3>
+        </div>
+        <div class="col">
+            <h5>Given the AddonConfig setup your addon will be installed:</h5>
+        </div>
+        <div class="col">
+            <button class="btn btn-sm btn-primary" @onclick="Install">
+                <span>Install</span>
+            </button>
+        </div>
+        <div class="w-100"></div>
+        <div class="col-1">
+            <h3><b>4.</b></h3>
+        </div>
+        <div class="col">
+            <h5>Finalize the AddonConfig process:</h5>
+        </div>
+        <div class="col">
+            <button class="btn-sm btn-success" @onclick="Save">
+                <span>Save</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<LogComponent />
+
+@code {
+
+    private AddonConfigurator? addonConfigurator;
+    private AddonConfig addonConfig = AddonConfig.Load();
+
+    protected override void OnInitialized()
+    {
+        addonConfigurator = new AddonConfigurator(logger, addonConfig);
+    }
+
+    private async Task RestartServer()
+    {
+        this.botController.Shutdown();
+        await Task.Delay(1000);
+        NavigationManager.NavigateTo("/");
+        lifetime.StopApplication();
+    }
+
+    private async Task Delete()
+    {
+        addonConfigurator?.Delete();
+
+        if (Libs.DataFrameConfiguration.Exists())
+        {
+            await RestartServer();
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+    }
+
+    private void Save()
+    {
+        addonConfigurator?.Save();
+        NavigationManager.NavigateTo("/AddonConfiguration", true);
+    }
+
+    private void FindPathByExe()
+    {
+        addonConfigurator?.FindPathByExecutable();
+    }
+
+    private void Install()
+    {
+        addonConfigurator?.Install();
+    }
+
+    private void Update()
+    {
+
+    }
+}
