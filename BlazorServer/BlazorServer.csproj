@@ -46,4 +46,8 @@
     </Content>
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /s /Y /i &quot;$(SolutionDir)Addons&quot; &quot;$(TargetDir)Addons&quot;" />
+  </Target>
+
 </Project>
