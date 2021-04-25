@@ -58,7 +58,7 @@ namespace BlazorServer
                 DataFrameConfiguration.RemoveConfiguration();
             }
 
-            if (DataFrameConfiguration.Exists())
+            if (AddonConfig.Exists() && DataFrameConfiguration.Exists())
             {
                 var dataConfig = DataConfig.Load();
                 var pather = GetPather(logger, dataConfig);
