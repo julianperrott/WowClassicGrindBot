@@ -190,7 +190,7 @@ else
     private async Task AutoConfigure()
     {
         await ToggleInGameConfiguration();
-        await Task.Delay(1000);
+        await Task.Delay(2000);
 
         var screenshot = wowScreen?.GetBitmap(ConfigWidth, ConfigHeight);
         if (config != null && screenshot != null && wowProcess != null)
@@ -218,9 +218,11 @@ else
         if (wowProcess != null)
         {
             wowProcess.SetForegroundWindow();
-            await wowProcess.KeyPress(ConsoleKey.Enter, 100);
+            await wowProcess.KeyPress(ConsoleKey.Enter, 200);
+            wowProcess.SetForegroundWindow();
             await wowProcess.SendText("/" + addonConfig?.Command);
-            await wowProcess.KeyPress(ConsoleKey.Enter, 100);
+            wowProcess.SetForegroundWindow();
+            await wowProcess.KeyPress(ConsoleKey.Enter, 200);
         }
     }
 
