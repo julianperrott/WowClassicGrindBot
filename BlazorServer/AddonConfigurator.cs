@@ -7,6 +7,7 @@ using System.Management;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace BlazorServer
 {
@@ -32,6 +33,12 @@ namespace BlazorServer
             this.wowProcess = new WowProcess(logger);
         }
 
+        public bool Installed()
+        {
+            var installed = GetVersion(FinalAddonPath, addonConfig.Title);
+            return installed != null;
+        }
+
         public bool Validate()
         {
             if(!Directory.Exists(addonConfig.InstallPath))
@@ -53,24 +60,31 @@ namespace BlazorServer
                 }
             }
 
-            if(!string.IsNullOrEmpty(addonConfig.Title))
+            if (string.IsNullOrEmpty(addonConfig.Author))
+            {
+                logger.LogError($"AddonConfigurator.Author - error - cannot be empty: '{addonConfig.Author}'");
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(addonConfig.Title))
             {
                 // this will appear in the lua code so
                 // special character not allowed
                 // also numbers not allowed
+                addonConfig.Title = Regex.Replace(addonConfig.Title, @"[^\u0000-\u007F]+", string.Empty);
                 addonConfig.Title = new string(addonConfig.Title.Where(char.IsLetter).ToArray());
                 addonConfig.Title = addonConfig.Title.Trim();
                 addonConfig.Title = addonConfig.Title.Replace(" ", "");
+
+                if (addonConfig.Title.Length == 0)
+                {
+                    logger.LogError($"AddonConfigurator.Title - error - use letters only: '{addonConfig.Title}'");
+                    return false;
+                }
             }
             else
             {
                 logger.LogError($"AddonConfigurator.Title - error - cannot be empty: '{addonConfig.Title}'");
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(addonConfig.Author))
-            {
-                logger.LogError($"AddonConfigurator.Author - error - cannot be empty: '{addonConfig.Author}'");
                 return false;
             }
 
@@ -79,29 +93,32 @@ namespace BlazorServer
 
         public void Install()
         {
-            if(Validate())
+            try
             {
-                DeleteExisting();
-
+                DeleteAddon();
                 CopyAllAddons();
                 RenameAddon();
-                bool success = MakeUnique();
+                MakeUnique();
 
-                logger.LogInformation($"AddonConfigurator.Install {(success ? "successful" : "Failed")}");
+                logger.LogInformation($"AddonConfigurator.Install - Success");
+            }
+            catch(Exception e)
+            {
+                logger.LogInformation($"AddonConfigurator.Install - Failed\n" + e.Message);
             }
         }
 
-        private void DeleteExisting()
+        private void DeleteAddon()
         {
             if (Directory.Exists(DefaultAddonPath))
             {
-                logger.LogInformation("AddonConfigurator.DeleteExisting DefaultAddonPath Exists");
+                logger.LogInformation("AddonConfigurator.DeleteAddon -> Default Addon Exists");
                 Directory.Delete(DefaultAddonPath, true);
             }
 
             if (!string.IsNullOrEmpty(addonConfig.Title) && Directory.Exists(FinalAddonPath))
             {
-                logger.LogInformation("AddonConfigurator.DeleteExisting FinalAddonPath Exists");
+                logger.LogInformation("AddonConfigurator.DeleteAddon -> Unique Addon Exists");
                 Directory.Delete(FinalAddonPath, true);
             }
         }
@@ -111,7 +128,7 @@ namespace BlazorServer
             try
             {
                 CopyFolder("");
-                logger.LogInformation("AddonConfigurator.CopyFiles - success");
+                logger.LogInformation("AddonConfigurator.CopyFiles - Success");
             }
             catch (Exception e)
             {
@@ -119,7 +136,7 @@ namespace BlazorServer
 
                 // This only should be happen when running from IDE
                 CopyFolder(".");
-                logger.LogInformation("AddonConfigurator.CopyFiles - success");
+                logger.LogInformation("AddonConfigurator.CopyFiles - Success");
             }
         }
 
@@ -133,13 +150,11 @@ namespace BlazorServer
             Directory.Move(Path.Join(AddonBasePath, DefaultAddonName), FinalAddonPath);
         }
 
-        private bool MakeUnique()
+        private void MakeUnique()
         {
             BulkRename(FinalAddonPath, DefaultAddonName, addonConfig.Title);
             EditToc();
             EditMainLua();
-
-            return true;
         }
 
         private static void BulkRename(string fPath, string match, string fNewName)
@@ -200,16 +215,13 @@ namespace BlazorServer
 
         public void Delete()
         {
-            DeleteExisting();
+            DeleteAddon();
             AddonConfig.Delete();
         }
 
         public void Save()
         {
-            if (Validate())
-            {
-                addonConfig.Save();
-            }
+            addonConfig.Save();
         }
 
 
@@ -296,5 +308,50 @@ namespace BlazorServer
             }
         }
 
+        public bool UpdateAvailable()
+        {
+            if (addonConfig.IsDefault())
+                return false;
+
+            Version? repo;
+            try
+            {
+                repo = GetVersion(Path.Join(AddonSourcePath, DefaultAddonName), DefaultAddonName);
+            }
+            catch
+            {
+                // This only should be happen when running from IDE
+                string parentFolder = ".";
+                repo = GetVersion(Path.Join(parentFolder + AddonSourcePath, DefaultAddonName), DefaultAddonName);
+            }
+
+            Version? installed = GetVersion(FinalAddonPath, addonConfig.Title);
+
+            return installed != null && repo != null && repo > installed;
+        }
+
+        private Version? GetVersion(string path, string fileName)
+        {
+            string tocPath = Path.Join(path, fileName + ".toc");
+            try
+            {
+                string text = File.ReadAllText(tocPath);
+
+                string begin = "## Version: ";
+                int startIdx = text.IndexOf(begin);
+                string end = "\r\n";
+                int endIdx = text.IndexOf(end, startIdx);
+                string versionStr = text.Substring(startIdx + begin.Length, endIdx - startIdx - begin.Length);
+
+                if (Version.TryParse(versionStr, out var version))
+                    return version;
+            }
+            catch(Exception e)
+            {
+                logger.LogError($"GetVerion {tocPath} file does not exists!\n" + e.Message);
+            }
+
+            return null;
+        }
     }
 }

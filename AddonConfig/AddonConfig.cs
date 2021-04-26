@@ -19,9 +19,9 @@ public class AddonConfig
 
     public bool IsDefault()
     {
-        return !string.IsNullOrEmpty(InstallPath) &&
-            !string.IsNullOrEmpty(Author) &&
-            !string.IsNullOrEmpty(Title);
+        return string.IsNullOrEmpty(InstallPath) || 
+            string.IsNullOrEmpty(Author) || 
+            string.IsNullOrEmpty(Title);
     }
 
     [NonSerialized]
@@ -54,9 +54,8 @@ public class AddonConfig
         }
     }
 
-    public AddonConfig Save()
+    public void Save()
     {
         File.WriteAllText(DefaultFileName, JsonConvert.SerializeObject(this));
-        return this;
     }
 }
