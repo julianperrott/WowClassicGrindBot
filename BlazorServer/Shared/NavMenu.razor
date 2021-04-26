@@ -1,4 +1,5 @@
 ﻿@inject Libs.IBotController botController
+@inject Microsoft.Extensions.Logging.ILogger logger
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">MasterOfPuppets</a>
@@ -130,7 +131,9 @@ else
 
     private bool WoWProcessRunning => Libs.WowProcess.Get() != null;
 
-    private bool AddonConfigExists => AddonConfig.Exists();
+    private bool AddonConfigExists => AddonConfig.Exists() && addonConfigurator != null && addonConfigurator.Installed();
+
+    private AddonConfigurator? addonConfigurator;
 
 
     private void ToggleNavMenu()
@@ -140,6 +143,8 @@ else
 
     protected override void OnInitialized()
     {
+        addonConfigurator = new AddonConfigurator(logger, AddonConfig.Load());
+
         if (Libs.DataFrameConfiguration.Exists())
         {
             botController.ProfileLoaded += (o, e) =>
