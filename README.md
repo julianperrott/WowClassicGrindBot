@@ -77,7 +77,7 @@ Windows 10 - Right click at the desktop -> Display Settings -> Scale and layout 
 
 Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings and Program Settings(for WoW) settings is set to `Sharpening Off, Scaling disabled`!
 
-## 3 Download the MPQ route files
+## 3. Download the MPQ route files
 
 You only need the common-2.MPQ (1.7Gb) file which you can get here: https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing
 
@@ -88,7 +88,7 @@ Copy it into the \Json\MPQ folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
 For TBC you have to download expansion.MPQ (1.8Gb) can get here: https://mega.nz/file/7ZwAVaQI#L0qvvU1uuRPFY5jGBErKaVpzmJQ4JhOv3nOrkQ-ppbQ
 and copy next to the common-2.MPQ file. 
 
-## 4 Build the bot
+## 4. Build the bot
 
 You will probably already have Visual Studio or Visual Studio Code installed. You need to build the bot using either one of them, or use powershell.
 
@@ -138,7 +138,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
     9. Click `5. Frame Configuration`
     10. Click `Auto Configure and Restart`
 
-## 5. The bot should restart and when it starts it should show the dashboard page.
+## 5. The bot should restart and show the dashboard page.
 
 ## 6. Configure the Wow Client - Interface Options
 
@@ -224,7 +224,7 @@ The path that the class follows is a json file in C:\WowClassicGrindBot\Json\pat
         "PathThereAndBack": true, // if true walks the path and the walks it backwards.
         "PathReduceSteps": true,  // uses every other coordinate.
 
-### Commands
+### Commands(KeyAction)
 
 The rest of the file contains a set of commands 
 
@@ -316,13 +316,13 @@ Repair macro example:
     /tar Vargus
     /script SelectGossipOption(1)
 
-spammable wand macro `shoot` in many profiles
+Spammable wand macro `shoot` in many profiles
 
     /#showtooltip
     /petattack
     /cast !shoot
 
-warlock `pull` macro used in warlock profiles
+Warlock `pull` macro used in warlock profiles
 
     #showtooltip
     /petattack
