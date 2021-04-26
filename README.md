@@ -118,7 +118,15 @@ The bot reads the game state using small blocks of colour shown at the top of th
 
 2. Execute the `run.bat`. This will start the bot and Chrome, Wow must be already running. If you get "Unable to find the Wow process is it running ?" in the console window then it can't find wow.exe.
 
-3. When running the BlazorServer for the first time you will have to follow a setup process:
+3. Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
+
+  * System>Advanced>Constrast: 50
+  * System>Advanced>Brightness: 50
+  * System>Advanced>Gamma from: 1.0
+  * System>Render Scale: 100%
+  * Disable Glow effect - type in the chat `/console ffxGlow 0` - to keep/save this settings make sure to properly shutdown the game.
+
+4. When running the BlazorServer for the first time you will have to follow a setup process:
     1. Just start the game and wait in the character selection screen.
     2. Click `2. Addon Configuration`
     3. Click `Find InstallPath` -> `InstallPath` should be filled otherwise, fill out manually
@@ -130,15 +138,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
     9. Click `5. Frame Configuration`
     10. Click `Auto Configure and Restart`
 
-4. Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
-
-* System>Advanced>Constrast: 50
-* System>Advanced>Brightness: 50
-* System>Advanced>Gamma from: 1.0
-* System>Render Scale: 100%
-* Disable Glow effect - type in the chat `/console ffxGlow 0` - to keep/save this settings make sure to properly shutdown the game.
-
-5. Restart the bot and when it starts it should show the dashboard page.
+## 5. The bot should restart and when it starts it should show the dashboard page.
 
 ## 6. Configure the Wow Client - Interface Options
 
@@ -243,7 +243,7 @@ Commands have the following parameters, only a subset will be used by each comma
 
 | Property Name | Description | Default value |
 | --- | --- | --- |
-| Name | Name of the command | |
+| Name | Name of the command. For the ActionBar populator, if you use full lowercase names thats means its a macro. | |
 | HasCastBar | Does the spell have a cast bar | false |
 | StopBeforeCast | Should the char stop moving before casting the spell | false |
 | Key | The key to click (ConsoleKey) | |
@@ -315,6 +315,18 @@ Repair macro example:
 
     /tar Vargus
     /script SelectGossipOption(1)
+
+spammable wand macro `shoot` in many profiles
+
+    /#showtooltip
+    /petattack
+    /cast !shoot
+
+warlock `pull` macro used in warlock profiles
+
+    #showtooltip
+    /petattack
+    /cast Immolate
 
 Because some NPCs are hard to reach, there is the option to add a short path to them e.g. "Tanaris_GadgetzanKrinkleGoodsteel.json". The idea is that the start of the path is easy to get to and is a short distance from the NPC, you record a path from the easy to reach spot to the NPC with a distance between spots of 1. When the bot needs to vend or repair it will path to the first spot in the list, then walk closely through the rest of the spots, once they are walked it will press the defined Key, then walk back through the path.
 
