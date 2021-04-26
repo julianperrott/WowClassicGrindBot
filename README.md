@@ -244,7 +244,7 @@ Commands have the following parameters, only a subset will be used by each comma
 
 | Property Name | Description | Default value |
 | --- | --- | --- |
-| Name | Name of the command | |
+| Name | Name of the command. For the ActionBar populator, if you youse full lowercase names thats means its a macro. | |
 | HasCastBar | Does the spell have a cast bar | false |
 | StopBeforeCast | Should the char stop moving before casting the spell | false |
 | Key | The key to click (ConsoleKey) | |
