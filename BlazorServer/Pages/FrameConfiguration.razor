@@ -30,7 +30,17 @@ else
         <h1>Frame configuration not found !</h1>
     }
 
+    <hr />
     <h4 class="row col-md-12">Use Auto config: It will automatically setup the necessary stuffs.</h4>
+    <hr />
+
+    <div class="row col-md-12">
+        @if (@dataFrames.Count == 1)
+        {
+            <span class="row col-md-12">I see @dataFrames.Count data frames. Most likely the addon is not visible. <p class="h1 text-danger">Restart the Game</p></span>
+        }
+    </div>
+    <hr />
     <button class="row col-md-1 btn btn-sm btn-primary" @onclick="AutoConfigure">
         <span>Auto Configure and Restart</span>
     </button>
@@ -72,7 +82,7 @@ else
     }
     else
     {
-<span class="row col-md-12">I see @dataFrames.Count data frames. I should see 100 if you have typed <span class="ml-1"><b>&#47;@addonConfig?.Command</b></span></span>
+        <span class="row col-md-12">I see @dataFrames.Count data frames. I should see 100 if you have typed <span class="ml-1"><b>&#47;@addonConfig?.Command</b></span></span>
     }
 
     <div class="row col-md-12">
