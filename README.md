@@ -244,7 +244,7 @@ Commands have the following parameters, only a subset will be used by each comma
 
 | Property Name | Description | Default value |
 | --- | --- | --- |
-| Name | Name of the command. For the ActionBar populator, if you youse full lowercase names thats means its a macro. | |
+| Name | Name of the command. For the ActionBar populator, if you use full lowercase names thats means its a macro. | |
 | HasCastBar | Does the spell have a cast bar | false |
 | StopBeforeCast | Should the char stop moving before casting the spell | false |
 | Key | The key to click (ConsoleKey) | |
@@ -316,6 +316,12 @@ Repair macro example:
 
     /tar Vargus
     /script SelectGossipOption(1)
+
+spammable Wand macro called `shoot` in many profiles
+
+    /#showtooltip
+    /petattack
+    /cast !shoot
 
 Because some NPCs are hard to reach, there is the option to add a short path to them e.g. "Tanaris_GadgetzanKrinkleGoodsteel.json". The idea is that the start of the path is easy to get to and is a short distance from the NPC, you record a path from the easy to reach spot to the NPC with a distance between spots of 1. When the bot needs to vend or repair it will path to the first spot in the list, then walk closely through the rest of the spots, once they are walked it will press the defined Key, then walk back through the path.
 
