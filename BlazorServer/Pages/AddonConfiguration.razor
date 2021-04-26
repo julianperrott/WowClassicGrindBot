@@ -10,31 +10,46 @@
     }
 </style>
 
-<h1>Addon configuration file @(AddonConfig.Exists()? "already exists" : "not exists") and @(addonConfig.IsDefault() ? "valid" : "not valid")</h1>
 <br>
 <div class="container mt-3">
     <div class="row">
-        <div class="col-1">
-            <h3><b>1.</b></h3>
-        </div>
-        <div class="col">
-            <h5>In case something goes wrong, delete the previous <b>AddonConfig</b> file<br>Also use this when the addons needs to be updated:</h5>
-        </div>
-        <div class="col">
-            <button class="btn btn-sm btn-danger" @onclick="Delete">
-                <span>Delete current configuration</span>
-            </button>
+        <div class="col-10">
+            <h3>
+                Addon configuration(@(AddonConfig.DefaultFileName)) file @(AddonConfig.Exists()? "exists" : "not exists") and @(!addonConfig.IsDefault() ? "valid" : "not valid")
+            </h3>
         </div>
         <div class="w-100"></div>
         <div class="col-1">
-            <h3><b>2.</b></h3>
+            <h6>0.</h6>
+        </div>
+        <div class="col">
+            <h5>Addon Status</h5>
+        </div>
+        <div class="col">
+            @((MarkupString)AddonStatus())
+        </div>
+        <div class="w-100"></div>
+        <div class="col-1">
+            <h6>1.</h6>
         </div>
         <div class="col">
             <h5>Find the <b>InstallPath</b> by running game instance:</h5>
         </div>
         <div class="col">
             <button class="btn btn-sm btn-primary" @onclick="FindPathByExe">
-                <span>Find InstallPath</span>
+                <span>Find InstallPath by running client</span>
+            </button>
+        </div>
+        <div class="w-100"></div>
+        <div class="col-1">
+            <h6>2.</h6>
+        </div>
+        <div class="col">
+            <h5>Delete previous <b>AddonConfig</b> and installed addon</h5>
+        </div>
+        <div class="col">
+            <button class="btn btn-sm btn-danger" @onclick="Delete">
+                <span>Delete current configuration</span>
             </button>
         </div>
     </div>
@@ -70,26 +85,14 @@
 <div class="container mt-3">
     <div class="row">
         <div class="col-1">
-            <h3><b>3.</b></h3>
+            <h6>3.</h6>
         </div>
         <div class="col">
-            <h5>Given the AddonConfig setup your addon will be installed:</h5>
+            <h5>Finalize AddonConfig setup, addon will be installed:</h5>
         </div>
         <div class="col">
-            <button class="btn btn-sm btn-primary" @onclick="Install">
-                <span>Install</span>
-            </button>
-        </div>
-        <div class="w-100"></div>
-        <div class="col-1">
-            <h3><b>4.</b></h3>
-        </div>
-        <div class="col">
-            <h5>Finalize the AddonConfig process:</h5>
-        </div>
-        <div class="col">
-            <button class="btn-sm btn-success" @onclick="Save">
-                <span>Save</span>
+            <button class="btn btn-sm btn-success" @onclick="Install">
+                <span>Install & Save</span>
             </button>
         </div>
     </div>
@@ -129,12 +132,6 @@
         }
     }
 
-    private void Save()
-    {
-        addonConfigurator?.Save();
-        NavigationManager.NavigateTo("/AddonConfiguration", true);
-    }
-
     private void FindPathByExe()
     {
         addonConfigurator?.FindPathByExecutable();
@@ -142,11 +139,33 @@
 
     private void Install()
     {
-        addonConfigurator?.Install();
+        if(addonConfigurator != null && addonConfigurator.Validate())
+        {
+            addonConfigurator?.Install();
+            addonConfigurator?.Save();
+            NavigationManager.NavigateTo("/AddonConfiguration", true);
+        }
     }
 
     private void Update()
     {
 
+    }
+
+    private string AddonStatus()
+    {
+        if(addonConfigurator != null && AddonConfig.Exists() && addonConfigurator.Installed())
+        {
+            if (addonConfigurator.UpdateAvailable())
+            {
+                return "<p class=\"text-warning\">Update available - press <b>Install & Save</b></p>";
+            }
+            else
+            {
+                return "<p class=\"text-success\">Up to Date</p>";
+            }
+        }
+
+        return "<p class=\"text-danger\">Not Installed</p>";
     }
 }
