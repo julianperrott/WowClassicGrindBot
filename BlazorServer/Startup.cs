@@ -52,6 +52,16 @@ namespace BlazorServer
 
             var wowProcess = new WowProcess(logger);
             wowProcess.GetWindowRect(out var rect);
+
+            var addonConfig = AddonConfig.Load();
+            var addonConfigurator = new AddonConfigurator(logger, addonConfig);
+
+            if(!addonConfig.IsDefault() && !addonConfigurator.Installed())
+            {
+                // At this point the webpage never loads so fallback to configuration page
+                DataFrameConfiguration.RemoveConfiguration();
+            }
+
             if(DataFrameConfiguration.Exists() && !DataFrameConfiguration.IsValid(rect))
             {
                 // At this point the webpage never loads so fallback to configuration page
