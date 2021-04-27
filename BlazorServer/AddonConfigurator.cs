@@ -335,14 +335,13 @@ namespace BlazorServer
             string tocPath = Path.Join(path, fileName + ".toc");
             try
             {
-                string text = File.ReadAllText(tocPath);
-
                 string begin = "## Version: ";
-                int startIdx = text.IndexOf(begin);
-                string end = Environment.NewLine;
-                int endIdx = text.IndexOf(end, startIdx);
-                string versionStr = text.Substring(startIdx + begin.Length, endIdx - startIdx - begin.Length);
+                var line = File
+                  .ReadLines(tocPath)
+                  .SkipWhile(line => !line.StartsWith(begin))
+                  .FirstOrDefault();
 
+                string? versionStr = line?.Split(begin)[1];
                 if (Version.TryParse(versionStr, out var version))
                     return version;
             }
