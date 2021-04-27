@@ -80,8 +80,8 @@ and copy next to the common-2.MPQ file.
 
 ## 3. System Requirements
 
-    1. Nvidia Control panel settings
-    Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings or Program Settings(for WoW) is set to `Sharpening Off, Scaling disabled`!
+1. Nvidia Control panel settings
+Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings or Program Settings(for WoW) is set to `Sharpening Off, Scaling disabled`!
 
 ## 4. Build the bot
 
