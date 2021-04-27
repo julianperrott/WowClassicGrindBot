@@ -171,6 +171,7 @@ namespace Libs.Goals
                 }
 
                 await wowInput.TapNearestTarget();
+                await Task.Delay(50);
                 if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
                 {
                     if (this.playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe)
