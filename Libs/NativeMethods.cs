@@ -60,19 +60,32 @@ namespace Libs
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
 
-        // should be calculated from the metrics
-        public const int WindowBarHeight = 31;
-        public const int WindowBorderThick = 8;
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetClientRect(IntPtr hWnd, ref RECT lpRect);
 
-        private static bool IsWindowedMode(Rectangle rect)
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ClientToScreen(IntPtr hWnd, ref POINT lpRect);
+
+        [DllImport("user32.dll")]
+        public static extern int GetSystemMetrics(int nIndexn);
+
+        [DllImport("user32.dll")]
+        public static extern int GetDpiForSystem();
+
+        public static int SM_CXCURSOR = 13;
+        public static int SM_CYCURSOR = 14;
+
+        private static bool IsWindowedMode(POINT point)
         {
-            return rect.X != 0 || rect.Y != 0;
+            return point.x != 0 || point.y != 0;
         }
 
-        private static void GetNativeWindowRect(IntPtr hWnd, out Rectangle rect)
+        private static void GetNativeClientRect(IntPtr hWnd, out Rectangle rect)
         {
             RECT nRect = new RECT();
-            if (GetWindowRect(hWnd, ref nRect))
+            if (GetClientRect(hWnd, ref nRect))
             {
                 rect = new Rectangle
                 {
@@ -90,18 +103,28 @@ namespace Libs
 
         public static void GetWindowRect(IntPtr hWnd, out Rectangle rect)
         {
-            GetNativeWindowRect(hWnd, out rect);
+            GetNativeClientRect(hWnd, out rect);
 
-            if(IsWindowedMode(rect))
+            POINT topLeft = new POINT();
+            ClientToScreen(hWnd, ref topLeft);
+            if (IsWindowedMode(topLeft))
             {
-                int border = WindowBorderThick;
-                int header = WindowBarHeight;
-
-                rect.Inflate(-border, 0);
-                rect.Offset(0, header);
-                rect.Height -= header;
+                rect.X = topLeft.x;
+                rect.Y = topLeft.y;
             }
         }
 
+        public static Size GetCursorSize()
+        {
+            int dpi = GetDpiForSystem();
+            var size = new SizeF(GetSystemMetrics(SM_CXCURSOR), GetSystemMetrics(SM_CYCURSOR));
+            size *= DPI2PPI(dpi);
+            return size.ToSize();
+        }
+
+        private static float DPI2PPI(int dpi)
+        {
+            return dpi / 96f;
+        }
     }
 }
