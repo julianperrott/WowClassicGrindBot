@@ -69,6 +69,14 @@ namespace Libs.Goals
                 Log("Found corpse - interact with it");
                 await playerReader.WaitForNUpdate(1);
 
+                if (classConfiguration.Skin)
+                {
+                    var targetSkinnable = !playerReader.Unskinnable;
+                    AddEffect(GoapKey.shouldskin, targetSkinnable);
+                    Log($"Should skin ? {targetSkinnable}");
+                    SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, targetSkinnable));
+                }
+
                 bool hadToMove = false;
                 if (IsPlayerMoving(lastPosition))
                 {
@@ -84,13 +92,6 @@ namespace Libs.Goals
                         await AquireTarget();
                         return;
                     }
-                }
-
-                if (classConfiguration.Skin)
-                {
-                    var targetSkinnable = !playerReader.Unskinnable;
-                    AddEffect(GoapKey.shouldskin, targetSkinnable);
-                    SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, targetSkinnable));
                 }
 
                 // TODO: damn spell batching
