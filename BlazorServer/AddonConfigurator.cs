@@ -339,7 +339,7 @@ namespace BlazorServer
 
                 string begin = "## Version: ";
                 int startIdx = text.IndexOf(begin);
-                string end = "\r\n";
+                string end = Environment.NewLine;
                 int endIdx = text.IndexOf(end, startIdx);
                 string versionStr = text.Substring(startIdx + begin.Length, endIdx - startIdx - begin.Length);
 
@@ -348,7 +348,7 @@ namespace BlazorServer
             }
             catch(Exception e)
             {
-                logger.LogError($"GetVerion {tocPath} file does not exists!\n" + e.Message);
+                logger.LogError($"GetVerion\n" + e.Message);
             }
 
             return null;
