@@ -29,7 +29,8 @@ namespace Libs.Cursor
 
         public static Bitmap Classify(out CursorClassification classification)
         {
-            var result = new Bitmap(32, 32);
+            var size = NativeMethods.GetCursorSize();
+            var result = new Bitmap(size.Width, size.Height);
             try
             {
                 var cursorInfo = new NativeMethods.CURSORINFO();
