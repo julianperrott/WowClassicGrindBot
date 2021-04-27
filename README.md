@@ -67,17 +67,7 @@ Create an issue rather than emailing me so that others can comment.
 
 Put the contents of the repo into a folder. e.g "C:\WowClassicGrindBot". I am going to refer to this folder from now on, so just substitute your own folder path.
 
-## 2.a Windows gui scale
-
-Make sure to use windows GUI scale at 100 %
-
-Windows 10 - Right click at the desktop -> Display Settings -> Scale and layout to 100 %
-
-## 2.b Nvidia Control panel
-
-Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings and Program Settings(for WoW) settings is set to `Sharpening Off, Scaling disabled`!
-
-## 3. Download the MPQ route files
+## 2. Download the MPQ route files
 
 You only need the common-2.MPQ (1.7Gb) file which you can get here: https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing
 
@@ -87,6 +77,11 @@ Copy it into the \Json\MPQ folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
 
 For TBC you have to download expansion.MPQ (1.8Gb) can get here: https://mega.nz/file/7ZwAVaQI#L0qvvU1uuRPFY5jGBErKaVpzmJQ4JhOv3nOrkQ-ppbQ
 and copy next to the common-2.MPQ file. 
+
+## 3. System Requirements
+
+    1. Nvidia Control panel settings
+    Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings or Program Settings(for WoW) is set to `Sharpening Off, Scaling disabled`!
 
 ## 4. Build the bot
 
