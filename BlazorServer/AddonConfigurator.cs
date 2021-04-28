@@ -313,16 +313,22 @@ namespace BlazorServer
             if (addonConfig.IsDefault())
                 return false;
 
-            Version? repo;
+            Version? repo = null;
             try
             {
                 repo = GetVersion(Path.Join(AddonSourcePath, DefaultAddonName), DefaultAddonName);
             }
-            catch
+            catch(Exception)
             {
                 // This only should be happen when running from IDE
                 string parentFolder = ".";
-                repo = GetVersion(Path.Join(parentFolder + AddonSourcePath, DefaultAddonName), DefaultAddonName);
+                try { 
+                    repo = GetVersion(Path.Join(parentFolder + AddonSourcePath, DefaultAddonName), DefaultAddonName);
+                }
+                catch(Exception e)
+                {
+                    logger.LogError(e.Message);
+                }
             }
 
             Version? installed = GetVersion(FinalAddonPath, addonConfig.Title);
@@ -330,25 +336,19 @@ namespace BlazorServer
             return installed != null && repo != null && repo > installed;
         }
 
-        private Version? GetVersion(string path, string fileName)
+        private static Version? GetVersion(string path, string fileName)
         {
             string tocPath = Path.Join(path, fileName + ".toc");
-            try
-            {
-                string begin = "## Version: ";
-                var line = File
-                  .ReadLines(tocPath)
-                  .SkipWhile(line => !line.StartsWith(begin))
-                  .FirstOrDefault();
 
-                string? versionStr = line?.Split(begin)[1];
-                if (Version.TryParse(versionStr, out var version))
-                    return version;
-            }
-            catch(Exception e)
-            {
-                logger.LogError($"GetVerion\n" + e.Message);
-            }
+            string begin = "## Version: ";
+            var line = File
+                .ReadLines(tocPath)
+                .SkipWhile(line => !line.StartsWith(begin))
+                .FirstOrDefault();
+
+            string? versionStr = line?.Split(begin)[1];
+            if (Version.TryParse(versionStr, out var version))
+                return version;
 
             return null;
         }
