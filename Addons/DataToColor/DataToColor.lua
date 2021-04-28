@@ -273,12 +273,22 @@ end
 -- This function runs when addon is initialized/player logs in
 -- Decides length of white box
 function DataToColor:OnInitialize()
+    self:SetupRequirements()
     self:CreateFrames(NUMBER_OF_FRAMES)
-    self:log("We're in")
-
     self:slashCommands();
 
+    self:log("We're in")
+
     LoggingChat(1);
+end
+
+function DataToColor:SetupRequirements()
+    SetCVar("autoInteract", 1);
+    SetCVar("autoLootDefault", 1)
+    -- /run SetCVar("cameraSmoothStyle", 2) --always
+	SetCVar('Contrast',50,'[]')
+	SetCVar('Brightness',50,'[]')
+	SetCVar('Gamma',1,'[]')
 end
 
 -- This function is able to pass numbers in range 0 to 16777215
