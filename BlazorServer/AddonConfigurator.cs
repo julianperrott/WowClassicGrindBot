@@ -34,9 +34,8 @@ namespace BlazorServer
         }
 
         public bool Installed()
-        {
-            var installed = GetVersion(FinalAddonPath, addonConfig.Title);
-            return installed != null;
+        {;
+            return GetInstalledVersion() != null;
         }
 
         public bool Validate()
@@ -313,27 +312,38 @@ namespace BlazorServer
             if (addonConfig.IsDefault())
                 return false;
 
+            Version? repo = GetRepoVerion();
+            Version? installed = GetInstalledVersion();
+
+            return installed != null && repo != null && repo > installed;
+        }
+
+        public Version? GetRepoVerion()
+        {
             Version? repo = null;
             try
             {
                 repo = GetVersion(Path.Join(AddonSourcePath, DefaultAddonName), DefaultAddonName);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 // This only should be happen when running from IDE
                 string parentFolder = ".";
-                try { 
+                try
+                {
                     repo = GetVersion(Path.Join(parentFolder + AddonSourcePath, DefaultAddonName), DefaultAddonName);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     logger.LogError(e.Message);
                 }
             }
+            return repo;
+        }
 
-            Version? installed = GetVersion(FinalAddonPath, addonConfig.Title);
-
-            return installed != null && repo != null && repo > installed;
+        public Version? GetInstalledVersion()
+        {
+            return GetVersion(FinalAddonPath, addonConfig.Title);
         }
 
         private static Version? GetVersion(string path, string fileName)
