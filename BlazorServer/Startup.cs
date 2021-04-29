@@ -62,7 +62,8 @@ namespace BlazorServer
                 DataFrameConfiguration.RemoveConfiguration();
             }
 
-            if(DataFrameConfiguration.Exists() && !DataFrameConfiguration.IsValid(rect))
+            if(DataFrameConfiguration.Exists() && 
+                !DataFrameConfiguration.IsValid(rect, addonConfigurator.GetInstalledVersion()))
             {
                 // At this point the webpage never loads so fallback to configuration page
                 DataFrameConfiguration.RemoveConfiguration();
