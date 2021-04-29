@@ -64,9 +64,7 @@ namespace Libs
             wowProcess = new WowProcess(logger);
             WowScreen = new WowScreen(wowProcess, logger);
 
-            var frames = DataFrameConfiguration.Exists()
-                ? DataFrameConfiguration.LoadConfiguration()
-                : new List<DataFrame>();
+            var frames = DataFrameConfiguration.LoadFrames();
 
             AddonReader = new AddonReader(DataConfig, WowScreen, frames, logger, areaDb);
 
