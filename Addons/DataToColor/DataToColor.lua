@@ -54,9 +54,9 @@ local NUMBER_OF_FRAMES = 100
 -- Set number of pixel rows
 local FRAME_ROWS = 1
 -- Size of data squares in px. Varies based on rounding errors as well as dimension size. Use as a guideline, but not 100% accurate.
-local CELL_SIZE = 3
+local CELL_SIZE = 3 -- 1-9 
 -- Spacing in px between data squares.
-local CELL_SPACING = 0
+local CELL_SPACING = 0 -- 0 or 1
 -- Item slot trackers initialization
 local itemNum = 0
 local equipNum = 0
@@ -371,9 +371,6 @@ function DataToColor:CreateFrames(n)
         end
         -- Number of loops is based on the number of generated frames declared at beginning of script
         
-        for i = 0, 99 do
-            MakePixelSquareArr({63 / 255, 0, 63 / 255}, i)
-        end
         if not SETUP_SEQUENCE then
             MakePixelSquareArr(integerToColor(0), 0)
             -- The final data square, reserved for additional metadata.
@@ -497,7 +494,7 @@ function DataToColor:CreateFrames(n)
         end
         if SETUP_SEQUENCE then
             -- Emits meta data in data square index 0 concerning our estimated cell size, number of rows, and the numbers of frames
-            MakePixelSquareArr(integerToColor(CELL_SIZE * 100000 + 1000 * FRAME_ROWS + NUMBER_OF_FRAMES), 0)
+            MakePixelSquareArr(integerToColor(CELL_SPACING * 10000000 + CELL_SIZE * 100000 + 1000 * FRAME_ROWS + NUMBER_OF_FRAMES), 0)
             -- Assign pixel squares a value equivalent to their respective indices.
             for i = 1, NUMBER_OF_FRAMES - 1 do
                 MakePixelSquareArr(integerToColor(i), i)
@@ -521,6 +518,7 @@ function DataToColor:CreateFrames(n)
         f:SetWidth(CELL_SIZE) -- Change this to make white box wider
         setFramePixelBackdrop(f)
         f:SetFrameStrata("DIALOG")
+        f:SetBackdropColor(0, 0, 0, 1)
         return f
     end
     
@@ -534,6 +532,7 @@ function DataToColor:CreateFrames(n)
     backgroundframe:SetHeight(FRAME_ROWS * (CELL_SIZE + CELL_SPACING))
     backgroundframe:SetWidth(floor(n / FRAME_ROWS) * (CELL_SIZE + CELL_SPACING))
     backgroundframe:SetFrameStrata("HIGH")
+    backgroundframe:SetBackdropColor(0, 0, 0, 1)
     
     --local windowCheckFrame = CreateFrame("Frame", "frame_windowcheck", UIParent)
     --windowCheckFrame:SetPoint("TOPLEFT", 120, -200)
