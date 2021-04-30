@@ -1,4 +1,4 @@
-using Libs.GOAP;
+﻿using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -211,7 +211,7 @@ namespace Libs.Goals
 
             // check for targets attacking me
             await wowInput.TapNearestTarget();
-            await Task.Delay(50);
+            await playerReader.WaitForNUpdate(1);
             if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
             {
                 if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)

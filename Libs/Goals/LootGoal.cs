@@ -186,10 +186,10 @@ namespace Libs.Goals
                 }
 
                 await wowInput.TapNearestTarget();
-                await Task.Delay(50);
+                await playerReader.WaitForNUpdate(1);
                 if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
                 {
-                    if (this.playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe)
+                    if (playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
                     {
                         Log("Found from nearest target");
                         SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
