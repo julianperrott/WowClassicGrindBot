@@ -1,4 +1,4 @@
-﻿using Libs.GOAP;
+using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -54,6 +54,11 @@ namespace Libs.Goals
             if ((DateTime.Now - lastActive).TotalSeconds > 5)
             {
                 classConfiguration.Interact.ResetCooldown();
+            }
+
+            if(playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
+            {
+                await wowInput.TapPetAttack("");
             }
 
             bool pressed = false;
