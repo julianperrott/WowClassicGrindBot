@@ -288,12 +288,10 @@ else
         var version = addonConfigurator?.GetInstalledVersion();
         if (version == null) return;
 
-        var size = dataFrameMeta.EstimatedSize();
-
-        var screenshot = wowScreen?.GetBitmap(size.Width, size.Height);
-        if (screenshot == null) return;
-
-        var dataFrames = config.CreateFrames(dataFrameMeta, screenshot);
+        if (dataFrames.Count != dataFrameMeta.frames)
+        {
+            return;
+        }
 
         wowProcess.GetWindowRect(out var rect);
 
