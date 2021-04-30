@@ -54,9 +54,9 @@ local NUMBER_OF_FRAMES = 100
 -- Set number of pixel rows
 local FRAME_ROWS = 1
 -- Size of data squares in px. Varies based on rounding errors as well as dimension size. Use as a guideline, but not 100% accurate.
-local CELL_SIZE = 3 -- 1-9 
+local CELL_SIZE = 1 -- 1-9 
 -- Spacing in px between data squares.
-local CELL_SPACING = 0 -- 0 or 1
+local CELL_SPACING = 1 -- 0 or 1
 -- Item slot trackers initialization
 local itemNum = 0
 local equipNum = 0
