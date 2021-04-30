@@ -133,6 +133,8 @@ The bot reads the game state using small blocks of colour shown at the top of th
     9. Click `5. Frame Configuration`
     10. Click `Auto Configure and Restart`
 
+5. Under the `Addon Configuration` you can check if theres a newer version available for the addon. In that case just press the `install` button then have to restart the game client and the bot it self in order to use it properly. 
+
 ## 5. The bot should restart and show the dashboard page.
 
 ## 6. Configure the Wow Client - Interface Options
