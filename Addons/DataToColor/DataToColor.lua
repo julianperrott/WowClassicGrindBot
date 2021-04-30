@@ -293,23 +293,9 @@ end
 
 -- This function is able to pass numbers in range 0 to 16777215
 function integerToColor(i)
-    if i ~= math.floor(i) then
-        error("The number passed to 'integerToColor' must be an integer")
-    end
-    
-    if i > (256 * 256 * 256 - 1) then -- the biggest value to represent with 3 bytes of colour
-        error("Integer too big to encode as color")
-    end
-    
     -- r,g,b are integers in range 0-255
-    local b = Modulo(i, 256)
-    i = math.floor(i / 256)
-    local g = Modulo(i, 256)
-    i = math.floor(i / 256)
-    local r = Modulo(i, 256)
-    
     -- then we turn them into 0-1 range
-    return {r / 255, g / 255, b / 255}
+    return {bit.band(bit.rshift(i,16),255) / 255, bit.band(bit.rshift(i,8),255) / 255, bit.band(i,255) / 255};
 end
 
 -- This function is able to pass numbers in range 0 to 9.99999 (6 digits)
@@ -359,13 +345,13 @@ function DataToColor:CreateFrames(n)
         -- Makes a 5px by 5px square. Might be 6x5 or 6x5.
         -- This is APPROXIMATE MATH. startingFrame is the x start, startingFramey is the "y" start (both starts are in regard to pixel position on the main frame)
         function MakePixelSquareArr(col, slot)
-            if type(slot) ~= "number" or slot < 0 or slot >= NUMBER_OF_FRAMES then
-                self:error("Invalid slot value")
-            end
+            --if type(slot) ~= "number" or slot < 0 or slot >= NUMBER_OF_FRAMES then
+            --    self:error("Invalid slot value")
+            --end
             
-            if type(col) ~= "table" then
-                self:error("Invalid color value (" .. tostring(col) .. ")")
-            end
+            --if type(col) ~= "table" then
+            --    self:error("Invalid color value (" .. tostring(col) .. ")")
+            --end
             
             self.frames[slot + 1]:SetBackdropColor(col[1], col[2], col[3], 1)
         end
