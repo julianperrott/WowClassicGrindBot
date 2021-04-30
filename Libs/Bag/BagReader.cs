@@ -30,7 +30,7 @@ namespace Libs
             this.itemDb = itemDb;
         }
 
-        public List<BagItem> Read()
+        public void Read()
         {
             bool hasChanged = false;
 
@@ -106,8 +106,6 @@ namespace Libs
                 DataChanged?.Invoke(this, new EventArgs());
                 lastEvent = DateTime.Now;
             }
-
-            return BagItems;
         }
 
         public List<string> ToBagString()

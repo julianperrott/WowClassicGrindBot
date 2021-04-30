@@ -92,7 +92,7 @@ namespace Libs
 
                     if (classConfig.Skin)
                     {
-                        availableActions.Add(new SkinningGoal(logger, wowInput, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder));
+                        availableActions.Add(new SkinningGoal(logger, wowInput, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, classConfig, npcNameFinder));
                     }
                 }
 

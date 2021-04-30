@@ -17,13 +17,14 @@ namespace Libs.Goals
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private readonly BagReader bagReader;
+        private readonly EquipmentReader equipmentReader;
         private readonly ClassConfiguration classConfiguration;
         private readonly NpcNameFinder npcNameFinder;
         
 
         private bool outOfCombat = false;
 
-        public SkinningGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
+        public SkinningGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
         {
             this.logger = logger;
             this.wowInput = wowInput;
@@ -31,7 +32,9 @@ namespace Libs.Goals
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
             this.bagReader = bagReader;
-            
+            this.equipmentReader = equipmentReader;
+
+
             this.classConfiguration = classConfiguration;
             this.npcNameFinder = npcNameFinder;
 
@@ -50,7 +53,11 @@ namespace Libs.Goals
                 (
                 bagReader.HasItem(7005) ||
                 bagReader.HasItem(12709) ||
-                bagReader.HasItem(19901)
+                bagReader.HasItem(19901) ||
+
+                equipmentReader.HasItem(7005) ||
+                equipmentReader.HasItem(12709) ||
+                equipmentReader.HasItem(19901)
                 );
         }
 

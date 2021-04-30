@@ -128,6 +128,7 @@ else
     private AddonConfigurator? addonConfigurator;
 
     private DataConfig? dataConfig;
+    private Libs.Database.AreaDB? areaDb;
     private DataFrameMeta dataFrameMeta = DataFrameMeta.Empty;
     private DataFrameConfiguration? config;
     private List<DataFrame> dataFrames = new List<DataFrame>();
@@ -155,6 +156,8 @@ else
             wowScreen = new WowScreen(wowProcess, logger);
             config = new DataFrameConfiguration(wowScreen);
             dataConfig = DataConfig.Load();
+
+            areaDb = new Libs.Database.AreaDB(logger, dataConfig);
 
             addonConfigurator = new AddonConfigurator(logger, addonConfig);
 
@@ -190,7 +193,7 @@ else
     {
         while (cancellationTokenSource != null && !cancellationTokenSource.Token.IsCancellationRequested)
         {
-            if (wowProcess != null && wowScreen != null && config != null && dataConfig != null)
+            if (wowProcess != null && wowScreen != null && config != null && dataConfig != null && areaDb != null)
             {
                 if (dataFrameMeta == DataFrameMeta.Empty)
                 {
@@ -247,7 +250,7 @@ else
 
                                 if (dataFrames.Count == dataFrameMeta.frames)
                                 {
-                                    addonReader = new AddonReader(dataConfig, new WowScreen(wowProcess, logger), dataFrames, logger, null);
+                                    addonReader = new AddonReader(dataConfig, new WowScreen(wowProcess, logger), dataFrames, logger, areaDb);
                                 }
 
                                 if (addonReader != null) // && dataFrames.Count != dataFrameMeta.frames

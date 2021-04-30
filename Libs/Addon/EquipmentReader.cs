@@ -31,7 +31,7 @@ namespace Libs
         private readonly int cellStart;
         private readonly ISquareReader reader;
 
-        private long[] equipment = new long[20];
+        private readonly long[] equipment = new long[20];
 
         public EquipmentReader(ISquareReader reader, int cellStart)
         {
@@ -39,14 +39,13 @@ namespace Libs
             this.reader = reader;
         }
 
-        public long[] Read()
+        public void Read()
         {
             var index = reader.GetLongAtCell(cellStart + 1);
             if (index < 20 && index >= 0)
             {
                 equipment[index] = reader.GetLongAtCell(cellStart);
             }
-            return equipment;
         }
 
         public string ToStringList()
@@ -57,6 +56,17 @@ namespace Libs
         public bool HasRanged()
         {
             return equipment[(int)InventorySlotId.Ranged] != 0;
+        }
+
+        public bool HasItem(int itemId)
+        {
+            for(int i=0; i<equipment.Length; i++)
+            {
+                if (equipment[i] == itemId)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

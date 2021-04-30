@@ -27,12 +27,12 @@ namespace Libs
         private readonly int height;
         private readonly IColorReader colorReader;
 
-        private readonly AreaDB? areaDb;
+        private readonly AreaDB areaDb;
         private readonly WorldMapAreaDB worldMapAreaDb;
         private readonly ItemDB itemDb;
         private readonly CreatureDB creatureDb;
 
-        public AddonReader(DataConfig dataConfig, IColorReader colorReader, List<DataFrame> frames, ILogger logger, AreaDB? areaDb)
+        public AddonReader(DataConfig dataConfig, IColorReader colorReader, List<DataFrame> frames, ILogger logger, AreaDB areaDb)
         {
             this.dataConfig = dataConfig;
             this.frames = frames;
@@ -61,16 +61,16 @@ namespace Libs
             Refresh();
 
             // 20 - 29
-            var bagItems = BagReader.Read();
+            BagReader.Read();
 
             // 30 - 31
-            var equipment = equipmentReader.Read();
+            equipmentReader.Read();
 
             LevelTracker.Update();
 
-            this.PlayerReader.UpdateCreatureLists();
+            PlayerReader.UpdateCreatureLists();
 
-            areaDb?.Update(worldMapAreaDb.GetAreaId(PlayerReader.ZoneId));
+            areaDb.Update(worldMapAreaDb.GetAreaId(PlayerReader.ZoneId));
 
             seq++;
 
