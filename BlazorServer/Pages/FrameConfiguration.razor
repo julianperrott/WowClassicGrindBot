@@ -182,7 +182,7 @@ else
     {
         if (config == null) return DataFrameMeta.Empty;
 
-        var screenshot = wowScreen?.GetBitmap(1, 1);
+        var screenshot = wowScreen?.GetBitmap(5, 5);
         if (screenshot == null) return DataFrameMeta.Empty;
 
         var meta = config.GetMeta(screenshot);
@@ -226,7 +226,7 @@ else
                     wowScreen.GetRectangle(out var rect);
 
                     if (size.Width < rect.Size.Width &&
-                        size.Height < rect.Size.Height)
+                        size.Height < rect.Size.Height && !size.IsEmpty)
                     {
                         var screenshot = wowScreen.GetBitmap(size.Width, size.Height);
                         if (screenshot != null)
