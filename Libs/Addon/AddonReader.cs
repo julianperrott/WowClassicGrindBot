@@ -79,7 +79,6 @@ namespace Libs
                 seq = 0;
                 AddonDataChanged?.Invoke(this, new EventArgs());
             }
-            System.Threading.Thread.Sleep(10);
         }
 
         public void Refresh()

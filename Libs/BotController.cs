@@ -102,6 +102,7 @@ namespace Libs
             {
                 this.AddonReader.AddonRefresh();
                 this.GoapAgent?.UpdateWorldState();
+                System.Threading.Thread.Sleep(10);
             }
             this.logger.LogInformation("Addon thread stoppped!");
         }

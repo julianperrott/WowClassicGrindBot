@@ -176,7 +176,7 @@ namespace Libs
                 {
                     var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                     mouseInput.SetCursorPosition(clickPostion);
-                    await Task.Delay(100);
+                    await Task.Delay(75);
                     CursorClassifier.Classify(out var cls).Dispose();
                     if (cls == cursor)
                     {
