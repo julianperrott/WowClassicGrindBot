@@ -252,10 +252,14 @@ namespace Libs.Goals
                 {
                     if (await LookForTarget())
                     {
-                        if (this.playerReader.HasTarget)
+                        if (this.playerReader.HasTarget && !playerReader.PlayerBitValues.TargetIsDead)
                         {
                             logger.LogInformation("Has target!");
                             return true;
+                        }
+                        else
+                        {
+                            await wowInput.TapClearTarget("Target is dead!");
                         }
                     }
                 }
