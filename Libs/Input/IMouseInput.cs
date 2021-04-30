@@ -8,5 +8,7 @@ namespace Libs
         void SetCursorPosition(Point point);
 
         Task RightClickMouse(Point position);
+
+        Task LeftClickMouse(Point position);
     }
 }

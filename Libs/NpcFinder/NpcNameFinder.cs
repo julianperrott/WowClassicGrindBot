@@ -132,7 +132,7 @@ namespace Libs
             }
         }
 
-        public async Task FindAndClickNpc(int threshold)
+        public async Task FindAndClickNpc(int threshold, bool leftClick)
         {
             var npc = GetClosestNpc();
             if (npc != null)
@@ -147,12 +147,12 @@ namespace Libs
                         CursorClassifier.Classify(out var cls).Dispose();
                         if (cls == CursorClassification.Kill)
                         {
-                            await AquireTargetAtCursor(clickPostion, npc);
+                            await AquireTargetAtCursor(clickPostion, npc, leftClick);
                             return;
                         }
                         else if(cls == CursorClassification.Vendor)
                         {
-                            await AquireTargetAtCursor(clickPostion, npc);
+                            await AquireTargetAtCursor(clickPostion, npc, leftClick);
                             return;
                         }
                     }
@@ -188,9 +188,13 @@ namespace Libs
             return false;
         }
 
-        private async Task AquireTargetAtCursor(Point clickPostion, NpcPosition npc)
+        private async Task AquireTargetAtCursor(Point clickPostion, NpcPosition npc, bool leftClick=false)
         {
-            await mouseInput.RightClickMouse(clickPostion);
+            if(leftClick)
+                await mouseInput.LeftClickMouse(clickPostion);
+            else
+                await mouseInput.RightClickMouse(clickPostion);
+
             logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}");
         }
 

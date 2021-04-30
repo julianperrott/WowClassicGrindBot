@@ -1,4 +1,4 @@
-﻿using Libs.GOAP;
+using Libs.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -411,7 +411,7 @@ namespace Libs.Goals
                     npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
                     if(npcNameFinder.NpcCount > 0)
                     {
-                        await this.npcNameFinder.FindAndClickNpc(0);
+                        await this.npcNameFinder.FindAndClickNpc(0, true);
                     }
                 }
             }
