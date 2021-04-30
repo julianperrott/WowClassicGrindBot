@@ -2,8 +2,7 @@
   "ClassName": "Warlock",
   "Loot": true,
   "NPCMaxLevels_Above": 2,
-
-  "PathFilename": "24_33_Wetflands_Crimson_Hill.json",
+  "PathFilename": "24-30 Duskwood wolf ravager.json",
   "PathThereAndBack": false,
   "PathReduceSteps": true,
 
@@ -132,10 +131,10 @@
   "Adhoc": {
     "Sequence": [
       {
-        "Name": "Demon Skin",
+        "Name": "Demon Armor",
         "Key": "3",
-        "MinMana": 50,
-        "Requirement": "not Demon Skin",
+        "MinMana": 275,
+        "Requirement": "not Demon Armor",
         "Log": false
       },
       {
