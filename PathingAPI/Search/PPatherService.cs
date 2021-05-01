@@ -9,6 +9,9 @@ using WowTriangles;
 using Newtonsoft.Json;
 using PathingAPI.Data;
 
+using SharedLib;
+using SharedLib.Data;
+
 namespace PathingAPI
 {
     public class PPatherService
@@ -32,14 +35,14 @@ namespace PathingAPI
         {
             logger = new PatherPath.Logger((s)=>Log(s));
             dataConfig = DataConfig.Load();
-            this.worldMapAreas = WorldMapArea.Read(logger, dataConfig);
+            this.worldMapAreas = WorldMapAreaFactory.Read(logger, dataConfig);
         }
 
         public PPatherService(Action<string> onWrite, DataConfig dataConfig)
         {
             this.dataConfig = dataConfig;
             logger = new PatherPath.Logger(onWrite);
-            this.worldMapAreas = WorldMapArea.Read(logger, dataConfig);
+            this.worldMapAreas = WorldMapAreaFactory.Read(logger, dataConfig);
         }
 
         public void Log(string message)
@@ -95,7 +98,7 @@ namespace PathingAPI
 
         public WorldMapAreaSpot ToMapAreaSpot(float x, float y, float z, int mapHint)
         {
-            var area = WorldMapArea.GetWorldMapArea(worldMapAreas, x, y, search.continent, mapHint);
+            var area = WorldMapAreaFactory.GetWorldMapArea(worldMapAreas, x, y, search.continent, mapHint);
             return new WorldMapAreaSpot
             {
                 Y = area.ToMapX(x),

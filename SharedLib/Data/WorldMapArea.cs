@@ -17,5 +17,27 @@ namespace SharedLib
         public float LocBottom { get; set; }
         public int UIMapId { get; set; }
         public string Continent { get; set; } = string.Empty;
+
+
+        public float ToWorldX(float value)
+        {
+            return ((LocBottom - LocTop) * value / 100) + LocTop;
+        }
+
+        public float ToWorldY(float value)
+        {
+            return ((LocRight - LocLeft) * value / 100) + LocLeft;
+        }
+
+        public float ToMapX(float value)
+        {
+            return 100 - (((value - LocBottom) * 100) / (LocTop - LocBottom));
+        }
+
+        public float ToMapY(float value)
+        {
+            return 100 - (((value - LocRight) * 100) / (LocLeft - LocRight));
+        }
+
     }
 }

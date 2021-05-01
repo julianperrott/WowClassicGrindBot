@@ -64,14 +64,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:PathingAPI.WorldMapArea.Matches(PathingAPI.WorldMapArea,System.String[])">
-            <summary>
-            Fix occurance where Stormwind and Stormwind city didn't match
-            </summary>
-            <param name="area"></param>
-            <param name="s"></param>
-            <returns></returns>
-        </member>
         <member name="T:WowTriangles.ChunkedTriangleCollection">
             <summary>
             A chunked collection of triangles

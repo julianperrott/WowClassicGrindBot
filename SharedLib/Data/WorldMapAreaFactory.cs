@@ -1,48 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 #nullable enable
 
-namespace PathingAPI
+namespace SharedLib.Data
 {
-    /*
-    public class WorldMapArea
+    public static class WorldMapAreaFactory
     {
-        public int ID { get; set; }
-        public int MapID { get; set; }
-        public int AreaID { get; set; }
-        public string AreaName { get; set; } = string.Empty;
-        public float LocLeft { get; set; }
-        public float LocRight { get; set; }
-        public float LocTop { get; set; }
-        public float LocBottom { get; set; }
-        public int UIMapId { get; set; }
-        public string Continent { get; set; } = string.Empty;
-
-        public float ToWorldX(float value)
-        {
-            return ((LocBottom - LocTop) * value / 100) + LocTop;
-        }
-
-        public float ToWorldY(float value)
-        {
-            return ((LocRight - LocLeft) * value / 100) + LocLeft;
-        }
-
-        public float ToMapX(float value)
-        {
-            return 100-(((value - LocBottom) * 100) / (LocTop- LocBottom));
-        }
-
-        public float ToMapY(float value)
-        {
-            return 100-(((value - LocRight) * 100) / (LocLeft- LocRight));
-        }
-
         public static WorldMapArea CreateV2(string[] values)
         {
             //https://wow.tools/dbc/?dbc=worldmaparea&build=2.0.0.5610#page=1&search=eas
@@ -77,12 +45,12 @@ namespace PathingAPI
             };
         }
 
-        public static List<WorldMapArea> Read(PatherPath.Logger logger, DataConfig dataConfig)
+        public static List<WorldMapArea> Read(ILogger logger, DataConfig dataConfig)
         {
             //CreateWorldMapAreaJson();
 
             var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(Path.Join(dataConfig.WorldToMap, "WorldMapArea.json")));
-            logger.WriteLine("Unsupported mini maps areas: " + string.Join(", ", list.Where(l => l.UIMapId == 0).Select(s => s.AreaName).OrderBy(s => s)));
+            logger.LogInformation("Unsupported mini maps areas: " + string.Join(", ", list.Where(l => l.UIMapId == 0).Select(s => s.AreaName).OrderBy(s => s)));
 
             return list;
         }
@@ -99,9 +67,9 @@ namespace PathingAPI
             return list;
         }
 
-        private static void PopulateUIMap(WorldMapArea area,IEnumerable<string[]> uimapLines)
+        private static void PopulateUIMap(WorldMapArea area, IEnumerable<string[]> uimapLines)
         {
-            var kalidor= uimapLines.Where(s=>s[0]== "Kalimdor").Select(s=>s[1]).FirstOrDefault();
+            var kalidor = uimapLines.Where(s => s[0] == "Kalimdor").Select(s => s[1]).FirstOrDefault();
 
             var matches = uimapLines.Where(s => Matches(area, s))
                 .ToList();
@@ -117,10 +85,10 @@ namespace PathingAPI
             }
 
             matches.ForEach(a =>
-                {
-                    area.UIMapId = int.Parse(a[1]);
-                    area.Continent = a[2] == kalidor ? "Kalimdor" : "Azeroth";
-                });
+            {
+                area.UIMapId = int.Parse(a[1]);
+                area.Continent = a[2] == kalidor ? "Kalimdor" : "Azeroth";
+            });
         }
 
         /// <summary>
@@ -172,6 +140,6 @@ namespace PathingAPI
 
             return maps.First();
         }
+
     }
-    */
 }
