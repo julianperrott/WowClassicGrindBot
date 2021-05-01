@@ -9,26 +9,30 @@ namespace Core.Looting
 {
     public class LootWheel
     {
-        private readonly WowProcess wowProcess;
+        private ILogger logger;
+
+        private readonly WowScreen wowScreen;
+        private readonly WowProcessInput input;
         private readonly PlayerReader playerReader;
         private readonly float num_theta = 32;
         private readonly float radiusLarge;
         private readonly float dtheta;
         private readonly Point centre;
         private readonly bool debug = true;
-        private ILogger logger;
+        
 
         public CursorClassification Classification { get; set; }
 
         private Point lastLootFoundAt;
 
-        public LootWheel(WowProcess wowProcess, PlayerReader playerReader, ILogger logger)
+        public LootWheel(ILogger logger, WowProcessInput input, WowScreen wowScreen, PlayerReader playerReader)
         {
-            this.wowProcess = wowProcess;
-            this.playerReader = playerReader;
             this.logger = logger;
+            this.input = input;
+            this.wowScreen = wowScreen;
+            this.playerReader = playerReader;
 
-            wowProcess.GetWindowRect(out var rect);
+            wowScreen.GetRectangle(out var rect);
 
             centre = new Point(rect.Centre().X, (int)((rect.Bottom / 5) * 3f));
             radiusLarge = rect.Bottom / 6;
@@ -50,7 +54,7 @@ namespace Core.Looting
 
         public async Task<bool> Loot(bool searchForMobs)
         {
-            wowProcess.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
+            input.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
             await Task.Delay(150);
 
             //if (!searchForMobs)
@@ -99,7 +103,7 @@ namespace Core.Looting
                 float y = (float)(circleCentre.Y + (ry * Math.Sin(theta)));
                 var mousePosition = new Point((int)x, (int)y);
 
-                wowProcess.SetCursorPosition(mousePosition);
+                input.SetCursorPosition(mousePosition);
 
                 if (await CheckForLoot(mousePosition, searchForMobs, ignoreMobs))
                 {
@@ -142,7 +146,7 @@ namespace Core.Looting
             if (cls == CursorClassification.Loot && !searchForMobs)
             {
                 Log("Found: " + cls.ToString());
-                await wowProcess.RightClickMouse(mousePosition);
+                await input.RightClickMouse(mousePosition);
                 Classification = cls;
                 await Task.Delay(500);
                 await Wait(2000, inCombat);
@@ -151,7 +155,7 @@ namespace Core.Looting
             if (cls == CursorClassification.Skin && !searchForMobs)
             {
                 Log("Found: " + cls.ToString());
-                await wowProcess.RightClickMouse(mousePosition);
+                await input.RightClickMouse(mousePosition);
                 Classification = cls;
                 await Task.Delay(1000);
                 await Wait(6000, inCombat);
@@ -160,7 +164,7 @@ namespace Core.Looting
             if (cls == CursorClassification.Kill && !ignoreMobs)
             {
                 Log("Found: " + cls.ToString());
-                await wowProcess.RightClickMouse(mousePosition);
+                await input.RightClickMouse(mousePosition);
                 Classification = cls;
             }
 

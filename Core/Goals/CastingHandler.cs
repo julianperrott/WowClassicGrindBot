@@ -9,7 +9,6 @@ namespace Core.Goals
     public class CastingHandler
     {
         private readonly ILogger logger;
-        private readonly WowProcess wowProcess;
         private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
@@ -19,10 +18,9 @@ namespace Core.Goals
         private readonly IPlayerDirection direction;
         private readonly NpcNameFinder npcNameFinder;
 
-        public CastingHandler(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder)
+        public CastingHandler(ILogger logger, ConfigurableInput input, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder)
         {
             this.logger = logger;
-            this.wowProcess = wowProcess;
             this.input = input;
 
             this.playerReader = playerReader;
@@ -174,7 +172,7 @@ namespace Core.Goals
             }
             if (item.StepBackAfterCast > 0)
             {
-                await this.wowProcess.KeyPress(ConsoleKey.DownArrow, item.StepBackAfterCast , $"Step back for {item.StepBackAfterCast}ms");
+                await this.input.KeyPress(ConsoleKey.DownArrow, item.StepBackAfterCast , $"Step back for {item.StepBackAfterCast}ms");
             }
             return true;
         }
@@ -197,7 +195,7 @@ namespace Core.Goals
                 return false;
             }
 
-            await this.wowProcess.KeyPress(desiredFormKey.ConsoleKey, 325);
+            await this.input.KeyPress(desiredFormKey.ConsoleKey, 325);
 
             return this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum;
         }
@@ -217,7 +215,7 @@ namespace Core.Goals
                 }
             }
 
-            await wowProcess.KeyPress(key, duration, description);
+            await input.KeyPress(key, duration, description);
 
             lastKeyPressed = key;
         }

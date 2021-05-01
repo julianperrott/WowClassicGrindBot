@@ -136,6 +136,7 @@ else
 
     private WowProcess? wowProcess;
     private WowScreen? wowScreen;
+    private WowProcessInput? WowProcessInput;
 
     private bool saved = false;
     private string playerClass = "";
@@ -152,8 +153,9 @@ else
     {
         if (config == null)
         {
-            wowProcess = new WowProcess(logger);
-            wowScreen = new WowScreen(wowProcess, logger);
+            wowProcess = new WowProcess();
+            wowScreen = new WowScreen(logger, wowProcess);
+            WowProcessInput = new WowProcessInput(logger, wowProcess);
             config = new DataFrameConfiguration(wowScreen);
             dataConfig = DataConfig.Load();
 
@@ -185,7 +187,7 @@ else
         var screenshot = wowScreen?.GetBitmap(5, 5);
         if (screenshot == null) return DataFrameMeta.Empty;
 
-        var meta = config.GetMeta(screenshot);
+        var meta = DataFrameConfiguration.GetMeta(screenshot);
         return meta;
     }
 
@@ -239,18 +241,18 @@ else
 
                                 if (dataFrameMeta == DataFrameMeta.Empty)
                                 {
-                                    dataFrameMeta = config.GetMeta(screenshot);
+                                    dataFrameMeta = DataFrameConfiguration.GetMeta(screenshot);
                                 }
 
                                 //if(dataFrames.Count == 0)
                                 if (dataFrames.Count != dataFrameMeta.frames)
                                 {
-                                    dataFrames = config.CreateFrames(dataFrameMeta, screenshot);
+                                    dataFrames = DataFrameConfiguration.CreateFrames(dataFrameMeta, screenshot);
                                 }
 
                                 if (dataFrames.Count == dataFrameMeta.frames)
                                 {
-                                    addonReader = new AddonReader(dataConfig, new WowScreen(wowProcess, logger), dataFrames, logger, areaDb);
+                                    addonReader = new AddonReader(logger, dataConfig, wowScreen, dataFrames, areaDb);
                                 }
 
                                 if (addonReader != null) // && dataFrames.Count != dataFrameMeta.frames
@@ -285,7 +287,7 @@ else
 
     private async Task Configure()
     {
-        if (wowProcess == null) return;
+        if (wowScreen == null) return;
         if (config == null) return;
 
         var version = addonConfigurator?.GetInstalledVersion();
@@ -296,7 +298,7 @@ else
             return;
         }
 
-        wowProcess.GetWindowRect(out var rect);
+        wowScreen.GetRectangle(out var rect);
 
         DataFrameConfiguration.SaveConfiguration(rect, version, dataFrameMeta, dataFrames);
         saved = true;
@@ -313,7 +315,6 @@ else
 
     private async Task AutoConfigure()
     {
-        if (wowProcess == null) return;
         if (config == null) return;
 
         var version = addonConfigurator?.GetInstalledVersion();
@@ -332,7 +333,7 @@ else
         var screenshot = wowScreen?.GetBitmap(size.Width, size.Height);
         if (screenshot == null) return;
 
-        var dataFrames = config.CreateFrames(meta, screenshot);
+        var dataFrames = DataFrameConfiguration.CreateFrames(meta, screenshot);
 
         if (dataFrames.Count != meta.frames)
         {
@@ -350,7 +351,8 @@ else
 
         await Wait();
 
-        wowProcess.GetWindowRect(out var rect);
+        if (wowScreen == null) return;
+        wowScreen.GetRectangle(out var rect);
         DataFrameConfiguration.SaveConfiguration(rect, version, meta, dataFrames);
         saved = true;
 
@@ -366,14 +368,14 @@ else
 
     private async Task ToggleInGameConfiguration()
     {
-        if (wowProcess != null)
+        if (WowProcessInput != null)
         {
-            wowProcess.SetForegroundWindow();
-            await wowProcess.KeyPress(ConsoleKey.Enter, 200);
-            wowProcess.SetForegroundWindow();
-            await wowProcess.SendText("/" + addonConfig?.Command);
-            wowProcess.SetForegroundWindow();
-            await wowProcess.KeyPress(ConsoleKey.Enter, 200);
+            WowProcessInput.SetForegroundWindow();
+            await WowProcessInput.KeyPress(ConsoleKey.Enter, 200);
+            WowProcessInput.SetForegroundWindow();
+            await WowProcessInput.SendText("/" + addonConfig?.Command);
+            WowProcessInput.SetForegroundWindow();
+            await WowProcessInput.KeyPress(ConsoleKey.Enter, 200);
         }
     }
 

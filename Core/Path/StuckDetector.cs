@@ -10,7 +10,6 @@ namespace Core
     public class StuckDetector
     {
         private readonly ILogger logger;
-        private readonly WowProcess wowProcess;
         private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
@@ -27,10 +26,9 @@ namespace Core
         private double previousDistanceToTarget = 99999;
         private DateTime timeOfLastSignificantMovement = DateTime.Now;
 
-        public StuckDetector(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving)
+        public StuckDetector(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving)
         {
             this.logger = logger;
-            this.wowProcess = wowProcess;
             this.input = input;
 
             this.playerReader = playerReader;
@@ -99,10 +97,10 @@ namespace Core
                 {
                     // back up a bit, added "remove" move forward
                     logger.LogInformation($"Trying to unstick by backing up for {actionDuration}ms");
-                    wowProcess.SetKeyState(ConsoleKey.DownArrow, true, false, "StuckDetector_back_up");
-					wowProcess.SetKeyState(ConsoleKey.UpArrow, false, false, "StuckDetector");
+                    input.SetKeyState(ConsoleKey.DownArrow, true, false, "StuckDetector_back_up");
+                    input.SetKeyState(ConsoleKey.UpArrow, false, false, "StuckDetector");
                     await Task.Delay(actionDuration);
-                    wowProcess.SetKeyState(ConsoleKey.DownArrow, false, false, "StuckDetector");
+                    input.SetKeyState(ConsoleKey.DownArrow, false, false, "StuckDetector");
                 }
                 this.stopMoving?.Stop();
 
@@ -111,14 +109,14 @@ namespace Core
                 var key = r == 0 ? ConsoleKey.A : ConsoleKey.D;
                 var turnDuration = random.Next(0, 800) + 200;
                 logger.LogInformation($"Trying to unstick by turning for {turnDuration}ms");
-                wowProcess.SetKeyState(key, true, false, "StuckDetector");
+                input.SetKeyState(key, true, false, "StuckDetector");
                 await Task.Delay(turnDuration);
-                wowProcess.SetKeyState(key, false, false, "StuckDetector");
+                input.SetKeyState(key, false, false, "StuckDetector");
 
                 // Move forward
                 var strafeDuration = random.Next(0, 2000) + actionDurationSeconds;
                 logger.LogInformation($"Trying to unstick by moving forward after turning for {strafeDuration}ms");
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "StuckDetector");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "StuckDetector");
                 await Task.Delay(strafeDuration);
 
                 await input.TapJump();

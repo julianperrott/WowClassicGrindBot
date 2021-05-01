@@ -4,108 +4,106 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    public class ConfigurableInput
+    public class ConfigurableInput : WowProcessInput
     {
         private readonly ILogger logger;
-        private readonly WowProcess wowProcess;
         private readonly ClassConfiguration classConfig;
 
         private const int defaultKeyPress = 50;
 
         private bool debug = false;
 
-        public ConfigurableInput(ILogger logger, WowProcess wowProcess, ClassConfiguration classConfiguration)
+        public ConfigurableInput(ILogger logger, WowProcess wowProcess, ClassConfiguration classConfiguration) : base(logger, wowProcess)
         {
             this.logger = logger;
-            this.wowProcess = wowProcess;
             this.classConfig = classConfiguration;
         }
 
         public async Task TapStopKey(string desc = "")
         {
             Log($"TapStopKey: {desc}");
-            await wowProcess.KeyPress(ConsoleKey.UpArrow, defaultKeyPress);
+            await KeyPress(ConsoleKey.UpArrow, defaultKeyPress);
         }
 
         public async Task TapInteractKey(string source)
         {
             Log($"TapInteract ({source})");
-            await wowProcess.KeyPress(classConfig.Interact.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.Interact.ConsoleKey, defaultKeyPress);
             this.classConfig.Interact.SetClicked();
         }
 
         public async Task TapLastTargetKey(string source)
         {
             Log($"TapLastTarget ({source})");
-            await wowProcess.KeyPress(classConfig.TargetLastTarget.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.TargetLastTarget.ConsoleKey, defaultKeyPress);
             this.classConfig.TargetLastTarget.SetClicked();
         }
 
         public async Task TapStandUpKey(string desc = "")
         {
             Log($"TapStandUpKey: {desc}");
-            await wowProcess.KeyPress(classConfig.StandUp.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.StandUp.ConsoleKey, defaultKeyPress);
             this.classConfig.StandUp.SetClicked();
         }
 
         public async Task TapClearTarget(string desc = "")
         {
             Log($"TapClearTarget: {desc}");
-            await wowProcess.KeyPress(classConfig.ClearTarget.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.ClearTarget.ConsoleKey, defaultKeyPress);
             this.classConfig.ClearTarget.SetClicked();
         }
 
         public async Task TapStopAttack(string desc = "")
         {
             Log($"TapStopAttack: {desc}");
-            await wowProcess.KeyPress(classConfig.StopAttack.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.StopAttack.ConsoleKey, defaultKeyPress);
             this.classConfig.StopAttack.SetClicked();
         }
 
         public async Task TapNearestTarget(string desc = "")
         {
             Log($"TapNearestTarget: {desc}");
-            await wowProcess.KeyPress(classConfig.TargetNearestTarget.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.TargetNearestTarget.ConsoleKey, defaultKeyPress);
             this.classConfig.TargetNearestTarget.SetClicked();
         }
 
         public async Task TapTargetPet(string desc = "")
         {
             Log($"TapTargetPet: {desc}");
-            await wowProcess.KeyPress(classConfig.TargetPet.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.TargetPet.ConsoleKey, defaultKeyPress);
             this.classConfig.TargetPet.SetClicked();
         }
 
         public async Task TapTargetOfTarget(string desc = "")
         {
             Log($"TapTargetsTarget: {desc}");
-            await wowProcess.KeyPress(classConfig.TargetTargetOfTarget.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.TargetTargetOfTarget.ConsoleKey, defaultKeyPress);
             this.classConfig.TargetTargetOfTarget.SetClicked();
         }
 
         public async Task TapJump(string desc = "")
         {
             Log($"TapJump: {desc}");
-            await wowProcess.KeyPress(classConfig.Jump.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.Jump.ConsoleKey, defaultKeyPress);
             this.classConfig.Jump.SetClicked();
         }
 
         public async Task TapPetAttack(string source = "")
         {
             Log($"TapPetAttack ({source})");
-            await wowProcess.KeyPress(classConfig.PetAttack.ConsoleKey, defaultKeyPress);
+            await KeyPress(classConfig.PetAttack.ConsoleKey, defaultKeyPress);
             this.classConfig.PetAttack.SetClicked();
         }
 
         public async Task Hearthstone()
         {
             // hearth macro = /use hearthstone
-            await wowProcess.KeyPress(ConsoleKey.I, defaultKeyPress);
+            await KeyPress(ConsoleKey.I, defaultKeyPress);
         }
 
         public async Task Mount(PlayerReader playerReader)
         {
-            await wowProcess.KeyPress(ConsoleKey.O, defaultKeyPress);
+            await KeyPress(ConsoleKey.O, defaultKeyPress);
 
             for (int i = 0; i < 40; i++)
             {
@@ -117,7 +115,7 @@ namespace Core
 
         public async Task Dismount()
         {
-            await wowProcess.KeyPress(ConsoleKey.O, defaultKeyPress);
+            await KeyPress(ConsoleKey.O, defaultKeyPress);
             await Task.Delay(1500);
         }
 

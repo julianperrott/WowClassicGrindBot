@@ -7,7 +7,7 @@ namespace Core
     public class PlayerDirection : IPlayerDirection
     {
         private readonly ILogger logger;
-        private readonly WowProcess wowProcess;
+        private readonly WowProcessInput input;
         private readonly PlayerReader playerReader;
 
         public DateTime LastSetDirection { get; private set; } = DateTime.Now.AddDays(-1);
@@ -18,10 +18,10 @@ namespace Core
 
         private bool debug = false;
 
-        public PlayerDirection(ILogger logger, WowProcess wowProcess, PlayerReader playerReader)
+        public PlayerDirection(ILogger logger, WowProcessInput input, PlayerReader playerReader)
         {
             this.logger = logger;
-            this.wowProcess = wowProcess;
+            this.input = input;
             this.playerReader = playerReader;
         }
 
@@ -56,7 +56,7 @@ namespace Core
 
         private void TurnUsingTimedPress(double desiredDirection, ConsoleKey key)
         {
-            wowProcess.KeyPressSleep(key, TurnDuration(desiredDirection), "TurnUsingTimedPress");
+            input.KeyPressSleep(key, TurnDuration(desiredDirection), "TurnUsingTimedPress");
         }
 
         public double TurnAmount(double desiredDirection)
@@ -75,7 +75,7 @@ namespace Core
         private async Task TurnAndReadActualDirection(double desiredDirection, ConsoleKey key)
         {
             // Press Right
-            wowProcess.SetKeyState(key, true, true, "PlayerDirection");
+            input.SetKeyState(key, true, true, "PlayerDirection");
 
             var startTime = DateTime.Now;
 
@@ -94,7 +94,7 @@ namespace Core
                 if (closeEnoughToDesiredDirection)
                 {
                     Log("Close enough, stopping turn");
-                    wowProcess.SetKeyState(key, false, true, "PlayerDirection");
+                    input.SetKeyState(key, false, true, "PlayerDirection");
                     break;
                 }
 
@@ -102,7 +102,7 @@ namespace Core
                 if (goingTheWrongWay)
                 {
                     Log("GOING THE WRONG WAY! Stop turn");
-                    wowProcess.SetKeyState(key, false, true, "PlayerDirection");
+                    input.SetKeyState(key, false, true, "PlayerDirection");
                     break;
                 }
             }

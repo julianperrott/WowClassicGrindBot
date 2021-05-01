@@ -6,16 +6,16 @@ namespace Core.Goals
 {
     public class StopMoving
     {
-        private readonly WowProcess wowProcess;
+        private readonly WowProcessInput input;
         private readonly PlayerReader playerReader;
 
         private double XCoord = 0;
         private double YCoord = 0;
         private double Direction = 0;
 
-        public StopMoving(WowProcess wowProcess, PlayerReader playerReader)
+        public StopMoving(WowProcessInput input, PlayerReader playerReader)
         {
-            this.wowProcess = wowProcess;
+            this.input = input;
             this.playerReader = playerReader;
         }
 
@@ -23,15 +23,15 @@ namespace Core.Goals
         {
             if (XCoord != playerReader.XCoord || YCoord != playerReader.YCoord)
             {
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, false, false, "StopMoving");
+                input.SetKeyState(ConsoleKey.UpArrow, false, false, "StopMoving");
                 await Task.Delay(1);
             }
 
             if (Direction != playerReader.Direction)
             {
-                wowProcess.SetKeyState(ConsoleKey.LeftArrow, false, false, "StopMoving");
+                input.SetKeyState(ConsoleKey.LeftArrow, false, false, "StopMoving");
                 await Task.Delay(1);
-                wowProcess.SetKeyState(ConsoleKey.RightArrow, false, false, "StopMoving");
+                input.SetKeyState(ConsoleKey.RightArrow, false, false, "StopMoving");
                 await Task.Delay(1);
             }
 

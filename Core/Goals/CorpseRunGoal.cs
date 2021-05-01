@@ -10,7 +10,7 @@ namespace Core.Goals
     public partial class CorpseRunGoal : GoapGoal
     {
         private double RADIAN = Math.PI * 2;
-        private WowProcess wowProcess;
+        private ConfigurableInput input;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
@@ -23,10 +23,10 @@ namespace Core.Goals
         private ILogger logger;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
-        public CorpseRunGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
+        public CorpseRunGoal(PlayerReader playerReader, ConfigurableInput input, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
         {
             this.playerReader = playerReader;
-            this.wowProcess = wowProcess;
+            this.input = input;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.spiritWalkerPath = spiritWalker.ToList();
@@ -80,7 +80,7 @@ namespace Core.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpseAction");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpseAction");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {

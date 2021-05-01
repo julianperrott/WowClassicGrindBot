@@ -69,8 +69,7 @@ namespace SharedLib
             {
                 resized.Save(ms, ImageFormat.Jpeg);
                 resized.Dispose();
-                byte[] byteImage = ms.ToArray();
-                return Convert.ToBase64String(byteImage); // Get Base64
+                return Convert.ToBase64String(ms.ToArray()); // Get Base64
             }
         }
 

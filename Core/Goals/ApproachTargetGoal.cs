@@ -11,7 +11,6 @@ namespace Core.Goals
         public override float CostOfPerformingAction { get => 8f; }
 
         private ILogger logger;
-        private readonly WowProcess wowProcess;
         private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
@@ -38,10 +37,9 @@ namespace Core.Goals
             }
         }
 
-        public ApproachTargetGoal(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, StopMoving stopMoving,  StuckDetector stuckDetector)
+        public ApproachTargetGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, StopMoving stopMoving,  StuckDetector stuckDetector)
         {
             this.logger = logger;
-            this.wowProcess = wowProcess;
             this.input = input;
 
             this.playerReader = playerReader;
@@ -103,7 +101,7 @@ namespace Core.Goals
             if ((location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5) ||
                 this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "ApproachTargetAction");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "ApproachTargetAction");
                 await Wait(100, () => false);
                 await input.TapJump();
                 this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;

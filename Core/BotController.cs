@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Core.Utils;
 using Core.Database;
+using SharedLib;
 
 namespace Core
 {
@@ -35,6 +36,8 @@ namespace Core
         private GoalThread? actionThread;
 
         public WowScreen WowScreen { get; set; }
+        public WowProcessInput WowProcessInput { get; set; }
+
         public ConfigurableInput? ConfigurableInput { get; set; }
 
         private NpcNameFinder npcNameFinder;
@@ -61,12 +64,13 @@ namespace Core
             this.areaDb = new AreaDB(logger, dataConfig);
 
             updatePlayerPostion.Start();
-            wowProcess = new WowProcess(logger);
-            WowScreen = new WowScreen(wowProcess, logger);
+            wowProcess = new WowProcess();
+            WowScreen = new WowScreen(logger, wowProcess);
+            WowProcessInput = new WowProcessInput(logger, wowProcess);
 
             var frames = DataFrameConfiguration.LoadFrames();
 
-            AddonReader = new AddonReader(DataConfig, WowScreen, frames, logger, areaDb);
+            AddonReader = new AddonReader(logger, DataConfig, WowScreen, frames, areaDb);
 
             minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
@@ -89,7 +93,9 @@ namespace Core
 
             logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerClass}.");
 
-            npcNameFinder = new NpcNameFinder(logger, wowProcess, wowProcess);
+            npcNameFinder = new NpcNameFinder(logger, WowScreen, WowProcessInput);
+            WowScreen.AddDrawAction(npcNameFinder.ShowNames);
+
             //ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
 
             screenshotThread = new Thread(ScreenshotRefreshThread);
@@ -114,7 +120,13 @@ namespace Core
             var nodeFound = false;
             while (this.Enabled)
             {
-                this.WowScreen.DoScreenshot(this.npcNameFinder);
+                //this.WowScreen.DoScreenshot(this.npcNameFinder);
+
+                if(this.WowScreen.UpdateScreenshot())
+                {
+                    this.npcNameFinder.Update();
+                    this.WowScreen.PostProcess();
+                }
 
                 if (ClassConfig != null && this.ClassConfig.Mode == Mode.AttendedGather)
                 {
@@ -175,7 +187,7 @@ namespace Core
                 }
             }
 
-            await new StopMoving(wowProcess, AddonReader.PlayerReader).Stop();
+            await new StopMoving(WowProcessInput, AddonReader.PlayerReader).Stop();
             logger.LogInformation("Stopped!");
         }
 
@@ -198,12 +210,12 @@ namespace Core
 
         private void Initialize(ClassConfiguration config)
         {
-            ActionBarPopulator = new ActionBarPopulator(logger, wowProcess, config, AddonReader);
             ConfigurableInput = new ConfigurableInput(logger, wowProcess, config);
+            ActionBarPopulator = new ActionBarPopulator(logger, wowProcess, ConfigurableInput, config, AddonReader);
 
             var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.Blacklist, logger);
 
-            var actionFactory = new GoalFactory(logger, AddonReader, wowProcess, ConfigurableInput, DataConfig, npcNameFinder, pather);
+            var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, pather);
             var availableActions = actionFactory.CreateGoals(config, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
@@ -251,7 +263,14 @@ namespace Core
 
         public void Dispose()
         {
-            npcNameFinder.Dispose();
+            //npcNameFinder.Dispose();
+            WowScreen.Dispose();
+            /*
+            if (screen != null)
+            {
+                screen?.Dispose();
+            }
+            */
         }
 
         public void StopBot()

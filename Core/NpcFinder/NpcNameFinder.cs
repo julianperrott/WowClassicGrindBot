@@ -11,7 +11,7 @@ using SharedLib;
 
 namespace Core
 {
-    public sealed class NpcNameFinder : IDisposable
+    public class NpcNameFinder
     {
         public enum NPCType
         {
@@ -24,7 +24,6 @@ namespace Core
 
         private NPCType _NPCType = NPCType.Enemy;
 
-        private const int tick = 150;
         private bool ColorMatch(Color pixel)
         {
             switch(_NPCType)
@@ -48,9 +47,8 @@ namespace Core
         private List<List<LineOfNpcName>> npcs { get; set; } = new List<List<LineOfNpcName>>();
 
         private readonly ILogger logger;
-        private readonly IRectProvider rectProvider;
+        private readonly IDirectBitmapProvider bitmapProvider;
         private readonly IMouseInput mouseInput;
-        private DirectBitmap screen;
 
         private float scaleToRefWidth = 1;
         private float scaleToRefHeight = 1;
@@ -58,38 +56,16 @@ namespace Core
         private readonly List<Point> locFindAndClickNpc;
         private readonly List<Point> locFindByCursorType;
 
-        public DirectBitmap Screenshot
-        {
-            get
-            {
-                return screen;
-            }
-            set
-            {
-                if (screen != null)
-                {
-                    screen.Dispose();
-                }
-                screen = value;
-
-                scaleToRefWidth = ScaleWidth(1);
-                scaleToRefHeight = ScaleHeight(1);
-            }
-        }
-
-        private List<NpcPosition> Npcs { get; set; } = new List<NpcPosition>();
+        public List<NpcPosition> Npcs { get; private set; } = new List<NpcPosition>();
         public int NpcCount => npcs.Count;
 
         public int Sequence { get; private set; } = 0;
 
-        private DateTime lastNpcFind = DateTime.Now.AddMilliseconds(-tick);
-
-        public NpcNameFinder(ILogger logger, IRectProvider rectProvider, IMouseInput mouseInput)
+        public NpcNameFinder(ILogger logger, IDirectBitmapProvider bitmapProvider, IMouseInput mouseInput)
         {
             this.logger = logger;
-            this.rectProvider = rectProvider;
             this.mouseInput = mouseInput;
-            this.screen = new DirectBitmap();
+            this.bitmapProvider = bitmapProvider;
 
             locFindAndClickNpc = new List<Point>
             {
@@ -115,13 +91,13 @@ namespace Core
         private float ScaleWidth(int value)
         {
             const float refWidth = 1920;
-            return value * (screen.Width / refWidth);
+            return value * (bitmapProvider.DirectBitmap.Width / refWidth);
         }
 
         private float ScaleHeight(int value)
         {
             const float refHeight = 1080;
-            return value * (screen.Height/ refHeight);
+            return value * (bitmapProvider.DirectBitmap.Height/ refHeight);
         }
 
         public void ChangeNpcType(NPCType type)
@@ -129,7 +105,6 @@ namespace Core
             if(_NPCType != type)
             {
                 _NPCType = type;
-                lastNpcFind = DateTime.Now.AddMilliseconds(-200);
             }
         }
 
@@ -142,7 +117,7 @@ namespace Core
                 {
                     foreach (var location in locFindAndClickNpc)
                     {
-                        var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
+                        var clickPostion = bitmapProvider.DirectBitmap.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                         mouseInput.SetCursorPosition(clickPostion);
                         await Task.Delay(100);
                         CursorClassifier.Classify(out var cls).Dispose();
@@ -175,7 +150,7 @@ namespace Core
             {
                 foreach (var location in locFindByCursorType)
                 {
-                    var clickPostion = Screenshot.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
+                    var clickPostion = bitmapProvider.DirectBitmap.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                     mouseInput.SetCursorPosition(clickPostion);
                     await Task.Delay(75);
                     CursorClassifier.Classify(out var cls).Dispose();
@@ -199,26 +174,27 @@ namespace Core
             logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}");
         }
 
-        public List<NpcPosition> RefreshNpcPositions()
+        public void Update()
         {
-            if ((DateTime.Now - lastNpcFind).TotalMilliseconds > tick) //150
-            {
-                UpdateScreenshot();
+            scaleToRefWidth = ScaleWidth(1);
+            scaleToRefHeight = ScaleHeight(1);
 
-                PopulateLinesOfNpcNames();
-                DetermineNpcs();
+            RefreshNpcPositions();
+        }
 
-                Npcs = npcs.OrderByDescending(npc => npc.Count)
-                    .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)), new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), Screenshot.Width))
-                    .Where(s => s.Width < ScaleWidth(250)) // 150 - fine // 200 - fine // 250 fine
-                    .ToList();
+        public void RefreshNpcPositions()
+        {
+            PopulateLinesOfNpcNames();
+            DetermineNpcs();
 
-                lastNpcFind = DateTime.Now;
-                Sequence++;
-            }
+            Npcs = npcs.OrderByDescending(npc => npc.Count)
+                .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)), new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), bitmapProvider.DirectBitmap.Width))
+                .Where(s => s.Width < ScaleWidth(250)) // 150 - fine // 200 - fine // 250 fine
+                .ToList();
+
+            Sequence++;
 
             UpdatePotentialAddsExist();
-            return Npcs;
         }
 
         public bool MobsVisible { get; private set; }
@@ -291,13 +267,13 @@ namespace Core
             float minEndLength = minLength - lengthDiff; // original 18
 
             bool isEndOfSection;
-            for (int y = (int)ScaleHeight(30); y < Screenshot.Height / 2; y++)
+            for (int y = (int)ScaleHeight(30); y < bitmapProvider.DirectBitmap.Height / 2; y++)
             {
                 var lengthStart = -1;
                 var lengthEnd = -1;
-                for (int x = 0; x < Screenshot.Width; x++)
+                for (int x = 0; x < bitmapProvider.DirectBitmap.Width; x++)
                 {
-                    var pixel = Screenshot.GetPixel(x, y);
+                    var pixel = bitmapProvider.DirectBitmap.GetPixel(x, y);
                     var isTargetColor = ColorMatch(pixel);
 
                     if (isTargetColor)
@@ -331,27 +307,23 @@ namespace Core
             }
         }
 
-        private void UpdateScreenshot()
-        {
-            rectProvider.GetWindowRect(out var rect);
-            Screenshot = new DirectBitmap(rect);
-            Screenshot.CaptureScreen();
-        }
-
         public async Task WaitForNUpdate(int n)
         {
             var s = this.Sequence;
             while (this.Sequence <= s + n)
             {
-                await Task.Delay(tick);
+                await Task.Delay(25);
             }
         }
 
-        public void Dispose()
+        public void ShowNames(Graphics gr)
         {
-            if (screen != null)
+            if (Npcs.Count > 0)
             {
-                screen.Dispose();
+                using (var whitePen = new Pen(Color.White, 3))
+                {
+                    Npcs.ForEach(n => gr.DrawRectangle(whitePen, new Rectangle(n.Min, new Size(n.Width, n.Height))));
+                }
             }
         }
     }

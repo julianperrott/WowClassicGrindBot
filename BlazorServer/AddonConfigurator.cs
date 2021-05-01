@@ -30,7 +30,7 @@ namespace BlazorServer
             this.logger = logger;
             this.addonConfig = addonConfig;
 
-            this.wowProcess = new WowProcess(logger);
+            this.wowProcess = new WowProcess();
         }
 
         public bool Installed()

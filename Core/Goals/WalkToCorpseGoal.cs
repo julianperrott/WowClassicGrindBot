@@ -13,7 +13,6 @@ namespace Core.Goals
         public override float CostOfPerformingAction { get => 1f; }
 
         private readonly ILogger logger;
-        private readonly WowProcess wowProcess;
         private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
@@ -52,10 +51,9 @@ namespace Core.Goals
             return points.Count == 0 ? null : points.Peek();
         }
 
-        public WalkToCorpseGoal(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather)
+        public WalkToCorpseGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather)
         {
             this.logger = logger;
-            this.wowProcess = wowProcess;
             this.input = input;
 
             this.playerReader = playerReader;
@@ -134,7 +132,7 @@ namespace Core.Goals
                     heading = DirectionCalculator.CalculateHeading(location, corpseLocation);
                     this.logger.LogInformation("no more points, heading to corpse");
                     await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
-                    wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpse");
+                    input.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpse");
                     this.stuckDetector.SetTargetLocation(points.Peek());
                 }
             }
@@ -151,7 +149,7 @@ namespace Core.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpseAction");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpseAction");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
@@ -315,7 +313,7 @@ namespace Core.Goals
                 this.stuckDetector.SetTargetLocation(points.Peek());
                 var heading = DirectionCalculator.CalculateHeading(this.playerReader.PlayerLocation, points.Peek());
                 await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpse");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpse");
                 this.stuckDetector.SetTargetLocation(points.Peek());
                 this.LastActive = DateTime.Now;
             }

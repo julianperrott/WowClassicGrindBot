@@ -101,11 +101,18 @@ namespace Core
             }
         }
 
+        public static void GetPosition(IntPtr hWnd, out Point point)
+        {
+            var p = new POINT();
+            ClientToScreen(hWnd, ref p);
+            point = new Point(p.x, p.y);
+        }
+
         public static void GetWindowRect(IntPtr hWnd, out Rectangle rect)
         {
             GetNativeClientRect(hWnd, out rect);
 
-            POINT topLeft = new POINT();
+            var topLeft = new POINT();
             ClientToScreen(hWnd, ref topLeft);
             if (IsWindowedMode(topLeft))
             {

@@ -4,6 +4,7 @@ namespace Core
 {
     public interface IRectProvider
     {
-        void GetWindowRect(out Rectangle rect);
+        void GetPosition(out Point point);
+        void GetRectangle(out Rectangle rect);
     }
 }

@@ -12,7 +12,6 @@ namespace Core.Goals
         private double RADIAN = Math.PI * 2;
 
         private readonly ILogger logger;
-        private readonly WowProcess wowProcess;
         private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
@@ -42,10 +41,9 @@ namespace Core.Goals
         
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
+        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
         {
             this.logger = logger;
-            this.wowProcess = wowProcess;
             this.input = input;
             this.playerReader = playerReader;
             this.playerDirection = playerDirection;
@@ -100,7 +98,7 @@ namespace Core.Goals
             }
             else
             {
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 1");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 1");
             }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
@@ -116,7 +114,7 @@ namespace Core.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 2");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 2");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
@@ -224,7 +222,7 @@ namespace Core.Goals
                 var heading = DirectionCalculator.CalculateHeading(playerReader.PlayerLocation, target);
                 await playerDirection.SetDirection(heading, this.StartOfPathToNPC(), "Correcting direction", 0);
 
-                await this.wowProcess.KeyPress(ConsoleKey.UpArrow, pressDuration);
+                await this.input.KeyPress(ConsoleKey.UpArrow, pressDuration);
                 await this.stopMoving.Stop();
                 distance = WowPoint.DistanceTo(playerReader.PlayerLocation, target);
             }
@@ -249,10 +247,10 @@ namespace Core.Goals
                     this.classConfiguration.ShapeshiftForm
                       .Where(s => s.ShapeShiftFormEnum == ShapeshiftForm.Druid_Travel)
                       .ToList()
-                      .ForEach(async k => await this.wowProcess.KeyPress(k.ConsoleKey, 325));
+                      .ForEach(async k => await this.input.KeyPress(k.ConsoleKey, 325));
                 }
 
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 3");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 3");
             }
         }
 
@@ -369,7 +367,7 @@ namespace Core.Goals
             for (int i = 0; i < 5; i++)
             {
                 // Macro runs: targets NPC and does action such as sell
-                await this.wowProcess.KeyPress(key.ConsoleKey, 100);
+                await this.input.KeyPress(key.ConsoleKey, 100);
 
                 // Interact with NPC
                 if (!string.IsNullOrEmpty(this.playerReader.Target))
@@ -386,7 +384,7 @@ namespace Core.Goals
                 }
 
                 System.Threading.Thread.Sleep(2000);
-                await this.wowProcess.KeyPress(ConsoleKey.Escape, 100);
+                await this.input.KeyPress(ConsoleKey.Escape, 100);
             }
 
             if(CheckIfActionCanRun())

@@ -8,7 +8,7 @@ namespace Core.Goals
     public class WrongZoneGoal : GoapGoal
     {
         private double RADIAN = Math.PI * 2;
-        private WowProcess wowProcess;
+        private ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
@@ -18,10 +18,10 @@ namespace Core.Goals
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private ILogger logger;
 
-        public WrongZoneGoal(PlayerReader playerReader, WowProcess wowProcess, IPlayerDirection playerDirection, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public WrongZoneGoal(PlayerReader playerReader, ConfigurableInput input, IPlayerDirection playerDirection, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.playerReader = playerReader;
-            this.wowProcess = wowProcess;
+            this.input = input;
             this.playerDirection = playerDirection;
             this.logger = logger;
             this.stuckDetector = stuckDetector;
@@ -43,7 +43,7 @@ namespace Core.Goals
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
             await Task.Delay(200);
-            wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 5");
+            input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 5");
 
             if (this.playerReader.PlayerBitValues.PlayerInCombat) { return; }
 
@@ -63,7 +63,7 @@ namespace Core.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 6");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 6");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {

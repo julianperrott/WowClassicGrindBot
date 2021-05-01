@@ -50,8 +50,9 @@ namespace BlazorServer
             var logger = new SerilogLoggerProvider(Log.Logger).CreateLogger(nameof(Program));
             services.AddSingleton(logger);
 
-            var wowProcess = new WowProcess(logger);
-            wowProcess.GetWindowRect(out var rect);
+            var wowProcess = new WowProcess();
+            var wowScreen = new WowScreen(logger, wowProcess);
+            wowScreen.GetRectangle(out var rect);
 
             var addonConfig = AddonConfig.Load();
             var addonConfigurator = new AddonConfigurator(logger, addonConfig);

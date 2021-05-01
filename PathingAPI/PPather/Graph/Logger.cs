@@ -8,9 +8,10 @@ namespace PatherPath
         private readonly string _name = "Logger";
         private readonly LoggerConfig _config;
 
-        public Logger(LoggerConfig loggerConfig)
+        public Logger()
         {
-            _config = loggerConfig;
+            //_config = loggerConfig;
+            _config = new LoggerConfig();
         }
 
         private Action<string> onWrite;
@@ -18,6 +19,7 @@ namespace PatherPath
         public Logger(Action<string> action)
         {
             this.onWrite = action;
+            _config = new LoggerConfig();
         }
 
         public void WriteLine(string message)

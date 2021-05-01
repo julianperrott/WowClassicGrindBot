@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using SharedLib;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -9,22 +11,59 @@ using System.Threading;
 
 namespace Core
 {
-    public class WowScreen : IColorReader
+    public sealed class WowScreen : IColorReader, IRectProvider, IDirectBitmapProvider, IDisposable
     {
         private readonly ILogger logger;
+        private readonly WowProcess wowProcess;
+        private readonly DirectBitmapCapturer capturer;
 
         public delegate void ScreenChangeEventHandler(object sender, ScreenChangeEventArgs args);
-
         public event ScreenChangeEventHandler? OnScreenChanged;
 
-        private WowProcess wowProcess;
+        private List<Action<Graphics>> drawActions = new List<Action<Graphics>>();
 
         public int Size { get; set; } = 1024;
 
-        public WowScreen(WowProcess wowProcess, ILogger logger)
+        private const int tick = 150;
+        private DateTime lastScreenshot = default;
+
+        public DirectBitmap DirectBitmap
+        {
+            get
+            {
+                return capturer.DirectBitmap;
+            }
+        }
+
+        public WowScreen(ILogger logger, WowProcess wowProcess)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
+
+            GetRectangle(out var rect);
+            this.capturer = new DirectBitmapCapturer(rect);
+        }
+
+        public void ForceScreenshot()
+        {
+            lastScreenshot = default;
+        }
+
+        public bool UpdateScreenshot()
+        {
+            if ((DateTime.Now - lastScreenshot).TotalMilliseconds > tick)
+            {
+                GetRectangle(out var rect);
+                capturer.Capture(rect);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void GetPosition(out Point point)
+        {
+            NativeMethods.GetPosition(wowProcess.WarcraftProcess.MainWindowHandle, out point);
         }
 
         public void GetRectangle(out Rectangle rect)
@@ -32,10 +71,11 @@ namespace Core
             NativeMethods.GetWindowRect(wowProcess.WarcraftProcess.MainWindowHandle, out rect);
         }
 
+
         public Bitmap GetBitmap(int width, int height)
         {
             var bmpScreen = new Bitmap(width, height);
-            NativeMethods.GetWindowRect(wowProcess.WarcraftProcess.MainWindowHandle, out var rect);
+            GetRectangle(out var rect);
 
             using (var graphics = Graphics.FromImage(bmpScreen))
             {
@@ -44,41 +84,35 @@ namespace Core
             return bmpScreen;
         }
 
-        public Color GetColorAt(Point point, Bitmap bmp)
+        public Color GetColorAt(Point point)
         {
-            var color = bmp.GetPixel(point.X, point.Y);
-
-            return color;
+            return DirectBitmap.GetPixel(point.X, point.Y);
         }
 
-        public void DoScreenshot(NpcNameFinder npcNameFinder)
+        public static Color GetColorAt(Point point, Bitmap bmp)
         {
-            try
-            {
-                var npcs = npcNameFinder.RefreshNpcPositions();
-                var bitmap = npcNameFinder.Screenshot.Bitmap;
+            return bmp.GetPixel(point.X, point.Y);
+        }
 
-                using (var gr = Graphics.FromImage(bitmap))
+        public void PostProcess()
+        {
+            var bitmap = DirectBitmap.Bitmap;
+            using (var gr = Graphics.FromImage(bitmap))
+            {
+                using (var blackPen = new SolidBrush(Color.Black))
                 {
-                    if (npcs.Count > 0)
-                    {
-                        using (var whitePen = new Pen(Color.White, 3))
-                        {
-                            npcs.ForEach(n => gr.DrawRectangle(whitePen, new Rectangle(n.Min, new Size(n.Width, n.Height))));
-                        }
-                    }
-                    using (var blackPen = new SolidBrush(Color.Black))
-                    {
-                        gr.FillRectangle(blackPen, new Rectangle(new Point(bitmap.Width / 15, bitmap.Height / 40), new Size(bitmap.Width / 15, bitmap.Height / 40)));
-                    }
+                    gr.FillRectangle(blackPen, new Rectangle(new Point(bitmap.Width / 15, bitmap.Height / 40), new Size(bitmap.Width / 15, bitmap.Height / 40)));
                 }
 
-                this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(npcNameFinder.Screenshot.ToBase64(Size)));
+                drawActions.ForEach(x => x(gr));
             }
-            catch (Exception ex)
-            {
-                logger.LogError(ex.Message);
-            }
+
+            this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(DirectBitmap.ToBase64(Size)));
+        }
+
+        public void AddDrawAction(Action<Graphics> a)
+        {
+            drawActions.Add(a);
         }
 
         private static Bitmap CropImage(Bitmap img, bool highlight)
@@ -124,7 +158,7 @@ namespace Core
 
         private Bitmap GetMinimapBitmap()
         {
-            NativeMethods.GetWindowRect(wowProcess.WarcraftProcess.MainWindowHandle, out var rect);
+            GetRectangle(out var rect);
 
             int Size = 200;
             var bmpScreen = new Bitmap(Size, Size);
@@ -164,6 +198,11 @@ namespace Core
                 byte[] byteImage = ms.ToArray();
                 return Convert.ToBase64String(byteImage); // Get Base64
             }
+        }
+
+        public void Dispose()
+        {
+            capturer?.Dispose();
         }
     }
 }

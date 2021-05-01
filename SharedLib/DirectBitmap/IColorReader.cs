@@ -1,10 +1,10 @@
 ﻿using System.Drawing;
 
-namespace Core
+namespace SharedLib
 {
     public interface IColorReader
     {
-        Color GetColorAt(Point point, Bitmap bmp);
+        Color GetColorAt(Point point);
 
         Bitmap GetBitmap(int width, int height);
     }

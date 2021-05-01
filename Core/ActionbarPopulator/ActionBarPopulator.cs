@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TextCopy;
 
 namespace Core
 {
@@ -17,13 +18,15 @@ namespace Core
 
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
+        private readonly WowProcessInput wowProcessInput;
         private readonly ClassConfiguration config;
         private readonly AddonReader addonReader;
 
-        public ActionBarPopulator(ILogger logger, WowProcess wowProcess, ClassConfiguration config, AddonReader addonReader)
+        public ActionBarPopulator(ILogger logger, WowProcess wowProcess, WowProcessInput wowProcessInput, ClassConfiguration config, AddonReader addonReader)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
+            this.wowProcessInput = wowProcessInput;
             this.config = config;
             this.addonReader = addonReader;
         }
@@ -71,24 +74,24 @@ namespace Core
 
         private async Task Run()
         {
-            wowProcess.SetForegroundWindow();
+            NativeMethods.SetForegroundWindow(wowProcess.WarcraftProcess.MainWindowHandle);
             foreach(var a in sources)
             {
                 var content = ScriptBuilder(a);
                 logger.LogInformation(content);
 
-                wowProcess.SetClipboard(content);
+                ClipboardService.SetText(content);
                 await Task.Delay(50);
                 
                 // Open chat inputbox
-                await wowProcess.KeyPress(ConsoleKey.Enter, 50);
+                await wowProcessInput.KeyPress(ConsoleKey.Enter, 50);
 
                 // Send Paste keys
-                wowProcess.PasteFromClipboard();
+                wowProcessInput.PasteFromClipboard();
                 await Task.Delay(250);
 
                 //
-                await wowProcess.KeyPress(ConsoleKey.Enter, 50);
+                await wowProcessInput.KeyPress(ConsoleKey.Enter, 50);
                 await Task.Delay(250);
             }
         }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SharedLib;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -87,9 +88,9 @@ namespace Core
             }
         }
 
-        public DataFrameMeta GetMeta(Bitmap bmp)
+        public static DataFrameMeta GetMeta(Bitmap bmp)
         {
-            var color = colorReader.GetColorAt(new Point(0, 0), bmp);
+            var color = bmp.GetPixel(0, 0);
             int data, hash;
             data = hash = color.R * 65536 + color.G * 256 + color.B;
 
@@ -111,7 +112,7 @@ namespace Core
             return new DataFrameMeta(hash, spacing, size, rows, count);
         }
 
-        public List<DataFrame> CreateFrames(DataFrameMeta meta, Bitmap bmp)
+        public static List<DataFrame> CreateFrames(DataFrameMeta meta, Bitmap bmp)
         {
             var dataFrames = new List<DataFrame>() { new DataFrame(new Point(0, 0), 0)};
             for (int dataframe = 1; dataframe < meta.frames; dataframe++)
@@ -127,17 +128,15 @@ namespace Core
             return dataFrames;
         }
 
-        private Point? GetFramePoint(DataFrameMeta meta, Bitmap bmp, int dataframe, int startX)
+        private static Point? GetFramePoint(DataFrameMeta meta, Bitmap bmp, int dataframe, int startX)
         {
             for (int x = startX; x < bmp.Width; x++)
             {
                 for (int y = 0; y < meta.rows; y++)
                 {
-                    var point = new Point(x, y);
-                    var color = colorReader.GetColorAt(point, bmp);
-                    if (color.B == dataframe)
+                    if (bmp.GetPixel(x, y).B == dataframe)
                     {
-                        return point;
+                        return new Point(x, y);
                     }
                 }
             }

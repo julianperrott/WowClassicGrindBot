@@ -1,80 +1,31 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Text;
 using System.Threading.Tasks;
-using TextCopy;
 
 namespace Core
 {
-    public class WowProcess : IRectProvider, IMouseInput
+    public class WowProcessInput : IMouseInput
     {
         private readonly ILogger logger;
+        private readonly WowProcess wowProcess;
         private readonly IInput nativeInput;
         private readonly IInput simulatorInput;
 
-        private bool debug = true;
-
-        private Process _warcraftProcess;
-        public Process WarcraftProcess
-        {
-            get
-            {
-                if (this._warcraftProcess == null)
-                {
-                    var process = Get();
-                    if (process == null)
-                    {
-                        throw new ArgumentOutOfRangeException("Unable to find the Wow process");
-                    }
-                    this._warcraftProcess = process;
-                }
-
-                return this._warcraftProcess;
-            }
-        }
-
         private readonly Dictionary<ConsoleKey, bool> keyDict = new Dictionary<ConsoleKey, bool>();
 
-        public WowProcess(ILogger logger)
+        private bool debug = true;
+
+        public WowProcessInput(ILogger logger, WowProcess wowProcess)
         {
             this.logger = logger;
+            this.wowProcess = wowProcess;
 
-            var process = Get();
-            if (process == null)
-            {
-                throw new ArgumentOutOfRangeException("Unable to find the Wow process");
-            }
-
-            this._warcraftProcess = process;
-
-            this.nativeInput = new InputWindowsNative(process);
-            this.simulatorInput = new InputSimulator(process);
-        }
-
-        public bool IsWowClassic()
-        {
-            return WarcraftProcess.ProcessName.ToLower().Contains("classic");
-        }
-
-        //Get the wow-process, if success returns the process else null
-        public static Process? Get(string name = "")
-        {
-            var names = string.IsNullOrEmpty(name) ? new List<string> { "Wow", "WowClassic", "WowClassicT", "Wow-64", "WowClassicB" } : new List<string> { name };
-
-            var processList = Process.GetProcesses();
-            foreach (var p in processList)
-            {
-                if (names.Contains(p.ProcessName))
-                {
-                    return p;
-                }
-            }
-
-            //logger.Error($"Failed to find the wow process, tried: {string.Join(", ", names)}");
-
-            return null;
+            this.nativeInput = new InputWindowsNative(wowProcess.WarcraftProcess);
+            this.simulatorInput = new InputSimulator(wowProcess.WarcraftProcess);
         }
 
         private void KeyDown(ConsoleKey key, string description = "")
@@ -115,34 +66,21 @@ namespace Core
             keyDict[key] = false;
         }
 
-        public async void RightClickMouseBehindPlayer()
-        {
-            GetWindowRect(out var rect);
-
-            await RightClickMouse(new Point(rect.Right / 2, (rect.Bottom * 2) / 3));
-        }
-
-        public void SetForegroundWindow()
-        {
-            NativeMethods.SetForegroundWindow(WarcraftProcess.MainWindowHandle);
-        }
-
         public async Task SendText(string payload)
         {
             await simulatorInput.SendText(payload);
-        }
-
-#pragma warning disable CA1822 // Mark members as static
-        public void SetClipboard(string text)
-#pragma warning restore CA1822 // Mark members as static
-        {
-            ClipboardService.SetText(text);
         }
 
         public void PasteFromClipboard()
         {
             simulatorInput.PasteFromClipboard();
         }
+
+        public void SetForegroundWindow()
+        {
+            NativeMethods.SetForegroundWindow(wowProcess.WarcraftProcess.MainWindowHandle);
+        }
+
 
         public async Task KeyPress(ConsoleKey key, int milliseconds, string description = "")
         {
@@ -184,11 +122,6 @@ namespace Core
         public async Task LeftClickMouse(Point position)
         {
             await nativeInput.LeftClickMouse(position);
-        }
-
-        public void GetWindowRect(out Rectangle rect)
-        {
-            NativeMethods.GetWindowRect(WarcraftProcess.MainWindowHandle, out rect);
         }
 
         private void Log(string text)

@@ -15,7 +15,6 @@ namespace Core.Goals
         private double RADIAN = Math.PI * 2;
 
         private readonly ILogger logger;
-        private readonly WowProcess wowProcess;
         private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
@@ -54,10 +53,9 @@ namespace Core.Goals
         private double avgDistance = 0;
         private bool firstLoad = true;
 
-        public FollowRouteGoal(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather)
+        public FollowRouteGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather)
         {
             this.logger = logger;
-            this.wowProcess = wowProcess;
             this.input = input;
 
             this.playerReader = playerReader;
@@ -159,7 +157,7 @@ namespace Core.Goals
                 }
 
                 //wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 1");
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false);
+                input.SetKeyState(ConsoleKey.UpArrow, true, false);
             }
 
             await RandomJump();
@@ -181,7 +179,7 @@ namespace Core.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 2");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 2");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
@@ -239,7 +237,7 @@ namespace Core.Goals
                     lastGatherKey = 0;
                 }
 
-                await wowProcess.KeyPress(classConfiguration.GatherFindKeyConfig[lastGatherKey].ConsoleKey, 200, "Gatherkey 1");
+                await input.KeyPress(classConfiguration.GatherFindKeyConfig[lastGatherKey].ConsoleKey, 200, "Gatherkey 1");
                 lastGatherClick = DateTime.Now;
             }
         }
@@ -292,14 +290,14 @@ namespace Core.Goals
                         this.classConfiguration.ShapeshiftForm
                           .Where(s => s.ShapeShiftFormEnum == ShapeshiftForm.Druid_Travel)
                           .ToList()
-                          .ForEach(async k => await this.wowProcess.KeyPress(k.ConsoleKey, 325));
+                          .ForEach(async k => await this.input.KeyPress(k.ConsoleKey, 325));
                     }
                 }
                 else
                 {
                     logger.LogInformation("Not mounting as can see NPC.");
                 }
-                wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 3");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 3");
             }
         }
 
