@@ -35,6 +35,8 @@ namespace Core
         private readonly ItemDB itemDb;
         private readonly CreatureDB creatureDb;
 
+        private Rectangle rectangle;
+
         public AddonReader(ILogger logger, DataConfig dataConfig, WowScreen wowScreen, List<DataFrame> frames, AreaDB areaDb)
         {
             this.logger = logger;
@@ -48,6 +50,7 @@ namespace Core
             wowScreen.GetRectangle(out var rect);
             rect.Width = width;
             rect.Height = height;
+            rectangle = new Rectangle(0, 0, width, height);
             capturer = new DirectBitmapCapturer(rect);
             colorReader = capturer;
 
@@ -97,7 +100,9 @@ namespace Core
             try
             {
                 wowScreen.GetPosition(out var p);
-                capturer.Capture(new Rectangle(p.X, p.Y, width, height));
+                rectangle.X = p.X;
+                rectangle.Y = p.Y;
+                capturer.Capture(rectangle);
 
                 frames.ForEach(frame => FrameColor[frame.index] = colorReader.GetColorAt(frame.point));
 

@@ -20,12 +20,9 @@ namespace Core
         public delegate void ScreenChangeEventHandler(object sender, ScreenChangeEventArgs args);
         public event ScreenChangeEventHandler? OnScreenChanged;
 
-        private List<Action<Graphics>> drawActions = new List<Action<Graphics>>();
+        private readonly List<Action<Graphics>> drawActions = new List<Action<Graphics>>();
 
         public int Size { get; set; } = 1024;
-
-        private const int tick = 150;
-        private DateTime lastScreenshot = default;
 
         public DirectBitmap DirectBitmap
         {
@@ -44,21 +41,31 @@ namespace Core
             this.capturer = new DirectBitmapCapturer(rect);
         }
 
-        public void ForceScreenshot()
+        public void UpdateScreenshot()
         {
-            lastScreenshot = default;
+            GetRectangle(out var rect);
+            capturer.Capture(rect);
         }
 
-        public bool UpdateScreenshot()
+        public void AddDrawAction(Action<Graphics> a)
         {
-            if ((DateTime.Now - lastScreenshot).TotalMilliseconds > tick)
+            drawActions.Add(a);
+        }
+
+        public void PostProcess()
+        {
+            var bitmap = DirectBitmap.Bitmap;
+            using (var gr = Graphics.FromImage(bitmap))
             {
-                GetRectangle(out var rect);
-                capturer.Capture(rect);
-                return true;
+                using (var blackPen = new SolidBrush(Color.Black))
+                {
+                    gr.FillRectangle(blackPen, new Rectangle(new Point(bitmap.Width / 15, bitmap.Height / 40), new Size(bitmap.Width / 15, bitmap.Height / 40)));
+                }
+
+                drawActions.ForEach(x => x(gr));
             }
 
-            return false;
+            this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(DirectBitmap.ToBase64(Size)));
         }
 
         public void GetPosition(out Point point)
@@ -89,30 +96,27 @@ namespace Core
             return DirectBitmap.GetPixel(point.X, point.Y);
         }
 
-        public static Color GetColorAt(Point point, Bitmap bmp)
+        public Bitmap GetCroppedMinimapBitmap(bool highlight)
         {
-            return bmp.GetPixel(point.X, point.Y);
+            return CropImage(GetMinimapBitmap(), highlight);
         }
 
-        public void PostProcess()
+        private Bitmap GetMinimapBitmap()
         {
-            var bitmap = DirectBitmap.Bitmap;
-            using (var gr = Graphics.FromImage(bitmap))
+            GetRectangle(out var rect);
+
+            int Size = 200;
+            var bmpScreen = new Bitmap(Size, Size);
+            using (var graphics = Graphics.FromImage(bmpScreen))
             {
-                using (var blackPen = new SolidBrush(Color.Black))
-                {
-                    gr.FillRectangle(blackPen, new Rectangle(new Point(bitmap.Width / 15, bitmap.Height / 40), new Size(bitmap.Width / 15, bitmap.Height / 40)));
-                }
-
-                drawActions.ForEach(x => x(gr));
+                graphics.CopyFromScreen(rect.Right - Size, rect.Top, 0, 0, bmpScreen.Size);
             }
-
-            this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(DirectBitmap.ToBase64(Size)));
+            return bmpScreen;
         }
 
-        public void AddDrawAction(Action<Graphics> a)
+        public void Dispose()
         {
-            drawActions.Add(a);
+            capturer?.Dispose();
         }
 
         private static Bitmap CropImage(Bitmap img, bool highlight)
@@ -151,25 +155,7 @@ namespace Core
             return tmp;
         }
 
-        public Bitmap GetCroppedMinimapBitmap(bool highlight)
-        {
-            return CropImage(GetMinimapBitmap(), highlight);
-        }
-
-        private Bitmap GetMinimapBitmap()
-        {
-            GetRectangle(out var rect);
-
-            int Size = 200;
-            var bmpScreen = new Bitmap(Size, Size);
-            using (var graphics = Graphics.FromImage(bmpScreen))
-            {
-                graphics.CopyFromScreen(rect.Right - Size, rect.Top, 0, 0, bmpScreen.Size);
-            }
-            return bmpScreen;
-        }
-
-        public static string ToBase64(Bitmap bitmap,int size)
+        public static string ToBase64(Bitmap bitmap, int size)
         {
             int width, height;
             if (bitmap.Width > bitmap.Height)
@@ -200,9 +186,5 @@ namespace Core
             }
         }
 
-        public void Dispose()
-        {
-            capturer?.Dispose();
-        }
     }
 }

@@ -26,7 +26,12 @@ namespace Core
 
         public DataConfig DataConfig { get; set; }
         public AddonReader AddonReader { get; set; }
+
         public Thread? screenshotThread { get; set; }
+
+        private const int screenshotTickMs = 150;
+        private readonly DateTime lastScreenshot = default;
+
         public Thread addonThread { get; set; }
         public Thread? botThread { get; set; }
 
@@ -120,10 +125,9 @@ namespace Core
             var nodeFound = false;
             while (this.Enabled)
             {
-                //this.WowScreen.DoScreenshot(this.npcNameFinder);
-
-                if(this.WowScreen.UpdateScreenshot())
+                if ((DateTime.Now - lastScreenshot).TotalMilliseconds > screenshotTickMs)
                 {
+                    this.WowScreen.UpdateScreenshot();
                     this.npcNameFinder.Update();
                     this.WowScreen.PostProcess();
                 }
