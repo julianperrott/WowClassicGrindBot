@@ -50,6 +50,8 @@ namespace Core
         private readonly IDirectBitmapProvider bitmapProvider;
         private readonly IMouseInput mouseInput;
 
+        public Rectangle Area { private set; get; }
+
         private float scaleToRefWidth = 1;
         private float scaleToRefHeight = 1;
 
@@ -179,17 +181,17 @@ namespace Core
             scaleToRefWidth = ScaleWidth(1);
             scaleToRefHeight = ScaleHeight(1);
 
-            RefreshNpcPositions();
-        }
+            Area = new Rectangle(new Point(0, (int)ScaleHeight(30)), 
+                new Size(bitmapProvider.DirectBitmap.Width, bitmapProvider.DirectBitmap.Height / 2));
 
-        public void RefreshNpcPositions()
-        {
             PopulateLinesOfNpcNames();
             DetermineNpcs();
 
             Npcs = npcs.OrderByDescending(npc => npc.Count)
-                .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)), new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), bitmapProvider.DirectBitmap.Width))
+                .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)),
+                    new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), bitmapProvider.DirectBitmap.Width, ScaleHeight(8), ScaleHeight(5)))
                 .Where(s => s.Width < ScaleWidth(250)) // 150 - fine // 200 - fine // 250 fine
+                .Distinct(new OverlappingNames())
                 .ToList();
 
             Sequence++;
@@ -267,11 +269,11 @@ namespace Core
             float minEndLength = minLength - lengthDiff; // original 18
 
             bool isEndOfSection;
-            for (int y = (int)ScaleHeight(30); y < bitmapProvider.DirectBitmap.Height / 2; y++)
+            for (int y = Area.Top; y < Area.Height; y++)
             {
                 var lengthStart = -1;
                 var lengthEnd = -1;
-                for (int x = 0; x < bitmapProvider.DirectBitmap.Width; x++)
+                for (int x = Area.Left; x < Area.Right; x++)
                 {
                     var pixel = bitmapProvider.DirectBitmap.GetPixel(x, y);
                     var isTargetColor = ColorMatch(pixel);

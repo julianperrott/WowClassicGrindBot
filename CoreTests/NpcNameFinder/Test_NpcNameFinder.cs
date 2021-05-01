@@ -32,7 +32,12 @@ namespace CoreTests
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.FriendlyOrNeutral);
 
             capturer.Capture();
+
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
             this.npcNameFinder.Update();
+            stopwatch.Stop();
+            logger.LogInformation($"Update: {stopwatch.ElapsedMilliseconds}ms");
 
             var bitmap = capturer.GetBitmap(capturer.Rect.Width, capturer.Rect.Height);
 
@@ -45,8 +50,11 @@ namespace CoreTests
                 {
                     using (var whitePen = new Pen(Color.White, 1))
                     {
+                        gr.DrawRectangle(whitePen, npcNameFinder.Area);
+
+                        npcNameFinder.Npcs.ForEach(n => gr.DrawEllipse(whitePen, n.ClickPoint.X, n.ClickPoint.Y, 5, 5));
                         npcNameFinder.Npcs.ForEach(n => gr.DrawRectangle(whitePen, new Rectangle(n.Min, new Size(n.Width, n.Height))));
-                        npcNameFinder.Npcs.ForEach(n => gr.DrawString(npcNameFinder.Npcs.IndexOf(n).ToString(), drawFont, drawBrush, new PointF(n.Min.X - 20, n.Min.Y)));
+                        npcNameFinder.Npcs.ForEach(n => gr.DrawString(npcNameFinder.Npcs.IndexOf(n).ToString(), drawFont, drawBrush, new PointF(n.Min.X - 20f, n.Min.Y)));
                     }
                 }
             }
