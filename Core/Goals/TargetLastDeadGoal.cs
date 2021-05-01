@@ -9,14 +9,14 @@ namespace Core.Goals
         public override float CostOfPerformingAction { get => 4.2f; }
 
         private readonly ILogger logger;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
         private bool debug = true;
         
 
-        public TargetLastDeadGoal(ILogger logger, WowInput wowInput)
+        public TargetLastDeadGoal(ILogger logger, ConfigurableInput input)
         {
             this.logger = logger;
-            this.wowInput = wowInput;
+            this.input = input;
 
             AddPrecondition(GoapKey.hastarget, false);
             AddPrecondition(GoapKey.producedcorpse, true);
@@ -24,7 +24,7 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
-            await wowInput.TapLastTargetKey(this.ToString());
+            await input.TapLastTargetKey(this.ToString());
         }
 
         private void Log(string text)

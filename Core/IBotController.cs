@@ -15,7 +15,7 @@ namespace Core
         GoapAgent? GoapAgent { get; set; }
         RouteInfo? RouteInfo { get; set; }
         WowScreen WowScreen { get; set; }
-        WowInput? WowInput { get; set; }
+        ConfigurableInput? ConfigurableInput { get; set; }
         ClassConfiguration? ClassConfig { get; set; }
         IImageProvider? MinimapImageFinder { get; set; }
 

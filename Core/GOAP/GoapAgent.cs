@@ -11,7 +11,7 @@ namespace Core.GOAP
     {
         private ILogger logger;
         private WowProcess wowProcess;
-        private WowInput wowInput;
+        private ConfigurableInput input;
 
         private readonly BagReader bagReader;
 
@@ -25,11 +25,11 @@ namespace Core.GOAP
         public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
         private IBlacklist blacklist;
 
-        public GoapAgent(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist,  ClassConfiguration classConfiguration, BagReader bagReader)
+        public GoapAgent(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist,  ClassConfiguration classConfiguration, BagReader bagReader)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.playerReader = playerReader;
             this.AvailableGoals = availableGoals.OrderBy(a => a.CostOfPerformingAction);
@@ -50,7 +50,7 @@ namespace Core.GOAP
             if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
                 logger.LogWarning("Target is blacklisted");
-                await wowInput.TapClearTarget();
+                await input.TapClearTarget();
                 UpdateWorldState();
             }
 
@@ -68,7 +68,7 @@ namespace Core.GOAP
 
                 if (this.classConfiguration.Mode != Mode.AttendedGrind)
                 {
-                    await wowInput.TapNearestTarget();
+                    await input.TapNearestTarget();
                 }
             }
 

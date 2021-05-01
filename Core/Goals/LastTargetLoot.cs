@@ -8,17 +8,17 @@ namespace Core.Goals
     public class LastTargetLoot : GoapGoal
     {
         private ILogger logger;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly ClassConfiguration classConfiguration;
         private readonly PlayerReader playerReader;
         
         public override float CostOfPerformingAction { get => 4.3f; }
 
-        public LastTargetLoot(ILogger logger, WowInput wowInput, PlayerReader playerReader,  ClassConfiguration classConfiguration)
+        public LastTargetLoot(ILogger logger, ConfigurableInput input, PlayerReader playerReader,  ClassConfiguration classConfiguration)
         {
             this.logger = logger;
-            this.wowInput = wowInput;
+            this.input = input;
             this.playerReader = playerReader;
             
             this.classConfiguration = classConfiguration;
@@ -37,7 +37,7 @@ namespace Core.Goals
 
             SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, !playerReader.Unskinnable));
 
-            await wowInput.TapInteractKey("interact target");
+            await input.TapInteractKey("interact target");
             while (IsPlayerMoving(lastPosition))
             {
                 logger.LogInformation("wait till the player become stil!");
@@ -46,7 +46,7 @@ namespace Core.Goals
             }
 
             if (!await Wait(100, () => playerReader.HealthCurrent < lastHealth)) { return; }
-            await wowInput.TapInteractKey("Looting...");
+            await input.TapInteractKey("Looting...");
 
             // wait grabbing the loot
             if (!await Wait(200, () => playerReader.HealthCurrent < lastHealth)) { return; }
@@ -56,7 +56,7 @@ namespace Core.Goals
 
             //clear target
             //await wowProcess.KeyPress(ConsoleKey.F3, 50);
-            await wowInput.TapClearTarget();
+            await input.TapClearTarget();
         }
 
         public override void ResetBeforePlanning()

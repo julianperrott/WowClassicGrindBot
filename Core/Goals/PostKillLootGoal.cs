@@ -8,8 +8,8 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction { get => 4.5f; }
 
-        public PostKillLootGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
-            : base(logger, wowInput, playerReader, bagReader, stopMoving, classConfiguration, npcNameFinder)
+        public PostKillLootGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
+            : base(logger, input, playerReader, bagReader, stopMoving, classConfiguration, npcNameFinder)
         {
         }
 

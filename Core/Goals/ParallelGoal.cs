@@ -11,17 +11,17 @@ namespace Core.Goals
         public override float CostOfPerformingAction { get => 3f; }
 
         private readonly ILogger logger;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly StopMoving stopMoving;
         private readonly PlayerReader playerReader;
         
         private readonly CastingHandler castingHandler;
 
-        public ParallelGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, StopMoving stopMoving, List<KeyAction> keysConfig, CastingHandler castingHandler)
+        public ParallelGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, StopMoving stopMoving, List<KeyAction> keysConfig, CastingHandler castingHandler)
         {
             this.logger = logger;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.stopMoving = stopMoving;
             this.playerReader = playerReader;
@@ -46,7 +46,7 @@ namespace Core.Goals
 
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
-                    await wowInput.Dismount();
+                    await input.Dismount();
                 }
                 if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return;
             }
@@ -91,7 +91,7 @@ namespace Core.Goals
 
             if (wasDrinkingOrEating)
             {
-                await wowInput.TapStandUpKey(); // stand up
+                await input.TapStandUpKey(); // stand up
             }
         }
     }

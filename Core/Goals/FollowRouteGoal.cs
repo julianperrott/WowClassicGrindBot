@@ -16,7 +16,7 @@ namespace Core.Goals
 
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
@@ -54,11 +54,11 @@ namespace Core.Goals
         private double avgDistance = 0;
         private bool firstLoad = true;
 
-        public FollowRouteGoal(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader,  IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather)
+        public FollowRouteGoal(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.playerReader = playerReader;
             this.playerDirection = playerDirection;
@@ -259,7 +259,7 @@ namespace Core.Goals
                         }
                         else
                         {
-                            await wowInput.TapClearTarget("Target is dead!");
+                            await input.TapClearTarget("Target is dead!");
                         }
                     }
                 }
@@ -283,9 +283,9 @@ namespace Core.Goals
                 {
                     if (this.playerReader.PlayerLevel >= 40 && this.playerReader.PlayerClass != PlayerClassEnum.Druid)
                     {
-                        await wowInput.TapStopKey();
+                        await input.TapStopKey();
                         await Task.Delay(500);
-                        await wowInput.Mount(this.playerReader);
+                        await input.Mount(this.playerReader);
                     }
                     if (this.playerReader.PlayerLevel >= 30 && this.playerReader.PlayerClass == PlayerClassEnum.Druid)
                     {
@@ -409,7 +409,7 @@ namespace Core.Goals
             }
             else
             {
-                await wowInput.TapNearestTarget();
+                await input.TapNearestTarget();
                 if (!playerReader.HasTarget)
                 {
                     npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
@@ -426,7 +426,7 @@ namespace Core.Goals
                 {
                     //await wowProcess.Dismount();
                 }
-                await wowInput.TapInteractKey("FollowRouteAction 4");
+                await input.TapInteractKey("FollowRouteAction 4");
                 return true;
             }
             return false;
@@ -467,7 +467,7 @@ namespace Core.Goals
                 {
                     logger.LogInformation($"Random jump");
 
-                    await wowInput.TapJump();
+                    await input.TapJump();
                 }
             }
         }

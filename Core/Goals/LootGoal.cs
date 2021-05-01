@@ -12,7 +12,7 @@ namespace Core.Goals
         public override float CostOfPerformingAction { get => 4.4f; }
 
         private ILogger logger;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
@@ -23,10 +23,10 @@ namespace Core.Goals
         private bool debug = true;
         private bool outOfCombat = false;
 
-        public LootGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
+        public LootGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
         {
             this.logger = logger;
-            this.wowInput = wowInput;
+            this.input = input;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
             this.bagReader = bagReader;
@@ -110,7 +110,7 @@ namespace Core.Goals
                 }
                     
 
-                await wowInput.TapInteractKey("Approach corpse");
+                await input.TapInteractKey("Approach corpse");
 
                 // TODO: find a better way to get notified about the successful loot
                 // challlange:
@@ -173,19 +173,19 @@ namespace Core.Goals
         {
             if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.PetHasTarget)
             {
-                await wowInput.TapTargetPet();
+                await input.TapTargetPet();
                 Log($"Pets target {this.playerReader.TargetTarget}");
                 if (this.playerReader.TargetTarget == TargetTargetEnum.PetHasATarget)
                 {
                     Log("Found target by pet");
-                    await wowInput.TapTargetOfTarget();
+                    await input.TapTargetOfTarget();
                     SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
                     SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
                     SendActionEvent(new ActionEventArgs(GoapKey.hastarget, true));
                     return;
                 }
 
-                await wowInput.TapNearestTarget();
+                await input.TapNearestTarget();
                 await playerReader.WaitForNUpdate(1);
                 if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
                 {
@@ -199,7 +199,7 @@ namespace Core.Goals
                     }
                 }
 
-                await wowInput.TapClearTarget();
+                await input.TapClearTarget();
                 Log("No target found");
             }
         }
@@ -221,7 +221,7 @@ namespace Core.Goals
                 npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
             }
 
-            await wowInput.TapClearTarget();
+            await input.TapClearTarget();
         }
 
         private void Log(string text)

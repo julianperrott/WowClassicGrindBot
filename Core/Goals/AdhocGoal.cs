@@ -7,7 +7,7 @@ namespace Core.Goals
     public class AdhocGoal : GoapGoal
     {
         private readonly ILogger logger;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly StopMoving stopMoving;
         private readonly PlayerReader playerReader;
@@ -15,10 +15,10 @@ namespace Core.Goals
         private readonly KeyAction key;
         private readonly CastingHandler castingHandler;
 
-        public AdhocGoal(ILogger logger, WowInput wowInput, KeyAction key, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler)
+        public AdhocGoal(ILogger logger, ConfigurableInput input, KeyAction key, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler)
         {
             this.logger = logger;
-            this.wowInput = wowInput;
+            this.input = input;
             this.stopMoving = stopMoving;
             this.playerReader = playerReader;
             this.key = key;
@@ -50,7 +50,7 @@ namespace Core.Goals
                 await this.stopMoving.Stop();
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
-                    await wowInput.Dismount();
+                    await input.Dismount();
                 }
                 await Task.Delay(1000);
             }
@@ -90,7 +90,7 @@ namespace Core.Goals
 
             if (wasDrinkingOrEating)
             {
-                await wowInput.TapStopKey(); // stand up
+                await input.TapStopKey(); // stand up
             }
 
             this.key.SetClicked();

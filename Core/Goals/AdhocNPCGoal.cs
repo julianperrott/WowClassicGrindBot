@@ -13,7 +13,7 @@ namespace Core.Goals
 
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
@@ -42,11 +42,11 @@ namespace Core.Goals
         
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader,  IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
+        public AdhocNPCGoal(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
-            this.wowInput = wowInput;
+            this.input = input;
             this.playerReader = playerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
@@ -156,14 +156,14 @@ namespace Core.Goals
                         await FollowPath(this.key.Path);
 
                         await this.stopMoving.Stop();
-                        await wowInput.TapClearTarget();
+                        await input.TapClearTarget();
 
                         npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.FriendlyOrNeutral);
                         await npcNameFinder.WaitForNUpdate(2);
                         var foundVendor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Vendor);
 
                         await InteractWithTarget();
-                        await wowInput.TapClearTarget();
+                        await input.TapClearTarget();
 
                         // walk back to the start of the path to the npc
                         var pathFrom = this.key.Path.ToList();
@@ -200,7 +200,7 @@ namespace Core.Goals
             // dismount
             if (this.playerReader.PlayerBitValues.IsMounted)
             {
-                await wowInput.Dismount();
+                await input.Dismount();
             }
 
             foreach (var point in path)
@@ -240,9 +240,9 @@ namespace Core.Goals
 
                 if (this.playerReader.PlayerLevel >= 40 && this.playerReader.PlayerClass != PlayerClassEnum.Druid)
                 {
-                    await wowInput.TapStopKey();
+                    await input.TapStopKey();
                     await Task.Delay(500);
-                    await wowInput.Mount(this.playerReader);
+                    await input.Mount(this.playerReader);
                 }
                 if (this.playerReader.PlayerLevel >= 30 && this.playerReader.PlayerClass == PlayerClassEnum.Druid)
                 {
@@ -377,7 +377,7 @@ namespace Core.Goals
                     // black list it so we don't get stuck trying to kill it
                     this.blacklist.Add(this.playerReader.Target);
 
-                    await wowInput.TapInteractKey($"InteractWithTarget {i}");
+                    await input.TapInteractKey($"InteractWithTarget {i}");
                 }
                 else
                 {

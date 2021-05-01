@@ -35,7 +35,7 @@ namespace Core
         private GoalThread? actionThread;
 
         public WowScreen WowScreen { get; set; }
-        public WowInput? WowInput { get; set; }
+        public ConfigurableInput? ConfigurableInput { get; set; }
 
         private NpcNameFinder npcNameFinder;
 
@@ -199,17 +199,17 @@ namespace Core
         private void Initialize(ClassConfiguration config)
         {
             ActionBarPopulator = new ActionBarPopulator(logger, wowProcess, config, AddonReader);
-            WowInput = new WowInput(logger, wowProcess, config);
+            ConfigurableInput = new ConfigurableInput(logger, wowProcess, config);
 
             var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.Blacklist, logger);
 
-            var actionFactory = new GoalFactory(logger, AddonReader, wowProcess, WowInput, DataConfig, npcNameFinder, pather);
+            var actionFactory = new GoalFactory(logger, AddonReader, wowProcess, ConfigurableInput, DataConfig, npcNameFinder, pather);
             var availableActions = actionFactory.CreateGoals(config, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
-            this.GoapAgent = new GoapAgent(logger, wowProcess, WowInput, AddonReader.PlayerReader, availableActions, blacklist, config, AddonReader.BagReader);
+            this.GoapAgent = new GoapAgent(logger, wowProcess, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config, AddonReader.BagReader);
 
-            this.actionThread = new GoalThread(logger, WowInput, AddonReader.PlayerReader, GoapAgent);
+            this.actionThread = new GoalThread(logger, ConfigurableInput, AddonReader.PlayerReader, GoapAgent);
 
             // hookup events between actions
             availableActions.ToList().ForEach(a =>

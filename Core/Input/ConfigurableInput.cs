@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    public class WowInput
+    public class ConfigurableInput
     {
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
@@ -14,7 +14,7 @@ namespace Core
 
         private bool debug = false;
 
-        public WowInput(ILogger logger, WowProcess wowProcess, ClassConfiguration classConfiguration)
+        public ConfigurableInput(ILogger logger, WowProcess wowProcess, ClassConfiguration classConfiguration)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;

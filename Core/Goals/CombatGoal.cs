@@ -11,7 +11,7 @@ namespace Core.Goals
         public override float CostOfPerformingAction { get => 4f; }
 
         private readonly ILogger logger;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
@@ -23,10 +23,10 @@ namespace Core.Goals
 
         private int lastKilledGuid;
 
-        public CombatGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, CastingHandler castingHandler)
+        public CombatGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, CastingHandler castingHandler)
         {
             this.logger = logger;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
@@ -58,7 +58,7 @@ namespace Core.Goals
 
             if(playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
             {
-                await wowInput.TapPetAttack("");
+                await input.TapPetAttack("");
             }
 
             bool pressed = false;
@@ -126,7 +126,7 @@ namespace Core.Goals
         {
             if (playerReader.PlayerBitValues.IsMounted)
             {
-                await wowInput.Dismount();
+                await input.Dismount();
             }
 
             /*
@@ -144,7 +144,7 @@ namespace Core.Goals
             if ((DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5)
             {
                 logger.LogInformation("Interact and stop");
-                await wowInput.TapInteractKey("CombatActionBase PerformAction");
+                await input.TapInteractKey("CombatActionBase PerformAction");
                 //await this.castingHandler.PressKey(ConsoleKey.UpArrow, "", 57);
             }
 
@@ -203,14 +203,14 @@ namespace Core.Goals
                 logger.LogWarning("---- My pet has a target!");
                 ResetCooldowns();
 
-                await wowInput.TapTargetPet();
-                await wowInput.TapTargetOfTarget();
+                await input.TapTargetPet();
+                await input.TapTargetOfTarget();
                 
                 return playerReader.HasTarget;
             }
 
             // check for targets attacking me
-            await wowInput.TapNearestTarget();
+            await input.TapNearestTarget();
             await playerReader.WaitForNUpdate(1);
             if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
             {
@@ -219,12 +219,12 @@ namespace Core.Goals
                     ResetCooldowns();
 
                     logger.LogWarning("---- Somebody is attacking me or my pet!");
-                    await wowInput.TapInteractKey("Found new target to attack");
+                    await input.TapInteractKey("Found new target to attack");
                     return true;
                 }
             }
 
-            await wowInput.TapClearTarget();
+            await input.TapClearTarget();
             logger.LogWarning("---- No Threat has been found!");
 
             return false;

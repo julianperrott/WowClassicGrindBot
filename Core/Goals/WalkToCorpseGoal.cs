@@ -14,7 +14,7 @@ namespace Core.Goals
 
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
@@ -52,11 +52,11 @@ namespace Core.Goals
             return points.Count == 0 ? null : points.Peek();
         }
 
-        public WalkToCorpseGoal(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather)
+        public WalkToCorpseGoal(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.playerReader = playerReader;
             this.playerDirection = playerDirection;
@@ -398,7 +398,7 @@ namespace Core.Goals
                 {
                     logger.LogInformation($"Random jump");
 
-                    await wowInput.TapJump();
+                    await input.TapJump();
                 }
             }
             LastJump = DateTime.Now;

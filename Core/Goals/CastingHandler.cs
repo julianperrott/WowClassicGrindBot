@@ -10,7 +10,7 @@ namespace Core.Goals
     {
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         
@@ -19,11 +19,11 @@ namespace Core.Goals
         private readonly IPlayerDirection direction;
         private readonly NpcNameFinder npcNameFinder;
 
-        public CastingHandler(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder)
+        public CastingHandler(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.playerReader = playerReader;
             
@@ -96,7 +96,7 @@ namespace Core.Goals
 
             if (this.playerReader.IsShooting)
             {
-                await wowInput.TapInteractKey("Stop casting shoot");
+                await input.TapInteractKey("Stop casting shoot");
                 await Task.Delay(1500); // wait for shooting to end
             }
 
@@ -211,7 +211,7 @@ namespace Core.Goals
                 if (distance > 1)
                 {
                     logger.LogInformation($"Stop moving: We have moved since the last interact: {distance}");
-                    await wowInput.TapStopKey();
+                    await input.TapStopKey();
                     classConfig.Interact.SetClicked();
                     await playerReader.WaitForNUpdate(1);
                 }
@@ -233,7 +233,7 @@ namespace Core.Goals
                 case UI_ERROR.ERR_BADATTACKPOS:
                 case UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR:
 
-                    await wowInput.TapStopAttack(this.playerReader.LastUIErrorMessage.ToString());
+                    await input.TapStopAttack(this.playerReader.LastUIErrorMessage.ToString());
 
                     logger.LogInformation($"Interact due to: this.playerReader.LastUIErrorMessage: {this.playerReader.LastUIErrorMessage}");
                     var facing = this.playerReader.Direction;
@@ -241,13 +241,13 @@ namespace Core.Goals
 
                     if (this.classConfig.Interact.MillisecondsSinceLastClick > 1000)
                     {
-                        await wowInput.TapInteractKey("CombatActionBase InteractOnUIError 1");
+                        await input.TapInteractKey("CombatActionBase InteractOnUIError 1");
                         await Task.Delay(50);
                     }
 
                     if (lastError == UI_ERROR.ERR_SPELL_FAILED_S)
                     {
-                        await wowInput.TapInteractKey("CombatActionBase InteractOnUIError 2");
+                        await input.TapInteractKey("CombatActionBase InteractOnUIError 2");
                         await playerReader.WaitForNUpdate(1); //3
                         if (this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_BADATTACKPOS && this.playerReader.Direction == facing)
                         {

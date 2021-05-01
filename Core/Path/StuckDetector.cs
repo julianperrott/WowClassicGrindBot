@@ -11,7 +11,7 @@ namespace Core
     {
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         
@@ -27,11 +27,11 @@ namespace Core
         private double previousDistanceToTarget = 99999;
         private DateTime timeOfLastSignificantMovement = DateTime.Now;
 
-        public StuckDetector(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving)
+        public StuckDetector(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
@@ -74,7 +74,7 @@ namespace Core
 
         public async Task Unstick()
         {
-            await wowInput.TapJump();
+            await input.TapJump();
 
             logger.LogInformation($"Stuck for {actionDurationSeconds}s, last tried to unstick {unstickSeconds}s ago. Unstick seconds={unstickSeconds}.");
 
@@ -121,7 +121,7 @@ namespace Core
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "StuckDetector");
                 await Task.Delay(strafeDuration);
 
-                await wowInput.TapJump();
+                await input.TapJump();
 
                 var heading = DirectionCalculator.CalculateHeading(this.playerReader.PlayerLocation, targetLocation);
                 await playerDirection.SetDirection(heading, targetLocation, "Move to next point");
@@ -131,7 +131,7 @@ namespace Core
             }
             else
             {
-                await wowInput.TapJump();
+                await input.TapJump();
             }
         }
 

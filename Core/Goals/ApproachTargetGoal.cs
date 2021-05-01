@@ -12,7 +12,7 @@ namespace Core.Goals
 
         private ILogger logger;
         private readonly WowProcess wowProcess;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
@@ -38,11 +38,11 @@ namespace Core.Goals
             }
         }
 
-        public ApproachTargetGoal(ILogger logger, WowProcess wowProcess, WowInput wowInput, PlayerReader playerReader, StopMoving stopMoving,  StuckDetector stuckDetector)
+        public ApproachTargetGoal(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, StopMoving stopMoving,  StuckDetector stuckDetector)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
@@ -60,7 +60,7 @@ namespace Core.Goals
         {
             if (playerReader.PlayerBitValues.IsMounted)
             {
-                await wowInput.Dismount();
+                await input.Dismount();
             }
 
             if (NeedsToReset)
@@ -83,13 +83,13 @@ namespace Core.Goals
                     logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
                     
                     await this.stopMoving.Stop();
-                    await wowInput.TapClearTarget();
-                    await wowInput.TapStopKey();
+                    await input.TapClearTarget();
+                    await input.TapStopKey();
 
                     if(playerReader.PetHasTarget)
                     {
-                        await this.wowInput.TapTargetPet();
-                        await this.wowInput.TapTargetOfTarget();
+                        await this.input.TapTargetPet();
+                        await this.input.TapTargetOfTarget();
                     }
                 }
 
@@ -105,7 +105,7 @@ namespace Core.Goals
             {
                 wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "ApproachTargetAction");
                 await Wait(100, () => false);
-                await wowInput.TapJump();
+                await input.TapJump();
                 this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
             }
 
@@ -152,7 +152,7 @@ namespace Core.Goals
             {
                 if (random.Next(1) == 0)
                 {
-                    await wowInput.TapJump();
+                    await input.TapJump();
                 }
                 LastJump = DateTime.Now;
             }
@@ -161,9 +161,9 @@ namespace Core.Goals
 
         public async Task TapInteractKey(string source)
         {
-            await wowInput.TapInteractKey($"Approach target ({source})");
+            await input.TapInteractKey($"Approach target ({source})");
             this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-            await wowInput.TapStopAttack();
+            await input.TapStopAttack();
         }
 
         private void Log(string text)

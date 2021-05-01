@@ -13,7 +13,7 @@ namespace Core
     {
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
         private readonly DataConfig dataConfig;
 
         private readonly AddonReader addonReader;
@@ -22,12 +22,12 @@ namespace Core
 
         public RouteInfo? RouteInfo { get; private set; }
 
-        public GoalFactory(ILogger logger, AddonReader addonReader, WowProcess wowProcess, WowInput wowInput, DataConfig dataConfig, NpcNameFinder npcNameFinder, IPPather pather)
+        public GoalFactory(ILogger logger, AddonReader addonReader, WowProcess wowProcess, ConfigurableInput input, DataConfig dataConfig, NpcNameFinder npcNameFinder, IPPather pather)
         {
             this.logger = logger;
             this.addonReader = addonReader;
             this.wowProcess = wowProcess;
-            this.wowInput = wowInput;
+            this.input = input;
             this.dataConfig = dataConfig;
             this.npcNameFinder = npcNameFinder;
             this.pather = pather;
@@ -43,11 +43,11 @@ namespace Core
             var playerDirection = new PlayerDirection(logger, wowProcess, addonReader.PlayerReader);
             var stopMoving = new StopMoving(wowProcess, addonReader.PlayerReader);
 
-            var castingHandler = new CastingHandler(logger, wowProcess, wowInput, addonReader.PlayerReader, classConfig, playerDirection, npcNameFinder);
+            var castingHandler = new CastingHandler(logger, wowProcess, input, addonReader.PlayerReader, classConfig, playerDirection, npcNameFinder);
 
-            var stuckDetector = new StuckDetector(logger, wowProcess, wowInput, addonReader.PlayerReader, playerDirection, stopMoving);
-            var followRouteAction = new FollowRouteGoal(logger, wowProcess, wowInput, addonReader.PlayerReader,  playerDirection, pathPoints, stopMoving, npcNameFinder, blacklist, stuckDetector, classConfig, pather);
-            var walkToCorpseAction = new WalkToCorpseGoal(logger, wowProcess, wowInput, addonReader.PlayerReader,  playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
+            var stuckDetector = new StuckDetector(logger, wowProcess, input, addonReader.PlayerReader, playerDirection, stopMoving);
+            var followRouteAction = new FollowRouteGoal(logger, wowProcess, input, addonReader.PlayerReader,  playerDirection, pathPoints, stopMoving, npcNameFinder, blacklist, stuckDetector, classConfig, pather);
+            var walkToCorpseAction = new WalkToCorpseGoal(logger, wowProcess, input, addonReader.PlayerReader,  playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
 
             availableActions.Clear();
 
@@ -72,7 +72,7 @@ namespace Core
                     availableActions.Add(followRouteAction);
                     availableActions.Add(walkToCorpseAction);
                 }
-                availableActions.Add(new ApproachTargetGoal(logger, wowProcess, wowInput, addonReader.PlayerReader, stopMoving,  stuckDetector));
+                availableActions.Add(new ApproachTargetGoal(logger, wowProcess, input, addonReader.PlayerReader, stopMoving,  stuckDetector));
 
                 if (classConfig.WrongZone.ZoneId > 0)
                 {
@@ -81,33 +81,33 @@ namespace Core
 
                 if (classConfig.Parallel.Sequence.Count > 0)
                 {
-                    availableActions.Add(new ParallelGoal(logger, wowInput, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler));
+                    availableActions.Add(new ParallelGoal(logger, input, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler));
                 }
 
                 if (classConfig.Loot)
                 {
-                    var lootAction = new LootGoal(logger, wowInput, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder);
+                    var lootAction = new LootGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder);
                     lootAction.AddPreconditions();
                     availableActions.Add(lootAction);
 
                     if (classConfig.Skin)
                     {
-                        availableActions.Add(new SkinningGoal(logger, wowInput, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, classConfig, npcNameFinder));
+                        availableActions.Add(new SkinningGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, classConfig, npcNameFinder));
                     }
                 }
 
                 try
                 {
-                    var genericCombat = new CombatGoal(logger, wowInput, addonReader.PlayerReader, stopMoving, classConfig, castingHandler);
+                    var genericCombat = new CombatGoal(logger, input, addonReader.PlayerReader, stopMoving, classConfig, castingHandler);
                     availableActions.Add(genericCombat);
-                    availableActions.Add(new PullTargetGoal(logger, wowInput, addonReader.PlayerReader, npcNameFinder, stopMoving, castingHandler, stuckDetector, classConfig));
+                    availableActions.Add(new PullTargetGoal(logger, input, addonReader.PlayerReader, npcNameFinder, stopMoving, castingHandler, stuckDetector, classConfig));
 
                     availableActions.Add(new CreatureKilledGoal(logger, addonReader.PlayerReader, classConfig));
                     availableActions.Add(new ConsumeCorpse(logger, addonReader.PlayerReader));
 
                     foreach (var item in classConfig.Adhoc.Sequence)
                     {
-                        availableActions.Add(new AdhocGoal(logger, wowInput, item, addonReader.PlayerReader, stopMoving, castingHandler));
+                        availableActions.Add(new AdhocGoal(logger, input, item, addonReader.PlayerReader, stopMoving, castingHandler));
                     }
                 }
                 catch (Exception ex)
@@ -118,7 +118,7 @@ namespace Core
 
                 foreach (var item in classConfig.NPC.Sequence)
                 {
-                    availableActions.Add(new AdhocNPCGoal(logger, wowProcess, wowInput, addonReader.PlayerReader,  playerDirection, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, item, blacklist));
+                    availableActions.Add(new AdhocNPCGoal(logger, wowProcess, input, addonReader.PlayerReader,  playerDirection, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, item, blacklist));
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 

@@ -11,7 +11,7 @@ namespace Core.Goals
         public override float CostOfPerformingAction { get => 7f; }
 
         private ILogger logger;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly NpcNameFinder npcNameFinder;
@@ -23,10 +23,10 @@ namespace Core.Goals
         private DateTime PullStartTime = DateTime.Now;
         private DateTime LastActive = DateTime.Now;
 
-        public PullTargetGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public PullTargetGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, NpcNameFinder npcNameFinder, StopMoving stopMoving, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.logger = logger;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.playerReader = playerReader;
             this.npcNameFinder = npcNameFinder;
@@ -48,7 +48,7 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
-            await wowInput.TapStopAttack();
+            await input.TapStopAttack();
             this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
             if ((DateTime.Now - LastActive).TotalSeconds > 5)
@@ -72,15 +72,15 @@ namespace Core.Goals
             if (playerReader.PlayerBitValues.IsMounted)
             {
                 logger.LogInformation($"Dismount");
-                await wowInput.Dismount();
+                await input.Dismount();
             }
 
             if (ShouldStopBeforePull)
             {
                 logger.LogInformation($"Stop approach");
                 await this.stopMoving.Stop();
-                await wowInput.TapStopAttack();
-                await wowInput.TapStopKey();
+                await input.TapStopAttack();
+                await input.TapStopKey();
             }
 
             bool pulled = await Pull();
@@ -92,12 +92,12 @@ namespace Core.Goals
                     logger.LogInformation($"Add on approach");
 
                     await this.stopMoving.Stop();
-                    await wowInput.TapStopKey();
+                    await input.TapStopKey();
 
                     //await wowProcess.KeyPress(ConsoleKey.F3, 50); // clear target
                     //await wowProcess.TapClearTarget();
 
-                    await wowInput.TapNearestTarget();
+                    await input.TapNearestTarget();
                     if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
                     {
                         if (this.playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe)
@@ -106,7 +106,7 @@ namespace Core.Goals
                         }
                     }
 
-                    await wowInput.TapClearTarget();
+                    await input.TapClearTarget();
                     return;
                 }
                 
@@ -130,7 +130,7 @@ namespace Core.Goals
         {
             if (this.classConfiguration.Interact.GetCooldownRemaining() == 0)
             {
-                await wowInput.TapInteractKey("PullTargetAction");
+                await input.TapInteractKey("PullTargetAction");
             }
 
             await this.castingHandler.InteractOnUIError();
@@ -165,12 +165,12 @@ namespace Core.Goals
 
             //stop combat
             //await this.wowProcess.KeyPress(ConsoleKey.F10, 50);
-            await wowInput.TapStopAttack();
+            await input.TapStopAttack();
             this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
             if(playerReader.PlayerBitValues.HasPet)
             {
-                await wowInput.TapPetAttack();
+                await input.TapPetAttack();
             }
 
             foreach (var item in this.Keys)

@@ -12,7 +12,7 @@ namespace Core.Goals
         public override float CostOfPerformingAction { get => 4.6f; }
 
         private ILogger logger;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
@@ -24,10 +24,10 @@ namespace Core.Goals
 
         private bool outOfCombat = false;
 
-        public SkinningGoal(ILogger logger, WowInput wowInput, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
+        public SkinningGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
         {
             this.logger = logger;
-            this.wowInput = wowInput;
+            this.input = input;
 
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
@@ -96,7 +96,7 @@ namespace Core.Goals
                     }
                 }
                 
-                await wowInput.TapInteractKey("Skinning Attempt...");
+                await input.TapInteractKey("Skinning Attempt...");
                 do
                 {
                     await playerReader.WaitForNUpdate(1);
@@ -142,7 +142,7 @@ namespace Core.Goals
 
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
 
-            await wowInput.TapClearTarget();
+            await input.TapClearTarget();
         }
 
         public async Task<bool> DiDEnteredCombat()
@@ -167,17 +167,17 @@ namespace Core.Goals
         {
             if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.PetHasTarget)
             {
-                await wowInput.TapTargetPet();
+                await input.TapTargetPet();
                 Log($"Pets target {this.playerReader.TargetTarget}");
                 if (this.playerReader.TargetTarget == TargetTargetEnum.PetHasATarget)
                 {
                     Log("Found target by pet");
-                    await wowInput.TapTargetOfTarget();
+                    await input.TapTargetOfTarget();
                     SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
                     return;
                 }
 
-                await wowInput.TapNearestTarget();
+                await input.TapNearestTarget();
                 await playerReader.WaitForNUpdate(1);
                 if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
                 {
@@ -189,7 +189,7 @@ namespace Core.Goals
                     }
                 }
 
-                await wowInput.TapClearTarget();
+                await input.TapClearTarget();
                 Log("No target found");
             }
         }

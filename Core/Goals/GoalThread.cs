@@ -9,7 +9,7 @@ namespace Core.Goals
     public class GoalThread
     {
         private readonly ILogger logger;
-        private readonly WowInput wowInput;
+        private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
         private readonly GoapAgent goapAgent;
@@ -17,10 +17,10 @@ namespace Core.Goals
         private GoapGoal? currentGoal;
         public bool Active { get; set; }
 
-        public GoalThread(ILogger logger, WowInput wowInput, PlayerReader playerReader, GoapAgent goapAgent)
+        public GoalThread(ILogger logger, ConfigurableInput input, PlayerReader playerReader, GoapAgent goapAgent)
         {
             this.logger = logger;
-            this.wowInput = wowInput;
+            this.input = input;
             this.playerReader = playerReader;
             this.goapAgent = goapAgent;
             
@@ -33,7 +33,7 @@ namespace Core.Goals
                 logger.LogInformation($"Abort from: {sender.GetType().Name}");
 
                 var location = this.playerReader.PlayerLocation;
-                wowInput?.Hearthstone();
+                input?.Hearthstone();
                 Active = false;
             }
         }
