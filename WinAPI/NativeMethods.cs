@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Core
 {
-    internal static class NativeMethods
+    public static class NativeMethods
     {
         [StructLayout(LayoutKind.Sequential)]
         public struct CURSORINFO

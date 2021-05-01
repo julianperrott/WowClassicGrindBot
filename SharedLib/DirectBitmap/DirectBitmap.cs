@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Core.NpcFinder
+namespace SharedLib
 {
     public sealed class DirectBitmap : IDisposable
     {
