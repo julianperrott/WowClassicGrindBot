@@ -1,6 +1,6 @@
-﻿@using Libs
-@inject Libs.IBotController botController
-@inject Libs.IAddonReader addonReader
+﻿@using Core
+@inject Core.IBotController botController
+@inject Core.IAddonReader addonReader
 
 @if (classConfig != null)
 {
@@ -60,14 +60,14 @@
 
     protected override void OnInitialized()
     {
-        if (Libs.DataFrameConfiguration.Exists())
+        if (Core.DataFrameConfiguration.Exists())
         {
             RefreshData();
 
             botController.ProfileLoaded -= OnProfileLoaded;
             botController.ProfileLoaded += OnProfileLoaded;
 
-            ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+            ((Core.AddonReader)addonReader).AddonDataChanged += (o, e) =>
             {
                 base.InvokeAsync(() =>
                 {

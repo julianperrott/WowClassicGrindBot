@@ -25,14 +25,14 @@
 @code {
 
     [Parameter]
-    public Libs.BagItem? Item { get; set; }
+    public Core.BagItem? Item { get; set; }
 
     [Parameter]
     public bool ShowChangesPrice { get; set; } = false;
 
     List<string> itemColour = new List<string> { "grey", "black", "green", "blue", "purple", "yellow", "yellow", "yellow" };
 
-    protected string BagItemColour(Libs.Addon.Item item)
+    protected string BagItemColour(Core.Addon.Item item)
     {
         if (item.Quality < 0 || item.Quality > 7) { return "black"; }
         return itemColour[item.Quality];
@@ -40,12 +40,12 @@
 
     List<string> itemBadge = new List<string> { "badge-secondary", "badge-dark", "badge-success", "badge-primary", "badge-warning", "badge-warning", "badge-warning", "badge-warning" };
 
-    protected string BagItemBadge(Libs.Addon.Item item)
+    protected string BagItemBadge(Core.Addon.Item item)
     {
         if (item.Quality < 0 || item.Quality > 7) { return "badge-dark"; }
         return itemBadge[item.Quality];
     }
-    protected int[] GetItemPrice(Libs.BagItem item)
+    protected int[] GetItemPrice(Core.BagItem item)
     {
         var price = item.Item.AHPrice;
         if (item.IsSoulbound) { price = item.Item.SellPrice; }
@@ -56,6 +56,6 @@
             value = (item.LastChange == 0 ? item.Count : item.LastChange) * price;
         }
 
-        return Libs.Addon.Item.ToSellPrice(value);
+        return Core.Addon.Item.ToSellPrice(value);
     }
 }

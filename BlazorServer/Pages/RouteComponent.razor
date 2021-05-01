@@ -1,8 +1,8 @@
-﻿@inject Libs.IAddonReader addonReader
-@inject Libs.IBotController botController
+﻿@inject Core.IAddonReader addonReader
+@inject Core.IBotController botController
 @inject IJSRuntime JSRuntime;
 @using System.Linq
-@using Libs
+@using Core
 
 <div class="card">
     <div class="card-header">
@@ -28,7 +28,7 @@
                     @{
                         var colour = addonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
 
-                        if (botController.GoapAgent != null && botController.GoapAgent.CurrentGoal?.GetType() == typeof(Libs.Goals.FollowRouteGoal))
+                        if (botController.GoapAgent != null && botController.GoapAgent.CurrentGoal?.GetType() == typeof(Core.Goals.FollowRouteGoal))
                         {
                             colour = "blue";
                         }
@@ -110,7 +110,7 @@
         botController.ProfileLoaded -= OnProfileLoaded;
         botController.ProfileLoaded += OnProfileLoaded;
 
-        ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+        ((Core.AddonReader)addonReader).AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() =>
             {
@@ -136,7 +136,7 @@
 
                 if (botController.GoapAgent != null)
                 {
-                    var walkToCorpseGoal = botController.GoapAgent.AvailableGoals.FirstOrDefault(a => a.GetType() == typeof(Libs.Goals.WalkToCorpseGoal)) as Libs.Goals.WalkToCorpseGoal;
+                    var walkToCorpseGoal = botController.GoapAgent.AvailableGoals.FirstOrDefault(a => a.GetType() == typeof(Core.Goals.WalkToCorpseGoal)) as Core.Goals.WalkToCorpseGoal;
                     if (walkToCorpseGoal != null)
                     {
                         Deaths = walkToCorpseGoal.Deaths;

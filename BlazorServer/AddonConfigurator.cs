@@ -1,7 +1,7 @@
 using System.IO;
 using Microsoft.Extensions.Logging;
 using Serilog.Extensions.Logging;
-using Libs;
+using Core;
 using System.Diagnostics;
 using System.Management;
 using System.Linq;

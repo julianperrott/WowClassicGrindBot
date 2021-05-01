@@ -1,8 +1,8 @@
-﻿@inject Libs.IAddonReader addonReader
-@inject Libs.IBotController botController
+﻿@inject Core.IAddonReader addonReader
+@inject Core.IBotController botController
 @inject IJSRuntime JSRuntime
-@using Libs.Addon
-@using Libs
+@using Core.Addon
+@using Core
 @using Microsoft.AspNetCore.Html
 
 <div class="card">
@@ -24,7 +24,7 @@
 </div>
 @code {
 
-    List<Libs.BagItem> NewItems = new List<Libs.BagItem>();
+    List<Core.BagItem> NewItems = new List<Core.BagItem>();
 
     int[] money = new int[0];
     int[] ahmoney = new int[0];

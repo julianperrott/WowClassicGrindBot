@@ -1,4 +1,4 @@
-﻿@inject Libs.IBotController botController
+﻿@inject Core.IBotController botController
 @inject Microsoft.Extensions.Logging.ILogger logger
 
 <div class="top-row pl-4 navbar navbar-dark">
@@ -9,7 +9,7 @@
     </button>
 </div>
 
-@if (AddonConfig.Exists() && Libs.DataFrameConfiguration.Exists())
+@if (AddonConfig.Exists() && Core.DataFrameConfiguration.Exists())
 {
 
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
@@ -42,7 +42,7 @@
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="Gather">
                     <span class="oi oi-basket" aria-hidden="true"></span>
-                    @if (this.botController.ClassConfig?.Mode == Libs.Mode.AttendedGather)
+                    @if (this.botController.ClassConfig?.Mode == Core.Mode.AttendedGather)
                     {
                         <span>Gather</span>
                     }
@@ -129,7 +129,7 @@ else
 
     private bool HideClassConfig => botController.IsBotActive || botController.ClassConfig == null;
 
-    private bool WoWProcessRunning => Libs.WowProcess.Get() != null;
+    private bool WoWProcessRunning => Core.WowProcess.Get() != null;
 
     private bool AddonConfigExists => AddonConfig.Exists() && addonConfigurator != null && addonConfigurator.Installed();
 
@@ -145,7 +145,7 @@ else
     {
         addonConfigurator = new AddonConfigurator(logger, AddonConfig.Load());
 
-        if (Libs.DataFrameConfiguration.Exists())
+        if (Core.DataFrameConfiguration.Exists())
         {
             botController.ProfileLoaded += (o, e) =>
             {

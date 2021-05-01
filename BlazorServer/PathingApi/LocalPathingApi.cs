@@ -1,5 +1,5 @@
-﻿using Libs;
-using Libs.PPather;
+﻿using Core;
+using Core.PPather;
 using Microsoft.Extensions.Logging;
 using PathingAPI;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
-using Libs;
-using Libs.Addon;
+using Core;
+using Core.Addon;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

@@ -1,8 +1,8 @@
 ﻿@page "/Gather"
-@inject Libs.IBotController botController
+@inject Core.IBotController botController
 @inject IJSRuntime JSRuntime;
 
-@if (botController.ClassConfig?.Mode != Libs.Mode.AttendedGather)
+@if (botController.ClassConfig?.Mode != Core.Mode.AttendedGather)
 {
     <h3>Attended gather mode is not enabled in the class config file.</h3>
     <p>

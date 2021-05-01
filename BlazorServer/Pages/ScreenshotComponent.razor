@@ -1,4 +1,4 @@
-﻿@inject Libs.IBotController botController
+﻿@inject Core.IBotController botController
 
 <img src="data:image/png;base64, @image" alt="Red dot" />
 
@@ -26,7 +26,7 @@
         }
     }
 
-    private async void ImageChanged(object sender, Libs.ScreenChangeEventArgs args)
+    private async void ImageChanged(object sender, Core.ScreenChangeEventArgs args)
     {
         this.image = args.Screenshot;
         this.eventTime = args.EventTime.ToString("HH:mm:ss");

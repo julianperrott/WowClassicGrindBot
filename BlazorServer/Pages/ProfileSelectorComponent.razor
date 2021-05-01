@@ -1,6 +1,6 @@
-﻿@using Libs
-@inject Libs.IBotController botController
-@inject Libs.IAddonReader addonReader
+﻿@using Core
+@inject Core.IBotController botController
+@inject Core.IAddonReader addonReader
 
 <div class="card @(Hide ? "hide" : "")" style="margin-top: 10px">
     <div class="card-header">
@@ -41,11 +41,11 @@
 
     protected override void OnInitialized()
     {
-        if (Libs.DataFrameConfiguration.Exists())
+        if (Core.DataFrameConfiguration.Exists())
         {
             RefreshData();
 
-            ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+            ((Core.AddonReader)addonReader).AddonDataChanged += (o, e) =>
             {
                 base.InvokeAsync(() =>
                 {

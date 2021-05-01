@@ -1,13 +1,13 @@
 ﻿@page "/"
 
-@inject Libs.IAddonReader addonReader
-@inject Libs.IBotController botController
+@inject Core.IAddonReader addonReader
+@inject Core.IBotController botController
 @inject IJSRuntime JSRuntime;
 
 <div class="container-fluid">
     <div class="row">
 
-        @if (AddonConfig.Exists() && Libs.DataFrameConfiguration.Exists())
+        @if (AddonConfig.Exists() && Core.DataFrameConfiguration.Exists())
         {
 
             <div class="col-sm">
@@ -32,7 +32,7 @@
         {
             <AddonConfiguration />
         }
-        else if (!Libs.DataFrameConfiguration.Exists())
+        else if (!Core.DataFrameConfiguration.Exists())
         {
             <FrameConfiguration />
         }
@@ -46,10 +46,10 @@
 
     protected override void OnInitialized()
     {
-        if (AddonConfig.Exists() && Libs.DataFrameConfiguration.Exists())
+        if (AddonConfig.Exists() && Core.DataFrameConfiguration.Exists())
         {
 
-            ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+            ((Core.AddonReader)addonReader).AddonDataChanged += (o, e) =>
             {
                 base.InvokeAsync(() =>
                 {

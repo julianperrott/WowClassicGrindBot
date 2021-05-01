@@ -1,6 +1,6 @@
-﻿@using Libs
-@inject Libs.IBotController botController
-@inject Libs.IAddonReader addonReader
+﻿@using Core
+@inject Core.IBotController botController
+@inject Core.IAddonReader addonReader
 
 <div class="card">
     <div class="card-header">
@@ -8,7 +8,7 @@
             <tr>
                 <td>
                     Minimap
-                    <span class="badge @CombatBadge()" style="margin-left:30px">@Libs.GOAP.GoapKeyDescription.ToString(Libs.GOAP.GoapKey.incombat, PlayerInCombat)</span>
+                    <span class="badge @CombatBadge()" style="margin-left:30px">@Core.GOAP.GoapKeyDescription.ToString(Core.GOAP.GoapKey.incombat, PlayerInCombat)</span>
                     <button class="btn btn-sm btn-primary float-right" @onclick="ToggleBot">
                         @if (!botController.IsBotActive)
                         {

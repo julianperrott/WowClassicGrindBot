@@ -27,7 +27,7 @@
 
                 @if (this.goal.Keys != null)
                 {
-                    var lastKeyClicked = Libs.KeyAction.LastKeyClicked();
+                    var lastKeyClicked = Core.KeyAction.LastKeyClicked();
 
                     foreach (var key in this.goal.Keys)
                     {
@@ -61,7 +61,7 @@
     public bool ShowKeys { get; set; } = false;
 
     [Parameter]
-    public Libs.Goals.GoapGoal goal { get; set; } = new Libs.Goals.NullGoal();
+    public Core.Goals.GoapGoal goal { get; set; } = new Core.Goals.NullGoal();
 
     public string Badge(KeyValuePair<string, bool> item)
     {

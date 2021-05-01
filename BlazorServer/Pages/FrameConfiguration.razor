@@ -2,10 +2,10 @@
 @inject Microsoft.Extensions.Logging.ILogger logger
 @inject Microsoft.Extensions.Hosting.IHostApplicationLifetime lifetime
 @inject NavigationManager NavigationManager
-@inject Libs.IBotController botController
+@inject Core.IBotController botController
 @implements IDisposable
 
-@using Libs
+@using Core
 @using Microsoft.AspNetCore.Html
 @using System.Threading;
 
@@ -23,7 +23,7 @@
 }
 else
 {
-    if (Libs.DataFrameConfiguration.Exists())
+    if (Core.DataFrameConfiguration.Exists())
     {
         <h1>Frame Configuration file already exists</h1>
     }
@@ -73,7 +73,7 @@ else
 
     <span class="row col-md-12">@playerClass</span>
 
-    @if (Libs.DataFrameConfiguration.Exists())
+    @if (Core.DataFrameConfiguration.Exists())
     {
         <hr />
         <h4 class="text-warning">Tinkering with the following fields are not recommend! Unless experinecing strange behaviours then repeat the Frame Configuration process!</h4>
@@ -128,7 +128,7 @@ else
     private AddonConfigurator? addonConfigurator;
 
     private DataConfig? dataConfig;
-    private Libs.Database.AreaDB? areaDb;
+    private Core.Database.AreaDB? areaDb;
     private DataFrameMeta dataFrameMeta = DataFrameMeta.Empty;
     private DataFrameConfiguration? config;
     private List<DataFrame> dataFrames = new List<DataFrame>();
@@ -157,11 +157,11 @@ else
             config = new DataFrameConfiguration(wowScreen);
             dataConfig = DataConfig.Load();
 
-            areaDb = new Libs.Database.AreaDB(logger, dataConfig);
+            areaDb = new Core.Database.AreaDB(logger, dataConfig);
 
             addonConfigurator = new AddonConfigurator(logger, addonConfig);
 
-            if (Libs.DataFrameConfiguration.Exists())
+            if (Core.DataFrameConfiguration.Exists())
             {
                 dataFrames = DataFrameConfiguration.LoadFrames();
                 dataFrameMeta = DataFrameConfiguration.LoadMeta();
