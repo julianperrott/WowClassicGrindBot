@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace Core
 {
-    public sealed class WowScreen : IColorReader, IRectProvider, IDirectBitmapProvider, IDisposable
+    public sealed class WowScreen : IWowScreen, IDirectBitmapProvider, IDisposable
     {
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;

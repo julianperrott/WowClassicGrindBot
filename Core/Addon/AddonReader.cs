@@ -16,7 +16,7 @@ namespace Core
         private readonly ILogger logger;
         private readonly ISquareReader squareReader;
         private readonly DataConfig dataConfig;
-        private readonly WowScreen wowScreen;
+        private readonly IWowScreen wowScreen;
         public PlayerReader PlayerReader { get; set; }
         public BagReader BagReader { get; set; }
         public EquipmentReader equipmentReader { get; set; }
@@ -37,7 +37,7 @@ namespace Core
 
         private Rectangle rectangle;
 
-        public AddonReader(ILogger logger, DataConfig dataConfig, WowScreen wowScreen, List<DataFrame> frames, AreaDB areaDb)
+        public AddonReader(ILogger logger, DataConfig dataConfig, IWowScreen wowScreen, List<DataFrame> frames, AreaDB areaDb)
         {
             this.logger = logger;
             this.dataConfig = dataConfig;
@@ -47,11 +47,11 @@ namespace Core
             this.width = frames.Last().point.X + 1;
             this.height = frames.Max(f => f.point.Y) + 1;
 
-            wowScreen.GetRectangle(out var rect);
-            rect.Width = width;
-            rect.Height = height;
+            wowScreen.GetRectangle(out rectangle);
+            rectangle.Width = width;
+            rectangle.Height = height;
             rectangle = new Rectangle(0, 0, width, height);
-            capturer = new DirectBitmapCapturer(rect);
+            capturer = new DirectBitmapCapturer(rectangle);
             colorReader = capturer;
 
             this.squareReader = new SquareReader(this);

@@ -1,4 +1,5 @@
 ﻿using Core;
+using SharedLib;
 using System.Drawing;
 
 namespace CoreTests
