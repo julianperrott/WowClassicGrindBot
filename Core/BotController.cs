@@ -267,14 +267,7 @@ namespace Core
 
         public void Dispose()
         {
-            //npcNameFinder.Dispose();
             WowScreen.Dispose();
-            /*
-            if (screen != null)
-            {
-                screen?.Dispose();
-            }
-            */
         }
 
         public void StopBot()
