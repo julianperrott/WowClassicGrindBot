@@ -12,6 +12,7 @@ using Serilog.Extensions.Logging;
 using System;
 using System.Threading;
 using MatBlazor;
+using SharedLib;
 
 namespace BlazorServer
 {

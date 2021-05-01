@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Core
+namespace SharedLib
 {
     public class WowProcess
     {

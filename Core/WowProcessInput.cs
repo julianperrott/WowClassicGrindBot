@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
+using SharedLib;
 
 namespace Core
 {
