@@ -422,8 +422,9 @@ e.g.
 * "Items Broken" - Some of my armor is red.
 * "BagFull" - player inventory is full.
 * "HasRangedWeapon" - player has an item equipped at the ranged slot.
+* "InMeleeRange" - determines if the target is in melee range (0-5 yard)
 
-| Class | Buff |
+| Class | Buff / Condition |
 | --- | --- |
 | All | "Items Broken" |
 | All | "HasRangedWeapon" |
@@ -433,6 +434,7 @@ e.g.
 | All | "Mana Regeneration" |
 | All | "OutOfCombatRange" |
 | All | "InCombatRange" |
+| All | "InMeleeRange" |
 | All | "AutoAttacking" |
 | All | "Shooting" |
 | Priest | "Fortitude" |
