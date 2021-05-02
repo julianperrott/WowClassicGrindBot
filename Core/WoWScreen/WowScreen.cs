@@ -81,14 +81,8 @@ namespace Core
 
         public Bitmap GetBitmap(int width, int height)
         {
-            var bmpScreen = new Bitmap(width, height);
-            GetRectangle(out var rect);
-
-            using (var graphics = Graphics.FromImage(bmpScreen))
-            {
-                graphics.CopyFromScreen(rect.X, rect.Y, 0, 0, bmpScreen.Size);
-            }
-            return bmpScreen;
+            UpdateScreenshot();
+            return capturer.GetBitmap(width, height);
         }
 
         public Color GetColorAt(Point point)

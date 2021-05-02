@@ -58,15 +58,13 @@ namespace SharedLib
 
         public Bitmap GetBitmap(int width, int height)
         {
-            Bitmap b = new Bitmap(width, height);
-            for(int y = 0; y < height; y++)
+            Bitmap bitmap = new Bitmap(width, height);
+            Rectangle sourceRect = new Rectangle(0, 0, width, height);
+            using (var graphics = Graphics.FromImage(bitmap))
             {
-                for (int x = 0; x < width; x++)
-                {
-                    b.SetPixel(x, y, DirectBitmap.GetPixel(x, y));
-                }
+                graphics.DrawImage(DirectBitmap.Bitmap, 0, 0, sourceRect, GraphicsUnit.Pixel);
             }
-            return b;
+            return bitmap;
         }
 
         public void Dispose()
