@@ -2,7 +2,7 @@
 @inject Microsoft.Extensions.Logging.ILogger logger
 @inject Microsoft.Extensions.Hosting.IHostApplicationLifetime lifetime
 @inject NavigationManager NavigationManager
-@inject Libs.IBotController botController
+@inject Core.IBotController botController
 
 <style>
     h5 {
@@ -122,7 +122,7 @@
     {
         addonConfigurator?.Delete();
 
-        if (Libs.DataFrameConfiguration.Exists())
+        if (Core.DataFrameConfiguration.Exists())
         {
             await RestartServer();
         }

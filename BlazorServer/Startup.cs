@@ -1,5 +1,5 @@
-using Libs;
-using Libs.Addon;
+using Core;
+using Core.Addon;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +12,7 @@ using Serilog.Extensions.Logging;
 using System;
 using System.Threading;
 using MatBlazor;
+using SharedLib;
 
 namespace BlazorServer
 {
@@ -50,8 +51,9 @@ namespace BlazorServer
             var logger = new SerilogLoggerProvider(Log.Logger).CreateLogger(nameof(Program));
             services.AddSingleton(logger);
 
-            var wowProcess = new WowProcess(logger);
-            wowProcess.GetWindowRect(out var rect);
+            var wowProcess = new WowProcess();
+            var wowScreen = new WowScreen(logger, wowProcess);
+            wowScreen.GetRectangle(out var rect);
 
             var addonConfig = AddonConfig.Load();
             var addonConfigurator = new AddonConfigurator(logger, addonConfig);

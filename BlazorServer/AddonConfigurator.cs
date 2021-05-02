@@ -1,13 +1,14 @@
 using System.IO;
 using Microsoft.Extensions.Logging;
 using Serilog.Extensions.Logging;
-using Libs;
+using Core;
 using System.Diagnostics;
 using System.Management;
 using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using SharedLib;
 
 namespace BlazorServer
 {
@@ -30,7 +31,7 @@ namespace BlazorServer
             this.logger = logger;
             this.addonConfig = addonConfig;
 
-            this.wowProcess = new WowProcess(logger);
+            this.wowProcess = new WowProcess();
         }
 
         public bool Installed()

@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libs", "Libs\Libs.csproj", "{277C93F8-DF2B-49B8-8A1C-1A64EB347B90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{277C93F8-DF2B-49B8-8A1C-1A64EB347B90}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServer", "BlazorServer\BlazorServer.csproj", "{31DA3032-F0D5-42E0-8F93-AE8622B42C53}"
 EndProject
@@ -13,15 +13,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathingAPI", "PathingAPI\PathingAPI.csproj", "{1FCAB55D-8AA5-4E68-9502-6C27D9BEF252}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibsTests", "LibsTests\LibsTests.csproj", "{36189519-32D6-4650-87CC-A525D99A0363}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreTests", "CoreTests\CoreTests.csproj", "{36189519-32D6-4650-87CC-A525D99A0363}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataConfig", "DataConfig\DataConfig.csproj", "{841D6DAD-AB21-47CF-98C2-F1DE3CABF59A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WowheadDB", "WowheadDB\WowheadDB.csproj", "{95EC76B4-B82B-472A-97C4-7257246A5B41}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{3C787F5D-0F6C-44F3-A9DA-8AF80EFCB6E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedLib", "SharedLib\SharedLib.csproj", "{3C787F5D-0F6C-44F3-A9DA-8AF80EFCB6E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddonConfig", "AddonConfig\AddonConfig.csproj", "{7CE141E1-DB09-4835-9F81-46E7D5C62F42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AddonConfig", "AddonConfig\AddonConfig.csproj", "{7CE141E1-DB09-4835-9F81-46E7D5C62F42}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinAPI", "WinAPI\WinAPI.csproj", "{DC3149ED-D37A-4020-B4A0-3AD3B86754F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{7CE141E1-DB09-4835-9F81-46E7D5C62F42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CE141E1-DB09-4835-9F81-46E7D5C62F42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CE141E1-DB09-4835-9F81-46E7D5C62F42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC3149ED-D37A-4020-B4A0-3AD3B86754F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC3149ED-D37A-4020-B4A0-3AD3B86754F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC3149ED-D37A-4020-B4A0-3AD3B86754F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC3149ED-D37A-4020-B4A0-3AD3B86754F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

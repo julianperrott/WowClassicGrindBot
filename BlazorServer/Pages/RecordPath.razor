@@ -1,11 +1,11 @@
 ﻿@page "/RecordPath"
 
-@using Libs
+@using Core
 @using Newtonsoft.Json
 @using System.IO
 
-@inject Libs.IAddonReader addonReader
-@inject Libs.IBotController botController
+@inject Core.IAddonReader addonReader
+@inject Core.IBotController botController
 @inject IJSRuntime JSRuntime
 
 <h3>Path Recording</h3>
@@ -119,7 +119,7 @@
     protected override void OnInitialized()
     {
 
-        ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+        ((Core.AddonReader)addonReader).AddonDataChanged += (o, e) =>
         {
             base.InvokeAsync(() =>
             {

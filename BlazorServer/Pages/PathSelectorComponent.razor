@@ -1,7 +1,7 @@
-﻿@using Libs
+﻿@using Core
 @using MatBlazor
-@inject Libs.IBotController botController
-@inject Libs.IAddonReader addonReader
+@inject Core.IBotController botController
+@inject Core.IAddonReader addonReader
 
 <div class="card @(Hide ? "hide" : "")" style="margin-top: 10px">
     <div class="card-header">
@@ -36,7 +36,7 @@
 
     protected override void OnInitialized()
     {
-        if (Libs.DataFrameConfiguration.Exists())
+        if (Core.DataFrameConfiguration.Exists())
         {
             RefreshData();
             ValidateButton();
@@ -44,7 +44,7 @@
             botController.ProfileLoaded -= OnProfileLoaded;
             botController.ProfileLoaded += OnProfileLoaded;
 
-            ((Libs.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+            ((Core.AddonReader)addonReader).AddonDataChanged += (o, e) =>
             {
                 base.InvokeAsync(() =>
                 {
