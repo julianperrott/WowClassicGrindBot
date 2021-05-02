@@ -51,6 +51,15 @@
         "Cooldown": 6
       },
       {
+        "Name": "Frost Nova",
+        "Key": 6,
+        "ManaRequirement": 55,
+        "Cooldown": 25,
+        "Requirement": "InMeleeRange",
+        "StepBackAfterCast": 1000,
+        "DelayAfterCast": 0
+      },
+      {
         "Name": "Fireball",
         "HasCastBar": true,
         "StopBeforeCast": true,
