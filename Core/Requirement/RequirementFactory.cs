@@ -142,7 +142,8 @@ namespace Core
                     { "Shooting", ()=> playerReader.IsShooting },
                     { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
                     { "BagFull", ()=> bagReader.BagsFull },
-                    { "HasRangedWeapon", ()=> equipmentReader.HasRanged() }
+                    { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
+                    { "InMeleeRange", ()=> playerReader.PlayerBitValues.IsInMeleeRange }
                 };
             }
 
