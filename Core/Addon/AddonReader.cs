@@ -10,8 +10,8 @@ namespace Core
 {
     public sealed class AddonReader : IAddonReader, IDisposable
     {
-        public List<DataFrame> frames { get; private set; } = new List<DataFrame>();
-        private Color[] FrameColor { get; set; } = new Color[200];
+        private readonly DataFrame[] frames;
+        private readonly Color[] FrameColor;
 
         private readonly ILogger logger;
         private readonly ISquareReader squareReader;
@@ -42,7 +42,9 @@ namespace Core
             this.logger = logger;
             this.dataConfig = dataConfig;
             this.wowScreen = wowScreen;
-            this.frames = frames;
+            //this.frames = frames;
+            this.frames = frames.ToArray();
+            this.FrameColor = new Color[this.frames.Length];
 
             this.width = frames.Last().point.X + 1;
             this.height = frames.Max(f => f.point.Y) + 1;
@@ -104,13 +106,16 @@ namespace Core
                 rectangle.Y = p.Y;
                 capturer.Capture(rectangle);
 
-                frames.ForEach(frame => FrameColor[frame.index] = colorReader.GetColorAt(frame.point));
+                for(int i=0; i<frames.Length; i++)
+                {
+                    FrameColor[frames[i].index] = colorReader.GetColorAt(frames[i].point);
+                }
 
                 PlayerReader.Updated();
             }
             catch (Exception ex)
             {
-                logger.LogInformation(ex.Message);
+                logger.LogError(ex.Message);
             }
         }
 
