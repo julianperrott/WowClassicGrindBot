@@ -58,8 +58,8 @@
 
                 var v1 = part switch
                 {
-                    Part.Right => int.Parse(text.Substring(text.Length - 5, 5)), // right 5 chars
-                    Part.Left => int.Parse(text.Substring(0, text.Length - 5)),// left 5 chars
+                    Part.Right => text.Length-5 >= 0 ? int.Parse(text.Substring(text.Length - 5, 5)) : 0, // right 5 chars
+                    Part.Left => text.Length-5 > 0 ? int.Parse(text.Substring(0, text.Length - 5)) : 0,  // left 5 chars
                     _ => 0
                 };
 
