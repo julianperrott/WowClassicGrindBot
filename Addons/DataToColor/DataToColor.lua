@@ -4,6 +4,8 @@
 
 DataToColor = {}
 DataToColor = LibStub("AceAddon-3.0"):NewAddon("AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0", "AceComm-3.0", "AceSerializer-3.0")
+Range = {}
+Range = LibStub("LibRangeCheck-2.0")
 
 DATA_CONFIG = {
     ACCEPT_PARTY_REQUESTS = false, -- O
@@ -571,7 +573,7 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:GetEnemyStatus(), 1) + 
     self:MakeIndexBase2(self:deadOrAlive(), 2) +
     self:MakeIndexBase2(self:checkTalentPoints(), 3) + 
-    self:MakeIndexBase2(0, 4) + 
+    self:MakeIndexBase2(self:inInMeleeRange(), 4) + 
     self:MakeIndexBase2(0, 5) +
     self:MakeIndexBase2(self:IsPetVisible(), 6) + 
     self:MakeIndexBase2(0, 7) + 
@@ -825,6 +827,20 @@ function DataToColor:isInRange()
     if IsActionInRange(4) then range = 20 end -- Checks Fire Blast Range, slot 4
     return range
 end
+
+function DataToColor:inInMeleeRange()
+    -- local rc = LibStub("LibRangeCheck-2.0")
+    -- local minRange, maxRange = rc:GetRange('target')
+    -- local minRangeIfVisible, maxRangeIfVisible = rc:GetRange('target', true)
+        local target = GetUnitName("target")
+        if target ~= nil then
+            local min, max = Range:GetRange("target")
+            if min == 0 and max == 5 then
+                return 1
+            end
+        end
+        return 0
+    end
 
 function DataToColor:targetNpcId()
     local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("target") or ''); 
