@@ -24,7 +24,7 @@
 }
 else
 {
-    if (Core.DataFrameConfiguration.Exists())
+    if (DataFrameConfiguration.Exists())
     {
         <h1>Frame Configuration file already exists</h1>
     }
@@ -74,7 +74,7 @@ else
 
     <span class="row col-md-12">@playerClass</span>
 
-    @if (Core.DataFrameConfiguration.Exists())
+    @if (DataFrameConfiguration.Exists())
     {
         <hr />
         <h4 class="text-warning">Tinkering with the following fields are not recommend! Unless experinecing strange behaviours then repeat the Frame Configuration process!</h4>
@@ -133,6 +133,7 @@ else
     private DataFrameMeta dataFrameMeta = DataFrameMeta.Empty;
     private DataFrameConfiguration? config;
     private List<DataFrame> dataFrames = new List<DataFrame>();
+    private IAddonDataProvider? addonDataProvider;
     private AddonReader? addonReader;
 
     private WowProcess? wowProcess;
@@ -164,10 +165,12 @@ else
 
             addonConfigurator = new AddonConfigurator(logger, addonConfig);
 
-            if (Core.DataFrameConfiguration.Exists())
+            if (DataFrameConfiguration.Exists())
             {
                 dataFrames = DataFrameConfiguration.LoadFrames();
                 dataFrameMeta = DataFrameConfiguration.LoadMeta();
+
+                addonDataProvider = new AddonDataProvider(wowScreen, dataFrames);
             }
 
             cancellationTokenSource = new CancellationTokenSource();
@@ -253,7 +256,18 @@ else
 
                                 if (dataFrames.Count == dataFrameMeta.frames)
                                 {
-                                    addonReader = new AddonReader(logger, dataConfig, wowScreen, dataFrames, areaDb);
+                                    if(addonReader != null)
+                                    {
+                                        addonReader.Dispose();
+                                        addonDataProvider = null;
+                                    }
+
+                                    if (addonDataProvider == null)
+                                    {
+                                        addonDataProvider = new AddonDataProvider(wowScreen, dataFrames);
+                                    }
+
+                                    addonReader = new AddonReader(logger, dataConfig, areaDb, addonDataProvider);
                                 }
 
                                 if (addonReader != null) // && dataFrames.Count != dataFrameMeta.frames

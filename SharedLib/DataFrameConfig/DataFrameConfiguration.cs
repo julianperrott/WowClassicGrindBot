@@ -5,7 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 
-namespace Core
+namespace SharedLib
 {
     public static class DataFrameConfigurationVersion
     {

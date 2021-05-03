@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core
+namespace SharedLib
 {
     public class ScreenChangeEventArgs : EventArgs
     {

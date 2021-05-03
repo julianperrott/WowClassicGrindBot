@@ -100,6 +100,7 @@
 
 <LogComponent />
 
+@using SharedLib;
 @code {
 
     private AddonConfigurator? addonConfigurator;
@@ -122,7 +123,7 @@
     {
         addonConfigurator?.Delete();
 
-        if (Core.DataFrameConfiguration.Exists())
+        if (DataFrameConfiguration.Exists())
         {
             await RestartServer();
         }

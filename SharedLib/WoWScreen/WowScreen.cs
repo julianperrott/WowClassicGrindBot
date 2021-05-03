@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using SharedLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,8 +7,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
+using WinAPI;
 
-namespace Core
+namespace SharedLib
 {
     public sealed class WowScreen : IWowScreen, IDirectBitmapProvider, IDisposable
     {

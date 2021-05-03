@@ -49,6 +49,8 @@ namespace Core
 
         private AreaDB areaDb;
 
+        private IAddonDataProvider addonDataProvider;
+
         public ClassConfiguration? ClassConfig { get; set; }
 
         private INodeFinder minimapNodeFinder;
@@ -75,7 +77,10 @@ namespace Core
 
             var frames = DataFrameConfiguration.LoadFrames();
 
-            AddonReader = new AddonReader(logger, DataConfig, WowScreen, frames, areaDb);
+            addonDataProvider = new AddonDataProvider(WowScreen, frames);
+            //addonDataProvider = new NetworkedAddonDataProvider(logger, 11000, "127.0.0.1", 9050);
+
+            AddonReader = new AddonReader(logger, DataConfig, areaDb, addonDataProvider);
 
             minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
@@ -268,6 +273,7 @@ namespace Core
         public void Dispose()
         {
             WowScreen.Dispose();
+            addonDataProvider?.Dispose();
         }
 
         public void StopBot()

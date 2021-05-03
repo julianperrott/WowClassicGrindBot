@@ -4,6 +4,7 @@ using System;
 using System.Drawing;
 using System.Threading.Tasks;
 using Core.Extensions;
+using SharedLib;
 
 namespace Core.Looting
 {

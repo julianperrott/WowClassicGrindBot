@@ -3,11 +3,12 @@
 @inject Core.IAddonReader addonReader
 @inject Core.IBotController botController
 @inject IJSRuntime JSRuntime;
+@using SharedLib; 
 
 <div class="container-fluid">
     <div class="row">
 
-        @if (AddonConfig.Exists() && Core.DataFrameConfiguration.Exists())
+        @if (AddonConfig.Exists() && DataFrameConfiguration.Exists())
         {
 
             <div class="col-sm">
@@ -32,7 +33,7 @@
         {
             <AddonConfiguration />
         }
-        else if (!Core.DataFrameConfiguration.Exists())
+        else if (!DataFrameConfiguration.Exists())
         {
             <FrameConfiguration />
         }
@@ -46,7 +47,7 @@
 
     protected override void OnInitialized()
     {
-        if (AddonConfig.Exists() && Core.DataFrameConfiguration.Exists())
+        if (AddonConfig.Exists() && DataFrameConfiguration.Exists())
         {
 
             ((Core.AddonReader)addonReader).AddonDataChanged += (o, e) =>

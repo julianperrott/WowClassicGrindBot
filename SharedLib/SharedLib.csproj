@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataConfig\DataConfig.csproj" />
+    <ProjectReference Include="..\WinAPI\WinAPI.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@
     </button>
 </div>
 
-@if (AddonConfig.Exists() && Core.DataFrameConfiguration.Exists())
+@if (AddonConfig.Exists() && DataFrameConfiguration.Exists())
 {
 
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
@@ -147,7 +147,7 @@ else
     {
         addonConfigurator = new AddonConfigurator(logger, AddonConfig.Load());
 
-        if (Core.DataFrameConfiguration.Exists())
+        if (DataFrameConfiguration.Exists())
         {
             botController.ProfileLoaded += (o, e) =>
             {
