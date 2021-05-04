@@ -425,6 +425,7 @@ e.g.
 * "InMeleeRange" - determines if the target is in melee range (0-5 yard)
 
 | Condition | Desciption |
+| --- | --- |
 | "Has Pet" | The player's pet is alive |
 | --- | --- |
 | "BagFull" | Inventory is full |
