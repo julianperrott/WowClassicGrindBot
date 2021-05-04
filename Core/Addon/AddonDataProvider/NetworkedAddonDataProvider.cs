@@ -33,6 +33,10 @@ namespace Core
             this.connectTo = connectTo;
             this.connectPort = connectPort;
 
+            logger.LogInformation($" - myPort {myPort}");
+            logger.LogInformation($" - connectTo {connectTo}");
+            logger.LogInformation($" - connectPort {connectPort}");
+
             udpClient = new UdpClient(myPort);
             RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, myPort);
 

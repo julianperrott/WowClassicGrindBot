@@ -79,20 +79,12 @@ namespace Core
 
             var frames = DataFrameConfiguration.LoadFrames();
 
-            var addonData = configuration.GetSection("AddonData");
-            var mode = addonData.GetSection("Mode");
-            if (addonData != null && mode != null && mode.Value == "Network")
+            var scad = new StartupConfigAddonData();
+            configuration.GetSection(StartupConfigAddonData.Position).Bind(scad);
+            if (scad.Mode == "Network")
             {
-                int myPort = int.Parse(addonData.GetSection("myPort").Value);
-                string connectTo = addonData.GetSection("connectTo").Value;
-                int connectPort = int.Parse(addonData.GetSection("connectPort").Value);
-
                 logger.LogInformation("Using NetworkedAddonDataProvider");
-                logger.LogInformation($" - myPort {myPort}");
-                logger.LogInformation($" - connectTo {connectTo}");
-                logger.LogInformation($" - connectPort {connectPort}");
-
-                addonDataProvider = new NetworkedAddonDataProvider(logger, myPort, connectTo, connectPort);
+                addonDataProvider = new NetworkedAddonDataProvider(logger, scad.myPort, scad.connectTo, scad.connectPort);
             }
             else
             {
