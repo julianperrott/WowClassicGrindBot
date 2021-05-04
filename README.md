@@ -317,13 +317,11 @@ Repair macro example:
 Spammable wand macro `shoot` in many profiles
 
     /#showtooltip
-    /petattack
     /cast !shoot
 
 Warlock `pull` macro used in warlock profiles
 
     #showtooltip
-    /petattack
     /cast Immolate
 
 Warlock `heal` macro used in warlock profiles. Have to change manually when new spell is learned!
