@@ -439,7 +439,7 @@ e.g.
 | "AutoAttacking" | Auto spell `Auto Attack` is active |
 | "Shooting" | (wand) Auto spell `Shoot` is active |
 
-| Class | Buff |
+| Class | Buff Condition |
 | --- | --- |
 | All | "Well Fed" |
 | All | "Eating" |
@@ -471,7 +471,7 @@ e.g.
 | Warlock | "Soul Link" |
 | Warrior | "Battle Shout" |
 
-| Class | Debuff |
+| Class | Debuff Condition |
 | --- | --- |
 | Druid | "Demoralizing Roar" |
 | Druid | "Faerie Fire" |
@@ -487,6 +487,7 @@ e.g.
 | Warlock | "Corruption" |
 | Warlock | "Immolate" |
 | Warrior | "Rend" |
+
 #### Range
 
 Allow requirements about spell range to be used, the spell in question depends upon the class being played.
@@ -520,7 +521,7 @@ In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tri
 | HUNTER | Raptor Strike | 0 |
 | HUNTER | Auto Shot | 1 |  
 | WARLOCK | Shadow Bolt | 0 |
-| WARLOCK | Shoot| 1 |
+| WARLOCK | Shoot | 1 |
 
 ----
 
