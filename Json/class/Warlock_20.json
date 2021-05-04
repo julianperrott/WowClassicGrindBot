@@ -140,7 +140,6 @@
       },
       {
         "Name": "Life Tap",
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirements": ["Health%>70","Mana%<60"],
         "Cooldown": 0,
@@ -148,7 +147,6 @@
       },
       {
         "Name": "Life Tap 2",
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirements": ["Health%>80","Mana%<80"],
         "Cooldown": 0,
@@ -157,6 +155,7 @@
       {
         "Name": "heal",
         "Key": "N3",
+        "StopBeforeCast": true,
         "HasCastBar": true,
         "Requirements": ["BagItem:6265:1", "not BagItem:19005:1"]
       }

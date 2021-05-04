@@ -165,6 +165,7 @@
         "Name": "heal",
         "Key": "N3",
         "HasCastBar": true,
+        "StopBeforeCast": true,
         "Requirements": ["BagItem:6265:1", "not BagItem:19005:1"]
       }
     ]
