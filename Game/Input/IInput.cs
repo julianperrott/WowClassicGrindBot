@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace Core
+namespace Game
 {
     public interface IInput
     {

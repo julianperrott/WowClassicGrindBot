@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using Core.Extensions;
 using SharedLib;
+using Game;
 
 namespace Core.Looting
 {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 #nullable enable
 
-namespace SharedLib
+namespace Game
 {
     public class WowProcess
     {

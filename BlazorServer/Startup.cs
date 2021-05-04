@@ -13,6 +13,7 @@ using System;
 using System.Threading;
 using MatBlazor;
 using SharedLib;
+using Game;
 
 namespace BlazorServer
 {

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedLib;
+using Game;
 
 namespace Core.GOAP
 {

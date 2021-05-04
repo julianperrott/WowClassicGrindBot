@@ -3,7 +3,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Server.Network
+namespace Server
 {
     public sealed class Server : IDisposable
     {

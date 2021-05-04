@@ -1,6 +1,7 @@
 ﻿using Core;
 using System.Drawing;
 using System.Threading.Tasks;
+using Game;
 
 namespace CoreTests
 {

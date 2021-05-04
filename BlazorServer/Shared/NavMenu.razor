@@ -2,6 +2,7 @@
 @inject Microsoft.Extensions.Logging.ILogger logger
 
 @using SharedLib;
+@using Game;
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">MasterOfPuppets</a>
@@ -131,7 +132,7 @@ else
 
     private bool HideClassConfig => botController.IsBotActive || botController.ClassConfig == null;
 
-    private bool WoWProcessRunning => SharedLib.WowProcess.Get() != null;
+    private bool WoWProcessRunning => WowProcess.Get() != null;
 
     private bool AddonConfigExists => AddonConfig.Exists() && addonConfigurator != null && addonConfigurator.Installed();
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharedLib
+namespace Game
 {
     public class ScreenChangeEventArgs : EventArgs
     {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TextCopy;
 using SharedLib;
 using WinAPI;
+using Game;
 
 namespace Core
 {

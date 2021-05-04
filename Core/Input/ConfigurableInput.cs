@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using SharedLib;
+using Game;
 
 namespace Core
 {

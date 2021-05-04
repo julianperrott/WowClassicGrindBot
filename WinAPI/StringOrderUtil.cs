@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace Core.Utils
+namespace WinAPI
 {
     [SuppressUnmanagedCodeSecurity]
     internal static class SafeNativeMethods

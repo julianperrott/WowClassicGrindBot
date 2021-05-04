@@ -3,6 +3,7 @@ using Serilog.Events;
 using SharedLib;
 using Serilog.Extensions.Logging;
 using System.Threading;
+using Game;
 using CommandLine;
 
 namespace Server
@@ -39,7 +40,7 @@ namespace Server
             }
         }
 
-        private static void CreateConfig(WowScreen wowScreen)
+        private static void CreateConfig(WowScreen wowScreen, WowProcessInput wowInput)
         {
             /*
             var dataFrameMeta = DataFrameMeta.Empty;
@@ -80,13 +81,14 @@ namespace Server
 
             if (!DataFrameConfiguration.Exists())
             {
-                CreateConfig(wowScreen);
+                var wowInput = new WowProcessInput(logger, wowProcess);
+                CreateConfig(wowScreen, wowInput);
             }
             else
             {
                 var frames = DataFrameConfiguration.LoadFrames();
                 IDataProvider provider = new DataProvider(logger, wowScreen, frames);
-                Network.Server server = new Network.Server(logger, port, provider);
+                Server server = new Server(logger, port, provider);
                 server.ListenServer();
             }
 

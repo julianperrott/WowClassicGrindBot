@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SharedLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ using System.IO;
 using System.Threading;
 using WinAPI;
 
-namespace SharedLib
+namespace Game
 {
     public sealed class WowScreen : IWowScreen, IDirectBitmapProvider, IDisposable
     {
@@ -18,7 +19,7 @@ namespace SharedLib
         private readonly DirectBitmapCapturer capturer;
 
         public delegate void ScreenChangeEventHandler(object sender, ScreenChangeEventArgs args);
-        public event ScreenChangeEventHandler? OnScreenChanged;
+        public event ScreenChangeEventHandler OnScreenChanged;
 
         private readonly List<Action<Graphics>> drawActions = new List<Action<Graphics>>();
 
