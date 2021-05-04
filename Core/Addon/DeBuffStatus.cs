@@ -41,9 +41,9 @@
         public bool Rend { get => IsBitSet(0); }
 
         // Warlock
-        public bool CurseofWeakness { get => IsBitSet(0); }
-        public bool CurseofAgony { get => IsBitSet(1); }
-        public bool Corruption { get => IsBitSet(2); }
-        public bool Immolate { get => IsBitSet(3); }
+        public bool Curseof { get => IsBitSet(0); }
+        public bool Corruption { get => IsBitSet(1); }
+        public bool Immolate { get => IsBitSet(2); }
+        public bool SiphonLife { get => IsBitSet(3); }
     }
 }

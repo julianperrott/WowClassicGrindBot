@@ -424,45 +424,68 @@ e.g.
 * "HasRangedWeapon" - player has an item equipped at the ranged slot.
 * "InMeleeRange" - determines if the target is in melee range (0-5 yard)
 
-| Class | Buff / Condition |
+| Condition | Desciption | 
+| "Has Pet" | The player's pet is alive |
 | --- | --- |
-| All | "Items Broken" |
-| All | "HasRangedWeapon" |
+| "BagFull" | Inventory is full |
+| "Items Broken" | Has any broken(red) worn item |
+| "HasRangedWeapon" | Has equipped ranged weapon (wand/crossbow/bow/gun) |
+| --- | --- |
+| "InMeleeRange" | Target is in 0-5 yard range |
+| "InCombatRange" | Class based - Have any ability which allows you to attack target from current place |
+| "OutOfCombatRange" | Negated value of "InCombatRange" |
+| --- | --- |
+| "AutoAttacking" | Auto spell `Auto Attack` is active |
+| "Shooting" | (wand) Auto spell `Shoot` is active |
+
+| Class | Buff |
+| --- | --- |
 | All | "Well Fed" |
 | All | "Eating" |
 | All | "Drinking" |
 | All | "Mana Regeneration" |
-| All | "OutOfCombatRange" |
-| All | "InCombatRange" |
-| All | "InMeleeRange" |
-| All | "AutoAttacking" |
-| All | "Shooting" |
+| --- | --- |
+| Druid | "Mark of the Wild" |
+| Druid | "Thorns" |
+| Druid | "TigersFury" |
+| Mage | "Frost Armor" |
+| Mage | "Arcane Intellect" |
+| Mage | "Ice Barrier" |
+| Mage | "Ward" |
+| Mage | "Fire Power" |
+| Paladin | "Seal" |
+| Paladin | "Aura" |
+| Paladin | "Blessing" |
+| Paladin | "Blessing of Might" |
 | Priest | "Fortitude" |
 | Priest | "InnerFire" |
 | Priest | "Divine Spirit" |
 | Priest | "Renew" |
 | Priest | "Shield" |
-| Priest | "Shadow Word: Pain" |
-| Paladin | "Seal" |
-| Paladin |  "Aura" |
-| Paladin |  "Blessing" |
-| Druid | "Mark of the Wild" |
-| Druid | "Thorns" |
-| Druid Debuff | "Demoralizing Roar"
-| Druid Debuff | "Faerie Fire"
-| Mage | "Frost Armor" |
-| Mage | "Arcane Intellect" |
-| Mage | "Ice Barrier" |
 | Rogue | "Slice And Dice" |
-| Warrior | "Battle Shout" |
+| Warlock | "Demon Armor" |
 | Warlock | "Demon Skin" |
-| Warlock | "Has Pet" |
+| Warlock | "Shadow Trance" |
+| Warlock | "Soulstone Resurraction" |
+| Warlock | "Soul Link" |
+| Warrior | "Battle Shout" |
+
+| Class | Debuff |
+| --- | --- |
+| Druid | "Demoralizing Roar" |
+| Druid | "Faerie Fire" |
+| Mage | "Frostbite" |
+| Priest | "Shadow Word: Pain" |
+| Warlock | "Curse of" |
 | Warlock | "Curse of Weakness" |
+| Warlock | "Curse of Elements" |
+| Warlock | "Curse of Recklessness" |
+| Warlock | "Curse of Shadow" |
 | Warlock | "Curse of Agony" |
+| Warlock | "Siphon Life" |
 | Warlock | "Corruption" |
 | Warlock | "Immolate" |
-| Warrior Debuff | "Rend" |
- 
+| Warrior | "Rend" |
 #### Range
 
 Allow requirements about spell range to be used, the spell in question depends upon the class being played.

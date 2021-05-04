@@ -24,7 +24,6 @@
 
         // All
         public bool Eating { get => IsBitSet(0); }
-
         public bool Drinking { get => IsBitSet(1); }
         public bool WellFed { get => IsBitSet(2); }
         public bool ManaRegeneration { get => IsBitSet(3); }
@@ -63,9 +62,10 @@
         public bool BattleShout { get => IsBitSet(10); }
 
         // Warlock
-        public bool DemonSkin { get => IsBitSet(10); }
+        public bool Demon { get => IsBitSet(10); } //Skin and Armor
+
         public bool SoulLink { get => IsBitSet(11); }
         public bool SoulstoneResurrection { get => IsBitSet(12); }
-        public bool DemonArmor { get => IsBitSet(13); }
+        public bool ShadowTrance { get => IsBitSet(13); }
     }
 }

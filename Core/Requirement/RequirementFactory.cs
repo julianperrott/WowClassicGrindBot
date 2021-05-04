@@ -90,23 +90,42 @@ namespace Core
             {
                 BuffDictionary = new Dictionary<string, Func<bool>>
                 {
-                    {  "Seal", ()=> playerReader.Buffs.Seal },
-                    {  "Aura", ()=>playerReader.Buffs.Aura },
-                    {  "Devotion Aura", ()=>playerReader.Buffs.Aura },
-                    {  "Blessing", ()=> playerReader.Buffs.Blessing },
-                    {  "Blessing of Might", ()=> playerReader.Buffs.Blessing },
-                    {  "Well Fed", ()=> playerReader.Buffs.WellFed },
+                    // Range
+                    { "InMeleeRange", ()=> playerReader.PlayerBitValues.IsInMeleeRange },
+                    { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
+                    { "InCombatRange", ()=> playerReader.WithInCombatRange },
+                    { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
+                    // Pet
+                    { "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
+                    // Auto Spell
+                    { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
+                    { "Shooting", ()=> playerReader.IsShooting },
+                    // Equipment - Bag
+                    { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
+                    { "BagFull", ()=> bagReader.BagsFull },
+                    { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
+                    // General Buff Condition
                     {  "Eating", ()=> playerReader.Buffs.Eating },
                     {  "Drinking", ()=> playerReader.Buffs.Drinking },
                     {  "Mana Regeneration", ()=> playerReader.Buffs.ManaRegeneration },
+                    {  "Well Fed", ()=> playerReader.Buffs.WellFed },
+                    //Priest
                     {  "Fortitude", ()=> playerReader.Buffs.Fortitude },
                     {  "InnerFire", ()=> playerReader.Buffs.InnerFire },
                     {  "Divine Spirit", ()=> playerReader.Buffs.DivineSpirit },
                     {  "Renew", ()=> playerReader.Buffs.Renew },
                     {  "Shield", ()=> playerReader.Buffs.Shield },
+                    // Druid
                     {  "Mark of the Wild", ()=> playerReader.Buffs.MarkOfTheWild },
                     {  "Thorns", ()=> playerReader.Buffs.Thorns },
                     {  "TigersFury", ()=> playerReader.Buffs.TigersFury },
+                    // Paladin
+                    {  "Seal", ()=> playerReader.Buffs.Seal },
+                    {  "Aura", ()=>playerReader.Buffs.Aura },
+                    {  "Devotion Aura", ()=>playerReader.Buffs.Aura },
+                    {  "Blessing", ()=> playerReader.Buffs.Blessing },
+                    {  "Blessing of Might", ()=> playerReader.Buffs.Blessing },
+                    // Mage
                     {  "Frost Armor", ()=> playerReader.Buffs.FrostArmor },
                     {  "Arcane Intellect", ()=> playerReader.Buffs.ArcaneIntellect },
                     {  "Ice Barrier", ()=>playerReader.Buffs.IceBarrier },
@@ -114,36 +133,34 @@ namespace Core
                     {  "Fire Power", ()=>playerReader.Buffs.FirePower },
                     {  "Slice And Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
-                    {  "Demon Skin", ()=> playerReader.Buffs.DemonSkin },
-                    {  "Demon Armor", ()=> playerReader.Buffs.DemonArmor },
+                    // Warlock
+                    {  "Demon Skin", ()=> playerReader.Buffs.Demon },
+                    {  "Demon Armor", ()=> playerReader.Buffs.Demon },
                     {  "Soul Link", ()=> playerReader.Buffs.SoulLink },
                     {  "Soulstone Resurrection", ()=> playerReader.Buffs.SoulstoneResurrection },
-                    {  "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
+                    {  "Shadow Trance", ()=> playerReader.Buffs.ShadowTrance },
 
+                    // Debuff Section
+                    // Druid Debuff
                     {  "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
                     {  "Faerie Fire", ()=> playerReader.Debuffs.FaerieFire },
                     {  "Rip", ()=> playerReader.Debuffs.Rip },
+                    // Warrior Debuff
                     {  "Rend", ()=> playerReader.Debuffs.Rend },
-
+                    // Priest Debuff
                     {  "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },
-
-                    {  "Curse of Weakness", ()=> playerReader.Debuffs.CurseofWeakness },
-                    {  "Curse of Agony", ()=> playerReader.Debuffs.CurseofAgony },
+                    // Mage Debuff
+                    { "Frostbite", ()=> playerReader.Debuffs.Frostbite },
+                    // Warlock Debuff
+                    {  "Curse of Weakness", ()=> playerReader.Debuffs.Curseof },
+                    {  "Curse of Elements", ()=> playerReader.Debuffs.Curseof },
+                    {  "Curse of Recklessness", ()=> playerReader.Debuffs.Curseof },
+                    {  "Curse of Shadow", ()=> playerReader.Debuffs.Curseof },
+                    {  "Curse of Agony", ()=> playerReader.Debuffs.Curseof },
+                    {  "Curse of", ()=> playerReader.Debuffs.Curseof },
                     {  "Corruption", ()=> playerReader.Debuffs.Corruption },
                     {  "Immolate", ()=> playerReader.Debuffs.Immolate },
-
-
-                    { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
-                    { "InCombatRange", ()=> playerReader.WithInCombatRange },
-
-                    { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
-
-                    { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
-                    { "Shooting", ()=> playerReader.IsShooting },
-                    { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
-                    { "BagFull", ()=> bagReader.BagsFull },
-                    { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
-                    { "InMeleeRange", ()=> playerReader.PlayerBitValues.IsInMeleeRange }
+                    {  "Siphon Life", ()=> playerReader.Debuffs.SiphonLife },
                 };
             }
 
