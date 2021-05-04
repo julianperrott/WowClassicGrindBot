@@ -40,26 +40,52 @@ namespace Server
             }
         }
 
-        private static void CreateConfig(WowScreen wowScreen, WowProcessInput wowInput)
+        private static void CreateConfig(WowScreen wowScreen)
         {
-            /*
+            // Requirement enabled addon
+            var enabledAddon = wowScreen.GetBitmap(1, 1);
+            var firstPixel = enabledAddon.GetPixel(0, 0);
+            while (firstPixel.ToArgb() != System.Drawing.Color.Black.ToArgb())
+            {
+                Log.Logger.Information("Addon not visible!");
+
+                Thread.Sleep(1000);
+                enabledAddon = wowScreen.GetBitmap(1, 1);
+                firstPixel = enabledAddon.GetPixel(0, 0);
+            }
+
+            // Enabled Addon visible
+            Log.Logger.Information("Addon Visible");
+
             var dataFrameMeta = DataFrameMeta.Empty;
             while(dataFrameMeta == DataFrameMeta.Empty)
             {
-                var screenshot = wowScreen.GetBitmap(5, 5);
-                var tempFrameMeta = DataFrameConfiguration.GetMeta(screenshot);
+                var metaBmp = wowScreen.GetBitmap(5, 5);
+                dataFrameMeta = DataFrameConfiguration.GetMeta(metaBmp);
                 Thread.Sleep(1000);
+
+                Log.Logger.Information("Enter Addon Configure mode!");
             }
 
+            var size = dataFrameMeta.EstimatedSize();
+            var screenshot = wowScreen.GetBitmap(size.Width, size.Height);
             var dataFrames = DataFrameConfiguration.CreateFrames(dataFrameMeta, screenshot);
 
             while (dataFrames.Count != dataFrameMeta.frames)
             {
                 dataFrames = DataFrameConfiguration.CreateFrames(dataFrameMeta, screenshot);
-
                 Thread.Sleep(1000);
+
+                Log.Logger.Information($"Size missmatch {dataFrames.Count} != {dataFrameMeta.frames}");
             }
-            */
+
+            wowScreen.GetRectangle(out var rect);
+            DataFrameConfiguration.SaveConfiguration(rect, null, dataFrameMeta, dataFrames);
+            Log.Logger.Information("DataFrameConfiguration Saved!");
+            Log.Logger.Information("Leave Addon Configure mode!");
+            Log.Logger.Information("Please Restart!");
+
+            System.Console.ReadLine();
         }
 
         static void Main(string[] args)
@@ -81,8 +107,8 @@ namespace Server
 
             if (!DataFrameConfiguration.Exists())
             {
-                var wowInput = new WowProcessInput(logger, wowProcess);
-                CreateConfig(wowScreen, wowInput);
+                Log.Logger.Error("DataFrameConfiguration not exists");
+                CreateConfig(wowScreen);
             }
             else
             {
