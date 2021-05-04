@@ -247,6 +247,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | PressDuration | How many milliseconds to press the key for |  250 |
 | ShapeShiftForm | For druids the shapeshift form to be in to cast this spell | None |
 | CastIfAddsVisible | If the bot can "See" any adds | false |
+| Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | 1 |
 | Cooldown | The cooldown in seconds until the command can be done again | 0 |
 | MinMana | The minimum Mana required to cast the spell | 0 |
 | MinRage | The minimum Rage required to cast the spell | 0 |

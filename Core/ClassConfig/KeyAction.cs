@@ -18,6 +18,9 @@ namespace Core
         public ShapeshiftForm ShapeShiftFormEnum { get; set; } = ShapeshiftForm.None;
         public string CastIfAddsVisible { get; set; } = "";
         public float Cooldown { get; set; } = 0;
+
+        private int _charge;
+        public int Charge { get; set; } = 1;
         public SchoolMask School { get; set; } = SchoolMask.None;
         public int MinMana { get; set; } = 0;
         public int MinRage { get; set; } = 0;
@@ -68,6 +71,8 @@ namespace Core
         {
             this.playerReader = playerReader;
             this.logger = logger;
+
+            ResetChanges();
 
             if (!string.IsNullOrEmpty(this.Requirement))
             {
@@ -124,18 +129,6 @@ namespace Core
             }
         }
 
-        internal void SetCooldown(int seconds)
-        {
-            if (LastClicked.ContainsKey(this.ConsoleKey))
-            {
-                LastClicked[this.ConsoleKey] = DateTime.Now.AddSeconds(this.Cooldown - seconds);
-            }
-            else
-            {
-                LastClicked.TryAdd(this.ConsoleKey, DateTime.Now.AddSeconds(this.Cooldown - seconds));
-            }
-        }
-
         internal void SetClicked()
         {
             try
@@ -164,7 +157,50 @@ namespace Core
 
         internal void ResetCooldown()
         {
-            if (LastClicked.ContainsKey(ConsoleKey)) { LastClicked.TryRemove(ConsoleKey, out DateTime value); }
+            if (LastClicked.ContainsKey(ConsoleKey))
+            {
+                LastClicked.TryRemove(ConsoleKey, out _);
+            }
+        }
+
+        public void CreateChargeRequirement()
+        {
+            if (this.Charge > 1)
+            {
+                this.RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => GetChargeRemaining() != 0,
+                    LogMessage = () => $"Charge {GetChargeRemaining()}",
+                    VisibleIfHasRequirement = true
+                });
+            }
+        }
+
+        public int GetChargeRemaining()
+        {
+            return _charge;
+        }
+
+        public void ConsumeCharge()
+        {
+            if(Charge > 1)
+            {
+                _charge--;
+                if(_charge > 0)
+                {
+                    ResetCooldown();
+                }
+                else
+                {
+                    ResetChanges();
+                    SetClicked();
+                }
+            }
+        }
+
+        internal void ResetChanges()
+        {
+            _charge = Charge;
         }
 
         public bool CanRun()
