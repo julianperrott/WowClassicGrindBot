@@ -174,6 +174,8 @@ namespace Core.Goals
             {
                 await this.input.KeyPress(ConsoleKey.DownArrow, item.StepBackAfterCast , $"Step back for {item.StepBackAfterCast}ms");
             }
+
+            item.ConsumeCharge();
             return true;
         }
 

@@ -34,6 +34,7 @@ namespace Core
             CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
             item.CreateCooldownRequirement();
+            item.CreateChargeRequirement();
         }
 
         private void CreateMinRequirement(List<Requirement> RequirementObjects, string type, int value)
