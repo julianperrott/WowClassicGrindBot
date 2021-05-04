@@ -13,6 +13,7 @@ using Core.Database;
 using SharedLib;
 using Game;
 using WinAPI;
+using Microsoft.Extensions.Configuration;
 
 namespace Core
 {
@@ -64,7 +65,7 @@ namespace Core
         public event EventHandler? ProfileLoaded;
         public event EventHandler<bool>? StatusChanged;
 
-        public BotController(ILogger logger, IPPather pather, DataConfig dataConfig)
+        public BotController(ILogger logger, IPPather pather, DataConfig dataConfig, IConfiguration configuration)
         {
             this.logger = logger;
             this.pather = pather;
@@ -78,8 +79,26 @@ namespace Core
 
             var frames = DataFrameConfiguration.LoadFrames();
 
-            addonDataProvider = new AddonDataProvider(WowScreen, frames);
-            //addonDataProvider = new NetworkedAddonDataProvider(logger, 11000, "127.0.0.1", 9050);
+            var addonData = configuration.GetSection("AddonData");
+            var mode = addonData.GetSection("Mode");
+            if (addonData != null && mode != null && mode.Value == "Network")
+            {
+                int myPort = int.Parse(addonData.GetSection("myPort").Value);
+                string connectTo = addonData.GetSection("connectTo").Value;
+                int connectPort = int.Parse(addonData.GetSection("connectPort").Value);
+
+                logger.LogInformation("Using NetworkedAddonDataProvider");
+                logger.LogInformation($" - myPort {myPort}");
+                logger.LogInformation($" - connectTo {connectTo}");
+                logger.LogInformation($" - connectPort {connectPort}");
+
+                addonDataProvider = new NetworkedAddonDataProvider(logger, myPort, connectTo, connectPort);
+            }
+            else
+            {
+                logger.LogInformation("Using AddonDataProvider");
+                addonDataProvider = new AddonDataProvider(WowScreen, frames);
+            }
 
             AddonReader = new AddonReader(logger, DataConfig, areaDb, addonDataProvider);
 
