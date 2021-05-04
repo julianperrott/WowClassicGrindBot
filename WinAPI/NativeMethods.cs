@@ -3,7 +3,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace Core
+namespace WinAPI
 {
     public static class NativeMethods
     {

@@ -1,5 +1,6 @@
 ﻿@using Core
 @using MatBlazor
+@using SharedLib; 
 @inject Core.IBotController botController
 @inject Core.IAddonReader addonReader
 
@@ -36,7 +37,7 @@
 
     protected override void OnInitialized()
     {
-        if (Core.DataFrameConfiguration.Exists())
+        if (DataFrameConfiguration.Exists())
         {
             RefreshData();
             ValidateButton();

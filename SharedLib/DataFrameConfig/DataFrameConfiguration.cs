@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
-using SharedLib;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 
-namespace Core
+#nullable enable
+
+namespace SharedLib
 {
     public static class DataFrameConfigurationVersion
     {

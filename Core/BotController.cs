@@ -9,9 +9,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Utils;
 using Core.Database;
 using SharedLib;
+using Game;
+using WinAPI;
+using Microsoft.Extensions.Configuration;
 
 namespace Core
 {
@@ -49,6 +51,8 @@ namespace Core
 
         private AreaDB areaDb;
 
+        private IAddonDataProvider addonDataProvider;
+
         public ClassConfiguration? ClassConfig { get; set; }
 
         private INodeFinder minimapNodeFinder;
@@ -61,7 +65,7 @@ namespace Core
         public event EventHandler? ProfileLoaded;
         public event EventHandler<bool>? StatusChanged;
 
-        public BotController(ILogger logger, IPPather pather, DataConfig dataConfig)
+        public BotController(ILogger logger, IPPather pather, DataConfig dataConfig, IConfiguration configuration)
         {
             this.logger = logger;
             this.pather = pather;
@@ -75,7 +79,20 @@ namespace Core
 
             var frames = DataFrameConfiguration.LoadFrames();
 
-            AddonReader = new AddonReader(logger, DataConfig, WowScreen, frames, areaDb);
+            var scad = new StartupConfigAddonData();
+            configuration.GetSection(StartupConfigAddonData.Position).Bind(scad);
+            if (scad.Mode == "Network")
+            {
+                logger.LogInformation("Using NetworkedAddonDataProvider");
+                addonDataProvider = new NetworkedAddonDataProvider(logger, scad.myPort, scad.connectTo, scad.connectPort);
+            }
+            else
+            {
+                logger.LogInformation("Using AddonDataProvider");
+                addonDataProvider = new AddonDataProvider(WowScreen, frames);
+            }
+
+            AddonReader = new AddonReader(logger, DataConfig, areaDb, addonDataProvider);
 
             minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
@@ -268,6 +285,7 @@ namespace Core
         public void Dispose()
         {
             WowScreen.Dispose();
+            addonDataProvider?.Dispose();
         }
 
         public void StopBot()

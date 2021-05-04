@@ -4,15 +4,17 @@ namespace Core
 {
     public interface IAddonReader
     {
-        PlayerReader PlayerReader { get; set; }
-
         void Refresh();
 
         Color GetColorAt(int index);
 
+        bool Active { get; set; }
+
+        PlayerReader PlayerReader { get; set; }
+
         BagReader BagReader { get; set; }
         EquipmentReader equipmentReader { get; set; }
-        bool Active { get; set; }
+
         LevelTracker LevelTracker { get; set; }
     }
 }

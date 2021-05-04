@@ -33,6 +33,7 @@
     }
 </div>
 
+@using SharedLib; 
 @code {
 
     bool disableButton = false;
@@ -42,7 +43,7 @@
 
     protected override void OnInitialized()
     {
-        if (Core.DataFrameConfiguration.Exists())
+        if (DataFrameConfiguration.Exists())
         {
             ValidateButton();
 

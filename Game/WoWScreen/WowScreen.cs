@@ -8,8 +8,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
+using WinAPI;
 
-namespace Core
+namespace Game
 {
     public sealed class WowScreen : IWowScreen, IDirectBitmapProvider, IDisposable
     {
@@ -18,7 +19,7 @@ namespace Core
         private readonly DirectBitmapCapturer capturer;
 
         public delegate void ScreenChangeEventHandler(object sender, ScreenChangeEventArgs args);
-        public event ScreenChangeEventHandler? OnScreenChanged;
+        public event ScreenChangeEventHandler OnScreenChanged;
 
         private readonly List<Action<Graphics>> drawActions = new List<Action<Graphics>>();
 

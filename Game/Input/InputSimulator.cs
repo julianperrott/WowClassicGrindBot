@@ -5,8 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
+using WinAPI;
 
-namespace Core
+namespace Game
 {
     public class InputSimulator : IInput
     {

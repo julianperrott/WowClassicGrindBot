@@ -6,8 +6,9 @@ using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 using SharedLib;
+using WinAPI;
 
-namespace Core
+namespace Game
 {
     public class WowProcessInput : IMouseInput
     {

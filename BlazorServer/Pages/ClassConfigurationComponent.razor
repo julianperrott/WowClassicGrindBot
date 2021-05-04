@@ -54,13 +54,14 @@
     </div>
     }
 
+@using SharedLib; 
 @code {
 
     private ClassConfiguration? classConfig;
 
     protected override void OnInitialized()
     {
-        if (Core.DataFrameConfiguration.Exists())
+        if (DataFrameConfiguration.Exists())
         {
             RefreshData();
 

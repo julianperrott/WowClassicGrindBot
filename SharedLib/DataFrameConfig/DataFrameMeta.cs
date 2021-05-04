@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using Newtonsoft.Json;
 
-namespace Core
+namespace SharedLib
 {
     public struct DataFrameMeta : System.IEquatable<object>, System.IEquatable<DataFrameMeta>
     {

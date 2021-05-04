@@ -1,6 +1,8 @@
 ﻿using Core.GOAP;
 using System.Collections.Generic;
 using System.Threading;
+using SharedLib;
+using Game;
 
 namespace Core
 {

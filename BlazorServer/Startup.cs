@@ -13,6 +13,7 @@ using System;
 using System.Threading;
 using MatBlazor;
 using SharedLib;
+using Game;
 
 namespace BlazorServer
 {
@@ -46,7 +47,7 @@ namespace BlazorServer
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public static void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             var logger = new SerilogLoggerProvider(Log.Logger).CreateLogger(nameof(Program));
             services.AddSingleton(logger);
@@ -75,7 +76,7 @@ namespace BlazorServer
             {
                 var dataConfig = DataConfig.Load();
                 var pather = GetPather(logger, dataConfig);
-                var botController = new BotController(logger, pather, dataConfig);
+                var botController = new BotController(logger, pather, dataConfig, Configuration);
                 services.AddSingleton<IBotController>(botController);
                 services.AddSingleton<IAddonReader>(botController.AddonReader);
                 services.AddMatBlazor();

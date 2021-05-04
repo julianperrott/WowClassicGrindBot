@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 #nullable enable
 
-namespace SharedLib
+namespace Game
 {
     public class WowProcess
     {
@@ -27,6 +27,9 @@ namespace SharedLib
             }
         }
 
+        private static readonly List<string> defaultProcessNames = 
+            new List<string> { "Wow", "WowClassic", "WowClassicT", "Wow-64", "WowClassicB" };
+
         public WowProcess()
         {
             var process = Get();
@@ -41,7 +44,7 @@ namespace SharedLib
         //Get the wow-process, if success returns the process else null
         public static Process? Get(string name = "")
         {
-            var names = string.IsNullOrEmpty(name) ? new List<string> { "Wow", "WowClassic", "WowClassicT", "Wow-64", "WowClassicB" } : new List<string> { name };
+            var names = string.IsNullOrEmpty(name) ? defaultProcessNames : new List<string> { name };
 
             var processList = Process.GetProcesses();
             foreach (var p in processList)

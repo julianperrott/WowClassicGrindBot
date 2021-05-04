@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Core
+namespace SharedLib
 {
     public class DataFrame
     {

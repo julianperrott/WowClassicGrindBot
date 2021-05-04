@@ -5,8 +5,9 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WinAPI;
 
-namespace Core
+namespace Game
 {
     public class InputWindowsNative : IInput
     {

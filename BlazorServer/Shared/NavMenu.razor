@@ -2,6 +2,7 @@
 @inject Microsoft.Extensions.Logging.ILogger logger
 
 @using SharedLib;
+@using Game;
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">MasterOfPuppets</a>
@@ -11,7 +12,7 @@
     </button>
 </div>
 
-@if (AddonConfig.Exists() && Core.DataFrameConfiguration.Exists())
+@if (AddonConfig.Exists() && DataFrameConfiguration.Exists())
 {
 
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
@@ -131,7 +132,7 @@ else
 
     private bool HideClassConfig => botController.IsBotActive || botController.ClassConfig == null;
 
-    private bool WoWProcessRunning => SharedLib.WowProcess.Get() != null;
+    private bool WoWProcessRunning => WowProcess.Get() != null;
 
     private bool AddonConfigExists => AddonConfig.Exists() && addonConfigurator != null && addonConfigurator.Installed();
 
@@ -147,7 +148,7 @@ else
     {
         addonConfigurator = new AddonConfigurator(logger, AddonConfig.Load());
 
-        if (Core.DataFrameConfiguration.Exists())
+        if (DataFrameConfiguration.Exists())
         {
             botController.ProfileLoaded += (o, e) =>
             {
