@@ -52,10 +52,10 @@
     "MapID": 0,
     "AreaID": 0,
     "AreaName": "Azeroth",
-    "LocLeft": 18171.97,
-    "LocRight": -22569.21,
-    "LocTop": 11176.344,
-    "LocBottom": -15973.344,
+    "LocLeft": 16000.0,
+    "LocRight": -19199.9,
+    "LocTop": 7466.6,
+    "LocBottom": -16000.0,
     "UIMapId": 947,
     "Continent": "Azeroth"
   },
@@ -68,7 +68,7 @@
     "LocRight": -2016.6666,
     "LocTop": 1500.0,
     "LocBottom": -366.66666,
-    "UIMapId": 1459,
+    "UIMapId": 1416,
     "Continent": "Azeroth"
   },
   {
@@ -80,7 +80,7 @@
     "LocRight": -4466.6665,
     "LocTop": -133.33333,
     "LocBottom": -2533.3333,
-    "UIMapId": 1461,
+    "UIMapId": 1417,
     "Continent": "Azeroth"
   },
   {
