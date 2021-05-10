@@ -101,6 +101,9 @@ namespace Core
                     // Auto Spell
                     { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
                     { "Shooting", ()=> playerReader.IsShooting },
+                    // Temporary Enchants
+                    { "HasMainHandEnchant", ()=> playerReader.PlayerBitValues.MainHandEnchant_Active },
+                    { "HasOffHandEnchant", ()=> playerReader.PlayerBitValues.OffHandEnchant_Active },
                     // Equipment - Bag
                     { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
                     { "BagFull", ()=> bagReader.BagsFull },
@@ -140,6 +143,8 @@ namespace Core
                     {  "Soul Link", ()=> playerReader.Buffs.SoulLink },
                     {  "Soulstone Resurrection", ()=> playerReader.Buffs.SoulstoneResurrection },
                     {  "Shadow Trance", ()=> playerReader.Buffs.ShadowTrance },
+                    // Shaman
+                    {  "Lightning Shield", ()=> playerReader.Buffs.LightningShield },
 
                     // Debuff Section
                     // Druid Debuff

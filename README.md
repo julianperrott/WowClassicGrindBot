@@ -444,6 +444,9 @@ e.g.
 | --- | --- |
 | "AutoAttacking" | Auto spell `Auto Attack` is active |
 | "Shooting" | (wand) Auto spell `Shoot` is active |
+| --- | --- |
+| "HasMainHandEnchant" | Indicates that main hand weapon has active poison/sharpening stone/shaman buff effect |
+| "HasOffHandEnchant" | Indicates that off hand weapon has active poison/sharpening stone/shaman buff effect |
 
 | Class | Buff Condition |
 | --- | --- |
@@ -476,6 +479,7 @@ e.g.
 | Warlock | "Soulstone Resurraction" |
 | Warlock | "Soul Link" |
 | Warrior | "Battle Shout" |
+| Shaman | "Lightning Shield" |
 
 | Class | Debuff Condition |
 | --- | --- |

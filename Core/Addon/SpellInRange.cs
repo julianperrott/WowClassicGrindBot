@@ -61,6 +61,10 @@ namespace Core
 
         public bool Warlock_Shoot { get => IsBitSet(1); }
 
+        // Shaman
+        public bool Shaman_LightningBolt { get => IsBitSet(0); }
+        public bool Shaman_EarthShock { get => IsBitSet(1); }
+
         public bool WithinPullRange(PlayerReader playerReader, PlayerClassEnum playerClass) => playerClass switch
         {
             PlayerClassEnum.Warrior => Warrior_Charge,
@@ -70,6 +74,7 @@ namespace Core
             PlayerClassEnum.Mage => (playerReader.PlayerLevel >= 4 && Mage_Frostbolt) || Mage_Fireball,
             PlayerClassEnum.Hunter => Hunter_ShootGun,
             PlayerClassEnum.Warlock => Warlock_ShadowBolt,
+            PlayerClassEnum.Shaman => (playerReader.PlayerLevel >= 4 && Shaman_EarthShock) || Shaman_LightningBolt,
             _ => true
         };
 
@@ -83,6 +88,7 @@ namespace Core
             PlayerClassEnum.Mage => Mage_Frostbolt || Mage_Fireball,
             PlayerClassEnum.Hunter => Hunter_ShootGun || Hunter_RaptorStrike,
             PlayerClassEnum.Warlock => Warlock_ShadowBolt,
+            PlayerClassEnum.Shaman => Shaman_LightningBolt,
             _ => true
         };
     }
