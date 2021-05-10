@@ -576,8 +576,8 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:inInMeleeRange(), 4) + 
     self:MakeIndexBase2(0, 5) +
     self:MakeIndexBase2(self:IsPetVisible(), 6) + 
-    self:MakeIndexBase2(0, 7) + 
-    self:MakeIndexBase2(0, 8) +
+    self:MakeIndexBase2(self:mainhandEnchantActive(), 7) + 
+    self:MakeIndexBase2(self:offhandEnchantActive(), 8) +
     self:MakeIndexBase2(self:GetInventoryBroken(), 9) + 
     self:MakeIndexBase2(self:IsPlayerFlying(), 10) + 
     self:MakeIndexBase2(self:IsPlayerSwimming(), 11) +
@@ -633,6 +633,8 @@ function DataToColor:getBuffsForClass()
         self:MakeIndexBase2(self:GetBuffs("Soul Link"), 11) +
         self:MakeIndexBase2(self:GetBuffs("Soulstone Resurrection"), 12) +
         self:MakeIndexBase2(self:GetBuffs("Shadow Trance"), 13);
+    elseif CC == "SHAMAN" then
+        class=class+self:MakeIndexBase2(self:GetBuffs("Lightning Shield"), 10);
     end
     return class;
 end
@@ -761,6 +763,9 @@ function DataToColor:CastingInfoSpellId()
     local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = CastingInfo();
     if spellID ~= nil then
         return spellID
+    end
+    if texture ~= nil then -- temp fix for tbc
+        return texture
     end
      _, _, _, _, _, _, _, spellID = ChannelInfo();
      if spellID ~= nil then
@@ -931,6 +936,22 @@ function DataToColor:enchantedItems()
     end
 end
 
+function DataToColor:mainhandEnchantActive() 
+    local hasMainHandEnchant = GetWeaponEnchantInfo()
+    if hasMainHandEnchant then
+        return 1
+    end
+    return 0
+end
+
+function DataToColor:offhandEnchantActive() 
+    local _, _, _, _, hasOffHandEnchant = GetWeaponEnchantInfo()
+    if hasOffHandEnchant then
+        return 1
+    end
+    return 0
+end
+
 function DataToColor:equipName(slot)
     local equip
     if GetInventoryItemLink("player", slot) == nil then
@@ -994,7 +1015,12 @@ function DataToColor:areSpellsInRange()
         spellList = {
             "Shadow Bolt",
             "Shoot"
-        };               
+        };
+    elseif CC == "SHAMAN" then
+        spellList = {
+            "Lightning Bolt",
+            "Earth Shock"
+        }
     else
         spellList = {};
     end
