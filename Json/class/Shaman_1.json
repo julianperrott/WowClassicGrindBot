@@ -11,7 +11,7 @@
         "Key": "2",
         "StopBeforeCast": true,
         "HasCastBar": true,
-        "ManaRequirement": 15
+        "MinMana": 15
       }
     ]
   },
@@ -22,7 +22,7 @@
         "Key": "2",
         "StopBeforeCast": true,
         "HasCastBar": true,
-        "ManaRequirement": 15,
+        "MinMana": 15,
         "Requirement": "not InMeleeRange"
       },
       {
@@ -32,7 +32,7 @@
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,
-        "ManaRequirement": 25
+        "MinMana": 25
       },
       {
         "Name": "AutoAttack",
