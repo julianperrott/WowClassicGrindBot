@@ -72,7 +72,7 @@ namespace Core
             this.playerReader = addonReader.PlayerReader;
             this.logger = logger;
 
-            ResetChanges();
+            ResetCharges();
 
             KeyReader.ReadKey(logger, this);
 
@@ -194,13 +194,13 @@ namespace Core
                 }
                 else
                 {
-                    ResetChanges();
+                    ResetCharges();
                     SetClicked();
                 }
             }
         }
 
-        internal void ResetChanges()
+        internal void ResetCharges()
         {
             _charge = Charge;
         }
