@@ -249,9 +249,9 @@ Commands have the following parameters, only a subset will be used by each comma
 | CastIfAddsVisible | If the bot can "See" any adds | false |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | 1 |
 | Cooldown | The cooldown in seconds until the command can be done again | 0 |
-| MinMana | The minimum Mana required to cast the spell | 0 |
-| MinRage | The minimum Rage required to cast the spell | 0 |
-| MinEnergy | The minimum Energy required to cast the spell | 0 |
+| MinMana | (Optional) The minimum Mana required to cast the spell | 0 |
+| MinRage | (Optional) The minimum Rage required to cast the spell | 0 |
+| MinEnergy | (Optional) The minimum Energy required to cast the spell | 0 |
 | MinComboPoints | The minimum combo points required to cast the spell | 0 |
 | Requirement | A single "Requirement" (See below) which must be true | |
 | Requirements | A list of "Requirements" which must be true |  |
