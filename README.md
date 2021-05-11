@@ -75,7 +75,7 @@ This file is required to find paths from where you are to the grind area, vendor
 
 Copy it into the \Json\MPQ folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
 
-For TBC you have to download expansion.MPQ (1.8Gb) can get here: https://mega.nz/file/7ZwAVaQI#L0qvvU1uuRPFY5jGBErKaVpzmJQ4JhOv3nOrkQ-ppbQ
+For TBC you have to download expansion.MPQ (1.8Gb) can get here: https://mega.nz/file/Of4i2YQS#egDGj-SXi9RigG-_8kPITihFsLom2L1IFF-ltnB3wmU
 and copy next to the common-2.MPQ file. 
 
 ## 3. System Requirements
