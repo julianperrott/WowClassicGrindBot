@@ -595,7 +595,7 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:IsPlayerFlying(), 10) + 
     self:MakeIndexBase2(self:IsPlayerSwimming(), 11) +
     self:MakeIndexBase2(self:petHappy(), 12) + 
-    self:MakeIndexBase2(0, 13) + 
+    self:MakeIndexBase2(self:hasAmmo(), 13) + 
     self:MakeIndexBase2(self:playerCombatStatus(), 14) +
     self:MakeIndexBase2(self:IsTargetOfTargetPlayer(), 15) + 
     self:MakeIndexBase2(0, 16) + 
@@ -844,6 +844,15 @@ function DataToColor:targetHostile()
         return 1
     end
     return 0
+end
+
+function Obtainer:hasAmmo()
+    local ammoSlot = GetInventorySlotInfo("AmmoSlot");
+    local ammoCount = GetInventoryItemCount("player", ammoSlot);
+    if ammoCount > 0 then
+        return 1
+    end
+    return 0;
 end
 
 -- Finds if target is attackable with the fireball which is the longest distance spell.

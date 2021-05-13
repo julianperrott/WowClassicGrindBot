@@ -443,6 +443,7 @@ e.g.
 | "BagFull" | Inventory is full |
 | "Items Broken" | Has any broken(red) worn item |
 | "HasRangedWeapon" | Has equipped ranged weapon (wand/crossbow/bow/gun) |
+| "HasAmmo" | AmmoSlot has equipped ammo and count is greater than zero |
 | --- | --- |
 | "InMeleeRange" | Target is in 0-5 yard range |
 | "InCombatRange" | Class based - Have any ability which allows you to attack target from current place |

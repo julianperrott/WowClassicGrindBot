@@ -11,7 +11,7 @@
         "Name": "autoshoot",
         "StopBeforeCast": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange"]
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
       }
     ]
   },
@@ -22,13 +22,13 @@
         "Key": "2",
         "MinMana": 15,
         "Cooldown": 15,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting"]
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting", "HasAmmo"]
       },
       {
         "Name": "autoshoot",
         "StopBeforeCast": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange"]
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
       },
       {
         "Name": "Raptor Strike",

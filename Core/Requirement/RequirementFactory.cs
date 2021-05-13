@@ -124,6 +124,7 @@ namespace Core
                     { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
                     { "BagFull", ()=> bagReader.BagsFull },
                     { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
+                    { "HasAmmo", ()=> playerReader.PlayerBitValues.HasAmmo },
                     // General Buff Condition
                     {  "Eating", ()=> playerReader.Buffs.Eating },
                     {  "Drinking", ()=> playerReader.Buffs.Drinking },

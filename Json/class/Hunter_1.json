@@ -11,7 +11,7 @@
         "Name": "autoshoot",
         "StopBeforeCast": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange"]
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
       }
     ]
   },
@@ -21,7 +21,7 @@
         "Name": "autoshoot",
         "StopBeforeCast": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange"]
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
       },
       {
         "Name": "Raptor Strike",
