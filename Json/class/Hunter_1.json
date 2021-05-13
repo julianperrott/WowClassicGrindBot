@@ -28,8 +28,8 @@
         "Name": "Raptor Strike",
         "Key": "2",
         "WhenUsable": true,
+        "Cooldown": 5,
         "MinMana": 15,
-        "Cooldown": 6,
         "Requirement": "InMeleeRange"
       },
       {
