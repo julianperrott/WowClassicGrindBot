@@ -5,8 +5,7 @@
     "Sequence": [
       {
         "Name": "Approach",
-        "DelayAfterCast": 0,
-        "Log": false
+        "DelayAfterCast": 0
       },
       {
         "Name": "autoshoot",
@@ -26,7 +25,7 @@
       },
       {
         "Name": "Raptor Strike",
-        "Key": "2",
+        "Key": "4",
         "WhenUsable": true,
         "Cooldown": 5,
         "MinMana": 15,

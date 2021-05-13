@@ -5,8 +5,7 @@
     "Sequence": [
       {
         "Name": "Approach",
-        "DelayAfterCast": 0,
-        "Log": false
+        "DelayAfterCast": 0
       },
       {
         "Name": "autoshoot",
@@ -20,7 +19,7 @@
     "Sequence": [
       {
         "Name": "Serpent Sting",
-        "Key": "4",
+        "Key": "2",
         "MinMana": 15,
         "Cooldown": 15,
         "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting"]
@@ -33,7 +32,7 @@
       },
       {
         "Name": "Raptor Strike",
-        "Key": "2",
+        "Key": "4",
         "WhenUsable": true,
         "Cooldown": 5,
         "MinMana": 15,
