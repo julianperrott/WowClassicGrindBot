@@ -1,0 +1,48 @@
+﻿@page "/History"
+
+@inject IGrindingSession Session
+
+@{
+  var initSearch = (new string[] {"PathName", "PlayerClass"});
+  var tool = (new List<string>() {"Search"});
+}
+
+@if (PreviousBotSessions.Any())
+{
+  <SfGrid DataSource="@PreviousBotSessions" AllowPaging="true" AllowSorting="true" Toolbar=@tool>
+    <GridSearchSettings Fields=@initSearch Operator="Operator.Contains" IgnoreCase="true"></GridSearchSettings>
+    <GridPageSettings PageSize="10"></GridPageSettings>
+    <GridColumns>
+      <GridColumn Field="@nameof(GrindingSession.PathName)" HeaderText="Path" Width="200"></GridColumn>
+      <GridColumn Field="@nameof(GrindingSession.PlayerClass)" HeaderText="Class" Width="100"></GridColumn>
+      <GridColumn Field="@nameof(GrindingSession.SessionStart)" Format="" HeaderText="Start" Width="100"></GridColumn>
+      <GridColumn Field="@nameof(GrindingSession.TotalTimeInMinutes)" HeaderText="Duration" Width="100">
+        <Template>
+          @{
+            var theSession = (context as GrindingSession);
+                    <span>@theSession?.TotalTimeInMinutes minutes</span>
+          }
+        </Template>
+      </GridColumn>
+      <GridColumn Field="@nameof(GrindingSession.LevelFrom)" HeaderText="Level" Width="80"></GridColumn>
+      <GridColumn Field="@nameof(GrindingSession.ExpGetInBotSession)" HeaderText="Total Exp" Width="100"></GridColumn>
+      <GridColumn Field="@nameof(GrindingSession.ExperiencePerHour)" HeaderText="Exp/Hour" Width="80"></GridColumn>
+      <GridColumn Field="@nameof(GrindingSession.MobsKilled)" HeaderText="Killed" Width="80"></GridColumn>
+    </GridColumns>
+  </SfGrid>
+}
+else{
+  <div>No previous bot sessions</div>
+}
+
+
+
+@code {
+    [Parameter]
+    public List<GrindingSession> PreviousBotSessions { get; set; } = new List<GrindingSession>();
+
+    protected override void OnInitialized()
+    {
+        PreviousBotSessions = Session.Load();
+    }
+}

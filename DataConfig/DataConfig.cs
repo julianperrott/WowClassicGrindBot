@@ -28,7 +28,8 @@ public class DataConfig
     public string Area => System.IO.Path.Join(Root, "area/");
     [JsonIgnore]
     public string PPather => System.IO.Path.Join(Root, "PPather/");
-
+    [JsonIgnore]
+    public string History => System.IO.Path.Join(Root, "History/");
     [NonSerialized]
     public const string DefaultFileName = "data_config.json";
 

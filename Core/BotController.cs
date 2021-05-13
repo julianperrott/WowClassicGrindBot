@@ -7,9 +7,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Database;
+using Core.Session;
 using SharedLib;
 using Game;
 using WinAPI;
@@ -23,6 +25,8 @@ namespace Core
         private readonly ILogger logger;
         private readonly IPPather pather;
 
+        public IGrindingSession GrindingSession { get; set; }
+        public IGrindingSessionHandler GrindingSessionHandler { get; set; }
         public string SelectedClassFilename { get; set; } = String.Empty;
         public string? SelectedPathFilename { get; set; }
 
@@ -76,6 +80,10 @@ namespace Core
             wowProcess = new WowProcess();
             WowScreen = new WowScreen(logger, wowProcess);
             WowProcessInput = new WowProcessInput(logger, wowProcess);
+
+            GrindingSessionHandler = new LocalGrindingBotSessionHandler(dataConfig.History);
+            GrindingSession = new GrindingSession(this, GrindingSessionHandler);
+            
 
             var frames = DataFrameConfiguration.LoadFrames();
 
@@ -183,6 +191,7 @@ namespace Core
             {
                 if (!actionThread.Active)
                 {
+                    this.GrindingSession.StartBotSession();
                     this.pather.DrawLines();
 
                     actionThread.Active = true;
@@ -192,6 +201,8 @@ namespace Core
                 else
                 {
                     actionThread.Active = false;
+                    this.GrindingSession.StopBotSession();
+                    AddonReader.LevelTracker.ResetMobsKilled();
                 }
 
                 StatusChanged?.Invoke(this, actionThread.Active);

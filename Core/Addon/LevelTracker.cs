@@ -21,6 +21,11 @@ namespace Core
             this.playerReader = playerReader;
         }
 
+        public void ResetMobsKilled()
+        {
+            MobsKilled = 0;
+        }
+
         public void Update()
         {
             if (level != playerReader.PlayerLevel)
