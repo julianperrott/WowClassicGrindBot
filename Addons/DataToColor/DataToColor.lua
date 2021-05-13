@@ -594,7 +594,7 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:GetInventoryBroken(), 9) + 
     self:MakeIndexBase2(self:IsPlayerFlying(), 10) + 
     self:MakeIndexBase2(self:IsPlayerSwimming(), 11) +
-    self:MakeIndexBase2(0, 12) + 
+    self:MakeIndexBase2(self:petHappy(), 12) + 
     self:MakeIndexBase2(0, 13) + 
     self:MakeIndexBase2(self:playerCombatStatus(), 14) +
     self:MakeIndexBase2(self:IsTargetOfTargetPlayer(), 15) + 
@@ -838,7 +838,7 @@ function DataToColor:getMoneyTotal()
     return GetMoney()
 end
 
-function Obtainer:targetHostile()
+function DataToColor:targetHostile()
     local hostile = UnitReaction("player", "target")
     if hostile ~= nil and hostile <= 4 then
         return 1
@@ -1467,6 +1467,16 @@ function DataToColor:IsPetVisible()
         return 1
     else return 0
     end
+end
+
+function DataToColor:petHappy()
+    local happiness, damagePercentage, loyaltyRate = GetPetHappiness();
+
+    if happiness ~= nil then
+        return happiness == 3; -- (1 = unhappy, 2 = content, 3 = happy)
+    end
+
+    return 0
 end
 
 -- Returns 0 if target is unskinnable or if we have no target.

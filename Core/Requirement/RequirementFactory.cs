@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,6 +113,7 @@ namespace Core
                     { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
                     // Pet
                     { "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
+                    { "Pet Happy", ()=> playerReader.PlayerBitValues.PetHappy },
                     // Auto Spell
                     { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
                     { "Shooting", ()=> playerReader.IsShooting },

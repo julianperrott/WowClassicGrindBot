@@ -30,6 +30,7 @@
         public bool ItemsAreBroken { get => IsBitSet(9); }
 
         public bool HasPet { get => IsBitSet(6); }
+        public bool PetHappy { get => IsBitSet(12); }
 
         public bool IsInMeleeRange { get => IsBitSet(4); }
 

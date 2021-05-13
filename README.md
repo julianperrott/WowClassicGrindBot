@@ -438,6 +438,7 @@ e.g.
 | Condition | Desciption |
 | --- | --- |
 | "Has Pet" | The player's pet is alive |
+| "Pet Happy" | Only true when the pet happienss is green |
 | --- | --- |
 | "BagFull" | Inventory is full |
 | "Items Broken" | Has any broken(red) worn item |
