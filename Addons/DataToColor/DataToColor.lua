@@ -425,7 +425,7 @@ function DataToColor:CreateFrames(n)
             end
             -- Worn inventory start.
             -- Starts at beginning once we have looked at all desired slots.
-            if equipNum - 19 == 0 then
+            if equipNum - 23 == 0 then
                 equipNum = 1
             end
 
