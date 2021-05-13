@@ -14,6 +14,7 @@
             return (value & (1 << pos)) != 0;
         }
 
+        public bool TargetCanBeHostile { get => IsBitSet(5); }
         public bool IsTagged { get => IsBitSet(22); }
         public bool TargetIsNormal { get => IsBitSet(21); }
         public bool IsAutoRepeatSpellOn_AutoAttack { get => IsBitSet(20); }

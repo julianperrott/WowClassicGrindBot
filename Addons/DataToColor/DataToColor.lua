@@ -587,7 +587,7 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:deadOrAlive(), 2) +
     self:MakeIndexBase2(self:checkTalentPoints(), 3) + 
     self:MakeIndexBase2(self:inInMeleeRange(), 4) + 
-    self:MakeIndexBase2(0, 5) +
+    self:MakeIndexBase2(self:targetHostile(), 5) +
     self:MakeIndexBase2(self:IsPetVisible(), 6) + 
     self:MakeIndexBase2(self:mainhandEnchantActive(), 7) + 
     self:MakeIndexBase2(self:offhandEnchantActive(), 8) +
@@ -836,6 +836,14 @@ end
 -- Finds the total amount of money.
 function DataToColor:getMoneyTotal()
     return GetMoney()
+end
+
+function Obtainer:targetHostile()
+    local hostile = UnitReaction("player", "target")
+    if hostile ~= nil and hostile <= 4 then
+        return 1
+    end
+    return 0
 end
 
 -- Finds if target is attackable with the fireball which is the longest distance spell.
