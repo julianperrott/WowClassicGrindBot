@@ -484,6 +484,12 @@ e.g.
 | Warlock | "Soul Link" |
 | Warrior | "Battle Shout" |
 | Shaman | "Lightning Shield" |
+| Hunter | "Aspect of the Cheetah" |
+| Hunter | "Aspect of the Pack" |
+| Hunter | "Aspect of the Beast" |
+| Hunter | "Aspect of the Hawk" |
+| Hunter | "Aspect of the Wild" |
+| Hunter | "Aspect of the Monkey" |
 
 | Class | Debuff Condition |
 | --- | --- |
@@ -501,6 +507,7 @@ e.g.
 | Warlock | "Corruption" |
 | Warlock | "Immolate" |
 | Warrior | "Rend" |
+| Hunter | "Serpent Sting" |
 
 #### Range
 

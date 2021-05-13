@@ -648,6 +648,8 @@ function DataToColor:getBuffsForClass()
         self:MakeIndexBase2(self:GetBuffs("Shadow Trance"), 13);
     elseif CC == "SHAMAN" then
         class=class+self:MakeIndexBase2(self:GetBuffs("Lightning Shield"), 10);
+    elseif CC == "HUNTER" then
+        class=class+self:MakeIndexBase2(self:GetBuffs("Aspect of"), 10);
     end
     return class;
 end
@@ -740,6 +742,8 @@ function DataToColor:getDebuffsForTarget()
         self:MakeIndexBase2(self:GetDebuffs("Corruption"), 1) +
         self:MakeIndexBase2(self:GetDebuffs("Immolate"), 2) +
         self:MakeIndexBase2(self:GetDebuffs("Siphon Life"), 3);
+    elseif CC == "HUNTER" then
+        class=self:MakeIndexBase2(self:GetDebuffs("Serpect Sting"), 0);
     end
 
     return class;
@@ -1051,6 +1055,7 @@ function DataToColor:areSpellsInRange()
         spellList = {
             "Raptor Strike", --1
             "Auto Shot", --2
+            "Serpent Sting" --3
         };        
     elseif CC == "WARLOCK" then
         spellList = {

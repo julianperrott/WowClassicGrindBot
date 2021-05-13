@@ -145,6 +145,13 @@ namespace Core
                     {  "Shadow Trance", ()=> playerReader.Buffs.ShadowTrance },
                     // Shaman
                     {  "Lightning Shield", ()=> playerReader.Buffs.LightningShield },
+                    //Hunter
+                    {  "Aspect of the Cheetah", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Pack", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Beast", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Hawk", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Wild", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Monkey", ()=> playerReader.Buffs.Aspect },
 
                     // Debuff Section
                     // Druid Debuff
@@ -167,6 +174,8 @@ namespace Core
                     {  "Corruption", ()=> playerReader.Debuffs.Corruption },
                     {  "Immolate", ()=> playerReader.Debuffs.Immolate },
                     {  "Siphon Life", ()=> playerReader.Debuffs.SiphonLife },
+                    // Hunter Debuff
+                    {  "Serpent Sting", ()=> playerReader.Debuffs.SerpentSting },
                 };
             }
 
