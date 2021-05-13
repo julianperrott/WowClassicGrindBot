@@ -17,18 +17,18 @@
 
         // https://wowwiki-archive.fandom.com/wiki/ActionSlot
         // valid range 1-96
-        public bool ActionUsable(string slot)
+        public bool ActionUsable(string keyName)
         {
-            if (KeyReader.ActionBarSlotMap.TryGetValue(slot, out var slotName))
+            if (KeyReader.ActionBarSlotMap.TryGetValue(keyName, out var slot))
             {
-                if (slotName < 24)
-                    return ActionBarUseable_1To24.IsBitSet(slotName - 1);
-                if (slotName < 48)
-                    return ActionBarUseable_25To48.IsBitSet(slotName - 1);
-                if (slotName < 72)
-                    return ActionBarUseable_49To72.IsBitSet(slotName - 1);
-                if (slotName < 96)
-                    return ActionBarUseable_73To96.IsBitSet(slotName - 1);
+                if (slot < 24)
+                    return ActionBarUseable_1To24.IsBitSet(slot - 1);
+                if (slot < 48)
+                    return ActionBarUseable_25To48.IsBitSet(slot - 1);
+                if (slot < 72)
+                    return ActionBarUseable_49To72.IsBitSet(slot - 1);
+                if (slot < 96)
+                    return ActionBarUseable_73To96.IsBitSet(slot - 1);
             }
 
             return false;
