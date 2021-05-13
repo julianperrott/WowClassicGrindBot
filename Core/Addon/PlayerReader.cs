@@ -78,11 +78,7 @@ namespace Core
         public long Gold => reader.GetLongAtCell(32) + reader.GetLongAtCell(33) * 1000000;
 
         // 34 -36 Loops through binaries of three pixels. Currently does 24 slots. 1-12 and 61-72.
-        public ActionBarStatus ActionBarUseable_1To24 => new ActionBarStatus(reader.GetLongAtCell(34));
-
-        public ActionBarStatus ActionBarUseable_25To48 => new ActionBarStatus(reader.GetLongAtCell(35));
-        public ActionBarStatus ActionBarUseable_49To72 => new ActionBarStatus(reader.GetLongAtCell(36));
-        public ActionBarStatus ActionBarUseable_73To96 => new ActionBarStatus(reader.GetLongAtCell(42));
+        public ActionBarUsable ActionBarUsable => new ActionBarUsable(reader, 34, 35, 36, 42);
 
         // 37- 40 Bag Slots - BadReader handles it
 

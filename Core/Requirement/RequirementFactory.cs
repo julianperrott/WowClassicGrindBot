@@ -33,6 +33,10 @@ namespace Core
             CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
             CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
+
+            if(item.WhenUsable)
+                CreateActionUsableRequirement(item.RequirementObjects, item);
+
             item.CreateCooldownRequirement();
             item.CreateChargeRequirement();
         }
@@ -57,6 +61,17 @@ namespace Core
                 {
                     HasRequirement = () => playerReader.ComboPoints >= item.MinComboPoints,
                     LogMessage = () => $"Combo point {playerReader.ComboPoints} >= {item.MinComboPoints}"
+                });
+            }
+        }
+        private void CreateActionUsableRequirement(List<Requirement> RequirementObjects, KeyAction item)
+        {
+            if (!string.IsNullOrEmpty(item.Key))
+            {
+                RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => playerReader.ActionBarUsable.ActionUsable(item.Key),
+                    LogMessage = () => $"Usable"
                 });
             }
         }
