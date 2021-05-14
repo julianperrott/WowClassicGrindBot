@@ -1467,8 +1467,9 @@ end
 function DataToColor:petHappy()
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness();
 
-    if happiness ~= nil then
-        return happiness == 3; -- (1 = unhappy, 2 = content, 3 = happy)
+    -- (1 = unhappy, 2 = content, 3 = happy)
+    if happiness ~= nil and happiness == 3 then
+        return 1;
     end
 
     return 0
