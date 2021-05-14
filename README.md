@@ -387,7 +387,7 @@ e.g.
 
 #### Value base requirements
 
-Value base requirements are made up on a [ Health% or TargetHealth% or Mana% or BagCount] [< or >] [Numeric Value].
+Value base requirements are made up on a [ `Health%` or `TargetHealth%` or `Mana%` or `BagCount` or `MobCount` or `MinRange` or `MaxRange`] [< or >] [Numeric Value].
 
 e.g.
 * "Health%>70",
