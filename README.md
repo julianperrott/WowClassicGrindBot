@@ -402,13 +402,16 @@ e.g.
 
 For the `MinRange` and `MaxRange` gives an approximation to the target distance to the player
 
-| MinRange | MaxRange | Description |
-| 0 | 5 | alias to "InMeleeRange" |
-| 5 | 15 | alias to "IsInDeadZoneRange" |
-| 15 | 20 | alias to "InCombatRange" |
-| 20 | 30 | alias to "InCombatRange" |
-| 30 | 35 | alias to "InCombatRange" |
-| 35 | 99 | alias to "OutOfCombatRange" |
+
+| MinRange | MaxRange | alias Description |
+| --- | --- | --- |
+| 0 | 5 | "InMeleeRange" |
+| 5 | 15 | "IsInDeadZoneRange" |
+| 15 | 20 | "InCombatRange" |
+| 20 | 30 | "InCombatRange" |
+| 30 | 35 | "InCombatRange" |
+| 35 | 99 | "OutOfCombatRange" |
+
 
 #### npcID requirements
 
