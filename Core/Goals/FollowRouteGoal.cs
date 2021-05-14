@@ -131,14 +131,16 @@ namespace Core.Goals
             {
                 await stopMoving.StopTurn();
                 
-                if (playerReader.PlayerClass == PlayerClassEnum.Hunter &&
-                    playerReader.PlayerBitValues.TargetCanBeHostile)
+                if (playerReader.PlayerClass == PlayerClassEnum.Hunter)
                 {
-                    await input.TapInteractKey("approach target as hunter");
-                }
-                else
-                {
-                    await input.TapClearTarget("not hostile");
+                    if(playerReader.PlayerBitValues.TargetCanBeHostile)
+                    {
+                        await input.TapInteractKey("approach target as hunter");
+                    }
+                    else
+                    {
+                        await input.TapClearTarget("not hostile");
+                    }
                 }
 
                 return;
