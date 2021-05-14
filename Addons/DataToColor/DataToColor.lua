@@ -586,7 +586,7 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:GetEnemyStatus(), 1) + 
     self:MakeIndexBase2(self:deadOrAlive(), 2) +
     self:MakeIndexBase2(self:checkTalentPoints(), 3) + 
-    self:MakeIndexBase2(0, 4) + 
+    self:MakeIndexBase2(self:isTradeRange(), 4) + 
     self:MakeIndexBase2(self:targetHostile(), 5) +
     self:MakeIndexBase2(self:IsPetVisible(), 6) + 
     self:MakeIndexBase2(self:mainhandEnchantActive(), 7) + 
@@ -863,6 +863,17 @@ function DataToColor:getRange()
             max = 99
         end
         return min * 100000 + max * 100
+    end
+    return 0
+end
+
+function DataToColor:isTradeRange()
+    local target = GetUnitName("target")
+    if target ~= nil then
+        local tradeRange = CheckInteractDistance("target", 2)
+        if tradeRange then
+            return 1
+        end
     end
     return 0
 end

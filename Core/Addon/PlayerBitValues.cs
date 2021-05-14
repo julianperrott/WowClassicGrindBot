@@ -29,6 +29,8 @@
         public bool IsFlying { get => IsBitSet(10); }
         public bool ItemsAreBroken { get => IsBitSet(9); }
 
+        public bool IsInDeadZoneRange { get => IsBitSet(4); }
+
         public bool HasPet { get => IsBitSet(6); }
         public bool PetHappy { get => IsBitSet(12); }
 

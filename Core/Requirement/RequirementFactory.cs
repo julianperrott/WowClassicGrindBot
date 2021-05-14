@@ -108,7 +108,7 @@ namespace Core
                 {
                     // Range
                     { "InMeleeRange", ()=> playerReader.IsInMeleeRange },
-                    { "IsInDeadZoneRange", ()=> playerReader.IsInDeadZone },
+                    { "InDeadZoneRange", ()=> playerReader.IsInDeadZone },
                     { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
                     { "InCombatRange", ()=> playerReader.WithInCombatRange },
                     { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
