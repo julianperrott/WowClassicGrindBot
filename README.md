@@ -463,7 +463,7 @@ e.g.
 | "HasAmmo" | AmmoSlot has equipped ammo and count is greater than zero |
 | --- | --- |
 | "InMeleeRange" | Target is approximately 0-5 yard range |
-| "IsInDeadZoneRange" | Target is approximately 5-15 yard range |
+| "InDeadZoneRange" | Target is approximately 5-11 yard range |
 | "InCombatRange" | Class based - Have any ability which allows you to attack target from current place |
 | "OutOfCombatRange" | Negated value of "InCombatRange" |
 | --- | --- |
