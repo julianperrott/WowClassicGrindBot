@@ -253,6 +253,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | MinRage | (Optional) The minimum Rage required to cast the spell | 0 |
 | MinEnergy | (Optional) The minimum Energy required to cast the spell | 0 |
 | MinComboPoints | The minimum combo points required to cast the spell | 0 |
+| WhenUsable | Designed for queueable spells. Meaning consumed on the next AutoAttack ex. Heroic Strike/Raptor Strike | false |
 | Requirement | A single "Requirement" (See below) which must be true | |
 | Requirements | A list of "Requirements" which must be true |  |
 | WaitForWithinMelleRange| Wait after casting for the mob to be in melee range | false |
@@ -330,6 +331,10 @@ Warlock `heal` macro used in warlock profiles. Have to change manually when new 
     /cast Create Healthstone (Minor)
     /use Minor Healthstone
 
+Hunter `autoshoot` spammable Auto Shoot macro
+
+    #showtooltip
+    /cast !Auto Shot
 
 Because some NPCs are hard to reach, there is the option to add a short path to them e.g. "Tanaris_GadgetzanKrinkleGoodsteel.json". The idea is that the start of the path is easy to get to and is a short distance from the NPC, you record a path from the easy to reach spot to the NPC with a distance between spots of 1. When the bot needs to vend or repair it will path to the first spot in the list, then walk closely through the rest of the spots, once they are walked it will press the defined Key, then walk back through the path.
 
@@ -382,14 +387,31 @@ e.g.
 
 #### Value base requirements
 
-Value base requirements are made up on a [ Health% or TargetHealth% or Mana% or BagCount] [< or >] [Numeric Value].
+Value base requirements are made up on a [ `Health%` or `TargetHealth%` or `Mana%` or `BagCount` or `MobCount` or `MinRange` or `MaxRange`] [< or >] [Numeric Value].
 
 e.g.
 * "Health%>70",
 * "TargetHealth%<10",
 * "Mana%<40",
 * "BagCount>80",
-* "MobCount>1"
+* "MobCount>1",
+* "MinRange<5",
+* "MinRange>15",
+* "MaxRange>20",
+* "MaxRange>35",
+
+For the `MinRange` and `MaxRange` gives an approximation to the target distance to the player
+
+
+| MinRange | MaxRange | alias Description |
+| --- | --- | --- |
+| 0 | 5 | "InMeleeRange" |
+| 5 | 15 | "IsInDeadZoneRange" |
+| 15 | 20 | "InCombatRange" |
+| 20 | 30 | "InCombatRange" |
+| 30 | 35 | "InCombatRange" |
+| 35 | 99 | "OutOfCombatRange" |
+
 
 #### npcID requirements
 
@@ -433,12 +455,15 @@ e.g.
 | Condition | Desciption |
 | --- | --- |
 | "Has Pet" | The player's pet is alive |
+| "Pet Happy" | Only true when the pet happienss is green |
 | --- | --- |
 | "BagFull" | Inventory is full |
 | "Items Broken" | Has any broken(red) worn item |
 | "HasRangedWeapon" | Has equipped ranged weapon (wand/crossbow/bow/gun) |
+| "HasAmmo" | AmmoSlot has equipped ammo and count is greater than zero |
 | --- | --- |
-| "InMeleeRange" | Target is in 0-5 yard range |
+| "InMeleeRange" | Target is approximately 0-5 yard range |
+| "IsInDeadZoneRange" | Target is approximately 5-15 yard range |
 | "InCombatRange" | Class based - Have any ability which allows you to attack target from current place |
 | "OutOfCombatRange" | Negated value of "InCombatRange" |
 | --- | --- |
@@ -480,6 +505,12 @@ e.g.
 | Warlock | "Soul Link" |
 | Warrior | "Battle Shout" |
 | Shaman | "Lightning Shield" |
+| Hunter | "Aspect of the Cheetah" |
+| Hunter | "Aspect of the Pack" |
+| Hunter | "Aspect of the Beast" |
+| Hunter | "Aspect of the Hawk" |
+| Hunter | "Aspect of the Wild" |
+| Hunter | "Aspect of the Monkey" |
 
 | Class | Debuff Condition |
 | --- | --- |
@@ -497,6 +528,7 @@ e.g.
 | Warlock | "Corruption" |
 | Warlock | "Immolate" |
 | Warrior | "Rend" |
+| Hunter | "Serpent Sting" |
 
 #### Range
 

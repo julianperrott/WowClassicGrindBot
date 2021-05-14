@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +33,10 @@ namespace Core
             CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
             CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
+
+            if(item.WhenUsable)
+                CreateActionUsableRequirement(item.RequirementObjects, item);
+
             item.CreateCooldownRequirement();
             item.CreateChargeRequirement();
         }
@@ -57,6 +61,17 @@ namespace Core
                 {
                     HasRequirement = () => playerReader.ComboPoints >= item.MinComboPoints,
                     LogMessage = () => $"Combo point {playerReader.ComboPoints} >= {item.MinComboPoints}"
+                });
+            }
+        }
+        private void CreateActionUsableRequirement(List<Requirement> RequirementObjects, KeyAction item)
+        {
+            if (!string.IsNullOrEmpty(item.Key))
+            {
+                RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => playerReader.ActionBarUsable.ActionUsable(item.Key),
+                    LogMessage = () => $"Usable"
                 });
             }
         }
@@ -92,12 +107,14 @@ namespace Core
                 BuffDictionary = new Dictionary<string, Func<bool>>
                 {
                     // Range
-                    { "InMeleeRange", ()=> playerReader.PlayerBitValues.IsInMeleeRange },
+                    { "InMeleeRange", ()=> playerReader.IsInMeleeRange },
+                    { "IsInDeadZoneRange", ()=> playerReader.IsInDeadZone },
                     { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
                     { "InCombatRange", ()=> playerReader.WithInCombatRange },
                     { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
                     // Pet
                     { "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
+                    { "Pet Happy", ()=> playerReader.PlayerBitValues.PetHappy },
                     // Auto Spell
                     { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
                     { "Shooting", ()=> playerReader.IsShooting },
@@ -108,6 +125,7 @@ namespace Core
                     { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
                     { "BagFull", ()=> bagReader.BagsFull },
                     { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
+                    { "HasAmmo", ()=> playerReader.PlayerBitValues.HasAmmo },
                     // General Buff Condition
                     {  "Eating", ()=> playerReader.Buffs.Eating },
                     {  "Drinking", ()=> playerReader.Buffs.Drinking },
@@ -145,6 +163,13 @@ namespace Core
                     {  "Shadow Trance", ()=> playerReader.Buffs.ShadowTrance },
                     // Shaman
                     {  "Lightning Shield", ()=> playerReader.Buffs.LightningShield },
+                    //Hunter
+                    {  "Aspect of the Cheetah", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Pack", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Beast", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Hawk", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Wild", ()=> playerReader.Buffs.Aspect },
+                    {  "Aspect of the Monkey", ()=> playerReader.Buffs.Aspect },
 
                     // Debuff Section
                     // Druid Debuff
@@ -167,6 +192,8 @@ namespace Core
                     {  "Corruption", ()=> playerReader.Debuffs.Corruption },
                     {  "Immolate", ()=> playerReader.Debuffs.Immolate },
                     {  "Siphon Life", ()=> playerReader.Debuffs.SiphonLife },
+                    // Hunter Debuff
+                    {  "Serpent Sting", ()=> playerReader.Debuffs.SerpentSting },
                 };
             }
 
@@ -286,6 +313,8 @@ namespace Core
                 {  "Mana%", ()=> playerReader.ManaPercentage },
                 {  "BagCount", ()=> bagReader.BagItems.Count },
                 {  "MobCount", ()=> playerReader.CombatCreatureCount },
+                {  "MinRange", ()=> playerReader.MinRange },
+                {  "MaxRange", ()=> playerReader.MaxRange }
             };
 
             if (!valueDictionary.Keys.Contains(parts[0]))
