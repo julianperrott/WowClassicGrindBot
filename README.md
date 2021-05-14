@@ -394,7 +394,21 @@ e.g.
 * "TargetHealth%<10",
 * "Mana%<40",
 * "BagCount>80",
-* "MobCount>1"
+* "MobCount>1",
+* "MinRange<5",
+* "MinRange>15",
+* "MaxRange>20",
+* "MaxRange>35",
+
+For the `MinRange` and `MaxRange` gives an approximation to the target distance to the player
+
+| MinRange | MaxRange | Description |
+| 0 | 5 | alias to "InMeleeRange" |
+| 5 | 15 | alias to "IsInDeadZoneRange" |
+| 15 | 20 | alias to "InCombatRange" |
+| 20 | 30 | alias to "InCombatRange" |
+| 30 | 35 | alias to "InCombatRange" |
+| 35 | 99 | alias to "OutOfCombatRange" |
 
 #### npcID requirements
 
@@ -445,7 +459,8 @@ e.g.
 | "HasRangedWeapon" | Has equipped ranged weapon (wand/crossbow/bow/gun) |
 | "HasAmmo" | AmmoSlot has equipped ammo and count is greater than zero |
 | --- | --- |
-| "InMeleeRange" | Target is in 0-5 yard range |
+| "InMeleeRange" | Target is approximately 0-5 yard range |
+| "IsInDeadZoneRange" | Target is approximately 5-15 yard range |
 | "InCombatRange" | Class based - Have any ability which allows you to attack target from current place |
 | "OutOfCombatRange" | Negated value of "InCombatRange" |
 | --- | --- |

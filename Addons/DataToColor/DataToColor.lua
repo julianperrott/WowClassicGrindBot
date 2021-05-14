@@ -385,7 +385,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(self:getManaMax("player")), 12) --10 Represents maximum amount of mana
             MakePixelSquareArr(integerToColor(self:getManaCurrent("player")), 13) --11 Represents current amount of mana
             MakePixelSquareArr(integerToColor(self:getPlayerLevel()), 14) --12 Represents character level
-            MakePixelSquareArr(integerToColor(self:isInRange()), 15) -- 15 Represents if target is within 20, 30, 35, or greater than 35 yards
+            MakePixelSquareArr(integerToColor(self:getRange()), 15) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
             MakePixelSquareArr(integerToColor(self:GetTargetName(0)), 16) -- Characters 1-3 of target's name
             MakePixelSquareArr(integerToColor(self:GetTargetName(3)), 17) -- Characters 4-6 of target's name
             MakePixelSquareArr(integerToColor(self:getHealthMax("target")), 18) -- Return the maximum amount of health a target can have
@@ -586,7 +586,7 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:GetEnemyStatus(), 1) + 
     self:MakeIndexBase2(self:deadOrAlive(), 2) +
     self:MakeIndexBase2(self:checkTalentPoints(), 3) + 
-    self:MakeIndexBase2(self:inInMeleeRange(), 4) + 
+    self:MakeIndexBase2(0, 4) + 
     self:MakeIndexBase2(self:targetHostile(), 5) +
     self:MakeIndexBase2(self:IsPetVisible(), 6) + 
     self:MakeIndexBase2(self:mainhandEnchantActive(), 7) + 
@@ -846,7 +846,7 @@ function DataToColor:targetHostile()
     return 0
 end
 
-function Obtainer:hasAmmo()
+function DataToColor:hasAmmo()
     local ammoSlot = GetInventorySlotInfo("AmmoSlot");
     local ammoCount = GetInventoryItemCount("player", ammoSlot);
     if ammoCount > 0 then
@@ -855,31 +855,17 @@ function Obtainer:hasAmmo()
     return 0;
 end
 
--- Finds if target is attackable with the fireball which is the longest distance spell.
--- Fireball or a spell with equivalent range must be in slot 2 for this to work
-function DataToColor:isInRange()
-    -- Assigns arbitrary value (50) to note the target is not within range
-    local range = 50
-    if IsActionInRange(2) then range = 35 end -- Checks Fireball Range, slot 2
-    if IsActionInRange(3) and self:getPlayerLevel() < 25 then range = 30 end -- Checks Frostbolt Range, slot 3
-    if IsActionInRange(10) then range = 30 end -- Checks Counterspell Range, slot 11. Useful for when after arctic reach is applied
-    if IsActionInRange(4) then range = 20 end -- Checks Fire Blast Range, slot 4
-    return range
-end
-
-function DataToColor:inInMeleeRange()
-    -- local rc = LibStub("LibRangeCheck-2.0")
-    -- local minRange, maxRange = rc:GetRange('target')
-    -- local minRangeIfVisible, maxRangeIfVisible = rc:GetRange('target', true)
-        local target = GetUnitName("target")
-        if target ~= nil then
-            local min, max = Range:GetRange("target")
-            if min == 0 and max == 5 then
-                return 1
-            end
+function DataToColor:getRange()
+    local target = GetUnitName("target")
+    if target ~= nil then
+        local min, max = Range:GetRange("target")
+        if max == nil then
+            max = 99
         end
-        return 0
+        return min * 100000 + max * 100
     end
+    return 0
+end
 
 function DataToColor:targetNpcId()
     local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("target") or ''); 

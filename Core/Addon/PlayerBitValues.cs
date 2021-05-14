@@ -34,8 +34,6 @@
 
         public bool HasAmmo { get => IsBitSet(13); }
 
-        public bool IsInMeleeRange { get => IsBitSet(4); }
-
         public bool TalentPoints { get => IsBitSet(3); }
         public bool DeadStatus { get => IsBitSet(2); }
         public bool TargetIsDead { get => IsBitSet(1); }

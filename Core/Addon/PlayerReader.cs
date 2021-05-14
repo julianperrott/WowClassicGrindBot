@@ -49,9 +49,11 @@ namespace Core
 
         public long PlayerLevel => reader.GetLongAtCell(14); // Level is our character's exact level ranging from 1-60
 
-        // Todo !
-        // range detects if a target range. Bases information off of action slot 2, 3, and 4. Outputs: 50, 35, 30, or 20
-        public long Range => reader.GetLongAtCell(15);
+        public bool IsInMeleeRange => MinRange == 0 && MaxRange == 5;
+        public bool IsInDeadZone => MinRange == 5 && MaxRange == 15;
+
+        public long MinRange => (long)(reader.GetLongAtCell(15) / 100000f);
+        public long MaxRange => (long)((reader.GetLongAtCell(15)-(MinRange*100000f)) / 100f);
 
         public string Target
         {

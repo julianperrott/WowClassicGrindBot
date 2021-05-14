@@ -107,7 +107,8 @@ namespace Core
                 BuffDictionary = new Dictionary<string, Func<bool>>
                 {
                     // Range
-                    { "InMeleeRange", ()=> playerReader.PlayerBitValues.IsInMeleeRange },
+                    { "InMeleeRange", ()=> playerReader.IsInMeleeRange },
+                    { "IsInDeadZoneRange", ()=> playerReader.IsInDeadZone },
                     { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
                     { "InCombatRange", ()=> playerReader.WithInCombatRange },
                     { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
@@ -312,6 +313,8 @@ namespace Core
                 {  "Mana%", ()=> playerReader.ManaPercentage },
                 {  "BagCount", ()=> bagReader.BagItems.Count },
                 {  "MobCount", ()=> playerReader.CombatCreatureCount },
+                {  "MinRange", ()=> playerReader.MinRange },
+                {  "MaxRange", ()=> playerReader.MaxRange }
             };
 
             if (!valueDictionary.Keys.Contains(parts[0]))
