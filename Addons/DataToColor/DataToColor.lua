@@ -1469,7 +1469,7 @@ function DataToColor:petHappy()
 
     -- (1 = unhappy, 2 = content, 3 = happy)
     if happiness ~= nil and happiness == 3 then
-        return 1;
+        return 1
     end
 
     return 0
