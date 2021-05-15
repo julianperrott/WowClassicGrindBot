@@ -194,10 +194,11 @@ https://wowwiki-archive.fandom.com/wiki/ActionSlot
 
 
 | ActionSlot | Key | Description |
+| --- | --- | --- |
 | 1-10 | 1,2,3 .. 9,0 | 0 is the 10th key |
-| Bottom Right ActionBar | --- | --- |
+| Bottom Right ActionBar | - | - |
 | 49-58 | N1,N2,N3 .. N9,N0 | N means Numpad - 0 is the 10th key |
-| Bottom Left ActionBar | --- | --- |
+| Bottom Left ActionBar | - | - |
 | 61-72 | F1,F2,F3 .. F11,F12 | F means Functions |
 
 
