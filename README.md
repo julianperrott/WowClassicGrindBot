@@ -13,9 +13,9 @@ https://docs.microsoft.com/en-us/aspnet/core/blazor
 
 - The bot was written from scratch in C#. The Pathing calculation is mostly from an old library called [PPather](https://github.com/namreeb/PPather).
 
-- All classes are working except Hunter.
+- Most of the classes should work.
 
-- Pathing to grind route, vendor and repair.
+- Pathing to grind route, vendor and repair. Indoors pathfinding only works properly if `PathFilename` is exists.
 
 - Further detail about the bot can be found in my [Blog post](http://www.codesin.net/post/wowbot/).
 
@@ -56,6 +56,12 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 * Added a new input system to handle modifier keys
 * Support more 4:3 aspect ratio based resolution
 * Added lot path profiles including TBC
+* System wide DPI should work from win 7
+* Added basic support for Hunter, Shaman classes
+* More Pet support
+* Exclude ammo pouch and quiver from containers
+* ActionBarSlot usable
+* Retrive ActionBarSlot power cost to get more precise resource usage
 
 # Issues and Ideas
 
@@ -179,6 +185,19 @@ From the main menu (ESC) set the following:
 | Interact With Target | I | InteractKey | ---- |
 | Assist Target | F | TargetTargetOfTargetKey | ---- |
 | Pet attack | Subtract | PetAttackKey | Only pet based class |
+
+## 7.1. Actionbar Key Bindings:
+
+The default class profiles assumes the following `Keybinds` setup. In total, `32` keys supported.
+Highly recommended to use this setup, in order to get properly working the `ActionBarSlotCost` and `ActionBarSlotUsable` features! 
+https://wowwiki-archive.fandom.com/wiki/ActionSlot
+
+| ActionSlot | Key | Description |
+| 1-10 | 1,2,3 .. 9,0 | 0 is the 10th key |
+| Bottom Right ActionBar | --- | --- |
+| 49-58 | N1,N2,N3 .. N9,N0 | N means Numpad - 0 is the 10th key |
+| Bottom Left ActionBar | --- | --- |
+| 61-72 | F1,F2,F3 .. F11,F12 | F means Functions |
 
 ## 8. Configure the Wow Client - Bindpad addon
 
