@@ -310,6 +310,7 @@ namespace Core
             {
                 {  "Health%", ()=> playerReader.HealthPercent },
                 {  "TargetHealth%", ()=> playerReader.TargetHealthPercentage },
+                {  "PetHealth%", ()=> playerReader.PetHealthPercentage },
                 {  "Mana%", ()=> playerReader.ManaPercentage },
                 {  "BagCount", ()=> bagReader.BagItems.Count },
                 {  "MobCount", ()=> playerReader.CombatCreatureCount },

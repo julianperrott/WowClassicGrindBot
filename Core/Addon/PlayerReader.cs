@@ -82,7 +82,14 @@ namespace Core
         // 34 -36 Loops through binaries of three pixels. Currently does 24 slots. 1-12 and 61-72.
         public ActionBarUsable ActionBarUsable => new ActionBarUsable(reader, 34, 35, 36, 42);
 
-        // 37- 40 Bag Slots - BadReader handles it
+        // 37 Bag Slots - BadReader handles it
+
+        public long PetMaxHealth => reader.GetLongAtCell(38);
+        public long PetHealth => reader.GetLongAtCell(39);
+
+        public long PetHealthPercentage => PetMaxHealth == 0 || PetHealth == 1 ? 0 : (PetHealth * 100) / PetMaxHealth;
+
+        // 40 - empty
 
         public BuffStatus Buffs => new BuffStatus(reader.GetLongAtCell(41));
         public DebuffStatus Debuffs => new DebuffStatus(reader.GetLongAtCell(55));
