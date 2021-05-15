@@ -10,7 +10,7 @@ namespace Core
     {
         private int bagItemsDataStart = 20;
         private int bagInfoDataStart = 60;
-        private int bagSlotCountStart = 37; // 37 38 39 40
+        private int bagSlotCountStart = 37;
 
         private readonly ISquareReader reader;
         private readonly ItemDB itemDb;
@@ -37,13 +37,16 @@ namespace Core
         {
             bool hasChanged = false;
 
-            // not includes the first(default) bag
-            for(var bagSlotIndex = 0; bagSlotIndex < 4; bagSlotIndex++)
-            {
-                bagSlotsCount[bagSlotIndex+1] = reader.GetLongAtCell(bagSlotCountStart + bagSlotIndex);
+            var slotCount = reader.GetLongAtCell(bagSlotCountStart);
+            var index = (int)(slotCount / 1000f);
+            slotCount -= index * 1000;
 
-                var bagItemId = equipmentReader.GetId((int)InventorySlotId.Bag_0 + bagSlotIndex);
-                bagForLoot[bagSlotIndex + 1] = IsContainerItem(bagItemId);
+            // the index 0 is skipped since its fixed 16
+            if(index > 0 && index < bagSlotsCount.Length)
+            {
+                bagSlotsCount[index] = slotCount;
+                var bagItemId = equipmentReader.GetId((int)InventorySlotId.Bag_0 + (index - 1));
+                bagForLoot[index] = IsContainerItem(bagItemId);
             }
 
             for (var bag = 0; bag < 5; bag++)

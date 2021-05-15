@@ -63,6 +63,7 @@ local CELL_SPACING = 1 -- 0 or 1
 local itemNum = 0
 local equipNum = 0
 local actionNum = 1
+local bagNum = 0
 local globalCounter = 0
 -- Global table of all items player has
 local items = {}
@@ -396,6 +397,21 @@ function DataToColor:CreateFrames(n)
             if Modulo(globalCounter, ITEM_ITERATION_FRAME_CHANGE_RATE) == 0 then
                 itemNum = itemNum + 1
                 equipNum = equipNum + 1
+                bagNum = bagNum + 1
+
+                if itemNum >= 21 then
+                    itemNum = 1
+                end
+                if bagNum >= 5 then
+                    bagNum = 1
+                end
+
+                -- Worn inventory start.
+                -- Starts at beginning once we have looked at all desired slots.
+                if equipNum > 24 then
+                    equipNum = 1
+                end
+
                 -- Reseting global counter to prevent integer overflow
                 if globalCounter > 10000 then
                     globalCounter = 1000
@@ -403,17 +419,12 @@ function DataToColor:CreateFrames(n)
             end
             if Modulo(globalCounter, ACTION_BAR_ITERATION_FRAME_CHANGE_RATE) == 0 then
                 actionNum = actionNum + 1
+                if actionNum >= 84 then
+                    actionNum = 1
+                end
             end
             -- Controls rate at which item frames change.
             globalCounter = globalCounter + 1
-
-            if itemNum >= 21 then
-                itemNum = 1
-            end
-
-            if actionNum >= 84 then
-                actionNum = 1
-            end
 
             -- Bag contents - Uses data pixel positions 20-29
             for bagNo = 0, 4 do
@@ -422,11 +433,6 @@ function DataToColor:CreateFrames(n)
                 -- Return item slot number
                 MakePixelSquareArr(integerToColor(bagNo * 20 + itemNum), 21 + bagNo * 2) -- 21,23,25,27,29
                 MakePixelSquareArr(integerToColor(self:itemInfo(bagNo, itemNum)), 60 + bagNo ) -- 60,61,62,63,64
-            end
-            -- Worn inventory start.
-            -- Starts at beginning once we have looked at all desired slots.
-            if equipNum - 24 == 0 then
-                equipNum = 1
             end
 
             local equipName = self:equipName(equipNum)
@@ -447,10 +453,11 @@ function DataToColor:CreateFrames(n)
 
 
             -- Number of slots each bag contains, not including our default backpack
-            MakePixelSquareArr(integerToColor(self:bagSlots(1)), 37) -- Bag slot 1
-            MakePixelSquareArr(integerToColor(self:bagSlots(2)), 38) -- Bag slot 2
-            MakePixelSquareArr(integerToColor(self:bagSlots(3)), 39) -- Bag slot 3
-            MakePixelSquareArr(integerToColor(self:bagSlots(4)), 40) -- Bag slot 4
+            MakePixelSquareArr(integerToColor(bagNum * 1000 + self:bagSlots(bagNum)), 37) -- Bag slots
+            -- 38
+            -- 39
+            -- 40
+
             -- Profession levels:
             -- tracks our skinning level
             --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
