@@ -129,7 +129,7 @@ namespace Core
 
         public bool BagsFull => LootableItemSlotCount() == LootableSlotCount();
 
-        private long LootableItemSlotCount()
+        public long LootableItemSlotCount()
         {
             int count = 0;
             for(int i = 0; i<BagItems.Count; i++)
@@ -142,7 +142,7 @@ namespace Core
             return count;
         }
 
-        private long LootableSlotCount()
+        public long LootableSlotCount()
         {
             long sum = 0;
             for (int i = 0; i < bagForLoot.Length; i++)
