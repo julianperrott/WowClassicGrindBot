@@ -106,6 +106,13 @@
         "Name": "AutoAttack",
         "Cooldown": 3,
         "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+      },
+      {
+        "Name": "Health Funnel",
+        "Key": "N6",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Requirements": ["Has Pet", "Health%>70", "PetHealth%<30"]
       }
     ]
   },

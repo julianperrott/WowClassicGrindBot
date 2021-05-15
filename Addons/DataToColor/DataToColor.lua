@@ -454,8 +454,8 @@ function DataToColor:CreateFrames(n)
 
             -- Number of slots each bag contains, not including our default backpack
             MakePixelSquareArr(integerToColor(bagNum * 1000 + self:bagSlots(bagNum)), 37) -- Bag slots
-            -- 38
-            -- 39
+            MakePixelSquareArr(integerToColor(self:getHealthMax("pet")), 38)
+            MakePixelSquareArr(integerToColor(self:getHealthCurrent("pet")), 39)
             -- 40
 
             -- Profession levels:
