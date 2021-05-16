@@ -30,7 +30,7 @@ namespace Core
         public string Requirement { get; set; } = string.Empty;
         public List<string> Requirements { get; } = new List<string>();
 
-        public bool WhenUsable { get; } = false;
+        public bool WhenUsable { get; set; } = false;
 
         public bool WaitForWithinMelleRange { get; set; } = false;
         public bool ResetOnNewTarget { get; set; } = false;
