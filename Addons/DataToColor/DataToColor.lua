@@ -62,6 +62,8 @@ local CELL_SPACING = 1 -- 0 or 1
 -- Item slot trackers initialization
 local itemNum = 0
 local equipNum = 0
+local actionNum = 1
+local bagNum = 0
 local globalCounter = 0
 -- Global table of all items player has
 local items = {}
@@ -69,6 +71,11 @@ local itemsPlaceholderComparison = {}
 local enchantedItemsList = {}
 -- How often item frames change
 local ITEM_ITERATION_FRAME_CHANGE_RATE = 6
+-- How often the actionbar frames change
+local ACTION_BAR_ITERATION_FRAME_CHANGE_RATE = 5
+
+local MAX_POWER_TYPE = 1000000
+local MAX_ACTION_IDX = 1000
 
 -- Action bar configuration for which spells are tracked
 local MAIN_MIN = 1
@@ -379,7 +386,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(self:getManaMax("player")), 12) --10 Represents maximum amount of mana
             MakePixelSquareArr(integerToColor(self:getManaCurrent("player")), 13) --11 Represents current amount of mana
             MakePixelSquareArr(integerToColor(self:getPlayerLevel()), 14) --12 Represents character level
-            MakePixelSquareArr(integerToColor(self:isInRange()), 15) -- 15 Represents if target is within 20, 30, 35, or greater than 35 yards
+            MakePixelSquareArr(integerToColor(self:getRange()), 15) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
             MakePixelSquareArr(integerToColor(self:GetTargetName(0)), 16) -- Characters 1-3 of target's name
             MakePixelSquareArr(integerToColor(self:GetTargetName(3)), 17) -- Characters 4-6 of target's name
             MakePixelSquareArr(integerToColor(self:getHealthMax("target")), 18) -- Return the maximum amount of health a target can have
@@ -390,17 +397,34 @@ function DataToColor:CreateFrames(n)
             if Modulo(globalCounter, ITEM_ITERATION_FRAME_CHANGE_RATE) == 0 then
                 itemNum = itemNum + 1
                 equipNum = equipNum + 1
+                bagNum = bagNum + 1
+
+                if itemNum >= 21 then
+                    itemNum = 1
+                end
+                if bagNum >= 5 then
+                    bagNum = 1
+                end
+
+                -- Worn inventory start.
+                -- Starts at beginning once we have looked at all desired slots.
+                if equipNum > 24 then
+                    equipNum = 1
+                end
+
                 -- Reseting global counter to prevent integer overflow
                 if globalCounter > 10000 then
                     globalCounter = 1000
                 end
             end
+            if Modulo(globalCounter, ACTION_BAR_ITERATION_FRAME_CHANGE_RATE) == 0 then
+                actionNum = actionNum + 1
+                if actionNum >= 84 then
+                    actionNum = 1
+                end
+            end
             -- Controls rate at which item frames change.
             globalCounter = globalCounter + 1
-
-            if itemNum >= 21 then
-                itemNum = 1
-            end
 
             -- Bag contents - Uses data pixel positions 20-29
             for bagNo = 0, 4 do
@@ -409,11 +433,6 @@ function DataToColor:CreateFrames(n)
                 -- Return item slot number
                 MakePixelSquareArr(integerToColor(bagNo * 20 + itemNum), 21 + bagNo * 2) -- 21,23,25,27,29
                 MakePixelSquareArr(integerToColor(self:itemInfo(bagNo, itemNum)), 60 + bagNo ) -- 60,61,62,63,64
-            end
-            -- Worn inventory start.
-            -- Starts at beginning once we have looked at all desired slots.
-            if equipNum - 19 == 0 then
-                equipNum = 1
             end
 
             local equipName = self:equipName(equipNum)
@@ -434,10 +453,11 @@ function DataToColor:CreateFrames(n)
 
 
             -- Number of slots each bag contains, not including our default backpack
-            MakePixelSquareArr(integerToColor(self:bagSlots(1)), 37) -- Bag slot 1
-            MakePixelSquareArr(integerToColor(self:bagSlots(2)), 38) -- Bag slot 2
-            MakePixelSquareArr(integerToColor(self:bagSlots(3)), 39) -- Bag slot 3
-            MakePixelSquareArr(integerToColor(self:bagSlots(4)), 40) -- Bag slot 4
+            MakePixelSquareArr(integerToColor(bagNum * 1000 + self:bagSlots(bagNum)), 37) -- Bag slots
+            MakePixelSquareArr(integerToColor(self:getHealthMax("pet")), 38)
+            MakePixelSquareArr(integerToColor(self:getHealthCurrent("pet")), 39)
+            -- 40
+
             -- Profession levels:
             -- tracks our skinning level
             --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
@@ -448,7 +468,7 @@ function DataToColor:CreateFrames(n)
             
             MakePixelSquareArr(integerToColor(self:getTargetLevel()), 43)
 
-            --MakePixelSquareArr(integerToColor(self:GameTime()), 44) -- Returns time in the game
+            MakePixelSquareArr(integerToColor(DataToColor:actionbarCost(actionNum)), 44)
             --MakePixelSquareArr(integerToColor(self:GetGossipIcons()), 45) -- Returns which gossip icons are on display in dialogue box
 
             MakePixelSquareArr(integerToColor(self:PlayerClass()), 46) -- Returns player class as an integer
@@ -573,16 +593,16 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:GetEnemyStatus(), 1) + 
     self:MakeIndexBase2(self:deadOrAlive(), 2) +
     self:MakeIndexBase2(self:checkTalentPoints(), 3) + 
-    self:MakeIndexBase2(self:inInMeleeRange(), 4) + 
-    self:MakeIndexBase2(0, 5) +
+    self:MakeIndexBase2(self:isTradeRange(), 4) + 
+    self:MakeIndexBase2(self:targetHostile(), 5) +
     self:MakeIndexBase2(self:IsPetVisible(), 6) + 
     self:MakeIndexBase2(self:mainhandEnchantActive(), 7) + 
     self:MakeIndexBase2(self:offhandEnchantActive(), 8) +
     self:MakeIndexBase2(self:GetInventoryBroken(), 9) + 
     self:MakeIndexBase2(self:IsPlayerFlying(), 10) + 
     self:MakeIndexBase2(self:IsPlayerSwimming(), 11) +
-    self:MakeIndexBase2(0, 12) + 
-    self:MakeIndexBase2(0, 13) + 
+    self:MakeIndexBase2(self:petHappy(), 12) + 
+    self:MakeIndexBase2(self:hasAmmo(), 13) + 
     self:MakeIndexBase2(self:playerCombatStatus(), 14) +
     self:MakeIndexBase2(self:IsTargetOfTargetPlayer(), 15) + 
     self:MakeIndexBase2(0, 16) + 
@@ -635,6 +655,8 @@ function DataToColor:getBuffsForClass()
         self:MakeIndexBase2(self:GetBuffs("Shadow Trance"), 13);
     elseif CC == "SHAMAN" then
         class=class+self:MakeIndexBase2(self:GetBuffs("Lightning Shield"), 10);
+    elseif CC == "HUNTER" then
+        class=class+self:MakeIndexBase2(self:GetBuffs("Aspect of"), 10);
     end
     return class;
 end
@@ -727,6 +749,8 @@ function DataToColor:getDebuffsForTarget()
         self:MakeIndexBase2(self:GetDebuffs("Corruption"), 1) +
         self:MakeIndexBase2(self:GetDebuffs("Immolate"), 2) +
         self:MakeIndexBase2(self:GetDebuffs("Siphon Life"), 3);
+    elseif CC == "HUNTER" then
+        class=self:MakeIndexBase2(self:GetDebuffs("Serpect Sting"), 0);
     end
 
     return class;
@@ -821,31 +845,45 @@ function DataToColor:getMoneyTotal()
     return GetMoney()
 end
 
--- Finds if target is attackable with the fireball which is the longest distance spell.
--- Fireball or a spell with equivalent range must be in slot 2 for this to work
-function DataToColor:isInRange()
-    -- Assigns arbitrary value (50) to note the target is not within range
-    local range = 50
-    if IsActionInRange(2) then range = 35 end -- Checks Fireball Range, slot 2
-    if IsActionInRange(3) and self:getPlayerLevel() < 25 then range = 30 end -- Checks Frostbolt Range, slot 3
-    if IsActionInRange(10) then range = 30 end -- Checks Counterspell Range, slot 11. Useful for when after arctic reach is applied
-    if IsActionInRange(4) then range = 20 end -- Checks Fire Blast Range, slot 4
-    return range
+function DataToColor:targetHostile()
+    local hostile = UnitReaction("player", "target")
+    if hostile ~= nil and hostile <= 4 then
+        return 1
+    end
+    return 0
 end
 
-function DataToColor:inInMeleeRange()
-    -- local rc = LibStub("LibRangeCheck-2.0")
-    -- local minRange, maxRange = rc:GetRange('target')
-    -- local minRangeIfVisible, maxRangeIfVisible = rc:GetRange('target', true)
-        local target = GetUnitName("target")
-        if target ~= nil then
-            local min, max = Range:GetRange("target")
-            if min == 0 and max == 5 then
-                return 1
-            end
-        end
-        return 0
+function DataToColor:hasAmmo()
+    local ammoSlot = GetInventorySlotInfo("AmmoSlot");
+    local ammoCount = GetInventoryItemCount("player", ammoSlot);
+    if ammoCount > 0 then
+        return 1
     end
+    return 0;
+end
+
+function DataToColor:getRange()
+    local target = GetUnitName("target")
+    if target ~= nil then
+        local min, max = Range:GetRange("target")
+        if max == nil then
+            max = 99
+        end
+        return min * 100000 + max * 100
+    end
+    return 0
+end
+
+function DataToColor:isTradeRange()
+    local target = GetUnitName("target")
+    if target ~= nil then
+        local tradeRange = CheckInteractDistance("target", 2)
+        if tradeRange then
+            return 1
+        end
+    end
+    return 0
+end
 
 function DataToColor:targetNpcId()
     local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("target") or ''); 
@@ -887,6 +925,34 @@ end
 
 function DataToColor:sum24(num)
     return num % 0x1000000
+end
+
+function DataToColor:actionbarCost(slot)
+    if HasAction(slot) then
+        local actionName, _
+        local actionType, id = GetActionInfo(slot)
+        if actionType == 'macro' then _, _ , id = GetMacroSpell(id) end
+        if actionType == 'item' then
+            actionName = GetItemInfo(id)
+        elseif actionType == 'spell' or (actionType == 'macro' and id) then
+            actionName = GetSpellInfo(id)
+        end
+        if actionName then
+            local cost = 0
+            local type = 0
+            local costTable = GetSpellPowerCost(actionName)
+            if costTable ~= nil then
+                for key, costInfo in pairs(costTable) do
+                    cost = costInfo.cost
+                    type = costInfo.type
+                    break
+                end
+            end
+            --print(button:GetName(), actionType, (GetSpellLink(id)), actionName, type, cost, id)
+            return MAX_POWER_TYPE * type + MAX_ACTION_IDX * slot + cost
+        end
+    end
+    return MAX_ACTION_IDX * slot
 end
 
 -- A function used to check which items we have.
@@ -1010,6 +1076,7 @@ function DataToColor:areSpellsInRange()
         spellList = {
             "Raptor Strike", --1
             "Auto Shot", --2
+            "Serpent Sting" --3
         };        
     elseif CC == "WARLOCK" then
         spellList = {
@@ -1040,9 +1107,9 @@ function DataToColor:isActionUseable(min,max)
     local isUsableBits = 0
     -- Loops through main action bar slots 1-12
     for i = min, max do
-        local status, b, available = GetActionCooldown(i)
+        local start = GetActionCooldown(i)
         local isUsable, notEnough = IsUsableAction(i)
-        if isUsable == true and notEnough==false and status == 0 and available == 1  then
+        if start == 0 and isUsable == true and notEnough == false then
             isUsableBits = isUsableBits + (2 ^ (i - min))
         end
     end
@@ -1413,6 +1480,17 @@ function DataToColor:IsPetVisible()
         return 1
     else return 0
     end
+end
+
+function DataToColor:petHappy()
+    local happiness, damagePercentage, loyaltyRate = GetPetHappiness();
+
+    -- (1 = unhappy, 2 = content, 3 = happy)
+    if happiness ~= nil and happiness == 3 then
+        return 1
+    end
+
+    return 0
 end
 
 -- Returns 0 if target is unskinnable or if we have no target.
