@@ -4,28 +4,17 @@ using Newtonsoft.Json;
 
 namespace Core.Session
 {
-    public class GrindingSession : IGrindingSession
+    public class GrindSession : IGrindSession
     {
         private readonly IBotController _botController;
 
-        private readonly IGrindingSessionHandler _grindingSessionHandler;
+        private readonly IGrindSessionHandler _grindSessionHandler;
 
-        // this will change for TBC
-        // we might need to consider getting Wow client version and determine the calculation from there
-        private readonly double[] _experience =
-        {
-            400, 900, 1400, 2100, 2800, 3600, 4500, 5400, 6500, 7600, 8800, 10100, 11400, 12900, 14400, 16000, 17700,
-            19400, 21300, 23200, 25200, 27300, 29400, 31700, 34000, 36400, 38900, 41400, 44300, 47400, 50800, 54700,
-            58600, 62800, 67000, 71600, 76100, 80800, 85700, 90700, 95800, 101000, 106300, 111800, 117400, 123200,
-            129100, 135100, 141200, 147500, 153900, 160400, 167100, 173900, 180800, 187900, 195000, 202300, 209800
-        };
-
-        public GrindingSession(IBotController botController, IGrindingSessionHandler grindingSessionHandler)
+        public GrindSession(IBotController botController, IGrindSessionHandler grindSessionHandler)
         {
             _botController = botController;
-            _grindingSessionHandler = grindingSessionHandler;
+            _grindSessionHandler = grindSessionHandler;
         }
-
         public Guid SessionId { get; set; }
         public string PathName { get; set; } = "No path selected";
         public PlayerClassEnum PlayerClass { get; set; }
@@ -38,6 +27,9 @@ namespace Core.Session
         public int LevelTo { get; set; }
         public double XpTo { get; set; }
         public int MobsKilled { get; set; }
+        public double MobsPerMinute => Math.Round(MobsKilled / (double)TotalTimeInMinutes, 2);
+        public int Death { get; set; }
+        public string? Reason { get; set; }
         [JsonIgnore]
         public double ExperiencePerHour => TotalTimeInMinutes == 0 ? 0 : Math.Round((double)(ExpGetInBotSession / TotalTimeInMinutes * 60), 0);
         [JsonIgnore]
@@ -45,11 +37,13 @@ namespace Core.Session
         {
             get
             {
-                if (LevelFrom == 60)
+                var expList = ExperienceProvider.GetExperienceList();
+                var maxLevel = expList.Length + 1;
+                if (LevelFrom == maxLevel)
                     return 0;
 
-                if (LevelFrom == 59 && LevelTo == 60)
-                    return _experience[LevelFrom - 1] - XpFrom;
+                if (LevelFrom == maxLevel-1 && LevelTo == maxLevel)
+                    return expList[LevelFrom - 1] - XpFrom;
 
                 if (LevelTo == LevelFrom)
                 {
@@ -62,9 +56,9 @@ namespace Core.Session
 
                     for (int i = 0; i < LevelTo-LevelFrom; i++)
                     {
-                        expSoFar += _experience[LevelFrom - 1 + i] - XpFrom;
+                        expSoFar += expList[LevelFrom - 1 + i] - XpFrom;
                         XpFrom = 0;
-                        if (LevelTo > 60)
+                        if (LevelTo > maxLevel)
                             break;
                     }
 
@@ -86,23 +80,25 @@ namespace Core.Session
             MobsKilled = (int)_botController.AddonReader.LevelTracker.MobsKilled;
         }
 
-        public void StopBotSession()
+        public void StopBotSession(string reason = "stopped by player")
         {
             SessionEnd = DateTime.UtcNow;
             LevelTo = (int)_botController.AddonReader.PlayerReader.PlayerLevel;
             XpTo = (int)_botController.AddonReader.PlayerReader.PlayerXp;
+            Reason = reason;
+            Death = (int)_botController.AddonReader.LevelTracker.Death;
             MobsKilled = (int)_botController.AddonReader.LevelTracker.MobsKilled;
             Save();
         }
-
+        
         public void Save()
         {
-            _grindingSessionHandler.Save(this);
+            _grindSessionHandler.Save(this);
         }
 
-        public List<GrindingSession> Load()
+        public List<GrindSession> Load()
         {
-            return _grindingSessionHandler.Load();
+            return _grindSessionHandler.Load();
         }
     }
 }

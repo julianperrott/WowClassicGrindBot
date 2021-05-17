@@ -24,7 +24,7 @@ namespace Core
         IImageProvider? MinimapImageFinder { get; set; }
 
         ActionBarPopulator? ActionBarPopulator { get; set; }
-        public IGrindingSession GrindingSession { get; set; }
+        public IGrindSession GrindSession { get; set; }
 
         string SelectedClassFilename { get; set; }
         string? SelectedPathFilename { get; set; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Core.Session
 {
-    public interface IGrindingSession
+    public interface IGrindSession
     {
         Guid SessionId { get; set; }
         string PathName { get; set; }
@@ -16,8 +16,8 @@ namespace Core.Session
         double XpTo { get; set; }
         int MobsKilled { get; set; }
         void StartBotSession();
-        void StopBotSession();
+        void StopBotSession(string reason = "stopped by player");
         void Save();
-        List<GrindingSession> Load();
+        List<GrindSession> Load();
     }
 }

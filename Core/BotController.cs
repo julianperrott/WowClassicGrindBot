@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Database;
@@ -25,8 +24,8 @@ namespace Core
         private readonly ILogger logger;
         private readonly IPPather pather;
 
-        public IGrindingSession GrindingSession { get; set; }
-        public IGrindingSessionHandler GrindingSessionHandler { get; set; }
+        public IGrindSession GrindSession { get; set; }
+        public IGrindSessionHandler GrindSessionHandler { get; set; }
         public string SelectedClassFilename { get; set; } = String.Empty;
         public string? SelectedPathFilename { get; set; }
 
@@ -81,8 +80,8 @@ namespace Core
             WowScreen = new WowScreen(logger, wowProcess);
             WowProcessInput = new WowProcessInput(logger, wowProcess);
 
-            GrindingSessionHandler = new LocalGrindingBotSessionHandler(dataConfig.History);
-            GrindingSession = new GrindingSession(this, GrindingSessionHandler);
+            GrindSessionHandler = new LocalGrindSessionHandler(dataConfig.History);
+            GrindSession = new GrindSession(this, GrindSessionHandler);
             
 
             var frames = DataFrameConfiguration.LoadFrames();
@@ -191,7 +190,7 @@ namespace Core
             {
                 if (!actionThread.Active)
                 {
-                    this.GrindingSession.StartBotSession();
+                    this.GrindSession.StartBotSession();
                     this.pather.DrawLines();
 
                     actionThread.Active = true;
@@ -201,8 +200,9 @@ namespace Core
                 else
                 {
                     actionThread.Active = false;
-                    this.GrindingSession.StopBotSession();
+                    this.GrindSession.StopBotSession();
                     AddonReader.LevelTracker.ResetMobsKilled();
+                    AddonReader.LevelTracker.ResetDeath();
                 }
 
                 StatusChanged?.Invoke(this, actionThread.Active);

@@ -9,39 +9,39 @@ namespace Core.Session
     // this is gonna save the bot session data locally atm
     // there will be an AWS session handler later to upload the session data to AWS S3
     // the idea is we will have two session data handlers working at the same time
-    public class LocalGrindingBotSessionHandler : IGrindingSessionHandler
+    public class LocalGrindSessionHandler : IGrindSessionHandler
     {
         private readonly string _historyPath;
 
-        public LocalGrindingBotSessionHandler(string historyPath)
+        public LocalGrindSessionHandler(string historyPath)
         {
             _historyPath = historyPath;
         }
 
-        public List<GrindingSession> Load()
+        public List<GrindSession> Load()
         {
             // first time load
             if (!Directory.Exists(_historyPath))
             {
                 Directory.CreateDirectory(_historyPath);
-                return new List<GrindingSession>();
+                return new List<GrindSession>();
             }
                 
             var previousSessions =
-                Directory.EnumerateFiles($"{_historyPath}", "*.json")
-                    .Select(file => JsonConvert.DeserializeObject<GrindingSession>(File.ReadAllText(file)))
+                Directory.EnumerateFiles(_historyPath, "*.json")
+                    .Select(file => JsonConvert.DeserializeObject<GrindSession>(File.ReadAllText(file)))
                     .OrderByDescending(grindingSession => grindingSession.SessionStart)
                     .ToList();
 
             return previousSessions;
         }
 
-        public void Save(IGrindingSession grindingSession)
+        public void Save(IGrindSession grindSession)
         {
-            var json = JsonConvert.SerializeObject(grindingSession);
+            var json = JsonConvert.SerializeObject(grindSession);
             if (!Directory.Exists(_historyPath))
                 Directory.CreateDirectory(_historyPath);
-            File.WriteAllText($@"{_historyPath}{grindingSession.SessionId}.json", json);
+            File.WriteAllText($"{_historyPath}{grindSession.SessionId}.json", json);
         }
     }
 }
