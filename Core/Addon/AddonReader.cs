@@ -17,6 +17,8 @@ namespace Core
         public PlayerReader PlayerReader { get; set; }
         public BagReader BagReader { get; set; }
         public EquipmentReader equipmentReader { get; set; }
+
+        public ActionBarCostReader ActionBarCostReader { get; set; }
         public LevelTracker LevelTracker { get; set; }
 
         public event EventHandler? AddonDataChanged;
@@ -36,8 +38,9 @@ namespace Core
             this.itemDb = new ItemDB(logger, dataConfig);
             this.creatureDb = new CreatureDB(logger, dataConfig);
 
-            this.BagReader = new BagReader(squareReader, 20, itemDb);
             this.equipmentReader = new EquipmentReader(squareReader, 30);
+            this.BagReader = new BagReader(squareReader, 20, itemDb, equipmentReader);
+            this.ActionBarCostReader = new ActionBarCostReader(squareReader, 44);
             this.PlayerReader = new PlayerReader(squareReader, creatureDb);
             this.LevelTracker = new LevelTracker(PlayerReader);
 
@@ -56,6 +59,9 @@ namespace Core
 
             // 30 - 31
             equipmentReader.Read();
+
+            // 44
+            ActionBarCostReader.Read();
 
             LevelTracker.Update();
 

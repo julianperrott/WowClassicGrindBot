@@ -1,0 +1,59 @@
+{
+  "ClassName": "Hunter",
+  "PathFilename": "1_Gnome.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Approach",
+        "DelayAfterCast": 0
+      },
+      {
+        "Name": "autoshoot",
+        "StopBeforeCast": true,
+        "Key": "3",
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "autoshoot",
+        "StopBeforeCast": true,
+        "Key": "3",
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "MinMana": 15,
+        "Requirement": "InMeleeRange"
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 3,
+        "DelayAfterCast": 0,
+        "Requirements": ["InMeleeRange", "not AutoAttacking"]
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

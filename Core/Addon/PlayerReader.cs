@@ -49,9 +49,11 @@ namespace Core
 
         public long PlayerLevel => reader.GetLongAtCell(14); // Level is our character's exact level ranging from 1-60
 
-        // Todo !
-        // range detects if a target range. Bases information off of action slot 2, 3, and 4. Outputs: 50, 35, 30, or 20
-        public long Range => reader.GetLongAtCell(15);
+        public bool IsInMeleeRange => MinRange == 0 && MaxRange == 5;
+        public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
+
+        public long MinRange => (long)(reader.GetLongAtCell(15) / 100000f);
+        public long MaxRange => (long)((reader.GetLongAtCell(15)-(MinRange*100000f)) / 100f);
 
         public string Target
         {
@@ -78,18 +80,23 @@ namespace Core
         public long Gold => reader.GetLongAtCell(32) + reader.GetLongAtCell(33) * 1000000;
 
         // 34 -36 Loops through binaries of three pixels. Currently does 24 slots. 1-12 and 61-72.
-        public ActionBarStatus ActionBarUseable_1To24 => new ActionBarStatus(reader.GetLongAtCell(34));
+        public ActionBarUsable ActionBarUsable => new ActionBarUsable(reader, 34, 35, 36, 42);
 
-        public ActionBarStatus ActionBarUseable_25To48 => new ActionBarStatus(reader.GetLongAtCell(35));
-        public ActionBarStatus ActionBarUseable_49To72 => new ActionBarStatus(reader.GetLongAtCell(36));
-        public ActionBarStatus ActionBarUseable_73To96 => new ActionBarStatus(reader.GetLongAtCell(42));
+        // 37 Bag Slots - BadReader handles it
 
-        // 37- 40 Bag Slots - BadReader handles it
+        public long PetMaxHealth => reader.GetLongAtCell(38);
+        public long PetHealth => reader.GetLongAtCell(39);
+
+        public long PetHealthPercentage => PetMaxHealth == 0 || PetHealth == 1 ? 0 : (PetHealth * 100) / PetMaxHealth;
+
+        // 40 - empty
 
         public BuffStatus Buffs => new BuffStatus(reader.GetLongAtCell(41));
         public DebuffStatus Debuffs => new DebuffStatus(reader.GetLongAtCell(55));
 
         public long TargetLevel => reader.GetLongAtCell(43);
+
+        // cell 44 reserved to ActionBarCostReader
 
         public PlayerClassEnum PlayerClass => (PlayerClassEnum)reader.GetLongAtCell(46);
 
