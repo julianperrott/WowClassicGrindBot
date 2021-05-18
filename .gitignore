@@ -268,3 +268,4 @@ __pycache__/
 # Logs
 *.log
 Json/History/*.*
+PathingAPI/data_config.json

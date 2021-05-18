@@ -16,7 +16,7 @@ namespace Core.Session
         double XpTo { get; set; }
         int MobsKilled { get; set; }
         void StartBotSession();
-        void StopBotSession(string reason = "stopped by player");
+        void StopBotSession(string reason, bool active);
         void Save();
         List<GrindSession> Load();
     }

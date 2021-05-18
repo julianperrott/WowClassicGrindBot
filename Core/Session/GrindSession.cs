@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Core.Session
@@ -7,14 +10,16 @@ namespace Core.Session
     public class GrindSession : IGrindSession
     {
         private readonly IBotController _botController;
-
         private readonly IGrindSessionHandler _grindSessionHandler;
+        private Thread? _autoUpdateThread;
 
         public GrindSession(IBotController botController, IGrindSessionHandler grindSessionHandler)
         {
             _botController = botController;
             _grindSessionHandler = grindSessionHandler;
         }
+        [JsonIgnore] 
+        public bool Active { get; set; }
         public Guid SessionId { get; set; }
         public string PathName { get; set; } = "No path selected";
         public PlayerClassEnum PlayerClass { get; set; }
@@ -71,6 +76,7 @@ namespace Core.Session
 
         public void StartBotSession()
         {
+            Active = true;
             SessionId = Guid.NewGuid();
             PathName = _botController.SelectedPathFilename ?? _botController.ClassConfig?.PathFilename ?? "No Path Selected";
             PlayerClass = _botController.AddonReader.PlayerReader.PlayerClass;
@@ -78,10 +84,25 @@ namespace Core.Session
             LevelFrom = (int)_botController.AddonReader.PlayerReader.PlayerLevel;
             XpFrom = (int)_botController.AddonReader.PlayerReader.PlayerXp;
             MobsKilled = (int)_botController.AddonReader.LevelTracker.MobsKilled;
+            _autoUpdateThread = new Thread(() => Task.Factory.StartNew(AutoUpdate));
+            _autoUpdateThread.Start();
         }
 
-        public void StopBotSession(string reason = "stopped by player")
+        private async Task AutoUpdate()
         {
+            if (_autoUpdateThread != null)
+            {
+                while (Active)
+                {
+                    StopBotSession("auto save", true);
+                    await Task.Delay(TimeSpan.FromMinutes(1));
+                }
+            }
+        }
+
+        public void StopBotSession(string reason = "stopped by player", bool active = false)
+        {
+            Active = active;
             SessionEnd = DateTime.UtcNow;
             LevelTo = (int)_botController.AddonReader.PlayerReader.PlayerLevel;
             XpTo = (int)_botController.AddonReader.PlayerReader.PlayerXp;

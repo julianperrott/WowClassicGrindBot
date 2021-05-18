@@ -200,7 +200,7 @@ namespace Core
                 else
                 {
                     actionThread.Active = false;
-                    this.GrindSession.StopBotSession();
+                    GrindSession.StopBotSession("Stopped By Player", false);
                     AddonReader.LevelTracker.ResetMobsKilled();
                     AddonReader.LevelTracker.ResetDeath();
                 }
@@ -215,6 +215,7 @@ namespace Core
             {
                 while (this.actionThread.Active && this.Enabled)
                 {
+
                     await actionThread.GoapPerformGoal();
                 }
             }
