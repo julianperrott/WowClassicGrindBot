@@ -154,6 +154,10 @@ namespace Core
         public int PetTargetGuid => (int)reader.GetLongAtCell(69);
         public bool PetHasTarget => PetTargetGuid != 0;
 
+        public long GlobalTime => reader.GetLongAtCell(70);
+        public long LastLootTime => reader.GetLongAtCell(71);
+
+
         #region Combat Creatures
         public int CombatCreatureCount => CombatCreatures.Count;
 

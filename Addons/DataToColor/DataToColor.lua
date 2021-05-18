@@ -83,6 +83,11 @@ local MAIN_MAX = 12
 local BOTTOM_LEFT_MIN = 61
 local BOTTOM_LEFT_MAX = 72
 
+-- Timers
+local timeUpdateSec = 0.1
+local globalTime = 0
+local lastLoot = 0
+
 DataToColor.frames = nil
 DataToColor.r = 0
 
@@ -194,6 +199,16 @@ local f = CreateFrame("Frame")
 f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 f:SetScript("OnEvent", OnCombatEvent)
 
+local l = CreateFrame("Frame")
+l:RegisterEvent("LOOT_CLOSED")
+l:SetScript("OnEvent", 
+function(self, event, arg1)														
+    if event == "LOOT_CLOSED" then
+        lastLoot = globalTime
+    end
+end
+)
+
 function DataToColor:OnMerchantShow(self, event, messageType, message)
     
     TotalPrice = 0
@@ -298,6 +313,14 @@ function DataToColor:SetupRequirements()
 	SetCVar('Contrast',50,'[]')
 	SetCVar('Brightness',50,'[]')
 	SetCVar('Gamma',1,'[]')
+end
+
+function timerTick()
+	globalTime = globalTime + 1
+    if globalTime > (256 * 256 * 256 - 1) then
+        globalTime = 0
+    end
+	C_Timer.After(timeUpdateSec, timerTick)
 end
 
 -- This function is able to pass numbers in range 0 to 16777215
@@ -497,6 +520,10 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArr(integerToColor(DataToColor:getGuid("pet")),68) -- pet guid
             MakePixelSquareArr(integerToColor(DataToColor:getGuid("pettarget")),69) -- pet target
+
+            -- Timers
+            MakePixelSquareArr(integerToColor(globalTime), 70)
+            MakePixelSquareArr(integerToColor(lastLoot), 71)
 
             self:HandleEvents()
         end
