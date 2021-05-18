@@ -219,10 +219,15 @@ namespace Core.Goals
                 {
                     ResetCooldowns();
 
-                    logger.LogWarning("---- Somebody is attacking me or my pet!");
+                    logger.LogWarning("---- Somebody is attacking me!");
                     await input.TapInteractKey("Found new target to attack");
                     return true;
                 }
+            }
+
+            if (await Wait(200, () => playerReader.HasTarget))
+            {
+                return true;
             }
 
             await input.TapClearTarget();
