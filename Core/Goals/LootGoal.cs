@@ -50,11 +50,6 @@ namespace Core.Goals
             return !bagReader.BagsFull && playerReader.ShouldConsumeCorpse;
         }
 
-        public override void ResetBeforePlanning()
-        {
-            base.ResetBeforePlanning();
-        }
-
         public override async Task PerformAction()
         {
             combatUtil.Update();
@@ -77,6 +72,10 @@ namespace Core.Goals
                 if (foundTarget)
                 {
                     Log("Goal interrupted!");
+                    SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+                    SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
+                    SendActionEvent(new ActionEventArgs(GoapKey.hastarget, true));
+                    SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
                     return;
                 }
 
@@ -107,6 +106,10 @@ namespace Core.Goals
                         if (foundTarget)
                         {
                             Log("Goal interrupted!");
+                            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+                            SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
+                            SendActionEvent(new ActionEventArgs(GoapKey.hastarget, true));
+                            SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
                             return;
                         }
 

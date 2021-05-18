@@ -63,9 +63,6 @@ namespace Core
                     {
                         Log("Found target by pet");
                         await input.TapTargetOfTarget();
-                        //SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-                        //SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
-                        //SendActionEvent(new ActionEventArgs(GoapKey.hastarget, true));
                         return true;
                     }
                 }
@@ -76,9 +73,6 @@ namespace Core
                     playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
                 {
                     Log("Found from nearest target");
-                    //SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-                    //SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
-                    //SendActionEvent(new ActionEventArgs(GoapKey.hastarget, true));
                     return true;
                 }
 
