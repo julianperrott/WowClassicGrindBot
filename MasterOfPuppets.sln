@@ -27,7 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinAPI", "WinAPI\WinAPI.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{BFB5D6D4-C6FF-4A19-97F7-7C8205AD1FD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", "{2DD51B2A-AA1A-493C-9370-72B52B74E350}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game", "Game\Game.csproj", "{2DD51B2A-AA1A-493C-9370-72B52B74E350}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{91A5C224-1F88-42AE-90D2-23573AB93FF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorServer.Test", "BlazorServer.Test\BlazorServer.Test.csproj", "{8F340D60-AF40-4000-B7B6-98507A9C95A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,9 +83,16 @@ Global
 		{2DD51B2A-AA1A-493C-9370-72B52B74E350}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DD51B2A-AA1A-493C-9370-72B52B74E350}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DD51B2A-AA1A-493C-9370-72B52B74E350}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F340D60-AF40-4000-B7B6-98507A9C95A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F340D60-AF40-4000-B7B6-98507A9C95A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F340D60-AF40-4000-B7B6-98507A9C95A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F340D60-AF40-4000-B7B6-98507A9C95A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8F340D60-AF40-4000-B7B6-98507A9C95A3} = {91A5C224-1F88-42AE-90D2-23573AB93FF7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9395D174-0646-43EF-9C91-A7EED7678BA4}
