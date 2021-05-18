@@ -63,9 +63,6 @@ namespace Core.Goals
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Corpse);
 
             await stopMoving.Stop();
-
-            // TODO: have to wait for the cursor to switch from loot -> skinning
-            // sometimes takes a lot of time
             await npcNameFinder.WaitForNUpdate(1);
 
             if (await combatUtil.EnteredCombat())
