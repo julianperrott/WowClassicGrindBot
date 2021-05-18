@@ -25,8 +25,10 @@ namespace Core
             lastPosition = playerReader.PlayerLocation;
         }
 
-        public void UpdateLastPosition()
+        public void Update()
         {
+            // TODO: have to find a better way to reset outOfCombat
+            outOfCombat = false;
             lastPosition = playerReader.PlayerLocation;
         }
 
@@ -43,7 +45,6 @@ namespace Core
             if (outOfCombat && playerReader.PlayerBitValues.PlayerInCombat)
             {
                 Log("Combat Enter");
-                outOfCombat = false;
                 return true;
             }
 

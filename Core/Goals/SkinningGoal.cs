@@ -57,7 +57,7 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
-            combatUtil.UpdateLastPosition();
+            combatUtil.Update();
 
             Log("Try to find Corpse");
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Corpse);
