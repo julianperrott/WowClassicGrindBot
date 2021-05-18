@@ -108,6 +108,7 @@ namespace Core
             if(_NPCType != type)
             {
                 _NPCType = type;
+                logger.LogInformation($"ChangeNpcType = {type}");
             }
         }
 
