@@ -39,19 +39,7 @@ namespace Core.Database
 
             var waters = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "waters.json")));
             waters.ForEach(x => WaterIds.Add(x.Id));
-
-            var containers = File.ReadAllLines(Path.Join(dataConfig.Dbc, "containers.txt"));
-            Array.ForEach(containers, (id) =>
-            {
-                ContainerIds.Add(int.Parse(id));
-            });
         }
-
-        public bool IsContainer(int itemId)
-        {
-            return ContainerIds.Contains(itemId);
-        }
-
 
         #region AH prices
 

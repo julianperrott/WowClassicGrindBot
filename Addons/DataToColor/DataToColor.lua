@@ -63,7 +63,7 @@ local CELL_SPACING = 1 -- 0 or 1
 local itemNum = 0
 local equipNum = 0
 local actionNum = 1
-local bagNum = 0
+local bagNum = -1
 local globalCounter = 0
 -- Global table of all items player has
 local items = {}
@@ -426,7 +426,7 @@ function DataToColor:CreateFrames(n)
                     itemNum = 1
                 end
                 if bagNum >= 5 then
-                    bagNum = 1
+                    bagNum = 0
                 end
 
                 -- Worn inventory start.
@@ -474,9 +474,13 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(self:isActionUseable(49,72)), 36) 
             MakePixelSquareArr(integerToColor(self:isActionUseable(73,96)), 42) 
 
+            local freeSlots, bagType = GetContainerNumFreeSlots(bagNum)
+            if bagType ~= nil then
+                bagType = 0
+            end
+            MakePixelSquareArr(integerToColor(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)), 37) -- BagType + Index + FreeSpace + BagSlots
 
-            -- Number of slots each bag contains, not including our default backpack
-            MakePixelSquareArr(integerToColor(bagNum * 1000 + self:bagSlots(bagNum)), 37) -- Bag slots
+
             MakePixelSquareArr(integerToColor(self:getHealthMax("pet")), 38)
             MakePixelSquareArr(integerToColor(self:getHealthCurrent("pet")), 39)
             -- 40
