@@ -1,0 +1,178 @@
+{
+  "ClassName": "Hunter",
+  "PathFilename": "_pack\\60-70\\Hellfire Peninsula\\60-64 birds.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Hunter's Mark",
+        "DelayAfterCast": 1500,
+        "Key": "0"
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Approach",
+        "Requirement": "MaxRange>30"
+      },
+      {
+        "Name": "Mend Pet",
+        "Key": "N7",
+        "MinMana": 200,
+        "Cooldown": 15,
+        "WhenUsable": true,
+        "Requirements": ["Has Pet", "PetHealth%<40"]
+      },
+      {
+        "Name": "Intimidation",
+        "Key": "8",
+        "MinMana": 15,
+        "Cooldown": 15,
+        "WhenUsable": true,
+        "Requirements": ["Has Pet"]
+      },
+      {
+        "Name": "Bestial Wrath",
+        "Key": "9",
+        "MinMana": 15,
+        "Cooldown": 15,
+        "WhenUsable": true,
+        "Requirements": ["Has Pet", "TargetHealth%>50"]
+      },
+      {
+        "Name": "Aimed Shot",
+        "Key": "6",
+        "HasCastBar": true,
+        "MinMana": 15,
+        "Cooldown": 8,
+        "WhenUsable": true,
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "HasAmmo", "TargetHealth%>35", "not Rapid Fire", "not Quick Shots"]
+      },
+      {
+        "Name": "Rapid Fire",
+        "Key": "7",
+        "MinMana": 15,
+        "Cooldown": 8,
+        "WhenUsable": true,
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "HasAmmo"]
+      },
+      {
+        "Name": "Serpent Sting",
+        "Key": "2",
+        "MinMana": 15,
+        "Cooldown": 15,
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting", "HasAmmo", "TargetHealth%>35"]
+      },
+      {
+        "Name": "autoshoot",
+        "StopBeforeCast": true,
+        "Key": "3",
+        "Cooldown": 2,
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+      },
+      {
+        "Name": "Multi-Shot",
+        "Key": "N3",
+        "HasCastBar": true,
+        "MinMana": 15,
+        "Cooldown": 10,
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting", "HasAmmo", "TargetHealth%>35", "not Rapid Fire", "not Quick Shots"]
+      },
+      {
+        "Name": "Mongoose Bite",
+        "Key": "5",
+        "WhenUsable": true,
+        "Cooldown": 5,
+        "MinMana": 15,
+        "Requirement": "InMeleeRange"
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "Cooldown": 6,
+        "MinMana": 15,
+        "Requirement": "InMeleeRange"
+      },
+      {
+        "Name": "Disengage",
+        "Key": "1",
+        "WhenUsable": true,
+        "Cooldown": 5,
+        "MinMana": 15,
+        "StepBackAfterCast": 1000,
+        "Requirement": "InMeleeRange"
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 3,
+        "DelayAfterCast": 0,
+        "Requirements": ["InMeleeRange", "not AutoAttacking"]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Aspect of the Hawk",
+        "Key": "N4",
+        "MinMana": 20,
+        "Cooldown": 20,
+        "Requirement": "not Aspect of the Hawk"
+      },
+      {
+        "Name": "feedpet",
+        "Key": "N5",
+        "Cooldown": 20,
+        "Requirements": ["Has Pet", "not Pet Happy"]
+      },
+      {
+        "Name": "sumpet",
+        "Key": "N6",
+        "MinMana": 20,
+        "HasCastBar": true,
+        "Cooldown": 4,
+        "Requirement": "not Has Pet"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "StopBeforeCast": true,
+        "Key": "N1",
+        "Requirement": "Health%<45",
+        "Cooldown": 10,
+        "Log": false
+      },
+      {
+        "Name": "Water",
+        "StopBeforeCast": true,
+        "Key": "N2",
+        "Requirement": "Mana%<45",
+        "Cooldown": 10,
+        "Log": false
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "60_Hellfire_Honor_Hold_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "60_Hellfire_Honor_Hold_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}
