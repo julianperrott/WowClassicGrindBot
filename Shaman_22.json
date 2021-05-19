@@ -2,7 +2,6 @@
   "ClassName": "Shaman",
   "Loot": true,
   "PathFilename": "_pack\\20-30\\Stonetalon Mountains\\21-23 Mirkfallonlage.json",
-  //"SpiritPathFilename"
   "PathThereAndBack": true,
   "PathReduceSteps": true,
   "Blacklist": ["Kolkar","Legashi"],
@@ -16,14 +15,13 @@
         "StopBeforeCast": true,
         "HasCastBar": true,
         "MinMana": 75,
-		"Requirements": ["Health%>50", "Mana%>50"]
       }
     ]
   },
   "Combat": {
     "Sequence": [
 	  {
-        "Name": "Earth Totem",
+        "Name": "Stoneclaw Totem",
         "Key": "7",
         "Requirement": "MobCount>2",
         "Cooldown": 30,
@@ -31,7 +29,7 @@
         "MinMana": 30
       },
 	  {
-        "Name": "Fire Totem",
+        "Name": "Searing Totem",
         "Key": "F7",
         "Requirement": "MobCount>2",
         "Cooldown": 15,
@@ -58,6 +56,7 @@
       {
         "Name": "Healing Wave",
         "Key": "3",
+		"StopBeforeCast": true,
         "Requirements": ["Health%<45","TargetHealth%>20"],
 		"Cooldown": 5,
         "HasCastBar": true,
@@ -93,15 +92,6 @@
         "Key": "6",
         "MinMana": 45,
         "Requirement": "not Lightning Shield"
-    //  },
-	//   {
-    //    "Name": "Well Fed",
-    //    "StopBeforeCast": true,
-    //    "Key": "7",
-    //    "Requirements": ["not Well Fed", "BagItem:6888:1"],
-    //    "Cooldown": 120,
-	//	"DelayAfterCast": 10000,
-    //    "Log": false
       }
     ]
   },
@@ -149,7 +139,7 @@
       {
         "Name": "Sell",
         "Key": "T",
-        "Requirement": "BagCount>46",
+        "Requirement": "BagFull",
         "PathFilename": "NPC_Stonetalon.json",
         "Cost": 6
       }

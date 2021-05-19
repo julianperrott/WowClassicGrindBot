@@ -4,7 +4,7 @@
   "PathFilename": "_pack\\1-20\\Troll.Orc\\15-18_The Barrens_North.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
-//  "Blacklist": ["Kolkar","Legashi"],
+  "Blacklist": ["Kolkar","Legashi"],
   "NPCMaxLevels_Below": 5,
   "NPCMaxLevels_Above": 1,
   "Pull": {
@@ -15,7 +15,6 @@
         "StopBeforeCast": true,
         "HasCastBar": true,
         "MinMana": 30,
-	//	"Requirements": ["Health%>50", "Mana%>50"]
       }
     ]
   },
@@ -40,6 +39,7 @@
       {
         "Name": "Healing Wave",
         "Key": "3",
+		"StopBeforeCast": true,
         "Requirement": "Health%<45",
 		"Cooldown": 5,
         "HasCastBar": true,
@@ -59,7 +59,7 @@
         "MinMana": 80
       },
 	  {
-        "Name": "Earth Totem",
+        "Name": "Stoneskin Totem",
         "Key": "7",
         "Requirement": "MobCount>2",
         "Cooldown": 30,
@@ -83,15 +83,6 @@
         "Key": "6",
         "MinMana": 45,
         "Requirement": "not Lightning Shield"
-    //  },
-	//   {
-    //    "Name": "Well Fed",
-    //    "StopBeforeCast": true,
-    //    "Key": "7",
-    //    "Requirements": ["not Well Fed", "BagItem:6888:1"],
-    //    "Cooldown": 120,
-	//	"DelayAfterCast": 10000,
-    //    "Log": false
       }
     ]
   },
