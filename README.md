@@ -266,7 +266,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | HasCastBar | Does the spell have a cast bar | false |
 | StopBeforeCast | Should the char stop moving before casting the spell | false |
 | Key | The key to click (ConsoleKey) | |
-| PressDuration | How many milliseconds to press the key for |  250 |
+| PressDuration | How many milliseconds to press the key for |  50 |
 | ShapeShiftForm | For druids the shapeshift form to be in to cast this spell | None |
 | CastIfAddsVisible | If the bot can "See" any adds | false |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | 1 |
@@ -275,17 +275,17 @@ Commands have the following parameters, only a subset will be used by each comma
 | MinRage | (Optional) The minimum Rage required to cast the spell | 0 |
 | MinEnergy | (Optional) The minimum Energy required to cast the spell | 0 |
 | MinComboPoints | The minimum combo points required to cast the spell | 0 |
-| WhenUsable | Designed for queueable spells. Meaning consumed on the next AutoAttack ex. Heroic Strike/Raptor Strike | false |
+| WhenUsable | When not in cooldown and have the min resource(mana,rage,energy) to use it. | false |
 | Requirement | A single "Requirement" (See below) which must be true | |
 | Requirements | A list of "Requirements" which must be true |  |
 | WaitForWithinMelleRange| Wait after casting for the mob to be in melee range | false |
 | ResetOnNewTarget | Reset the cooldown if the target changes | false |
 | Log | Write to the log when this key is evaluated | true |
-| DelayAfterCast | The delay in milliseconds after the spell is cast | 1500 |
+| DelayAfterCast | The delay in milliseconds after the spell is cast | 1450 |
 | DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
 | Cost | For Adhoc goals the priority | 18 |
 | InCombat | Can it be cast in combat | false |
-| StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | false |
+| StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | 0 |
 | PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | "Tanaris_GadgetzanKrinkleGoodsteel.json" |
 
 ### Pull Goal
@@ -358,13 +358,13 @@ Hunter `autoshoot` spammable Auto Shoot macro
     #showtooltip
     /cast !Auto Shot
 
-Hunter `feedpet` replace `Roasted Quail` with the proper diet
+Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
 
     #showtooltip
     /cast Feed Pet
     /use Roasted Quail
 
-Hunter `sumpet` replace
+Hunter `sumpet` macro
 
     #showtooltip
     /cast [target=pet,nodead,exists] Revive pet; Call Pet 
@@ -444,7 +444,10 @@ For the `MinRange` and `MaxRange` gives an approximation to the target distance 
 | 15 | 20 | "InCombatRange" |
 | 20 | 30 | "InCombatRange" |
 | 30 | 35 | "InCombatRange" |
+| 35 | 40 | "OutOfCombatRange" |
 | 35 | 99 | "OutOfCombatRange" |
+| 40 | 45 | "OutOfCombatRange" |
+| 45 | 99 | "OutOfCombatRange" |
 
 
 #### npcID requirements
