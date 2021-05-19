@@ -1,0 +1,148 @@
+{
+  "ClassName": "Shaman",
+  "Loot": true,
+  "PathFilename": "_pack\\20-30\\Stonetalon Mountains\\21-23 Mirkfallonlage.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "Blacklist": ["Kolkar","Legashi"],
+  "NPCMaxLevels_Below": 6,
+  "NPCMaxLevels_Above": 1,
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+        "MinMana": 75,
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+	  {
+        "Name": "Stoneclaw Totem",
+        "Key": "7",
+        "Requirement": "MobCount>2",
+        "Cooldown": 30,
+        "Log": false,
+        "MinMana": 30
+      },
+	  {
+        "Name": "Searing Totem",
+        "Key": "F7",
+        "Requirement": "MobCount>2",
+        "Cooldown": 15,
+        "Log": false,
+        "MinMana": 95
+      },
+	   {
+        "Name": "War Stomp",
+        "Key": "0",
+        "Requirements": ["Health%<49","MobCount>2"],
+        "Cooldown": 120,
+        "Log": false,
+        "MinMana": 10
+      },
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+        "MinMana": 75,
+        "Requirements": ["not InMeleeRange", "Mana%>30"]
+      },
+	  
+      {
+        "Name": "Healing Wave",
+        "Key": "3",
+		"StopBeforeCast": true,
+        "Requirements": ["Health%<45","TargetHealth%>20"],
+		"Cooldown": 5,
+        "HasCastBar": true,
+        "Log": false,
+        "MinMana": 80
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+      },
+	  {
+        "Name": "Fire shock",
+        "Key": "4",
+        "Requirements": ["Mana%>40", "InMeleeRange"],
+        "Cooldown": 6,
+        "Log": false,
+        "MinMana": 80
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Rockbiter Weapon",
+        "StopBeforeCast": false,
+        "Key": "5",
+        "MinMana": 25,
+        "Requirement": "not HasMainHandEnchant"
+      },
+	  {
+        "Name": "Lightning Shield",
+        "StopBeforeCast": false,
+        "Key": "6",
+        "MinMana": 45,
+        "Requirement": "not Lightning Shield"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+	  {
+        "Name": "Healing Wave",
+		"StopBeforeCast": true,
+        "Key": "3",
+        "Requirement": "Health%<50",
+		"Cooldown": 5,
+        "HasCastBar": true,
+        "Log": false,
+        "MinMana": 80
+      },
+      {
+        "Name": "Food",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirement": "Health%<40",
+        "Cooldown": 6,
+        "Log": false
+      },
+      {
+        "Name": "Water",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "9",
+        "Requirement": "Mana%<40",
+        "Cooldown": 6,
+        "Log": false
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "R",
+        "Requirement": "Items Broken",
+        "PathFilename": "NPC_Stonetalon.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "T",
+        "Requirement": "BagFull",
+        "PathFilename": "NPC_Stonetalon.json",
+        "Cost": 6
+      }
+    ]
+  }
+}
