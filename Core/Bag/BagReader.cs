@@ -20,8 +20,7 @@ namespace Core
 
         public List<BagItem> BagItems { get; private set; } = new List<BagItem>();
 
-        private readonly long[] bagSlotsCount = new long[] { 16, 0, 0, 0, 0 };
-        private readonly bool[] bagForLoot = new bool[] { true, false, false, false, false };
+        private readonly Bag[] bags = new Bag[5];
 
         public event EventHandler? DataChanged;
 
@@ -37,16 +36,29 @@ namespace Core
         {
             bool hasChanged = false;
 
-            var slotCount = reader.GetLongAtCell(bagSlotCountStart);
-            var index = (int)(slotCount / 1000f);
-            slotCount -= index * 1000;
+            //bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)
+            int data = (int)reader.GetLongAtCell(bagSlotCountStart);
 
-            // the index 0 is skipped since its fixed 16
-            if(index > 0 && index < bagSlotsCount.Length)
+            int bagType = (int)(data / 1000000f);
+            data -= (1000000 * bagType);
+
+            int index = (int)(data / 100000f);
+            data -= (100000 * index);
+
+            int freeSlots = (int)(data / 1000f);
+            data -= (1000 * freeSlots);
+
+            int slotCount = data;
+
+            if (index >= 0 && index < bags.Length)
             {
-                bagSlotsCount[index] = slotCount;
-                var bagItemId = equipmentReader.GetId((int)InventorySlotId.Bag_0 + (index - 1));
-                bagForLoot[index] = IsContainerItem(bagItemId);
+                // default bag, the first has no equipment slot
+                if (index != 0)
+                    bags[index].ItemId = equipmentReader.GetId((int)InventorySlotId.Bag_0 + index - 1);
+
+                bags[index].BagType = (BagType)bagType;
+                bags[index].SlotCount = slotCount;
+                bags[index].FreeSlot = freeSlots;
             }
 
             for (var bag = 0; bag < 5; bag++)
@@ -128,34 +140,9 @@ namespace Core
                 .ToList();
         }
 
-        public long SlotCount => bagSlotsCount.Sum();
+        public long SlotCount => bags.Sum((x) => x.SlotCount);
 
-        public bool BagsFull => LootableItemSlotCount() == LootableSlotCount();
-
-        public long LootableItemSlotCount()
-        {
-            int count = 0;
-            for(int i = 0; i<BagItems.Count; i++)
-            {
-                if (bagForLoot[BagItems[i].Bag])
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        public long LootableSlotCount()
-        {
-            long sum = 0;
-            for (int i = 0; i < bagForLoot.Length; i++)
-            {
-                if (bagForLoot[i])
-                    sum += bagSlotsCount[i];
-            }
-
-            return sum;
-        }
+        public bool BagsFull => bags.Sum((x) => x.BagType == BagType.Unspecified ? x.FreeSlot : 0) == 0;
 
         public int ItemCount(int itemId) => BagItems.Where(bi => bi.ItemId == itemId).Sum(bi => bi.Count);
 
@@ -173,11 +160,6 @@ namespace Core
             return itemDb.FoodIds.
                 OrderByDescending(c => ItemCount(c)).
                 FirstOrDefault();
-        }
-
-        private bool IsContainerItem(int itemId)
-        {
-            return itemDb.IsContainer(itemId);
         }
     }
 }
