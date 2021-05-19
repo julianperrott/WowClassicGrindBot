@@ -53,27 +53,27 @@ namespace Game
             NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
         }
 
-        public async Task LeftClickMouse(Point position)
+        public async Task LeftClickMouse(Point p)
         {
-            SetCursorPosition(position);
+            SetCursorPosition(p);
             await Delay(MAX_MOUSE_DELAY);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_LBUTTONDOWN, NativeMethods.VK_RMB, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_LBUTTONDOWN, NativeMethods.VK_RMB, NativeMethods.MakeLParam(p.X, p.Y));
             await Delay(MAX_MOUSE_DELAY);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_LBUTTONUP, NativeMethods.VK_RMB, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_LBUTTONUP, NativeMethods.VK_RMB, NativeMethods.MakeLParam(p.X, p.Y));
             await Delay(MAX_MOUSE_DELAY);
         }
 
-        public async Task RightClickMouse(Point position)
+        public async Task RightClickMouse(Point p)
         {
-            SetCursorPosition(position);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_RBUTTONDOWN, NativeMethods.VK_RMB, 0);
+            SetCursorPosition(p);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_RBUTTONDOWN, NativeMethods.VK_RMB, NativeMethods.MakeLParam(p.X, p.Y));
             await Delay(MAX_MOUSE_DELAY);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_RBUTTONUP, NativeMethods.VK_RMB, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_RBUTTONUP, NativeMethods.VK_RMB, NativeMethods.MakeLParam(p.X, p.Y));
         }
 
-        public void SetCursorPosition(Point position)
+        public void SetCursorPosition(Point p)
         {
-            NativeMethods.SetCursorPos(position.X, position.Y);
+            NativeMethods.SetCursorPos(p.X, p.Y);
         }
 
         public async Task SendText(string text)

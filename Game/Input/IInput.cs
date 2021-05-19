@@ -14,11 +14,11 @@ namespace Game
 
         void KeyPressSleep(int key, int milliseconds);
 
-        void SetCursorPosition(Point position);
+        void SetCursorPosition(Point p);
 
-        Task RightClickMouse(Point position);
+        Task RightClickMouse(Point p);
 
-        Task LeftClickMouse(Point position);
+        Task LeftClickMouse(Point p);
 
         Task SendText(string text);
 
