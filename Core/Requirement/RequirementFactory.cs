@@ -168,6 +168,8 @@ namespace Core
                     {  "Aspect of the Hawk", ()=> playerReader.Buffs.Aspect },
                     {  "Aspect of the Wild", ()=> playerReader.Buffs.Aspect },
                     {  "Aspect of the Monkey", ()=> playerReader.Buffs.Aspect },
+                    {  "Rapid Fire", ()=> playerReader.Buffs.RapidFire },
+                    {  "Quick Shots", ()=> playerReader.Buffs.QuickShots },
 
                     // Debuff Section
                     // Druid Debuff

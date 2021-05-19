@@ -73,5 +73,7 @@
 
         // Hunter
         public bool Aspect { get => IsBitSet(10); } //Any Aspect of
+        public bool RapidFire { get => IsBitSet(11); }
+        public bool QuickShots { get => IsBitSet(12); }
     }
 }

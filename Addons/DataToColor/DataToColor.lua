@@ -683,7 +683,9 @@ function DataToColor:getBuffsForClass()
     elseif CC == "SHAMAN" then
         class=class+self:MakeIndexBase2(self:GetBuffs("Lightning Shield"), 10);
     elseif CC == "HUNTER" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Aspect of"), 10);
+        class=class+self:MakeIndexBase2(self:GetBuffs("Aspect of"), 10)+
+        self:MakeIndexBase2(self:GetBuffs("Rapid Fire"), 11)+
+        self:MakeIndexBase2(self:GetBuffs("Quick Shots"), 12);
     end
     return class;
 end
