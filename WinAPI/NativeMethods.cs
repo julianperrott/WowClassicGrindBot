@@ -56,6 +56,8 @@ namespace WinAPI
         public const UInt32 WM_RBUTTONUP = 0x205;
         public const int VK_RMB = 0x02;
 
+        public static int MakeLParam(int x, int y) => (y << 16) | (x & 0xFFFF);
+
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);

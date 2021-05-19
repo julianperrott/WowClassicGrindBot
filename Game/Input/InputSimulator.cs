@@ -59,9 +59,9 @@ namespace Game
             simulator.Keyboard.KeyUp((VirtualKeyCode)key);
         }
 
-        public async Task LeftClickMouse(Point position)
+        public async Task LeftClickMouse(Point p)
         {
-            SetCursorPosition(position);
+            SetCursorPosition(p);
             await Delay(MAX_MOUSE_DELAY);
             simulator.Mouse.LeftButtonDown();
             await Delay(MAX_MOUSE_DELAY);
@@ -69,20 +69,20 @@ namespace Game
             await Delay(MAX_MOUSE_DELAY);
         }
 
-        public async Task RightClickMouse(Point position)
+        public async Task RightClickMouse(Point p)
         {
-            SetCursorPosition(position);
+            SetCursorPosition(p);
             simulator.Mouse.RightButtonDown();
             await Delay(MAX_MOUSE_DELAY);
             simulator.Mouse.RightButtonUp();
         }
 
-        public void SetCursorPosition(Point position)
+        public void SetCursorPosition(Point p)
         {
             NativeMethods.GetWindowRect(process.MainWindowHandle, out var rect);
-            position.X = position.X * 65535 / rect.Width;
-            position.Y = position.Y * 65535 / rect.Height;
-            simulator.Mouse.MoveMouseTo(Convert.ToDouble(position.X), Convert.ToDouble(position.Y));
+            p.X = p.X * 65535 / rect.Width;
+            p.Y = p.Y * 65535 / rect.Height;
+            simulator.Mouse.MoveMouseTo(Convert.ToDouble(p.X), Convert.ToDouble(p.Y));
         }
 
         public async Task SendText(string text)
