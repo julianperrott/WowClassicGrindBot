@@ -158,7 +158,7 @@ namespace Core.Goals
 
                         npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.FriendlyOrNeutral);
                         await npcNameFinder.WaitForNUpdate(2);
-                        var foundVendor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Vendor);
+                        var foundVendor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Vendor, Cursor.CursorClassification.Repair);
 
                         await InteractWithTarget();
                         await input.TapClearTarget();
