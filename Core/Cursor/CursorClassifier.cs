@@ -26,6 +26,8 @@ namespace Core.Cursor
             {CursorClassification.None,new List<ulong>{4645529528554094592, 4665762466636896256,6376251547633783040,6376251547633783552 }},
 
             {CursorClassification.Vendor,new List<ulong>{ 4645529528554094592, 17940331276560775168, 17940331276594329600,17940331276594460672} },
+
+            {CursorClassification.Repair,new List<ulong>{ 16207573517913036808, 4669140166357294088 } }
         };
 
         public static Bitmap Classify(out CursorClassification classification)

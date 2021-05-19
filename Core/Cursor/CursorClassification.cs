@@ -9,6 +9,7 @@
         Mine = 50,
         Herb = 60,
         Vendor = 70,
+        Repair = 80,
         Unknown = 999
     }
 }
