@@ -824,9 +824,12 @@ function DataToColor:CastingInfoSpellId()
     if texture ~= nil then -- temp fix for tbc
         return texture
     end
-     _, _, _, _, _, _, _, spellID = ChannelInfo();
+     _, _, texture, _, _, _, _, spellID = ChannelInfo();
      if spellID ~= nil then
         return spellID
+    end
+    if texture ~= nil then -- temp fix for tbc
+        return texture
     end
     return 0
 end
