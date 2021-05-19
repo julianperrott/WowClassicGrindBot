@@ -108,6 +108,7 @@ namespace Core
             if(_NPCType != type)
             {
                 _NPCType = type;
+                logger.LogInformation($"ChangeNpcType = {type}");
             }
         }
 
@@ -147,7 +148,7 @@ namespace Core
             }
         }
 
-        public async Task<bool> FindByCursorType(CursorClassification cursor)
+        public async Task<bool> FindByCursorType(params CursorClassification[] cursor)
         {
             foreach (var npc in Npcs)
             {
@@ -157,7 +158,7 @@ namespace Core
                     mouseInput.SetCursorPosition(clickPostion);
                     await Task.Delay(75);
                     CursorClassifier.Classify(out var cls).Dispose();
-                    if (cls == cursor)
+                    if (cursor.Contains(cls))
                     {
                         await AquireTargetAtCursor(clickPostion, npc);
                         return true;
@@ -174,7 +175,7 @@ namespace Core
             else
                 await mouseInput.RightClickMouse(clickPostion);
 
-            logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}");
+            logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}, pos={clickPostion}");
         }
 
         public void Update()

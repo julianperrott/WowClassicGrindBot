@@ -67,5 +67,13 @@
         public bool SoulLink { get => IsBitSet(11); }
         public bool SoulstoneResurrection { get => IsBitSet(12); }
         public bool ShadowTrance { get => IsBitSet(13); }
+
+        // Shaman
+        public bool LightningShield { get => IsBitSet(10); }
+
+        // Hunter
+        public bool Aspect { get => IsBitSet(10); } //Any Aspect of
+        public bool RapidFire { get => IsBitSet(11); }
+        public bool QuickShots { get => IsBitSet(12); }
     }
 }

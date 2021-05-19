@@ -1,6 +1,7 @@
 ﻿using Core.GOAP;
 using System.Collections.Generic;
 using System.Threading;
+using Core.Session;
 using SharedLib;
 using Game;
 
@@ -23,6 +24,7 @@ namespace Core
         IImageProvider? MinimapImageFinder { get; set; }
 
         ActionBarPopulator? ActionBarPopulator { get; set; }
+        public IGrindSession GrindSession { get; set; }
 
         string SelectedClassFilename { get; set; }
         string? SelectedPathFilename { get; set; }

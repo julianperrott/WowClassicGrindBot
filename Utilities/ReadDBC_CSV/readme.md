@@ -3,10 +3,10 @@
 
 # Required DBC files
 * data/spell.csv
-https://wow.tools/dbc/?dbc=spell&build=1.13.7.37429#page=1&search=Restores%20%24o1%20health%20over%20%24d
+https://wow.tools/dbc/?dbc=spell&build=2.5.1.38707#page=1&search=Restores%20%24o1%20health%20over%20%24d
 
 * data/itemeffect.csv
-https://wow.tools/dbc/?dbc=itemeffect&build=1.13.7.37429#page=1
+https://wow.tools/dbc/?dbc=itemeffect&build=2.5.1.38707#page=1
 
 # Produces
 * data/foods.json

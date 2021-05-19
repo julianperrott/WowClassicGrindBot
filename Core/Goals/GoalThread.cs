@@ -23,7 +23,6 @@ namespace Core.Goals
             this.input = input;
             this.playerReader = playerReader;
             this.goapAgent = goapAgent;
-            
         }
 
         public void OnActionEvent(object sender, ActionEventArgs e)

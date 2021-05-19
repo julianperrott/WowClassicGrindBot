@@ -17,6 +17,8 @@ namespace Core.Database
         public HashSet<int> FoodIds { get; } = new HashSet<int>();
         public HashSet<int> WaterIds { get; } = new HashSet<int>();
 
+        public HashSet<int> ContainerIds { get; } = new HashSet<int>();
+
 
         public ItemDB(ILogger logger, DataConfig dataConfig)
         {
@@ -38,7 +40,6 @@ namespace Core.Database
             var waters = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "waters.json")));
             waters.ForEach(x => WaterIds.Add(x.Id));
         }
-
 
         #region AH prices
 

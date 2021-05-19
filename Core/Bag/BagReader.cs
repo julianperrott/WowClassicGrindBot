@@ -10,34 +10,55 @@ namespace Core
     {
         private int bagItemsDataStart = 20;
         private int bagInfoDataStart = 60;
-        private int bagSlotCountStart = 37; // 37 38 39 40
+        private int bagSlotCountStart = 37;
 
         private readonly ISquareReader reader;
         private readonly ItemDB itemDb;
+        private readonly EquipmentReader equipmentReader;
 
         private DateTime lastEvent = DateTime.Now;
 
         public List<BagItem> BagItems { get; private set; } = new List<BagItem>();
 
-        private readonly long[] bagSlotsCount = new long[] { 16, 0, 0, 0, 0 };
+        private readonly Bag[] bags = new Bag[5];
 
         public event EventHandler? DataChanged;
 
-        public BagReader(ISquareReader reader, int bagItemsDataStart, ItemDB itemDb)
+        public BagReader(ISquareReader reader, int bagItemsDataStart, ItemDB itemDb, EquipmentReader equipmentReader)
         {
             this.bagItemsDataStart = bagItemsDataStart;
             this.reader = reader;
             this.itemDb = itemDb;
+            this.equipmentReader = equipmentReader;
         }
 
         public void Read()
         {
             bool hasChanged = false;
 
-            // not includes the first(default) bag
-            for(var bagSlotIndex = 0; bagSlotIndex < 4; bagSlotIndex++)
+            //bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)
+            int data = (int)reader.GetLongAtCell(bagSlotCountStart);
+
+            int bagType = (int)(data / 1000000f);
+            data -= (1000000 * bagType);
+
+            int index = (int)(data / 100000f);
+            data -= (100000 * index);
+
+            int freeSlots = (int)(data / 1000f);
+            data -= (1000 * freeSlots);
+
+            int slotCount = data;
+
+            if (index >= 0 && index < bags.Length)
             {
-                bagSlotsCount[bagSlotIndex+1] = reader.GetLongAtCell(bagSlotCountStart + bagSlotIndex);
+                // default bag, the first has no equipment slot
+                if (index != 0)
+                    bags[index].ItemId = equipmentReader.GetId((int)InventorySlotId.Bag_0 + index - 1);
+
+                bags[index].BagType = (BagType)bagType;
+                bags[index].SlotCount = slotCount;
+                bags[index].FreeSlot = freeSlots;
             }
 
             for (var bag = 0; bag < 5; bag++)
@@ -119,8 +140,9 @@ namespace Core
                 .ToList();
         }
 
-        public long SlotCount => bagSlotsCount.Sum();
-        public bool BagsFull => BagItems.Count == SlotCount;
+        public long SlotCount => bags.Sum((x) => x.SlotCount);
+
+        public bool BagsFull => bags.Sum((x) => x.BagType == BagType.Unspecified ? x.FreeSlot : 0) == 0;
 
         public int ItemCount(int itemId) => BagItems.Where(bi => bi.ItemId == itemId).Sum(bi => bi.Count);
 
@@ -139,6 +161,5 @@ namespace Core
                 OrderByDescending(c => ItemCount(c)).
                 FirstOrDefault();
         }
-
     }
 }

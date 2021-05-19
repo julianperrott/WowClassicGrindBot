@@ -5,49 +5,55 @@
   "NPCMaxLevels_Above": 2,
 
   "PathFilename": "56_Azshara.json",
-  "SpiritPathFilename": "56_Azshara_SpiritHealer.json",
   "PathThereAndBack": false,
   "PathReduceSteps": false,
 
   "Blacklist": ["Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
-  "Blink":{
-      "Name": "Blink",
-      "Key": "T"
-    },
-
   "Pull": {
     "Sequence": [
       {
-        "Name": "Fireball",
+        "Name": "Frostbolt",
         "HasCastBar": true,
-        "Key": "5",
-        "MinMana": 221,
-        "Cooldown": 0
+        "StopBeforeCast": true,
+        "Key": "1",
+        "MinMana": 25
       }
     ]
   },
   "Combat": {
     "Sequence": [
       {
-        "Name": "Healing Potion",
-        "Key": "F4",
-        "Requirement": "Health%<10",
-        "Cooldown": 60,
-        "Log": false
+        "Name": "Ice Barrier",
+        "Key": "7",
+        "MinMana": 60,
+        "Cooldown": 30,
+        "WhenUsable": true,
+        "Requirement": "not Ice Barrier"
       },
       {
         "Name": "Fire Blast",
-        "Key": "1",
-        "MinMana": 340,
-        "Cooldown": 8
+        "Key": "5",
+        "MinMana": 40,
+        "Cooldown": 8,
+        "Requirements": ["TargetHealth%<45", "SpellInRange:4"]
+      },
+      {
+        "Name": "Frost Nova",
+        "Key": 6,
+        "MinMana": 55,
+        "Cooldown": 25,
+        "Requirement": "InMeleeRange",
+        "StepBackAfterCast": 1000,
+        "DelayAfterCast": 0
       },
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "Key": "5",
-        "MinMana": 350,
-        "Cooldown": 0
+        "StopBeforeCast": true,
+        "Key": "2",
+        "MinMana": 30,
+        "Requirements": ["TargetHealth%>35"]
       },
       {
         "Name": "shoot",
@@ -66,20 +72,20 @@
   "Parallel": {
     "Sequence": [
       {
-        "Name": "Low Health",
+        "Name": "Food",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "6",
-        "Requirement": "Health%<70",
+        "Key": "N1",
+        "Requirement": "Health%<60",
         "Cooldown": 10,
         "Log": false
       },
       {
-        "Name": "Drink",
+        "Name": "Water",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Key": "7",
-        "Requirement": "Mana%<70",
+        "Key": "N2",
+        "Requirement": "Mana%<60",
         "Cooldown": 10,
         "Log": false
       }
@@ -89,19 +95,18 @@
   "Adhoc": {
     "Sequence": [
       {
-        "Name": "Combustion",
-        "HasCastBar": false,
-        "Key": "2",
-        "MinMana": 0,
-        "Cooldown": 60
-      },
-      {
-        "Name": "Frost Armor",
+        "Name": "Ice Armor",
         "StopBeforeCast": false,
         "Key": "3",
-        "MinMana": 110,
-        "Requirement": "not Frost Armor",
-        "Log": false
+        "MinMana": 60,
+        "Requirement": "not Frost Armor"
+      },
+      {
+        "Name": "Ice Barrier",
+        "Key": "7",
+        "MinMana": 60,
+        "Cooldown": 30,
+        "Requirement": "not Ice Barrier"
       },
       {
         "Name": "Arcane Intellect",

@@ -18,13 +18,10 @@ namespace Core.Goals
         private readonly StopMoving stopMoving;
         private readonly BagReader bagReader;
         private readonly EquipmentReader equipmentReader;
-        private readonly ClassConfiguration classConfiguration;
         private readonly NpcNameFinder npcNameFinder;
-        
+        private readonly CombatUtil combatUtil;
 
-        private bool outOfCombat = false;
-
-        public SkinningGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder)
+        public SkinningGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving,  NpcNameFinder npcNameFinder, CombatUtil combatUtil)
         {
             this.logger = logger;
             this.input = input;
@@ -34,16 +31,13 @@ namespace Core.Goals
             this.bagReader = bagReader;
             this.equipmentReader = equipmentReader;
 
-
-            this.classConfiguration = classConfiguration;
             this.npcNameFinder = npcNameFinder;
+            this.combatUtil = combatUtil;
 
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.shouldskin, true);
 
             AddEffect(GoapKey.shouldskin, false);
-
-            outOfCombat = playerReader.PlayerBitValues.PlayerInCombat;
         }
 
         public override bool CheckIfActionCanRun()
@@ -63,46 +57,47 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
+            combatUtil.Update();
+
             Log("Try to find Corpse");
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Corpse);
 
             await stopMoving.Stop();
-
-            // TODO: have to wait for the cursor to switch from loot -> skinning
-            // sometimes takes a lot of time
             await npcNameFinder.WaitForNUpdate(1);
-            if (await DiDEnteredCombat())
+
+            if (await combatUtil.EnteredCombat())
             {
-                await AquireTarget();
+                await combatUtil.AquiredTarget();
                 return;
             }
 
             Log("Found corpses: " + npcNameFinder.NpcCount);
-            WowPoint lastPosition = playerReader.PlayerLocation;
+
             bool skinSuccess = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Skin);
             if (skinSuccess)
             {
-                await Wait(100, () => false);
-                if (IsPlayerMoving(lastPosition)) 
-                    Log("Goto corpse - Wait till the player become stil!");
+                Log("Found corpse - interact with it");
+                await playerReader.WaitForNUpdate(1);
 
-                while (IsPlayerMoving(lastPosition))
+                (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
+                if (foundTarget)
                 {
-                    lastPosition = playerReader.PlayerLocation;
-                    if (!await Wait(100, DiDEnteredCombat()))
-                    {
-                        await AquireTarget();
-                        return;
-                    }
+                    Log("Goal interrupted!");
+                    return;
                 }
-                
-                await input.TapInteractKey("Skinning Attempt...");
+
+                if (moved)
+                {
+                    Log("had to move so interact again");
+                    await input.TapInteractKey("");
+                }
+
                 do
                 {
                     await playerReader.WaitForNUpdate(1);
-                    if (await DiDEnteredCombat())
+                    if (await combatUtil.EnteredCombat())
                     {
-                        await AquireTarget();
+                        await combatUtil.AquiredTarget();
                         return;
                     }
                 } while (playerReader.IsCasting);
@@ -128,77 +123,16 @@ namespace Core.Goals
             }
         }
 
-        public override void OnActionEvent(object sender, ActionEventArgs e)
-        {
-            if (sender != this)
-            {
-                outOfCombat = true;
-            }
-        }
-
         async Task GoalExit()
         {
             SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
 
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
 
-            await input.TapClearTarget();
-        }
-
-        public async Task<bool> DiDEnteredCombat()
-        {
-            await Task.Delay(0);
-            if (!outOfCombat && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
             {
-                Log("Combat Leave");
-                outOfCombat = true;
-            }
-
-            if (outOfCombat && playerReader.PlayerBitValues.PlayerInCombat)
-            {
-                Log("Combat detected");
-                return true;
-            }
-
-            return false;
-        }
-
-        private async Task AquireTarget()
-        {
-            if (this.playerReader.PlayerBitValues.PlayerInCombat && this.playerReader.PetHasTarget)
-            {
-                await input.TapTargetPet();
-                Log($"Pets target {this.playerReader.TargetTarget}");
-                if (this.playerReader.TargetTarget == TargetTargetEnum.PetHasATarget)
-                {
-                    Log("Found target by pet");
-                    await input.TapTargetOfTarget();
-                    SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
-                    return;
-                }
-
-                await input.TapNearestTarget();
-                await playerReader.WaitForNUpdate(1);
-                if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
-                {
-                    if (playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
-                    {
-                        Log("Found from nearest target");
-                        SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
-                        return;
-                    }
-                }
-
                 await input.TapClearTarget();
-                Log("No target found");
             }
-        }
-
-
-
-        public override void ResetBeforePlanning()
-        {
-            base.ResetBeforePlanning();
         }
 
         private void Log(string text)
@@ -206,10 +140,5 @@ namespace Core.Goals
             logger.LogInformation($"{this.GetType().Name}: {text}");
         }
 
-        private bool IsPlayerMoving(WowPoint lastPos)
-        {
-            var distance = WowPoint.DistanceTo(lastPos, playerReader.PlayerLocation);
-            return distance > 0.5f;
-        }
     }
 }

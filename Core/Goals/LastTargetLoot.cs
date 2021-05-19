@@ -59,11 +59,6 @@ namespace Core.Goals
             await input.TapClearTarget();
         }
 
-        public override void ResetBeforePlanning()
-        {
-            base.ResetBeforePlanning();
-        }
-
         private bool IsPlayerMoving(WowPoint lastPos)
         {
             var distance = WowPoint.DistanceTo(lastPos, playerReader.PlayerLocation);

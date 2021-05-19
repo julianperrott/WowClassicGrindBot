@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Database;
+using Core.Session;
 using SharedLib;
 using Game;
 using WinAPI;
@@ -23,6 +24,8 @@ namespace Core
         private readonly ILogger logger;
         private readonly IPPather pather;
 
+        public IGrindSession GrindSession { get; set; }
+        public IGrindSessionHandler GrindSessionHandler { get; set; }
         public string SelectedClassFilename { get; set; } = String.Empty;
         public string? SelectedPathFilename { get; set; }
 
@@ -76,6 +79,10 @@ namespace Core
             wowProcess = new WowProcess();
             WowScreen = new WowScreen(logger, wowProcess);
             WowProcessInput = new WowProcessInput(logger, wowProcess);
+
+            GrindSessionHandler = new LocalGrindSessionHandler(dataConfig.History);
+            GrindSession = new GrindSession(this, GrindSessionHandler);
+            
 
             var frames = DataFrameConfiguration.LoadFrames();
 
@@ -183,6 +190,7 @@ namespace Core
             {
                 if (!actionThread.Active)
                 {
+                    this.GrindSession.StartBotSession();
                     this.pather.DrawLines();
 
                     actionThread.Active = true;
@@ -192,6 +200,9 @@ namespace Core
                 else
                 {
                     actionThread.Active = false;
+                    GrindSession.StopBotSession("Stopped By Player", false);
+                    AddonReader.LevelTracker.ResetMobsKilled();
+                    AddonReader.LevelTracker.ResetDeath();
                 }
 
                 StatusChanged?.Invoke(this, actionThread.Active);
@@ -204,6 +215,7 @@ namespace Core
             {
                 while (this.actionThread.Active && this.Enabled)
                 {
+
                     await actionThread.GoapPerformGoal();
                 }
             }
@@ -272,7 +284,7 @@ namespace Core
             if (File.Exists(classFilePath))
             {
                 classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilePath));
-                classConfig.Initialise(DataConfig, AddonReader.PlayerReader, requirementFactory, logger, pathFilename);
+                classConfig.Initialise(DataConfig, AddonReader, requirementFactory, logger, pathFilename);
 
                 logger.LogDebug($"Loaded `{classFilename}` with Path Profile `{classConfig.PathFilename}`.");
 

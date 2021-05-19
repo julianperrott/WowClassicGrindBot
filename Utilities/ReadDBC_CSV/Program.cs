@@ -108,11 +108,11 @@ namespace ReadDBC_CSV
 
         private static void GenerateConsumables()
         {
-            var path = "../../../dbc/";
+            var path = "../../../data/";
 
             var spell = Path.Join(path, "spell.csv");
             var foods = Spell.Extract(spell, "Restores $o1 health over $d");
-            var waters = Spell.Extract(spell, "Restores $o1 mana over $d");
+            var waters = Spell.Extract(spell, "mana over $d"); //Restores $o1 mana over $d
 
             var itemEffect = Path.Join(path, "itemeffect.csv");
             Consumable.Extract(itemEffect, foods, Path.Join(path, "foods.json"));

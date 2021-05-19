@@ -13,9 +13,9 @@ https://docs.microsoft.com/en-us/aspnet/core/blazor
 
 - The bot was written from scratch in C#. The Pathing calculation is mostly from an old library called [PPather](https://github.com/namreeb/PPather).
 
-- All classes are working except Hunter.
+- Most of the classes should work.
 
-- Pathing to grind route, vendor and repair.
+- Pathing to grind route, vendor and repair. Indoors pathfinding only works properly if `PathFilename` is exists.
 
 - Further detail about the bot can be found in my [Blog post](http://www.codesin.net/post/wowbot/).
 
@@ -56,6 +56,12 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 * Added a new input system to handle modifier keys
 * Support more 4:3 aspect ratio based resolution
 * Added lot path profiles including TBC
+* System wide DPI should work from win 7
+* Added basic support for Hunter, Shaman classes
+* More Pet support
+* Exclude ammo pouch and quiver from containers
+* ActionBarSlot usable
+* Retrive ActionBarSlot power cost to get more precise resource usage
 
 # Issues and Ideas
 
@@ -75,7 +81,7 @@ This file is required to find paths from where you are to the grind area, vendor
 
 Copy it into the \Json\MPQ folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
 
-For TBC you have to download expansion.MPQ (1.8Gb) can get here: https://mega.nz/file/7ZwAVaQI#L0qvvU1uuRPFY5jGBErKaVpzmJQ4JhOv3nOrkQ-ppbQ
+For TBC you have to download expansion.MPQ (1.8Gb) can get here: https://mega.nz/file/Of4i2YQS#egDGj-SXi9RigG-_8kPITihFsLom2L1IFF-ltnB3wmU
 and copy next to the common-2.MPQ file. 
 
 ## 3. System Requirements
@@ -180,6 +186,22 @@ From the main menu (ESC) set the following:
 | Assist Target | F | TargetTargetOfTargetKey | ---- |
 | Pet attack | Subtract | PetAttackKey | Only pet based class |
 
+## 7.1. Actionbar Key Bindings:
+
+The default class profiles assumes the following `Keybinds` setup. In total, `32` keys supported.
+Highly recommended to use this setup, in order to get properly working the `ActionBarSlotCost` and `ActionBarSlotUsable` features! 
+https://wowwiki-archive.fandom.com/wiki/ActionSlot
+
+
+| ActionSlot | Key | Description |
+| --- | --- | --- |
+| 1-10 | 1,2,3 .. 9,0 | 0 is the 10th key |
+| Bottom Right ActionBar | - | - |
+| 49-58 | N1,N2,N3 .. N9,N0 | N means Numpad - 0 is the 10th key |
+| Bottom Left ActionBar | - | - |
+| 61-72 | F1,F2,F3 .. F11,F12 | F means Functions |
+
+
 ## 8. Configure the Wow Client - Bindpad addon
 
 Bindpad allows keys to be easily bound to commands and macros. Type /bindpad to show it.
@@ -244,25 +266,26 @@ Commands have the following parameters, only a subset will be used by each comma
 | HasCastBar | Does the spell have a cast bar | false |
 | StopBeforeCast | Should the char stop moving before casting the spell | false |
 | Key | The key to click (ConsoleKey) | |
-| PressDuration | How many milliseconds to press the key for |  250 |
+| PressDuration | How many milliseconds to press the key for |  50 |
 | ShapeShiftForm | For druids the shapeshift form to be in to cast this spell | None |
 | CastIfAddsVisible | If the bot can "See" any adds | false |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | 1 |
 | Cooldown | The cooldown in seconds until the command can be done again | 0 |
-| MinMana | The minimum Mana required to cast the spell | 0 |
-| MinRage | The minimum Rage required to cast the spell | 0 |
-| MinEnergy | The minimum Energy required to cast the spell | 0 |
+| MinMana | (Optional) The minimum Mana required to cast the spell | 0 |
+| MinRage | (Optional) The minimum Rage required to cast the spell | 0 |
+| MinEnergy | (Optional) The minimum Energy required to cast the spell | 0 |
 | MinComboPoints | The minimum combo points required to cast the spell | 0 |
+| WhenUsable | When not in cooldown and have the min resource(mana,rage,energy) to use it. | false |
 | Requirement | A single "Requirement" (See below) which must be true | |
 | Requirements | A list of "Requirements" which must be true |  |
 | WaitForWithinMelleRange| Wait after casting for the mob to be in melee range | false |
 | ResetOnNewTarget | Reset the cooldown if the target changes | false |
 | Log | Write to the log when this key is evaluated | true |
-| DelayAfterCast | The delay in milliseconds after the spell is cast | 1500 |
+| DelayAfterCast | The delay in milliseconds after the spell is cast | 1450 |
 | DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
 | Cost | For Adhoc goals the priority | 18 |
 | InCombat | Can it be cast in combat | false |
-| StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | false |
+| StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | 0 |
 | PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | "Tanaris_GadgetzanKrinkleGoodsteel.json" |
 
 ### Pull Goal
@@ -330,6 +353,21 @@ Warlock `heal` macro used in warlock profiles. Have to change manually when new 
     /cast Create Healthstone (Minor)
     /use Minor Healthstone
 
+Hunter `autoshoot` spammable Auto Shoot macro
+
+    #showtooltip
+    /cast !Auto Shot
+
+Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
+
+    #showtooltip
+    /cast Feed Pet
+    /use Roasted Quail
+
+Hunter `sumpet` macro
+
+    #showtooltip
+    /cast [target=pet,nodead,exists] Revive pet; Call Pet 
 
 Because some NPCs are hard to reach, there is the option to add a short path to them e.g. "Tanaris_GadgetzanKrinkleGoodsteel.json". The idea is that the start of the path is easy to get to and is a short distance from the NPC, you record a path from the easy to reach spot to the NPC with a distance between spots of 1. When the bot needs to vend or repair it will path to the first spot in the list, then walk closely through the rest of the spots, once they are walked it will press the defined Key, then walk back through the path.
 
@@ -382,14 +420,35 @@ e.g.
 
 #### Value base requirements
 
-Value base requirements are made up on a [ Health% or TargetHealth% or Mana% or BagCount] [< or >] [Numeric Value].
+Value base requirements are made up on a [ `Health%` or `TargetHealth%` or `PetHealth%` or `Mana%` or `BagCount` or `MobCount` or `MinRange` or `MaxRange`] [< or >] [Numeric Value].
 
 e.g.
 * "Health%>70",
 * "TargetHealth%<10",
+* "PetHealth%<10",
 * "Mana%<40",
 * "BagCount>80",
-* "MobCount>1"
+* "MobCount>1",
+* "MinRange<5",
+* "MinRange>15",
+* "MaxRange>20",
+* "MaxRange>35",
+
+For the `MinRange` and `MaxRange` gives an approximation to the target distance to the player
+
+
+| MinRange | MaxRange | alias Description |
+| --- | --- | --- |
+| 0 | 5 | "InMeleeRange" |
+| 5 | 15 | "IsInDeadZoneRange" |
+| 15 | 20 | "InCombatRange" |
+| 20 | 30 | "InCombatRange" |
+| 30 | 35 | "InCombatRange" |
+| 35 | 40 | "OutOfCombatRange" |
+| 35 | 99 | "OutOfCombatRange" |
+| 40 | 45 | "OutOfCombatRange" |
+| 45 | 99 | "OutOfCombatRange" |
+
 
 #### npcID requirements
 
@@ -433,17 +492,23 @@ e.g.
 | Condition | Desciption |
 | --- | --- |
 | "Has Pet" | The player's pet is alive |
+| "Pet Happy" | Only true when the pet happienss is green |
 | --- | --- |
 | "BagFull" | Inventory is full |
 | "Items Broken" | Has any broken(red) worn item |
 | "HasRangedWeapon" | Has equipped ranged weapon (wand/crossbow/bow/gun) |
+| "HasAmmo" | AmmoSlot has equipped ammo and count is greater than zero |
 | --- | --- |
-| "InMeleeRange" | Target is in 0-5 yard range |
+| "InMeleeRange" | Target is approximately 0-5 yard range |
+| "InDeadZoneRange" | Target is approximately 5-11 yard range |
 | "InCombatRange" | Class based - Have any ability which allows you to attack target from current place |
 | "OutOfCombatRange" | Negated value of "InCombatRange" |
 | --- | --- |
 | "AutoAttacking" | Auto spell `Auto Attack` is active |
 | "Shooting" | (wand) Auto spell `Shoot` is active |
+| --- | --- |
+| "HasMainHandEnchant" | Indicates that main hand weapon has active poison/sharpening stone/shaman buff effect |
+| "HasOffHandEnchant" | Indicates that off hand weapon has active poison/sharpening stone/shaman buff effect |
 
 | Class | Buff Condition |
 | --- | --- |
@@ -476,6 +541,13 @@ e.g.
 | Warlock | "Soulstone Resurraction" |
 | Warlock | "Soul Link" |
 | Warrior | "Battle Shout" |
+| Shaman | "Lightning Shield" |
+| Hunter | "Aspect of the Cheetah" |
+| Hunter | "Aspect of the Pack" |
+| Hunter | "Aspect of the Beast" |
+| Hunter | "Aspect of the Hawk" |
+| Hunter | "Aspect of the Wild" |
+| Hunter | "Aspect of the Monkey" |
 
 | Class | Debuff Condition |
 | --- | --- |
@@ -493,6 +565,7 @@ e.g.
 | Warlock | "Corruption" |
 | Warlock | "Immolate" |
 | Warrior | "Rend" |
+| Hunter | "Serpent Sting" |
 
 #### Range
 

@@ -38,8 +38,6 @@ namespace Core.Goals
 
         public List<KeyAction> Keys { get; private set; } = new List<KeyAction>();
 
-        public bool InRangeOfTarget { get; set; }
-
         public abstract float CostOfPerformingAction { get; }
 
         public void DoReset()

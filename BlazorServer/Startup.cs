@@ -9,8 +9,9 @@ using PathingAPI;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
-using System;
 using System.Threading;
+using BlazorTable;
+using Core.Session;
 using MatBlazor;
 using SharedLib;
 using Game;
@@ -78,6 +79,8 @@ namespace BlazorServer
                 var pather = GetPather(logger, dataConfig);
                 var botController = new BotController(logger, pather, dataConfig, Configuration);
                 services.AddSingleton<IBotController>(botController);
+                services.AddSingleton<IGrindSessionHandler>(botController.GrindSessionHandler);
+                services.AddSingleton<IGrindSession>(botController.GrindSession);
                 services.AddSingleton<IAddonReader>(botController.AddonReader);
                 services.AddMatBlazor();
             }
@@ -89,6 +92,7 @@ namespace BlazorServer
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddBlazorTable();
         }
 
         private static IPPather GetPather(Microsoft.Extensions.Logging.ILogger logger, DataConfig dataConfig)
