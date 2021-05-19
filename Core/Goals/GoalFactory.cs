@@ -44,6 +44,7 @@ namespace Core
             var castingHandler = new CastingHandler(logger, input, addonReader.PlayerReader, classConfig, playerDirection, npcNameFinder);
 
             var stuckDetector = new StuckDetector(logger, input, addonReader.PlayerReader, playerDirection, stopMoving);
+            var combatUtil = new CombatUtil(logger, input, addonReader.PlayerReader);
             var followRouteAction = new FollowRouteGoal(logger, input, addonReader.PlayerReader,  playerDirection, pathPoints, stopMoving, npcNameFinder, blacklist, stuckDetector, classConfig, pather);
             var walkToCorpseAction = new WalkToCorpseGoal(logger, input, addonReader.PlayerReader,  playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
 
@@ -86,13 +87,13 @@ namespace Core
 
                 if (classConfig.Loot)
                 {
-                    var lootAction = new LootGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder);
+                    var lootAction = new LootGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder, combatUtil);
                     lootAction.AddPreconditions();
                     availableActions.Add(lootAction);
 
                     if (classConfig.Skin)
                     {
-                        availableActions.Add(new SkinningGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, classConfig, npcNameFinder));
+                        availableActions.Add(new SkinningGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, npcNameFinder, combatUtil));
                     }
                 }
 
