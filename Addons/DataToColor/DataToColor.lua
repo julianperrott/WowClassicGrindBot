@@ -475,7 +475,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(self:isActionUseable(73,96)), 42) 
 
             local freeSlots, bagType = GetContainerNumFreeSlots(bagNum)
-            if bagType ~= nil then
+            if bagType == nil then
                 bagType = 0
             end
             MakePixelSquareArr(integerToColor(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)), 37) -- BagType + Index + FreeSpace + BagSlots
