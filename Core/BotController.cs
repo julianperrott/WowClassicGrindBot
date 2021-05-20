@@ -35,7 +35,7 @@ namespace Core
         public Thread? screenshotThread { get; set; }
 
         private const int screenshotTickMs = 150;
-        private readonly DateTime lastScreenshot = default;
+        private DateTime lastScreenshot = default;
 
         public Thread addonThread { get; set; }
         public Thread? botThread { get; set; }
@@ -154,6 +154,8 @@ namespace Core
                     this.WowScreen.UpdateScreenshot();
                     this.npcNameFinder.Update();
                     this.WowScreen.PostProcess();
+
+                    lastScreenshot = DateTime.Now;
                 }
 
                 if (ClassConfig != null && this.ClassConfig.Mode == Mode.AttendedGather)
