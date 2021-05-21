@@ -268,6 +268,6 @@ __pycache__/
 Json/History/*.*
 
 # Configs
-frame_config.json
-addon_config.json
-data_config.json
+**/frame_config.json
+**/addon_config.json
+**/data_config.json
