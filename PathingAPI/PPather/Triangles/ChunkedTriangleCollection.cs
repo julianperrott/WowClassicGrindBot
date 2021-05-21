@@ -180,7 +180,7 @@ namespace WowTriangles
             float min_x, max_x, min_y, max_y;
             GetGridLimits(grid_x, grid_y, out min_x, out min_y, out max_x, out max_y);
 
-            Console.WriteLine("Got asked for triangles at " + x + ", " + y);
+            Console.WriteLine("Got asked for triangles at " + x + ", " + y + " grid [" + grid_x + "," + grid_y + "]");
             Console.WriteLine("Need triangles grid (" + min_x + " , " + min_y + ") - (" + max_x + ", " + max_y);
 
             tc.SetLimits(min_x - 1, min_y - 1, -1E30f, max_x + 1, max_y + 1, 1E30f);
