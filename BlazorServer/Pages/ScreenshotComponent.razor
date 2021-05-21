@@ -1,6 +1,10 @@
 ﻿@inject Core.IBotController botController
 
-<img src="data:image/png;base64, @image" alt="Red dot" />
+<div class="@(Stretch ? "w-100 h-auto m-0 p-0" : "")">
+    <div class="row">
+        <img class="@(Stretch ? "img-fluid w-100" : "")" src="data:image/png;base64, @image" alt="Red dot" />
+    </div>
+</div>
 
 @using SharedLib;
 @using Game;
@@ -8,6 +12,9 @@
 
     [Parameter]
     public int Size { get; set; } = 1024;
+
+    [Parameter]
+    public bool Stretch { get; set; } = false;
 
     string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
     string eventTime = "";
