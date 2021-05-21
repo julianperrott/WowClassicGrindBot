@@ -105,6 +105,16 @@ app {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.sidebar-text-toggler {
+    background-color: rgba(255,255,255,0);
+    color: white;
+    border: none;
+}
+
+.sidebar-text-toggler:focus {
+    outline: none;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -156,7 +166,7 @@ app {
     }
 
     .sidebar {
-        width: 250px;
+        /*width: 250px;*/
         height: 100vh;
         position: sticky;
         top: 0;
@@ -180,6 +190,10 @@ app {
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
+}
+
+.auto-width {
+    width: auto !important;
 }
 
 .table-no-border > thead > tr > th,
