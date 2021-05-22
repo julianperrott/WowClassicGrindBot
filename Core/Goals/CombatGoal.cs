@@ -144,9 +144,8 @@ namespace Core.Goals
 
             if ((DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5)
             {
-                logger.LogInformation("Interact and stop");
-                await input.TapInteractKey("CombatActionBase PerformAction");
-                //await this.castingHandler.PressKey(ConsoleKey.UpArrow, "", 57);
+                await input.TapInteractKey($"{GetType().Name}: Interact and stop");
+                await stopMoving.Stop();
             }
 
             await stopMoving.Stop();
