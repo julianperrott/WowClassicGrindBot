@@ -151,7 +151,7 @@ namespace Core
                     {  "Ice Barrier", ()=>playerReader.Buffs.IceBarrier },
                     {  "Ward", ()=>playerReader.Buffs.Ward },
                     {  "Fire Power", ()=>playerReader.Buffs.FirePower },
-                    {  "Slice And Dice", ()=> playerReader.Buffs.SliceAndDice },
+                    {  "Slice and Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
                     // Warlock
                     {  "Demon Skin", ()=> playerReader.Buffs.Demon },
