@@ -24,7 +24,8 @@ namespace Core.Goals
         {
             if (XCoord != playerReader.XCoord || YCoord != playerReader.YCoord)
             {
-                input.SetKeyState(ConsoleKey.UpArrow, false, false, "StopMoving");
+                input.SetKeyState(ConsoleKey.UpArrow, false, true, "StopMoving");
+                input.SetKeyState(ConsoleKey.DownArrow, false, true, "StopMoving");
                 await Task.Delay(1);
             }
 
