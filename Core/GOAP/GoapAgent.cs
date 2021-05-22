@@ -52,7 +52,7 @@ namespace Core.GOAP
             if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
                 logger.LogWarning("Target is blacklisted");
-                await input.TapClearTarget();
+                await input.TapClearTarget("Target is blacklisted");
                 UpdateWorldState();
             }
 
@@ -70,7 +70,7 @@ namespace Core.GOAP
 
                 if (this.classConfiguration.Mode != Mode.AttendedGrind)
                 {
-                    await input.TapNearestTarget();
+                    await input.TapNearestTarget("GoapAgent");
                 }
             }
 

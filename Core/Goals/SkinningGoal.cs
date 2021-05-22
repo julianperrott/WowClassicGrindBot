@@ -1,4 +1,4 @@
-﻿using Core.GOAP;
+using Core.GOAP;
 using Core.Looting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -71,25 +71,24 @@ namespace Core.Goals
                 return;
             }
 
-            Log("Found corpses: " + npcNameFinder.NpcCount);
+            
 
             bool skinSuccess = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Skin);
             if (skinSuccess)
             {
-                Log("Found corpse - interact with it");
+                Log("Found corpse - interacted with right click");
                 await playerReader.WaitForNUpdate(1);
 
                 (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
                 if (foundTarget)
                 {
-                    Log("Goal interrupted!");
+                    Log("Interrupted!");
                     return;
                 }
 
                 if (moved)
                 {
-                    Log("had to move so interact again");
-                    await input.TapInteractKey("");
+                    await input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
                 }
 
                 do

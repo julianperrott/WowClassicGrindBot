@@ -108,7 +108,7 @@ namespace Core
             if(_NPCType != type)
             {
                 _NPCType = type;
-                logger.LogInformation($"ChangeNpcType = {type}");
+                logger.LogInformation($"{GetType().Name}.ChangeNpcType = {type}");
             }
         }
 
@@ -139,7 +139,7 @@ namespace Core
                 }
                 else
                 {
-                    logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found but below threshold {threshold}! Height={npc.Height}, width={npc.Width}");
+                    logger.LogInformation($"{this.GetType().Name}.FindAndClickNpc: NPC found but below threshold {threshold}! Height={npc.Height}, width={npc.Width}");
                 }
             }
             else

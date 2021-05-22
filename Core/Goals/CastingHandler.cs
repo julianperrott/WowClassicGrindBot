@@ -233,28 +233,25 @@ namespace Core.Goals
                 case UI_ERROR.ERR_BADATTACKPOS:
                 case UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR:
 
-                    await input.TapStopAttack(this.playerReader.LastUIErrorMessage.ToString());
-
-                    logger.LogInformation($"Interact due to: this.playerReader.LastUIErrorMessage: {this.playerReader.LastUIErrorMessage}");
+                    await input.TapStopAttack($"{GetType().Name}: " + this.playerReader.LastUIErrorMessage.ToString());
                     var facing = this.playerReader.Direction;
                     var location = this.playerReader.PlayerLocation;
 
-                    if (this.classConfig.Interact.MillisecondsSinceLastClick > 1000)
+                    if (this.classConfig.Interact.MillisecondsSinceLastClick > 500)
                     {
-                        await input.TapInteractKey("CombatActionBase InteractOnUIError 1");
+                        await input.TapInteractKey($"{GetType().Name} InteractOnUIError by Timer");
                         await Task.Delay(50);
                     }
 
                     if (lastError == UI_ERROR.ERR_SPELL_FAILED_S)
                     {
-                        await input.TapInteractKey("CombatActionBase InteractOnUIError 2");
+                        await input.TapInteractKey($"{GetType().Name} InteractOnUIError by ERR_SPELL_FAILED_S");
                         await playerReader.WaitForNUpdate(1); //3
                         if (this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_BADATTACKPOS && this.playerReader.Direction == facing)
                         {
-                            logger.LogInformation("Turning 180 as I have not moved!");
                             var desiredDirection = facing + Math.PI;
                             desiredDirection = desiredDirection > Math.PI * 2 ? desiredDirection - Math.PI * 2 : desiredDirection;
-                            await this.direction.SetDirection(desiredDirection, new WowPoint(0, 0), "InteractOnUIError");
+                            await this.direction.SetDirection(desiredDirection, new WowPoint(0, 0), "InteractOnUIError Turning 180 as I have not moved!");
                         }
                     }
 

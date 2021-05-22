@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -61,8 +61,7 @@ namespace Core
                     Log($"Pets target {this.playerReader.TargetTarget}");
                     if (this.playerReader.TargetTarget == TargetTargetEnum.PetHasATarget)
                     {
-                        Log("Found target by pet");
-                        await input.TapTargetOfTarget();
+                        await input.TapTargetOfTarget($"{GetType().Name}.AquiredTarget: Found target by pet");
                         return true;
                     }
                 }
@@ -81,9 +80,8 @@ namespace Core
                     return true;
                 }
 
-                await input.TapClearTarget();
+                await input.TapClearTarget($"{GetType().Name}.AquiredTarget: No target found");
                 await playerReader.WaitForNUpdate(1);
-                Log("No target found");
             }
             return false;
         }
@@ -161,7 +159,7 @@ namespace Core
         {
             if (debug)
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{GetType().Name}: {text}");
             }
         }
     }
