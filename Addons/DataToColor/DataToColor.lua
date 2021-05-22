@@ -301,6 +301,7 @@ function DataToColor:OnInitialize()
     self:CreateFrames(NUMBER_OF_FRAMES)
     self:slashCommands();
 
+    timerTick()
     self:log("We're in")
 
     LoggingChat(1);
