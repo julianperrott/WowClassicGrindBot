@@ -1,4 +1,4 @@
-using Core.GOAP;
+﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
@@ -116,17 +116,6 @@ namespace Core.Goals
                 await this.stuckDetector.Unstick();
                 await this.TapInteractKey($"{GetType().Name}:  unstick");
                 await Task.Delay(250);
-            }
-
-            if(playerReader.WithInCombatRange && (
-                playerReader.PlayerClass == PlayerClassEnum.Rogue ||
-                playerReader.PlayerClass == PlayerClassEnum.Warrior ||
-                playerReader.PlayerClass == PlayerClassEnum.Paladin))
-            {
-                Log("WithInCombatRange -- Strictly melee -- Wait a moment");
-                await stopMoving.Stop();
-                await this.TapInteractKey("ApproachTargetAction engage");
-                await Task.Delay(200);
             }
         }
 
