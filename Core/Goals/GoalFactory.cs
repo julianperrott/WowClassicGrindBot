@@ -41,7 +41,7 @@ namespace Core
             var playerDirection = new PlayerDirection(logger, input, addonReader.PlayerReader);
             var stopMoving = new StopMoving(input, addonReader.PlayerReader);
 
-            var castingHandler = new CastingHandler(logger, input, addonReader.PlayerReader, classConfig, playerDirection, npcNameFinder);
+            var castingHandler = new CastingHandler(logger, input, addonReader.PlayerReader, classConfig, playerDirection, npcNameFinder, stopMoving);
 
             var stuckDetector = new StuckDetector(logger, input, addonReader.PlayerReader, playerDirection, stopMoving);
             var combatUtil = new CombatUtil(logger, input, addonReader.PlayerReader);

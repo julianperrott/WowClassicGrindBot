@@ -17,8 +17,9 @@ namespace Core.Goals
         private readonly ClassConfiguration classConfig;
         private readonly IPlayerDirection direction;
         private readonly NpcNameFinder npcNameFinder;
+        private readonly StopMoving stopMoving;
 
-        public CastingHandler(ILogger logger, ConfigurableInput input, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder)
+        public CastingHandler(ILogger logger, ConfigurableInput input, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder, StopMoving stopMoving)
         {
             this.logger = logger;
             this.input = input;
@@ -28,6 +29,7 @@ namespace Core.Goals
             this.classConfig = classConfig;
             this.direction = direction;
             this.npcNameFinder = npcNameFinder;
+            this.stopMoving = stopMoving;
         }
 
         protected bool CanRun(KeyAction item)
@@ -121,6 +123,10 @@ namespace Core.Goals
                 if (!this.playerReader.IsCasting && this.playerReader.HasTarget)
                 {
                     await this.InteractOnUIError();
+
+                    if(item.StopBeforeCast)
+                        await stopMoving.Stop();
+
                     item.LogInformation($"Not casting, pressing it again");
                     await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
                     await playerReader.WaitForNUpdate(1);
