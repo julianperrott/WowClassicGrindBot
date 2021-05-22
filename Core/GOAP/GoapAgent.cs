@@ -52,6 +52,7 @@ namespace Core.GOAP
             if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
                 logger.LogWarning("Target is blacklisted");
+                await input.TapStopAttack("Target is blacklisted");
                 await input.TapClearTarget("Target is blacklisted");
                 UpdateWorldState();
             }
