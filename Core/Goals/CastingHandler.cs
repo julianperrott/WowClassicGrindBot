@@ -94,7 +94,7 @@ namespace Core.Goals
 
             if (this.playerReader.IsShooting)
             {
-                await input.TapInteractKey("Stop casting shoot");
+                await input.TapStopAttack("Stop casting Shoot");
                 await Task.Delay(1500); // wait for shooting to end
             }
 
