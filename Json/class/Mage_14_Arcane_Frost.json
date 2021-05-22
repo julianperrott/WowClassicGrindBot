@@ -1,0 +1,138 @@
+{
+  "ClassName": "Mage",
+  "Loot": true,
+  "PathFilename": "10_Gnome.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": false,
+
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Frostbolt",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "1",
+        "MinMana": 25
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Fire Blast",
+        "Key": "5",
+        "MinMana": 40,
+        "Cooldown": 8,
+        "Requirements": ["TargetHealth%<45", "SpellInRange:4"]
+      },
+      {
+        "Name": "Frost Nova",
+        "Key": 6,
+        "MinMana": 55,
+        "Cooldown": 25,
+        "WhenUsable": true,
+        "Requirement": "InMeleeRange",
+        "StepBackAfterCast": 1000,
+        "DelayAfterCast": 0
+      },
+      {
+        "Name": "Arcane Missiles",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "2",
+        "MinMana": 30,
+        "Requirements": ["TargetHealth%>35"]
+      },
+      {
+        "Name": "shoot",
+        "Key": "0",
+        "Cooldown": 3,
+        "StopBeforeCast": true,
+        "Requirements": ["HasRangedWeapon", "not Shooting"],
+        "Log": false
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 3,
+        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "N1",
+        "Requirement": "Health%<60",
+        "Cooldown": 10,
+        "Log": false
+      },
+      {
+        "Name": "Water",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "N2",
+        "Requirement": "Mana%<60",
+        "Cooldown": 10,
+        "Log": false
+      }
+    ]
+    },
+
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Frost Armor",
+        "StopBeforeCast": false,
+        "Key": "3",
+        "MinMana": 60,
+        "Requirement": "not Frost Armor"
+      },
+      {
+        "Name": "Arcane Intellect",
+        "StopBeforeCast": false,
+        "Key": "4",
+        "MinMana": 60,
+        "Requirement": "not Arcane Intellect",
+        "Log": false
+      },
+      {
+        "Name": "Conjure Water",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "9",
+        "Requirement": "not BagItem:2288:4",
+        "Cooldown": 30,
+        "Log": false
+      },
+      {
+        "Name": "Conjure Food",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirement": "not BagItem:1113:4",
+        "Cooldown": 30,
+        "Log": false
+      }
+    ]},
+    "NPC": {
+      "Sequence": [
+        {
+          "Name": "Repair",
+          "Key": "C",
+          "Requirement": "Items Broken",
+          "PathFilename": "10_Gnome_Vendor.json",
+          "Cost": 6
+        },
+        {
+          "Name": "Sell",
+          "Key": "C",
+          "Requirement": "BagFull",
+          "PathFilename": "10_Gnome_Vendor.json",
+          "Cost": 6
+        }
+      ]
+    }
+}
