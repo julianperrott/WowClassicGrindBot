@@ -144,8 +144,8 @@ namespace Core.Goals
 
             if ((DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5)
             {
-                await input.TapInteractKey($"{GetType().Name}: Interact and stop");
                 await stopMoving.Stop();
+                await input.TapInteractKey($"{GetType().Name}: Interact and stop");
             }
 
             await stopMoving.Stop();
