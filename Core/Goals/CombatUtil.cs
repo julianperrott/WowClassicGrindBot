@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -10,7 +10,7 @@ namespace Core
         private readonly PlayerReader playerReader;
         private readonly ConfigurableInput input;
 
-        private bool debug = true;
+        private readonly bool debug = true;
 
         private bool outOfCombat;
         private WowPoint lastPosition;
@@ -28,7 +28,7 @@ namespace Core
         public void Update()
         {
             // TODO: have to find a better way to reset outOfCombat
-            outOfCombat = false;
+            outOfCombat = !playerReader.PlayerBitValues.PlayerInCombat;
             lastPosition = playerReader.PlayerLocation;
         }
 
