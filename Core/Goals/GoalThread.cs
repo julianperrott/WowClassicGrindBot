@@ -32,7 +32,7 @@ namespace Core.Goals
                 logger.LogInformation($"Abort from: {sender.GetType().Name}");
 
                 var location = this.playerReader.PlayerLocation;
-                input?.Hearthstone();
+                input?.TapHearthstone();
                 Active = false;
             }
         }
