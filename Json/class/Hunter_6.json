@@ -9,7 +9,7 @@
         "Key": "0"
       },
       {
-        "Name": "autoshoot",
+        "Name": "autoshot",
         "StopBeforeCast": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
@@ -34,13 +34,13 @@
         "Key": "8",
         "MinMana": 15,
         "WhenUsable": true,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
       },
       {
-        "Name": "autoshoot",
+        "Name": "autoshot",
         "StopBeforeCast": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
       },
       {
         "Name": "Raptor Strike",
