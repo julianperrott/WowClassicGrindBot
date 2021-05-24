@@ -11,8 +11,8 @@ namespace Game
 {
     public class InputWindowsNative : IInput
     {
-        private const int MAX_DELAY = 200;
-        private const int MAX_MOUSE_DELAY = 75;
+        private const int MAX_DELAY = 180;
+        private const int MIN_MOUSE_DELAY = 10;
 
         private readonly Process process;
         private readonly Random random = new Random();
@@ -55,20 +55,32 @@ namespace Game
 
         public async Task LeftClickMouse(Point p)
         {
-            SetCursorPosition(p);
-            await Delay(MAX_MOUSE_DELAY);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_LBUTTONDOWN, NativeMethods.VK_RMB, NativeMethods.MakeLParam(p.X, p.Y));
-            await Delay(MAX_MOUSE_DELAY);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_LBUTTONUP, NativeMethods.VK_RMB, NativeMethods.MakeLParam(p.X, p.Y));
-            await Delay(MAX_MOUSE_DELAY);
+            var pp = new PInvoke.POINT
+            {
+                x = p.X,
+                y = p.Y
+            };
+            NativeMethods.ScreenToClient(process.MainWindowHandle, ref pp);
+            int lparam = NativeMethods.MakeLParam(pp.x, pp.y);
+
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_LBUTTONDOWN, NativeMethods.VK_LBUTTON, lparam);
+            await Delay(MIN_MOUSE_DELAY);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_LBUTTONUP, 0, lparam);
         }
 
         public async Task RightClickMouse(Point p)
         {
-            SetCursorPosition(p);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_RBUTTONDOWN, NativeMethods.VK_RMB, NativeMethods.MakeLParam(p.X, p.Y));
-            await Delay(MAX_MOUSE_DELAY);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_RBUTTONUP, NativeMethods.VK_RMB, NativeMethods.MakeLParam(p.X, p.Y));
+            var pp = new PInvoke.POINT
+            {
+                x = p.X,
+                y = p.Y
+            };
+            NativeMethods.ScreenToClient(process.MainWindowHandle, ref pp);
+            int lparam = NativeMethods.MakeLParam(pp.x, pp.y);
+
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_RBUTTONDOWN, NativeMethods.VK_RBUTTON, lparam);
+            await Delay(MIN_MOUSE_DELAY);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_RBUTTONUP, 0, lparam);
         }
 
         public void SetCursorPosition(Point p)
