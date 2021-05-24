@@ -56,7 +56,7 @@ namespace Core
         private float scaleToRefWidth = 1;
         private float scaleToRefHeight = 1;
 
-        private readonly List<Point> locFindAndClickNpc;
+        public List<Point> locTargetingAndClickNpc { get; private set; }
         private readonly List<Point> locFindByCursorType;
 
         public List<NpcPosition> Npcs { get; private set; } = new List<NpcPosition>();
@@ -70,24 +70,20 @@ namespace Core
             this.mouseInput = mouseInput;
             this.bitmapProvider = bitmapProvider;
 
-            locFindAndClickNpc = new List<Point>
+            locTargetingAndClickNpc = new List<Point>
             {
                 new Point(0, 0),
-                new Point(10, 10).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(-10, -10).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(20, 20).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(-20, -20).Scale(scaleToRefWidth, scaleToRefHeight)
+                new Point(-10, 15).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(10, 15).Scale(scaleToRefWidth, scaleToRefHeight),
             };
 
             locFindByCursorType = new List<Point>
             {
                 new Point(0, 0),
-                new Point(0, -25).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(-5, 10).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(5, 35).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(-5, 75).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(0, 125).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(0, 160).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(0, 20).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(0, 60).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(-10, 45).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(10, 45).Scale(scaleToRefWidth, scaleToRefHeight),
             };
         }
 
@@ -112,14 +108,14 @@ namespace Core
             }
         }
 
-        public async Task FindAndClickNpc(int threshold, bool leftClick)
+        public async Task TargetingAndClickNpc(int threshold, bool leftClick)
         {
             var npc = GetClosestNpc();
             if (npc != null)
             {
                 if (npc.Height >= threshold)
                 {
-                    foreach (var location in locFindAndClickNpc)
+                    foreach (var location in locTargetingAndClickNpc)
                     {
                         var clickPostion = bitmapProvider.DirectBitmap.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                         mouseInput.SetCursorPosition(clickPostion);
@@ -191,7 +187,7 @@ namespace Core
 
             Npcs = npcs.OrderByDescending(npc => npc.Count)
                 .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)),
-                    new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), bitmapProvider.DirectBitmap.Width, ScaleHeight(8), ScaleHeight(5)))
+                    new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), bitmapProvider.DirectBitmap.Width, ScaleHeight(20), ScaleHeight(5)))
                 .Where(s => s.Width < ScaleWidth(250)) // 150 - fine // 200 - fine // 250 fine
                 .Distinct(new OverlappingNames())
                 .ToList();
@@ -203,7 +199,7 @@ namespace Core
 
         public bool MobsVisible { get; private set; }
         public bool PotentialAddsExist { get; private set; }
-        public DateTime LastPotentialAddsSeen { get; private set; } = DateTime.Now.AddMinutes(-1);
+        public DateTime LastPotentialAddsSeen { get; private set; } = default;
 
         public void UpdatePotentialAddsExist()
         {
