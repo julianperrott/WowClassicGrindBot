@@ -621,7 +621,7 @@
     "LocTop": 11041.666,
     "LocBottom": 7758.333,
     "UIMapId": 1941,
-    "Continent": "Azeroth"
+    "Continent": "Expansion01"
   },
   {
     "ID": 463,
@@ -633,7 +633,7 @@
     "LocTop": 8266.666,
     "LocBottom": 6066.6665,
     "UIMapId": 1942,
-    "Continent": "Azeroth"
+    "Continent": "Expansion01"
   },
   {
     "ID": 464,
@@ -645,7 +645,7 @@
     "LocTop": -2793.75,
     "LocBottom": -5508.333,
     "UIMapId": 1943,
-    "Continent": "Kalimdor"
+    "Continent": "Expansion01"
   },
   {
     "ID": 465,
@@ -693,7 +693,7 @@
     "LocTop": -3609.6833,
     "LocBottom": -4314.371,
     "UIMapId": 1947,
-    "Continent": "Kalimdor"
+    "Continent": "Expansion01"
   },
   {
     "ID": 473,
@@ -729,7 +729,7 @@
     "LocTop": -758.3333,
     "LocBottom": -2933.3333,
     "UIMapId": 1950,
-    "Continent": "Kalimdor"
+    "Continent": "Expansion01"
   },
   {
     "ID": 477,
@@ -777,7 +777,7 @@
     "LocTop": 10153.709,
     "LocBottom": 9346.938,
     "UIMapId": 1954,
-    "Continent": "Azeroth"
+    "Continent": "Expansion01"
   },
   {
     "ID": 481,
@@ -813,6 +813,6 @@
     "LocTop": 13568.749,
     "LocBottom": 11350.0,
     "UIMapId": 0,
-    "Continent": ""
+    "Continent": "Expansion01"
   }
 ]
