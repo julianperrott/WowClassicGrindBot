@@ -29,7 +29,7 @@ namespace CoreTests
 
         public void Execute()
         {
-            npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.FriendlyOrNeutral);
+            npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
 
             capturer.Capture();
 
@@ -52,16 +52,24 @@ namespace CoreTests
                     {
                         gr.DrawRectangle(whitePen, npcNameFinder.Area);
 
-                        npcNameFinder.Npcs.ForEach(n => gr.DrawEllipse(whitePen, n.ClickPoint.X, n.ClickPoint.Y, 5, 5));
+                        npcNameFinder.Npcs.ForEach(n =>
+                        {
+                            npcNameFinder.locTargetingAndClickNpc.ForEach(l =>
+                            {
+                                gr.DrawEllipse(whitePen, l.X + n.ClickPoint.X, l.Y + n.ClickPoint.Y, 5, 5);
+                            });
+                        });
+                        
+
                         npcNameFinder.Npcs.ForEach(n => gr.DrawRectangle(whitePen, new Rectangle(n.Min, new Size(n.Width, n.Height))));
                         npcNameFinder.Npcs.ForEach(n => gr.DrawString(npcNameFinder.Npcs.IndexOf(n).ToString(), drawFont, drawBrush, new PointF(n.Min.X - 20f, n.Min.Y)));
                     }
                 }
             }
 
-            npcNameFinder.Npcs.ForEach(x =>
+            npcNameFinder.Npcs.ForEach(n =>
             {
-                logger.LogInformation($"{npcNameFinder.Npcs.IndexOf(x),2} -> {{X={x.Min.X,4},Y={x.Min.Y,4}}} - ({x.Width},{x.Height})");
+                logger.LogInformation($"{npcNameFinder.Npcs.IndexOf(n),2} -> rect={new Rectangle(n.Min.X, n.Min.Y, n.Width, n.Height)} ClickPoint={{{n.ClickPoint.X,4},{n.ClickPoint.Y,4}}}");
             });
 
             logger.LogInformation("\n");

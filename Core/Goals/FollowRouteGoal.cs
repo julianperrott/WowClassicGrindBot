@@ -431,7 +431,7 @@ namespace Core.Goals
                     npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
                     if(npcNameFinder.NpcCount > 0)
                     {
-                        await this.npcNameFinder.FindAndClickNpc(0, true);
+                        await this.npcNameFinder.TargetingAndClickNpc(0, true);
                     }
                 }
             }

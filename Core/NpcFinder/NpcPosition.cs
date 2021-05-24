@@ -11,25 +11,26 @@ namespace Core
 
         public int Height => Max.Y - Min.Y;
         public int Width => Max.X - Min.X;
-        private int screenMid;
-        private int screenMidBuffer;
 
-        private float heightMul1 = 30;
-        private float heightMul2 = 7;
+        private readonly int screenMid;
+        private readonly int screenMidBuffer;
+
+        private readonly float yOffset;
+        private readonly float heightMul;
 
         public bool IsAdd => ClickPoint.X < screenMid - screenMidBuffer || ClickPoint.X > screenMid + screenMidBuffer;
 
-        public Point ClickPoint => new Point(Min.X + (Width / 2), (int)(Max.Y + heightMul1 + (Height * heightMul2)));
+        public Point ClickPoint => new Point(Min.X + (Width / 2), (int)(Max.Y + yOffset + (Height * heightMul)));
 
-        public NpcPosition(Point min, Point max, int screenWidth, float heightMul1, float heightMul2)
+        public NpcPosition(Point min, Point max, int screenWidth, float yOffset, float heightMul)
         {
             this.Min = min;
             this.Max = max;
             this.screenMid = screenWidth / 2;
             this.screenMidBuffer = screenWidth / 10;
 
-            this.heightMul1 = heightMul1;
-            this.heightMul2 = heightMul2;
+            this.yOffset = yOffset;
+            this.heightMul = heightMul;
         }
     }
 
