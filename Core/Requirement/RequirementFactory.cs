@@ -148,6 +148,7 @@ namespace Core
                     {  "Blessing of Might", ()=> playerReader.Buffs.Blessing },
                     // Mage
                     {  "Frost Armor", ()=> playerReader.Buffs.FrostArmor },
+                    {  "Ice Armor", ()=> playerReader.Buffs.FrostArmor },
                     {  "Arcane Intellect", ()=> playerReader.Buffs.ArcaneIntellect },
                     {  "Ice Barrier", ()=>playerReader.Buffs.IceBarrier },
                     {  "Ward", ()=>playerReader.Buffs.Ward },

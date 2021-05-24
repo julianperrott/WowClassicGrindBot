@@ -522,6 +522,7 @@ e.g.
 | Druid | "Thorns" |
 | Druid | "TigersFury" |
 | Mage | "Frost Armor" |
+| Mage | "Ice Armor" |
 | Mage | "Arcane Intellect" |
 | Mage | "Ice Barrier" |
 | Mage | "Ward" |
@@ -549,6 +550,8 @@ e.g.
 | Hunter | "Aspect of the Hawk" |
 | Hunter | "Aspect of the Wild" |
 | Hunter | "Aspect of the Monkey" |
+| Hunter | "Rapid Fire" |
+| Hunter | "Quick Shots" |
 
 | Class | Debuff Condition |
 | --- | --- |
