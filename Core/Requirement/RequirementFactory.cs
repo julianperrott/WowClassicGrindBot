@@ -116,6 +116,7 @@ namespace Core
                     // Auto Spell
                     { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
                     { "Shooting", ()=> playerReader.IsShooting },
+                    { "AutoShot", ()=> playerReader.IsAutoShoting },
                     // Temporary Enchants
                     { "HasMainHandEnchant", ()=> playerReader.PlayerBitValues.MainHandEnchant_Active },
                     { "HasOffHandEnchant", ()=> playerReader.PlayerBitValues.OffHandEnchant_Active },

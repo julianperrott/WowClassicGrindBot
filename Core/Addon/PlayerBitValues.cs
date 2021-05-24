@@ -19,6 +19,7 @@
         public bool TargetIsNormal { get => IsBitSet(21); }
         public bool IsAutoRepeatSpellOn_AutoAttack { get => IsBitSet(20); }
         public bool IsAutoRepeatSpellOn_Shoot { get => IsBitSet(19); }
+        public bool IsAutoRepeatSpellOn_AutoShot { get => IsBitSet(16); }
         public bool IsMounted { get => IsBitSet(18); }
         public bool ProcessExitStatus { get => IsBitSet(17); }
 
