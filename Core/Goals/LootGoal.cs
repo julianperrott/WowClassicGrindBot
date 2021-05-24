@@ -10,6 +10,7 @@ namespace Core.Goals
     public class LootGoal : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.4f; }
+        public override bool Repeatable => false;
 
         private ILogger logger;
         private readonly ConfigurableInput input;
