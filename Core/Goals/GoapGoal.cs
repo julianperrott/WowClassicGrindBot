@@ -40,6 +40,8 @@ namespace Core.Goals
 
         public abstract float CostOfPerformingAction { get; }
 
+        public virtual bool Repeatable { get; } = true;
+
         public void DoReset()
         {
             ResetBeforePlanning();

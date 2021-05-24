@@ -10,6 +10,7 @@ namespace Core.Goals
     public class SkinningGoal : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.6f; }
+        public override bool Repeatable => false;
 
         private ILogger logger;
         private readonly ConfigurableInput input;

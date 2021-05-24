@@ -52,6 +52,11 @@ namespace Core.Goals
                         logger.LogInformation("---------------------------------");
                         logger.LogInformation($"New Plan= {newGoal.GetType().Name}");
                     }
+                    else if(!this.currentGoal.Repeatable)
+                    {
+                        logger.LogInformation($"Current Plan= {newGoal.GetType().Name} is not Repeatable!");
+                        return;
+                    }
 
                     try
                     {
