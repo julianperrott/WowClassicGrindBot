@@ -127,7 +127,7 @@ namespace Core.Goals
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
-            if (await AquireTarget())
+            if (await AquireTarget() || (playerReader.PlayerClass == PlayerClassEnum.Hunter && playerReader.HasTarget))
             {
                 await stopMoving.StopTurn();
                 
