@@ -54,7 +54,9 @@ namespace WinAPI
         public const UInt32 WM_LBUTTONUP = 0x202;
         public const UInt32 WM_RBUTTONDOWN = 0x204;
         public const UInt32 WM_RBUTTONUP = 0x205;
-        public const int VK_RMB = 0x02;
+
+        public const int VK_LBUTTON = 0x01;
+        public const int VK_RBUTTON = 0x02;
 
         public static int MakeLParam(int x, int y) => (y << 16) | (x & 0xFFFF);
 
@@ -69,6 +71,10 @@ namespace WinAPI
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool ClientToScreen(IntPtr hWnd, ref POINT lpRect);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool ScreenToClient(IntPtr hWnd, ref POINT lpRect);
 
         [DllImport("user32.dll")]
         static extern int GetSystemMetrics(int nIndexn);
