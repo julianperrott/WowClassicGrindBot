@@ -15,6 +15,7 @@ using Core.Session;
 using MatBlazor;
 using SharedLib;
 using Game;
+using Core.Database;
 
 namespace BlazorServer
 {
@@ -97,7 +98,10 @@ namespace BlazorServer
 
         private static IPPather GetPather(Microsoft.Extensions.Logging.ILogger logger, DataConfig dataConfig)
         {
-            var api = new RemotePathingAPI(logger);
+            var worldmapAreaDb = new WorldMapAreaDB(logger, dataConfig);
+
+            //var api = new RemotePathingAPI(logger);
+            var api = new RemotePathingAPIV2(logger, "127.0.0.1", 47110, worldmapAreaDb);
             if (api.PingServer().Result)
             {
                 Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");

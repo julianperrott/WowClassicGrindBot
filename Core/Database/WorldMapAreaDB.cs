@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SharedLib;
+using SharedLib.Data;
 
 namespace Core.Database
 {
@@ -31,6 +33,43 @@ namespace Core.Database
             }
 
             return -1;
+        }
+
+        public WorldMapArea Get(int uiMapId)
+        {
+            return areas[uiMapId];
+        }
+
+        public Vector3 GetWorldLocation(int uiMapId, WowPoint p)
+        {
+            var worldMapArea = areas[uiMapId];
+            if (worldMapArea == null)
+            {
+                logger.LogError($"Unsupported mini map area, UIMapId {uiMapId} not found in WorldMapArea.json");
+                return Vector3.Zero;
+            }
+
+            var worldX = worldMapArea.ToWorldX((float)p.X);
+            var worldY = worldMapArea.ToWorldY((float)p.Y);
+
+            return new Vector3(worldX, worldY, 0);
+        }
+
+        public WorldMapAreaSpot ToMapAreaSpot(float x, float y, float z, string continent, int mapHint)
+        {
+            var area = WorldMapAreaFactory.GetWorldMapArea(areas.Values.ToList(), x, y, continent, mapHint);
+            if(area == null)
+            {
+                return new WorldMapAreaSpot();
+            }
+
+            return new WorldMapAreaSpot
+            {
+                Y = area.ToMapX(x),
+                X = area.ToMapY(y),
+                Z = z,
+                MapID = area.UIMapId
+            };
         }
     }
 }
