@@ -45,16 +45,23 @@ namespace Core
             if (!IsConnected)
                 return new List<WowPoint>();
 
+            if(targetMapId == 0)
+            {
+                targetMapId = uiMapId;
+            }
+
             try
             {
                 await Task.Delay(0);
-                logger.LogInformation($"Finding route from {fromPoint} map {uiMapId} to {toPoint} map {targetMapId}...");
 
-                Vector3 start = worldMapAreaDB.GetWorldLocation(uiMapId, fromPoint);
-                Vector3 end = worldMapAreaDB.GetWorldLocation(uiMapId, toPoint);
+                Vector3 start = worldMapAreaDB.GetWorldLocation(uiMapId, fromPoint, true);
+                Vector3 end = worldMapAreaDB.GetWorldLocation(uiMapId, toPoint, true);
+
+                logger.LogInformation($"Finding route from {fromPoint} map {uiMapId} to {toPoint} map {targetMapId}...");
+                //logger.LogInformation($"Finding route from {start} to {end}...");
 
                 var area = worldMapAreaDB.Get(uiMapId);
-                var request = new PathRequestWithLocationRequest(area.MapID, start, end, PathRequestFlags.None);
+                var request = new PathRequestWithLocationRequest(area.MapID, start, end, PathRequestFlags.ChaikinCurve);
 
                 int typeSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(PathRequestWithLocationRequest));
                 byte[]? response = SendData(request, typeSize);
@@ -81,10 +88,9 @@ namespace Core
                 for (int i=0; i<path.Length; i++)
                 {
                     var p = worldMapAreaDB.ToMapAreaSpot(path[i].X, path[i].Y, path[i].Z, area.Continent, uiMapId);
-                    // TODO: excusmewtf
-                    result.Add(new WowPoint(p.Y, p.X));
+                    result.Add(new WowPoint(p.X, p.Y));
 
-                    logger.LogInformation($"new float[] {{ {path[i].X}f, {path[i].Y}f, {path[i].Z} }},");
+                    logger.LogInformation($"new float[] {{ {path[i].X}f, {path[i].Y}f, {path[i].Z}f}},");
                 }
 
                 return result;

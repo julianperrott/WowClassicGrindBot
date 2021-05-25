@@ -40,7 +40,7 @@ namespace Core.Database
             return areas[uiMapId];
         }
 
-        public Vector3 GetWorldLocation(int uiMapId, WowPoint p)
+        public Vector3 GetWorldLocation(int uiMapId, WowPoint p, bool flipXY)
         {
             var worldMapArea = areas[uiMapId];
             if (worldMapArea == null)
@@ -49,10 +49,16 @@ namespace Core.Database
                 return Vector3.Zero;
             }
 
-            var worldX = worldMapArea.ToWorldX((float)p.X);
-            var worldY = worldMapArea.ToWorldY((float)p.Y);
-
-            return new Vector3(worldX, worldY, 0);
+            if(flipXY)
+            {
+                return new Vector3(worldMapArea.ToWorldX((float)p.Y), worldMapArea.ToWorldY((float)p.X), 0);
+            }
+            else
+            {
+                var worldX = worldMapArea.ToWorldX((float)p.X);
+                var worldY = worldMapArea.ToWorldY((float)p.Y);
+                return new Vector3(worldX, worldY, 0);
+            }
         }
 
         public WorldMapAreaSpot ToMapAreaSpot(float x, float y, float z, string continent, int mapHint)
