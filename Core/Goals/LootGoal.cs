@@ -1,4 +1,4 @@
-using Core.GOAP;
+﻿using Core.GOAP;
 using Core.Looting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -58,9 +58,7 @@ namespace Core.Goals
             Log("Search for corpse");
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Corpse);
 
-            await stopMoving.Stop();
             await npcNameFinder.WaitForNUpdate(1);
-
             bool foundCursor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Loot);
             if (foundCursor)
             {
@@ -73,10 +71,7 @@ namespace Core.Goals
                 if (foundTarget)
                 {
                     Log("Interrupted!");
-                    SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-                    SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
-                    SendActionEvent(new ActionEventArgs(GoapKey.hastarget, true));
-                    SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
+                    EmergencyExit();
                     return;
                 }
 
@@ -102,10 +97,7 @@ namespace Core.Goals
                         if (foundTarget)
                         {
                             Log("Goal interrupted!");
-                            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-                            SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
-                            SendActionEvent(new ActionEventArgs(GoapKey.hastarget, true));
-                            SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
+                            EmergencyExit();
                             return;
                         }
 
@@ -149,17 +141,24 @@ namespace Core.Goals
             LastLoot = playerReader.LastLootTime;
 
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-            await Task.Delay(1);
 
             if (!classConfiguration.Skin)
             {
                 npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
+                await npcNameFinder.WaitForNUpdate(1);
             }
 
             if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
             {
                 await input.TapClearTarget($"{GetType().Name}: Exit Goal");
+                await playerReader.WaitForNUpdate(1);
             }
+        }
+
+        private void EmergencyExit()
+        {
+            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+            npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
         }
 
         private void Log(string text)
