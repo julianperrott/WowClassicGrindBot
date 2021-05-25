@@ -8,7 +8,7 @@ namespace Core.Session
         public static double[] GetExperienceList()
         {
             var dataConfig = new DataConfig();
-            var json = File.ReadAllText($"{dataConfig.Experience}exp.json");
+            var json = File.ReadAllText($"{dataConfig.Experience}exp_tbc.json");
             var expList = JsonConvert.DeserializeObject<double[]>(json);
             return expList;
         }
