@@ -10,6 +10,8 @@ namespace Core.Goals
         private readonly WowProcessInput input;
         private readonly PlayerReader playerReader;
 
+        private const double MinDist = 0.1;
+
         private double XCoord = 0;
         private double YCoord = 0;
         private double Direction = 0;
@@ -24,7 +26,15 @@ namespace Core.Goals
         {
             if (XCoord != playerReader.XCoord || YCoord != playerReader.YCoord)
             {
+                if(!input.IsKeyDown(ConsoleKey.DownArrow) && !input.IsKeyDown(ConsoleKey.UpArrow) &&
+                    (Math.Abs(XCoord - playerReader.XCoord) > MinDist || Math.Abs(XCoord - playerReader.XCoord) > MinDist))
+                {
+                    input.SetKeyState(ConsoleKey.DownArrow, true, false, $"StopMoving - Cancel interact dx:{Math.Abs(XCoord - playerReader.XCoord),6} dy:{Math.Abs(XCoord - playerReader.XCoord),6}");
+                    await Task.Delay(1);
+                }
+
                 input.SetKeyState(ConsoleKey.UpArrow, false, false, "StopMoving");
+                input.SetKeyState(ConsoleKey.DownArrow, false, false, "StopMoving");
                 await Task.Delay(1);
             }
 

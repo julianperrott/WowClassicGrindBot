@@ -10,6 +10,7 @@ namespace Core.Goals
     public class LootGoal : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.4f; }
+        public override bool Repeatable => false;
 
         private ILogger logger;
         private readonly ConfigurableInput input;
@@ -57,13 +58,11 @@ namespace Core.Goals
             Log("Search for corpse");
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Corpse);
 
-            await stopMoving.Stop();
             await npcNameFinder.WaitForNUpdate(1);
-
             bool foundCursor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Loot);
             if (foundCursor)
             {
-                Log("Found corpse - interact with it");
+                Log("Found corpse - clicked");
                 await playerReader.WaitForNUpdate(1);
 
                 CheckForSkinning();
@@ -71,58 +70,45 @@ namespace Core.Goals
                 (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
                 if (foundTarget)
                 {
-                    Log("Goal interrupted!");
-                    SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-                    SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
-                    SendActionEvent(new ActionEventArgs(GoapKey.hastarget, true));
-                    SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
+                    Log("Interrupted!");
+                    EmergencyExit();
                     return;
                 }
 
                 if(moved) 
                 {
-                    Log("had to move so interact again");
-                    await input.TapInteractKey("");
+                    await input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
                 }
             }
             else
             {
-                Log($"No corpse name found - check last dead target exists");
-
-                await input.TapLastTargetKey("");
+                await input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
                 await playerReader.WaitForNUpdate(1);
                 if(playerReader.HasTarget)
                 {
                     if(playerReader.PlayerBitValues.TargetIsDead)
                     {
-                        Log("Found last dead target");
-
                         CheckForSkinning();
 
-                        await input.TapInteractKey("");
+                        await input.TapInteractKey($"{GetType().Name}: Found last dead target");
                         await playerReader.WaitForNUpdate(1);
 
                         (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
                         if (foundTarget)
                         {
                             Log("Goal interrupted!");
-                            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-                            SendActionEvent(new ActionEventArgs(GoapKey.newtarget, true));
-                            SendActionEvent(new ActionEventArgs(GoapKey.hastarget, true));
-                            SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
+                            EmergencyExit();
                             return;
                         }
 
                         if (moved)
                         {
-                            Log("Last dead target double");
-                            await input.TapInteractKey("");
+                            await input.TapInteractKey($"{GetType().Name}: Last dead target double");
                         }
                     }
                     else
                     {
-                        Log("Dont attak the target!");
-                        await input.TapClearTarget("");
+                        await input.TapClearTarget($"{GetType().Name}: Dont attak the target!");
                     }
                 }
             }
@@ -143,28 +129,43 @@ namespace Core.Goals
 
         private async Task GoalExit()
         {
+            if(!await Wait(500, () => LastLoot != playerReader.LastLootTime))
+            {
+                Log($"Loot Successfull");
+            }
+            else
+            {
+                Log($"Loot Failed");
+            }
+
             LastLoot = playerReader.LastLootTime;
-            Log($"Loot Finished! LastLoot = {LastLoot}");
 
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-            await Task.Delay(1);
 
             if (!classConfiguration.Skin)
             {
                 npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
+                await npcNameFinder.WaitForNUpdate(1);
             }
 
             if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
             {
-                await input.TapClearTarget();
+                await input.TapClearTarget($"{GetType().Name}: Exit Goal");
+                await playerReader.WaitForNUpdate(1);
             }
+        }
+
+        private void EmergencyExit()
+        {
+            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+            npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
         }
 
         private void Log(string text)
         {
             if (debug)
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{GetType().Name}: {text}");
             }
         }
     }

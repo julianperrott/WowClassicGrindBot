@@ -1,11 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Threading.Tasks;
-using SharedLib;
 using WinAPI;
 
 namespace Game
@@ -17,7 +15,7 @@ namespace Game
         private readonly IInput nativeInput;
         private readonly IInput simulatorInput;
 
-        private readonly Dictionary<ConsoleKey, bool> keyDict = new Dictionary<ConsoleKey, bool>();
+        private readonly ConcurrentDictionary<ConsoleKey, bool> keyDict = new ConcurrentDictionary<ConsoleKey, bool>();
 
         private bool debug = true;
 
@@ -38,7 +36,10 @@ namespace Game
             }
             else
             {
-                keyDict.Add(key, true);
+                if(!keyDict.TryAdd(key, true))
+                {
+                    return;
+                }
             }
 
             if (!string.IsNullOrEmpty(description))
@@ -59,13 +60,25 @@ namespace Game
             }
             else
             {
-                keyDict.Add(key, false);
+                if(!keyDict.TryAdd(key, false))
+                {
+                    return;
+                }
             }
 
             Log($"KeyUp {key}");
             nativeInput.KeyUp((int)key);
 
             keyDict[key] = false;
+        }
+
+        public bool IsKeyDown(ConsoleKey key)
+        {
+            if(keyDict.TryGetValue(key, out var down))
+            {
+                return down;
+            }
+            return false;
         }
 
         public async Task SendText(string payload)

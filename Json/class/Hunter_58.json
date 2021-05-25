@@ -65,11 +65,11 @@
         "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting", "HasAmmo", "TargetHealth%>35"]
       },
       {
-        "Name": "autoshoot",
+        "Name": "autoshot",
         "StopBeforeCast": true,
         "Key": "3",
         "Cooldown": 2,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
       },
       {
         "Name": "Multi-Shot",

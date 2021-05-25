@@ -12,6 +12,21 @@ namespace ReadDBC_CSV_WorldMapArea
 
         List<string> acceptedOverride = new List<string> { "Hellfire", "Kalimdor" };
 
+        private const string expansion01Continent = "Expansion01";
+
+        readonly Dictionary<int, string> tbc_expansionContinent = new Dictionary<int, string>
+        {
+            { 464, expansion01Continent }, // AzuremystIsle
+            { 476, expansion01Continent }, // BloodmystIsle
+            { 471, expansion01Continent }, // TheExodar
+                   
+            { 462, expansion01Continent }, // EversongWoods
+            { 463, expansion01Continent }, // Ghostlands
+            { 480, expansion01Continent }, // SilvermoonCity
+                   
+            { 499, expansion01Continent }, // Sunwell
+        };
+
         public WorldMapArea CreateV2(string[] values)
         {
             //https://wow.tools/dbc/?dbc=worldmaparea&build=2.0.0.5610#page=1
@@ -70,6 +85,16 @@ namespace ReadDBC_CSV_WorldMapArea
 
             var uimapLines = File.ReadAllLines(Path.Join(path, "uimap.csv")).ToList().Select(l => l.Split(","));
             list.ForEach(wmp => PopulateUIMap(wmp, uimapLines));
+
+            list.ForEach(l => { 
+                if(tbc_expansionContinent.ContainsKey(l.ID))
+                {
+                    l.Continent = tbc_expansionContinent[l.ID];
+                    Console.WriteLine($" - {l.AreaName} expansion continent set to {l.Continent}");
+                }
+            });
+
+
             File.WriteAllText(Path.Join(path, "WorldMapArea.json"), JsonConvert.SerializeObject(list, Formatting.Indented));
 
             return list;
@@ -111,7 +136,7 @@ namespace ReadDBC_CSV_WorldMapArea
                     Console.WriteLine($" - Prevented override [{area.AreaName}] from [{area.UIMapId}] to [{int.Parse(a[1])}]");
                 }
 
-                area.Continent = a[2] == outland ? "Expansion01" : (a[2] == kalimdor ? "Kalimdor" : "Azeroth");
+                area.Continent = a[2] == outland ? expansion01Continent : (a[2] == kalimdor ? "Kalimdor" : "Azeroth");
             });
         }
 

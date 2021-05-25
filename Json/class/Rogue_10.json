@@ -1,0 +1,68 @@
+{
+  "ClassName": "Rogue",
+  "PathFilename": "10_Gnome.json",
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Evasion",
+        "Key": 5,
+        "WhenUsable": true,
+        "Requirement": "Health%<40"
+      },
+      {
+        "Name": "Slice and Dice",
+        "Key": "4",
+        "MinEnergy": 25,
+        "MinComboPoints": 1,
+        "Requirements": ["not Slice and Dice"]
+      },
+      {
+        "Name": "Eviscerate",
+        "Key": "3",
+        "MinEnergy": 35,
+        "MinComboPoints": 2,
+        "Requirements": ["TargetHealth%>20"]
+      },
+      {
+        "Name": "Sinister Strike",
+        "Key": "2",
+        "MinEnergy": 42
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 1
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "N1",
+        "Requirement": "Health%<30",
+        "Cooldown": 15,
+        "Log": false
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

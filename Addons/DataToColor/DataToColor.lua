@@ -301,6 +301,7 @@ function DataToColor:OnInitialize()
     self:CreateFrames(NUMBER_OF_FRAMES)
     self:slashCommands();
 
+    timerTick()
     self:log("We're in")
 
     LoggingChat(1);
@@ -636,7 +637,7 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:hasAmmo(), 13) + 
     self:MakeIndexBase2(self:playerCombatStatus(), 14) +
     self:MakeIndexBase2(self:IsTargetOfTargetPlayer(), 15) + 
-    self:MakeIndexBase2(0, 16) + 
+    self:MakeIndexBase2(self:IsAutoRepeatSpellOn("Auto Shot"), 16) + 
     self:MakeIndexBase2(self:ProcessExitStatus(), 17)+
     self:MakeIndexBase2(self:IsPlayerMounted(), 18)+
     self:MakeIndexBase2(self:IsAutoRepeatSpellOn("Shoot"), 19)+

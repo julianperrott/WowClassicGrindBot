@@ -3,6 +3,7 @@ using PatherPath;
 using PatherPath.Graph;
 using PathingAPI.Data;
 using PathingAPI.WorldToMap;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -176,6 +177,37 @@ namespace PathingAPI.Controllers
             }
 
             return new JsonResult(countOfMPQFiles > 0);
+        }
+
+        [HttpPost("DrawPathTest")]
+        [Produces("application/json")]
+        public bool DrawPathTest()
+        {
+            string continent = "Azeroth";
+            var coords = new List<float[]>()
+            {
+                new float[] {-5609.00f,-479.00f,397.49f},
+                new float[] {-5609.33f,-444.00f,405.22f},
+                new float[] {-5609.33f,-438.40f,406.02f},
+                new float[] {-5608.80f,-427.73f,404.69f},
+                new float[] {-5608.80f,-426.67f,404.69f},
+                new float[] {-5610.67f,-405.33f,402.02f},
+                new float[] {-5635.20f,-368.00f,392.15f},
+                new float[] {-5645.07f,-362.67f,385.49f},
+                new float[] {-5646.40f,-362.13f,384.69f},
+                new float[] {-5664.27f,-355.73f,378.29f},
+                new float[] {-5696.00f,-362.67f,366.02f},
+                new float[] {-5758.93f,-385.87f,366.82f},
+                new float[] {-5782.00f,-394.00f,366.09f}
+            };
+
+            if (isBusy) { return false; }
+            isBusy = true;
+
+            service.DrawPath(continent, coords);
+
+            isBusy = false;
+            return true;
         }
     }
 }

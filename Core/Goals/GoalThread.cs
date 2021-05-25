@@ -32,7 +32,7 @@ namespace Core.Goals
                 logger.LogInformation($"Abort from: {sender.GetType().Name}");
 
                 var location = this.playerReader.PlayerLocation;
-                input?.Hearthstone();
+                input?.TapHearthstone();
                 Active = false;
             }
         }
@@ -51,6 +51,11 @@ namespace Core.Goals
                         this.currentGoal = newGoal;
                         logger.LogInformation("---------------------------------");
                         logger.LogInformation($"New Plan= {newGoal.GetType().Name}");
+                    }
+                    else if(!this.currentGoal.Repeatable)
+                    {
+                        logger.LogInformation($"Current Plan= {newGoal.GetType().Name} is not Repeatable!");
+                        return;
                     }
 
                     try

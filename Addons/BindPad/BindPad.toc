@@ -1,6 +1,6 @@
-## Interface: 11302
+## Interface: 20501
 ## Title: BindPad
-## Version: c0.1
+## Version: c0.2
 ## Author: Tageshi, jukx
 ## Notes: BindPad - Keybinding UI for Items, Spells and Macroes. Drag anything into BindPad's slot and click it to bind a key.
 ## SavedVariables: BindPadVars

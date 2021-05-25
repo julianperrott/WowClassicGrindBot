@@ -9,8 +9,6 @@
 *.sln.docstates
 *.mpq
 *.bin
-BlazorServer/frame_config.json
-BlazorServer/addon_config.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -268,4 +266,8 @@ __pycache__/
 # Logs
 *.log
 Json/History/*.*
-PathingAPI/data_config.json
+
+# Configs
+**/frame_config.json
+**/addon_config.json
+**/data_config.json

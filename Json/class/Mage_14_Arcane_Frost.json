@@ -30,12 +30,13 @@
         "Key": 6,
         "MinMana": 55,
         "Cooldown": 25,
+        "WhenUsable": true,
         "Requirement": "InMeleeRange",
         "StepBackAfterCast": 1000,
         "DelayAfterCast": 0
       },
       {
-        "Name": "Fireball",
+        "Name": "Arcane Missiles",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "2",
@@ -45,8 +46,8 @@
       {
         "Name": "shoot",
         "Key": "0",
-        "StopBeforeCast": true,
         "Cooldown": 3,
+        "StopBeforeCast": true,
         "Requirements": ["HasRangedWeapon", "not Shooting"],
         "Log": false
       },
@@ -111,7 +112,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "8",
-        "Requirement": "not BagItem:5349:4",
+        "Requirement": "not BagItem:1113:4",
         "Cooldown": 30,
         "Log": false
       }

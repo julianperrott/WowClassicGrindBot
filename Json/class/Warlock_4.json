@@ -47,6 +47,7 @@
       },
       {
         "Name": "shoot",
+        "StopBeforeCast": true,
         "Key": "0",
         "Cooldown": 3,
         "Requirements": ["HasRangedWeapon", "not Shooting"],

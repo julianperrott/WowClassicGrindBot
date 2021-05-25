@@ -353,7 +353,7 @@ Warlock `heal` macro used in warlock profiles. Have to change manually when new 
     /cast Create Healthstone (Minor)
     /use Minor Healthstone
 
-Hunter `autoshoot` spammable Auto Shoot macro
+Hunter `autoshot` spammable Auto Shoot macro
 
     #showtooltip
     /cast !Auto Shot
@@ -506,6 +506,7 @@ e.g.
 | --- | --- |
 | "AutoAttacking" | Auto spell `Auto Attack` is active |
 | "Shooting" | (wand) Auto spell `Shoot` is active |
+| "AutoShot" | (hunter) Auto spell `Auto Shot` is active |
 | --- | --- |
 | "HasMainHandEnchant" | Indicates that main hand weapon has active poison/sharpening stone/shaman buff effect |
 | "HasOffHandEnchant" | Indicates that off hand weapon has active poison/sharpening stone/shaman buff effect |
@@ -521,6 +522,7 @@ e.g.
 | Druid | "Thorns" |
 | Druid | "TigersFury" |
 | Mage | "Frost Armor" |
+| Mage | "Ice Armor" |
 | Mage | "Arcane Intellect" |
 | Mage | "Ice Barrier" |
 | Mage | "Ward" |
@@ -548,6 +550,8 @@ e.g.
 | Hunter | "Aspect of the Hawk" |
 | Hunter | "Aspect of the Wild" |
 | Hunter | "Aspect of the Monkey" |
+| Hunter | "Rapid Fire" |
+| Hunter | "Quick Shots" |
 
 | Class | Debuff Condition |
 | --- | --- |

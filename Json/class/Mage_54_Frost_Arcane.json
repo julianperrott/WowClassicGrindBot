@@ -3,17 +3,15 @@
   "Loot": true,
   "NPCMaxLevels_Below": 10,
   "NPCMaxLevels_Above": 2,
-
-  "PathFilename": "56_Azshara.json",
-  "PathThereAndBack": false,
-  "PathReduceSteps": false,
-
+  "UseMount": false,
+  "PathFilename": "_pack\\40-50\\Azshara\\54-55 High Beach.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
   "Pull": {
     "Sequence": [
       {
         "Name": "Ice Barrier",
         "Key": "7",
-        "StopBeforeCast": true,
         "MinMana": 420,
         "WhenUsable": true,
         "Requirement": "not Ice Barrier"
@@ -24,7 +22,7 @@
         "StopBeforeCast": true,
         "Key": "1",
         "MinMana": 25,
-        "Requirement": "MaxRange<30"
+        "Requirement": "MaxRange<36"
       }
     ]
   },
@@ -63,10 +61,18 @@
         "DelayAfterCast": 0
       },
       {
+        "Name": "Frostbolt",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "1",
+        "MinMana": 25,
+        "Requirements": [ "MaxRange>31", "MaxRange<36"]
+      },
+      {
         "Name": "Arcane Missiles",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Requirements": ["MaxRange<35", "TargetHealth%>30"],
+        "Requirements": ["MaxRange<30", "TargetHealth%>30"],
         "Key": "2",
         "MinMana": 500
       },
@@ -88,7 +94,7 @@
         "StopBeforeCast": true,
         "Key": "N1",
         "Requirement": "Health%<50",
-        "Cooldown": 10,
+        "Cooldown": 5,
         "Log": false
       },
       {
@@ -97,7 +103,7 @@
         "StopBeforeCast": true,
         "Key": "N2",
         "Requirement": "Mana%<50",
-        "Cooldown": 10,
+        "Cooldown": 5,
         "Log": false
       }
     ]

@@ -24,6 +24,7 @@
       },
       {
         "Name": "Shoot",
+        "StopBeforeCast": true,
         "Key": "0"
       }
     ]

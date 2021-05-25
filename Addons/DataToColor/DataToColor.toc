@@ -1,10 +1,10 @@
-## Interface: 11307
+## Interface: 20501
 ## Title: DataToColor
 ## Author: FreeHongKongMMO
 ## Notes: An addon that displays player position as color
-## Version: 1.0.20
+## Version: 1.0.24
 ## RequiredDeps:
-## OptionalDeps: Ace3, LibDataBroker-1.1, LibCompress
+## OptionalDeps: Ace3, LibDataBroker-1.1, LibCompress, LibRangeCheck
 ## SavedVariables:
 
 embeds.xml

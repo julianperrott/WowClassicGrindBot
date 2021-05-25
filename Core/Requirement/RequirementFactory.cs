@@ -116,6 +116,7 @@ namespace Core
                     // Auto Spell
                     { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
                     { "Shooting", ()=> playerReader.IsShooting },
+                    { "AutoShot", ()=> playerReader.IsAutoShoting },
                     // Temporary Enchants
                     { "HasMainHandEnchant", ()=> playerReader.PlayerBitValues.MainHandEnchant_Active },
                     { "HasOffHandEnchant", ()=> playerReader.PlayerBitValues.OffHandEnchant_Active },
@@ -147,11 +148,12 @@ namespace Core
                     {  "Blessing of Might", ()=> playerReader.Buffs.Blessing },
                     // Mage
                     {  "Frost Armor", ()=> playerReader.Buffs.FrostArmor },
+                    {  "Ice Armor", ()=> playerReader.Buffs.FrostArmor },
                     {  "Arcane Intellect", ()=> playerReader.Buffs.ArcaneIntellect },
                     {  "Ice Barrier", ()=>playerReader.Buffs.IceBarrier },
                     {  "Ward", ()=>playerReader.Buffs.Ward },
                     {  "Fire Power", ()=>playerReader.Buffs.FirePower },
-                    {  "Slice And Dice", ()=> playerReader.Buffs.SliceAndDice },
+                    {  "Slice and Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
                     // Warlock
                     {  "Demon Skin", ()=> playerReader.Buffs.Demon },

@@ -15,8 +15,10 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "pull",
+        "Name": "Immolate",
         "Key": "5",
+        "DelayBeforeCast": 1500,
+        "Requirements": ["TargetHealth%>35", "not Immolate"],
         "HasCastBar": true,
         "StopBeforeCast": true,
         "ResetOnNewTarget": true,
@@ -56,7 +58,7 @@
       {
         "Name": "Immolate",
         "Key": "5",
-        "Requirements": ["TargetHealth%>35", "not Immolate"],
+        "Requirements": ["TargetHealth%>35", "not Immolate", "not InMeleeRange"],
         "HasCastBar": true,
         "StopBeforeCast": true,
         "ResetOnNewTarget": true,
@@ -68,6 +70,7 @@
         "Name": "Curse of Agony",
         "Key": "1",
         "ResetOnNewTarget": true,
+        "StopBeforeCast": true,
         "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
         "MinMana": 50,
         "School": "Shadow",
@@ -78,6 +81,7 @@
         "Key": "7",
         "Requirements": ["TargetHealth%>35", "not Corruption"],
         "ResetOnNewTarget": true,
+        "StopBeforeCast": true,
         "MinMana": 55,
         "School": "Shadow",
         "Log": false
@@ -85,12 +89,11 @@
       {
         "Name": "Shadow Bolt",
         "Key": "2",
-        "Charge": 2,
         "HasCastBar": true,
         "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 110,
-        "Requirement": "TargetHealth%>35",
+        "Requirements": ["TargetHealth%>35", "not InMeleeRange"],
         "School": "Shadow",
         "Log": false,
         "Cooldown": 8
@@ -98,6 +101,7 @@
       {
         "Name": "shoot",
         "Key": "0",
+        "StopBeforeCast": true,
         "Cooldown": 3,
         "Requirements": ["HasRangedWeapon", "not Shooting"],
         "Log": false
@@ -168,7 +172,7 @@
         "Key": "N3",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Requirements": ["BagItem:6265:1", "not BagItem:19005:1"]
+        "Requirements": ["BagItem:6265:1", "not BagItem:19007:1"]
       }
     ]
   }

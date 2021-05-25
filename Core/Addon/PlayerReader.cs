@@ -132,6 +132,8 @@ namespace Core
         public bool IsAutoAttacking => PlayerBitValues.IsAutoRepeatSpellOn_AutoAttack;
         public bool IsShooting => PlayerBitValues.IsAutoRepeatSpellOn_Shoot;
 
+        public bool IsAutoShoting => PlayerBitValues.IsAutoRepeatSpellOn_AutoShot;
+
         public long SpellBeingCast => reader.GetLongAtCell(53);
         public long ComboPoints => reader.GetLongAtCell(54);
 

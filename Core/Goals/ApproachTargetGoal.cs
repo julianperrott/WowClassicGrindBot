@@ -94,14 +94,14 @@ namespace Core.Goals
                 playerWasInCombat = true;
             }
 
-            await this.TapInteractKey("ApproachTargetAction 1");
+            await this.TapInteractKey($"{GetType().Name}");
             await this.playerReader.WaitForNUpdate(1);
 
             var newLocation = playerReader.PlayerLocation;
             if ((location.X == newLocation.X && location.Y == newLocation.Y && SecondsSinceLastFighting > 5) ||
                 this.playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "ApproachTargetAction");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, $"{GetType().Name}: ");
                 await Wait(100, () => false);
                 await input.TapJump();
                 this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
@@ -114,19 +114,8 @@ namespace Core.Goals
             if (approachSeconds > 20)
             {
                 await this.stuckDetector.Unstick();
-                await this.TapInteractKey("ApproachTargetAction unstick");
+                await this.TapInteractKey($"{GetType().Name}:  unstick");
                 await Task.Delay(250);
-            }
-
-            if(playerReader.WithInCombatRange && (
-                playerReader.PlayerClass == PlayerClassEnum.Rogue ||
-                playerReader.PlayerClass == PlayerClassEnum.Warrior ||
-                playerReader.PlayerClass == PlayerClassEnum.Paladin))
-            {
-                Log("WithInCombatRange -- Strictly melee -- Wait a moment");
-                await stopMoving.Stop();
-                await this.TapInteractKey("ApproachTargetAction engage");
-                await Task.Delay(200);
             }
         }
 
@@ -159,7 +148,7 @@ namespace Core.Goals
 
         public async Task TapInteractKey(string source)
         {
-            await input.TapInteractKey($"Approach target ({source})");
+            await input.TapInteractKey(source);
             this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
             await input.TapStopAttack();
         }

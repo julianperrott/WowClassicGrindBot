@@ -127,7 +127,7 @@ namespace Core.Goals
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
-            if (await AquireTarget())
+            if (await AquireTarget() || (playerReader.PlayerClass == PlayerClassEnum.Hunter && playerReader.HasTarget))
             {
                 await stopMoving.StopTurn();
                 
@@ -270,6 +270,7 @@ namespace Core.Goals
                         if (this.playerReader.HasTarget && !playerReader.PlayerBitValues.TargetIsDead)
                         {
                             logger.LogInformation("Has target!");
+                            await Task.Delay(20);
                             return true;
                         }
                         else
@@ -430,7 +431,7 @@ namespace Core.Goals
                     npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
                     if(npcNameFinder.NpcCount > 0)
                     {
-                        await this.npcNameFinder.FindAndClickNpc(0, true);
+                        await this.npcNameFinder.TargetingAndClickNpc(0, true);
                     }
                 }
             }
