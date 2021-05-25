@@ -184,5 +184,33 @@ namespace PathingAPI
         public Location ClosestLocation => this.search?.PathGraph?.ClosestSpot?.location;
 
         public Location PeekLocation => this.search?.PathGraph?.PeekSpot?.location;
+
+        public void DrawPath(string continent, List<float[]> coords)
+        {
+            var first = coords[0];
+            var last = coords[^1];
+
+            var fromLoc = new Location(first[0], first[1], first[2], "l1", continent);
+            var toLoc = new Location(last[0], last[1], last[2], "l2", continent);
+
+            SetLocations(fromLoc, toLoc);
+
+            if (search.PathGraph == null)
+            {
+                search.CreatePathGraph(continent);
+            }
+
+            List<Spot> spots = new List<Spot>();
+            for (int i = 0; i < coords.Count(); i++)
+            {
+                Location l = new Location(coords[i][0], coords[i][1], coords[i][2], "l" + i.ToString(), continent);
+                Spot spot = new Spot(l);
+                spots.Add(spot);
+                search.PathGraph.CreateSpotsAroundSpot(spot, false);
+            }
+
+            var path = new Path(spots);
+            OnPathCreated?.Invoke(path);
+        }
     }
 }
