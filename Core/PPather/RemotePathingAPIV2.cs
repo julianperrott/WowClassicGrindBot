@@ -112,7 +112,7 @@ namespace Core
         public async Task<bool> PingServer()
         {
             logger.LogInformation($"PingServer {2*watchdogPollMs}ms");
-            await Task.Delay(2 * watchdogPollMs);
+            await Task.Delay(2 * watchdogPollMs + 250);
             return IsConnected;
         }
 
