@@ -70,6 +70,8 @@ namespace Core
 
             Reader?.Close();
             Stream?.Close();
+
+            logger.LogInformation("RemotePathingAPIV2 Disconnected!");
         }
 
         public unsafe byte[]? SendData<T>(T data, int size) where T : unmanaged
@@ -121,6 +123,8 @@ namespace Core
                         Reader = new BinaryReader(Stream);
 
                         ConnectionFailedCounter = 0;
+
+                        logger.LogInformation("RemotePathingAPIV2 Connected!");
                     }
                 }
                 else
@@ -155,7 +159,7 @@ namespace Core
 
                     IsConnected = false;
 
-                    logger.LogWarning("Connection is closed!");
+                    logger.LogWarning("RemotePathingAPIV2 Connection is closed!");
                 }
 
                 connectionTimerBusy = 0;
