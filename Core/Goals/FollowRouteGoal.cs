@@ -167,16 +167,19 @@ namespace Core.Goals
             else
             {
                 var playerLocation = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-                var distanceToRoute = WowPoint.DistanceTo(playerLocation, routeToWaypoint.Peek());
-                if (routeToWaypoint.Count <= 1 && distanceToRoute > 200)
+                if(routeToWaypoint.Count > 0)
                 {
-                    logger.LogError("wtf too far away kekw");
-                    routeToWaypoint.Pop();
-                    return;
+                    var distanceToRoute = WowPoint.DistanceTo(playerLocation, routeToWaypoint.Peek());
+                    if (routeToWaypoint.Count <= 1 && distanceToRoute > 200)
+                    {
+                        logger.LogError($"No route To Waypoint or too far {distanceToRoute}>200");
+                        routeToWaypoint.Pop();
+                        return;
+                    }
                 }
 
                 //wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 1");
-                input.SetKeyState(ConsoleKey.UpArrow, true, false);
+                //input.SetKeyState(ConsoleKey.UpArrow, true, false);
             }
 
             await RandomJump();
