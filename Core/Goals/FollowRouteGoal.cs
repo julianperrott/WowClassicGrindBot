@@ -179,7 +179,7 @@ namespace Core.Goals
                 }
 
                 //wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 1");
-                //input.SetKeyState(ConsoleKey.UpArrow, true, false);
+                input.SetKeyState(ConsoleKey.UpArrow, true, false);
             }
 
             await RandomJump();
