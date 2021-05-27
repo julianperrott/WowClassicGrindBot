@@ -36,6 +36,7 @@ namespace Core.Goals
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
 
+            AddPrecondition(GoapKey.targetisalive, true);
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.pulled, false);
@@ -66,7 +67,6 @@ namespace Core.Goals
                 return; 
             }
             */
-
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
 
             if (playerReader.PlayerBitValues.IsMounted)
@@ -82,6 +82,8 @@ namespace Core.Goals
                 await input.TapStopAttack();
                 await input.TapStopKey();
             }
+
+
 
             bool pulled = await Pull();
             if (!pulled)
