@@ -32,5 +32,15 @@ namespace Core.Database
 
             return -1;
         }
+
+        public WorldMapArea? Get(int uiMapId)
+        {
+            if (areas.TryGetValue(uiMapId, out var map))
+            {
+                return map;
+            }
+
+            return null;
+        }
     }
 }

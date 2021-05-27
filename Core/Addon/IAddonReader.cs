@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using Core.Database;
+using System.Drawing;
 
 namespace Core
 {
@@ -18,5 +19,7 @@ namespace Core
         ActionBarCostReader ActionBarCostReader { get; set; }
 
         LevelTracker LevelTracker { get; set; }
+
+        WorldMapAreaDB WorldMapAreaDb { get; set; }
     }
 }
