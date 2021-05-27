@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 public static class DataConfigVersion
 {
-    public static int Version = 8;
+    public static int Version = 9;
 }
 
 public class DataConfig
@@ -32,6 +32,10 @@ public class DataConfig
     public string History => System.IO.Path.Join(Root, "History/");
     [JsonIgnore]
     public string Experience => System.IO.Path.Join(Root, "experience/");
+
+    [JsonIgnore]
+    public string AuctionHouse => System.IO.Path.Join(Root, "ah/");
+
     [NonSerialized]
     public const string DefaultFileName = "data_config.json";
 
