@@ -1,0 +1,58 @@
+﻿@using Core
+@inject Core.IBotController botController
+@inject Core.IAddonReader addonReader
+@using SharedLib;
+
+<button class="btn btn-sm btn-primary" @onclick="ToggleBot" disabled="@(disableButton ? "disabled" : null)">
+@if (!botController.IsBotActive)
+{
+    <span>Start Bot</span>
+}
+else
+{
+    <span>Stop Bot</span>
+}
+</button>
+
+@code {
+
+    private bool disableButton;
+
+    protected override void OnInitialized()
+    {
+        if (DataFrameConfiguration.Exists())
+        {
+            ValidateButton();
+
+            botController.ProfileLoaded -= OnProfileLoaded;
+            botController.ProfileLoaded += OnProfileLoaded;
+
+            ((Core.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+            {
+                base.InvokeAsync(() =>
+                {
+                    try
+                    {
+                        StateHasChanged();
+                    }
+                    catch { }
+                });
+            };
+        }
+    }
+
+    private void ToggleBot()
+    {
+        botController.ToggleBotStatus();
+    }
+
+    private void OnProfileLoaded(object? sender, EventArgs e)
+    {
+        ValidateButton();
+    }
+
+    private void ValidateButton()
+    {
+        disableButton = string.IsNullOrEmpty(botController.SelectedClassFilename);
+    }
+}

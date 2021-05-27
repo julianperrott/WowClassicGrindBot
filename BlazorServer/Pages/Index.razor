@@ -13,10 +13,17 @@
 
             <div class="col-sm">
                 <ScreenshotComponent Size="800" Stretch="false" />
-                <table width="100%">
+                <table width="100%" style="margin-top: 10px">
                     <tr>
-                        <td valign="top"><div style="margin-top: 10px"><RouteComponent Size="400" /></div></td>
-                        <td valign="top"> <div style="margin-left: 10px; margin-top: 10px"><BagChanges /></div></td>
+                        <td valign="top"><div><RouteComponent Size="400" /></div></td>
+                        <td valign="top">
+                            <div class="card text-center @(!botController.IsBotActive ? "hide" : "")">
+                                <div class="card-header">
+                                    <ToggleButton/>
+                                </div>
+                            </div>
+                            <BagChanges />
+                        </td>
                     </tr>
                 </table>
             </div>
