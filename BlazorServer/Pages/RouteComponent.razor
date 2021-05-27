@@ -3,6 +3,7 @@
 @inject IJSRuntime JSRuntime;
 @using System.Linq
 @using Core
+@using SharedLib; 
 
 <div class="card">
     <div class="card-header">
@@ -11,7 +12,7 @@
                 <td>Route</td>
                 <td>
                     <div class="float-right">
-                        Player at @addonReader.PlayerReader.XCoord.ToString("0.00") , @addonReader.PlayerReader.YCoord.ToString("0.00") on map @addonReader.PlayerReader.ZoneId
+                       [@addonReader.PlayerReader.XCoord.ToString("0.00"),@addonReader.PlayerReader.YCoord.ToString("0.00")] @(wma?.AreaName) (@addonReader.PlayerReader.UIMapId)
                     </div>
                 </td>
             </tr>
@@ -105,6 +106,8 @@
 
     private List<WowPoint> Deaths = new List<WowPoint>();
 
+    private WorldMapArea? wma { get; set; }
+
     protected override void OnInitialized()
     {
         botController.ProfileLoaded -= OnProfileLoaded;
@@ -117,6 +120,19 @@
                 try
                 {
                     InitialiseRoute();
+                    StateHasChanged();
+                }
+                catch { }
+            });
+        };
+
+        ((Core.AddonReader)addonReader).ZoneChanged += (o, e) =>
+        {
+            base.InvokeAsync(() =>
+            {
+                try
+                {
+                    UpdateZone();
                     StateHasChanged();
                 }
                 catch { }
@@ -191,5 +207,10 @@
     private void OnProfileLoaded(object? sender, EventArgs e)
     {
         CanvasInitialised = false;
+    }
+
+    private void UpdateZone()
+    {
+        wma = addonReader.WorldMapAreaDb.Get(addonReader.PlayerReader.UIMapId);
     }
 }

@@ -140,7 +140,7 @@ namespace Core
         public int TargetId => (int)reader.GetLongAtCell(56);
         public long TargetGuid => reader.GetLongAtCell(57);
 
-        public int ZoneId => (int)reader.GetLongAtCell(58);
+        public int UIMapId => (int)reader.GetLongAtCell(58);
 
         public bool IsCasting => SpellBeingCast != 0;
 

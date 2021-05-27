@@ -35,11 +35,6 @@ namespace Core.Database
             return -1;
         }
 
-        public WorldMapArea Get(int uiMapId)
-        {
-            return areas[uiMapId];
-        }
-
         public Vector3 GetWorldLocation(int uiMapId, WowPoint p, bool flipXY)
         {
             var worldMapArea = areas[uiMapId];
@@ -76,6 +71,16 @@ namespace Core.Database
                 Z = z,
                 MapID = area.UIMapId
             };
+        }
+        
+        public WorldMapArea? Get(int uiMapId)
+        {
+            if (areas.TryGetValue(uiMapId, out var map))
+            {
+                return map;
+            }
+
+            return null;
         }
     }
 }
