@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Core.Database;
 
 namespace Core.Addon
 {
@@ -11,6 +12,8 @@ namespace Core.Addon
         public bool Active { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public LevelTracker LevelTracker { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ActionBarCostReader ActionBarCostReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public WorldMapAreaDB WorldMapAreaDb { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private void ConfigAddonReader_AddonDataChanged(object sender, EventArgs e)
         {

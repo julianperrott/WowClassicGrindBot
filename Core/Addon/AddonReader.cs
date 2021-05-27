@@ -22,9 +22,10 @@ namespace Core
         public LevelTracker LevelTracker { get; set; }
 
         public event EventHandler? AddonDataChanged;
+        public event EventHandler? ZoneChanged;
 
         private readonly AreaDB areaDb;
-        private readonly WorldMapAreaDB worldMapAreaDb;
+        public WorldMapAreaDB WorldMapAreaDb { get; set; }
         private readonly ItemDB itemDb;
         private readonly CreatureDB creatureDb;
 
@@ -45,14 +46,17 @@ namespace Core
             this.LevelTracker = new LevelTracker(PlayerReader);
 
             this.areaDb = areaDb;
-            this.worldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
+            this.WorldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
         }
 
         private int seq = 0;
 
         public void AddonRefresh()
         {
+            int uiMapId = PlayerReader.UIMapId;
             Refresh();
+            if(seq == 0 || uiMapId != PlayerReader.UIMapId)
+                ZoneChanged?.Invoke(this, EventArgs.Empty);
 
             // 20 - 29
             BagReader.Read();
@@ -67,7 +71,7 @@ namespace Core
 
             PlayerReader.UpdateCreatureLists();
 
-            areaDb.Update(worldMapAreaDb.GetAreaId(PlayerReader.ZoneId));
+            areaDb.Update(WorldMapAreaDb.GetAreaId(PlayerReader.UIMapId));
 
             seq++;
 
