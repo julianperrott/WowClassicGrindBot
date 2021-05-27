@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Core.PPather;
 using Core.Database;
+using SharedLib;
 
 namespace Core
 {
@@ -61,6 +62,9 @@ namespace Core
                 //logger.LogInformation($"Finding route from {start} to {end}...");
 
                 var area = worldMapAreaDB.Get(uiMapId);
+                if(area == null)
+                    return new List<WowPoint>();
+
                 var request = new PathRequestWithLocationRequest(area.MapID, start, end, PathRequestFlags.ChaikinCurve);
 
                 int typeSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(PathRequestWithLocationRequest));
@@ -105,7 +109,7 @@ namespace Core
 
         public Task<List<WowPoint>> FindRouteTo(PlayerReader playerReader, WowPoint destination)
         {
-            return FindRoute(playerReader.ZoneId, playerReader.PlayerLocation, destination);
+            return FindRoute(playerReader.UIMapId, playerReader.PlayerLocation, destination);
         }
 
 
