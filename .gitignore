@@ -271,3 +271,11 @@ Json/History/*.*
 **/frame_config.json
 **/addon_config.json
 **/data_config.json
+
+BlazorServer/frame_config.json
+BlazorServer/addon_config.json
+BlazorServer/data_config.json
+
+PathingAPI/frame_config.json
+PathingAPI/addon_config.json
+PathingAPI/data_config.json

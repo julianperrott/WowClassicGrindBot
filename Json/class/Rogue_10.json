@@ -53,14 +53,14 @@
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "1_Gnome_Vendor.json",
+        "PathFilename": "5_Gnome_Vendor.json",
         "Cost": 6
       },
       {
         "Name": "Sell",
         "Key": "C",
         "Requirement": "BagFull",
-        "PathFilename": "1_Gnome_Vendor.json",
+        "PathFilename": "5_Gnome_Vendor.json",
         "Cost": 6
       }
     ]
