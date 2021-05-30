@@ -21,7 +21,7 @@ namespace Core.Goals
         private readonly NpcNameFinder npcNameFinder;
         private readonly CombatUtil combatUtil;
 
-        private long LastLoot;
+        private long lastLoot;
 
         public SkinningGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving,  NpcNameFinder npcNameFinder, CombatUtil combatUtil)
         {
@@ -35,8 +35,6 @@ namespace Core.Goals
 
             this.npcNameFinder = npcNameFinder;
             this.combatUtil = combatUtil;
-
-            LastLoot = playerReader.LastLootTime;
 
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.shouldskin, true);
@@ -61,6 +59,8 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
+            lastLoot = playerReader.LastLootTime;
+
             combatUtil.Update();
 
             Log("Try to find Corpse");
@@ -120,7 +120,7 @@ namespace Core.Goals
                 // Wait for to update the LastUIErrorMessage
                 await playerReader.WaitForNUpdate(2);
                 var lastError = this.playerReader.LastUIErrorMessage;
-                if (lastError != UI_ERROR.ERR_SPELL_FAILED_S && LastLoot != playerReader.LastLootTime)
+                if (lastError != UI_ERROR.ERR_SPELL_FAILED_S && lastLoot != playerReader.LastLootTime)
                 {
                     this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     Log("Skinning Successful!");
@@ -140,7 +140,7 @@ namespace Core.Goals
 
         private async Task GoalExit()
         {
-            if (!await Wait(500, () => LastLoot != playerReader.LastLootTime))
+            if (!await Wait(500, () => lastLoot != playerReader.LastLootTime))
             {
                 Log($"Skin-Loot Successfull");
             }
@@ -149,7 +149,7 @@ namespace Core.Goals
                 Log($"Skin-Loot Failed");
             }
 
-            LastLoot = playerReader.LastLootTime;
+            lastLoot = playerReader.LastLootTime;
 
             EmergencyExit();
             await npcNameFinder.WaitForNUpdate(1);
