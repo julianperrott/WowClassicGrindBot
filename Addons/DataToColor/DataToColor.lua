@@ -95,9 +95,16 @@ DataToColor.r = 0
 -- Note: Player direction is in radians (360 degrees = 2π radians)
 -- Note: Player health/mana is taken out of 100% (0 - 1)
 
+local unitPlayer = "player"
+local unitTarget = "target"
+local unitPet = "pet"
+local unitPetTarget = "pettarget"
+local unitTargetTarget = "targettarget"
+
+
 -- Character's name
-local CHARACTER_NAME = UnitName("player")
-local CHARACTER_GUID = UnitGUID("player")
+local CHARACTER_NAME = UnitName(unitPlayer)
+local CHARACTER_GUID = UnitGUID(unitPlayer)
 local uiErrorMessage=0;
 local lastCombatDamageDealerCreature=0;
 local lastCombatCreature=0;
@@ -405,16 +412,16 @@ function DataToColor:CreateFrames(n)
             -- Boolean variables --
             MakePixelSquareArr(integerToColor(self:Base2Converter()), 8)
             -- Start combat/NPC related variables --
-            MakePixelSquareArr(integerToColor(self:getHealthMax("player")), 10) --8 Represents maximum amount of health
-            MakePixelSquareArr(integerToColor(self:getHealthCurrent("player")), 11) --9 Represents current amount of health
-            MakePixelSquareArr(integerToColor(self:getManaMax("player")), 12) --10 Represents maximum amount of mana
-            MakePixelSquareArr(integerToColor(self:getManaCurrent("player")), 13) --11 Represents current amount of mana
+            MakePixelSquareArr(integerToColor(self:getHealthMax(unitPlayer)), 10) --8 Represents maximum amount of health
+            MakePixelSquareArr(integerToColor(self:getHealthCurrent(unitPlayer)), 11) --9 Represents current amount of health
+            MakePixelSquareArr(integerToColor(self:getManaMax(unitPlayer)), 12) --10 Represents maximum amount of mana
+            MakePixelSquareArr(integerToColor(self:getManaCurrent(unitPlayer)), 13) --11 Represents current amount of mana
             MakePixelSquareArr(integerToColor(self:getPlayerLevel()), 14) --12 Represents character level
             MakePixelSquareArr(integerToColor(self:getRange()), 15) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
             MakePixelSquareArr(integerToColor(self:GetTargetName(0)), 16) -- Characters 1-3 of target's name
             MakePixelSquareArr(integerToColor(self:GetTargetName(3)), 17) -- Characters 4-6 of target's name
-            MakePixelSquareArr(integerToColor(self:getHealthMax("target")), 18) -- Return the maximum amount of health a target can have
-            MakePixelSquareArr(integerToColor(self:getHealthCurrent("target")), 19) -- Returns the current amount of health the target currently has
+            MakePixelSquareArr(integerToColor(self:getHealthMax(unitTarget)), 18) -- Return the maximum amount of health a target can have
+            MakePixelSquareArr(integerToColor(self:getHealthCurrent(unitTarget)), 19) -- Returns the current amount of health the target currently has
             -- Begin Items section --
             -- there are 5 item slots: main backpack and 4 pouches
             -- Indexes one slot from each bag each frame. SlotN (1-16) and bag (0-4) calculated here:
@@ -482,8 +489,8 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)), 37) -- BagType + Index + FreeSpace + BagSlots
 
 
-            MakePixelSquareArr(integerToColor(self:getHealthMax("pet")), 38)
-            MakePixelSquareArr(integerToColor(self:getHealthCurrent("pet")), 39)
+            MakePixelSquareArr(integerToColor(self:getHealthMax(unitPet)), 38)
+            MakePixelSquareArr(integerToColor(self:getHealthCurrent(unitPet)), 39)
             -- 40
 
             -- Profession levels:
@@ -504,8 +511,8 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(self:shapeshiftForm()), 48) -- Shapeshift id https://wowwiki.fandom.com/wiki/API_GetShapeshiftForm
             MakePixelSquareArr(integerToColor(self:areSpellsInRange()), 49) -- Are spells in range
 
-            MakePixelSquareArr(integerToColor(self:getUnitXP("player")), 50) -- Player Xp
-            MakePixelSquareArr(integerToColor(self:getUnitXPMax("player")), 51) -- Player Level Xp
+            MakePixelSquareArr(integerToColor(self:getUnitXP(unitPlayer)), 50) -- Player Xp
+            MakePixelSquareArr(integerToColor(self:getUnitXPMax(unitPlayer)), 51) -- Player Level Xp
             MakePixelSquareArr(integerToColor(uiErrorMessage), 52) -- Last UI Error message
             uiErrorMessage=0;
 
@@ -514,7 +521,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(DataToColor:getDebuffsForTarget()), 55) -- target debuffs
 
             MakePixelSquareArr(integerToColor(DataToColor:targetNpcId()), 56) -- target id
-            MakePixelSquareArr(integerToColor(DataToColor:getGuid("target")),57) -- target reasonably uniqueId
+            MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitTarget)),57) -- target reasonably uniqueId
             MakePixelSquareArr(integerToColor(DataToColor:GetBestMap()),58) -- MapId
 
             MakePixelSquareArr(integerToColor(DataToColor:IsTargetOfTargetPlayerAsNumber()),59) -- IsTargetOfTargetPlayerAsNumber
@@ -523,8 +530,8 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(lastCombatDamageDealerCreature),66) -- Combat message last damage dealer creature
             MakePixelSquareArr(integerToColor(lastCombatCreatureDied),67) -- Last Killed Unit
 
-            MakePixelSquareArr(integerToColor(DataToColor:getGuid("pet")),68) -- pet guid
-            MakePixelSquareArr(integerToColor(DataToColor:getGuid("pettarget")),69) -- pet target
+            MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitPet)),68) -- pet guid
+            MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitPetTarget)),69) -- pet target
 
             -- Timers
             MakePixelSquareArr(integerToColor(globalTime), 70)
@@ -607,9 +614,9 @@ end
 
 -- Use Astrolabe function to get current player position
 function DataToColor:GetCurrentPlayerPosition()
-    local map = C_Map.GetBestMapForUnit("player")
+    local map = C_Map.GetBestMapForUnit(unitPlayer)
     if map ~= nil then
-        local position = C_Map.GetPlayerMapPosition(map, "player")
+        local position = C_Map.GetPlayerMapPosition(map, unitPlayer)
         -- Resets map to correct zone ... removed in 8.0.1, needs to be tested to see if zone auto update
         -- SetMapToCurrentZone()
         return position:GetXY()
@@ -649,7 +656,7 @@ end
 
 
 function DataToColor:getBuffsForClass()
-    local class, CC = UnitClass("player");
+    local class, CC = UnitClass(unitPlayer);
 
     class=self:MakeIndexBase2(self:GetBuffs("Food"), 0) +
     self:MakeIndexBase2(self:GetBuffs("Drink"), 1) +
@@ -713,7 +720,7 @@ end
 
 function DataToColor:sell(items)
 
-    local target = GetUnitName("target")
+    local target = GetUnitName(unitTarget)
     if target ~= nil then
         local item= GetMerchantItemLink(1);
 
@@ -761,7 +768,7 @@ end
 
 function DataToColor:getDebuffsForTarget()
 
-    local class, CC = UnitClass("player");
+    local class, CC = UnitClass(unitPlayer);
     class=0;
 
     if CC == "PRIEST" then 
@@ -803,7 +810,7 @@ end
 -- Grabs current target's name (friend or foe)
 function DataToColor:GetTargetName(partition)
     -- Uses wow function to get target string
-    local target = GetUnitName("target")
+    local target = GetUnitName(unitTarget)
     if target ~= nil then
         target = DataToColor:StringToASCIIHex(target)
         if partition < 3 then
@@ -870,11 +877,11 @@ end
 
 -- Finds player current level
 function DataToColor:getPlayerLevel()
-    return UnitLevel("player")
+    return UnitLevel(unitPlayer)
 end
 
 function DataToColor:getTargetLevel()
-    return UnitLevel("target")
+    return UnitLevel(unitTarget)
 end
 
 -- Finds the total amount of money.
@@ -883,7 +890,7 @@ function DataToColor:getMoneyTotal()
 end
 
 function DataToColor:targetHostile()
-    local hostile = UnitReaction("player", "target")
+    local hostile = UnitReaction(unitPlayer, unitTarget)
     if hostile ~= nil and hostile <= 4 then
         return 1
     end
@@ -892,7 +899,7 @@ end
 
 function DataToColor:hasAmmo()
     local ammoSlot = GetInventorySlotInfo("AmmoSlot");
-    local ammoCount = GetInventoryItemCount("player", ammoSlot);
+    local ammoCount = GetInventoryItemCount(unitPlayer, ammoSlot);
     if ammoCount > 0 then
         return 1
     end
@@ -900,9 +907,9 @@ function DataToColor:hasAmmo()
 end
 
 function DataToColor:getRange()
-    local target = GetUnitName("target")
+    local target = GetUnitName(unitTarget)
     if target ~= nil then
-        local min, max = Range:GetRange("target")
+        local min, max = Range:GetRange(unitTarget)
         if max == nil then
             max = 99
         end
@@ -912,9 +919,9 @@ function DataToColor:getRange()
 end
 
 function DataToColor:isTradeRange()
-    local target = GetUnitName("target")
+    local target = GetUnitName(unitTarget)
     if target ~= nil then
-        local tradeRange = CheckInteractDistance("target", 2)
+        local tradeRange = CheckInteractDistance(unitTarget, 2)
         if tradeRange then
             return 1
         end
@@ -923,7 +930,7 @@ function DataToColor:isTradeRange()
 end
 
 function DataToColor:targetNpcId()
-    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("target") or ''); 
+    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID(unitTarget) or ''); 
     if npcID ~= nil then
         return tonumber(npcID);
     end
@@ -1057,9 +1064,9 @@ end
 
 function DataToColor:equipName(slot)
     local equip
-    if GetInventoryItemLink("player", slot) == nil then
+    if GetInventoryItemLink(unitPlayer, slot) == nil then
         equip = 0
-    else _, _, equip = string.find(GetInventoryItemLink("player", slot), "(m:%d+)")
+    else _, _, equip = string.find(GetInventoryItemLink(unitPlayer, slot), "(m:%d+)")
         equip = string.gsub(equip, 'm:', '')
     end
     if equip == nil then equip = 0
@@ -1071,7 +1078,7 @@ end
 
 function DataToColor:areSpellsInRange()
 
-    local spellList, CC = UnitClass("player");
+    local spellList, CC = UnitClass(unitPlayer);
     if CC == "ROGUE" then
          spellList = {
             "Sinister Strike", --1
@@ -1132,7 +1139,7 @@ function DataToColor:areSpellsInRange()
 
     local inRange = 0
     for i = 1, table.getn(spellList ), 1 do
-        local isInRange = IsSpellInRange(spellList[i], "target");
+        local isInRange = IsSpellInRange(spellList[i], unitTarget);
         if isInRange==1 then
             inRange = inRange + (2 ^ (i - 1))
         end
@@ -1173,7 +1180,7 @@ end
 
 -- Checks target to see if  target has a specified debuff
 function DataToColor:GetDebuffs(debuff)
-    for i = 1, 5 do local db = UnitDebuff("target", i);
+    for i = 1, 5 do local db = UnitDebuff(unitTarget, i);
         if db ~= nil then
             if string.find(db, debuff) then
                 return 1
@@ -1200,7 +1207,7 @@ function DataToColor:GetZoneName(partition)
 end
 
 function DataToColor:GetBestMap()
-    local map= C_Map.GetBestMapForUnit("player");
+    local map= C_Map.GetBestMapForUnit(unitPlayer);
     if map ~= nil then
         return map
     else
@@ -1249,8 +1256,8 @@ function DataToColor:CorpsePosition(coord)
     -- Assigns death coordinates
     local cX
     local cY
-    if UnitIsGhost("player") then
-        local map = C_Map.GetBestMapForUnit("player")
+    if UnitIsGhost(unitPlayer) then
+        local map = C_Map.GetBestMapForUnit(unitPlayer)
         if C_DeathInfo.GetCorpseMapPosition(map) ~= nil then
             cX, cY = C_DeathInfo.GetCorpseMapPosition(map):GetXY()
         end
@@ -1275,7 +1282,7 @@ end
 --returns class of player
 function DataToColor:PlayerClass()
     -- UnitClass returns class and the class in uppercase e.g. "Mage" and "MAGE"
-    local class, CC = UnitClass("player")
+    local class, CC = UnitClass(unitPlayer)
     if CC == "MAGE" then
         class = 128
     elseif CC == "ROGUE" then
@@ -1301,7 +1308,7 @@ function DataToColor:PlayerClass()
 end
 
 function DataToColor:ComboPoints()
-    local points = GetComboPoints("player","target");
+    local points = GetComboPoints(unitPlayer,unitTarget);
     -- if target is in combat, return 0 for bitmask
     if points ~= nil then
         return points
@@ -1319,7 +1326,7 @@ end
 
 -- Finds if player or target is in combat
 function DataToColor:targetCombatStatus()
-    local combatStatus = UnitAffectingCombat("target")
+    local combatStatus = UnitAffectingCombat(unitTarget)
     -- if target is in combat, return 0 for bitmask
     if combatStatus then
         return 1
@@ -1330,7 +1337,7 @@ end
 
 -- Checks if target is dead. Returns 1 if target is dead, nil otherwise (converts to 0)
 function DataToColor:GetEnemyStatus()
-    local targStatus = UnitIsDead("target")
+    local targStatus = UnitIsDead(unitTarget)
     if targStatus then
         return 1
     else
@@ -1339,13 +1346,13 @@ function DataToColor:GetEnemyStatus()
 end
 
 function DataToColor:targetIsNormal()
-    local classification = UnitClassification("target");
+    local classification = UnitClassification(unitTarget);
     if classification=="normal" then
-        if (UnitIsPlayer("target")) then 
+        if (UnitIsPlayer(unitTarget)) then 
             return 0 
         end
 
-        if UnitName("pet") ==  UnitName("target") then
+        if UnitName(unitPet) ==  UnitName(unitTarget) then
             return 0
         end
 
@@ -1358,7 +1365,7 @@ end
 
 -- Checks if we are currently alive or are a ghost/dead.
 function DataToColor:deadOrAlive()
-    local deathStatus = UnitIsDeadOrGhost("player")
+    local deathStatus = UnitIsDeadOrGhost(unitPlayer)
     if deathStatus then
         return 1
     else
@@ -1368,7 +1375,7 @@ end
 
 -- Checks the number of talent points we have available to spend
 function DataToColor:checkTalentPoints()
-    if UnitCharacterPoints("player") > 0 then
+    if UnitCharacterPoints(unitPlayer) > 0 then
         return 1
     else return 0
     end
@@ -1383,7 +1390,7 @@ function DataToColor:shapeshiftForm()
 end
 
 function DataToColor:playerCombatStatus()
-    local combatStatus = UnitAffectingCombat("player")
+    local combatStatus = UnitAffectingCombat(unitPlayer)
     -- if player is not in combat, convert nil to 0
     if combatStatus then
         return 1
@@ -1395,7 +1402,7 @@ end
 -- Iterates through index of buffs to see if we have the buff is passed in
 function DataToColor:GetBuffs(buff)
     for i = 1, 10 do
-        local b = UnitBuff("player", i);
+        local b = UnitBuff(unitPlayer, i);
         if b ~= nil then
             if string.find(b, buff) then
                 return 1
@@ -1408,7 +1415,7 @@ end
 -- Returns the slot in which we have a fully degraded item
 function DataToColor:GetInventoryBroken()
     for i = 1, 16 do
-        local isBroken = GetInventoryItemBroken("player", i)
+        local isBroken = GetInventoryItemBroken(unitPlayer, i)
         if isBroken == true then
             return 1
         end
@@ -1417,7 +1424,7 @@ function DataToColor:GetInventoryBroken()
 end
 -- Checks if we are on a taxi
 function DataToColor:IsPlayerFlying()
-    local taxiStatus = UnitOnTaxi("player")
+    local taxiStatus = UnitOnTaxi(unitPlayer)
     if taxiStatus then
         return 1
     end
@@ -1466,11 +1473,11 @@ function DataToColor:needManaGem()
 end
 
 function DataToColor:IsTargetOfTargetPlayerAsNumber()
-    if not(UnitName("targettarget")) then return 2 end; -- target has no target
-    if CHARACTER_NAME == UnitName("target") then return 0 end; -- targeting self
-    if UnitName("pet") == UnitName("targettarget") then return 4 end; -- targetting my pet
-    if CHARACTER_NAME == UnitName("targettarget") then return 1 end; -- targetting me
-    if UnitName("pet") == UnitName("target") and UnitName("targettarget") ~= nil then return 5 end;
+    if not(UnitName(unitTargetTarget)) then return 2 end; -- target has no target
+    if CHARACTER_NAME == UnitName(unitTarget) then return 0 end; -- targeting self
+    if UnitName(unitPet) == UnitName(unitTargetTarget) then return 4 end; -- targetting my pet
+    if CHARACTER_NAME == UnitName(unitTargetTarget) then return 1 end; -- targetting me
+    if UnitName(unitPet) == UnitName(unitTarget) and UnitName(unitTargetTarget) ~= nil then return 5 end;
     return 3;
 end
 
@@ -1481,7 +1488,7 @@ function DataToColor:IsTargetOfTargetPlayer()
 end
 
 function DataToColor:IsTagged()
-    if UnitIsTapDenied("target") then return 1 else return 0 end;
+    if UnitIsTapDenied(unitTarget) then return 1 else return 0 end;
 end
 
 function DataToColor:IsAutoRepeatActionOn(actionSlot)
@@ -1513,7 +1520,7 @@ function DataToColor:IsCurrentActionOn(actionSlot)
 end
 
 function DataToColor:IsPetVisible()
-    if UnitIsVisible("pet") and not UnitIsDead("pet")  then
+    if UnitIsVisible(unitPet) and not UnitIsDead(unitPet)  then
         return 1
     else return 0
     end
@@ -1532,7 +1539,7 @@ end
 
 -- Returns 0 if target is unskinnable or if we have no target.
 function DataToColor:isUnskinnable()
-    local creatureType = UnitCreatureType("target")
+    local creatureType = UnitCreatureType(unitTarget)
     -- Demons COULD be included in this list, but there are some skinnable demon dogs.
     if creatureType == "Humanoid" or creatureType == "Elemental" or creatureType == "Mechanical" or creatureType == "Totem" then
         return 1
@@ -1629,7 +1636,7 @@ end
 
 -- Automatically learns predefined talents
 function DataToColor:LearnTalents()
-    if UnitCharacterPoints("player") > 0 then
+    if UnitCharacterPoints(unitPlayer) > 0 then
         -- Grabs global list of talents we want to learn
         for i = 0, table.getn(talentList), 1 do
             -- Iterates through each talent tab (e.g. "Arcane, Fire, Frost")
@@ -1706,7 +1713,7 @@ function DataToColor:CheckTrainer()
             -- LPCONFIG.AUTO_TRAIN_SPELLS = false
             local allAvailableOptions = GetNumTrainerServices()
             local money = GetMoney()
-            local level = UnitLevel("player")
+            local level = UnitLevel(unitPlayer)
             
             -- Loops through every spell on the list and checks if we
             -- 1) Have the level to train that spell
@@ -1749,14 +1756,14 @@ end
 --runs the RetrieveCorpse() function to ressurrect
 function DataToColor:ResurrectPlayer()
     if Modulo(iterator, 150) == 1 then
-        if UnitIsDeadOrGhost("player") then
+        if UnitIsDeadOrGhost(unitPlayer) then
             
             -- Accept Release Spirit immediately after dying
-            if not UnitIsGhost("player") and UnitIsGhost("player") ~= nil then
+            if not UnitIsGhost(unitPlayer) and UnitIsGhost(unitPlayer) ~= nil then
                 RepopMe()
             end
-            if UnitIsGhost("player") then
-                local map = C_Map.GetBestMapForUnit("player")
+            if UnitIsGhost(unitPlayer) then
+                local map = C_Map.GetBestMapForUnit(unitPlayer)
                 if C_DeathInfo.GetCorpseMapPosition(map) ~= nil then
                     local cX, cY = C_DeathInfo.GetCorpseMapPosition(map):GetXY()
                     local x, y = self:GetCurrentPlayerPosition()
