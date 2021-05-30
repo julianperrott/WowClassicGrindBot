@@ -185,11 +185,12 @@ namespace Core
             PopulateLinesOfNpcNames();
             DetermineNpcs();
 
-            Npcs = npcs.OrderByDescending(npc => npc.Count)
-                .Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)),
+            Npcs = npcs.
+                Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)),
                     new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), bitmapProvider.DirectBitmap.Width, ScaleHeight(20), ScaleHeight(5)))
                 .Where(s => s.Width < ScaleWidth(250)) // 150 - fine // 200 - fine // 250 fine
                 .Distinct(new OverlappingNames())
+                .OrderBy(npc => RectangleExt.SqrDistance(Area.BottomCentre(), npc.ClickPoint))
                 .ToList();
 
             Sequence++;
