@@ -797,8 +797,8 @@ function DataToColor:getAuraMaskForClass(func, unitId, table)
             if b == nil then
                 break
             end
-            if string.find(b, k) then
-                num = num + self:MakeIndexBase2(true, k)
+            if string.find(b, v) then
+                num = num + self:MakeIndexBase2(1, k)
                 break
             end
         end
@@ -870,10 +870,10 @@ function DataToColor:sell(items)
 end
 
 -- Returns bitmask values.
--- MakeIndexBase2(true, 4) --> returns 16
--- MakeIndexBase2(false, 9) --> returns 0
-function DataToColor:MakeIndexBase2(bool, power)
-    if bool ~= nil and bool > 0 then
+-- MakeIndexBase2(1, 4) --> returns 16
+-- MakeIndexBase2(0, 9) --> returns 0
+function DataToColor:MakeIndexBase2(number, power)
+    if number ~= nil and number > 0 then
         return math.pow(2, power)
     end
     return 0
