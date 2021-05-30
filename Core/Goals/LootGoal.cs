@@ -23,7 +23,7 @@ namespace Core.Goals
         private readonly CombatUtil combatUtil;
 
         private bool debug = true;
-        private long LastLoot;
+        private long lastLoot;
 
         public LootGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder, CombatUtil combatUtil)
         {
@@ -36,8 +36,6 @@ namespace Core.Goals
             this.classConfiguration = classConfiguration;
             this.npcNameFinder = npcNameFinder;
             this.combatUtil = combatUtil;
-
-            LastLoot = playerReader.LastLootTime;
         }
 
         public virtual void AddPreconditions()
@@ -53,6 +51,7 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
+            lastLoot = playerReader.LastLootTime;
             combatUtil.Update();
 
             Log("Search for corpse");
@@ -129,7 +128,7 @@ namespace Core.Goals
 
         private async Task GoalExit()
         {
-            if(!await Wait(500, () => LastLoot != playerReader.LastLootTime))
+            if(!await Wait(500, () => lastLoot != playerReader.LastLootTime))
             {
                 Log($"Loot Successfull");
             }
@@ -138,7 +137,7 @@ namespace Core.Goals
                 Log($"Loot Failed");
             }
 
-            LastLoot = playerReader.LastLootTime;
+            lastLoot = playerReader.LastLootTime;
 
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
 
