@@ -105,10 +105,142 @@ local unitTargetTarget = "targettarget"
 -- Character's name
 local CHARACTER_NAME = UnitName(unitPlayer)
 local CHARACTER_GUID = UnitGUID(unitPlayer)
+local _, CHARACTER_CLASS = UnitClass(unitPlayer)
 local uiErrorMessage=0;
 local lastCombatDamageDealerCreature=0;
 local lastCombatCreature=0;
 local lastCombatCreatureDied=0;
+
+local buffList
+function DataToColor:createBuffList()
+    local t = {}
+    t[0] = "Food"
+    t[1] = "Drink"
+    t[2] = "Well Fed"
+    t[3] = "Mana Regeneration"
+
+    if CHARACTER_CLASS == "PRIEST" then
+        t[10] = "Fortitude"
+        t[11] = "Inner Fire"
+        t[12] = "Renew"
+        t[13] = "Shield"
+        t[14] = "Spirit"
+    elseif CHARACTER_CLASS == "DRUID" then
+        t[10] = "Mark of the Wild"
+        t[11] = "Thorns"
+        t[12] = "Fury"
+    elseif CHARACTER_CLASS == "PALADIN" then
+        t[10] = "Aura"
+        t[11] = "Blessing"
+        t[12] = "Seal"
+    elseif CHARACTER_CLASS == "MAGE" then
+        t[10] = "Armor"
+        t[11] = "Arcane Intellect"
+        t[12] = "Ice Barrier"
+        t[13] = "Ward"
+        t[14] = "Fire Power"
+    elseif CHARACTER_CLASS == "ROGUE" then
+        t[10] = "Slice and Dice"
+    elseif CHARACTER_CLASS == "WARRIOR" then
+        t[10] = "Battle Shout"
+    elseif CHARACTER_CLASS == "WARLOCK" then
+        t[10] = "Demon"
+        t[11] = "Soul Link"
+        t[12] = "Soulstone Resurrection"
+        t[13] = "Shadow Trance"
+    elseif CHARACTER_CLASS == "SHAMAN" then
+        t[10] = "Lightning Shield"
+    elseif CHARACTER_CLASS == "HUNTER" then
+        t[10] = "Aspect of"
+        t[11] = "Rapid Fire"
+        t[12] = "Quick Shots"
+    end
+    return t
+end
+
+local debuffList
+function DataToColor:createDebuffTargetList()
+    local t = {}
+    if CHARACTER_CLASS == "PRIEST" then 
+        t[0] = "Pain"
+    elseif CHARACTER_CLASS == "DRUID" then
+        t[0] = "Roar"
+        t[1] = "Faerie Fire"
+        t[2] = "Rip"
+    elseif CHARACTER_CLASS == "PALADIN" then
+    elseif CHARACTER_CLASS == "MAGE" then
+        t[0] = "Frostbite"
+    elseif CHARACTER_CLASS == "ROGUE" then
+    elseif CHARACTER_CLASS == "WARRIOR" then
+        t[0] = "Rend"
+    elseif CHARACTER_CLASS == "WARLOCK" then
+        t[0] = "Curse of"
+        t[1] = "Corruption"
+        t[2] = "Immolate"
+        t[2] = "Siphon Life"
+    elseif CHARACTER_CLASS == "HUNTER" then
+        t[0] = "Serpect Sting"
+    end
+    return t
+end
+
+local spellInRangeList
+function DataToColor:createSpellInrangeList()
+    if CHARACTER_CLASS == "ROGUE" then
+        spellInRangeList = {
+            "Sinister Strike", --1
+            "Throw", --2
+            "Shoot Gun" --4
+        };
+    elseif CHARACTER_CLASS == "DRUID" then
+        spellInRangeList = {
+            "Wrath", --1
+            "Bash", --2
+            "Rip" --3
+        };
+    elseif CHARACTER_CLASS == "WARRIOR" then
+        spellInRangeList = {
+            "Charge", --1
+            "Rend", --2
+            "Shoot Gun", --4
+        };        
+    elseif CHARACTER_CLASS == "PRIEST" then
+        spellInRangeList = {
+            "Shadow Word: Pain", --1
+            "Mind Blast", --2
+            "Mind Flay", --4
+            "Shoot", --8
+        };
+    elseif CHARACTER_CLASS == "PALADIN" then
+        spellInRangeList = {
+            "Judgement" --1
+        };
+    elseif CHARACTER_CLASS == "MAGE" then
+        spellInRangeList = {
+            "Fireball", --1
+            "Shoot",
+            "Pyroblast",
+            "Frostbolt",
+            "Fire Blast"
+        };        
+    elseif CHARACTER_CLASS == "HUNTER" then
+        spellInRangeList = {
+            "Raptor Strike", --1
+            "Auto Shot", --2
+            "Serpent Sting" --3
+        };        
+    elseif CHARACTER_CLASS == "WARLOCK" then
+        spellInRangeList = {
+            "Shadow Bolt",
+            "Shoot"
+        };
+    elseif CHARACTER_CLASS == "SHAMAN" then
+        spellInRangeList = {
+            "Lightning Bolt",
+            "Earth Shock"
+        }
+    end
+end
 
 -- List of possible subzones to which a player's hearthstone may be bound
 local HearthZoneList = {"CENARION HOLD", "VALLEY OF TRIALS", "THE CROSSROADS", "RAZOR HILL", "DUROTAR", "ORGRIMMAR", "CAMP TAURAJO", "FREEWIND POST", "GADGETZAN", "SHADOWPREY VILLAGE", "THUNDER BLUFF", "UNDERCITY", "CAMP MOJACHE", "COLDRIDGE VALLEY", "DUN MOROGH", "THUNDERBREW DISTILLERY", "IRONFORGE", "STOUTLAGER INN", "STORMWIND CITY", "SOUTHSHORE", "LAKESHIRE", "STONETALON PEAK", "GOLDSHIRE", "SENTINEL HILL", "DEEPWATER TAVERN", "THERAMORE ISLE", "DOLANAAR", "ASTRANAAR", "NIJEL'S POINT", "CRAFTSMEN'S TERRACE", "AUBERDINE", "FEATHERMOON STRONGHOLD", "BOOTY BAY", "WILDHAMMER KEEP", "DARKSHIRE", "EVERLOOK", "RATCHET", "LIGHT'S HOPE CHAPEL"}
@@ -311,6 +443,10 @@ function DataToColor:OnInitialize()
     timerTick()
     self:log("We're in")
 
+    buffList = self:createBuffList()
+    debuffList = self:createDebuffTargetList()
+    self:createSpellInrangeList();
+
     LoggingChat(1);
 end
 
@@ -498,7 +634,7 @@ function DataToColor:CreateFrames(n)
             --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
             -- tracks our fishing level
             --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Fishing")), 42) -- Fishing profession level
-            MakePixelSquareArr(integerToColor(self:getBuffsForClass()), 41);
+            MakePixelSquareArr(integerToColor(self:getAuraMaskForClass(UnitBuff, unitPlayer, buffList)), 41);
             -- 42 used by keys
             
             MakePixelSquareArr(integerToColor(self:getTargetLevel()), 43)
@@ -518,7 +654,7 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArr(integerToColor(DataToColor:CastingInfoSpellId()), 53) -- Spell being cast
             MakePixelSquareArr(integerToColor(DataToColor:ComboPoints()), 54) -- Combo points for rogue / druid
-            MakePixelSquareArr(integerToColor(DataToColor:getDebuffsForTarget()), 55) -- target debuffs
+            MakePixelSquareArr(integerToColor(self:getAuraMaskForClass(UnitDebuff, unitTarget, debuffList)), 55); -- target debuffs
 
             MakePixelSquareArr(integerToColor(DataToColor:targetNpcId()), 56) -- target id
             MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitTarget)),57) -- target reasonably uniqueId
@@ -653,53 +789,21 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:IsTagged(), 22);
 end
 
-
-
-function DataToColor:getBuffsForClass()
-    local class, CC = UnitClass(unitPlayer);
-
-    class=self:MakeIndexBase2(self:GetBuffs("Food"), 0) +
-    self:MakeIndexBase2(self:GetBuffs("Drink"), 1) +
-    self:MakeIndexBase2(self:GetBuffs("Well Fed"), 2) +
-    self:MakeIndexBase2(self:GetBuffs("Mana Regeneration"), 3);
-
-    if CC == "PRIEST" then 
-        class=class+self:MakeIndexBase2(self:GetBuffs("Fortitude"),10) +
-	    self:MakeIndexBase2(self:GetBuffs("Inner Fire"), 11)+
-	    self:MakeIndexBase2(self:GetBuffs("Renew"), 12)+
-        self:MakeIndexBase2(self:GetBuffs("Shield"), 13)+
-        self:MakeIndexBase2(self:GetBuffs("Spirit"), 14);
-    elseif CC == "DRUID" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Mark of the Wild"), 10) +
-        self:MakeIndexBase2(self:GetBuffs("Thorns"), 11)+
-        self:MakeIndexBase2(self:GetBuffs("Fury"), 12);
-    elseif CC == "PALADIN" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Aura"), 10) +
-        self:MakeIndexBase2(self:GetBuffs("Blessing"), 11)+       
-        self:MakeIndexBase2(self:GetBuffs("Seal"), 12); 
-    elseif CC == "MAGE" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Armor"), 10)+
-        self:MakeIndexBase2(self:GetBuffs("Arcane Intellect"), 11)+       
-        self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 12)+
-        self:MakeIndexBase2(self:GetBuffs("Ward"), 13)+
-        self:MakeIndexBase2(self:GetBuffs("Fire Power"), 14);
-    elseif CC == "ROGUE" then        
-        class=class+self:MakeIndexBase2(self:GetBuffs("Slice and Dice"), 10);
-    elseif CC == "WARRIOR" then        
-        class=class+self:MakeIndexBase2(self:GetBuffs("Battle Shout"), 10);        
-    elseif CC == "WARLOCK" then        
-        class=class+self:MakeIndexBase2(self:GetBuffs("Demon"), 10) + -- Demon Skin or Demon Armor
-        self:MakeIndexBase2(self:GetBuffs("Soul Link"), 11) +
-        self:MakeIndexBase2(self:GetBuffs("Soulstone Resurrection"), 12) +
-        self:MakeIndexBase2(self:GetBuffs("Shadow Trance"), 13);
-    elseif CC == "SHAMAN" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Lightning Shield"), 10);
-    elseif CC == "HUNTER" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Aspect of"), 10)+
-        self:MakeIndexBase2(self:GetBuffs("Rapid Fire"), 11)+
-        self:MakeIndexBase2(self:GetBuffs("Quick Shots"), 12);
+function DataToColor:getAuraMaskForClass(func, unitId, table)
+    local num = 0
+    for k, v in pairs(table) do
+        for i = 1, 10 do
+            local b = func(unitId, i)
+            if b == nil then
+                break
+            end
+            if string.find(b, k) then
+                num = num + self:MakeIndexBase2(true, k)
+                break
+            end
+        end
     end
-    return class;
+    return num
 end
 
 function DataToColor:delete(items)
@@ -765,46 +869,14 @@ function DataToColor:sell(items)
     end
 end
 
-
-function DataToColor:getDebuffsForTarget()
-
-    local class, CC = UnitClass(unitPlayer);
-    class=0;
-
-    if CC == "PRIEST" then 
-        class=class+self:MakeIndexBase2(self:GetDebuffs("Pain"), 0);
-    elseif CC == "DRUID" then
-        class=class+self:MakeIndexBase2(self:GetDebuffs("Roar"), 0) +
-        self:MakeIndexBase2(self:GetDebuffs("Faerie Fire"), 1) +
-        self:MakeIndexBase2(self:GetDebuffs("Rip"), 2);
-    elseif CC == "PALADIN" then
-        class=0;
-    elseif CC == "MAGE" then
-        class=class+self:MakeIndexBase2(self:GetDebuffs("Frostbite"), 0);
-    elseif CC == "ROGUE" then        
-        class=0;
-    elseif CC == "WARRIOR" then        
-        class=class+self:MakeIndexBase2(self:GetDebuffs("Rend"), 0);
-    elseif CC == "WARLOCK" then        
-        class=self:MakeIndexBase2(self:GetDebuffs("Curse of"), 0) + -- Curse of Agony or Curse of Recklessness or Curse of Weakness or Curse of Elements or Curse of Shadow 
-        self:MakeIndexBase2(self:GetDebuffs("Corruption"), 1) +
-        self:MakeIndexBase2(self:GetDebuffs("Immolate"), 2) +
-        self:MakeIndexBase2(self:GetDebuffs("Siphon Life"), 3);
-    elseif CC == "HUNTER" then
-        class=self:MakeIndexBase2(self:GetDebuffs("Serpect Sting"), 0);
-    end
-
-    return class;
-end
-
 -- Returns bitmask values.
 -- MakeIndexBase2(true, 4) --> returns 16
 -- MakeIndexBase2(false, 9) --> returns 0
 function DataToColor:MakeIndexBase2(bool, power)
     if bool ~= nil and bool > 0 then
         return math.pow(2, power)
-    else return 0
     end
+    return 0
 end
 
 -- Grabs current target's name (friend or foe)
@@ -1069,69 +1141,9 @@ end
 -- -- Slot ID information can be found on WoW Wiki. Slots we are using: 1-12 (main action bar), Bottom Right Action Bar maybe(49-60), and  Bottom Left (61-72)
 
 function DataToColor:areSpellsInRange()
-
-    local spellList, CC = UnitClass(unitPlayer);
-    if CC == "ROGUE" then
-         spellList = {
-            "Sinister Strike", --1
-            "Throw", --2
-            "Shoot Gun" --4
-        };
-    elseif CC == "DRUID" then
-        spellList = {
-            "Wrath", --1
-            "Bash", --2
-            "Rip" --3
-        };
-    elseif CC == "WARRIOR" then
-        spellList = {
-            "Charge", --1
-            "Rend", --2
-            "Shoot Gun", --4
-        };        
-    elseif CC == "PRIEST" then
-        spellList = {
-            "Shadow Word: Pain", --1
-            "Mind Blast", --2
-            "Mind Flay", --4
-            "Shoot", --8
-        };
-    elseif CC == "PALADIN" then
-        spellList = {
-            "Judgement" --1
-        };
-    elseif CC == "MAGE" then
-        spellList = {
-            "Fireball", --1
-            "Shoot",
-            "Pyroblast",
-            "Frostbolt",
-            "Fire Blast"
-        };        
-    elseif CC == "HUNTER" then
-        spellList = {
-            "Raptor Strike", --1
-            "Auto Shot", --2
-            "Serpent Sting" --3
-        };        
-    elseif CC == "WARLOCK" then
-        spellList = {
-            "Shadow Bolt",
-            "Shoot"
-        };
-    elseif CC == "SHAMAN" then
-        spellList = {
-            "Lightning Bolt",
-            "Earth Shock"
-        }
-    else
-        spellList = {};
-    end
-
-
     local inRange = 0
-    for i = 1, table.getn(spellList ), 1 do
-        local isInRange = IsSpellInRange(spellList[i], unitTarget);
+    for i = 1, table.getn(spellInRangeList), 1 do
+        local isInRange = IsSpellInRange(spellInRangeList[i], unitTarget);
         if isInRange==1 then
             inRange = inRange + (2 ^ (i - 1))
         end
@@ -1142,9 +1154,10 @@ end
 function DataToColor:isActionUseable(min,max)
     local isUsableBits = 0
     -- Loops through main action bar slots 1-12
+    local start, isUsable, notEnough
     for i = min, max do
-        local start = GetActionCooldown(i)
-        local isUsable, notEnough = IsUsableAction(i)
+        start = GetActionCooldown(i)
+        isUsable, notEnough = IsUsableAction(i)
         if start == 0 and isUsable == true and notEnough == false then
             isUsableBits = isUsableBits + (2 ^ (i - min))
         end
@@ -1167,18 +1180,6 @@ function DataToColor:GetProfessionLevel(skill)
         end
     end
     return 0;
-end
-
--- Checks target to see if  target has a specified debuff
-function DataToColor:GetDebuffs(debuff)
-    for i = 1, 5 do local db = UnitDebuff(unitTarget, i);
-        if db ~= nil then
-            if string.find(db, debuff) then
-                return 1
-            end
-        end
-    end
-    return 0
 end
 
 -- Returns zone name
@@ -1378,19 +1379,6 @@ end
 function DataToColor:playerCombatStatus()
     if UnitAffectingCombat(unitPlayer) then
         return 1 
-    end
-    return 0
-end
-
--- Iterates through index of buffs to see if we have the buff is passed in
-function DataToColor:GetBuffs(buff)
-    for i = 1, 10 do
-        local b = UnitBuff(unitPlayer, i);
-        if b ~= nil then
-            if string.find(b, buff) then
-                return 1
-            end
-        end
     end
     return 0
 end
