@@ -95,13 +95,152 @@ DataToColor.r = 0
 -- Note: Player direction is in radians (360 degrees = 2π radians)
 -- Note: Player health/mana is taken out of 100% (0 - 1)
 
+local unitPlayer = "player"
+local unitTarget = "target"
+local unitPet = "pet"
+local unitPetTarget = "pettarget"
+local unitTargetTarget = "targettarget"
+
+
 -- Character's name
-local CHARACTER_NAME = UnitName("player")
-local CHARACTER_GUID = UnitGUID("player")
+local CHARACTER_NAME = UnitName(unitPlayer)
+local CHARACTER_GUID = UnitGUID(unitPlayer)
+local _, CHARACTER_CLASS = UnitClass(unitPlayer)
 local uiErrorMessage=0;
 local lastCombatDamageDealerCreature=0;
 local lastCombatCreature=0;
 local lastCombatCreatureDied=0;
+
+local buffList
+function DataToColor:createBuffList()
+    local t = {}
+    t[0] = "Food"
+    t[1] = "Drink"
+    t[2] = "Well Fed"
+    t[3] = "Mana Regeneration"
+
+    if CHARACTER_CLASS == "PRIEST" then
+        t[10] = "Fortitude"
+        t[11] = "Inner Fire"
+        t[12] = "Renew"
+        t[13] = "Shield"
+        t[14] = "Spirit"
+    elseif CHARACTER_CLASS == "DRUID" then
+        t[10] = "Mark of the Wild"
+        t[11] = "Thorns"
+        t[12] = "Fury"
+    elseif CHARACTER_CLASS == "PALADIN" then
+        t[10] = "Aura"
+        t[11] = "Blessing"
+        t[12] = "Seal"
+    elseif CHARACTER_CLASS == "MAGE" then
+        t[10] = "Armor"
+        t[11] = "Arcane Intellect"
+        t[12] = "Ice Barrier"
+        t[13] = "Ward"
+        t[14] = "Fire Power"
+    elseif CHARACTER_CLASS == "ROGUE" then
+        t[10] = "Slice and Dice"
+    elseif CHARACTER_CLASS == "WARRIOR" then
+        t[10] = "Battle Shout"
+    elseif CHARACTER_CLASS == "WARLOCK" then
+        t[10] = "Demon"
+        t[11] = "Soul Link"
+        t[12] = "Soulstone Resurrection"
+        t[13] = "Shadow Trance"
+    elseif CHARACTER_CLASS == "SHAMAN" then
+        t[10] = "Lightning Shield"
+    elseif CHARACTER_CLASS == "HUNTER" then
+        t[10] = "Aspect of"
+        t[11] = "Rapid Fire"
+        t[12] = "Quick Shots"
+    end
+    return t
+end
+
+local debuffList
+function DataToColor:createDebuffTargetList()
+    local t = {}
+    if CHARACTER_CLASS == "PRIEST" then 
+        t[0] = "Pain"
+    elseif CHARACTER_CLASS == "DRUID" then
+        t[0] = "Roar"
+        t[1] = "Faerie Fire"
+        t[2] = "Rip"
+    elseif CHARACTER_CLASS == "PALADIN" then
+    elseif CHARACTER_CLASS == "MAGE" then
+        t[0] = "Frostbite"
+    elseif CHARACTER_CLASS == "ROGUE" then
+    elseif CHARACTER_CLASS == "WARRIOR" then
+        t[0] = "Rend"
+    elseif CHARACTER_CLASS == "WARLOCK" then
+        t[0] = "Curse of"
+        t[1] = "Corruption"
+        t[2] = "Immolate"
+        t[2] = "Siphon Life"
+    elseif CHARACTER_CLASS == "HUNTER" then
+        t[0] = "Serpect Sting"
+    end
+    return t
+end
+
+local spellInRangeList
+function DataToColor:createSpellInrangeList()
+    if CHARACTER_CLASS == "ROGUE" then
+        spellInRangeList = {
+            "Sinister Strike", --1
+            "Throw", --2
+            "Shoot Gun" --4
+        };
+    elseif CHARACTER_CLASS == "DRUID" then
+        spellInRangeList = {
+            "Wrath", --1
+            "Bash", --2
+            "Rip" --3
+        };
+    elseif CHARACTER_CLASS == "WARRIOR" then
+        spellInRangeList = {
+            "Charge", --1
+            "Rend", --2
+            "Shoot Gun", --4
+        };        
+    elseif CHARACTER_CLASS == "PRIEST" then
+        spellInRangeList = {
+            "Shadow Word: Pain", --1
+            "Mind Blast", --2
+            "Mind Flay", --4
+            "Shoot", --8
+        };
+    elseif CHARACTER_CLASS == "PALADIN" then
+        spellInRangeList = {
+            "Judgement" --1
+        };
+    elseif CHARACTER_CLASS == "MAGE" then
+        spellInRangeList = {
+            "Fireball", --1
+            "Shoot",
+            "Pyroblast",
+            "Frostbolt",
+            "Fire Blast"
+        };        
+    elseif CHARACTER_CLASS == "HUNTER" then
+        spellInRangeList = {
+            "Raptor Strike", --1
+            "Auto Shot", --2
+            "Serpent Sting" --3
+        };        
+    elseif CHARACTER_CLASS == "WARLOCK" then
+        spellInRangeList = {
+            "Shadow Bolt",
+            "Shoot"
+        };
+    elseif CHARACTER_CLASS == "SHAMAN" then
+        spellInRangeList = {
+            "Lightning Bolt",
+            "Earth Shock"
+        }
+    end
+end
 
 -- List of possible subzones to which a player's hearthstone may be bound
 local HearthZoneList = {"CENARION HOLD", "VALLEY OF TRIALS", "THE CROSSROADS", "RAZOR HILL", "DUROTAR", "ORGRIMMAR", "CAMP TAURAJO", "FREEWIND POST", "GADGETZAN", "SHADOWPREY VILLAGE", "THUNDER BLUFF", "UNDERCITY", "CAMP MOJACHE", "COLDRIDGE VALLEY", "DUN MOROGH", "THUNDERBREW DISTILLERY", "IRONFORGE", "STOUTLAGER INN", "STORMWIND CITY", "SOUTHSHORE", "LAKESHIRE", "STONETALON PEAK", "GOLDSHIRE", "SENTINEL HILL", "DEEPWATER TAVERN", "THERAMORE ISLE", "DOLANAAR", "ASTRANAAR", "NIJEL'S POINT", "CRAFTSMEN'S TERRACE", "AUBERDINE", "FEATHERMOON STRONGHOLD", "BOOTY BAY", "WILDHAMMER KEEP", "DARKSHIRE", "EVERLOOK", "RATCHET", "LIGHT'S HOPE CHAPEL"}
@@ -304,6 +443,10 @@ function DataToColor:OnInitialize()
     timerTick()
     self:log("We're in")
 
+    buffList = self:createBuffList()
+    debuffList = self:createDebuffTargetList()
+    self:createSpellInrangeList();
+
     LoggingChat(1);
 end
 
@@ -405,16 +548,16 @@ function DataToColor:CreateFrames(n)
             -- Boolean variables --
             MakePixelSquareArr(integerToColor(self:Base2Converter()), 8)
             -- Start combat/NPC related variables --
-            MakePixelSquareArr(integerToColor(self:getHealthMax("player")), 10) --8 Represents maximum amount of health
-            MakePixelSquareArr(integerToColor(self:getHealthCurrent("player")), 11) --9 Represents current amount of health
-            MakePixelSquareArr(integerToColor(self:getManaMax("player")), 12) --10 Represents maximum amount of mana
-            MakePixelSquareArr(integerToColor(self:getManaCurrent("player")), 13) --11 Represents current amount of mana
+            MakePixelSquareArr(integerToColor(self:getHealthMax(unitPlayer)), 10) --8 Represents maximum amount of health
+            MakePixelSquareArr(integerToColor(self:getHealthCurrent(unitPlayer)), 11) --9 Represents current amount of health
+            MakePixelSquareArr(integerToColor(self:getManaMax(unitPlayer)), 12) --10 Represents maximum amount of mana
+            MakePixelSquareArr(integerToColor(self:getManaCurrent(unitPlayer)), 13) --11 Represents current amount of mana
             MakePixelSquareArr(integerToColor(self:getPlayerLevel()), 14) --12 Represents character level
             MakePixelSquareArr(integerToColor(self:getRange()), 15) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
             MakePixelSquareArr(integerToColor(self:GetTargetName(0)), 16) -- Characters 1-3 of target's name
             MakePixelSquareArr(integerToColor(self:GetTargetName(3)), 17) -- Characters 4-6 of target's name
-            MakePixelSquareArr(integerToColor(self:getHealthMax("target")), 18) -- Return the maximum amount of health a target can have
-            MakePixelSquareArr(integerToColor(self:getHealthCurrent("target")), 19) -- Returns the current amount of health the target currently has
+            MakePixelSquareArr(integerToColor(self:getHealthMax(unitTarget)), 18) -- Return the maximum amount of health a target can have
+            MakePixelSquareArr(integerToColor(self:getHealthCurrent(unitTarget)), 19) -- Returns the current amount of health the target currently has
             -- Begin Items section --
             -- there are 5 item slots: main backpack and 4 pouches
             -- Indexes one slot from each bag each frame. SlotN (1-16) and bag (0-4) calculated here:
@@ -482,8 +625,8 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)), 37) -- BagType + Index + FreeSpace + BagSlots
 
 
-            MakePixelSquareArr(integerToColor(self:getHealthMax("pet")), 38)
-            MakePixelSquareArr(integerToColor(self:getHealthCurrent("pet")), 39)
+            MakePixelSquareArr(integerToColor(self:getHealthMax(unitPet)), 38)
+            MakePixelSquareArr(integerToColor(self:getHealthCurrent(unitPet)), 39)
             -- 40
 
             -- Profession levels:
@@ -491,7 +634,7 @@ function DataToColor:CreateFrames(n)
             --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
             -- tracks our fishing level
             --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Fishing")), 42) -- Fishing profession level
-            MakePixelSquareArr(integerToColor(self:getBuffsForClass()), 41);
+            MakePixelSquareArr(integerToColor(self:getAuraMaskForClass(UnitBuff, unitPlayer, buffList)), 41);
             -- 42 used by keys
             
             MakePixelSquareArr(integerToColor(self:getTargetLevel()), 43)
@@ -504,17 +647,17 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(self:shapeshiftForm()), 48) -- Shapeshift id https://wowwiki.fandom.com/wiki/API_GetShapeshiftForm
             MakePixelSquareArr(integerToColor(self:areSpellsInRange()), 49) -- Are spells in range
 
-            MakePixelSquareArr(integerToColor(self:getUnitXP("player")), 50) -- Player Xp
-            MakePixelSquareArr(integerToColor(self:getUnitXPMax("player")), 51) -- Player Level Xp
+            MakePixelSquareArr(integerToColor(self:getUnitXP(unitPlayer)), 50) -- Player Xp
+            MakePixelSquareArr(integerToColor(self:getUnitXPMax(unitPlayer)), 51) -- Player Level Xp
             MakePixelSquareArr(integerToColor(uiErrorMessage), 52) -- Last UI Error message
             uiErrorMessage=0;
 
             MakePixelSquareArr(integerToColor(DataToColor:CastingInfoSpellId()), 53) -- Spell being cast
             MakePixelSquareArr(integerToColor(DataToColor:ComboPoints()), 54) -- Combo points for rogue / druid
-            MakePixelSquareArr(integerToColor(DataToColor:getDebuffsForTarget()), 55) -- target debuffs
+            MakePixelSquareArr(integerToColor(self:getAuraMaskForClass(UnitDebuff, unitTarget, debuffList)), 55); -- target debuffs
 
             MakePixelSquareArr(integerToColor(DataToColor:targetNpcId()), 56) -- target id
-            MakePixelSquareArr(integerToColor(DataToColor:getGuid("target")),57) -- target reasonably uniqueId
+            MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitTarget)),57) -- target reasonably uniqueId
             MakePixelSquareArr(integerToColor(DataToColor:GetBestMap()),58) -- MapId
 
             MakePixelSquareArr(integerToColor(DataToColor:IsTargetOfTargetPlayerAsNumber()),59) -- IsTargetOfTargetPlayerAsNumber
@@ -523,8 +666,8 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(lastCombatDamageDealerCreature),66) -- Combat message last damage dealer creature
             MakePixelSquareArr(integerToColor(lastCombatCreatureDied),67) -- Last Killed Unit
 
-            MakePixelSquareArr(integerToColor(DataToColor:getGuid("pet")),68) -- pet guid
-            MakePixelSquareArr(integerToColor(DataToColor:getGuid("pettarget")),69) -- pet target
+            MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitPet)),68) -- pet guid
+            MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitPetTarget)),69) -- pet target
 
             -- Timers
             MakePixelSquareArr(integerToColor(globalTime), 70)
@@ -607,9 +750,9 @@ end
 
 -- Use Astrolabe function to get current player position
 function DataToColor:GetCurrentPlayerPosition()
-    local map = C_Map.GetBestMapForUnit("player")
+    local map = C_Map.GetBestMapForUnit(unitPlayer)
     if map ~= nil then
-        local position = C_Map.GetPlayerMapPosition(map, "player")
+        local position = C_Map.GetPlayerMapPosition(map, unitPlayer)
         -- Resets map to correct zone ... removed in 8.0.1, needs to be tested to see if zone auto update
         -- SetMapToCurrentZone()
         return position:GetXY()
@@ -646,53 +789,21 @@ function DataToColor:Base2Converter()
     self:MakeIndexBase2(self:IsTagged(), 22);
 end
 
-
-
-function DataToColor:getBuffsForClass()
-    local class, CC = UnitClass("player");
-
-    class=self:MakeIndexBase2(self:GetBuffs("Food"), 0) +
-    self:MakeIndexBase2(self:GetBuffs("Drink"), 1) +
-    self:MakeIndexBase2(self:GetBuffs("Well Fed"), 2) +
-    self:MakeIndexBase2(self:GetBuffs("Mana Regeneration"), 3);
-
-    if CC == "PRIEST" then 
-        class=class+self:MakeIndexBase2(self:GetBuffs("Fortitude"),10) +
-	    self:MakeIndexBase2(self:GetBuffs("Inner Fire"), 11)+
-	    self:MakeIndexBase2(self:GetBuffs("Renew"), 12)+
-        self:MakeIndexBase2(self:GetBuffs("Shield"), 13)+
-        self:MakeIndexBase2(self:GetBuffs("Spirit"), 14);
-    elseif CC == "DRUID" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Mark of the Wild"), 10) +
-        self:MakeIndexBase2(self:GetBuffs("Thorns"), 11)+
-        self:MakeIndexBase2(self:GetBuffs("Fury"), 12);
-    elseif CC == "PALADIN" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Aura"), 10) +
-        self:MakeIndexBase2(self:GetBuffs("Blessing"), 11)+       
-        self:MakeIndexBase2(self:GetBuffs("Seal"), 12); 
-    elseif CC == "MAGE" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Armor"), 10)+
-        self:MakeIndexBase2(self:GetBuffs("Arcane Intellect"), 11)+       
-        self:MakeIndexBase2(self:GetBuffs("Ice Barrier"), 12)+
-        self:MakeIndexBase2(self:GetBuffs("Ward"), 13)+
-        self:MakeIndexBase2(self:GetBuffs("Fire Power"), 14);
-    elseif CC == "ROGUE" then        
-        class=class+self:MakeIndexBase2(self:GetBuffs("Slice and Dice"), 10);
-    elseif CC == "WARRIOR" then        
-        class=class+self:MakeIndexBase2(self:GetBuffs("Battle Shout"), 10);        
-    elseif CC == "WARLOCK" then        
-        class=class+self:MakeIndexBase2(self:GetBuffs("Demon"), 10) + -- Demon Skin or Demon Armor
-        self:MakeIndexBase2(self:GetBuffs("Soul Link"), 11) +
-        self:MakeIndexBase2(self:GetBuffs("Soulstone Resurrection"), 12) +
-        self:MakeIndexBase2(self:GetBuffs("Shadow Trance"), 13);
-    elseif CC == "SHAMAN" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Lightning Shield"), 10);
-    elseif CC == "HUNTER" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Aspect of"), 10)+
-        self:MakeIndexBase2(self:GetBuffs("Rapid Fire"), 11)+
-        self:MakeIndexBase2(self:GetBuffs("Quick Shots"), 12);
+function DataToColor:getAuraMaskForClass(func, unitId, table)
+    local num = 0
+    for k, v in pairs(table) do
+        for i = 1, 10 do
+            local b = func(unitId, i)
+            if b == nil then
+                break
+            end
+            if string.find(b, v) then
+                num = num + self:MakeIndexBase2(1, k)
+                break
+            end
+        end
     end
-    return class;
+    return num
 end
 
 function DataToColor:delete(items)
@@ -713,7 +824,7 @@ end
 
 function DataToColor:sell(items)
 
-    local target = GetUnitName("target")
+    local target = GetUnitName(unitTarget)
     if target ~= nil then
         local item= GetMerchantItemLink(1);
 
@@ -758,52 +869,20 @@ function DataToColor:sell(items)
     end
 end
 
-
-function DataToColor:getDebuffsForTarget()
-
-    local class, CC = UnitClass("player");
-    class=0;
-
-    if CC == "PRIEST" then 
-        class=class+self:MakeIndexBase2(self:GetDebuffs("Pain"), 0);
-    elseif CC == "DRUID" then
-        class=class+self:MakeIndexBase2(self:GetDebuffs("Roar"), 0) +
-        self:MakeIndexBase2(self:GetDebuffs("Faerie Fire"), 1) +
-        self:MakeIndexBase2(self:GetDebuffs("Rip"), 2);
-    elseif CC == "PALADIN" then
-        class=0;
-    elseif CC == "MAGE" then
-        class=class+self:MakeIndexBase2(self:GetDebuffs("Frostbite"), 0);
-    elseif CC == "ROGUE" then        
-        class=0;
-    elseif CC == "WARRIOR" then        
-        class=class+self:MakeIndexBase2(self:GetDebuffs("Rend"), 0);
-    elseif CC == "WARLOCK" then        
-        class=self:MakeIndexBase2(self:GetDebuffs("Curse of"), 0) + -- Curse of Agony or Curse of Recklessness or Curse of Weakness or Curse of Elements or Curse of Shadow 
-        self:MakeIndexBase2(self:GetDebuffs("Corruption"), 1) +
-        self:MakeIndexBase2(self:GetDebuffs("Immolate"), 2) +
-        self:MakeIndexBase2(self:GetDebuffs("Siphon Life"), 3);
-    elseif CC == "HUNTER" then
-        class=self:MakeIndexBase2(self:GetDebuffs("Serpect Sting"), 0);
-    end
-
-    return class;
-end
-
 -- Returns bitmask values.
--- MakeIndexBase2(true, 4) --> returns 16
--- MakeIndexBase2(false, 9) --> returns 0
-function DataToColor:MakeIndexBase2(bool, power)
-    if bool ~= nil and bool > 0 then
+-- MakeIndexBase2(1, 4) --> returns 16
+-- MakeIndexBase2(0, 9) --> returns 0
+function DataToColor:MakeIndexBase2(number, power)
+    if number ~= nil and number > 0 then
         return math.pow(2, power)
-    else return 0
     end
+    return 0
 end
 
 -- Grabs current target's name (friend or foe)
 function DataToColor:GetTargetName(partition)
     -- Uses wow function to get target string
-    local target = GetUnitName("target")
+    local target = GetUnitName(unitTarget)
     if target ~= nil then
         target = DataToColor:StringToASCIIHex(target)
         if partition < 3 then
@@ -836,45 +915,39 @@ function DataToColor:CastingInfoSpellId()
 end
 
 function DataToColor:getUnitXP(unit)
-    local value = UnitXP(unit);
-    return value
+    return UnitXP(unit)
 end
 
 function DataToColor:getUnitXPMax(unit)
-    local value = UnitXPMax(unit);
-    return value
+    return UnitXPMax(unit)
 end
 
 -- Finds maximum amount of health player can have
 function DataToColor:getHealthMax(unit)
-    local health = UnitHealthMax(unit)
-    return health
+    return UnitHealthMax(unit)
 end
 -- Finds axact amount of health player current has
 function DataToColor:getHealthCurrent(unit)
-    local health = UnitHealth(unit)
-    return health
+    return UnitHealth(unit)
 end
 
 -- Finds maximum amount of mana a character can store
 function DataToColor:getManaMax(unit)
-    local manaMax = UnitPowerMax(unit)
-    return manaMax
+    return UnitPowerMax(unit)
 end
 
 -- Finds exact amount of mana player is storing
 function DataToColor:getManaCurrent(unit)
-    local mana = UnitPower(unit)
-    return mana
+    return UnitPower(unit)
 end
 
 -- Finds player current level
 function DataToColor:getPlayerLevel()
-    return UnitLevel("player")
+    return UnitLevel(unitPlayer)
 end
 
 function DataToColor:getTargetLevel()
-    return UnitLevel("target")
+    return UnitLevel(unitTarget)
 end
 
 -- Finds the total amount of money.
@@ -883,7 +956,7 @@ function DataToColor:getMoneyTotal()
 end
 
 function DataToColor:targetHostile()
-    local hostile = UnitReaction("player", "target")
+    local hostile = UnitReaction(unitPlayer, unitTarget)
     if hostile ~= nil and hostile <= 4 then
         return 1
     end
@@ -892,7 +965,7 @@ end
 
 function DataToColor:hasAmmo()
     local ammoSlot = GetInventorySlotInfo("AmmoSlot");
-    local ammoCount = GetInventoryItemCount("player", ammoSlot);
+    local ammoCount = GetInventoryItemCount(unitPlayer, ammoSlot);
     if ammoCount > 0 then
         return 1
     end
@@ -900,9 +973,8 @@ function DataToColor:hasAmmo()
 end
 
 function DataToColor:getRange()
-    local target = GetUnitName("target")
-    if target ~= nil then
-        local min, max = Range:GetRange("target")
+    if UnitExists(unitTarget) then
+        local min, max = Range:GetRange(unitTarget)
         if max == nil then
             max = 99
         end
@@ -912,9 +984,8 @@ function DataToColor:getRange()
 end
 
 function DataToColor:isTradeRange()
-    local target = GetUnitName("target")
-    if target ~= nil then
-        local tradeRange = CheckInteractDistance("target", 2)
+    if UnitExists(unitTarget) then
+        local tradeRange = CheckInteractDistance(unitTarget, 2)
         if tradeRange then
             return 1
         end
@@ -923,7 +994,7 @@ function DataToColor:isTradeRange()
 end
 
 function DataToColor:targetNpcId()
-    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID("target") or ''); 
+    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID(unitTarget) or ''); 
     if npcID ~= nil then
         return tonumber(npcID);
     end
@@ -1057,9 +1128,9 @@ end
 
 function DataToColor:equipName(slot)
     local equip
-    if GetInventoryItemLink("player", slot) == nil then
+    if GetInventoryItemLink(unitPlayer, slot) == nil then
         equip = 0
-    else _, _, equip = string.find(GetInventoryItemLink("player", slot), "(m:%d+)")
+    else _, _, equip = string.find(GetInventoryItemLink(unitPlayer, slot), "(m:%d+)")
         equip = string.gsub(equip, 'm:', '')
     end
     if equip == nil then equip = 0
@@ -1070,69 +1141,9 @@ end
 -- -- Slot ID information can be found on WoW Wiki. Slots we are using: 1-12 (main action bar), Bottom Right Action Bar maybe(49-60), and  Bottom Left (61-72)
 
 function DataToColor:areSpellsInRange()
-
-    local spellList, CC = UnitClass("player");
-    if CC == "ROGUE" then
-         spellList = {
-            "Sinister Strike", --1
-            "Throw", --2
-            "Shoot Gun" --4
-        };
-    elseif CC == "DRUID" then
-        spellList = {
-            "Wrath", --1
-            "Bash", --2
-            "Rip" --3
-        };
-    elseif CC == "WARRIOR" then
-        spellList = {
-            "Charge", --1
-            "Rend", --2
-            "Shoot Gun", --4
-        };        
-    elseif CC == "PRIEST" then
-        spellList = {
-            "Shadow Word: Pain", --1
-            "Mind Blast", --2
-            "Mind Flay", --4
-            "Shoot", --8
-        };
-    elseif CC == "PALADIN" then
-        spellList = {
-            "Judgement" --1
-        };
-    elseif CC == "MAGE" then
-        spellList = {
-            "Fireball", --1
-            "Shoot",
-            "Pyroblast",
-            "Frostbolt",
-            "Fire Blast"
-        };        
-    elseif CC == "HUNTER" then
-        spellList = {
-            "Raptor Strike", --1
-            "Auto Shot", --2
-            "Serpent Sting" --3
-        };        
-    elseif CC == "WARLOCK" then
-        spellList = {
-            "Shadow Bolt",
-            "Shoot"
-        };
-    elseif CC == "SHAMAN" then
-        spellList = {
-            "Lightning Bolt",
-            "Earth Shock"
-        }
-    else
-        spellList = {};
-    end
-
-
     local inRange = 0
-    for i = 1, table.getn(spellList ), 1 do
-        local isInRange = IsSpellInRange(spellList[i], "target");
+    for i = 1, table.getn(spellInRangeList), 1 do
+        local isInRange = IsSpellInRange(spellInRangeList[i], unitTarget);
         if isInRange==1 then
             inRange = inRange + (2 ^ (i - 1))
         end
@@ -1143,9 +1154,10 @@ end
 function DataToColor:isActionUseable(min,max)
     local isUsableBits = 0
     -- Loops through main action bar slots 1-12
+    local start, isUsable, notEnough
     for i = min, max do
-        local start = GetActionCooldown(i)
-        local isUsable, notEnough = IsUsableAction(i)
+        start = GetActionCooldown(i)
+        isUsable, notEnough = IsUsableAction(i)
         if start == 0 and isUsable == true and notEnough == false then
             isUsableBits = isUsableBits + (2 ^ (i - min))
         end
@@ -1155,8 +1167,7 @@ end
 
 -- Function to tell how many bag slots we have in each bag
 function DataToColor:bagSlots(bag)
-    bagSlots = GetContainerNumSlots(bag)
-    return bagSlots
+    return GetContainerNumSlots(bag)
 end
 
 -- Finds passed in string to return profession level
@@ -1169,18 +1180,6 @@ function DataToColor:GetProfessionLevel(skill)
         end
     end
     return 0;
-end
-
--- Checks target to see if  target has a specified debuff
-function DataToColor:GetDebuffs(debuff)
-    for i = 1, 5 do local db = UnitDebuff("target", i);
-        if db ~= nil then
-            if string.find(db, debuff) then
-                return 1
-            end
-        end
-    end
-    return 0
 end
 
 -- Returns zone name
@@ -1200,7 +1199,7 @@ function DataToColor:GetZoneName(partition)
 end
 
 function DataToColor:GetBestMap()
-    local map= C_Map.GetBestMapForUnit("player");
+    local map = C_Map.GetBestMapForUnit(unitPlayer)
     if map ~= nil then
         return map
     else
@@ -1249,8 +1248,8 @@ function DataToColor:CorpsePosition(coord)
     -- Assigns death coordinates
     local cX
     local cY
-    if UnitIsGhost("player") then
-        local map = C_Map.GetBestMapForUnit("player")
+    if UnitIsGhost(unitPlayer) then
+        local map = C_Map.GetBestMapForUnit(unitPlayer)
         if C_DeathInfo.GetCorpseMapPosition(map) ~= nil then
             cX, cY = C_DeathInfo.GetCorpseMapPosition(map):GetXY()
         end
@@ -1275,7 +1274,7 @@ end
 --returns class of player
 function DataToColor:PlayerClass()
     -- UnitClass returns class and the class in uppercase e.g. "Mage" and "MAGE"
-    local class, CC = UnitClass("player")
+    local class, CC = UnitClass(unitPlayer)
     if CC == "MAGE" then
         class = 128
     elseif CC == "ROGUE" then
@@ -1301,7 +1300,7 @@ function DataToColor:PlayerClass()
 end
 
 function DataToColor:ComboPoints()
-    local points = GetComboPoints("player","target");
+    local points = GetComboPoints(unitPlayer, unitTarget);
     -- if target is in combat, return 0 for bitmask
     if points ~= nil then
         return points
@@ -1319,33 +1318,30 @@ end
 
 -- Finds if player or target is in combat
 function DataToColor:targetCombatStatus()
-    local combatStatus = UnitAffectingCombat("target")
     -- if target is in combat, return 0 for bitmask
-    if combatStatus then
+    if UnitAffectingCombat(unitTarget) then
         return 1
         -- if target is not in combat, return 1 for bitmask
-    else return 0
     end
+    return 0
 end
 
 -- Checks if target is dead. Returns 1 if target is dead, nil otherwise (converts to 0)
 function DataToColor:GetEnemyStatus()
-    local targStatus = UnitIsDead("target")
-    if targStatus then
+    if UnitIsDead(unitTarget) then
         return 1
-    else
-        return 0
     end
+    return 0
 end
 
 function DataToColor:targetIsNormal()
-    local classification = UnitClassification("target");
+    local classification = UnitClassification(unitTarget);
     if classification=="normal" then
-        if (UnitIsPlayer("target")) then 
+        if (UnitIsPlayer(unitTarget)) then 
             return 0 
         end
 
-        if UnitName("pet") ==  UnitName("target") then
+        if UnitName(unitPet) == UnitName(unitTarget) then
             return 0
         end
 
@@ -1358,49 +1354,31 @@ end
 
 -- Checks if we are currently alive or are a ghost/dead.
 function DataToColor:deadOrAlive()
-    local deathStatus = UnitIsDeadOrGhost("player")
-    if deathStatus then
+    if UnitIsDeadOrGhost(unitPlayer) then
         return 1
-    else
-        return 0
     end
+    return 0
 end
 
 -- Checks the number of talent points we have available to spend
 function DataToColor:checkTalentPoints()
-    if UnitCharacterPoints("player") > 0 then
+    if UnitCharacterPoints(unitPlayer) > 0 then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:shapeshiftForm()
     local form = GetShapeshiftForm(true)
     if form == nil then
-        form =0
-    end;
-    return form;
+        form = 0
+    end
+    return form
 end
 
 function DataToColor:playerCombatStatus()
-    local combatStatus = UnitAffectingCombat("player")
-    -- if player is not in combat, convert nil to 0
-    if combatStatus then
-        return 1
-    else
-        return 0
-    end
-end
-
--- Iterates through index of buffs to see if we have the buff is passed in
-function DataToColor:GetBuffs(buff)
-    for i = 1, 10 do
-        local b = UnitBuff("player", i);
-        if b ~= nil then
-            if string.find(b, buff) then
-                return 1
-            end
-        end
+    if UnitAffectingCombat(unitPlayer) then
+        return 1 
     end
     return 0
 end
@@ -1408,8 +1386,7 @@ end
 -- Returns the slot in which we have a fully degraded item
 function DataToColor:GetInventoryBroken()
     for i = 1, 16 do
-        local isBroken = GetInventoryItemBroken("player", i)
-        if isBroken == true then
+        if GetInventoryItemBroken(unitPlayer, i) then
             return 1
         end
     end
@@ -1417,7 +1394,7 @@ function DataToColor:GetInventoryBroken()
 end
 -- Checks if we are on a taxi
 function DataToColor:IsPlayerFlying()
-    local taxiStatus = UnitOnTaxi("player")
+    local taxiStatus = UnitOnTaxi(unitPlayer)
     if taxiStatus then
         return 1
     end
@@ -1445,94 +1422,95 @@ end
 function DataToColor:needFood()
     if GetActionCount(6) < 10 then
         return 1
-    else return 0
     end
+    return 0
 end
 
 -- Returns true if the player has less than 10 water in action slot 7
 function DataToColor:needWater()
     if GetActionCount(7) < 10 then
         return 1
-    else return 0
     end
+    return 0
 end
 
 -- Returns if we have a mana gem (Agate, Ruby, etc.) in slot 67
 function DataToColor:needManaGem()
     if GetActionCount(67) < 1 then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsTargetOfTargetPlayerAsNumber()
-    if not(UnitName("targettarget")) then return 2 end; -- target has no target
-    if CHARACTER_NAME == UnitName("target") then return 0 end; -- targeting self
-    if UnitName("pet") == UnitName("targettarget") then return 4 end; -- targetting my pet
-    if CHARACTER_NAME == UnitName("targettarget") then return 1 end; -- targetting me
-    if UnitName("pet") == UnitName("target") and UnitName("targettarget") ~= nil then return 5 end;
-    return 3;
+    if not(UnitName(unitTargetTarget)) then return 2 end -- target has no target
+    if CHARACTER_NAME == UnitName(unitTarget) then return 0 end -- targeting self
+    if UnitName(unitPet) == UnitName(unitTargetTarget) then return 4 end -- targetting my pet
+    if CHARACTER_NAME == UnitName(unitTargetTarget) then return 1 end -- targetting me
+    if UnitName(unitPet) == UnitName(unitTarget) and UnitName(unitTargetTarget) ~= nil then return 5 end
+    return 3
 end
 
 -- Returns true if target of our target is us
 function DataToColor:IsTargetOfTargetPlayer()
-    local x = self:IsTargetOfTargetPlayerAsNumber();
-    if x==1 or x==4 then return 1 else return 0 end;
+    local x = self:IsTargetOfTargetPlayerAsNumber()
+    if x==1 or x==4 then return 1 else return 0 end
 end
 
 function DataToColor:IsTagged()
-    if UnitIsTapDenied("target") then return 1 else return 0 end;
+    if UnitIsTapDenied(unitTarget) then 
+        return 1 
+    end
+    return 0
 end
 
 function DataToColor:IsAutoRepeatActionOn(actionSlot)
-    if IsAutoRepeatAction(actionSlot)  then
+    if IsAutoRepeatAction(actionSlot) then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsAutoRepeatSpellOn(spell)
-    if IsAutoRepeatSpell(spell)  then
+    if IsAutoRepeatSpell(spell) then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsCurrentSpell(spell)
     if IsCurrentSpell(spell) then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsCurrentActionOn(actionSlot)
     if IsCurrentAction(actionSlot)  then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsPetVisible()
-    if UnitIsVisible("pet") and not UnitIsDead("pet")  then
+    if UnitIsVisible(unitPet) and not UnitIsDead(unitPet)  then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:petHappy()
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness();
-
     -- (1 = unhappy, 2 = content, 3 = happy)
     if happiness ~= nil and happiness == 3 then
         return 1
     end
-
     return 0
 end
 
 -- Returns 0 if target is unskinnable or if we have no target.
 function DataToColor:isUnskinnable()
-    local creatureType = UnitCreatureType("target")
+    local creatureType = UnitCreatureType(unitTarget)
     -- Demons COULD be included in this list, but there are some skinnable demon dogs.
     if creatureType == "Humanoid" or creatureType == "Elemental" or creatureType == "Mechanical" or creatureType == "Totem" then
         return 1
@@ -1629,7 +1607,7 @@ end
 
 -- Automatically learns predefined talents
 function DataToColor:LearnTalents()
-    if UnitCharacterPoints("player") > 0 then
+    if UnitCharacterPoints(unitPlayer) > 0 then
         -- Grabs global list of talents we want to learn
         for i = 0, table.getn(talentList), 1 do
             -- Iterates through each talent tab (e.g. "Arcane, Fire, Frost")
@@ -1706,7 +1684,7 @@ function DataToColor:CheckTrainer()
             -- LPCONFIG.AUTO_TRAIN_SPELLS = false
             local allAvailableOptions = GetNumTrainerServices()
             local money = GetMoney()
-            local level = UnitLevel("player")
+            local level = UnitLevel(unitPlayer)
             
             -- Loops through every spell on the list and checks if we
             -- 1) Have the level to train that spell
@@ -1749,14 +1727,14 @@ end
 --runs the RetrieveCorpse() function to ressurrect
 function DataToColor:ResurrectPlayer()
     if Modulo(iterator, 150) == 1 then
-        if UnitIsDeadOrGhost("player") then
+        if UnitIsDeadOrGhost(unitPlayer) then
             
             -- Accept Release Spirit immediately after dying
-            if not UnitIsGhost("player") and UnitIsGhost("player") ~= nil then
+            if not UnitIsGhost(unitPlayer) and UnitIsGhost(unitPlayer) ~= nil then
                 RepopMe()
             end
-            if UnitIsGhost("player") then
-                local map = C_Map.GetBestMapForUnit("player")
+            if UnitIsGhost(unitPlayer) then
+                local map = C_Map.GetBestMapForUnit(unitPlayer)
                 if C_DeathInfo.GetCorpseMapPosition(map) ~= nil then
                     local cX, cY = C_DeathInfo.GetCorpseMapPosition(map):GetXY()
                     local x, y = self:GetCurrentPlayerPosition()
