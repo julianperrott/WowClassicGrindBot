@@ -843,36 +843,30 @@ function DataToColor:CastingInfoSpellId()
 end
 
 function DataToColor:getUnitXP(unit)
-    local value = UnitXP(unit);
-    return value
+    return UnitXP(unit)
 end
 
 function DataToColor:getUnitXPMax(unit)
-    local value = UnitXPMax(unit);
-    return value
+    return UnitXPMax(unit)
 end
 
 -- Finds maximum amount of health player can have
 function DataToColor:getHealthMax(unit)
-    local health = UnitHealthMax(unit)
-    return health
+    return UnitHealthMax(unit)
 end
 -- Finds axact amount of health player current has
 function DataToColor:getHealthCurrent(unit)
-    local health = UnitHealth(unit)
-    return health
+    return UnitHealth(unit)
 end
 
 -- Finds maximum amount of mana a character can store
 function DataToColor:getManaMax(unit)
-    local manaMax = UnitPowerMax(unit)
-    return manaMax
+    return UnitPowerMax(unit)
 end
 
 -- Finds exact amount of mana player is storing
 function DataToColor:getManaCurrent(unit)
-    local mana = UnitPower(unit)
-    return mana
+    return UnitPower(unit)
 end
 
 -- Finds player current level
@@ -907,8 +901,7 @@ function DataToColor:hasAmmo()
 end
 
 function DataToColor:getRange()
-    local target = GetUnitName(unitTarget)
-    if target ~= nil then
+    if UnitExists(unitTarget) then
         local min, max = Range:GetRange(unitTarget)
         if max == nil then
             max = 99
@@ -919,8 +912,7 @@ function DataToColor:getRange()
 end
 
 function DataToColor:isTradeRange()
-    local target = GetUnitName(unitTarget)
-    if target ~= nil then
+    if UnitExists(unitTarget) then
         local tradeRange = CheckInteractDistance(unitTarget, 2)
         if tradeRange then
             return 1
@@ -1162,8 +1154,7 @@ end
 
 -- Function to tell how many bag slots we have in each bag
 function DataToColor:bagSlots(bag)
-    bagSlots = GetContainerNumSlots(bag)
-    return bagSlots
+    return GetContainerNumSlots(bag)
 end
 
 -- Finds passed in string to return profession level
@@ -1207,7 +1198,7 @@ function DataToColor:GetZoneName(partition)
 end
 
 function DataToColor:GetBestMap()
-    local map= C_Map.GetBestMapForUnit(unitPlayer);
+    local map = C_Map.GetBestMapForUnit(unitPlayer)
     if map ~= nil then
         return map
     else
@@ -1308,7 +1299,7 @@ function DataToColor:PlayerClass()
 end
 
 function DataToColor:ComboPoints()
-    local points = GetComboPoints(unitPlayer,unitTarget);
+    local points = GetComboPoints(unitPlayer, unitTarget);
     -- if target is in combat, return 0 for bitmask
     if points ~= nil then
         return points
@@ -1326,23 +1317,20 @@ end
 
 -- Finds if player or target is in combat
 function DataToColor:targetCombatStatus()
-    local combatStatus = UnitAffectingCombat(unitTarget)
     -- if target is in combat, return 0 for bitmask
-    if combatStatus then
+    if UnitAffectingCombat(unitTarget) then
         return 1
         -- if target is not in combat, return 1 for bitmask
-    else return 0
     end
+    return 0
 end
 
 -- Checks if target is dead. Returns 1 if target is dead, nil otherwise (converts to 0)
 function DataToColor:GetEnemyStatus()
-    local targStatus = UnitIsDead(unitTarget)
-    if targStatus then
+    if UnitIsDead(unitTarget) then
         return 1
-    else
-        return 0
     end
+    return 0
 end
 
 function DataToColor:targetIsNormal()
@@ -1352,7 +1340,7 @@ function DataToColor:targetIsNormal()
             return 0 
         end
 
-        if UnitName(unitPet) ==  UnitName(unitTarget) then
+        if UnitName(unitPet) == UnitName(unitTarget) then
             return 0
         end
 
@@ -1365,38 +1353,33 @@ end
 
 -- Checks if we are currently alive or are a ghost/dead.
 function DataToColor:deadOrAlive()
-    local deathStatus = UnitIsDeadOrGhost(unitPlayer)
-    if deathStatus then
+    if UnitIsDeadOrGhost(unitPlayer) then
         return 1
-    else
-        return 0
     end
+    return 0
 end
 
 -- Checks the number of talent points we have available to spend
 function DataToColor:checkTalentPoints()
     if UnitCharacterPoints(unitPlayer) > 0 then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:shapeshiftForm()
     local form = GetShapeshiftForm(true)
     if form == nil then
-        form =0
-    end;
-    return form;
+        form = 0
+    end
+    return form
 end
 
 function DataToColor:playerCombatStatus()
-    local combatStatus = UnitAffectingCombat(unitPlayer)
-    -- if player is not in combat, convert nil to 0
-    if combatStatus then
-        return 1
-    else
-        return 0
+    if UnitAffectingCombat(unitPlayer) then
+        return 1 
     end
+    return 0
 end
 
 -- Iterates through index of buffs to see if we have the buff is passed in
@@ -1415,8 +1398,7 @@ end
 -- Returns the slot in which we have a fully degraded item
 function DataToColor:GetInventoryBroken()
     for i = 1, 16 do
-        local isBroken = GetInventoryItemBroken(unitPlayer, i)
-        if isBroken == true then
+        if GetInventoryItemBroken(unitPlayer, i) then
             return 1
         end
     end
@@ -1452,88 +1434,89 @@ end
 function DataToColor:needFood()
     if GetActionCount(6) < 10 then
         return 1
-    else return 0
     end
+    return 0
 end
 
 -- Returns true if the player has less than 10 water in action slot 7
 function DataToColor:needWater()
     if GetActionCount(7) < 10 then
         return 1
-    else return 0
     end
+    return 0
 end
 
 -- Returns if we have a mana gem (Agate, Ruby, etc.) in slot 67
 function DataToColor:needManaGem()
     if GetActionCount(67) < 1 then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsTargetOfTargetPlayerAsNumber()
-    if not(UnitName(unitTargetTarget)) then return 2 end; -- target has no target
-    if CHARACTER_NAME == UnitName(unitTarget) then return 0 end; -- targeting self
-    if UnitName(unitPet) == UnitName(unitTargetTarget) then return 4 end; -- targetting my pet
-    if CHARACTER_NAME == UnitName(unitTargetTarget) then return 1 end; -- targetting me
-    if UnitName(unitPet) == UnitName(unitTarget) and UnitName(unitTargetTarget) ~= nil then return 5 end;
-    return 3;
+    if not(UnitName(unitTargetTarget)) then return 2 end -- target has no target
+    if CHARACTER_NAME == UnitName(unitTarget) then return 0 end -- targeting self
+    if UnitName(unitPet) == UnitName(unitTargetTarget) then return 4 end -- targetting my pet
+    if CHARACTER_NAME == UnitName(unitTargetTarget) then return 1 end -- targetting me
+    if UnitName(unitPet) == UnitName(unitTarget) and UnitName(unitTargetTarget) ~= nil then return 5 end
+    return 3
 end
 
 -- Returns true if target of our target is us
 function DataToColor:IsTargetOfTargetPlayer()
-    local x = self:IsTargetOfTargetPlayerAsNumber();
-    if x==1 or x==4 then return 1 else return 0 end;
+    local x = self:IsTargetOfTargetPlayerAsNumber()
+    if x==1 or x==4 then return 1 else return 0 end
 end
 
 function DataToColor:IsTagged()
-    if UnitIsTapDenied(unitTarget) then return 1 else return 0 end;
+    if UnitIsTapDenied(unitTarget) then 
+        return 1 
+    end
+    return 0
 end
 
 function DataToColor:IsAutoRepeatActionOn(actionSlot)
-    if IsAutoRepeatAction(actionSlot)  then
+    if IsAutoRepeatAction(actionSlot) then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsAutoRepeatSpellOn(spell)
-    if IsAutoRepeatSpell(spell)  then
+    if IsAutoRepeatSpell(spell) then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsCurrentSpell(spell)
     if IsCurrentSpell(spell) then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsCurrentActionOn(actionSlot)
     if IsCurrentAction(actionSlot)  then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:IsPetVisible()
     if UnitIsVisible(unitPet) and not UnitIsDead(unitPet)  then
         return 1
-    else return 0
     end
+    return 0
 end
 
 function DataToColor:petHappy()
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness();
-
     -- (1 = unhappy, 2 = content, 3 = happy)
     if happiness ~= nil and happiness == 3 then
         return 1
     end
-
     return 0
 end
 
