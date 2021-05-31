@@ -9,6 +9,14 @@
         "MinMana": 15,
         "Cooldown": 12,
         "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "MinMana": 15,
+        "StepBackAfterCast": 1000,
+        "Requirement": "InMeleeRange"
       }
     ]
   },

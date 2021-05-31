@@ -4,8 +4,18 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "Approach",
-        "Requirement": "MaxRange>36"
+        "Name": "Serpent Sting",
+        "Key": "2",
+        "MinMana": 15,
+        "Cooldown": 15,
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting", "HasAmmo"]
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "MinMana": 15,
+        "Requirement": "InMeleeRange"
       }
     ]
   },
