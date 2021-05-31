@@ -127,22 +127,9 @@ namespace Core.Goals
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
-            if (await AquireTarget() || (playerReader.PlayerClass == PlayerClassEnum.Hunter && playerReader.HasTarget))
+            if (await AquireTarget())
             {
                 await stopMoving.StopTurn();
-                
-                if (playerReader.PlayerClass == PlayerClassEnum.Hunter)
-                {
-                    if(playerReader.PlayerBitValues.TargetCanBeHostile)
-                    {
-                        await input.TapInteractKey("approach target as hunter");
-                    }
-                    else
-                    {
-                        await input.TapClearTarget("not hostile");
-                    }
-                }
-
                 return;
             }
 
