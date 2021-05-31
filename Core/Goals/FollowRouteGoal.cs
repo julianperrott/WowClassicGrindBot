@@ -135,7 +135,6 @@ namespace Core.Goals
 
             await SwitchGatherType();
 
-            await playerReader.WaitForNUpdate(1);
             if (this.playerReader.PlayerBitValues.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
 
             var timeSinceResetSeconds = (DateTime.Now - LastReset).TotalSeconds;
@@ -192,7 +191,7 @@ namespace Core.Goals
                 }
                 else
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(100);
                     logger.LogInformation("Resuming movement");
                 }
             }
