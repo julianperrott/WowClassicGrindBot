@@ -177,7 +177,7 @@ function DataToColor:createDebuffTargetList()
         t[0] = "Curse of"
         t[1] = "Corruption"
         t[2] = "Immolate"
-        t[2] = "Siphon Life"
+        t[3] = "Siphon Life"
     elseif CHARACTER_CLASS == "HUNTER" then
         t[0] = "Serpect Sting"
     end
