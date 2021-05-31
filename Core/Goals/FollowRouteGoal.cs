@@ -379,7 +379,7 @@ namespace Core.Goals
             {
                 if(diff > wanderAngle * 3)
                 {
-                    await this.stopMoving.Stop();
+                    await stopMoving.StopForward();
                 }
 
                 await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");
