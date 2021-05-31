@@ -50,7 +50,7 @@ namespace Core.Goals
                 await this.stopMoving.Stop();
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
-                    await input.Dismount();
+                    await input.TapDismount();
                 }
                 await Task.Delay(1000);
             }

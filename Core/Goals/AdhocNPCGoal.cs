@@ -22,6 +22,7 @@ namespace Core.Goals
         private readonly NpcNameFinder npcNameFinder;
         private readonly IBlacklist blacklist;
         private readonly IPPather pather;
+        private readonly MountHandler mountHandler;
 
         private Stack<WowPoint> routeToWaypoint = new Stack<WowPoint>();
 
@@ -41,7 +42,7 @@ namespace Core.Goals
         
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist)
+        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler)
         {
             this.logger = logger;
             this.input = input;
@@ -55,6 +56,7 @@ namespace Core.Goals
             this.pather = pather;
             this.key = key;
             this.blacklist = blacklist;
+            this.mountHandler = mountHandler;
 
             if (key.InCombat == "false")
             {
@@ -195,10 +197,9 @@ namespace Core.Goals
             rpath.Reverse();
             rpath.ForEach(p => this.routeToWaypoint.Push(p));
 
-            // dismount
             if (this.playerReader.PlayerBitValues.IsMounted)
             {
-                await input.Dismount();
+                await input.TapDismount();
             }
 
             foreach (var point in path)
@@ -230,27 +231,13 @@ namespace Core.Goals
 
         private async Task MountIfRequired()
         {
-            if (shouldMount && !this.playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (shouldMount && !playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
             {
                 shouldMount = false;
 
-                logger.LogInformation("Mounting if level >=40 (druid 30) and no NPC in sight");
+                await mountHandler.MountUp();
 
-                if (this.playerReader.PlayerLevel >= 40 && this.playerReader.PlayerClass != PlayerClassEnum.Druid)
-                {
-                    await input.TapStopKey();
-                    await Task.Delay(500);
-                    await input.Mount(this.playerReader);
-                }
-                if (this.playerReader.PlayerLevel >= 30 && this.playerReader.PlayerClass == PlayerClassEnum.Druid)
-                {
-                    this.classConfiguration.ShapeshiftForm
-                      .Where(s => s.ShapeShiftFormEnum == ShapeshiftForm.Druid_Travel)
-                      .ToList()
-                      .ForEach(async k => await this.input.KeyPress(k.ConsoleKey, 325));
-                }
-
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 3");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "Move forward");
             }
         }
 

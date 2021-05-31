@@ -88,6 +88,9 @@ namespace Core
         public KeyAction PetAttack { get; set; } = new KeyAction();
         public string PetAttackKey { get; set; } = "Subtract";
 
+        public KeyAction Mount { get; set; } = new KeyAction();
+        public string MountKey { get; set; } = "O";
+
 
         public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
 
@@ -144,6 +147,9 @@ namespace Core
 
             PetAttack.Key = PetAttackKey;
             PetAttack.Initialise(addonReader, requirementFactory, logger);
+
+            Mount.Key = MountKey;
+            Mount.Initialise(addonReader, requirementFactory, logger);
 
             GatherFindKeys.ForEach(key =>
             {
