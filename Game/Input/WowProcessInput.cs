@@ -99,19 +99,19 @@ namespace Game
 
         public async Task KeyPress(ConsoleKey key, int milliseconds, string description = "")
         {
-            var keyDescription = string.Empty;
-            if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
-            Log($"{keyDescription}[{key}] pressing for {milliseconds}ms");
+            if (!string.IsNullOrEmpty(description))
+                Log($"{description}[{key}] pressing for {milliseconds}ms");
 
             await nativeInput.KeyPress((int)key, milliseconds);
         }
 
         public void KeyPressSleep(ConsoleKey key, int milliseconds, string description = "")
         {
-            if (milliseconds < 1) { return; }
-            var keyDescription = string.Empty;
-            if (!string.IsNullOrEmpty(description)) { keyDescription = $"{description} "; }
-            Log($"{keyDescription}[{key}] pressing for {milliseconds}ms");
+            if (milliseconds < 1)
+                return;
+
+            if (!string.IsNullOrEmpty(description))
+                Log($"{description}[{key}] pressing for {milliseconds}ms");
 
             nativeInput.KeyPressSleep((int)key, milliseconds);
         }
@@ -142,7 +142,7 @@ namespace Game
         private void Log(string text)
         {
             if (debug)
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"Input: {text}");
         }
     }
 }

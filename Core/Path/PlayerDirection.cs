@@ -57,7 +57,7 @@ namespace Core
 
         private void TurnUsingTimedPress(double desiredDirection, ConsoleKey key)
         {
-            input.KeyPressSleep(key, TurnDuration(desiredDirection), "TurnUsingTimedPress");
+            input.KeyPressSleep(key, TurnDuration(desiredDirection), debug ? "TurnUsingTimedPress" : string.Empty);
         }
 
         public double TurnAmount(double desiredDirection)
