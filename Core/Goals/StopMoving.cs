@@ -24,24 +24,28 @@ namespace Core.Goals
 
         public async Task Stop()
         {
+            await StopForward();
+            await StopTurn();
+        }
+
+        public async Task StopForward()
+        {
             if (XCoord != playerReader.XCoord || YCoord != playerReader.YCoord)
             {
-                if(!input.IsKeyDown(ConsoleKey.DownArrow) && !input.IsKeyDown(ConsoleKey.UpArrow) &&
+                if (!input.IsKeyDown(ConsoleKey.DownArrow) && !input.IsKeyDown(ConsoleKey.UpArrow) &&
                     (Math.Abs(XCoord - playerReader.XCoord) > MinDist || Math.Abs(XCoord - playerReader.XCoord) > MinDist))
                 {
-                    input.SetKeyState(ConsoleKey.DownArrow, true, false, $"StopMoving - Cancel interact dx:{Math.Abs(XCoord - playerReader.XCoord),6} dy:{Math.Abs(XCoord - playerReader.XCoord),6}");
+                    input.SetKeyState(ConsoleKey.DownArrow, true, false, $"StopForward - Cancel interact dx:{Math.Abs(XCoord - playerReader.XCoord),6} dy:{Math.Abs(XCoord - playerReader.XCoord),6}");
                     await Task.Delay(1);
                 }
 
                 input.SetKeyState(ConsoleKey.UpArrow, false, false, "");
-                input.SetKeyState(ConsoleKey.DownArrow, false, false, "StopMoving");
+                input.SetKeyState(ConsoleKey.DownArrow, false, false, "StopForward");
                 await Task.Delay(1);
             }
 
             this.XCoord = playerReader.XCoord;
             this.YCoord = playerReader.YCoord;
-
-            await StopTurn();
         }
 
         public async Task StopTurn()
