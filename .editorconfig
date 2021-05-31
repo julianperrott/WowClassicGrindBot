@@ -38,3 +38,7 @@ dotnet_diagnostic.CA2008.severity = none
 
 # CS1591: Missing XML comment for publicly visible type or member
 dotnet_diagnostic.CS1591.severity = none
+
+dotnet_diagnostic.CA1822.severity = error
+dotnet_analyzer_diagnostic.category-performance.severity = warning
+dotnet_analyzer_diagnostic.severity = suggestion
