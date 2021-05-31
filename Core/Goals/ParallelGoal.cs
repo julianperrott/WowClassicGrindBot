@@ -46,7 +46,7 @@ namespace Core.Goals
 
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
-                    await input.Dismount();
+                    await input.TapDismount();
                 }
                 if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return;
             }

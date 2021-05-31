@@ -71,8 +71,7 @@ namespace Core.Goals
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
-                logger.LogInformation($"Dismount");
-                await input.Dismount();
+                await input.TapDismount();
             }
 
             if (ShouldStopBeforePull)
