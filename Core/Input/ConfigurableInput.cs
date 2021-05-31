@@ -86,22 +86,22 @@ namespace Core
             await KeyPress(ConsoleKey.I, defaultKeyPress, "TapHearthstone");
         }
 
-        public async Task Mount(PlayerReader playerReader)
+        public async Task TapMount(int castTimeMs, PlayerReader playerReader)
         {
-            await KeyPress(ConsoleKey.O, defaultKeyPress, "TapMount");
+            await KeyPress(classConfig.Mount.ConsoleKey, defaultKeyPress, "TapMount");
+            this.classConfig.Mount.SetClicked();
 
-            for (int i = 0; i < 40; i++)
+            for (int i = 0; i < (castTimeMs / 100); i++)
             {
                 if (playerReader.PlayerBitValues.IsMounted) { return; }
                 if (playerReader.PlayerBitValues.PlayerInCombat) { return; }
-                await Task.Delay(100);
+                await playerReader.WaitForNUpdate(1);
             }
         }
 
-        public async Task Dismount()
+        public async Task TapDismount()
         {
-            await KeyPress(ConsoleKey.O, defaultKeyPress, "Dismount");
-            await Task.Delay(1500);
+            await KeyPress(classConfig.Mount.ConsoleKey, defaultKeyPress, "TapDismount");
         }
     }
 }

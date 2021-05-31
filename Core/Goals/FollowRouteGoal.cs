@@ -24,6 +24,8 @@ namespace Core.Goals
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
         private readonly IPPather pather;
+        private readonly MountHandler mountHandler;
+
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
@@ -53,7 +55,7 @@ namespace Core.Goals
         private double avgDistance = 0;
         private bool firstLoad = true;
 
-        public FollowRouteGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather)
+        public FollowRouteGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler)
         {
             this.logger = logger;
             this.input = input;
@@ -70,6 +72,7 @@ namespace Core.Goals
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
             this.pather = pather;
+            this.mountHandler = mountHandler;
 
             if (classConfiguration.Mode != Mode.AttendedGather)
             {
@@ -165,7 +168,7 @@ namespace Core.Goals
                 input.SetKeyState(ConsoleKey.UpArrow, true, false);
             }
 
-            await RandomJump();
+            bool jumped = await RandomJump();
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
@@ -225,7 +228,7 @@ namespace Core.Goals
             }
 
             // should mount
-            await MountIfRequired();
+            await MountIfRequired(jumped);
 
             LastActive = DateTime.Now;
         }
@@ -270,7 +273,7 @@ namespace Core.Goals
             return false;
         }
 
-        private async Task MountIfRequired()
+        private async Task MountIfRequired(bool jumped)
         {
             if (shouldMount && !this.playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
             {
@@ -283,25 +286,16 @@ namespace Core.Goals
                 Log("Mounting if level >=40 (druid 30) and no NPC in sight");
                 if (!this.npcNameFinder.MobsVisible)
                 {
-                    if (this.playerReader.PlayerLevel >= 40 && this.playerReader.PlayerClass != PlayerClassEnum.Druid)
-                    {
-                        await input.TapStopKey();
+                    if (jumped) 
                         await Task.Delay(500);
-                        await input.Mount(this.playerReader);
-                    }
-                    if (this.playerReader.PlayerLevel >= 30 && this.playerReader.PlayerClass == PlayerClassEnum.Druid)
-                    {
-                        this.classConfiguration.ShapeshiftForm
-                          .Where(s => s.ShapeShiftFormEnum == ShapeshiftForm.Druid_Travel)
-                          .ToList()
-                          .ForEach(async k => await this.input.KeyPress(k.ConsoleKey, 325));
-                    }
+
+                    await mountHandler.MountUp();
                 }
                 else
                 {
                     logger.LogInformation("Not mounting as can see NPC.");
                 }
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 3");
+                input.SetKeyState(ConsoleKey.UpArrow, true, false, "Move Forward");
             }
         }
 
@@ -426,7 +420,7 @@ namespace Core.Goals
             {
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
-                    //await wowProcess.Dismount();
+                    await input.TapDismount();
                 }
                 await input.TapInteractKey("FollowRouteAction 4");
                 return true;
@@ -461,7 +455,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task RandomJump()
+        private async Task<bool> RandomJump()
         {
             if (classConfiguration.Jump.MillisecondsSinceLastClick > 10000)
             {
@@ -470,8 +464,10 @@ namespace Core.Goals
                     logger.LogInformation($"Random jump");
 
                     await input.TapJump();
+                    return true;
                 }
             }
+            return false;
         }
 
         public async Task Reset()

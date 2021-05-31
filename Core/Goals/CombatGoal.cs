@@ -127,7 +127,7 @@ namespace Core.Goals
         {
             if (playerReader.PlayerBitValues.IsMounted)
             {
-                await input.Dismount();
+                await input.TapDismount();
             }
 
             /*

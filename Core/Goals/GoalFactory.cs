@@ -45,7 +45,9 @@ namespace Core
 
             var stuckDetector = new StuckDetector(logger, input, addonReader.PlayerReader, playerDirection, stopMoving);
             var combatUtil = new CombatUtil(logger, input, addonReader.PlayerReader);
-            var followRouteAction = new FollowRouteGoal(logger, input, addonReader.PlayerReader,  playerDirection, pathPoints, stopMoving, npcNameFinder, blacklist, stuckDetector, classConfig, pather);
+            var mountHandler = new MountHandler(logger, input, classConfig, addonReader.PlayerReader, stopMoving);
+
+            var followRouteAction = new FollowRouteGoal(logger, input, addonReader.PlayerReader,  playerDirection, pathPoints, stopMoving, npcNameFinder, blacklist, stuckDetector, classConfig, pather, mountHandler);
             var walkToCorpseAction = new WalkToCorpseGoal(logger, input, addonReader.PlayerReader,  playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
 
             availableActions.Clear();
@@ -118,7 +120,7 @@ namespace Core
 
                 foreach (var item in classConfig.NPC.Sequence)
                 {
-                    availableActions.Add(new AdhocNPCGoal(logger, input, addonReader.PlayerReader,  playerDirection, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, item, blacklist));
+                    availableActions.Add(new AdhocNPCGoal(logger, input, addonReader.PlayerReader, playerDirection, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, item, blacklist, mountHandler));
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 
