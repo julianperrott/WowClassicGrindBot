@@ -198,7 +198,8 @@ namespace Core
             UpdatePotentialAddsExist();
         }
 
-        public bool MobsVisible { get; private set; }
+        public bool MobsVisible => npcs.Count > 0;
+
         public bool PotentialAddsExist { get; private set; }
         public DateTime LastPotentialAddsSeen { get; private set; } = default;
 
