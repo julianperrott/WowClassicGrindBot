@@ -94,7 +94,7 @@ namespace Core.Goals
                 playerWasInCombat = true;
             }
 
-            await this.TapInteractKey($"{GetType().Name}");
+            await this.TapInteractKey("");
             await this.playerReader.WaitForNUpdate(1);
 
             var newLocation = playerReader.PlayerLocation;

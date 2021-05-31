@@ -33,7 +33,7 @@ namespace Core.Goals
                     await Task.Delay(1);
                 }
 
-                input.SetKeyState(ConsoleKey.UpArrow, false, false, "StopMoving");
+                input.SetKeyState(ConsoleKey.UpArrow, false, false, "");
                 input.SetKeyState(ConsoleKey.DownArrow, false, false, "StopMoving");
                 await Task.Delay(1);
             }
@@ -48,9 +48,9 @@ namespace Core.Goals
         {
             if (Direction != playerReader.Direction)
             {
-                input.SetKeyState(ConsoleKey.LeftArrow, false, false, "StopTurnLeft");
+                input.SetKeyState(ConsoleKey.LeftArrow, false, false, "");
                 await Task.Delay(1);
-                input.SetKeyState(ConsoleKey.RightArrow, false, false, "StopTurnRight");
+                input.SetKeyState(ConsoleKey.RightArrow, false, false, "StopTurn");
                 await Task.Delay(1);
             }
 
