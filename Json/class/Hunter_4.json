@@ -4,14 +4,18 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "Approach",
-        "DelayAfterCast": 0
+        "Name": "Serpent Sting",
+        "Key": "2",
+        "MinMana": 15,
+        "Cooldown": 15,
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting", "HasAmmo"]
       },
       {
-        "Name": "autoshot",
-        "StopBeforeCast": true,
-        "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "StepBackAfterCast": 1000,
+        "Requirement": "InMeleeRange"
       }
     ]
   },
