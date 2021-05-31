@@ -290,7 +290,7 @@ namespace Core.Goals
                 if (!this.npcNameFinder.MobsVisible)
                 {
                     if (jumped) 
-                        await Task.Delay(500);
+                        await Task.Delay(700);
 
                     await mountHandler.MountUp();
                 }
