@@ -1,6 +1,6 @@
 {
   "ClassName": "Hunter",
-  "PathFilename": "_pack\\1-20\\Draenei\\9-10_Azuremyst Isle.json",
+  "PathFilename": "_pack\\1-20\\Human\\18-20_Duskwood_The Darkened Bank - wolves spiders.json",
   "Pull": {
     "Sequence": [
       {
@@ -27,15 +27,14 @@
         "Key": "N7",
         "MinMana": 200,
         "Cooldown": 15,
-        "WhenUsable": true,
-        "Requirements": ["Has Pet", "PetHealth%<40"]
+        "Requirements": ["Has Pet", "PetHealth%<50"]
       },
       {
         "Name": "Serpent Sting",
         "Key": "2",
         "MinMana": 15,
         "Cooldown": 15,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting", "HasAmmo"]
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "Mana%>55", "not Serpent Sting", "HasAmmo"]
       },
       {
         "Name": "autoshot",
@@ -49,14 +48,14 @@
         "MinMana": 15,
         "Cooldown": 6,
         "WhenUsable": true,
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "HasAmmo", "TargetHealth%>60", "not Rapid Fire", "not Quick Shots"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "HasAmmo", "TargetHealth%>60", "Mana%>70", "not Rapid Fire", "not Quick Shots"]
       },
       {
         "Name": "Raptor Strike",
         "Key": "4",
         "WhenUsable": true,
         "MinMana": 15,
-        "StepBackAfterCast": 1000,
+        "StepBackAfterCast": 1200,
         "Requirement": "InMeleeRange"
       },
       {
@@ -117,14 +116,14 @@
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "5_Draenai_Vendor.json",
+        "PathFilename": "23_Duskwood_Vendor.json",
         "Cost": 6
       },
       {
         "Name": "Sell",
         "Key": "C",
         "Requirement": "BagFull",
-        "PathFilename": "5_Draenai_Vendor.json",
+        "PathFilename": "23_Duskwood_Vendor.json",
         "Cost": 6
       }
     ]
