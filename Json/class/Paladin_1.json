@@ -1,0 +1,30 @@
+{
+  "ClassName": "Paladin",
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Draenei\\1-5_Azuremyst Isle.json",
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Approach"
+      },
+      {
+        "Name": "Seal of Righteousness",
+        "Key": "2",
+        "Cooldown": 2,
+        "Requirement": "not Seal"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Holy Light",
+        "HasCastBar": true,
+        "StopBeforeCast": true,
+        "Key": "3",
+        "Requirement": "Health%<50",
+        "Cooldown": 2
+      }
+    ]
+  }
+}
