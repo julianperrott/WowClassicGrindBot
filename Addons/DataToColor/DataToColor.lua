@@ -1385,7 +1385,7 @@ end
 
 -- Returns the slot in which we have a fully degraded item
 function DataToColor:GetInventoryBroken()
-    for i = 1, 16 do
+    for i = 1, 18 do
         if GetInventoryItemBroken(unitPlayer, i) then
             return 1
         end
