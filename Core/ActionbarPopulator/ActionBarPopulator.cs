@@ -158,15 +158,19 @@ namespace Core
             if (a.Key.StartsWith(KeyReader.BL))
                 return CalculateActionNumber(a.Key, KeyReader.BL, KeyReader.BLIdx);
 
-            return CalculateActionNumber(a.Key, "",  0);
+            // "-" "=" keys
+            if (KeyReader.ActionBarSlotMap.ContainsKey(a.Key))
+                return CalculateActionNumber(KeyReader.ActionBarSlotMap[a.Key].ToString(), "", 0);
+
+            return CalculateActionNumber(a.Key, "", 0);
         }
 
-        private static string CalculateActionNumber(string key, string prefix,  int offset)
+        private static string CalculateActionNumber(string key, string prefix, int offset)
         {
-            if(!string.IsNullOrEmpty(prefix))
+            if (!string.IsNullOrEmpty(prefix))
                 key = key.Replace(prefix, "");
 
-            if (int.TryParse(key, out var hotkey))
+            if (int.TryParse(key, out int hotkey))
             {
                 if (hotkey == 0)
                     return (offset + 10).ToString();
