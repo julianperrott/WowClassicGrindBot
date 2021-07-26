@@ -44,6 +44,12 @@
         "StopBeforeCast": true,
         "Requirement": "Mana%<30",
         "Cooldown": 10
+      },
+      {
+        "Name": "Mark of the Wild",
+        "Key": "4",
+        "Requirement": "not Mark of the Wild",
+        "Cooldown": 10
       }
     ]
   },
