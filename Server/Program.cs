@@ -67,7 +67,8 @@ namespace Server
                 Log.Logger.Information("Enter Addon Configure mode!");
             }
 
-            var size = dataFrameMeta.EstimatedSize();
+            wowScreen.GetRectangle(out var rect);
+            var size = dataFrameMeta.EstimatedSize(rect);
             var screenshot = wowScreen.GetBitmap(size.Width, size.Height);
             var dataFrames = DataFrameConfiguration.CreateFrames(dataFrameMeta, screenshot);
 
