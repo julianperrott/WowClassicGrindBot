@@ -76,7 +76,7 @@ namespace Core
 
         public Requirement GetRequirement(string name, string requirement)
         {
-            this.logger.LogInformation($"Processing requirement {name} : {requirement}");
+            this.logger.LogInformation($"[{name}] Processing requirement: {requirement}");
 
             var requirementText = requirement;
 
@@ -227,7 +227,7 @@ namespace Core
                 };
             }
 
-            logger.LogInformation($"UNKNOWN REQUIREMENT! {name} - {requirement}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
+            logger.LogInformation($"[{name}] UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
             return new Requirement
             {
                 HasRequirement = () => false,
@@ -322,7 +322,7 @@ namespace Core
 
             if (!valueDictionary.Keys.Contains(parts[0]))
             {
-                logger.LogInformation($"UNKNOWN REQUIREMENT! {name} - {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
+                logger.LogInformation($"[{name}] UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
                 {
                     HasRequirement = () => false,
