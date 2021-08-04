@@ -234,7 +234,7 @@ namespace Core
                         break;
                 }
 
-                logger.LogInformation($"Updated {tuple.Item1} cost of {this.Name} to {tuple.Item2} from {oldValue}");
+                logger.LogInformation($"[{Name}] Update {tuple.Item1} cost to {tuple.Item2} from {oldValue}");
             }
         }
 
