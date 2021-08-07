@@ -80,7 +80,6 @@ namespace Server
                 Log.Logger.Information($"Size missmatch {dataFrames.Count} != {dataFrameMeta.frames}");
             }
 
-            wowScreen.GetRectangle(out var rect);
             DataFrameConfiguration.SaveConfiguration(rect, null, dataFrameMeta, dataFrames);
             Log.Logger.Information("DataFrameConfiguration Saved!");
             Log.Logger.Information("Leave Addon Configure mode!");
