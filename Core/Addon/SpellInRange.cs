@@ -88,7 +88,7 @@ namespace Core
             PlayerClassEnum.Druid => playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Bear ? Druid_Bash : playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Cat ? Druid_Rip : Druid_Wrath,
             PlayerClassEnum.Paladin => (playerReader.PlayerLevel >= 4 && Paladin_Judgement) || playerReader.IsInMeleeRange,
             PlayerClassEnum.Mage => Mage_Frostbolt || Mage_Fireball,
-            PlayerClassEnum.Hunter => (playerReader.PlayerLevel >= 4 && Hunter_SerpentSting) || Hunter_AutoShoot,
+            PlayerClassEnum.Hunter => (playerReader.PlayerLevel >= 4 && Hunter_SerpentSting) || Hunter_AutoShoot || playerReader.IsInMeleeRange,
             PlayerClassEnum.Warlock => Warlock_ShadowBolt,
             PlayerClassEnum.Shaman => Shaman_LightningBolt,
             _ => true
