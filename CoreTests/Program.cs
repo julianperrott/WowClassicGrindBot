@@ -21,7 +21,8 @@ namespace CoreTests
         {
             CreateLogger();
 
-            var test = new Test_NpcNameFinder(logger);
+            //var test = new Test_NpcNameFinderTarget(logger);
+            var test = new Test_NpcNameFinderLoot(logger);
             test.Execute();
         }
     }

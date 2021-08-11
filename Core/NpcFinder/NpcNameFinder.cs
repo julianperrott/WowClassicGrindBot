@@ -57,7 +57,7 @@ namespace Core
         private float scaleToRefHeight = 1;
 
         public List<Point> locTargetingAndClickNpc { get; private set; }
-        private readonly List<Point> locFindByCursorType;
+        public List<Point> locFindByCursorType { get; private set; }
 
         public List<NpcPosition> Npcs { get; private set; } = new List<NpcPosition>();
         public int NpcCount => npcs.Count;
@@ -80,10 +80,10 @@ namespace Core
             locFindByCursorType = new List<Point>
             {
                 new Point(0, 0),
-                new Point(0, 20).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(0, 60).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(-10, 45).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(10, 45).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(0, 25).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(0, 90).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(-10, 50).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(10, 50).Scale(scaleToRefWidth, scaleToRefHeight),
             };
         }
 
