@@ -1,4 +1,5 @@
-﻿using Core.Database;
+﻿using System;
+using Core.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -237,8 +238,8 @@ namespace Core
         }
         public async Task WaitForNUpdate(int n)
         {
-            var s = this.Sequence;
-            while (this.Sequence <= s + n)
+            var s = GlobalTime;
+            while (Math.Abs(s - GlobalTime) <= n)
             {
                 await Task.Delay(100);
             }
