@@ -1,4 +1,5 @@
-﻿using Core.Goals;
+﻿using Core.Database;
+using Core.Goals;
 using Core.PPather;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -19,9 +20,11 @@ namespace Core
         private readonly NpcNameFinder npcNameFinder;
         private readonly IPPather pather;
 
+        private readonly AreaDB areaDb;
+
         public RouteInfo? RouteInfo { get; private set; }
 
-        public GoalFactory(ILogger logger, AddonReader addonReader, ConfigurableInput input, DataConfig dataConfig, NpcNameFinder npcNameFinder, IPPather pather)
+        public GoalFactory(ILogger logger, AddonReader addonReader, ConfigurableInput input, DataConfig dataConfig, NpcNameFinder npcNameFinder, IPPather pather, AreaDB areaDb)
         {
             this.logger = logger;
             this.addonReader = addonReader;
@@ -29,6 +32,7 @@ namespace Core
             this.dataConfig = dataConfig;
             this.npcNameFinder = npcNameFinder;
             this.pather = pather;
+            this.areaDb = areaDb;
         }
 
         public HashSet<GoapGoal> CreateGoals(ClassConfiguration classConfig, IBlacklist blacklist)
@@ -88,7 +92,7 @@ namespace Core
 
                 if (classConfig.Loot)
                 {
-                    var lootAction = new LootGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder, combatUtil);
+                    var lootAction = new LootGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder, combatUtil, areaDb);
                     lootAction.AddPreconditions();
                     availableActions.Add(lootAction);
 
