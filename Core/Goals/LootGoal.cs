@@ -1,4 +1,5 @@
-﻿using Core.GOAP;
+﻿using Core.Database;
+using Core.GOAP;
 using Core.Looting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -16,6 +17,7 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
 
         private readonly PlayerReader playerReader;
+        private readonly AreaDB areaDb;
         private readonly StopMoving stopMoving;
         private readonly BagReader bagReader;
         private readonly ClassConfiguration classConfiguration;
@@ -25,11 +27,12 @@ namespace Core.Goals
         private bool debug = true;
         private long lastLoot;
 
-        public LootGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder, CombatUtil combatUtil)
+        public LootGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder, CombatUtil combatUtil, AreaDB areaDb)
         {
             this.logger = logger;
             this.input = input;
             this.playerReader = playerReader;
+            this.areaDb = areaDb;
             this.stopMoving = stopMoving;
             this.bagReader = bagReader;
             
@@ -120,6 +123,12 @@ namespace Core.Goals
             if (classConfiguration.Skin)
             {
                 var targetSkinnable = !playerReader.Unskinnable;
+
+                if (areaDb.CurrentArea != null && areaDb.CurrentArea.skinnable != null)
+                {
+                    targetSkinnable = areaDb.CurrentArea.skinnable.Contains(playerReader.TargetId);
+                }
+
                 Log($"Should skin ? {targetSkinnable}");
                 AddEffect(GoapKey.shouldskin, targetSkinnable);
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, targetSkinnable));
