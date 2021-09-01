@@ -29,6 +29,10 @@ namespace WowheadDB_Extractor
                 {
                     var p = GetPayloadFromWebpage(await LoadPage(entry.Value));
                     var z = ZoneFromJson(p);
+
+                    PerZoneSkinnable perZoneSkinnable = new PerZoneSkinnable(entry.Value, z);
+                    await perZoneSkinnable.Run();
+
                     SaveZone(z, entry.Value.ToString());
 
                     Console.WriteLine($"Saved {entry.Value,5}={entry.Key}");
@@ -36,6 +40,7 @@ namespace WowheadDB_Extractor
                 catch(Exception e)
                 {
                     Console.WriteLine($"Fail  {entry.Value,5}={entry.Key} -> '{e.Message}'");
+                    Console.WriteLine(e);
                 }
 
                 await Task.Delay(50);
