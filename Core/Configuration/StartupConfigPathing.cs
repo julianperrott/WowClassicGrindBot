@@ -7,12 +7,13 @@ namespace Core
     {
         public const string Position = "Pathing";
 
-        public static List<string> Modes { get; private set; } = new List<string>
+        public enum Types
         {
-            "Local",
-            "RemoteV1",
-            "RemoteV2"
-        };
+            Local,
+            RemoteV1,
+            RemoteV2
+        }
+
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public StartupConfigPathing()
@@ -31,6 +32,8 @@ namespace Core
             this.hostv2 = hostv2;
             this.portv2 = portv2;
         }
+
+        public Types Type => System.Enum.TryParse(Mode, out Types m) ? m : Types.Local;
 
         public string Mode { get; set; }
         public string hostv1 { get; set; }

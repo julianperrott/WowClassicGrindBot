@@ -101,46 +101,49 @@ namespace BlazorServer
             var scp = new StartupConfigPathing();
             Configuration.GetSection(StartupConfigPathing.Position).Bind(scp);
 
-            if(scp.Mode == StartupConfigPathing.Modes[2])
+            if (scp.Type == StartupConfigPathing.Types.RemoteV2)
             {
                 var worldmapAreaDb = new WorldMapAreaDB(logger, dataConfig);
                 var api = new RemotePathingAPIV2(logger, scp.hostv2, scp.portv2, worldmapAreaDb);
                 if (api.PingServer().Result)
                 {
                     Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                    Log.Debug($"Using RemotePathingAPI V2 {scp.hostv2}:{scp.portv2}");
+                    Log.Debug($"Using {StartupConfigPathing.Types.RemoteV2}({api.GetType().Name}) {scp.hostv2}:{scp.portv2}");
                     Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
                     return api;
                 }
+
+                api.Disconnect();
             }
-            else if(scp.Mode == StartupConfigPathing.Modes[1] || scp.Mode == StartupConfigPathing.Modes[2])
+            else if (scp.Type == StartupConfigPathing.Types.RemoteV1 || scp.Type == StartupConfigPathing.Types.RemoteV2)
             {
                 var api = new RemotePathingAPI(logger, scp.hostv1, scp.portv1);
                 if (api.PingServer().Result)
                 {
                     Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-                    if (scp.Mode == StartupConfigPathing.Modes[2])
+                    if (scp.Type == StartupConfigPathing.Types.RemoteV2)
                     {
-                        Log.Debug($"Unavailable RemotePathingAPI V2 {scp.hostv2}:{scp.portv2} - Fallback to V1");
+                        Log.Debug($"Unavailable {StartupConfigPathing.Types.RemoteV2} {scp.hostv2}:{scp.portv2} - Fallback to {StartupConfigPathing.Types.RemoteV1}");
                     }
 
-                    Log.Debug($"Using RemotePathingAPI {scp.hostv1}:{scp.portv1}");
+                    Log.Debug($"Using {StartupConfigPathing.Types.RemoteV1}({api.GetType().Name}) {scp.hostv1}:{scp.portv1}");
                     Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
                     return api;
                 }
             }
 
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-            if (scp.Mode != StartupConfigPathing.Modes[0])
+            if (scp.Type != StartupConfigPathing.Types.Local)
             {
-                Log.Debug($"Unavailable RemotePathingAPI V2 {scp.hostv2}:{scp.portv2} and V1 {scp.hostv1}:{scp.portv1} -- Fallback to local");
+                Log.Debug($"Unavailable {StartupConfigPathing.Types.RemoteV2} {scp.hostv2}:{scp.portv2} and {StartupConfigPathing.Types.RemoteV1} {scp.hostv1}:{scp.portv1} -- Fallback to {StartupConfigPathing.Types.Local}");
             }
-            Log.Information("Using local pathing API.");
+            
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             var pathingService = new PPatherService(LogWrite, dataConfig);
             var localApi = new LocalPathingApi(logger, pathingService);
             localApi.SelfTest();
+            Log.Information($"Using {StartupConfigPathing.Types.Local}({localApi.GetType().Name}) pathing API.");
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             return localApi;
         }
