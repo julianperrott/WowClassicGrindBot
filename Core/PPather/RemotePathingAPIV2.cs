@@ -47,7 +47,7 @@ namespace Core
             if (!IsConnected)
                 return new List<WowPoint>();
 
-            if(targetMapId == 0)
+            if (targetMapId == 0)
             {
                 targetMapId = uiMapId;
             }
@@ -63,7 +63,7 @@ namespace Core
                 //logger.LogInformation($"Finding route from {start} to {end}...");
 
                 var area = worldMapAreaDB.Get(uiMapId);
-                if(area == null)
+                if (area == null)
                     return new List<WowPoint>();
 
                 var request = new PathRequestWithLocationRequest(area.MapID, start, end, PathRequestFlags.ChaikinCurve);
@@ -71,7 +71,7 @@ namespace Core
                 int typeSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(PathRequestWithLocationRequest));
                 byte[]? response = SendData(request, typeSize);
 
-                if(response == null || response.Length < typeSize)
+                if (response == null || response.Length < typeSize)
                     return new List<WowPoint>();
 
                 int vtypeSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Vector3));
@@ -90,7 +90,7 @@ namespace Core
 
                 var result = new List<WowPoint>();
 
-                for (int i=0; i<path.Length; i++)
+                for (int i = 0; i < path.Length; i++)
                 {
                     var p = worldMapAreaDB.ToMapAreaSpot(path[i].X, path[i].Y, path[i].Z, area.Continent, uiMapId);
                     result.Add(new WowPoint(p.X, p.Y));

@@ -61,19 +61,17 @@ namespace Core
         public unsafe byte[]? SendData<T>(T data, int size) where T : unmanaged
         {
             if (Stream == null)
+            {
                 return null;
+            }
 
-            //var s = BitConverter.GetBytes(size);
-            //var span = new Span<byte>(&data, size);
-            //logger.LogInformation($"size:{size} s: {s.Length}");
-            //logger.LogInformation($"data:{data} s: {span.Length}");
             try
             {
                 Stream.Write(BitConverter.GetBytes(size));
                 Stream.Write(new Span<byte>(&data, size));
                 Stream.Flush();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex.Message);
                 return null;
@@ -87,7 +85,7 @@ namespace Core
                 int dataSize = BitConverter.ToInt32(Reader.ReadBytes(4), 0);
                 return Reader.ReadBytes(dataSize);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex.Message);
                 return null;
