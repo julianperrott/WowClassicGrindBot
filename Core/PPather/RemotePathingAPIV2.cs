@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Core.PPather;
 using Core.Database;
-using SharedLib;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Core
 {
@@ -113,11 +114,31 @@ namespace Core
         }
 
 
-        public async Task<bool> PingServer()
+        public Task<bool> PingServer()
         {
-            logger.LogInformation($"PingServer {2*watchdogPollMs}ms");
-            await Task.Delay(2 * watchdogPollMs + 250);
-            return IsConnected;
+            CancellationTokenSource cts = new CancellationTokenSource();
+
+            var task = Task.Run(() =>
+            {
+                cts.CancelAfter(2 * watchdogPollMs);
+                Stopwatch sw = Stopwatch.StartNew();
+
+                while (!cts.IsCancellationRequested)
+                {
+                    if (IsConnected)
+                    {
+                        break;
+                    }
+                }
+
+                sw.Stop();
+
+                logger.LogInformation($"{GetType().Name} PingServer {sw.ElapsedMilliseconds}ms {IsConnected}");
+
+                return IsConnected;
+            });
+
+            return task;
         }
 
         #endregion old

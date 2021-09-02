@@ -3,8 +3,8 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -46,6 +46,8 @@ namespace Core
             ConnectionWatchdog = new Timer(watchdogPollMs);
             ConnectionWatchdog.Elapsed += ConnectionWatchdogTick;
             ConnectionWatchdog.Start();
+            // Start immediately, dont wait for the first Elapsed
+            Task.Run(() => Update());
 
             ConnectionFailedCounter = 100;
         }
@@ -66,12 +68,7 @@ namespace Core
         public void Disconnect()
         {
             ConnectionWatchdog.Stop();
-            TcpClient?.Close();
-
-            Reader?.Close();
-            Stream?.Close();
-
-            logger.LogInformation("RemotePathingAPIV2 Disconnected!");
+            logger.LogInformation($"{GetType().Name} Disconnected!");
         }
 
         public unsafe byte[]? SendData<T>(T data, int size) where T : unmanaged
@@ -112,6 +109,11 @@ namespace Core
 
         private void ConnectionWatchdogTick(object sender, ElapsedEventArgs e)
         {
+            Update();
+        }
+
+        private void Update()
+        {
             // only start one timer tick at a time
             if (Interlocked.CompareExchange(ref connectionTimerBusy, 1, 0) == 1)
             {
@@ -137,7 +139,7 @@ namespace Core
 
                         ConnectionFailedCounter = 0;
 
-                        logger.LogInformation("RemotePathingAPIV2 Connected!");
+                        logger.LogInformation($"{GetType().Name} Connected!");
                     }
                 }
                 else
@@ -156,7 +158,7 @@ namespace Core
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+                logger.LogError($"{GetType().Name} {ex.Message}");
                 ++ConnectionFailedCounter;
             }
             finally
@@ -172,7 +174,7 @@ namespace Core
 
                     IsConnected = false;
 
-                    logger.LogWarning("RemotePathingAPIV2 Connection is closed!");
+                    logger.LogWarning($"{GetType().Name} Connection is closed!");
                 }
 
                 connectionTimerBusy = 0;
