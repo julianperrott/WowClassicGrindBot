@@ -113,7 +113,7 @@ namespace BlazorServer
                     return api;
                 }
 
-                api.Disconnect();
+                api.RequestDisconnect();
             }
             else if (scp.Type == StartupConfigPathing.Types.RemoteV1 || scp.Type == StartupConfigPathing.Types.RemoteV2)
             {

@@ -52,23 +52,10 @@ namespace Core
             ConnectionFailedCounter = 100;
         }
 
-        public CustomTcpClient(ILogger logger, IPAddress ip, int port, int watchdogPollMs = 1000)
-        {
-            this.logger = logger;
-            Ip = ip;
-            Port = port;
-
-            ConnectionWatchdog = new Timer(watchdogPollMs);
-            ConnectionWatchdog.Elapsed += ConnectionWatchdogTick;
-            ConnectionWatchdog.Start();
-
-            ConnectionFailedCounter = 100;
-        }
-
-        public void Disconnect()
+        public void RequestDisconnect()
         {
             ConnectionWatchdog.Stop();
-            logger.LogInformation($"{GetType().Name} Disconnected!");
+            logger.LogInformation($"{GetType().Name} Disconnect requested!");
         }
 
         public unsafe byte[]? SendData<T>(T data, int size) where T : unmanaged
