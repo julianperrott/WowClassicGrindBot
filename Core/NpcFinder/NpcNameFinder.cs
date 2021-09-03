@@ -14,6 +14,8 @@ namespace Core
 {
     public class NpcNameFinder
     {
+        private const int MOUSE_DELAY = 35;
+
         public enum NPCType
         {
             Enemy,
@@ -119,7 +121,7 @@ namespace Core
                     {
                         var clickPostion = bitmapProvider.DirectBitmap.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                         mouseInput.SetCursorPosition(clickPostion);
-                        await Task.Delay(100);
+                        await Task.Delay(MOUSE_DELAY);
                         CursorClassifier.Classify(out var cls).Dispose();
                         if (cls == CursorClassification.Kill)
                         {
@@ -152,7 +154,7 @@ namespace Core
                 {
                     var clickPostion = bitmapProvider.DirectBitmap.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                     mouseInput.SetCursorPosition(clickPostion);
-                    await Task.Delay(75);
+                    await Task.Delay(MOUSE_DELAY);
                     CursorClassifier.Classify(out var cls).Dispose();
                     if (cursor.Contains(cls))
                     {

@@ -189,7 +189,7 @@ namespace Core.Goals
             {
                 // stuck so jump
                 input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 2");
-                await Task.Delay(100);
+                await playerReader.WaitForNUpdate(1);
                 if (HasBeenActiveRecently())
                 {
                     await this.stuckDetector.Unstick();
@@ -197,7 +197,7 @@ namespace Core.Goals
                 }
                 else
                 {
-                    await Task.Delay(100);
+                    await playerReader.WaitForNUpdate(1);
                     logger.LogInformation("Resuming movement");
                 }
             }
