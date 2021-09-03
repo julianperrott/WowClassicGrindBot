@@ -241,7 +241,7 @@ namespace Core
             var s = GlobalTime;
             while (Math.Abs(s - GlobalTime) <= n)
             {
-                await Task.Delay(100);
+                await Task.Delay(50);
             }
         }
 
