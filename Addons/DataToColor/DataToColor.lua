@@ -2,10 +2,9 @@
 --  DataToColor - display player position as color
 ----------------------------------------------------------------------------
 
-DataToColor = {}
-DataToColor = LibStub("AceAddon-3.0"):NewAddon("AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0", "AceComm-3.0", "AceSerializer-3.0")
-Range = {}
-Range = LibStub("LibRangeCheck-2.0")
+local Load = select(2, ...)
+local DataToColor = unpack(Load)
+local Range = DataToColor.Libs.RangeCheck
 
 DATA_CONFIG = {
     ACCEPT_PARTY_REQUESTS = false, -- O
@@ -247,8 +246,8 @@ local HearthZoneList = {"CENARION HOLD", "VALLEY OF TRIALS", "THE CROSSROADS", "
 local EnchantmentStrings = {}
 
 function DataToColor:slashCommands()
-    SLASH_DC1 = "/dc";
-    SlashCmdList["DC"] = StartSetup;
+    self:RegisterChatCommand('dc', 'StartSetup')
+    self:RegisterChatCommand('dccpu', 'GetCPUImpact')
 end
 
 UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
@@ -299,34 +298,35 @@ local function OnUIErrorMessage(self, event, messageType, message)
     end
 
     if not foundMessage then
-        --DataToColor:log(message .. ":" .. errorName);
+        --DataToColor:Print(message .. ":" .. errorName);
         UIErrorsFrame:AddMessage(message, 0, 0, 1) -- show as blue message (unknown message)
     end
   end
 
 local function OnCombatEvent(self, event)
     local timestamp, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, spellName, spellSchool = CombatLogGetCurrentEventInfo();
+    --DataToColor:Print(CombatLogGetCurrentEventInfo())
     if eventType=="SPELL_PERIODIC_DAMAGE" then
         lastCombatCreature=0;
     elseif string.find(sourceGUID, "Creature") then
         lastCombatCreature = DataToColor:getGuidFromUUID(sourceGUID);
         lastCombatDamageDealerCreature = lastCombatCreature;
-        --print(sourceGUID.." "..lastCombatCreature);
+        --DataToColor:Print(sourceGUID.." "..lastCombatCreature);
     else
         lastCombatCreature=0;
-        --print("Other "..eventType);
+        --DataToColor:Print("Other "..eventType);
     end
 
     if eventType=="UNIT_DIED" then
         if string.find(destGUID, "Creature") then
             lastCombatCreatureDied = DataToColor:getGuidFromUUID(destGUID);
-            --print("v_killing blow " .. destGUID .. " " .. lastCombatCreatureDied .. " " .. destName)
+            --DataToColor:Print("v_killing blow " .. destGUID .. " " .. lastCombatCreatureDied .. " " .. destName)
         else
-            --print("i_killing blow " .. destGUID .. " " .. destName)
+            --DataToColor:Print("i_killing blow " .. destGUID .. " " .. destName)
         end
     end
 
-    --print(CombatLogGetCurrentEventInfo());
+    --DataToColor:Print(CombatLogGetCurrentEventInfo());
 end  
 
 --event handler
@@ -359,35 +359,33 @@ function DataToColor:OnMerchantShow(self, event, messageType, message)
                     _, itemCount = GetContainerItemInfo(myBags, bagSlots)
                     if itemRarity == 0 and itemSellPrice ~= 0 then
                         TotalPrice = TotalPrice + (itemSellPrice * itemCount);
-                        DataToColor:log("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
+                        DataToColor:Print("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
                         UseContainerItem(myBags, bagSlots)
                     end
                 end
         end
     end
     if TotalPrice ~= 0 then
-        print("Total Price for all items: " .. GetCoinTextureString(TotalPrice))
+        DataToColor:Print("Total Price for all items: " .. GetCoinTextureString(TotalPrice))
     else
-        print("No grey items were sold.")
+        DataToColor:Print("No grey items were sold.")
     end
 end
 
 DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow');
 
-
-
--- Function to quickly log info to wow console
-function DataToColor:log(msg)
-    DEFAULT_CHAT_FRAME:AddMessage(msg) -- alias for convenience
-end
-
-function StartSetup()
+function DataToColor:StartSetup()
     if not SETUP_SEQUENCE then
         SETUP_SEQUENCE = true
     else
         SETUP_SEQUENCE = false
     end
 end
+
+function DataToColor:Print(...)
+	(_G.DEFAULT_CHAT_FRAME):AddMessage(strjoin('', '|cff00b3ff', 'DataToColor:|r ', ...)) -- I put DEFAULT_CHAT_FRAME as a fail safe.
+end
+
 function DataToColor:error(msg)
     self:log("|cff0000ff" .. msg .. "|r")
     self:log(msg)
@@ -422,9 +420,9 @@ end
 
 -- Discover player's direction in radians (360 degrees = 2π radians)
 function DataToColor:GetPlayerFacing()
-    local p = Minimap
-    local m = ({p:GetChildren()})[9]
-    local facing = GetPlayerFacing()
+    --local p = Minimap
+    --local m = ({p:GetChildren()})[9]
+    local facing = GetPlayerFacing() or 0
 
     if facing ~= nil then
         return facing
@@ -441,7 +439,7 @@ function DataToColor:OnInitialize()
     self:slashCommands();
 
     timerTick()
-    self:log("We're in")
+    DataToColor:Print("We're in")
 
     buffList = self:createBuffList()
     debuffList = self:createDebuffTargetList()
@@ -464,6 +462,7 @@ function timerTick()
     if globalTime > (256 * 256 * 256 - 1) then
         globalTime = 0
     end
+    --DataToColor:Print(globalTime)
 	C_Timer.After(timeUpdateSec, timerTick)
 end
 
@@ -675,6 +674,7 @@ function DataToColor:CreateFrames(n)
 
             self:HandleEvents()
         end
+
         if SETUP_SEQUENCE then
             -- Emits meta data in data square index 0 concerning our estimated cell size, number of rows, and the numbers of frames
             MakePixelSquareArr(integerToColor(CELL_SPACING * 10000000 + CELL_SIZE * 100000 + 1000 * FRAME_ROWS + NUMBER_OF_FRAMES), 0)
@@ -812,7 +812,7 @@ function DataToColor:delete(items)
             if n then
                 for i = 1, table.getn(items), 1 do
                     if strfind(n,items[i]) then
-                        DataToColor:log("Delete: " .. items[i]);
+                        DataToColor:Print("Delete: " .. items[i]);
                         PickupContainerItem(b,s);
                         DeleteCursorItem();
                     end
@@ -829,7 +829,7 @@ function DataToColor:sell(items)
         local item= GetMerchantItemLink(1);
 
         if  item ~= nil then
-            DataToColor:log("Selling items...");
+            DataToColor:Print("Selling items...");
 
             DataToColor:OnMerchantShow();
 
@@ -844,10 +844,10 @@ function DataToColor:sell(items)
                                 if (itemRarity<2) then
                                     _, itemCount = GetContainerItemInfo(b, s);
                                     TotalPrice = TotalPrice + (itemSellPrice * itemCount);
-                                    DataToColor:log("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
+                                    DataToColor:Print("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
                                     UseContainerItem(b,s);
                                 else
-                                    DataToColor:log("Item is not gray or common, not selling it: " .. items[i]);
+                                    DataToColor:Print("Item is not gray or common, not selling it: " .. items[i]);
                                 end
                             end
                         end
@@ -856,16 +856,16 @@ function DataToColor:sell(items)
             end
 
             if TotalPrice ~= 0 then
-                print("Total Price for all items: " .. GetCoinTextureString(TotalPrice))
+                DataToColor:Print("Total Price for all items: " .. GetCoinTextureString(TotalPrice))
             else
-                print("No grey items were sold.")
+                DataToColor:Print("No grey items were sold.")
             end
 
         else
-            DataToColor:log("Merchant is not open to sell to, please approach and open.");
+            DataToColor:Print("Merchant is not open to sell to, please approach and open.");
         end
     else
-        DataToColor:log("Merchant is not targetted.");
+        DataToColor:Print("Merchant is not targetted.");
     end
 end
 
@@ -1056,7 +1056,7 @@ function DataToColor:actionbarCost(slot)
                     break
                 end
             end
-            --print(button:GetName(), actionType, (GetSpellLink(id)), actionName, type, cost, id)
+            --DataToColor:Print(button:GetName(), actionType, (GetSpellLink(id)), actionName, type, cost, id)
             return MAX_POWER_TYPE * type + MAX_ACTION_IDX * slot + cost
         end
     end
