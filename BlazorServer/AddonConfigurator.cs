@@ -352,6 +352,9 @@ namespace BlazorServer
         {
             string tocPath = Path.Join(path, fileName + ".toc");
 
+            if (!File.Exists(tocPath))
+                return null;
+
             string begin = "## Version: ";
             var line = File
                 .ReadLines(tocPath)

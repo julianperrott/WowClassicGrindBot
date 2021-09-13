@@ -64,6 +64,7 @@ namespace BlazorServer
             if(!addonConfig.IsDefault() && !addonConfigurator.Installed())
             {
                 // At this point the webpage never loads so fallback to configuration page
+                AddonConfig.Delete();
                 DataFrameConfiguration.RemoveConfiguration();
             }
 
