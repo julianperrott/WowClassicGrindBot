@@ -11,3 +11,7 @@ DataToColor.C.unitTargetTarget = "targettarget"
 DataToColor.C.CHARACTER_NAME = UnitName(DataToColor.C.unitPlayer)
 DataToColor.C.CHARACTER_GUID = UnitGUID(DataToColor.C.unitPlayer)
 _, DataToColor.C.CHARACTER_CLASS = UnitClass(DataToColor.C.unitPlayer)
+
+-- actionbar power cost
+DataToColor.C.MAX_POWER_TYPE = 1000000
+DataToColor.C.MAX_ACTION_IDX = 1000

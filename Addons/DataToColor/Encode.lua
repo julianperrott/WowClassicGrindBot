@@ -22,6 +22,7 @@ function DataToColor:fixedDecimalToColor(f)
     elseif f < 0 then
         return {0}
     end
+    --]]
     -- "%f" denotes formatting a string as floating point decimal
     -- The number (.5 in this case) is used to denote the number of decimal places
     --local f6 = tonumber(string.format("%.5f", 1))

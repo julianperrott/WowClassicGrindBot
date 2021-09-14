@@ -18,6 +18,9 @@ Libs\LibRangeCheck-2.0\LibRangeCheck-2.0\LibRangeCheck-2.0.lua
 init.lua
 
 Constants.lua
+Query.lua
+
+Storage.lua
 
 Diagnostics.lua
 Encode.lua
