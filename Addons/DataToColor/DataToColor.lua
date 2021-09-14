@@ -190,21 +190,11 @@ function DataToColor:createSpellInrangeList()
     end
 end
 
--- List of possible subzones to which a player's hearthstone may be bound
-local HearthZoneList = {"CENARION HOLD", "VALLEY OF TRIALS", "THE CROSSROADS", "RAZOR HILL", "DUROTAR", "ORGRIMMAR", "CAMP TAURAJO", "FREEWIND POST", "GADGETZAN", "SHADOWPREY VILLAGE", "THUNDER BLUFF", "UNDERCITY", "CAMP MOJACHE", "COLDRIDGE VALLEY", "DUN MOROGH", "THUNDERBREW DISTILLERY", "IRONFORGE", "STOUTLAGER INN", "STORMWIND CITY", "SOUTHSHORE", "LAKESHIRE", "STONETALON PEAK", "GOLDSHIRE", "SENTINEL HILL", "DEEPWATER TAVERN", "THERAMORE ISLE", "DOLANAAR", "ASTRANAAR", "NIJEL'S POINT", "CRAFTSMEN'S TERRACE", "AUBERDINE", "FEATHERMOON STRONGHOLD", "BOOTY BAY", "WILDHAMMER KEEP", "DARKSHIRE", "EVERLOOK", "RATCHET", "LIGHT'S HOPE CHAPEL"}
-local EnchantmentStrings = {}
 
-function DataToColor:slashCommands()
+function DataToColor:RegisterSlashCommands()
     self:RegisterChatCommand('dc', 'StartSetup')
     self:RegisterChatCommand('dccpu', 'GetCPUImpact')
 end
-
--- handle error events
-UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
-DataToColor:RegisterEvent("UI_ERROR_MESSAGE", 'OnUIErrorMessage')
-DataToColor:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", 'OnCombatEvent')
-DataToColor:RegisterEvent('LOOT_CLOSED','OnLootClosed')
-DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
 
 function DataToColor:StartSetup()
     if not SETUP_SEQUENCE then
@@ -264,16 +254,23 @@ end
 function DataToColor:OnInitialize()
     self:SetupRequirements()
     self:CreateFrames(NUMBER_OF_FRAMES)
-    self:slashCommands();
+    self:RegisterSlashCommands()
 
-    self:Update()
-    self:Print("We're in")
+    -- handle error events
+    UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
+
+    self:RegisterEvent("UI_ERROR_MESSAGE", 'OnUIErrorMessage')
+    self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", 'OnCombatEvent')
+    self:RegisterEvent('LOOT_CLOSED','OnLootClosed')
+    self:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
 
     buffList = self:createBuffList()
     debuffList = self:createDebuffTargetList()
     self:createSpellInrangeList();
 
-    LoggingChat(1);
+    --LoggingChat(1);
+    self:Update()
+    self:Print("We're in")
 end
 
 function DataToColor:SetupRequirements()
@@ -1319,6 +1316,9 @@ function DataToColor:ProcessExitStatus()
     end
     return EXIT_PROCESS_STATUS
 end
+
+-- List of possible subzones to which a player's hearthstone may be bound
+local HearthZoneList = {"CENARION HOLD", "VALLEY OF TRIALS", "THE CROSSROADS", "RAZOR HILL", "DUROTAR", "ORGRIMMAR", "CAMP TAURAJO", "FREEWIND POST", "GADGETZAN", "SHADOWPREY VILLAGE", "THUNDER BLUFF", "UNDERCITY", "CAMP MOJACHE", "COLDRIDGE VALLEY", "DUN MOROGH", "THUNDERBREW DISTILLERY", "IRONFORGE", "STOUTLAGER INN", "STORMWIND CITY", "SOUTHSHORE", "LAKESHIRE", "STONETALON PEAK", "GOLDSHIRE", "SENTINEL HILL", "DEEPWATER TAVERN", "THERAMORE ISLE", "DOLANAAR", "ASTRANAAR", "NIJEL'S POINT", "CRAFTSMEN'S TERRACE", "AUBERDINE", "FEATHERMOON STRONGHOLD", "BOOTY BAY", "WILDHAMMER KEEP", "DARKSHIRE", "EVERLOOK", "RATCHET", "LIGHT'S HOPE CHAPEL"}
 
 -- Returns sub zone ID based on index of subzone in constant variable
 function DataToColor:hearthZoneID()
