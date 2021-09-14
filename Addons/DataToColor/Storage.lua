@@ -98,70 +98,70 @@ function CreateSpellInRangeList(self)
 end
 
 function CreatePlayerBuffList(self)
-    self.S.buffList = {}
-    self.S.buffList[0] = "Food"
-    self.S.buffList[1] = "Drink"
-    self.S.buffList[2] = "Well Fed"
-    self.S.buffList[3] = "Mana Regeneration"
+    self.S.playerBuffs = {}
+    self.S.playerBuffs[0] = "Food"
+    self.S.playerBuffs[1] = "Drink"
+    self.S.playerBuffs[2] = "Well Fed"
+    self.S.playerBuffs[3] = "Mana Regeneration"
 
     if self.C.CHARACTER_CLASS == "PRIEST" then
-        self.S.buffList[10] = "Fortitude"
-        self.S.buffList[11] = "Inner Fire"
-        self.S.buffList[12] = "Renew"
-        self.S.buffList[13] = "Shield"
-        self.S.buffList[14] = "Spirit"
+        self.S.playerBuffs[10] = "Fortitude"
+        self.S.playerBuffs[11] = "Inner Fire"
+        self.S.playerBuffs[12] = "Renew"
+        self.S.playerBuffs[13] = "Shield"
+        self.S.playerBuffs[14] = "Spirit"
     elseif self.C.CHARACTER_CLASS == "DRUID" then
-        self.S.buffList[10] = "Mark of the Wild"
-        self.S.buffList[11] = "Thorns"
-        self.S.buffList[12] = "Fury"
+        self.S.playerBuffs[10] = "Mark of the Wild"
+        self.S.playerBuffs[11] = "Thorns"
+        self.S.playerBuffs[12] = "Fury"
     elseif self.C.CHARACTER_CLASS == "PALADIN" then
-        self.S.buffList[10] = "Aura"
-        self.S.buffList[11] = "Blessing"
-        self.S.buffList[12] = "Seal"
+        self.S.playerBuffs[10] = "Aura"
+        self.S.playerBuffs[11] = "Blessing"
+        self.S.playerBuffs[12] = "Seal"
     elseif self.C.CHARACTER_CLASS == "MAGE" then
-        self.S.buffList[10] = "Armor"
-        self.S.buffList[11] = "Arcane Intellect"
-        self.S.buffList[12] = "Ice Barrier"
-        self.S.buffList[13] = "Ward"
-        self.S.buffList[14] = "Fire Power"
+        self.S.playerBuffs[10] = "Armor"
+        self.S.playerBuffs[11] = "Arcane Intellect"
+        self.S.playerBuffs[12] = "Ice Barrier"
+        self.S.playerBuffs[13] = "Ward"
+        self.S.playerBuffs[14] = "Fire Power"
     elseif self.C.CHARACTER_CLASS == "ROGUE" then
-        self.S.buffList[10] = "Slice and Dice"
+        self.S.playerBuffs[10] = "Slice and Dice"
     elseif self.C.CHARACTER_CLASS == "WARRIOR" then
-        self.S.buffList[10] = "Battle Shout"
+        self.S.playerBuffs[10] = "Battle Shout"
     elseif self.C.CHARACTER_CLASS == "WARLOCK" then
-        self.S.buffList[10] = "Demon"
-        self.S.buffList[11] = "Soul Link"
-        self.S.buffList[12] = "Soulstone Resurrection"
-        self.S.buffList[13] = "Shadow Trance"
+        self.S.playerBuffs[10] = "Demon"
+        self.S.playerBuffs[11] = "Soul Link"
+        self.S.playerBuffs[12] = "Soulstone Resurrection"
+        self.S.playerBuffs[13] = "Shadow Trance"
     elseif self.C.CHARACTER_CLASS == "SHAMAN" then
-        self.S.buffList[10] = "Lightning Shield"
+        self.S.playerBuffs[10] = "Lightning Shield"
     elseif self.C.CHARACTER_CLASS == "HUNTER" then
-        self.S.buffList[10] = "Aspect of"
-        self.S.buffList[11] = "Rapid Fire"
-        self.S.buffList[12] = "Quick Shots"
+        self.S.playerBuffs[10] = "Aspect of"
+        self.S.playerBuffs[11] = "Rapid Fire"
+        self.S.playerBuffs[12] = "Quick Shots"
     end
 end
 
 function CreateTargetDebuffList(self)
-    self.S.debuffList = {}
+    self.S.targetDebuffs = {}
     if self.C.CHARACTER_CLASS == "PRIEST" then 
-        self.S.debuffList[0] = "Pain"
+        self.S.targetDebuffs[0] = "Pain"
     elseif self.C.CHARACTER_CLASS == "DRUID" then
-        self.S.debuffList[0] = "Roar"
-        self.S.debuffList[1] = "Faerie Fire"
-        self.S.debuffList[2] = "Rip"
+        self.S.targetDebuffs[0] = "Roar"
+        self.S.targetDebuffs[1] = "Faerie Fire"
+        self.S.targetDebuffs[2] = "Rip"
     elseif self.C.CHARACTER_CLASS == "PALADIN" then
     elseif self.C.CHARACTER_CLASS == "MAGE" then
-        self.S.debuffList[0] = "Frostbite"
+        self.S.targetDebuffs[0] = "Frostbite"
     elseif self.C.CHARACTER_CLASS == "ROGUE" then
     elseif self.C.CHARACTER_CLASS == "WARRIOR" then
-        self.S.debuffList[0] = "Rend"
+        self.S.targetDebuffs[0] = "Rend"
     elseif self.C.CHARACTER_CLASS == "WARLOCK" then
-        self.S.debuffList[0] = "Curse of"
-        self.S.debuffList[1] = "Corruption"
-        self.S.debuffList[2] = "Immolate"
-        self.S.debuffList[3] = "Siphon Life"
+        self.S.targetDebuffs[0] = "Curse of"
+        self.S.targetDebuffs[1] = "Corruption"
+        self.S.targetDebuffs[2] = "Immolate"
+        self.S.targetDebuffs[3] = "Siphon Life"
     elseif self.C.CHARACTER_CLASS == "HUNTER" then
-        self.S.debuffList[0] = "Serpect Sting"
+        self.S.targetDebuffs[0] = "Serpect Sting"
     end
 end
