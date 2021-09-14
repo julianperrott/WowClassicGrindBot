@@ -124,6 +124,7 @@ function CreatePlayerBuffList(self)
         self.S.playerBuffs[12] = "Ice Barrier"
         self.S.playerBuffs[13] = "Ward"
         self.S.playerBuffs[14] = "Fire Power"
+        self.S.playerBuffs[15] = "Mana Shield"
     elseif self.C.CHARACTER_CLASS == "ROGUE" then
         self.S.playerBuffs[10] = "Slice and Dice"
     elseif self.C.CHARACTER_CLASS == "WARRIOR" then
