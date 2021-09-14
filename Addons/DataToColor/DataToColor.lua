@@ -83,12 +83,17 @@ local BOTTOM_LEFT_MIN = 61
 local BOTTOM_LEFT_MAX = 72
 
 -- Timers
-local timeUpdateSec = 0.1
-local globalTime = 0
-local lastLoot = 0
+DataToColor.timeUpdateSec = 0.1
+DataToColor.globalTime = 0
+DataToColor.lastLoot = 0
 
 DataToColor.frames = nil
 DataToColor.r = 0
+
+DataToColor.uiErrorMessage=0;
+DataToColor.lastCombatDamageDealerCreature=0;
+DataToColor.lastCombatCreature=0;
+DataToColor.lastCombatCreatureDied=0;
 
 -- Note: Coordinates where player is standing (max: 10, min: -10)
 -- Note: Player direction is in radians (360 degrees = 2π radians)
@@ -100,15 +105,10 @@ local unitPet = "pet"
 local unitPetTarget = "pettarget"
 local unitTargetTarget = "targettarget"
 
-
 -- Character's name
 local CHARACTER_NAME = UnitName(unitPlayer)
 local CHARACTER_GUID = UnitGUID(unitPlayer)
 local _, CHARACTER_CLASS = UnitClass(unitPlayer)
-local uiErrorMessage=0;
-local lastCombatDamageDealerCreature=0;
-local lastCombatCreature=0;
-local lastCombatCreatureDied=0;
 
 local buffList
 function DataToColor:createBuffList()
@@ -250,129 +250,12 @@ function DataToColor:slashCommands()
     self:RegisterChatCommand('dccpu', 'GetCPUImpact')
 end
 
-UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
-
-
-local ignoreErrorList = {
-    "ERR_ABILITY_COOLDOWN",
-    "ERR_OUT_OF_RAGE",
-    "ERR_NO_ATTACK_TARGET",
-    "ERR_OUT_OF_MANA",
-    "ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS", 
-    "ERR_SPELL_COOLDOWN", 
-    "ERR_SPELL_FAILED_SHAPESHIFT_FORM_S",
-    "ERR_GENERIC_NO_TARGET",
-    "ERR_ATTACK_PREVENTED_BY_MECHANIC_S",
-    "ERR_ATTACK_STUNNED",
-    "ERR_NOEMOTEWHILERUNNING",
-}
-
-local errorList = {
-    "ERR_BADATTACKFACING", --1
-    "ERR_SPELL_FAILED_S", --2
-    "ERR_SPELL_OUT_OF_RANGE", --3
-    "ERR_BADATTACKPOS", --4
-    "ERR_AUTOFOLLOW_TOO_FAR", --5
-};
-
 -- handle error events
-local function OnUIErrorMessage(self, event, messageType, message)
-    local errorName, soundKitID, voiceID = GetGameMessageInfo(messageType)
-
-    local foundMessage=false;
-    for i = 1, table.getn(ignoreErrorList), 1 do
-        if ignoreErrorList[i]==errorName then
-            foundMessage=true;
-            UIErrorsFrame:AddMessage(message, 0.7, 0.7, 0.7) -- show as grey messasge
-        end
-    end
-
-    if not foundMessage then
-        for i = 1, table.getn(errorList), 1 do
-            if errorList[i]==errorName then
-                uiErrorMessage = i;
-                foundMessage=true;
-                UIErrorsFrame:AddMessage(message, 0, 1, 0) -- show as green messasge
-            end
-        end
-    end
-
-    if not foundMessage then
-        --DataToColor:Print(message .. ":" .. errorName);
-        UIErrorsFrame:AddMessage(message, 0, 0, 1) -- show as blue message (unknown message)
-    end
-  end
-
-local function OnCombatEvent(self, event)
-    local timestamp, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, spellName, spellSchool = CombatLogGetCurrentEventInfo();
-    --DataToColor:Print(CombatLogGetCurrentEventInfo())
-    if eventType=="SPELL_PERIODIC_DAMAGE" then
-        lastCombatCreature=0;
-    elseif string.find(sourceGUID, "Creature") then
-        lastCombatCreature = DataToColor:getGuidFromUUID(sourceGUID);
-        lastCombatDamageDealerCreature = lastCombatCreature;
-        --DataToColor:Print(sourceGUID.." "..lastCombatCreature);
-    else
-        lastCombatCreature=0;
-        --DataToColor:Print("Other "..eventType);
-    end
-
-    if eventType=="UNIT_DIED" then
-        if string.find(destGUID, "Creature") then
-            lastCombatCreatureDied = DataToColor:getGuidFromUUID(destGUID);
-            --DataToColor:Print("v_killing blow " .. destGUID .. " " .. lastCombatCreatureDied .. " " .. destName)
-        else
-            --DataToColor:Print("i_killing blow " .. destGUID .. " " .. destName)
-        end
-    end
-
-    --DataToColor:Print(CombatLogGetCurrentEventInfo());
-end  
-
---event handler
-local eventHandler = CreateFrame("Frame");
-eventHandler:SetScript("OnEvent", OnUIErrorMessage);
-eventHandler:RegisterEvent("UI_ERROR_MESSAGE")
-
-local f = CreateFrame("Frame")
-f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-f:SetScript("OnEvent", OnCombatEvent)
-
-local l = CreateFrame("Frame")
-l:RegisterEvent("LOOT_CLOSED")
-l:SetScript("OnEvent", 
-function(self, event, arg1)														
-    if event == "LOOT_CLOSED" then
-        lastLoot = globalTime
-    end
-end
-)
-
-function DataToColor:OnMerchantShow(self, event, messageType, message)
-    
-    TotalPrice = 0
-    for myBags = 0,4 do
-        for bagSlots = 1, GetContainerNumSlots(myBags) do
-            CurrentItemLink = GetContainerItemLink(myBags, bagSlots)
-                if CurrentItemLink then
-                    _, _, itemRarity, _, _, _, _, _, _, _, itemSellPrice = GetItemInfo(CurrentItemLink)
-                    _, itemCount = GetContainerItemInfo(myBags, bagSlots)
-                    if itemRarity == 0 and itemSellPrice ~= 0 then
-                        TotalPrice = TotalPrice + (itemSellPrice * itemCount);
-                        DataToColor:Print("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
-                        UseContainerItem(myBags, bagSlots)
-                    end
-                end
-        end
-    end
-    if TotalPrice ~= 0 then
-        DataToColor:Print("Total Price for all items: " .. GetCoinTextureString(TotalPrice))
-    else
-        DataToColor:Print("No grey items were sold.")
-    end
-end
-
-DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow');
+UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
+DataToColor:RegisterEvent("UI_ERROR_MESSAGE", 'OnUIErrorMessage')
+DataToColor:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", 'OnCombatEvent')
+DataToColor:RegisterEvent('LOOT_CLOSED','OnLootClosed')
+DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
 
 function DataToColor:StartSetup()
     if not SETUP_SEQUENCE then
@@ -391,10 +274,6 @@ function DataToColor:error(msg)
     self:log(msg)
     self:log(debugstack())
     error(msg)
-end
--- Automatic Modulo function for Lua 5 and earlier
-function Modulo(val, by)
-    return val - math.floor(val / by) * by
 end
 
 -- Check if two tables are identical
@@ -438,8 +317,8 @@ function DataToColor:OnInitialize()
     self:CreateFrames(NUMBER_OF_FRAMES)
     self:slashCommands();
 
-    timerTick()
-    DataToColor:Print("We're in")
+    self:Update()
+    self:Print("We're in")
 
     buffList = self:createBuffList()
     debuffList = self:createDebuffTargetList()
@@ -457,54 +336,21 @@ function DataToColor:SetupRequirements()
 	SetCVar('Gamma',1,'[]')
 end
 
-function timerTick()
-	globalTime = globalTime + 1
-    if globalTime > (256 * 256 * 256 - 1) then
-        globalTime = 0
+local UpdateFuncCache={};
+function DataToColor:Update()
+	self.globalTime = self.globalTime + 1
+    if self.globalTime > (256 * 256 * 256 - 1) then
+        self.globalTime = 0
     end
-    --DataToColor:Print(globalTime)
-	C_Timer.After(timeUpdateSec, timerTick)
-end
 
--- This function is able to pass numbers in range 0 to 16777215
-function integerToColor(i)
-    -- r,g,b are integers in range 0-255
-    -- then we turn them into 0-1 range
-    return {bit.band(bit.rshift(i,16),255) / 255, bit.band(bit.rshift(i,8),255) / 255, bit.band(i,255) / 255};
-end
-
--- This function is able to pass numbers in range 0 to 9.99999 (6 digits)
--- converting them to a 6-digit integer.
-function fixedDecimalToColor(f)
-    if f > 9.99999 then
-        -- error("Number too big to be passed as a fixed-point decimal")
-        return {0}
-    elseif f < 0 then
-        return {0}
+    --self:Print(self.globalTime)
+ 
+    local func = UpdateFuncCache[self]
+    if not func then
+        func = function() self:Update(); end;
+        UpdateFuncCache[self] = func;
     end
-    -- "%f" denotes formatting a string as floating point decimal
-    -- The number (.5 in this case) is used to denote the number of decimal places
-    local f6 = tonumber(string.format("%.5f", 1))
-    -- Makes number an integer so it can be encoded
-    local i = math.floor(f * 100000)
-    return integerToColor(i)
-end
-
--- Pass in a string to get the upper case ASCII values. Converts any special character with ASCII values below 100
-function DataToColor:StringToASCIIHex(str)
-    -- Converts string to upper case so only 2 digit ASCII values
-    -- All lowercase letters have a decimal ASCII value >100, so we only uppercase numbers which are a mere 2 digits long.
-    str = string.sub(string.upper(str), 0, 6)
-    -- Sets string to an empty string
-    local ASCII = ''
-    -- Loops through all of string passed to it and converts to upper case ASCII values
-    for i = 1, string.len(str) do
-        -- Assigns the specific value to a character to then assign to the ASCII string/number
-        local c = string.sub(str, i, i)
-        -- Concatenation of old string and new character
-        ASCII = ASCII .. string.byte(c)
-    end
-    return tonumber(ASCII)
+    C_Timer.After(self.timeUpdateSec, func);
 end
 
 -- Function to mass generate all of the initial frames for the pixel reader
@@ -533,34 +379,34 @@ function DataToColor:CreateFrames(n)
         -- Number of loops is based on the number of generated frames declared at beginning of script
         
         if not SETUP_SEQUENCE then
-            MakePixelSquareArr(integerToColor(0), 0)
+            MakePixelSquareArr(self:integerToColor(0), 0)
             -- The final data square, reserved for additional metadata.
-            MakePixelSquareArr(integerToColor(2000001), NUMBER_OF_FRAMES - 1)
+            MakePixelSquareArr(self:integerToColor(2000001), NUMBER_OF_FRAMES - 1)
             -- Position related variables --
-            MakePixelSquareArr(fixedDecimalToColor(xCoordi), 1) --1 The x-coordinate
-            MakePixelSquareArr(fixedDecimalToColor(yCoordi), 2) --2 The y-coordinate
-            MakePixelSquareArr(fixedDecimalToColor(DataToColor:GetPlayerFacing()), 3) --3 The direction the player is facing in radians
-            MakePixelSquareArr(integerToColor(self:GetZoneName(0)), 4) -- Get name of first 3 characters of zone
-            MakePixelSquareArr(integerToColor(self:GetZoneName(3)), 5) -- Get name of last 3 characters of zone
-            MakePixelSquareArr(fixedDecimalToColor(self:CorpsePosition("x") * 10), 6) -- Returns the x coordinates of corpse
-            MakePixelSquareArr(fixedDecimalToColor(self:CorpsePosition("y") * 10), 7) -- Return y coordinates of corpse
+            MakePixelSquareArr(self:fixedDecimalToColor(xCoordi), 1) --1 The x-coordinate
+            MakePixelSquareArr(self:fixedDecimalToColor(yCoordi), 2) --2 The y-coordinate
+            MakePixelSquareArr(self:fixedDecimalToColor(DataToColor:GetPlayerFacing()), 3) --3 The direction the player is facing in radians
+            MakePixelSquareArr(self:integerToColor(self:GetZoneName(0)), 4) -- Get name of first 3 characters of zone
+            MakePixelSquareArr(self:integerToColor(self:GetZoneName(3)), 5) -- Get name of last 3 characters of zone
+            MakePixelSquareArr(self:fixedDecimalToColor(self:CorpsePosition("x") * 10), 6) -- Returns the x coordinates of corpse
+            MakePixelSquareArr(self:fixedDecimalToColor(self:CorpsePosition("y") * 10), 7) -- Return y coordinates of corpse
             -- Boolean variables --
-            MakePixelSquareArr(integerToColor(self:Base2Converter()), 8)
+            MakePixelSquareArr(self:integerToColor(self:Base2Converter()), 8)
             -- Start combat/NPC related variables --
-            MakePixelSquareArr(integerToColor(self:getHealthMax(unitPlayer)), 10) --8 Represents maximum amount of health
-            MakePixelSquareArr(integerToColor(self:getHealthCurrent(unitPlayer)), 11) --9 Represents current amount of health
-            MakePixelSquareArr(integerToColor(self:getManaMax(unitPlayer)), 12) --10 Represents maximum amount of mana
-            MakePixelSquareArr(integerToColor(self:getManaCurrent(unitPlayer)), 13) --11 Represents current amount of mana
-            MakePixelSquareArr(integerToColor(self:getPlayerLevel()), 14) --12 Represents character level
-            MakePixelSquareArr(integerToColor(self:getRange()), 15) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
-            MakePixelSquareArr(integerToColor(self:GetTargetName(0)), 16) -- Characters 1-3 of target's name
-            MakePixelSquareArr(integerToColor(self:GetTargetName(3)), 17) -- Characters 4-6 of target's name
-            MakePixelSquareArr(integerToColor(self:getHealthMax(unitTarget)), 18) -- Return the maximum amount of health a target can have
-            MakePixelSquareArr(integerToColor(self:getHealthCurrent(unitTarget)), 19) -- Returns the current amount of health the target currently has
+            MakePixelSquareArr(self:integerToColor(self:getHealthMax(unitPlayer)), 10) --8 Represents maximum amount of health
+            MakePixelSquareArr(self:integerToColor(self:getHealthCurrent(unitPlayer)), 11) --9 Represents current amount of health
+            MakePixelSquareArr(self:integerToColor(self:getManaMax(unitPlayer)), 12) --10 Represents maximum amount of mana
+            MakePixelSquareArr(self:integerToColor(self:getManaCurrent(unitPlayer)), 13) --11 Represents current amount of mana
+            MakePixelSquareArr(self:integerToColor(self:getPlayerLevel()), 14) --12 Represents character level
+            MakePixelSquareArr(self:integerToColor(self:getRange()), 15) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
+            MakePixelSquareArr(self:integerToColor(self:GetTargetName(0)), 16) -- Characters 1-3 of target's name
+            MakePixelSquareArr(self:integerToColor(self:GetTargetName(3)), 17) -- Characters 4-6 of target's name
+            MakePixelSquareArr(self:integerToColor(self:getHealthMax(unitTarget)), 18) -- Return the maximum amount of health a target can have
+            MakePixelSquareArr(self:integerToColor(self:getHealthCurrent(unitTarget)), 19) -- Returns the current amount of health the target currently has
             -- Begin Items section --
             -- there are 5 item slots: main backpack and 4 pouches
             -- Indexes one slot from each bag each frame. SlotN (1-16) and bag (0-4) calculated here:
-            if Modulo(globalCounter, ITEM_ITERATION_FRAME_CHANGE_RATE) == 0 then
+            if self:Modulo(globalCounter, ITEM_ITERATION_FRAME_CHANGE_RATE) == 0 then
                 itemNum = itemNum + 1
                 equipNum = equipNum + 1
                 bagNum = bagNum + 1
@@ -583,7 +429,7 @@ function DataToColor:CreateFrames(n)
                     globalCounter = 1000
                 end
             end
-            if Modulo(globalCounter, ACTION_BAR_ITERATION_FRAME_CHANGE_RATE) == 0 then
+            if self:Modulo(globalCounter, ACTION_BAR_ITERATION_FRAME_CHANGE_RATE) == 0 then
                 actionNum = actionNum + 1
                 if actionNum >= 84 then
                     actionNum = 1
@@ -595,92 +441,92 @@ function DataToColor:CreateFrames(n)
             -- Bag contents - Uses data pixel positions 20-29
             for bagNo = 0, 4 do
                 -- Returns item ID and quantity
-                MakePixelSquareArr(integerToColor(self:itemName(bagNo, itemNum)), 20 + bagNo * 2) -- 20,22,24,26,28
+                MakePixelSquareArr(self:integerToColor(self:itemName(bagNo, itemNum)), 20 + bagNo * 2) -- 20,22,24,26,28
                 -- Return item slot number
-                MakePixelSquareArr(integerToColor(bagNo * 20 + itemNum), 21 + bagNo * 2) -- 21,23,25,27,29
-                MakePixelSquareArr(integerToColor(self:itemInfo(bagNo, itemNum)), 60 + bagNo ) -- 60,61,62,63,64
+                MakePixelSquareArr(self:integerToColor(bagNo * 20 + itemNum), 21 + bagNo * 2) -- 21,23,25,27,29
+                MakePixelSquareArr(self:integerToColor(self:itemInfo(bagNo, itemNum)), 60 + bagNo ) -- 60,61,62,63,64
             end
 
             local equipName = self:equipName(equipNum)
             -- Equipment ID
-            MakePixelSquareArr(integerToColor(equipName), 30)
+            MakePixelSquareArr(self:integerToColor(equipName), 30)
             -- Equipment slot
-            MakePixelSquareArr(integerToColor(equipNum), 31)
+            MakePixelSquareArr(self:integerToColor(equipNum), 31)
             
             -- Amount of money in coppers
-            MakePixelSquareArr(integerToColor(Modulo(self:getMoneyTotal(), 1000000)), 32) -- 13 Represents amount of money held (in copper)
-            MakePixelSquareArr(integerToColor(floor(self:getMoneyTotal() / 1000000)), 33) -- 14 Represents amount of money held (in gold)
+            MakePixelSquareArr(self:integerToColor(self:Modulo(self:getMoneyTotal(), 1000000)), 32) -- 13 Represents amount of money held (in copper)
+            MakePixelSquareArr(self:integerToColor(floor(self:getMoneyTotal() / 1000000)), 33) -- 14 Represents amount of money held (in gold)
            
             -- Start main action page (page 1)
-            MakePixelSquareArr(integerToColor(self:isActionUseable(1,24)), 34) 
-            MakePixelSquareArr(integerToColor(self:isActionUseable(25,48)), 35) 
-            MakePixelSquareArr(integerToColor(self:isActionUseable(49,72)), 36) 
-            MakePixelSquareArr(integerToColor(self:isActionUseable(73,96)), 42) 
+            MakePixelSquareArr(self:integerToColor(self:isActionUseable(1,24)), 34) 
+            MakePixelSquareArr(self:integerToColor(self:isActionUseable(25,48)), 35) 
+            MakePixelSquareArr(self:integerToColor(self:isActionUseable(49,72)), 36) 
+            MakePixelSquareArr(self:integerToColor(self:isActionUseable(73,96)), 42) 
 
             local freeSlots, bagType = GetContainerNumFreeSlots(bagNum)
             if bagType == nil then
                 bagType = 0
             end
-            MakePixelSquareArr(integerToColor(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)), 37) -- BagType + Index + FreeSpace + BagSlots
+            MakePixelSquareArr(self:integerToColor(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)), 37) -- BagType + Index + FreeSpace + BagSlots
 
 
-            MakePixelSquareArr(integerToColor(self:getHealthMax(unitPet)), 38)
-            MakePixelSquareArr(integerToColor(self:getHealthCurrent(unitPet)), 39)
+            MakePixelSquareArr(self:integerToColor(self:getHealthMax(unitPet)), 38)
+            MakePixelSquareArr(self:integerToColor(self:getHealthCurrent(unitPet)), 39)
             -- 40
 
             -- Profession levels:
             -- tracks our skinning level
-            --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
+            --MakePixelSquareArr(self:integerToColor(self:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
             -- tracks our fishing level
-            --MakePixelSquareArr(integerToColor(self:GetProfessionLevel("Fishing")), 42) -- Fishing profession level
-            MakePixelSquareArr(integerToColor(self:getAuraMaskForClass(UnitBuff, unitPlayer, buffList)), 41);
+            --MakePixelSquareArr(self:integerToColor(self:GetProfessionLevel("Fishing")), 42) -- Fishing profession level
+            MakePixelSquareArr(self:integerToColor(self:getAuraMaskForClass(UnitBuff, unitPlayer, buffList)), 41);
             -- 42 used by keys
             
-            MakePixelSquareArr(integerToColor(self:getTargetLevel()), 43)
+            MakePixelSquareArr(self:integerToColor(self:getTargetLevel()), 43)
 
-            MakePixelSquareArr(integerToColor(DataToColor:actionbarCost(actionNum)), 44)
-            --MakePixelSquareArr(integerToColor(self:GetGossipIcons()), 45) -- Returns which gossip icons are on display in dialogue box
+            MakePixelSquareArr(self:integerToColor(DataToColor:actionbarCost(actionNum)), 44)
+            --MakePixelSquareArr(self:integerToColor(self:GetGossipIcons()), 45) -- Returns which gossip icons are on display in dialogue box
 
-            MakePixelSquareArr(integerToColor(self:PlayerClass()), 46) -- Returns player class as an integer
-            MakePixelSquareArr(integerToColor(self:isUnskinnable()), 47) -- Returns 1 if creature is unskinnable
-            MakePixelSquareArr(integerToColor(self:shapeshiftForm()), 48) -- Shapeshift id https://wowwiki.fandom.com/wiki/API_GetShapeshiftForm
-            MakePixelSquareArr(integerToColor(self:areSpellsInRange()), 49) -- Are spells in range
+            MakePixelSquareArr(self:integerToColor(self:PlayerClass()), 46) -- Returns player class as an integer
+            MakePixelSquareArr(self:integerToColor(self:isUnskinnable()), 47) -- Returns 1 if creature is unskinnable
+            MakePixelSquareArr(self:integerToColor(self:shapeshiftForm()), 48) -- Shapeshift id https://wowwiki.fandom.com/wiki/API_GetShapeshiftForm
+            MakePixelSquareArr(self:integerToColor(self:areSpellsInRange()), 49) -- Are spells in range
 
-            MakePixelSquareArr(integerToColor(self:getUnitXP(unitPlayer)), 50) -- Player Xp
-            MakePixelSquareArr(integerToColor(self:getUnitXPMax(unitPlayer)), 51) -- Player Level Xp
-            MakePixelSquareArr(integerToColor(uiErrorMessage), 52) -- Last UI Error message
-            uiErrorMessage=0;
+            MakePixelSquareArr(self:integerToColor(self:getUnitXP(unitPlayer)), 50) -- Player Xp
+            MakePixelSquareArr(self:integerToColor(self:getUnitXPMax(unitPlayer)), 51) -- Player Level Xp
+            MakePixelSquareArr(self:integerToColor(self.uiErrorMessage), 52) -- Last UI Error message
+            self.uiErrorMessage=0;
 
-            MakePixelSquareArr(integerToColor(DataToColor:CastingInfoSpellId()), 53) -- Spell being cast
-            MakePixelSquareArr(integerToColor(DataToColor:ComboPoints()), 54) -- Combo points for rogue / druid
-            MakePixelSquareArr(integerToColor(self:getAuraMaskForClass(UnitDebuff, unitTarget, debuffList)), 55); -- target debuffs
+            MakePixelSquareArr(self:integerToColor(DataToColor:CastingInfoSpellId()), 53) -- Spell being cast
+            MakePixelSquareArr(self:integerToColor(DataToColor:ComboPoints()), 54) -- Combo points for rogue / druid
+            MakePixelSquareArr(self:integerToColor(self:getAuraMaskForClass(UnitDebuff, unitTarget, debuffList)), 55); -- target debuffs
 
-            MakePixelSquareArr(integerToColor(DataToColor:targetNpcId()), 56) -- target id
-            MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitTarget)),57) -- target reasonably uniqueId
-            MakePixelSquareArr(integerToColor(DataToColor:GetBestMap()),58) -- MapId
+            MakePixelSquareArr(self:integerToColor(DataToColor:targetNpcId()), 56) -- target id
+            MakePixelSquareArr(self:integerToColor(DataToColor:getGuid(unitTarget)),57) -- target reasonably uniqueId
+            MakePixelSquareArr(self:integerToColor(DataToColor:GetBestMap()),58) -- MapId
 
-            MakePixelSquareArr(integerToColor(DataToColor:IsTargetOfTargetPlayerAsNumber()),59) -- IsTargetOfTargetPlayerAsNumber
+            MakePixelSquareArr(self:integerToColor(DataToColor:IsTargetOfTargetPlayerAsNumber()),59) -- IsTargetOfTargetPlayerAsNumber
             -- 60-64 = Bag item info
-            MakePixelSquareArr(integerToColor(lastCombatCreature),65) -- Combat message creature
-            MakePixelSquareArr(integerToColor(lastCombatDamageDealerCreature),66) -- Combat message last damage dealer creature
-            MakePixelSquareArr(integerToColor(lastCombatCreatureDied),67) -- Last Killed Unit
+            MakePixelSquareArr(self:integerToColor(self.lastCombatCreature),65) -- Combat message creature
+            MakePixelSquareArr(self:integerToColor(self.lastCombatDamageDealerCreature),66) -- Combat message last damage dealer creature
+            MakePixelSquareArr(self:integerToColor(self.lastCombatCreatureDied),67) -- Last Killed Unit
 
-            MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitPet)),68) -- pet guid
-            MakePixelSquareArr(integerToColor(DataToColor:getGuid(unitPetTarget)),69) -- pet target
+            MakePixelSquareArr(self:integerToColor(DataToColor:getGuid(unitPet)),68) -- pet guid
+            MakePixelSquareArr(self:integerToColor(DataToColor:getGuid(unitPetTarget)),69) -- pet target
 
             -- Timers
-            MakePixelSquareArr(integerToColor(globalTime), 70)
-            MakePixelSquareArr(integerToColor(lastLoot), 71)
+            MakePixelSquareArr(self:integerToColor(self.globalTime), 70)
+            MakePixelSquareArr(self:integerToColor(self.lastLoot), 71)
 
             self:HandleEvents()
         end
 
         if SETUP_SEQUENCE then
             -- Emits meta data in data square index 0 concerning our estimated cell size, number of rows, and the numbers of frames
-            MakePixelSquareArr(integerToColor(CELL_SPACING * 10000000 + CELL_SIZE * 100000 + 1000 * FRAME_ROWS + NUMBER_OF_FRAMES), 0)
+            MakePixelSquareArr(self:integerToColor(CELL_SPACING * 10000000 + CELL_SIZE * 100000 + 1000 * FRAME_ROWS + NUMBER_OF_FRAMES), 0)
             -- Assign pixel squares a value equivalent to their respective indices.
             for i = 1, NUMBER_OF_FRAMES - 1 do
-                MakePixelSquareArr(integerToColor(i), i)
+                MakePixelSquareArr(self:integerToColor(i), i)
             end
         end
         -- Note: Use this area to set color for individual pixel frames
@@ -737,7 +583,7 @@ function DataToColor:CreateFrames(n)
     
     -- Note: Use for loop based on input to generate "n" number of frames
     for frame = 0, n - 1 do
-        local y = Modulo(frame, FRAME_ROWS) -- those are grid coordinates (1,2,3,4 by  1,2,3,4 etc), not pixel coordinates
+        local y = self:Modulo(frame, FRAME_ROWS) -- those are grid coordinates (1,2,3,4 by  1,2,3,4 etc), not pixel coordinates
         local x = floor(frame / FRAME_ROWS)
         -- Put frame information in to an object/array
         frames[frame + 1] = genFrame("frame_"..tostring(frame), x, y)
@@ -869,22 +715,12 @@ function DataToColor:sell(items)
     end
 end
 
--- Returns bitmask values.
--- MakeIndexBase2(1, 4) --> returns 16
--- MakeIndexBase2(0, 9) --> returns 0
-function DataToColor:MakeIndexBase2(number, power)
-    if number ~= nil and number > 0 then
-        return math.pow(2, power)
-    end
-    return 0
-end
-
 -- Grabs current target's name (friend or foe)
 function DataToColor:GetTargetName(partition)
     -- Uses wow function to get target string
     local target = GetUnitName(unitTarget)
     if target ~= nil then
-        target = DataToColor:StringToASCIIHex(target)
+        target = self:StringToASCIIHex(target)
         if partition < 3 then
             return tonumber(string.sub(target, 0, 6))
         else if target > 999999 then
@@ -1029,10 +865,6 @@ function DataToColor:uniqueGuid(npcId, spawn)
         spawnIndex
     );
     return tonumber(num, 16);
-end
-
-function DataToColor:sum24(num)
-    return num % 0x1000000
 end
 
 function DataToColor:actionbarCost(slot)
@@ -1184,7 +1016,7 @@ end
 
 -- Returns zone name
 function DataToColor:GetZoneName(partition)
-    local zone = DataToColor:StringToASCIIHex(GetZoneText())
+    local zone = self:StringToASCIIHex(GetZoneText())
     if zone and tonumber(string.sub(zone, 7, 12)) ~= nil then
         -- Returns first 3 characters of zone
         if partition < 3 then
@@ -1677,7 +1509,7 @@ end
 -- Used purely for training spells and professions
 function DataToColor:CheckTrainer()
     iterator = iterator + 1
-    if Modulo(iterator, 30) == 1 then
+    if self:Modulo(iterator, 30) == 1 then
         -- First checks that the trainer gossip window is open
         -- DEFAULT_CHAT_FRAME:AddMessage(GetTrainerServdiceInfo(1))
         if GetTrainerServiceInfo(1) ~= nil and DATA_CONFIG .AUTO_TRAIN_SPELLS then
@@ -1726,7 +1558,7 @@ end
 --the x and y is 0 if not dead
 --runs the RetrieveCorpse() function to ressurrect
 function DataToColor:ResurrectPlayer()
-    if Modulo(iterator, 150) == 1 then
+    if self:Modulo(iterator, 150) == 1 then
         if UnitIsDeadOrGhost(unitPlayer) then
             
             -- Accept Release Spirit immediately after dying

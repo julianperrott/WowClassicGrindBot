@@ -1,7 +1,10 @@
 local AceAddon, AceAddonMinor = _G.LibStub('AceAddon-3.0')
 local AddOnName, Engine = ...
 
+local CallbackHandler = _G.LibStub('CallbackHandler-1.0')
 local E = AceAddon:NewAddon(AddOnName, "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0", "AceComm-3.0", "AceSerializer-3.0")
+
+E.callbacks = E.callbacks or CallbackHandler:New(E)
 
 Engine[1] = E
 _G[AddOnName] = Engine
