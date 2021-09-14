@@ -16,6 +16,9 @@ Libs\HereBeDragons\HereBeDragons-Migrate.lua
 Libs\LibRangeCheck-2.0\LibRangeCheck-2.0\LibRangeCheck-2.0.lua
 
 init.lua
+
+Constants.lua
+
 Diagnostics.lua
 Encode.lua
 
