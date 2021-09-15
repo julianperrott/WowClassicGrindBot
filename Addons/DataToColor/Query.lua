@@ -14,9 +14,9 @@ end
 
 -- Use Astrolabe function to get current player position
 function DataToColor:GetCurrentPlayerPosition()
-    local map = C_Map.GetBestMapForUnit(self.C.unitPlayer)
+    local map = C_Map.GetBestMapForUnit(DataToColor.C.unitPlayer)
     if map ~= nil then
-        local position = C_Map.GetPlayerMapPosition(map, self.C.unitPlayer)
+        local position = C_Map.GetPlayerMapPosition(map, DataToColor.C.unitPlayer)
         return position:GetXY()
     else
         return
@@ -27,29 +27,29 @@ end
 function DataToColor:Base2Converter()
     -- 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384
     return
-    self:MakeIndexBase2(self:targetCombatStatus(), 0) +
-    self:MakeIndexBase2(self:GetEnemyStatus(), 1) +
-    self:MakeIndexBase2(self:deadOrAlive(), 2) +
-    self:MakeIndexBase2(self:checkTalentPoints(), 3) +
-    self:MakeIndexBase2(self:isTradeRange(), 4) +
-    self:MakeIndexBase2(self:targetHostile(), 5) +
-    self:MakeIndexBase2(self:IsPetVisible(), 6) +
-    self:MakeIndexBase2(self:mainhandEnchantActive(), 7) +
-    self:MakeIndexBase2(self:offhandEnchantActive(), 8) +
-    self:MakeIndexBase2(self:GetInventoryBroken(), 9) +
-    self:MakeIndexBase2(self:IsPlayerFlying(), 10) +
-    self:MakeIndexBase2(self:IsPlayerSwimming(), 11) +
-    self:MakeIndexBase2(self:petHappy(), 12) +
-    self:MakeIndexBase2(self:hasAmmo(), 13) +
-    self:MakeIndexBase2(self:playerCombatStatus(), 14) +
-    self:MakeIndexBase2(self:IsTargetOfTargetPlayer(), 15) +
-    self:MakeIndexBase2(self:IsAutoRepeatSpellOn("Auto Shot"), 16) +
-    self:MakeIndexBase2(self:ProcessExitStatus(), 17) +
-    self:MakeIndexBase2(self:IsPlayerMounted(), 18) +
-    self:MakeIndexBase2(self:IsAutoRepeatSpellOn("Shoot"), 19) +
-    self:MakeIndexBase2(self:IsCurrentSpell(6603), 20) + -- AutoAttack enabled
-    self:MakeIndexBase2(self:targetIsNormal(), 21)+
-    self:MakeIndexBase2(self:IsTagged(), 22)
+    DataToColor:MakeIndexBase2(DataToColor:targetCombatStatus(), 0) +
+    DataToColor:MakeIndexBase2(DataToColor:GetEnemyStatus(), 1) +
+    DataToColor:MakeIndexBase2(DataToColor:deadOrAlive(), 2) +
+    DataToColor:MakeIndexBase2(DataToColor:checkTalentPoints(), 3) +
+    DataToColor:MakeIndexBase2(DataToColor:isTradeRange(), 4) +
+    DataToColor:MakeIndexBase2(DataToColor:targetHostile(), 5) +
+    DataToColor:MakeIndexBase2(DataToColor:IsPetVisible(), 6) +
+    DataToColor:MakeIndexBase2(DataToColor:mainhandEnchantActive(), 7) +
+    DataToColor:MakeIndexBase2(DataToColor:offhandEnchantActive(), 8) +
+    DataToColor:MakeIndexBase2(DataToColor:GetInventoryBroken(), 9) +
+    DataToColor:MakeIndexBase2(DataToColor:IsPlayerFlying(), 10) +
+    DataToColor:MakeIndexBase2(DataToColor:IsPlayerSwimming(), 11) +
+    DataToColor:MakeIndexBase2(DataToColor:petHappy(), 12) +
+    DataToColor:MakeIndexBase2(DataToColor:hasAmmo(), 13) +
+    DataToColor:MakeIndexBase2(DataToColor:playerCombatStatus(), 14) +
+    DataToColor:MakeIndexBase2(DataToColor:IsTargetOfTargetPlayer(), 15) +
+    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn("Auto Shot"), 16) +
+    DataToColor:MakeIndexBase2(DataToColor:ProcessExitStatus(), 17) +
+    DataToColor:MakeIndexBase2(DataToColor:IsPlayerMounted(), 18) +
+    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn("Shoot"), 19) +
+    DataToColor:MakeIndexBase2(DataToColor:IsCurrentSpell(6603), 20) + -- AutoAttack enabled
+    DataToColor:MakeIndexBase2(DataToColor:targetIsNormal(), 21)+
+    DataToColor:MakeIndexBase2(DataToColor:IsTagged(), 22)
 end
 
 function DataToColor:getAuraMaskForClass(func, unitId, table)
@@ -61,7 +61,7 @@ function DataToColor:getAuraMaskForClass(func, unitId, table)
                 break
             end
             if string.find(b, v) then
-                num = num + self:MakeIndexBase2(1, k)
+                num = num + DataToColor:MakeIndexBase2(1, k)
                 break
             end
         end
@@ -71,9 +71,9 @@ end
 
 -- Grabs current targets name
 function DataToColor:GetTargetName(partition)
-    if UnitExists(self.C.unitTarget) then
-        local target = GetUnitName(self.C.unitTarget)
-        target = self:StringToASCIIHex(target)
+    if UnitExists(DataToColor.C.unitTarget) then
+        local target = GetUnitName(DataToColor.C.unitTarget)
+        target = DataToColor:StringToASCIIHex(target)
         if partition < 3 then
             return tonumber(string.sub(target, 0, 6))
         else if target > 999999 then
@@ -136,11 +136,11 @@ end
 
 -- Finds player current level
 function DataToColor:getPlayerLevel()
-    return UnitLevel(self.C.unitPlayer)
+    return UnitLevel(DataToColor.C.unitPlayer)
 end
 
 function DataToColor:getTargetLevel()
-    return UnitLevel(self.C.unitTarget)
+    return UnitLevel(DataToColor.C.unitTarget)
 end
 
 -- Finds the total amount of money.
@@ -149,7 +149,7 @@ function DataToColor:getMoneyTotal()
 end
 
 function DataToColor:targetHostile()
-    local hostile = UnitReaction(self.C.unitPlayer, self.C.unitTarget)
+    local hostile = UnitReaction(DataToColor.C.unitPlayer, DataToColor.C.unitTarget)
     if hostile ~= nil and hostile <= 4 then
         return 1
     end
@@ -158,7 +158,7 @@ end
 
 local ammoSlot = GetInventorySlotInfo("AmmoSlot")
 function DataToColor:hasAmmo()
-    local ammoCount = GetInventoryItemCount(self.C.unitPlayer, ammoSlot)
+    local ammoCount = GetInventoryItemCount(DataToColor.C.unitPlayer, ammoSlot)
     if ammoCount > 0 then
         return 1
     end
@@ -166,8 +166,8 @@ function DataToColor:hasAmmo()
 end
 
 function DataToColor:getRange()
-    if UnitExists(self.C.unitTarget) then
-        local min, max = Range:GetRange(self.C.unitTarget)
+    if UnitExists(DataToColor.C.unitTarget) then
+        local min, max = Range:GetRange(DataToColor.C.unitTarget)
         if max == nil then
             max = 99
         end
@@ -177,8 +177,8 @@ function DataToColor:getRange()
 end
 
 function DataToColor:isTradeRange()
-    if UnitExists(self.C.unitTarget) then
-        if CheckInteractDistance(self.C.unitTarget, 2) then
+    if UnitExists(DataToColor.C.unitTarget) then
+        if CheckInteractDistance(DataToColor.C.unitTarget, 2) then
             return 1
         end
     end
@@ -186,7 +186,7 @@ function DataToColor:isTradeRange()
 end
 
 function DataToColor:targetNpcId()
-    local _, _, _, _, _, npcID, guid = strsplit('-', UnitGUID(self.C.unitTarget) or '')
+    local _, _, _, _, _, npcID, guid = strsplit('-', UnitGUID(DataToColor.C.unitTarget) or '')
     if npcID ~= nil then
         return tonumber(npcID)
     end
@@ -196,14 +196,14 @@ end
 function DataToColor:getGuid(src)
     local _, _, _, _, _, npcID, spawnUID = strsplit('-', UnitGUID(src) or '')
     if npcID ~= nil then
-        return self:uniqueGuid(npcID, spawnUID)
+        return DataToColor:uniqueGuid(npcID, spawnUID)
     end
     return 0
 end
 
 function DataToColor:getGuidFromUUID(uuid)
     local _, _, _, _, _, npcID, spawnUID = strsplit('-', uuid or '')
-    return self:uniqueGuid(npcID, spawnUID)
+    return DataToColor:uniqueGuid(npcID, spawnUID)
 end
 
 function DataToColor:uniqueGuid(npcId, spawn)
@@ -212,7 +212,7 @@ function DataToColor:uniqueGuid(npcId, spawn)
 
     local dd = date("*t", spawnEpochOffset)
     local num = 
-    self:sum24(
+    DataToColor:sum24(
         dd.day +
         dd.hour +
         dd.min +
@@ -245,10 +245,10 @@ function DataToColor:actionbarCost(slot)
                 end
             end
             --DataToColor:Print(button:GetName(), actionType, (GetSpellLink(id)), actionName, type, cost, id)
-            return self.C.MAX_POWER_TYPE * type + self.C.MAX_ACTION_IDX * slot + cost
+            return DataToColor.C.MAX_POWER_TYPE * type + DataToColor.C.MAX_ACTION_IDX * slot + cost
         end
     end
-    return self.C.MAX_ACTION_IDX * slot
+    return DataToColor.C.MAX_ACTION_IDX * slot
 end
 
 -- A function used to check which items we have.
@@ -294,7 +294,7 @@ function DataToColor:returnItemFromIndex(index)
 end
 
 function DataToColor:enchantedItems()
-    if self:ValuesAreEqual(items, itemsPlaceholderComparison) then
+    if DataToColor:ValuesAreEqual(items, itemsPlaceholderComparison) then
     end
 end
 
@@ -316,9 +316,9 @@ end
 
 function DataToColor:equipName(slot)
     local equip
-    if GetInventoryItemLink(self.C.unitPlayer, slot) == nil then
+    if GetInventoryItemLink(DataToColor.C.unitPlayer, slot) == nil then
         equip = 0
-    else _, _, equip = string.find(GetInventoryItemLink(self.C.unitPlayer, slot), "(m:%d+)")
+    else _, _, equip = string.find(GetInventoryItemLink(DataToColor.C.unitPlayer, slot), "(m:%d+)")
         equip = string.gsub(equip, 'm:', '')
     end
     if equip == nil then equip = 0
@@ -330,8 +330,8 @@ end
 
 function DataToColor:areSpellsInRange()
     local inRange = 0
-    for i = 1, table.getn(self.S.spellInRangeList), 1 do
-        local isInRange = IsSpellInRange(self.S.spellInRangeList[i], self.C.unitTarget)
+    for i = 1, table.getn(DataToColor.S.spellInRangeList), 1 do
+        local isInRange = IsSpellInRange(DataToColor.S.spellInRangeList[i], DataToColor.C.unitTarget)
         if isInRange==1 then
             inRange = inRange + (2 ^ (i - 1))
         end
@@ -372,7 +372,7 @@ end
 
 -- Returns zone name
 function DataToColor:GetZoneName(partition)
-    local zone = self:StringToASCIIHex(GetZoneText())
+    local zone = DataToColor:StringToASCIIHex(GetZoneText())
     if zone and tonumber(string.sub(zone, 7, 12)) ~= nil then
         -- Returns first 3 characters of zone
         if partition < 3 then
@@ -387,7 +387,7 @@ function DataToColor:GetZoneName(partition)
 end
 
 function DataToColor:GetBestMap()
-    local map = C_Map.GetBestMapForUnit(self.C.unitPlayer)
+    local map = C_Map.GetBestMapForUnit(DataToColor.C.unitPlayer)
     if map ~= nil then
         return map
     else
@@ -436,8 +436,8 @@ function DataToColor:CorpsePosition(coord)
     -- Assigns death coordinates
     local cX
     local cY
-    if UnitIsGhost(self.C.unitPlayer) then
-        local map = C_Map.GetBestMapForUnit(self.C.unitPlayer)
+    if UnitIsGhost(DataToColor.C.unitPlayer) then
+        local map = C_Map.GetBestMapForUnit(DataToColor.C.unitPlayer)
         if C_DeathInfo.GetCorpseMapPosition(map) ~= nil then
             cX, cY = C_DeathInfo.GetCorpseMapPosition(map):GetXY()
         end
@@ -460,14 +460,7 @@ function DataToColor:CorpsePosition(coord)
 end
 
 function DataToColor:ComboPoints()
-    local points = GetComboPoints(self.C.unitPlayer, self.C.unitTarget)
-    -- if target is in combat, return 0 for bitmask
-    if points ~= nil then
-        return points
-        -- if target is not in combat, return 1 for bitmask
-    else
-        return 0
-    end
+    return GetComboPoints(DataToColor.C.unitPlayer, DataToColor.C.unitTarget) or 0
 end
 
 -----------------------------------------------------------------
@@ -479,7 +472,7 @@ end
 -- Finds if player or target is in combat
 function DataToColor:targetCombatStatus()
     -- if target is in combat, return 0 for bitmask
-    if UnitAffectingCombat(self.C.unitTarget) then
+    if UnitAffectingCombat(DataToColor.C.unitTarget) then
         return 1
         -- if target is not in combat, return 1 for bitmask
     end
@@ -488,20 +481,20 @@ end
 
 -- Checks if target is dead. Returns 1 if target is dead, nil otherwise (converts to 0)
 function DataToColor:GetEnemyStatus()
-    if UnitIsDead(self.C.unitTarget) then
+    if UnitIsDead(DataToColor.C.unitTarget) then
         return 1
     end
     return 0
 end
 
 function DataToColor:targetIsNormal()
-    local classification = UnitClassification(self.C.unitTarget)
+    local classification = UnitClassification(DataToColor.C.unitTarget)
     if classification=="normal" then
-        if (UnitIsPlayer(self.C.unitTarget)) then 
+        if (UnitIsPlayer(DataToColor.C.unitTarget)) then 
             return 0 
         end
 
-        if UnitName(self.C.unitPet) == UnitName(self.C.unitTarget) then
+        if UnitName(DataToColor.C.unitPet) == UnitName(DataToColor.C.unitTarget) then
             return 0
         end
 
@@ -514,7 +507,7 @@ end
 
 -- Checks if we are currently alive or are a ghost/dead.
 function DataToColor:deadOrAlive()
-    if UnitIsDeadOrGhost(self.C.unitPlayer) then
+    if UnitIsDeadOrGhost(DataToColor.C.unitPlayer) then
         return 1
     end
     return 0
@@ -522,7 +515,7 @@ end
 
 -- Checks the number of talent points we have available to spend
 function DataToColor:checkTalentPoints()
-    if UnitCharacterPoints(self.C.unitPlayer) > 0 then
+    if UnitCharacterPoints(DataToColor.C.unitPlayer) > 0 then
         return 1
     end
     return 0
@@ -537,7 +530,7 @@ function DataToColor:shapeshiftForm()
 end
 
 function DataToColor:playerCombatStatus()
-    if UnitAffectingCombat(self.C.unitPlayer) then
+    if UnitAffectingCombat(DataToColor.C.unitPlayer) then
         return 1 
     end
     return 0
@@ -546,7 +539,7 @@ end
 -- Returns the slot in which we have a fully degraded item
 function DataToColor:GetInventoryBroken()
     for i = 1, 18 do
-        if GetInventoryItemBroken(self.C.unitPlayer, i) then
+        if GetInventoryItemBroken(DataToColor.C.unitPlayer, i) then
             return 1
         end
     end
@@ -554,7 +547,7 @@ function DataToColor:GetInventoryBroken()
 end
 -- Checks if we are on a taxi
 function DataToColor:IsPlayerFlying()
-    local taxiStatus = UnitOnTaxi(self.C.unitPlayer)
+    local taxiStatus = UnitOnTaxi(DataToColor.C.unitPlayer)
     if taxiStatus then
         return 1
     end
@@ -579,22 +572,22 @@ function DataToColor:IsPlayerMounted()
 end
 
 function DataToColor:IsTargetOfTargetPlayerAsNumber()
-    if not(UnitName(self.C.unitTargetTarget)) then return 2 end -- target has no target
-    if self.C.CHARACTER_NAME == UnitName(self.C.unitTarget) then return 0 end -- targeting self
-    if UnitName(self.C.unitPet) == UnitName(self.C.unitTargetTarget) then return 4 end -- targetting my pet
-    if self.C.CHARACTER_NAME == UnitName(self.C.unitTargetTarget) then return 1 end -- targetting me
-    if UnitName(self.C.unitPet) == UnitName(self.C.unitTarget) and UnitName(self.C.unitTargetTarget) ~= nil then return 5 end
+    if not(UnitName(DataToColor.C.unitTargetTarget)) then return 2 end -- target has no target
+    if DataToColor.C.CHARACTER_NAME == UnitName(DataToColor.C.unitTarget) then return 0 end -- targeting self
+    if UnitName(DataToColor.C.unitPet) == UnitName(DataToColor.C.unitTargetTarget) then return 4 end -- targetting my pet
+    if DataToColor.C.CHARACTER_NAME == UnitName(DataToColor.C.unitTargetTarget) then return 1 end -- targetting me
+    if UnitName(DataToColor.C.unitPet) == UnitName(DataToColor.C.unitTarget) and UnitName(DataToColor.C.unitTargetTarget) ~= nil then return 5 end
     return 3
 end
 
 -- Returns true if target of our target is us
 function DataToColor:IsTargetOfTargetPlayer()
-    local x = self:IsTargetOfTargetPlayerAsNumber()
+    local x = DataToColor:IsTargetOfTargetPlayerAsNumber()
     if x==1 or x==4 then return 1 else return 0 end
 end
 
 function DataToColor:IsTagged()
-    if UnitIsTapDenied(self.C.unitTarget) then 
+    if UnitIsTapDenied(DataToColor.C.unitTarget) then 
         return 1 
     end
     return 0
@@ -629,7 +622,7 @@ function DataToColor:IsCurrentActionOn(actionSlot)
 end
 
 function DataToColor:IsPetVisible()
-    if UnitIsVisible(self.C.unitPet) and not UnitIsDead(self.C.unitPet)  then
+    if UnitIsVisible(DataToColor.C.unitPet) and not UnitIsDead(DataToColor.C.unitPet)  then
         return 1
     end
     return 0
@@ -646,7 +639,7 @@ end
 
 -- Returns 0 if target is unskinnable or if we have no target.
 function DataToColor:isUnskinnable()
-    local creatureType = UnitCreatureType(self.C.unitTarget)
+    local creatureType = UnitCreatureType(DataToColor.C.unitTarget)
     -- Demons COULD be included in this list, but there are some skinnable demon dogs.
     if creatureType == "Humanoid" or creatureType == "Elemental" or creatureType == "Mechanical" or creatureType == "Totem" then
         return 1

@@ -8,161 +8,161 @@ DataToColor.S.playerBuffs = {}
 DataToColor.S.targetDebuffs = {}
 
 function DataToColor:InitStorage()
-    CreatePlayerClass(self)
-    CreateSpellInRangeList(self)
+    CreatePlayerClass()
+    CreateSpellInRangeList()
 
-    CreatePlayerBuffList(self)
-    CreateTargetDebuffList(self)
+    CreatePlayerBuffList()
+    CreateTargetDebuffList()
 end
 
-function CreatePlayerClass(self)
+function CreatePlayerClass()
     -- UnitClass returns class and the class in uppercase e.g. "Mage" and "MAGE"
-    if self.C.CHARACTER_CLASS == "MAGE" then
-        self.S.PlayerClass = 128
-    elseif self.C.CHARACTER_CLASS == "ROGUE" then
-        self.S.PlayerClass = 64
-    elseif self.C.CHARACTER_CLASS == "WARRIOR" then
-        self.S.PlayerClass = 32
-    elseif self.C.CHARACTER_CLASS == "PALADIN" then
-        self.S.PlayerClass = 16
-    elseif self.C.CHARACTER_CLASS == "HUNTER" then
-        self.S.PlayerClass = 8
-    elseif self.C.CHARACTER_CLASS == "PRIEST" then
-        self.S.PlayerClass = 4
-    elseif self.C.CHARACTER_CLASS == "SHAMAN" then
-        self.S.PlayerClass = 2
-    elseif self.C.CHARACTER_CLASS == "WARLOCK" then
-        self.S.PlayerClass = 1    
-    elseif self.C.CHARACTER_CLASS == "DRUID" then
-        self.S.PlayerClass = 256
+    if DataToColor.C.CHARACTER_CLASS == "MAGE" then
+        DataToColor.S.PlayerClass = 128
+    elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
+        DataToColor.S.PlayerClass = 64
+    elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
+        DataToColor.S.PlayerClass = 32
+    elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
+        DataToColor.S.PlayerClass = 16
+    elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
+        DataToColor.S.PlayerClass = 8
+    elseif DataToColor.C.CHARACTER_CLASS == "PRIEST" then
+        DataToColor.S.PlayerClass = 4
+    elseif DataToColor.C.CHARACTER_CLASS == "SHAMAN" then
+        DataToColor.S.PlayerClass = 2
+    elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then
+        DataToColor.S.PlayerClass = 1    
+    elseif DataToColor.C.CHARACTER_CLASS == "DRUID" then
+        DataToColor.S.PlayerClass = 256
     else
-        self.S.PlayerClass = 0
+        DataToColor.S.PlayerClass = 0
     end
 end
 
-function CreateSpellInRangeList(self)
-    if self.C.CHARACTER_CLASS == "ROGUE" then
-        self.S.spellInRangeList = {
+function CreateSpellInRangeList()
+    if DataToColor.C.CHARACTER_CLASS == "ROGUE" then
+        DataToColor.S.spellInRangeList = {
             "Sinister Strike", --1
             "Throw", --2
             "Shoot Gun" --4
         }
-    elseif self.C.CHARACTER_CLASS == "DRUID" then
-        self.S.spellInRangeList = {
+    elseif DataToColor.C.CHARACTER_CLASS == "DRUID" then
+        DataToColor.S.spellInRangeList = {
             "Wrath", --1
             "Bash", --2
             "Rip" --3
         }
-    elseif self.C.CHARACTER_CLASS == "WARRIOR" then
-        self.S.spellInRangeList = {
+    elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
+        DataToColor.S.spellInRangeList = {
             "Charge", --1
             "Rend", --2
             "Shoot Gun", --4
         }       
-    elseif self.C.CHARACTER_CLASS == "PRIEST" then
-        self.S.spellInRangeList = {
+    elseif DataToColor.C.CHARACTER_CLASS == "PRIEST" then
+        DataToColor.S.spellInRangeList = {
             "Shadow Word: Pain", --1
             "Mind Blast", --2
             "Mind Flay", --4
             "Shoot", --8
         }
-    elseif self.C.CHARACTER_CLASS == "PALADIN" then
-        self.S.spellInRangeList = {
+    elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
+        DataToColor.S.spellInRangeList = {
             "Judgement" --1
         }
-    elseif self.C.CHARACTER_CLASS == "MAGE" then
-        self.S.spellInRangeList = {
+    elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
+        DataToColor.S.spellInRangeList = {
             "Fireball", --1
             "Shoot",
             "Pyroblast",
             "Frostbolt",
             "Fire Blast"
         }     
-    elseif self.C.CHARACTER_CLASS == "HUNTER" then
-        self.S.spellInRangeList = {
+    elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
+        DataToColor.S.spellInRangeList = {
             "Raptor Strike", --1
             "Auto Shot", --2
             "Serpent Sting" --3
         }      
-    elseif self.C.CHARACTER_CLASS == "WARLOCK" then
-        self.S.spellInRangeList = {
+    elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then
+        DataToColor.S.spellInRangeList = {
             "Shadow Bolt",
             "Shoot"
         }
-    elseif self.C.CHARACTER_CLASS == "SHAMAN" then
-        self.S.spellInRangeList = {
+    elseif DataToColor.C.CHARACTER_CLASS == "SHAMAN" then
+        DataToColor.S.spellInRangeList = {
             "Lightning Bolt",
             "Earth Shock"
         }
     end
 end
 
-function CreatePlayerBuffList(self)
-    self.S.playerBuffs = {}
-    self.S.playerBuffs[0] = "Food"
-    self.S.playerBuffs[1] = "Drink"
-    self.S.playerBuffs[2] = "Well Fed"
-    self.S.playerBuffs[3] = "Mana Regeneration"
+function CreatePlayerBuffList()
+    DataToColor.S.playerBuffs = {}
+    DataToColor.S.playerBuffs[0] = "Food"
+    DataToColor.S.playerBuffs[1] = "Drink"
+    DataToColor.S.playerBuffs[2] = "Well Fed"
+    DataToColor.S.playerBuffs[3] = "Mana Regeneration"
 
-    if self.C.CHARACTER_CLASS == "PRIEST" then
-        self.S.playerBuffs[10] = "Fortitude"
-        self.S.playerBuffs[11] = "Inner Fire"
-        self.S.playerBuffs[12] = "Renew"
-        self.S.playerBuffs[13] = "Shield"
-        self.S.playerBuffs[14] = "Spirit"
-    elseif self.C.CHARACTER_CLASS == "DRUID" then
-        self.S.playerBuffs[10] = "Mark of the Wild"
-        self.S.playerBuffs[11] = "Thorns"
-        self.S.playerBuffs[12] = "Fury"
-    elseif self.C.CHARACTER_CLASS == "PALADIN" then
-        self.S.playerBuffs[10] = "Aura"
-        self.S.playerBuffs[11] = "Blessing"
-        self.S.playerBuffs[12] = "Seal"
-    elseif self.C.CHARACTER_CLASS == "MAGE" then
-        self.S.playerBuffs[10] = "Armor"
-        self.S.playerBuffs[11] = "Arcane Intellect"
-        self.S.playerBuffs[12] = "Ice Barrier"
-        self.S.playerBuffs[13] = "Ward"
-        self.S.playerBuffs[14] = "Fire Power"
-        self.S.playerBuffs[15] = "Mana Shield"
-    elseif self.C.CHARACTER_CLASS == "ROGUE" then
-        self.S.playerBuffs[10] = "Slice and Dice"
-    elseif self.C.CHARACTER_CLASS == "WARRIOR" then
-        self.S.playerBuffs[10] = "Battle Shout"
-    elseif self.C.CHARACTER_CLASS == "WARLOCK" then
-        self.S.playerBuffs[10] = "Demon"
-        self.S.playerBuffs[11] = "Soul Link"
-        self.S.playerBuffs[12] = "Soulstone Resurrection"
-        self.S.playerBuffs[13] = "Shadow Trance"
-    elseif self.C.CHARACTER_CLASS == "SHAMAN" then
-        self.S.playerBuffs[10] = "Lightning Shield"
-    elseif self.C.CHARACTER_CLASS == "HUNTER" then
-        self.S.playerBuffs[10] = "Aspect of"
-        self.S.playerBuffs[11] = "Rapid Fire"
-        self.S.playerBuffs[12] = "Quick Shots"
+    if DataToColor.C.CHARACTER_CLASS == "PRIEST" then
+        DataToColor.S.playerBuffs[10] = "Fortitude"
+        DataToColor.S.playerBuffs[11] = "Inner Fire"
+        DataToColor.S.playerBuffs[12] = "Renew"
+        DataToColor.S.playerBuffs[13] = "Shield"
+        DataToColor.S.playerBuffs[14] = "Spirit"
+    elseif DataToColor.C.CHARACTER_CLASS == "DRUID" then
+        DataToColor.S.playerBuffs[10] = "Mark of the Wild"
+        DataToColor.S.playerBuffs[11] = "Thorns"
+        DataToColor.S.playerBuffs[12] = "Fury"
+    elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
+        DataToColor.S.playerBuffs[10] = "Aura"
+        DataToColor.S.playerBuffs[11] = "Blessing"
+        DataToColor.S.playerBuffs[12] = "Seal"
+    elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
+        DataToColor.S.playerBuffs[10] = "Armor"
+        DataToColor.S.playerBuffs[11] = "Arcane Intellect"
+        DataToColor.S.playerBuffs[12] = "Ice Barrier"
+        DataToColor.S.playerBuffs[13] = "Ward"
+        DataToColor.S.playerBuffs[14] = "Fire Power"
+        DataToColor.S.playerBuffs[15] = "Mana Shield"
+    elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
+        DataToColor.S.playerBuffs[10] = "Slice and Dice"
+    elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
+        DataToColor.S.playerBuffs[10] = "Battle Shout"
+    elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then
+        DataToColor.S.playerBuffs[10] = "Demon"
+        DataToColor.S.playerBuffs[11] = "Soul Link"
+        DataToColor.S.playerBuffs[12] = "Soulstone Resurrection"
+        DataToColor.S.playerBuffs[13] = "Shadow Trance"
+    elseif DataToColor.C.CHARACTER_CLASS == "SHAMAN" then
+        DataToColor.S.playerBuffs[10] = "Lightning Shield"
+    elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
+        DataToColor.S.playerBuffs[10] = "Aspect of"
+        DataToColor.S.playerBuffs[11] = "Rapid Fire"
+        DataToColor.S.playerBuffs[12] = "Quick Shots"
     end
 end
 
-function CreateTargetDebuffList(self)
-    self.S.targetDebuffs = {}
-    if self.C.CHARACTER_CLASS == "PRIEST" then 
-        self.S.targetDebuffs[0] = "Pain"
-    elseif self.C.CHARACTER_CLASS == "DRUID" then
-        self.S.targetDebuffs[0] = "Roar"
-        self.S.targetDebuffs[1] = "Faerie Fire"
-        self.S.targetDebuffs[2] = "Rip"
-    elseif self.C.CHARACTER_CLASS == "PALADIN" then
-    elseif self.C.CHARACTER_CLASS == "MAGE" then
-        self.S.targetDebuffs[0] = "Frostbite"
-    elseif self.C.CHARACTER_CLASS == "ROGUE" then
-    elseif self.C.CHARACTER_CLASS == "WARRIOR" then
-        self.S.targetDebuffs[0] = "Rend"
-    elseif self.C.CHARACTER_CLASS == "WARLOCK" then
-        self.S.targetDebuffs[0] = "Curse of"
-        self.S.targetDebuffs[1] = "Corruption"
-        self.S.targetDebuffs[2] = "Immolate"
-        self.S.targetDebuffs[3] = "Siphon Life"
-    elseif self.C.CHARACTER_CLASS == "HUNTER" then
-        self.S.targetDebuffs[0] = "Serpect Sting"
+function CreateTargetDebuffList()
+    DataToColor.S.targetDebuffs = {}
+    if DataToColor.C.CHARACTER_CLASS == "PRIEST" then 
+        DataToColor.S.targetDebuffs[0] = "Pain"
+    elseif DataToColor.C.CHARACTER_CLASS == "DRUID" then
+        DataToColor.S.targetDebuffs[0] = "Roar"
+        DataToColor.S.targetDebuffs[1] = "Faerie Fire"
+        DataToColor.S.targetDebuffs[2] = "Rip"
+    elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
+    elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
+        DataToColor.S.targetDebuffs[0] = "Frostbite"
+    elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
+    elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
+        DataToColor.S.targetDebuffs[0] = "Rend"
+    elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then
+        DataToColor.S.targetDebuffs[0] = "Curse of"
+        DataToColor.S.targetDebuffs[1] = "Corruption"
+        DataToColor.S.targetDebuffs[2] = "Immolate"
+        DataToColor.S.targetDebuffs[3] = "Siphon Life"
+    elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
+        DataToColor.S.targetDebuffs[0] = "Serpect Sting"
     end
 end

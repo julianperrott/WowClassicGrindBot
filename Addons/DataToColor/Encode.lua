@@ -27,7 +27,7 @@ function DataToColor:fixedDecimalToColor(f)
     --local f6 = tonumber(string.format("%.5f", 1))
     -- Makes number an integer so it can be encoded
     local i = math.floor(f * 100000)
-    return self:integerToColor(i)
+    return DataToColor:integerToColor(i)
 end
 
 -- Returns bitmask values.
@@ -75,11 +75,11 @@ function DataToColor:ValuesAreEqual(t1, t2, ignore_mt)
     if not ignore_mt and mt and mt.__eq then return t1 == t2 end
     for k1, v1 in pairs(t1) do
         local v2 = t2[k1]
-        if v2 == nil or not self:ValuesAreEqual(v1, v2) then return false end
+        if v2 == nil or not DataToColor:ValuesAreEqual(v1, v2) then return false end
     end
     for k2, v2 in pairs(t2) do
         local v1 = t1[k2]
-        if v1 == nil or not self:ValuesAreEqual(v1, v2) then return false end
+        if v1 == nil or not DataToColor:ValuesAreEqual(v1, v2) then return false end
     end
     return true
 end

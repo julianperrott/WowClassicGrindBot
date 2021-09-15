@@ -37,7 +37,7 @@ function DataToColor:OnUIErrorMessage(event, messageType, message)
     if not foundMessage then
         for i = 1, table.getn(errorList), 1 do
             if errorList[i]==errorName then
-                self.uiErrorMessage = i;
+                DataToColor.uiErrorMessage = i;
                 foundMessage=true;
                 UIErrorsFrame:AddMessage(message, 0, 1, 0) -- show as green messasge
             end
@@ -53,19 +53,19 @@ function DataToColor:OnCombatEvent(event)
     local timestamp, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, spellName, spellSchool = CombatLogGetCurrentEventInfo();
     --print(CombatLogGetCurrentEventInfo())
     if eventType=="SPELL_PERIODIC_DAMAGE" then
-        self.lastCombatCreature=0;
+        DataToColor.lastCombatCreature=0;
     elseif string.find(sourceGUID, "Creature") then
-        self.lastCombatCreature = self:getGuidFromUUID(sourceGUID);
-        self.lastCombatDamageDealerCreature = self.lastCombatCreature;
+        DataToColor.lastCombatCreature = DataToColor:getGuidFromUUID(sourceGUID);
+        DataToColor.lastCombatDamageDealerCreature = DataToColor.lastCombatCreature;
         --print(sourceGUID.." "..lastCombatCreature);
     else
-        self.lastCombatCreature=0;
+        DataToColor.lastCombatCreature=0;
         --print("Other "..eventType);
     end
 
     if eventType=="UNIT_DIED" then
         if string.find(destGUID, "Creature") then
-            self.lastCombatCreatureDied = self:getGuidFromUUID(destGUID);
+            DataToColor.lastCombatCreatureDied = DataToColor:getGuidFromUUID(destGUID);
             --print("v_killing blow " .. destGUID .. " " .. lastCombatCreatureDied .. " " .. destName)
         else
             --print("i_killing blow " .. destGUID .. " " .. destName)
@@ -74,8 +74,8 @@ function DataToColor:OnCombatEvent(event)
 end
 
 function DataToColor:OnLootClosed(event)
-    self.lastLoot = self.globalTime
-    --self:Print(lastLoot)
+    DataToColor.lastLoot = DataToColor.globalTime
+    --DataToColor:Print(lastLoot)
 end
 
 function DataToColor:OnMerchantShow(event)
@@ -89,16 +89,16 @@ function DataToColor:OnMerchantShow(event)
                     _, itemCount = GetContainerItemInfo(myBags, bagSlots)
                     if itemRarity == 0 and itemSellPrice ~= 0 then
                         TotalPrice = TotalPrice + (itemSellPrice * itemCount);
-                        self:Print("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
+                        DataToColor:Print("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
                         UseContainerItem(myBags, bagSlots)
                     end
                 end
         end
     end
     if TotalPrice ~= 0 then
-        self:Print("Total Price for all items: " .. GetCoinTextureString(TotalPrice))
+        DataToColor:Print("Total Price for all items: " .. GetCoinTextureString(TotalPrice))
     else
-        self:Print("No grey items were sold.")
+        DataToColor:Print("No grey items were sold.")
     end
 end
 
@@ -145,26 +145,26 @@ local CORPSE_RETRIEVAL_DISTANCE = 40
 function DataToColor:HandlePlayerInteractionEvents()
     -- Handles group accept/decline
     if DATA_CONFIG.ACCEPT_PARTY_REQUESTS or DATA_CONFIG.DECLINE_PARTY_REQUESTS then
-        self:HandlePartyInvite()
+        DataToColor:HandlePartyInvite()
     end
     -- Handles item repairs when talking to item repair NPC
     if DATA_CONFIG.AUTO_REPAIR_ITEMS then
-        self:RepairItems()
+        DataToColor:RepairItems()
     end
     -- Handles learning talents, only works after level 10
     if DATA_CONFIG.AUTO_LEARN_TALENTS then
-        self:LearnTalents()
+        DataToColor:LearnTalents()
     end
     -- Handles train new spells and talents
     if DATA_CONFIG.AUTO_TRAIN_SPELLS then
-        self:CheckTrainer()  
+        DataToColor:CheckTrainer()  
     end
     -- Resurrect player
     if DATA_CONFIG.AUTO_RESURRECT then
-        self:ResurrectPlayer()
+        DataToColor:ResurrectPlayer()
     end
 
-    self:IncrementIterator();
+    DataToColor:IncrementIterator();
 end
 
 -- Declines/Accepts Party Invites.
@@ -191,7 +191,7 @@ end
 
 -- Automatically learns predefined talents
 function DataToColor:LearnTalents()
-    if UnitCharacterPoints(self.C.unitPlayer) > 0 then
+    if UnitCharacterPoints(DataToColor.C.unitPlayer) > 0 then
         -- Grabs global list of talents we want to learn
         for i = 0, table.getn(talentList), 1 do
             -- Iterates through each talent tab (e.g. "Arcane, Fire, Frost")
@@ -253,20 +253,20 @@ function ValidSpell(spell)
 end
 
 function DataToColor:IncrementIterator()
-    self.playerInteractIterator = self.playerInteractIterator + 1
+    DataToColor.playerInteractIterator = DataToColor.playerInteractIterator + 1
 end 
 
 -- Used purely for training spells and professions
 function DataToColor:CheckTrainer()
-    self.playerInteractIterator = self.playerInteractIterator + 1
-    if self:Modulo(self.playerInteractIterator, 30) == 1 then
+    DataToColor.playerInteractIterator = DataToColor.playerInteractIterator + 1
+    if DataToColor:Modulo(DataToColor.playerInteractIterator, 30) == 1 then
         -- First checks that the trainer gossip window is open
         -- DEFAULT_CHAT_FRAME:AddMessage(GetTrainerServdiceInfo(1))
         if GetTrainerServiceInfo(1) ~= nil and DATA_CONFIG .AUTO_TRAIN_SPELLS then
             -- LPCONFIG.AUTO_TRAIN_SPELLS = false
             local allAvailableOptions = GetNumTrainerServices()
             local money = GetMoney()
-            local level = UnitLevel(self.C.unitPlayer)
+            local level = UnitLevel(DataToColor.C.unitPlayer)
             
             -- Loops through every spell on the list and checks if we
             -- 1) Have the level to train that spell
@@ -308,18 +308,18 @@ end
 --the x and y is 0 if not dead
 --runs the RetrieveCorpse() function to ressurrect
 function DataToColor:ResurrectPlayer()
-    if self:Modulo(self.playerInteractIterator, 150) == 1 then
-        if UnitIsDeadOrGhost(self.C.unitPlayer) then
+    if DataToColor:Modulo(DataToColor.playerInteractIterator, 150) == 1 then
+        if UnitIsDeadOrGhost(DataToColor.C.unitPlayer) then
             
             -- Accept Release Spirit immediately after dying
-            if not UnitIsGhost(self.C.unitPlayer) and UnitIsGhost(self.C.unitPlayer) ~= nil then
+            if not UnitIsGhost(DataToColor.C.unitPlayer) and UnitIsGhost(DataToColor.C.unitPlayer) ~= nil then
                 RepopMe()
             end
-            if UnitIsGhost(self.C.unitPlayer) then
-                local map = C_Map.GetBestMapForUnit(self.C.unitPlayer)
+            if UnitIsGhost(DataToColor.C.unitPlayer) then
+                local map = C_Map.GetBestMapForUnit(DataToColor.C.unitPlayer)
                 if C_DeathInfo.GetCorpseMapPosition(map) ~= nil then
                     local cX, cY = C_DeathInfo.GetCorpseMapPosition(map):GetXY()
-                    local x, y = self:GetCurrentPlayerPosition()
+                    local x, y = DataToColor:GetCurrentPlayerPosition()
                     -- Waits so that we are in range of specified retrieval distance, and ensures there is no delay timer before attemtping to resurrect
                     if math.abs(cX - x) < CORPSE_RETRIEVAL_DISTANCE / 1000 and math.abs(cY - y) < CORPSE_RETRIEVAL_DISTANCE / 1000 and GetCorpseRecoveryDelay() == 0 then
                         DEFAULT_CHAT_FRAME:AddMessage('Attempting to retrieve corpse')
