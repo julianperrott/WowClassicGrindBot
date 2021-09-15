@@ -94,9 +94,10 @@ function DataToColor:OnInitialize()
     self:RegisterEvent('LOOT_CLOSED','OnLootClosed')
     self:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
 
-    --LoggingChat(1);
     self:Update()
-    self:Print("We're in")
+    
+    local version = GetAddOnMetadata('DataToColor', 'Version')
+    self:Print("Welcome. Using "..version)
 end
 
 function DataToColor:SetupRequirements()
