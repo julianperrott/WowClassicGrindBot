@@ -19,7 +19,7 @@ function DataToColor:GetCurrentPlayerPosition()
         local position = C_Map.GetPlayerMapPosition(map, self.C.unitPlayer)
         return position:GetXY()
     else
-        return;
+        return
     end
 end
 
@@ -69,11 +69,10 @@ function DataToColor:getAuraMaskForClass(func, unitId, table)
     return num
 end
 
--- Grabs current target's name (friend or foe)
+-- Grabs current targets name
 function DataToColor:GetTargetName(partition)
-    -- Uses wow function to get target string
-    local target = GetUnitName(self.C.unitTarget)
-    if target ~= nil then
+    if UnitExists(self.C.unitTarget) then
+        local target = GetUnitName(self.C.unitTarget)
         target = self:StringToASCIIHex(target)
         if partition < 3 then
             return tonumber(string.sub(target, 0, 6))
@@ -81,26 +80,27 @@ function DataToColor:GetTargetName(partition)
                 return tonumber(string.sub(target, 7, 12))
             end
         end
-        return 0
     end
     return 0
 end
 
 function DataToColor:CastingInfoSpellId()
-    local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = CastingInfo();
+    local _, _, texture, _, _, _, _, _, spellID = CastingInfo()
     if spellID ~= nil then
         return spellID
     end
     if texture ~= nil then -- temp fix for tbc
         return texture
     end
-     _, _, texture, _, _, _, _, spellID = ChannelInfo();
-     if spellID ~= nil then
+
+    _, _, texture, _, _, _, _, spellID = ChannelInfo()
+    if spellID ~= nil then
         return spellID
     end
     if texture ~= nil then -- temp fix for tbc
         return texture
     end
+
     return 0
 end
 
@@ -156,13 +156,13 @@ function DataToColor:targetHostile()
     return 0
 end
 
+local ammoSlot = GetInventorySlotInfo("AmmoSlot")
 function DataToColor:hasAmmo()
-    local ammoSlot = GetInventorySlotInfo("AmmoSlot");
-    local ammoCount = GetInventoryItemCount(self.C.unitPlayer, ammoSlot);
+    local ammoCount = GetInventoryItemCount(self.C.unitPlayer, ammoSlot)
     if ammoCount > 0 then
         return 1
     end
-    return 0;
+    return 0
 end
 
 function DataToColor:getRange()
@@ -178,8 +178,7 @@ end
 
 function DataToColor:isTradeRange()
     if UnitExists(self.C.unitTarget) then
-        local tradeRange = CheckInteractDistance(self.C.unitTarget, 2)
-        if tradeRange then
+        if CheckInteractDistance(self.C.unitTarget, 2) then
             return 1
         end
     end
@@ -187,24 +186,24 @@ function DataToColor:isTradeRange()
 end
 
 function DataToColor:targetNpcId()
-    local unitType, _, _, _, _, npcID, guid = strsplit('-', UnitGUID(self.C.unitTarget) or ''); 
+    local _, _, _, _, _, npcID, guid = strsplit('-', UnitGUID(self.C.unitTarget) or '')
     if npcID ~= nil then
-        return tonumber(npcID);
+        return tonumber(npcID)
     end
-    return 0;
+    return 0
 end
 
 function DataToColor:getGuid(src)
-    local unitType, _, _, _, _, npcID, spawnUID = strsplit('-', UnitGUID(src) or ''); 
+    local _, _, _, _, _, npcID, spawnUID = strsplit('-', UnitGUID(src) or '')
     if npcID ~= nil then
-        return self:uniqueGuid(npcID, spawnUID);
+        return self:uniqueGuid(npcID, spawnUID)
     end
-    return 0;
+    return 0
 end
 
 function DataToColor:getGuidFromUUID(uuid)
-    local unitType, _, _, _, _, npcID, spawnUID = strsplit('-', uuid or ''); 
-    return self:uniqueGuid(npcID, spawnUID);
+    local _, _, _, _, _, npcID, spawnUID = strsplit('-', uuid or '')
+    return self:uniqueGuid(npcID, spawnUID)
 end
 
 function DataToColor:uniqueGuid(npcId, spawn)
@@ -220,8 +219,8 @@ function DataToColor:uniqueGuid(npcId, spawn)
         dd.sec +
         npcId +
         spawnIndex
-    );
-    return tonumber(num, 16);
+    )
+    return tonumber(num, 16)
 end
 
 function DataToColor:actionbarCost(slot)
@@ -277,16 +276,16 @@ function DataToColor:itemName(bag, slot)
 end
 
 function DataToColor:itemInfo(bag, slot)
-    local itemCount;
-    _, itemCount, _, _, _, _, _ = GetContainerItemInfo(bag, slot);
-    local value=0;
+    local itemCount
+    _, itemCount, _, _, _, _, _ = GetContainerItemInfo(bag, slot)
+    local value=0
     if itemCount ~= nil and itemCount > 0 then 
-        local isSoulBound = C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag,slot));
+        local isSoulBound = C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag,slot))
         if isSoulBound == true then value=1 end
     else
-        value=2;
+        value=2
     end
-    return value;
+    return value
 end
 
 -- Returns item id from specific index in global items table
@@ -332,12 +331,12 @@ end
 function DataToColor:areSpellsInRange()
     local inRange = 0
     for i = 1, table.getn(self.S.spellInRangeList), 1 do
-        local isInRange = IsSpellInRange(self.S.spellInRangeList[i], self.C.unitTarget);
+        local isInRange = IsSpellInRange(self.S.spellInRangeList[i], self.C.unitTarget)
         if isInRange==1 then
             inRange = inRange + (2 ^ (i - 1))
         end
     end
-    return inRange;
+    return inRange
 end
 
 function DataToColor:isActionUseable(min,max)
@@ -361,14 +360,14 @@ end
 
 -- Finds passed in string to return profession level
 function DataToColor:GetProfessionLevel(skill)
-    local numskills = GetNumSkillLines();
+    local numskills = GetNumSkillLines()
     for c = 1, numskills do
-        local skillname, _, _, skillrank = GetSkillLineInfo(c);
+        local skillname, _, _, skillrank = GetSkillLineInfo(c)
         if(skillname == skill) then
-            return tonumber(skillrank);
+            return tonumber(skillrank)
         end
     end
-    return 0;
+    return 0
 end
 
 -- Returns zone name
@@ -461,12 +460,12 @@ function DataToColor:CorpsePosition(coord)
 end
 
 function DataToColor:ComboPoints()
-    local points = GetComboPoints(self.C.unitPlayer, self.C.unitTarget);
+    local points = GetComboPoints(self.C.unitPlayer, self.C.unitTarget)
     -- if target is in combat, return 0 for bitmask
     if points ~= nil then
         return points
         -- if target is not in combat, return 1 for bitmask
-    else 
+    else
         return 0
     end
 end
@@ -496,7 +495,7 @@ function DataToColor:GetEnemyStatus()
 end
 
 function DataToColor:targetIsNormal()
-    local classification = UnitClassification(self.C.unitTarget);
+    local classification = UnitClassification(self.C.unitTarget)
     if classification=="normal" then
         if (UnitIsPlayer(self.C.unitTarget)) then 
             return 0 
@@ -637,7 +636,7 @@ function DataToColor:IsPetVisible()
 end
 
 function DataToColor:petHappy()
-    local happiness, damagePercentage, loyaltyRate = GetPetHappiness();
+    local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
     -- (1 = unhappy, 2 = content, 3 = happy)
     if happiness ~= nil and happiness == 3 then
         return 1
