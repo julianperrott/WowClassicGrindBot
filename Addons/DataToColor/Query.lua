@@ -43,10 +43,10 @@ function DataToColor:Base2Converter()
     DataToColor:MakeIndexBase2(DataToColor:hasAmmo(), 13) +
     DataToColor:MakeIndexBase2(DataToColor:playerCombatStatus(), 14) +
     DataToColor:MakeIndexBase2(DataToColor:IsTargetOfTargetPlayer(), 15) +
-    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn("Auto Shot"), 16) +
+    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.AutoShot), 16) +
     DataToColor:MakeIndexBase2(DataToColor:ProcessExitStatus(), 17) +
     DataToColor:MakeIndexBase2(DataToColor:IsPlayerMounted(), 18) +
-    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn("Shoot"), 19) +
+    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.Shoot), 19) +
     DataToColor:MakeIndexBase2(DataToColor:IsCurrentSpell(6603), 20) + -- AutoAttack enabled
     DataToColor:MakeIndexBase2(DataToColor:targetIsNormal(), 21)+
     DataToColor:MakeIndexBase2(DataToColor:IsTagged(), 22)
@@ -261,7 +261,7 @@ function DataToColor:itemName(bag, slot)
     if GetContainerItemLink(bag, slot) == nil then
         item = 0
         -- Formatting to isolate the ID in the ItemLink
-    else _, _, item = string.find(GetContainerItemLink(bag, slot), "(m:%d+)")
+    else _, _, item = string.find(GetContainerItemLink(bag, slot), DataToColor.C.ItemPattern)
         item = string.gsub(item, 'm:', '')
     end
     if item == nil then item = 0
@@ -304,10 +304,11 @@ function DataToColor:equipName(slot)
     local equip
     if GetInventoryItemLink(DataToColor.C.unitPlayer, slot) == nil then
         equip = 0
-    else _, _, equip = string.find(GetInventoryItemLink(DataToColor.C.unitPlayer, slot), "(m:%d+)")
+    else _, _, equip = string.find(GetInventoryItemLink(DataToColor.C.unitPlayer, slot), DataToColor.C.ItemPattern)
         equip = string.gsub(equip, 'm:', '')
     end
-    if equip == nil then equip = 0
+    if equip == nil then
+        equip = 0
     end
     return tonumber(equip)
 end
@@ -472,7 +473,7 @@ end
 
 function DataToColor:targetIsNormal()
     local classification = UnitClassification(DataToColor.C.unitTarget)
-    if classification == "normal" then
+    if classification == DataToColor.C.unitNormal then
         if (UnitIsPlayer(DataToColor.C.unitTarget)) then
             return 0
         end
@@ -590,7 +591,7 @@ end
 function DataToColor:isUnskinnable()
     local creatureType = UnitCreatureType(DataToColor.C.unitTarget)
     -- Demons COULD be included in this list, but there are some skinnable demon dogs.
-    if creatureType == "Humanoid" or creatureType == "Elemental" or creatureType == "Mechanical" or creatureType == "Totem" then
+    if creatureType == DataToColor.C.Humanoid or creatureType == DataToColor.C.Elemental or creatureType == DataToColor.C.Mechanical or creatureType == DataToColor.C.Totem then
         return 1
     else if creatureType ~= nil then
             return 0

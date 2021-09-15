@@ -6,6 +6,8 @@ local E = AceAddon:NewAddon(AddOnName, "AceConsole-3.0", "AceEvent-3.0", "AceTim
 
 E.callbacks = E.callbacks or CallbackHandler:New(E)
 E.C = {} -- Constants
+E.C.Spell = {} -- Spells
+
 E.S = {} -- Storage
 E.R = {} -- Runtime
 
