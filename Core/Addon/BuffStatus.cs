@@ -55,6 +55,8 @@
         public bool Ward { get => IsBitSet(13); }
         public bool FirePower { get => IsBitSet(14); }
 
+        public bool ManaShield { get => IsBitSet(15); }
+
         // Rogue
         public bool SliceAndDice { get => IsBitSet(10); }
 
