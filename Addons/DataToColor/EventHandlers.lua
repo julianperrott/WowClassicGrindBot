@@ -75,6 +75,7 @@ end
 
 function DataToColor:OnLootClosed(event)
     DataToColor.lastLoot = DataToColor.globalTime
+    DataToColor.inventoryChanged = true
     --DataToColor:Print(lastLoot)
 end
 
@@ -100,6 +101,10 @@ function DataToColor:OnMerchantShow(event)
     else
         DataToColor:Print("No grey items were sold.")
     end
+end
+
+function DataToColor:OnPlayerTargetChanged(event)
+    DataToColor.targetChanged = true
 end
 
 DataToColor.playerInteractIterator = 0
