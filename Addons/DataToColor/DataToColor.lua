@@ -126,7 +126,7 @@ function DataToColor:Update()
     C_Timer.After(self.timeUpdateSec, func);
 end
 
-local values = {}
+local valueCache = {}
 -- Function to mass generate all of the initial frames for the pixel reader
 function DataToColor:CreateFrames(n)
     -- Note: Use single frame and update color on game update call
@@ -138,16 +138,16 @@ function DataToColor:CreateFrames(n)
         
         -- DataToColor:integerToColor
         function MakePixelSquareArrI(value, slot)
-            if values[slot + 1].last ~= value then
-                values[slot + 1].last = value
+            if valueCache[slot + 1].last ~= value then
+                valueCache[slot + 1].last = value
                 MakePixelSquareArr(DataToColor:integerToColor(value), slot)
             end
         end
 
         -- DataToColor:fixedDecimalToColor
         function MakePixelSquareArrF(value, slot)
-            if values[slot + 1].last ~= value then
-                values[slot + 1].last = value
+            if valueCache[slot + 1].last ~= value then
+                valueCache[slot + 1].last = value
                 MakePixelSquareArr(DataToColor:fixedDecimalToColor(value), slot)
             end
         end
@@ -352,7 +352,7 @@ function DataToColor:CreateFrames(n)
         local x = floor(frame / FRAME_ROWS)
         -- Put frame information in to an object/array
         frames[frame + 1] = genFrame("frame_"..tostring(frame), x, y)
-        values[frame + 1] = { last = -1 }
+        valueCache[frame + 1] = { last = -1 }
     end
     
     -- Assign self.frames to frame list generated above
