@@ -471,27 +471,19 @@ end
 
 -- Finds if player or target is in combat
 function DataToColor:targetCombatStatus()
-    -- if target is in combat, return 0 for bitmask
-    if UnitAffectingCombat(DataToColor.C.unitTarget) then
-        return 1
-        -- if target is not in combat, return 1 for bitmask
-    end
-    return 0
+    return UnitAffectingCombat(DataToColor.C.unitTarget) and 1 or 0
 end
 
 -- Checks if target is dead. Returns 1 if target is dead, nil otherwise (converts to 0)
 function DataToColor:GetEnemyStatus()
-    if UnitIsDead(DataToColor.C.unitTarget) then
-        return 1
-    end
-    return 0
+    return UnitIsDead(DataToColor.C.unitTarget) and 1 or 0
 end
 
 function DataToColor:targetIsNormal()
     local classification = UnitClassification(DataToColor.C.unitTarget)
-    if classification=="normal" then
-        if (UnitIsPlayer(DataToColor.C.unitTarget)) then 
-            return 0 
+    if classification == "normal" then
+        if (UnitIsPlayer(DataToColor.C.unitTarget)) then
+            return 0
         end
 
         if UnitName(DataToColor.C.unitPet) == UnitName(DataToColor.C.unitTarget) then
@@ -500,17 +492,14 @@ function DataToColor:targetIsNormal()
 
         return 1
         -- if target is not in combat, return 1 for bitmask
-    else 
+    else
         return 0
     end
 end
 
 -- Checks if we are currently alive or are a ghost/dead.
 function DataToColor:deadOrAlive()
-    if UnitIsDeadOrGhost(DataToColor.C.unitPlayer) then
-        return 1
-    end
-    return 0
+    return UnitIsDeadOrGhost(DataToColor.C.unitPlayer) and 1 or 0
 end
 
 -- Checks the number of talent points we have available to spend
@@ -530,10 +519,7 @@ function DataToColor:shapeshiftForm()
 end
 
 function DataToColor:playerCombatStatus()
-    if UnitAffectingCombat(DataToColor.C.unitPlayer) then
-        return 1 
-    end
-    return 0
+    return UnitAffectingCombat(DataToColor.C.unitPlayer) and 1 or 0
 end
 
 -- Returns the slot in which we have a fully degraded item
@@ -547,28 +533,15 @@ function DataToColor:GetInventoryBroken()
 end
 -- Checks if we are on a taxi
 function DataToColor:IsPlayerFlying()
-    local taxiStatus = UnitOnTaxi(DataToColor.C.unitPlayer)
-    if taxiStatus then
-        return 1
-    end
-    -- Returns 0 if not on a wind rider beast
-    return 0
+    return UnitOnTaxi(DataToColor.C.unitPlayer) and 1 or 0
 end
 
 function DataToColor:IsPlayerSwimming()
-    if IsSwimming() then
-        return 1
-    end
-    return 0
+    return IsSwimming() and 1 or 0
 end
 
 function DataToColor:IsPlayerMounted()
-    local mounted = IsMounted()
-    if mounted then
-        return 1
-    end
-    -- Returns 0 if not on a wind rider beast
-    return 0
+    return IsMounted() and 1 or 0
 end
 
 function DataToColor:IsTargetOfTargetPlayerAsNumber()
@@ -587,42 +560,27 @@ function DataToColor:IsTargetOfTargetPlayer()
 end
 
 function DataToColor:IsTagged()
-    if UnitIsTapDenied(DataToColor.C.unitTarget) then 
-        return 1 
-    end
-    return 0
+    return UnitIsTapDenied(DataToColor.C.unitTarget) and 1 or 0
 end
 
 function DataToColor:IsAutoRepeatActionOn(actionSlot)
-    if IsAutoRepeatAction(actionSlot) then
-        return 1
-    end
-    return 0
+    return IsAutoRepeatAction(actionSlot) and 1 or 0
 end
 
 function DataToColor:IsAutoRepeatSpellOn(spell)
-    if IsAutoRepeatSpell(spell) then
-        return 1
-    end
-    return 0
+    return IsAutoRepeatSpell(spell) and 1 or 0
 end
 
 function DataToColor:IsCurrentSpell(spell)
-    if IsCurrentSpell(spell) then
-        return 1
-    end
-    return 0
+    return IsCurrentSpell(spell) and 1 or 0
 end
 
 function DataToColor:IsCurrentActionOn(actionSlot)
-    if IsCurrentAction(actionSlot)  then
-        return 1
-    end
-    return 0
+    return IsCurrentAction(actionSlot) and 1 or 0
 end
 
 function DataToColor:IsPetVisible()
-    if UnitIsVisible(DataToColor.C.unitPet) and not UnitIsDead(DataToColor.C.unitPet)  then
+    if UnitIsVisible(DataToColor.C.unitPet) and not UnitIsDead(DataToColor.C.unitPet) then
         return 1
     end
     return 0
