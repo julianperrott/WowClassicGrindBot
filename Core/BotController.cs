@@ -63,6 +63,8 @@ namespace Core
 
         public ActionBarPopulator? ActionBarPopulator { get; set; }
 
+        public ExecGameCommand ExecGameCommand { get; set; }
+
         private bool Enabled = true;
 
         public event EventHandler? ProfileLoaded;
@@ -79,6 +81,8 @@ namespace Core
             wowProcess = new WowProcess();
             WowScreen = new WowScreen(logger, wowProcess);
             WowProcessInput = new WowProcessInput(logger, wowProcess);
+
+            ExecGameCommand = new ExecGameCommand(logger, WowProcessInput);
 
             GrindSessionHandler = new LocalGrindSessionHandler(dataConfig.History);
             GrindSession = new GrindSession(this, GrindSessionHandler);
@@ -246,7 +250,8 @@ namespace Core
         private void Initialize(ClassConfiguration config)
         {
             ConfigurableInput = new ConfigurableInput(logger, wowProcess, config);
-            ActionBarPopulator = new ActionBarPopulator(logger, wowProcess, ConfigurableInput, config, AddonReader);
+
+            ActionBarPopulator = new ActionBarPopulator(logger, config, AddonReader, ExecGameCommand);
 
             var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.Blacklist, logger);
 
