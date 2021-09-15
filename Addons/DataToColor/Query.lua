@@ -298,21 +298,7 @@ function DataToColor:enchantedItems()
     end
 end
 
-function DataToColor:mainhandEnchantActive() 
-    local hasMainHandEnchant = GetWeaponEnchantInfo()
-    if hasMainHandEnchant then
-        return 1
-    end
-    return 0
-end
 
-function DataToColor:offhandEnchantActive() 
-    local _, _, _, _, hasOffHandEnchant = GetWeaponEnchantInfo()
-    if hasOffHandEnchant then
-        return 1
-    end
-    return 0
-end
 
 function DataToColor:equipName(slot)
     local equip
@@ -387,12 +373,7 @@ function DataToColor:GetZoneName(partition)
 end
 
 function DataToColor:GetBestMap()
-    local map = C_Map.GetBestMapForUnit(DataToColor.C.unitPlayer)
-    if map ~= nil then
-        return map
-    else
-        return 0
-    end
+    return C_Map.GetBestMapForUnit(DataToColor.C.unitPlayer) or 0
 end 
 
 -- Game time on a 24 hour clock
@@ -468,6 +449,16 @@ end
 -- Only put functions here that are part of a boolean sequence --
 -- Sew BELOW for examples ---------------------------------------
 -----------------------------------------------------------------
+
+function DataToColor:mainhandEnchantActive() 
+    local hasMainHandEnchant = GetWeaponEnchantInfo()
+    return hasMainHandEnchant and 1 or 0
+end
+
+function DataToColor:offhandEnchantActive() 
+    local _, _, _, _, hasOffHandEnchant = GetWeaponEnchantInfo()
+    return hasOffHandEnchant and 1 or 0
+end
 
 -- Finds if player or target is in combat
 function DataToColor:targetCombatStatus()
