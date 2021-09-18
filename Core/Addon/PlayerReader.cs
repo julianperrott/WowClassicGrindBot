@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Core.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -16,6 +16,8 @@ namespace Core
             this.reader = reader;
             this.creatureDb = creatureDb;
         }
+
+        public double AvgUpdateLatency = 0;
 
         public int Sequence { get; private set; } = 0;
         public List<CombatCreature> TargetHistory { get; } = new List<CombatCreature>();
