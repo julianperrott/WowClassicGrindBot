@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Core.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -243,7 +243,7 @@ namespace Core
             var s = GlobalTime;
             while (Math.Abs(s - GlobalTime) <= n)
             {
-                await Task.Delay(50);
+                await Task.Delay(2 * (int)AvgUpdateLatency);
             }
         }
 
