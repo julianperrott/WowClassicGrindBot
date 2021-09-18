@@ -14,7 +14,7 @@ namespace Core
 {
     public class NpcNameFinder
     {
-        private const int MOUSE_DELAY = 35;
+        private const int MOUSE_DELAY = 40;
 
         public enum NPCType
         {
