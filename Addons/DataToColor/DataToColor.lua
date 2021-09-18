@@ -96,12 +96,7 @@ function DataToColor:OnInitialize()
     -- handle error events
     UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
 
-    DataToColor:RegisterEvent("UI_ERROR_MESSAGE", 'OnUIErrorMessage')
-    DataToColor:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", 'OnCombatEvent')
-    DataToColor:RegisterEvent('LOOT_CLOSED','OnLootClosed')
-    DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
-    DataToColor:RegisterEvent('PLAYER_TARGET_CHANGED', 'OnPlayerTargetChanged')
-
+    DataToColor:RegisterEvents()
     DataToColor:UpdateTimer()
 
     local version = GetAddOnMetadata('DataToColor', 'Version')
