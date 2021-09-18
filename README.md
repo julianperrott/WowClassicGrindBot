@@ -534,6 +534,7 @@ e.g.
 | Mage | "Ice Barrier" |
 | Mage | "Ward" |
 | Mage | "Fire Power" |
+| Mage | "Mana Shield" |
 | Paladin | "Seal" |
 | Paladin | "Aura" |
 | Paladin | "Blessing" |
