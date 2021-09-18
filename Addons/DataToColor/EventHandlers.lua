@@ -23,6 +23,15 @@ local errorList = {
     "ERR_AUTOFOLLOW_TOO_FAR", --5
 };
 
+function DataToColor:RegisterEvents()
+    DataToColor:RegisterEvent("UI_ERROR_MESSAGE", 'OnUIErrorMessage')
+    DataToColor:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", 'OnCombatEvent')
+    DataToColor:RegisterEvent('LOOT_CLOSED','OnLootClosed')
+    DataToColor:RegisterEvent('BAG_UPDATE','OnBagUpdate')
+    DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
+    DataToColor:RegisterEvent('PLAYER_TARGET_CHANGED', 'OnPlayerTargetChanged')
+end
+
 function DataToColor:OnUIErrorMessage(event, messageType, message)
     local errorName = GetGameMessageInfo(messageType)
 
@@ -77,6 +86,11 @@ function DataToColor:OnLootClosed(event)
     DataToColor.lastLoot = DataToColor.globalTime
     DataToColor.inventoryChanged = true
     --DataToColor:Print(lastLoot)
+end
+
+function DataToColor:OnBagUpdate(event, containerID)
+    DataToColor.inventoryChanged = true
+    --DataToColor:Print("OnBagUpdate "..containerID)
 end
 
 function DataToColor:OnMerchantShow(event)
