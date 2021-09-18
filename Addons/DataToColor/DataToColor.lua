@@ -102,8 +102,8 @@ function DataToColor:OnInitialize()
     DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
     DataToColor:RegisterEvent('PLAYER_TARGET_CHANGED', 'OnPlayerTargetChanged')
 
-    DataToColor:Update()
-    
+    DataToColor:UpdateTimer()
+
     local version = GetAddOnMetadata('DataToColor', 'Version')
     DataToColor:Print("Welcome. Using "..version)
 end
@@ -117,22 +117,26 @@ function DataToColor:SetupRequirements()
 	SetCVar('Gamma',1,'[]')
 end
 
-local UpdateFuncCache={};
 function DataToColor:Update()
-	DataToColor.globalTime = DataToColor.globalTime + 1
+    DataToColor.globalTime = DataToColor.globalTime + 1
     if DataToColor.globalTime > (256 * 256 * 256 - 1) then
         DataToColor.globalTime = 0
     end
-
     --DataToColor:Print(DataToColor.globalTime)
- 
+end
+
+local UpdateFuncCache={};
+function DataToColor:UpdateTimer()
+    DataToColor:Update()
+
     local func = UpdateFuncCache[self]
     if not func then
-        func = function() DataToColor:Update(); end;
+        func = function() DataToColor:UpdateTimer(); end;
         UpdateFuncCache[self] = func;
     end
     C_Timer.After(DataToColor.timeUpdateSec, func);
 end
+
 
 function DataToColor:FushState()
     DataToColor.targetChanged = true
@@ -357,6 +361,8 @@ function DataToColor:CreateFrames(n)
             DataToColor:ConsumeChanges()
 
             DataToColor:HandlePlayerInteractionEvents()
+
+            DataToColor:Update()
         end
 
         if SETUP_SEQUENCE then

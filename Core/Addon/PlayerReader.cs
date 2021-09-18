@@ -17,6 +17,8 @@ namespace Core
             this.creatureDb = creatureDb;
         }
 
+        public double AvgUpdateLatency = 0;
+
         public int Sequence { get; private set; } = 0;
         public List<CombatCreature> TargetHistory { get; } = new List<CombatCreature>();
         public List<CombatCreature> CombatCreatures { get; } = new List<CombatCreature>();
@@ -241,7 +243,7 @@ namespace Core
             var s = GlobalTime;
             while (Math.Abs(s - GlobalTime) <= n)
             {
-                await Task.Delay(50);
+                await Task.Delay(2 * (int)AvgUpdateLatency);
             }
         }
 
