@@ -10,8 +10,8 @@ namespace Game
 {
     public class WowProcessInput : IMouseInput
     {
-        private const int MIN_DELAY = 35;
-        private const int MAX_DELAY = 65;
+        private const int MIN_DELAY = 25;
+        private const int MAX_DELAY = 55;
 
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
