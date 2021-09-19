@@ -81,7 +81,7 @@ namespace Core.Goals
             if (foundCursor)
             {
                 Log("Found corpse - interacted with right click");
-                await playerReader.WaitForNUpdate(1);
+                await playerReader.WaitForNUpdate(5);
 
                 (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
                 if (foundTarget)
@@ -105,7 +105,7 @@ namespace Core.Goals
                 // wait until cast ends
                 do
                 {
-                    await playerReader.WaitForNUpdate(1);
+                    await playerReader.WaitForNUpdate(5);
                     if (await combatUtil.EnteredCombat())
                     {
                         if(await combatUtil.AquiredTarget())
@@ -118,7 +118,7 @@ namespace Core.Goals
                 Log("Cast finished!");
 
                 // Wait for to update the LastUIErrorMessage
-                await playerReader.WaitForNUpdate(2);
+                await playerReader.WaitForNUpdate(1);
                 var lastError = this.playerReader.LastUIErrorMessage;
                 if (lastError != UI_ERROR.ERR_SPELL_FAILED_S && lastLoot != playerReader.LastLootTime)
                 {
@@ -157,7 +157,7 @@ namespace Core.Goals
             if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
             {
                 await input.TapClearTarget();
-                await playerReader.WaitForNUpdate(1);
+                await playerReader.WaitForNUpdate(5);
             }
         }
 

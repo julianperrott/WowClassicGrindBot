@@ -65,7 +65,7 @@ namespace Core.Goals
             if (foundCursor)
             {
                 Log("Found corpse - clicked");
-                await playerReader.WaitForNUpdate(1);
+                await playerReader.WaitForNUpdate(8);
 
                 CheckForSkinning();
 
@@ -85,7 +85,7 @@ namespace Core.Goals
             else
             {
                 await input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
-                await playerReader.WaitForNUpdate(1);
+                await playerReader.WaitForNUpdate(5);
                 if(playerReader.HasTarget)
                 {
                     if(playerReader.PlayerBitValues.TargetIsDead)
@@ -93,7 +93,7 @@ namespace Core.Goals
                         CheckForSkinning();
 
                         await input.TapInteractKey($"{GetType().Name}: Found last dead target");
-                        await playerReader.WaitForNUpdate(1);
+                        await playerReader.WaitForNUpdate(5);
 
                         (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
                         if (foundTarget)
@@ -153,13 +153,13 @@ namespace Core.Goals
             if (!classConfiguration.Skin)
             {
                 npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
-                await npcNameFinder.WaitForNUpdate(1);
+                await npcNameFinder.WaitForNUpdate(3);
             }
 
             if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
             {
                 await input.TapClearTarget($"{GetType().Name}: Exit Goal");
-                await playerReader.WaitForNUpdate(1);
+                await playerReader.WaitForNUpdate(5);
             }
         }
 
