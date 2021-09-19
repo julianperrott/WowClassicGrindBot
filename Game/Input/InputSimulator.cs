@@ -66,7 +66,6 @@ namespace Game
         public async Task LeftClickMouse(Point p)
         {
             SetCursorPosition(p);
-            await Delay(MIN_DELAY);
             simulator.Mouse.LeftButtonDown();
             await Delay(MIN_DELAY);
             simulator.Mouse.LeftButtonUp();
