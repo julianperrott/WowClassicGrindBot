@@ -83,9 +83,11 @@ namespace Core
             {
                 new Point(0, 0),
                 new Point(0, 25).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(-25, 50).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(25, 50).Scale(scaleToRefWidth, scaleToRefHeight),
                 new Point(0, 90).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(-10, 50).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(10, 50).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(0, 130).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(0, 160).Scale(scaleToRefWidth, scaleToRefHeight),
             };
         }
 
@@ -327,6 +329,16 @@ namespace Core
                 using (var whitePen = new Pen(Color.White, 3))
                 {
                     Npcs.ForEach(n => gr.DrawRectangle(whitePen, new Rectangle(n.Min, new Size(n.Width, n.Height))));
+
+                    /*
+                    Npcs.ForEach(n =>
+                    {
+                        locFindByCursorType.ForEach(l =>
+                        {
+                            gr.DrawEllipse(whitePen, l.X + n.ClickPoint.X, l.Y + n.ClickPoint.Y, 5, 5);
+                        });
+                    });
+                    */
                 }
             }
         }
