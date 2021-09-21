@@ -16,7 +16,7 @@ namespace CoreTests
 
         public Test_MouseClicks(ILogger logger)
         {
-            logger = this.logger;
+            this.logger = logger;
 
             wowProcess = new WowProcess();
             wowScreen = new WowScreen(logger, wowProcess);
@@ -56,6 +56,8 @@ namespace CoreTests
             await Task.Delay(500);
 
             await wowProcessInput.RightClickMouse(p);
+
+            logger.LogInformation("Finished");
         }
     }
 }

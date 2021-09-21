@@ -26,13 +26,13 @@ namespace CoreTests
             var test = new Test_NpcNameFinderLoot(logger);
             test.Execute();
 
-            MainAsync().GetAwaiter().GetResult();
+            //MainAsync().GetAwaiter().GetResult();
         }
 
         private static async Task MainAsync()
         {
-            //var test = new Test_MouseClicks(logger);
-            //await test.Execute();
+            var test = new Test_MouseClicks(logger);
+            await test.Execute();
         }
     }
 }
