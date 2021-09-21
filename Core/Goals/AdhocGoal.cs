@@ -10,16 +10,18 @@ namespace Core.Goals
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
 
+        private readonly Wait wait;
         private readonly StopMoving stopMoving;
         private readonly PlayerReader playerReader;
         
         private readonly KeyAction key;
         private readonly CastingHandler castingHandler;
 
-        public AdhocGoal(ILogger logger, ConfigurableInput input, KeyAction key, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler)
+        public AdhocGoal(ILogger logger, ConfigurableInput input, Wait wait, KeyAction key, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler)
         {
             this.logger = logger;
             this.input = input;
+            this.wait = wait;
             this.stopMoving = stopMoving;
             this.playerReader = playerReader;
             this.key = key;
@@ -55,7 +57,7 @@ namespace Core.Goals
                     //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
                 }
             }
-            await Wait(200, () => false);
+            await wait.InterruptTask(200, () => false);
 
             await castingHandler.CastIfReady(key, key.DelayBeforeCast);
 
@@ -68,7 +70,7 @@ namespace Core.Goals
             DateTime startTime = DateTime.Now;
             while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.PlayerBitValues.PlayerInCombat)
             {
-                await playerReader.WaitForNUpdate(1);
+                await wait.Update(1);
 
                 if (playerReader.Buffs.Drinking)
                 {

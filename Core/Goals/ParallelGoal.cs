@@ -15,16 +15,18 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
 
         private readonly StopMoving stopMoving;
+        private readonly Wait wait;
         private readonly PlayerReader playerReader;
         
         private readonly CastingHandler castingHandler;
 
-        public ParallelGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, StopMoving stopMoving, List<KeyAction> keysConfig, CastingHandler castingHandler)
+        public ParallelGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving, List<KeyAction> keysConfig, CastingHandler castingHandler)
         {
             this.logger = logger;
             this.input = input;
 
             this.stopMoving = stopMoving;
+            this.wait = wait;
             this.playerReader = playerReader;
             
             this.castingHandler = castingHandler;
@@ -52,7 +54,7 @@ namespace Core.Goals
                 }
             }
 
-            await Wait(200, () => false);
+            await wait.Interrupt(200, () => false);
 
             Keys.ForEach(async key =>
             {
@@ -68,7 +70,7 @@ namespace Core.Goals
             DateTime startTime = DateTime.Now;
             while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.PlayerBitValues.PlayerInCombat)
             {
-                await playerReader.WaitForNUpdate(1);
+                await wait.Update(1);
 
                 if (playerReader.Buffs.Drinking && playerReader.Buffs.Eating)
                 {

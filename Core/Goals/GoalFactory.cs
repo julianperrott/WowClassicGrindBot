@@ -42,16 +42,18 @@ namespace Core
             List<WowPoint> pathPoints, spiritPath;
             GetPaths(out pathPoints, out spiritPath, classConfig);
 
+            var wait = new Wait(addonReader.PlayerReader);
+
             var playerDirection = new PlayerDirection(logger, input, addonReader.PlayerReader);
             var stopMoving = new StopMoving(input, addonReader.PlayerReader);
 
-            var castingHandler = new CastingHandler(logger, input, addonReader.PlayerReader, classConfig, playerDirection, npcNameFinder, stopMoving);
+            var castingHandler = new CastingHandler(logger, input, wait, addonReader.PlayerReader, classConfig, playerDirection, npcNameFinder, stopMoving);
 
             var stuckDetector = new StuckDetector(logger, input, addonReader.PlayerReader, playerDirection, stopMoving);
-            var combatUtil = new CombatUtil(logger, input, addonReader.PlayerReader);
-            var mountHandler = new MountHandler(logger, input, classConfig, addonReader.PlayerReader, stopMoving);
+            var combatUtil = new CombatUtil(logger, input, wait, addonReader.PlayerReader);
+            var mountHandler = new MountHandler(logger, input, classConfig, wait, addonReader.PlayerReader, stopMoving);
 
-            var followRouteAction = new FollowRouteGoal(logger, input, addonReader.PlayerReader,  playerDirection, pathPoints, stopMoving, npcNameFinder, blacklist, stuckDetector, classConfig, pather, mountHandler);
+            var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader.PlayerReader,  playerDirection, pathPoints, stopMoving, npcNameFinder, blacklist, stuckDetector, classConfig, pather, mountHandler);
             var walkToCorpseAction = new WalkToCorpseGoal(logger, input, addonReader.PlayerReader,  playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
 
             availableActions.Clear();
@@ -78,7 +80,7 @@ namespace Core
                     availableActions.Add(walkToCorpseAction);
                 }
 
-                availableActions.Add(new ApproachTargetGoal(logger, input, addonReader.PlayerReader, stopMoving,  stuckDetector));
+                availableActions.Add(new ApproachTargetGoal(logger, input, wait, addonReader.PlayerReader, stopMoving,  stuckDetector));
 
                 if (classConfig.WrongZone.ZoneId > 0)
                 {
@@ -87,33 +89,33 @@ namespace Core
 
                 if (classConfig.Parallel.Sequence.Count > 0)
                 {
-                    availableActions.Add(new ParallelGoal(logger, input, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler));
+                    availableActions.Add(new ParallelGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler));
                 }
 
                 if (classConfig.Loot)
                 {
-                    var lootAction = new LootGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder, combatUtil, areaDb);
+                    var lootAction = new LootGoal(logger, input, wait, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder, combatUtil, areaDb);
                     lootAction.AddPreconditions();
                     availableActions.Add(lootAction);
 
                     if (classConfig.Skin)
                     {
-                        availableActions.Add(new SkinningGoal(logger, input, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, npcNameFinder, combatUtil));
+                        availableActions.Add(new SkinningGoal(logger, input, wait, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, npcNameFinder, combatUtil));
                     }
                 }
 
                 try
                 {
-                    var genericCombat = new CombatGoal(logger, input, addonReader.PlayerReader, stopMoving, classConfig, castingHandler);
+                    var genericCombat = new CombatGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, classConfig, castingHandler);
                     availableActions.Add(genericCombat);
-                    availableActions.Add(new PullTargetGoal(logger, input, addonReader.PlayerReader, npcNameFinder, stopMoving, castingHandler, stuckDetector, classConfig));
+                    availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader.PlayerReader, npcNameFinder, stopMoving, castingHandler, stuckDetector, classConfig));
 
                     availableActions.Add(new CreatureKilledGoal(logger, addonReader.PlayerReader, classConfig));
-                    availableActions.Add(new ConsumeCorpse(logger, addonReader.PlayerReader));
+                    availableActions.Add(new ConsumeCorpse(logger, wait, addonReader.PlayerReader));
 
                     foreach (var item in classConfig.Adhoc.Sequence)
                     {
-                        availableActions.Add(new AdhocGoal(logger, input, item, addonReader.PlayerReader, stopMoving, castingHandler));
+                        availableActions.Add(new AdhocGoal(logger, input, wait, item, addonReader.PlayerReader, stopMoving, castingHandler));
                     }
                 }
                 catch (Exception ex)
