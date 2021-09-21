@@ -229,23 +229,5 @@ namespace Core
                 LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
             }
         }
-
-        internal async Task WaitForUpdate()
-        {
-            var s = this.Sequence;
-            while (this.Sequence == s)
-            {
-                await Task.Delay(100);
-            }
-        }
-        public async Task WaitForNUpdate(int n)
-        {
-            var s = GlobalTime;
-            while (Math.Abs(s - GlobalTime) <= n)
-            {
-                await Task.Delay(2 * (int)AvgUpdateLatency);
-            }
-        }
-
     }
 }
