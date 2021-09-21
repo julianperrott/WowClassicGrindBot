@@ -17,6 +17,7 @@ namespace Core.Goals
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
 
+        private readonly Wait wait;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
@@ -55,11 +56,12 @@ namespace Core.Goals
         private double avgDistance = 0;
         private bool firstLoad = true;
 
-        public FollowRouteGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader,  IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler)
+        public FollowRouteGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader,  IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, IBlacklist blacklist, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler)
         {
             this.logger = logger;
             this.input = input;
 
+            this.wait = wait;
             this.playerReader = playerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
@@ -189,7 +191,7 @@ namespace Core.Goals
             {
                 // stuck so jump
                 input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 2");
-                await playerReader.WaitForNUpdate(1);
+                await wait.Update(1);
                 if (HasBeenActiveRecently())
                 {
                     await this.stuckDetector.Unstick();
@@ -197,7 +199,7 @@ namespace Core.Goals
                 }
                 else
                 {
-                    await playerReader.WaitForNUpdate(1);
+                    await wait.Update(1);
                     logger.LogInformation("Resuming movement");
                 }
             }

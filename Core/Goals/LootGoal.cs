@@ -16,6 +16,7 @@ namespace Core.Goals
         private ILogger logger;
         private readonly ConfigurableInput input;
 
+        private readonly Wait wait;
         private readonly PlayerReader playerReader;
         private readonly AreaDB areaDb;
         private readonly StopMoving stopMoving;
@@ -27,10 +28,11 @@ namespace Core.Goals
         private bool debug = true;
         private long lastLoot;
 
-        public LootGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder, CombatUtil combatUtil, AreaDB areaDb)
+        public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder, CombatUtil combatUtil, AreaDB areaDb)
         {
             this.logger = logger;
             this.input = input;
+            this.wait = wait;
             this.playerReader = playerReader;
             this.areaDb = areaDb;
             this.stopMoving = stopMoving;
@@ -65,7 +67,7 @@ namespace Core.Goals
             if (foundCursor)
             {
                 Log("Found corpse - clicked");
-                await playerReader.WaitForNUpdate(8);
+                await wait.Update(1);
 
                 CheckForSkinning();
 
@@ -77,23 +79,24 @@ namespace Core.Goals
                     return;
                 }
 
-                if(moved) 
+                if (moved)
                 {
                     await input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
+                    await wait.Update(1);
                 }
             }
             else
             {
                 await input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
-                await playerReader.WaitForNUpdate(5);
-                if(playerReader.HasTarget)
+                await wait.Update(2);
+                if (playerReader.HasTarget)
                 {
                     if(playerReader.PlayerBitValues.TargetIsDead)
                     {
                         CheckForSkinning();
 
                         await input.TapInteractKey($"{GetType().Name}: Found last dead target");
-                        await playerReader.WaitForNUpdate(5);
+                        await wait.Update(1);
 
                         (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
                         if (foundTarget)
@@ -137,7 +140,7 @@ namespace Core.Goals
 
         private async Task GoalExit()
         {
-            if(!await Wait(500, () => lastLoot != playerReader.LastLootTime))
+            if (!await wait.Interrupt(1000, () => lastLoot != playerReader.LastLootTime))
             {
                 Log($"Loot Successfull");
             }
@@ -153,13 +156,13 @@ namespace Core.Goals
             if (!classConfiguration.Skin)
             {
                 npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
-                await npcNameFinder.WaitForNUpdate(3);
+                await npcNameFinder.WaitForNUpdate(1);
             }
 
             if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
             {
                 await input.TapClearTarget($"{GetType().Name}: Exit Goal");
-                await playerReader.WaitForNUpdate(5);
+                await wait.Update(1);
             }
         }
 
