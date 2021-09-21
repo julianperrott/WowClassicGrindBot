@@ -21,6 +21,8 @@ namespace Core.Goals
         private readonly ClassConfiguration classConfiguration;
         private DateTime lastPulled = DateTime.Now;
 
+        private readonly KeyAction defaultKeyAction = new KeyAction();
+
         private int lastKilledGuid;
 
         public CombatGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, CastingHandler castingHandler)
@@ -71,7 +73,7 @@ namespace Core.Goals
                     continue;
                 }
 
-                pressed = await this.castingHandler.CastIfReady(item);
+                pressed = await this.castingHandler.CastIfReady(item, item.DelayBeforeCast);
                 if (pressed)
                 {
                     break;
@@ -79,7 +81,7 @@ namespace Core.Goals
             }
             if (!pressed)
             {
-                await Task.Delay(20);
+                await Task.Delay(defaultKeyAction.PressDuration);
             }
 
             this.lastActive = DateTime.Now;
@@ -168,7 +170,7 @@ namespace Core.Goals
                     logger.LogInformation("Exit CombatGoal!!!");
                 }
             }
-            await Task.Delay(0);
+            await playerReader.WaitForNUpdate(2);
         }
 
         private bool DidKilledACreature()
@@ -211,7 +213,7 @@ namespace Core.Goals
 
             // check for targets attacking me
             await input.TapNearestTarget();
-            await playerReader.WaitForNUpdate(1);
+            await playerReader.WaitForNUpdate(2);
             if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
             {
                 if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
