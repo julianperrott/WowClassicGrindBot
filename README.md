@@ -282,8 +282,9 @@ Commands have the following parameters, only a subset will be used by each comma
 | WaitForWithinMelleRange| Wait after casting for the mob to be in melee range | false |
 | ResetOnNewTarget | Reset the cooldown if the target changes | false |
 | Log | Write to the log when this key is evaluated | true |
-| DelayAfterCast | The delay in milliseconds after the spell is cast | 1450 |
 | DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
+| DelayAfterCast | The delay in milliseconds after the spell is cast | 1450 |
+| AfterCastWaitBuff | After the cast happened, should wait until player buffs changed | false |
 | Cost | For Adhoc goals the priority | 18 |
 | InCombat | Can it be cast in combat | false |
 | StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | 0 |

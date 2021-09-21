@@ -1,5 +1,6 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace Core.Goals
@@ -47,43 +48,44 @@ namespace Core.Goals
         {
             if (key.StopBeforeCast)
             {
-                await this.stopMoving.Stop();
+                await stopMoving.Stop();
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
                     await input.TapDismount();
+                    //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
                 }
-                await Task.Delay(1000);
             }
-            await this.castingHandler.CastIfReady(key);
+            await Wait(200, () => false);
 
-            this.key.ResetCooldown();
+            await castingHandler.CastIfReady(key, key.DelayBeforeCast);
 
-            bool wasDrinkingOrEating = this.playerReader.Buffs.Drinking || this.playerReader.Buffs.Eating;
+            key.ResetCooldown();
 
-            int seconds = 0;
+            bool wasDrinkingOrEating = playerReader.Buffs.Drinking || playerReader.Buffs.Eating;
 
-            while ((this.playerReader.Buffs.Drinking || this.playerReader.Buffs.Eating || this.playerReader.IsCasting) && !this.playerReader.PlayerBitValues.PlayerInCombat)
+            logger.LogInformation($"Waiting for {key.Name}");
+
+            DateTime startTime = DateTime.Now;
+            while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.PlayerBitValues.PlayerInCombat)
             {
-                await Task.Delay(1000);
-                seconds++;
-                this.logger.LogInformation($"Waiting for {key.Name}");
+                await playerReader.WaitForNUpdate(1);
 
-                if (this.playerReader.Buffs.Drinking)
+                if (playerReader.Buffs.Drinking)
                 {
-                    if (this.playerReader.ManaPercentage > 98) { break; }
+                    if (playerReader.ManaPercentage > 98) { break; }
                 }
-                else if (this.playerReader.Buffs.Eating && !this.key.Requirement.Contains("Well Fed"))
+                else if (playerReader.Buffs.Eating && !key.Requirement.Contains("Well Fed"))
                 {
-                    if (this.playerReader.HealthPercent > 98) { break; }
+                    if (playerReader.HealthPercent > 98) { break; }
                 }
-                else if (!this.key.CanRun())
+                else if (!key.CanRun())
                 {
                     break;
                 }
 
-                if (seconds > 20)
+                if ((DateTime.Now - startTime).TotalSeconds > 25)
                 {
-                    this.logger.LogInformation($"Waited long enough for {key.Name}");
+                    logger.LogInformation($"Waited (25s) long enough for {key.Name}");
                     break;
                 }
             }
@@ -93,7 +95,7 @@ namespace Core.Goals
                 await input.TapStopKey(); // stand up
             }
 
-            this.key.SetClicked();
+            key.SetClicked();
         }
 
         public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
