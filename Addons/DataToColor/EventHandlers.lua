@@ -85,7 +85,7 @@ end
 function DataToColor:OnLootClosed(event)
     DataToColor.lastLoot = DataToColor.globalTime
     DataToColor.inventoryChanged = true
-    --DataToColor:Print(lastLoot)
+    --DataToColor:Print("OnLootClosed:"..DataToColor.lastLoot)
 end
 
 function DataToColor:OnBagUpdate(event, containerID)

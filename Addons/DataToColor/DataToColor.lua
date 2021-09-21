@@ -212,8 +212,9 @@ function DataToColor:CreateFrames(n)
                 MakePixelSquareArrI(DataToColor:GetTargetName(3), 17) -- Characters 4-6 of target's name
 
                 MakePixelSquareArrI(DataToColor:getHealthMax(DataToColor.C.unitTarget), 18) -- Return the maximum amount of health a target can have
-                MakePixelSquareArrI(DataToColor:getHealthCurrent(DataToColor.C.unitTarget), 19) -- Returns the current amount of health the target currently has
             end
+
+            MakePixelSquareArrI(DataToColor:getHealthCurrent(DataToColor.C.unitTarget), 19) -- Returns the current amount of health the target currently has
 
             -- Begin Items section --
             -- there are 5 item slots: main backpack and 4 pouches
