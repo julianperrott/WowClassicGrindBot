@@ -25,8 +25,8 @@ namespace Core
 
         public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord);
 
-        public double XCoord => reader.GetFixedPointAtCell(1) * 100;
-        public double YCoord => reader.GetFixedPointAtCell(2) * 100;
+        public double XCoord => reader.GetFixedPointAtCell(1) * 10;
+        public double YCoord => reader.GetFixedPointAtCell(2) * 10;
         public double Direction => reader.GetFixedPointAtCell(3);
 
         public string Zone => reader.GetStringAtCell(4) + reader.GetStringAtCell(5); // Checks current geographic zone
@@ -34,9 +34,9 @@ namespace Core
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
 
         // gets the position of your corpse where you died
-        public double CorpseX => reader.GetFixedPointAtCell(6) * 100;
+        public double CorpseX => reader.GetFixedPointAtCell(6) * 10;
 
-        public double CorpseY => reader.GetFixedPointAtCell(7) * 100;
+        public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
 
         public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetLongAtCell(8));
 
