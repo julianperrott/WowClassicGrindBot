@@ -27,6 +27,8 @@ namespace Core.Goals
         private readonly IPPather pather;
         private readonly MountHandler mountHandler;
 
+        private const int MinDistance = 8;
+
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
@@ -210,13 +212,11 @@ namespace Core.Goals
 
             lastDistance = distance;
 
-            //if (distance < PointReachedDistance((int)(avgDistance / 2)))
-            //if (distance < PointReachedDistance(5))
-            if (distance < PointReachedDistance(10))
+            if (distance < PointReachedDistance(MinDistance))
             {
                 Log($"Move to next point");
 
-                ReduceRouteByDistance();
+                ReduceRouteByDistance(MinDistance);
 
                 lastDistance = 999;
                 if (routeToWaypoint.Count == 0)
@@ -304,13 +304,13 @@ namespace Core.Goals
             }
         }
 
-        private void ReduceRouteByDistance()
+        private void ReduceRouteByDistance(int minDistance)
         {
             if (routeToWaypoint.Any())
             {
                 var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
                 var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
-                while (distance < PointReachedDistance(15) && routeToWaypoint.Any())
+                while (distance < PointReachedDistance(minDistance - 1) && routeToWaypoint.Any())
                 {
                     routeToWaypoint.Pop();
                     if (routeToWaypoint.Any())
