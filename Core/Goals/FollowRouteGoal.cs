@@ -323,7 +323,7 @@ namespace Core.Goals
 
         private void SimplyfyRouteToWaypoint()
         {
-            var simple = PathSimplify.Simplify(routeToWaypoint.ToArray(), 0.1f);
+            var simple = PathSimplify.Simplify(routeToWaypoint.ToArray(), 0.01f);
             simple.Reverse();
             routeToWaypoint = new Stack<WowPoint>(simple);
         }
