@@ -89,6 +89,8 @@ namespace Core
                 new Point(0, 130).Scale(scaleToRefWidth, scaleToRefHeight),
                 new Point(0, 160).Scale(scaleToRefWidth, scaleToRefHeight),
             };
+
+            locFindByCursorType.Reverse();
         }
 
         private float ScaleWidth(int value)
