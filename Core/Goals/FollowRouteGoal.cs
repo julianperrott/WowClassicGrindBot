@@ -132,7 +132,7 @@ namespace Core.Goals
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
-            if (await AquireTarget())
+            if (playerReader.HasTarget || await AquireTarget())
             {
                 await stopMoving.StopTurn();
                 return;
@@ -264,12 +264,12 @@ namespace Core.Goals
                         if (this.playerReader.HasTarget && !playerReader.PlayerBitValues.TargetIsDead)
                         {
                             logger.LogInformation("Has target!");
-                            await Task.Delay(20);
                             return true;
                         }
                         else
                         {
                             await input.TapClearTarget("Target is dead!");
+                            await wait.Update(1);
                         }
                     }
                 }
@@ -417,6 +417,7 @@ namespace Core.Goals
                     if(npcNameFinder.NpcCount > 0)
                     {
                         await this.npcNameFinder.TargetingAndClickNpc(0, true);
+                        await wait.Update(1);
                     }
                 }
             }
