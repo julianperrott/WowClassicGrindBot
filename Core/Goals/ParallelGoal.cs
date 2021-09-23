@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Extensions;
 
 namespace Core.Goals
 {
@@ -46,17 +47,17 @@ namespace Core.Goals
             if (Keys.Any(k => k.StopBeforeCast))
             {
                 await stopMoving.Stop();
+                await wait.Update(1);
 
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
                     await input.TapDismount();
+                    await wait.Update(1);
                     //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
                 }
             }
 
-            await wait.Interrupt(200, () => false);
-
-            Keys.ForEach(async key =>
+            await AsyncExt.Loop(Keys, async (KeyAction key) =>
             {
                 var pressed = await castingHandler.CastIfReady(key, key.DelayBeforeCast);
                 key.ResetCooldown();

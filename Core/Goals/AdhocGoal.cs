@@ -51,16 +51,16 @@ namespace Core.Goals
             if (key.StopBeforeCast)
             {
                 await stopMoving.Stop();
+                await wait.Update(1);
+
                 if (playerReader.PlayerBitValues.IsMounted)
                 {
                     await input.TapDismount();
                     //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
                 }
             }
-            await wait.InterruptTask(200, () => false);
 
             await castingHandler.CastIfReady(key, key.DelayBeforeCast);
-
             key.ResetCooldown();
 
             bool wasDrinkingOrEating = playerReader.Buffs.Drinking || playerReader.Buffs.Eating;
