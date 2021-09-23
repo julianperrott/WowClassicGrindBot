@@ -327,7 +327,7 @@ end
 --the x and y is 0 if not dead
 --runs the RetrieveCorpse() function to ressurrect
 function DataToColor:ResurrectPlayer()
-    if DataToColor:Modulo(DataToColor.playerInteractIterator, 150) == 1 then
+    if DataToColor:Modulo(DataToColor.playerInteractIterator, 700) == 1 then
         if UnitIsDeadOrGhost(DataToColor.C.unitPlayer) then
             
             -- Accept Release Spirit immediately after dying

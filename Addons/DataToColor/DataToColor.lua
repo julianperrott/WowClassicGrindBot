@@ -176,25 +176,28 @@ function DataToColor:CreateFrames(n)
         end
 
         if not SETUP_SEQUENCE then
-            local xCoordi, yCoordi = DataToColor:GetCurrentPlayerPosition()
-            if xCoordi == nil or yCoordi == nil then
-                xCoordi = 0
-                yCoordi = 0
-            end
-
             MakePixelSquareArrI(0, 0)
             -- The final data square, reserved for additional metadata.
             MakePixelSquareArrI(2000001, NUMBER_OF_FRAMES - 1)
 
             -- Position related variables --
-            MakePixelSquareArrF(xCoordi, 1) --1 The x-coordinate
-            MakePixelSquareArrF(yCoordi, 2) --2 The y-coordinate
+            local x, y = DataToColor:GetCurrentPlayerPosition()
+            if x == nil or y == nil then
+                x = 0
+                y = 0
+            end
+
+            MakePixelSquareArrF(x, 1) --1 The x-coordinate
+            MakePixelSquareArrF(y, 2) --2 The y-coordinate
 
             MakePixelSquareArrF(DataToColor:GetPlayerFacing(), 3) --3 The direction the player is facing in radians
             MakePixelSquareArrI(DataToColor:GetZoneName(0), 4) -- Get name of first 3 characters of zone
             MakePixelSquareArrI(DataToColor:GetZoneName(3), 5) -- Get name of last 3 characters of zone
-            MakePixelSquareArrF(DataToColor:CorpsePosition("x") * 10, 6) -- Returns the x coordinates of corpse
-            MakePixelSquareArrF(DataToColor:CorpsePosition("y") * 10, 7) -- Return y coordinates of corpse
+
+            x, y = DataToColor:CorpsePosition()
+
+            MakePixelSquareArrF(x * 10, 6) -- Returns the x coordinates of corpse
+            MakePixelSquareArrF(y * 10, 7) -- Return y coordinates of corpse
 
             -- Boolean variables --
             MakePixelSquareArrI(DataToColor:Base2Converter(), 8)

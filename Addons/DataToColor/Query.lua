@@ -414,31 +414,15 @@ end
 --return the x and y of corpse and resurrect the player if he is on his corpse
 --the x and y is 0 if not dead
 --runs the RetrieveCorpse() function to ressurrect
-function DataToColor:CorpsePosition(coord)
-    -- Assigns death coordinates
-    local cX
-    local cY
+function DataToColor:CorpsePosition()
     if UnitIsGhost(DataToColor.C.unitPlayer) then
         local map = C_Map.GetBestMapForUnit(DataToColor.C.unitPlayer)
         if C_DeathInfo.GetCorpseMapPosition(map) ~= nil then
-            cX, cY = C_DeathInfo.GetCorpseMapPosition(map):GetXY()
+            return C_DeathInfo.GetCorpseMapPosition(map):GetXY()
         end
     end
-    if coord == "x" then
-        if cX ~= nil then
-            return cX
-        else
-            return 0
-        end
-        
-    end
-    if coord == "y" then
-        if cY ~= nil then
-            return cY
-        else
-            return 0
-        end
-    end
+
+    return 0, 0
 end
 
 function DataToColor:ComboPoints()
