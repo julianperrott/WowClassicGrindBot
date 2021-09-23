@@ -34,9 +34,9 @@ namespace Core
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
 
         // gets the position of your corpse where you died
-        public double CorpseX => reader.GetFixedPointAtCell(6) * 10;
+        public double CorpseX => reader.GetFixedPointAtCell(6) * 100;
 
-        public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
+        public double CorpseY => reader.GetFixedPointAtCell(7) * 100;
 
         public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetLongAtCell(8));
 

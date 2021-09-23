@@ -16,18 +16,20 @@ end
 -- This function is able to pass numbers in range 0 to 9.99999 (6 digits)
 -- converting them to a 6-digit integer.
 function DataToColor:fixedDecimalToColor(f)
+    --[[
     if f > 9.99999 then
-        -- error("Number too big to be passed as a fixed-point decimal")
+        --DataToColor:error("Number too big to be passed as a fixed-point decimal")
         return {0}
     elseif f < 0 then
         return {0}
     end
+    --]]
     -- "%f" denotes formatting a string as floating point decimal
     -- The number (.5 in this case) is used to denote the number of decimal places
     --local f6 = tonumber(string.format("%.5f", 1))
     -- Makes number an integer so it can be encoded
-    local i = math.floor(f * 100000)
-    return DataToColor:integerToColor(i)
+    --local i = math.floor(f * 100000)
+    return DataToColor:integerToColor(math.floor(f * 100000))
 end
 
 -- Returns bitmask values.

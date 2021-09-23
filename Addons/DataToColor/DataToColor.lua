@@ -196,8 +196,8 @@ function DataToColor:CreateFrames(n)
 
             x, y = DataToColor:CorpsePosition()
 
-            MakePixelSquareArrF(x * 10, 6) -- Returns the x coordinates of corpse
-            MakePixelSquareArrF(y * 10, 7) -- Return y coordinates of corpse
+            MakePixelSquareArrF(x, 6) -- Returns the x coordinates of corpse
+            MakePixelSquareArrF(y, 7) -- Return y coordinates of corpse
 
             -- Boolean variables --
             MakePixelSquareArrI(DataToColor:Base2Converter(), 8)
