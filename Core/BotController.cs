@@ -141,7 +141,7 @@ namespace Core
             {
                 this.AddonReader.AddonRefresh();
                 this.GoapAgent?.UpdateWorldState();
-                System.Threading.Thread.Sleep(10);
+                System.Threading.Thread.Sleep(5);
             }
             this.logger.LogInformation("Addon thread stoppped!");
         }
