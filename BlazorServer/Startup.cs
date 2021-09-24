@@ -102,7 +102,25 @@ namespace BlazorServer
             var scp = new StartupConfigPathing();
             Configuration.GetSection(StartupConfigPathing.Position).Bind(scp);
 
-            if (scp.Type == StartupConfigPathing.Types.RemoteV2)
+            bool failed = false;
+
+            if (scp.Type == StartupConfigPathing.Types.RemoteV3)
+            {
+                var worldmapAreaDb = new WorldMapAreaDB(logger, dataConfig);
+                var api = new RemotePathingAPIV3(logger, scp.hostv3, scp.portv3, worldmapAreaDb);
+                if (api.PingServer().Result)
+                {
+                    Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    Log.Debug($"Using {StartupConfigPathing.Types.RemoteV3}({api.GetType().Name}) {scp.hostv3}:{scp.portv3}");
+                    Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    return api;
+                }
+
+                api.RequestDisconnect();
+                failed = true;
+            }
+            
+            if (scp.Type == StartupConfigPathing.Types.RemoteV2 || failed)
             {
                 var worldmapAreaDb = new WorldMapAreaDB(logger, dataConfig);
                 var api = new RemotePathingAPIV2(logger, scp.hostv2, scp.portv2, worldmapAreaDb);
@@ -115,8 +133,10 @@ namespace BlazorServer
                 }
 
                 api.RequestDisconnect();
+                failed = true;
             }
-            else if (scp.Type == StartupConfigPathing.Types.RemoteV1 || scp.Type == StartupConfigPathing.Types.RemoteV2)
+            
+            if (scp.Type == StartupConfigPathing.Types.RemoteV1 || failed)
             {
                 var api = new RemotePathingAPI(logger, scp.hostv1, scp.portv1);
                 if (api.PingServer().Result)
@@ -132,15 +152,17 @@ namespace BlazorServer
                     Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
                     return api;
                 }
+
+                failed = true;
             }
 
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             if (scp.Type != StartupConfigPathing.Types.Local)
             {
-                Log.Debug($"Unavailable {StartupConfigPathing.Types.RemoteV2} {scp.hostv2}:{scp.portv2} and {StartupConfigPathing.Types.RemoteV1} {scp.hostv1}:{scp.portv1} -- Fallback to {StartupConfigPathing.Types.Local}");
+                Log.Debug($"{scp.Type} not available!");
             }
-            
             Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
             var pathingService = new PPatherService(LogWrite, dataConfig);
             var localApi = new LocalPathingApi(logger, pathingService);
             localApi.SelfTest();
