@@ -93,6 +93,7 @@ namespace Core.Goals
 
                     await stopMoving.Stop();
                     await input.TapClearTarget();
+                    await wait.Update(1);
 
                     if (playerReader.PetHasTarget)
                     {
@@ -134,20 +135,28 @@ namespace Core.Goals
 
             if (playerReader.TargetGuid == initialTargetGuid)
             {
-                var targetMinRange = playerReader.MinRange;
+                var initialTargetMinRange = playerReader.MinRange;
                 await input.TapNearestTarget("Try to find closer target...");
                 await wait.Update(1);
 
                 if (playerReader.TargetGuid != initialTargetGuid)
                 {
-                    if (targetMinRange < playerReader.MinRange)
+                    if (playerReader.HasTarget) // blacklist
                     {
-                        Log("   Found a closer target!");
+                        if (playerReader.MinRange < initialTargetMinRange)
+                        {
+                            Log($"Found a closer target! {playerReader.MinRange} < {initialTargetMinRange}");
+                        }
+                        else
+                        {
+                            initialTargetGuid = -1;
+                            await input.TapLastTargetKey($"Stick to initial target!");
+                            await wait.Update(1);
+                        }
                     }
                     else
                     {
-                        await input.TapLastTargetKey("   Go back to the previus target!");
-                        await wait.Update(1);
+                        Log($"Lost the target due blacklist!");
                     }
                 }
             }
