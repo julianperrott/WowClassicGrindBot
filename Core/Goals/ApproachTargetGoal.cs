@@ -22,11 +22,14 @@ namespace Core.Goals
 
         private readonly Random random = new Random(DateTime.Now.Millisecond);
 
-        private bool playerWasInCombat;
-        private double distance;
-        private WowPoint location;
         private DateTime approachStart;
+
+        private bool playerWasInCombat;
+        private double lastPlayerDistance;
+        private WowPoint lastPlayerLocation;
+
         private long initialTargetGuid;
+        private double initialMinRange;
 
         private int SecondsSinceApproachStarted => (int)(DateTime.Now - approachStart).TotalSeconds;
 
@@ -49,9 +52,11 @@ namespace Core.Goals
 
             this.classConfig = classConfig;
 
-            distance = 0;
-            location = playerReader.PlayerLocation;
+            lastPlayerDistance = 0;
+            lastPlayerLocation = playerReader.PlayerLocation;
+
             initialTargetGuid = playerReader.TargetGuid;
+            initialMinRange = 0;
 
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, true);
@@ -70,14 +75,16 @@ namespace Core.Goals
             }
 
             playerWasInCombat = playerReader.PlayerBitValues.PlayerInCombat;
+
             initialTargetGuid = playerReader.TargetGuid;
+            initialMinRange = playerReader.MinRange;
 
             approachStart = DateTime.Now;
         }
 
         public override async Task PerformAction()
         {
-            location = playerReader.PlayerLocation;
+            lastPlayerLocation = playerReader.PlayerLocation;
 
             if (!playerReader.PlayerBitValues.PlayerInCombat)
             {
@@ -109,9 +116,9 @@ namespace Core.Goals
             await input.TapInteractKey("");
             await wait.Update(1);
 
-            distance = WowPoint.DistanceTo(location, playerReader.PlayerLocation);
+            lastPlayerDistance = WowPoint.DistanceTo(lastPlayerLocation, playerReader.PlayerLocation);
 
-            if (distance < 0.5 && playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
+            if (lastPlayerDistance < 0.5 && playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {
                 playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
@@ -119,7 +126,7 @@ namespace Core.Goals
                 await wait.Update(1);
             }
 
-            if (SecondsSinceApproachStarted > 1 && distance < 0.5)
+            if (SecondsSinceApproachStarted > 1 && lastPlayerDistance < 0.5)
             {
                 await input.TapClearTarget("");
                 await wait.Update(1);
@@ -146,6 +153,7 @@ namespace Core.Goals
                         if (playerReader.MinRange < initialTargetMinRange)
                         {
                             Log($"Found a closer target! {playerReader.MinRange} < {initialTargetMinRange}");
+                            initialMinRange = playerReader.MinRange;
                         }
                         else
                         {
@@ -159,6 +167,13 @@ namespace Core.Goals
                         Log($"Lost the target due blacklist!");
                     }
                 }
+            }
+
+            if (initialMinRange < playerReader.MinRange)
+            {
+                Log($"We are going away from the target! {initialMinRange} < {playerReader.MinRange}");
+                await input.TapClearTarget();
+                await wait.Update(1);
             }
 
             await RandomJump();
