@@ -288,11 +288,21 @@ namespace Core.Goals
                     playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
                 case UI_ERROR.ERR_BADATTACKFACING:
-                    logger.LogInformation($"React to {UI_ERROR.ERR_BADATTACKFACING} -- Turning 180! -- {source}");
 
-                    double desiredDirection = playerReader.Direction + Math.PI;
-                    desiredDirection = desiredDirection > Math.PI * 2 ? desiredDirection - (Math.PI * 2) : desiredDirection;
-                    await direction.SetDirection(desiredDirection, new WowPoint(0, 0), "");
+                    if (playerReader.IsInMeleeRange)
+                    {
+                        logger.LogInformation($"React to {UI_ERROR.ERR_BADATTACKFACING} -- Interact! -- {source}");
+                        await input.TapInteractKey("");
+                    }
+                    else
+                    {
+                        logger.LogInformation($"React to {UI_ERROR.ERR_BADATTACKFACING} -- Turning 180! -- {source}");
+
+                        double desiredDirection = playerReader.Direction + Math.PI;
+                        desiredDirection = desiredDirection > Math.PI * 2 ? desiredDirection - (Math.PI * 2) : desiredDirection;
+                        await direction.SetDirection(desiredDirection, new WowPoint(0, 0), "");
+                    }
+
                     playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
                 case UI_ERROR.SPELL_FAILED_MOVING:
