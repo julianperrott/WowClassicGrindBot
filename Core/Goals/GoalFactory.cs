@@ -108,7 +108,7 @@ namespace Core
                 {
                     var genericCombat = new CombatGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, classConfig, castingHandler);
                     availableActions.Add(genericCombat);
-                    availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader.PlayerReader, npcNameFinder, stopMoving, castingHandler, stuckDetector, classConfig));
+                    availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, castingHandler, stuckDetector, classConfig));
 
                     availableActions.Add(new CreatureKilledGoal(logger, addonReader.PlayerReader, classConfig));
                     availableActions.Add(new ConsumeCorpse(logger, wait, addonReader.PlayerReader));
