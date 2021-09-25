@@ -89,7 +89,7 @@ namespace Core
                 lastGlobalTimeChange = DateTime.Now;
             }
 
-            if (seq >= 50) // Thread 10ms delay => 500ms
+            if (seq >= 50) // Thread 5ms delay => 250ms
             {
                 seq = 0;
                 AddonDataChanged?.Invoke(this, new EventArgs());
