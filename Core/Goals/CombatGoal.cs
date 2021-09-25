@@ -156,7 +156,7 @@ namespace Core.Goals
 
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
 
-            await this.castingHandler.InteractOnUIError();
+            //await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}-PerformAction: ");
 
             await Fight();
             await KillCheck();
