@@ -18,7 +18,7 @@ namespace Core.Goals
         private readonly ClassConfiguration classConfig;
         private readonly StopMoving stopMoving;
 
-        private readonly bool debug = false;
+        private readonly bool debug = true;
 
         private readonly Random random = new Random(DateTime.Now.Millisecond);
 
@@ -26,6 +26,7 @@ namespace Core.Goals
         private double distance;
         private WowPoint location;
         private DateTime approachStart;
+        private long initialTargetGuid;
 
         private int SecondsSinceApproachStarted => (int)(DateTime.Now - approachStart).TotalSeconds;
 
@@ -50,6 +51,7 @@ namespace Core.Goals
 
             distance = 0;
             location = playerReader.PlayerLocation;
+            initialTargetGuid = playerReader.TargetGuid;
 
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, true);
@@ -68,6 +70,8 @@ namespace Core.Goals
             }
 
             playerWasInCombat = playerReader.PlayerBitValues.PlayerInCombat;
+            initialTargetGuid = playerReader.TargetGuid;
+
             approachStart = DateTime.Now;
         }
 
@@ -126,6 +130,26 @@ namespace Core.Goals
                 await input.TapClearTarget("");
                 await wait.Update(1);
                 await input.KeyPress(random.Next(2) == 0 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow, 1000, "Too long time. Clear Target. Turn away.");
+            }
+
+            if (playerReader.TargetGuid == initialTargetGuid)
+            {
+                var targetMinRange = playerReader.MinRange;
+                await input.TapNearestTarget("Try to find closer target...");
+                await wait.Update(1);
+
+                if (playerReader.TargetGuid != initialTargetGuid)
+                {
+                    if (targetMinRange < playerReader.MinRange)
+                    {
+                        Log("   Found a closer target!");
+                    }
+                    else
+                    {
+                        await input.TapLastTargetKey("   Go back to the previus target!");
+                        await wait.Update(1);
+                    }
+                }
             }
 
             await RandomJump();
