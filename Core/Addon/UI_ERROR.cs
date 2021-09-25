@@ -8,5 +8,6 @@
         ERR_SPELL_OUT_OF_RANGE = 3,
         ERR_BADATTACKPOS = 4,
         ERR_AUTOFOLLOW_TOO_FAR = 5,
+        SPELL_FAILED_MOVING = 6
     }
 }

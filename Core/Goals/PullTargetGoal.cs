@@ -124,7 +124,7 @@ namespace Core.Goals
                 await input.TapInteractKey($"{GetType().Name} {source}");
                 await wait.Update(1);
 
-                await castingHandler.InteractOnUIError($"{GetType().Name}-Interact: ");
+                await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}-Interact: ");
             }
         }
 
