@@ -1,4 +1,4 @@
-﻿using Core.Goals;
+using Core.Goals;
 using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -259,7 +259,9 @@ namespace Core
             var availableActions = actionFactory.CreateGoals(config, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
-            this.GoapAgent = new GoapAgent(logger, wowProcess, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config, AddonReader.BagReader);
+            Wait wait = new Wait(AddonReader.PlayerReader);
+
+            this.GoapAgent = new GoapAgent(logger, wowProcess, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config, AddonReader.BagReader, wait);
 
             this.actionThread = new GoalThread(logger, ConfigurableInput, AddonReader.PlayerReader, GoapAgent);
 
