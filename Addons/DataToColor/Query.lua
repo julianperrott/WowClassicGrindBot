@@ -43,10 +43,10 @@ function DataToColor:Base2Converter()
     DataToColor:MakeIndexBase2(DataToColor:hasAmmo(), 13) +
     DataToColor:MakeIndexBase2(DataToColor:playerCombatStatus(), 14) +
     DataToColor:MakeIndexBase2(DataToColor:IsTargetOfTargetPlayer(), 15) +
-    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.AutoShot), 16) +
+    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.AutoShotId), 16) +
     DataToColor:MakeIndexBase2(DataToColor:ProcessExitStatus(), 17) +
     DataToColor:MakeIndexBase2(DataToColor:IsPlayerMounted(), 18) +
-    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.Shoot), 19) +
+    DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.ShootId), 19) +
     DataToColor:MakeIndexBase2(DataToColor:IsCurrentSpell(6603), 20) + -- AutoAttack enabled
     DataToColor:MakeIndexBase2(DataToColor:targetIsNormal(), 21)+
     DataToColor:MakeIndexBase2(DataToColor:IsTagged(), 22)
@@ -56,11 +56,12 @@ function DataToColor:getAuraMaskForClass(func, unitId, table)
     local num = 0
     for k, v in pairs(table) do
         for i = 1, 10 do
-            local b = func(unitId, i)
-            if b == nil then
+            local name, texture = func(unitId, i)
+            if name == nil then
                 break
             end
-            if string.find(b, v) then
+            if v[texture] or string.find(name, v[1]) then
+                --DataToColor:Print(name.." -> "..v[1]);
                 num = num + DataToColor:MakeIndexBase2(1, k)
                 break
             end

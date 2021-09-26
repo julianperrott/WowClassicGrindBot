@@ -24,8 +24,8 @@ DataToColor.C.MAX_POWER_TYPE = 1000000
 DataToColor.C.MAX_ACTION_IDX = 1000
 
 -- Spells
-DataToColor.C.Spell.AutoShot = "Auto Shot"
-DataToColor.C.Spell.Shoot = "Shoot"
+DataToColor.C.Spell.AutoShotId = 75 -- Auto shot
+DataToColor.C.Spell.ShootId = 5019 -- Shoot
 
 -- Item / Inventory
 DataToColor.C.ItemPattern = "(m:%d+)"
