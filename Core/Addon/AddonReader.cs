@@ -57,7 +57,7 @@ namespace Core
             this.areaDb = areaDb;
             this.WorldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
 
-            UpdateLatencys = new CircularBuffer<double>(5);
+            UpdateLatencys = new CircularBuffer<double>(10);
         }
 
         public void AddonRefresh()
