@@ -158,16 +158,27 @@ namespace Core.Goals
 
             //await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}-PerformAction: ");
 
+            bool hasTarget = playerReader.HasTarget;
+
             await Fight();
-            await KillCheck();
+            await KillCheck(hasTarget);
             lastActive = DateTime.Now;
 
             await Task.Delay(10);
         }
 
-        private async Task KillCheck()
+        private async Task KillCheck(bool hasTarget)
         {
-            await wait.Update(1);
+            if (hasTarget != playerReader.HasTarget)
+            {
+                (bool lastkilledGuidNotChanged, double elapsedMs) = await wait.InterruptTask(300, 
+                    () => lastKilledGuid != playerReader.LastKilledGuid);
+                if (!lastkilledGuidNotChanged)
+                {
+                    logger.LogInformation($"Target Death detected after {elapsedMs}ms");
+                }
+            }
+
             if (DidKilledACreature())
             {
                 if (!await CreatureTargetMeOrMyPet())
