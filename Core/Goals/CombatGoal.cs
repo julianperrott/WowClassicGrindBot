@@ -1,4 +1,4 @@
-using Core.GOAP;
+﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -21,8 +21,6 @@ namespace Core.Goals
         private DateTime lastActive = DateTime.Now;
         private readonly ClassConfiguration classConfiguration;
         private DateTime lastPulled = DateTime.Now;
-
-        private readonly KeyAction defaultKeyAction = new KeyAction();
 
         private int lastKilledGuid;
 
@@ -81,11 +79,6 @@ namespace Core.Goals
                     break;
                 }
             }
-            if (!pressed)
-            {
-                await Task.Delay(defaultKeyAction.PressDuration);
-            }
-
             this.lastActive = DateTime.Now;
         }
 
