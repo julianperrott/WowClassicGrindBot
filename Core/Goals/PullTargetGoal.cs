@@ -193,7 +193,7 @@ namespace Core.Goals
             (bool interrupted, double elapsedMs) = await wait.InterruptTask(1000, () => playerReader.PlayerBitValues.PlayerInCombat);
             if (!interrupted)
             {
-                Log($"Entered combat after {elapsedMs}");
+                Log($"Entered combat after {elapsedMs}ms");
             }
 
             return playerReader.PlayerBitValues.PlayerInCombat;
