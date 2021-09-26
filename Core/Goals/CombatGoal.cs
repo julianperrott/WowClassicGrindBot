@@ -1,4 +1,4 @@
-﻿using Core.GOAP;
+using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -161,6 +161,8 @@ namespace Core.Goals
             await Fight();
             await KillCheck();
             lastActive = DateTime.Now;
+
+            await Task.Delay(10);
         }
 
         private async Task KillCheck()
