@@ -47,25 +47,29 @@ namespace Core.Goals
             AddEffect(GoapKey.targetisalive, false);
             AddEffect(GoapKey.hastarget, false);
 
-            this.classConfiguration.Combat.Sequence.Where(k => k != null).ToList().ForEach(key => this.Keys.Add(key));
+            classConfiguration.Combat.Sequence.Where(k => k != null).ToList().ForEach(key => Keys.Add(key));
         }
 
         protected async Task Fight()
         {
-            //logger.LogInformation("-");
             if ((DateTime.Now - lastActive).TotalSeconds > 5)
             {
                 classConfiguration.Interact.ResetCooldown();
             }
 
-            if(playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
+            if (playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
             {
                 await input.TapPetAttack("");
             }
 
-            bool pressed = false;
-            foreach (var item in this.Keys)
+            foreach (var item in Keys)
             {
+                if (!playerReader.HasTarget)
+                {
+                    logger.LogInformation($"{GetType().Name}: Lost Target!");
+                    break;
+                }
+
                 bool isFightold=(DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5;
                 if (item.Name == "Interact" && !isFightold) // don't interact at the start of the fight
                 {
@@ -73,13 +77,13 @@ namespace Core.Goals
                     continue;
                 }
 
-                pressed = await this.castingHandler.CastIfReady(item, item.DelayBeforeCast);
-                if (pressed)
+                if (await castingHandler.CastIfReady(item, item.DelayBeforeCast))
                 {
                     break;
                 }
             }
-            this.lastActive = DateTime.Now;
+
+            lastActive = DateTime.Now;
         }
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
@@ -120,48 +124,41 @@ namespace Core.Goals
             }
         }
 
-        public override async Task PerformAction()
+        public override async Task OnEnter()
         {
+            await base.OnEnter();
+
             if (playerReader.PlayerBitValues.IsMounted)
             {
                 await input.TapDismount();
             }
+        }
+
+        public override async Task PerformAction()
+        {
+            bool hasTarget = playerReader.HasTarget;
 
             /*
-            if (HasPickedUpAnAdd)
-            {
-                logger.LogInformation($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayerOrPet}");
-                logger.LogInformation($"Add on combat");
-                await this.stopMoving.Stop();
-                await wowProcess.TapStopKey();
-                await wowProcess.TapClearTarget();
-                return;
-            }
-            */
-
             if ((DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5)
             {
                 await stopMoving.Stop();
                 await input.TapInteractKey($"{GetType().Name}: Interact and stop");
             }
-
-            await stopMoving.Stop();
+            */
 
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
 
-            //await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}-PerformAction: ");
-
-            bool hasTarget = playerReader.HasTarget;
-
             await Fight();
             await KillCheck(hasTarget);
+
             lastActive = DateTime.Now;
 
-            await Task.Delay(10);
+            await Task.Delay((int)(playerReader.AvgUpdateLatency / 2));
         }
 
         private async Task KillCheck(bool hasTarget)
         {
+            await wait.Update(1);
             if (hasTarget != playerReader.HasTarget)
             {
                 (bool lastkilledGuidNotChanged, double elapsedMs) = await wait.InterruptTask(300, 
@@ -235,7 +232,7 @@ namespace Core.Goals
                 }
             }
 
-            if (await wait.Interrupt(200, () => playerReader.HasTarget))
+            if (playerReader.HasTarget)
             {
                 return true;
             }
