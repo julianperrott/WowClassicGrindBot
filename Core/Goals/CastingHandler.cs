@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -21,7 +21,8 @@ namespace Core.Goals
         private readonly StopMoving stopMoving;
 
         private readonly KeyAction defaultKeyAction = new KeyAction();
-        private const int MaxWaitTimeMs = 300;
+        private const int MaxWaitCastTimeMs = 300;
+        private const int MaxWaitBuffTimeMs = 300;
         private const int MaxCastTimeMs = 15000;
         private const int GCD = 1500;
 
@@ -84,6 +85,103 @@ namespace Core.Goals
             }
         }
 
+        private async Task PressKeyAction(KeyAction item)
+        {
+            playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+
+            await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
+            item.SetClicked();
+        }
+
+        private async Task<bool> CastInstant(KeyAction item)
+        {
+            if (item.StopBeforeCast)
+            {
+                await stopMoving.Stop();
+            }
+
+            await PressKeyAction(item);
+
+            (bool input, double inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
+                () => playerReader.LastUIErrorMessage != UI_ERROR.NONE);
+            if (!input)
+            {
+                item.LogInformation($" ... instant input after {inputElapsedMs}ms");
+            }
+            else
+            {
+                item.LogInformation($" ... instant input not registered!");
+                return false;
+            }
+
+            item.LogInformation($" ... usable: {playerReader.ActionBarUsable.ActionUsable(item.Key)} -- {playerReader.LastUIErrorMessage}");
+
+            if (playerReader.LastUIErrorMessage != UI_ERROR.NONE)
+            {
+                if (playerReader.LastUIErrorMessage == UI_ERROR.ERR_SPELL_COOLDOWN)
+                {
+                    item.LogInformation($" ... instant wait until its ready");
+                    bool before = playerReader.ActionBarUsable.ActionUsable(item.Key);
+                    await wait.While(() => before != playerReader.ActionBarUsable.ActionUsable(item.Key));
+                }
+                else
+                {
+                    await ReactToLastUIErrorMessage($"{item.Name}-{GetType().Name}: CastInstant");
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> CastCastbar(KeyAction item)
+        {
+            if (item.StopBeforeCast)
+            {
+                await stopMoving.Stop();
+            }
+
+            bool beforeHasTarget = playerReader.HasTarget;
+
+            await PressKeyAction(item);
+
+            (bool input, double inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
+                () => playerReader.IsCasting || playerReader.LastUIErrorMessage != UI_ERROR.NONE);
+            if (!input)
+            {
+                item.LogInformation($" ... castbar input after {inputElapsedMs}ms");
+            }
+            else
+            {
+                item.LogInformation($" ... castbar input not registered!");
+                return false;
+            }
+
+            item.LogInformation($" ... usable: {playerReader.ActionBarUsable.ActionUsable(item.Key)} -- {playerReader.LastUIErrorMessage}");
+
+            if (playerReader.LastUIErrorMessage != UI_ERROR.NONE)
+            {
+                if (playerReader.LastUIErrorMessage == UI_ERROR.ERR_SPELL_COOLDOWN)
+                {
+                    item.LogInformation($" ... castbar wait until its ready");
+                    bool before = playerReader.ActionBarUsable.ActionUsable(item.Key);
+                    await wait.While(() => before != playerReader.ActionBarUsable.ActionUsable(item.Key));
+                }
+                else
+                {
+                    await ReactToLastUIErrorMessage($"{item.Name}-{GetType().Name}: CastCastbar");
+                }
+
+                return false;
+            }
+
+            item.LogInformation(" ... waiting for cast bar to end or target loss.");
+            await wait.InterruptTask(MaxCastTimeMs, () => !playerReader.IsCasting || beforeHasTarget != playerReader.HasTarget);
+
+            return true;
+        }
+
         public async Task<bool> CastIfReady(KeyAction item, int sleepBeforeCast = 0)
         {
             if (!CanRun(item))
@@ -103,11 +201,14 @@ namespace Core.Goals
 
             if (playerReader.IsShooting)
             {
-                await input.TapStopAttack("Stop casting Shoot");
-                var shootWait = await wait.InterruptTask(GCD, () => playerReader.ActionBarUsable.ActionUsable(item.Name));
-                if (!shootWait.Item1)
+                await input.TapStopAttack("Stop AutoRepeat Shoot");
+
+                (bool interrupted, double elapsedMs) = await wait.InterruptTask(GCD, 
+                    () => playerReader.ActionBarUsable.ActionUsable(item.Key));
+
+                if (!interrupted)
                 {
-                    item.LogInformation($" waited to end shooting {shootWait.Item2}ms");
+                    item.LogInformation($" ... waited to end Shoot {elapsedMs}ms");
                 }
             }
 
@@ -120,109 +221,84 @@ namespace Core.Goals
             long beforeBuff = playerReader.Buffs.Value;
             bool beforeHasTarget = playerReader.HasTarget;
 
-            playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-            await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
-            item.SetClicked();
+            (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
+                () => playerReader.ActionBarUsable.ActionUsable(item.Key) || beforeHasTarget != playerReader.HasTarget);
+            if (!gcd)
+            {
+                item.LogInformation($" ... waited for gcd {gcdElapsedMs}ms");
+
+                if (beforeHasTarget != playerReader.HasTarget)
+                {
+                    item.LogInformation($" ... lost target!");
+                    return false;
+                }
+            }
 
             if (!item.HasCastBar)
             {
-                var result = await wait.InterruptTask(item.DelayAfterCast, () => beforeHasTarget != playerReader.HasTarget);
-                item.LogInformation($" ... no castbar delay after cast {result.Item2}ms");
-                if (!result.Item1)
+                if (!await CastInstant(item))
                 {
-                    item.LogInformation($" .... wait interrupted {result.Item2}ms");
-                }
-
-                if (item.AfterCastWaitBuff)
-                {
-                    var result1 = await wait.InterruptTask(MaxWaitTimeMs, () => beforeBuff != playerReader.Buffs.Value);
-                    if (!result1.Item1)
+                    // try again after reacted to UI_ERROR
+                    if (!await CastInstant(item))
                     {
-                        item.LogInformation($"AfterCastWaitBuff .... wait interrupted {result1.Item2}ms");
-                    }
-
-                    logger.LogInformation($"AfterCastWaitBuff: Interrupted: {result1.Item1} | Delay: {result1.Item2}ms");
-                }
-
-                await ReactToLastUIErrorMessage($"{GetType().Name}: CastIfReady-NoHasCastBar");
-            }
-            else
-            {
-                var startedCasting = await wait.InterruptTask(MaxWaitTimeMs, () => playerReader.IsCasting || playerReader.LastUIErrorMessage != UI_ERROR.NONE);
-                if (!startedCasting.Item1)
-                {
-                    item.LogInformation($" input registered after {startedCasting.Item2}ms");
-                }
-
-                if (!playerReader.IsCasting && playerReader.HasTarget)
-                {
-                    await ReactToLastUIErrorMessage($"{GetType().Name}: CastIfReady-HasCastBar-NotCasting-HasTarget");
-
-                    if (item.StopBeforeCast)
-                    {
-                        await stopMoving.Stop();
-                        await wait.Update(1);
-                    }
-
-                    item.LogInformation($"Not casting, pressing it again");
-
-                    playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-                    await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
-                    await wait.InterruptTask(MaxWaitTimeMs, () => playerReader.IsCasting || playerReader.LastUIErrorMessage != UI_ERROR.NONE);
-
-                    if (!playerReader.IsCasting && playerReader.HasTarget)
-                    {
-                        item.LogInformation($"Still not casting !");
-                        await ReactToLastUIErrorMessage($"{GetType().Name}: CastIfReady-HasCastBar-NotCasting-HasTarget-2ndTime");
                         return false;
                     }
                 }
-
-                item.LogInformation(" waiting for cast bar to end.");
-                await wait.InterruptTask(MaxCastTimeMs, () => !playerReader.IsCasting);
-
-                if (item.DelayAfterCast != defaultKeyAction.DelayAfterCast)
+            }
+            else
+            {
+                if (!await CastCastbar(item))
                 {
-                    if (item.DelayUntilCombat) // stop waiting if the mob is targetting me
+                    // try again after reacted to UI_ERROR
+                    if (!await CastCastbar(item))
                     {
-                        item.LogInformation($" ... delay after cast {item.DelayAfterCast}ms");
-
-                        var sw = new Stopwatch();
-                        sw.Start();
-                        while (sw.ElapsedMilliseconds < item.DelayAfterCast)
-                        {
-                            await wait.Update(1);
-                            if (playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
-                            {
-                                break;
-                            }
-                        }
+                        return false;
                     }
-                    else
+                }
+            }
+
+            if (item.AfterCastWaitBuff)
+            {
+                (bool notappeared, double elapsedMs) = await wait.InterruptTask(MaxWaitBuffTimeMs, () => beforeBuff != playerReader.Buffs.Value);
+                logger.LogInformation($" ... AfterCastWaitBuff: Buff: {!notappeared} | Delay: {elapsedMs}ms");
+            }
+
+            if (item.DelayAfterCast != defaultKeyAction.DelayAfterCast)
+            {
+                if (item.DelayUntilCombat) // stop waiting if the mob is targetting me
+                {
+                    item.LogInformation($" ... DelayUntilCombat ... delay after cast {item.DelayAfterCast}ms");
+
+                    var sw = new Stopwatch();
+                    sw.Start();
+                    while (sw.ElapsedMilliseconds < item.DelayAfterCast)
                     {
-                        item.LogInformation($" ... castbar delay after cast {item.DelayAfterCast}ms");
-                        var result = await wait.InterruptTask(item.DelayAfterCast, () => beforeHasTarget != playerReader.HasTarget);
-                        if (!result.Item1)
+                        await wait.Update(1);
+                        if (playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
                         {
-                            item.LogInformation($" .... wait interrupted {result.Item2}ms");
+                            break;
                         }
                     }
                 }
-
-                if (item.AfterCastWaitBuff)
+                else
                 {
-                    var result = await wait.InterruptTask(MaxWaitTimeMs, () => beforeBuff != playerReader.Buffs.Value);
-                    logger.LogInformation($"AfterCastWaitBuff: Interrupted: {result.Item1} | Delay: {result.Item2}ms");
+                    item.LogInformation($" ... delay after cast {item.DelayAfterCast}ms");
+                    var result = await wait.InterruptTask(item.DelayAfterCast, () => beforeHasTarget != playerReader.HasTarget);
+                    if (!result.Item1)
+                    {
+                        item.LogInformation($" .... wait interrupted {result.Item2}ms");
+                    }
                 }
             }
 
             if (item.StepBackAfterCast > 0)
             {
                 input.SetKeyState(ConsoleKey.DownArrow, true, false, $"Step back for {item.StepBackAfterCast}ms");
-                var stepbackResult = await wait.InterruptTask(item.StepBackAfterCast, () => beforeHasTarget != playerReader.HasTarget);
-                if(!stepbackResult.Item1)
+                (bool notStepback, double stepbackElapsedMs) = 
+                    await wait.InterruptTask(item.StepBackAfterCast, () => beforeHasTarget != playerReader.HasTarget);
+                if (!notStepback)
                 {
-                    item.LogInformation($" .... interrupted wait stepback {stepbackResult.Item2}ms");
+                    item.LogInformation($" .... interrupted stepback | lost target? {beforeHasTarget != playerReader.HasTarget} | {stepbackElapsedMs}ms");
                 }
                 input.SetKeyState(ConsoleKey.DownArrow, false, false);
             }
@@ -282,7 +358,7 @@ namespace Core.Goals
                 case UI_ERROR.NONE:
                     break;
                 case UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
-                    logger.LogInformation($"React to {UI_ERROR.ERR_SPELL_OUT_OF_RANGE} -- Start moving forward -- {source}");
+                    logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_OUT_OF_RANGE} -- Start moving forward");
 
                     input.SetKeyState(ConsoleKey.UpArrow, true, false, "");
                     playerReader.LastUIErrorMessage = UI_ERROR.NONE;
@@ -291,12 +367,12 @@ namespace Core.Goals
 
                     if (playerReader.IsInMeleeRange)
                     {
-                        logger.LogInformation($"React to {UI_ERROR.ERR_BADATTACKFACING} -- Interact! -- {source}");
+                        logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_BADATTACKFACING} -- Interact!");
                         await input.TapInteractKey("");
                     }
                     else
                     {
-                        logger.LogInformation($"React to {UI_ERROR.ERR_BADATTACKFACING} -- Turning 180! -- {source}");
+                        logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_BADATTACKFACING} -- Turning 180!");
 
                         double desiredDirection = playerReader.Direction + Math.PI;
                         desiredDirection = desiredDirection > Math.PI * 2 ? desiredDirection - (Math.PI * 2) : desiredDirection;
@@ -306,21 +382,21 @@ namespace Core.Goals
                     playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
                 case UI_ERROR.SPELL_FAILED_MOVING:
-                    logger.LogInformation($"React to {UI_ERROR.SPELL_FAILED_MOVING} -- Stop moving! -- {source}");
+                    logger.LogInformation($"{source} -- React to {UI_ERROR.SPELL_FAILED_MOVING} -- Stop moving!");
 
                     await stopMoving.Stop();
                     await wait.Update(1);
                     playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
                 case UI_ERROR.ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS:
-                    logger.LogInformation($"React to {UI_ERROR.ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS} -- Wait till casting! -- {source}");
+                    logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS} -- Wait till casting!");
                     await wait.While(() => playerReader.IsCasting);
                     break;
                 case UI_ERROR.ERR_SPELL_COOLDOWN:
-                    logger.LogInformation($"Cant react to {UI_ERROR.ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS} -- {source}");
+                    logger.LogInformation($"{source} -- Cant react to {UI_ERROR.ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS}");
                     break;
                 default:
-                    logger.LogInformation($"Didn't know how to React to {playerReader.LastUIErrorMessage} -- {source}");
+                    logger.LogInformation($"{source} -- Didn't know how to React to {playerReader.LastUIErrorMessage}");
                     break;
                 //case UI_ERROR.ERR_SPELL_FAILED_S:
                 //case UI_ERROR.ERR_BADATTACKPOS:
