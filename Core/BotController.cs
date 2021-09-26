@@ -1,4 +1,4 @@
-using Core.Goals;
+﻿using Core.Goals;
 using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -141,7 +141,8 @@ namespace Core
             {
                 this.AddonReader.AddonRefresh();
                 this.GoapAgent?.UpdateWorldState();
-                System.Threading.Thread.Sleep(5);
+                int update = (int)(AddonReader.PlayerReader.AvgUpdateLatency / 2);
+                System.Threading.Thread.Sleep(update);
             }
             this.logger.LogInformation("Addon thread stoppped!");
         }

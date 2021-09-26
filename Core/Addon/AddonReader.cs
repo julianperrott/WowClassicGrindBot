@@ -35,6 +35,9 @@ namespace Core
         private DateTime lastGlobalTimeChange = DateTime.Now;
         private readonly CircularBuffer<double> UpdateLatencys;
 
+        private DateTime lastFrontendUpdate = DateTime.Now;
+        private readonly int FrontendUpdateIntervalMs = 250;
+
         public AddonReader(ILogger logger, DataConfig dataConfig, AreaDB areaDb, IAddonDataProvider addonDataProvider)
         {
             this.logger = logger;
@@ -54,7 +57,7 @@ namespace Core
             this.areaDb = areaDb;
             this.WorldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
 
-            UpdateLatencys = new CircularBuffer<double>(10);
+            UpdateLatencys = new CircularBuffer<double>(5);
         }
 
         public void AddonRefresh()
@@ -87,12 +90,6 @@ namespace Core
 
                 lastGlobalTime = PlayerReader.GlobalTime;
                 lastGlobalTimeChange = DateTime.Now;
-            }
-
-            if (seq >= 50) // Thread 5ms delay => 250ms
-            {
-                seq = 0;
-                AddonDataChanged?.Invoke(this, new EventArgs());
 
                 PlayerReader.AvgUpdateLatency = 0;
                 for (int i = 0; i < UpdateLatencys.Size; i++)
@@ -100,6 +97,14 @@ namespace Core
                     PlayerReader.AvgUpdateLatency += UpdateLatencys.PeekAt(i);
                 }
                 PlayerReader.AvgUpdateLatency /= UpdateLatencys.Size;
+            }
+
+            if ((DateTime.Now - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
+            {
+                seq = 0;
+                AddonDataChanged?.Invoke(this, new EventArgs());
+
+                lastFrontendUpdate = DateTime.Now;
             }
         }
 
