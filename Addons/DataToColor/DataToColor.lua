@@ -25,7 +25,7 @@ local bagNum = -1
 local globalCounter = 0
 
 -- How often item frames change
-local ITEM_ITERATION_FRAME_CHANGE_RATE = 6
+local ITEM_ITERATION_FRAME_CHANGE_RATE = 10
 -- How often the actionbar frames change
 local ACTION_BAR_ITERATION_FRAME_CHANGE_RATE = 5
 
@@ -234,10 +234,7 @@ function DataToColor:CreateFrames(n)
 
                 if itemNum >= 21 then
                     itemNum = 1
-
-                    if bagNum >= 5 then
-                        DataToColor.inventoryChanged = false
-                    end
+                    DataToColor.inventoryChanged = false
                 end
 
                 if bagNum >= 5 then
