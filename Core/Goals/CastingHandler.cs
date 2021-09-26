@@ -95,20 +95,9 @@ namespace Core.Goals
 
         private async Task<bool> CastInstant(KeyAction item)
         {
-            bool beforeHasTarget = playerReader.HasTarget;
-            bool beforeReady = playerReader.ActionBarUsable.ActionUsable(item.Key);
-
-            (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD, 
-                () => playerReader.ActionBarUsable.ActionUsable(item.Key) || beforeHasTarget != playerReader.HasTarget);
-            if (!gcd)
+            if (item.StopBeforeCast)
             {
-                item.LogInformation($" ... instant waited for gcd {gcdElapsedMs}ms");
-
-                if (beforeHasTarget != playerReader.HasTarget)
-                {
-                    item.LogInformation($" ... lost target!");
-                    return true;
-                }
+                await stopMoving.Stop();
             }
 
             await PressKeyAction(item);
@@ -118,6 +107,11 @@ namespace Core.Goals
             if (!input)
             {
                 item.LogInformation($" ... instant input after {inputElapsedMs}ms");
+            }
+            else
+            {
+                item.LogInformation($" ... instant input not registered!");
+                return false;
             }
 
             item.LogInformation($" ... usable: {playerReader.ActionBarUsable.ActionUsable(item.Key)} -- {playerReader.LastUIErrorMessage}");
@@ -149,20 +143,6 @@ namespace Core.Goals
             }
 
             bool beforeHasTarget = playerReader.HasTarget;
-            bool beforeReady = playerReader.ActionBarUsable.ActionUsable(item.Key);
-
-            (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
-                () => playerReader.ActionBarUsable.ActionUsable(item.Key) || beforeHasTarget != playerReader.HasTarget);
-            if (!gcd)
-            {
-                item.LogInformation($" ... castbar waited for gcd {gcdElapsedMs}ms");
-
-                if (beforeHasTarget != playerReader.HasTarget)
-                {
-                    item.LogInformation($" ... lost target!");
-                    return true;
-                }
-            }
 
             await PressKeyAction(item);
 
@@ -174,7 +154,7 @@ namespace Core.Goals
             }
             else
             {
-                item.LogInformation($" ... castbar input not registered :(");
+                item.LogInformation($" ... castbar input not registered!");
                 return false;
             }
 
@@ -240,6 +220,19 @@ namespace Core.Goals
 
             long beforeBuff = playerReader.Buffs.Value;
             bool beforeHasTarget = playerReader.HasTarget;
+
+            (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
+                () => playerReader.ActionBarUsable.ActionUsable(item.Key) || beforeHasTarget != playerReader.HasTarget);
+            if (!gcd)
+            {
+                item.LogInformation($" ... waited for gcd {gcdElapsedMs}ms");
+
+                if (beforeHasTarget != playerReader.HasTarget)
+                {
+                    item.LogInformation($" ... lost target!");
+                    return false;
+                }
+            }
 
             if (!item.HasCastBar)
             {
