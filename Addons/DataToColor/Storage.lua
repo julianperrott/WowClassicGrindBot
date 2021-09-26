@@ -136,6 +136,8 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[13] = "Shadow Trance"
     elseif DataToColor.C.CHARACTER_CLASS == "SHAMAN" then
         DataToColor.S.playerBuffs[10] = "Lightning Shield"
+        DataToColor.S.playerBuffs[11] = "Water Shield"
+        DataToColor.S.playerBuffs[12] = "Shamanistic Focus"
     elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
         DataToColor.S.playerBuffs[10] = "Aspect of"
         DataToColor.S.playerBuffs[11] = "Rapid Fire"

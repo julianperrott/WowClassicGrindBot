@@ -166,6 +166,8 @@ namespace Core
                     {  "Shadow Trance", ()=> playerReader.Buffs.ShadowTrance },
                     // Shaman
                     {  "Lightning Shield", ()=> playerReader.Buffs.LightningShield },
+                    {  "Water Shield", ()=> playerReader.Buffs.WaterShield },
+                    {  "Shamanistic Focus", ()=> playerReader.Buffs.ShamanisticFocus },
                     //Hunter
                     {  "Aspect of the Cheetah", ()=> playerReader.Buffs.Aspect },
                     {  "Aspect of the Pack", ()=> playerReader.Buffs.Aspect },

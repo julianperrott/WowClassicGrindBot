@@ -553,6 +553,8 @@ e.g.
 | Warlock | "Soul Link" |
 | Warrior | "Battle Shout" |
 | Shaman | "Lightning Shield" |
+| Shaman | "Water Shield" |
+| Shaman | "Shamanistic Focus" |
 | Hunter | "Aspect of the Cheetah" |
 | Hunter | "Aspect of the Pack" |
 | Hunter | "Aspect of the Beast" |
