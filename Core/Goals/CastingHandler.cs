@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -311,6 +311,13 @@ namespace Core.Goals
                     await stopMoving.Stop();
                     await wait.Update(1);
                     playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+                    break;
+                case UI_ERROR.ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS:
+                    logger.LogInformation($"React to {UI_ERROR.ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS} -- Wait till casting! -- {source}");
+                    await wait.While(() => playerReader.IsCasting);
+                    break;
+                case UI_ERROR.ERR_SPELL_COOLDOWN:
+                    logger.LogInformation($"Cant react to {UI_ERROR.ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS} -- {source}");
                     break;
                 default:
                     logger.LogInformation($"Didn't know how to React to {playerReader.LastUIErrorMessage} -- {source}");
