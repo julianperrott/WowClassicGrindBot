@@ -192,7 +192,7 @@ namespace Core.Goals
         {
             if (lastKilledGuid != playerReader.LastKilledGuid)
             {
-                logger.LogInformation($"----- A mob just died {playerReader.LastKilledGuid}");
+                //logger.LogInformation($"----- A mob just died {playerReader.LastKilledGuid}");
 
                 if ((playerReader.CombatCreatures.Any(x => x.CreatureId == playerReader.LastKilledGuid) || // creature dealt damage to me or my pet
                 playerReader.TargetHistory.Any(x => x.CreatureId == playerReader.LastKilledGuid)))     // has ever targeted by the player)
