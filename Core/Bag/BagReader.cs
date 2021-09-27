@@ -9,7 +9,6 @@ namespace Core
     public class BagReader
     {
         private int bagItemsDataStart = 20;
-        private int bagInfoDataStart = 60;
         private int bagSlotCountStart = 37;
 
         private readonly ISquareReader reader;
@@ -61,64 +60,66 @@ namespace Core
                 bags[index].FreeSlot = freeSlots;
             }
 
-            for (var bag = 0; bag < 5; bag++)
+
+            // 20 -- 0-4 bagNum + 1-21 itenNum + 1-1000 quantity
+            int itemCount = (int)reader.GetLongAtCell(bagItemsDataStart);
+
+            int bag = (int)(itemCount / 1000000f);
+            itemCount -= (1000000 * bag);
+
+            int slot = (int)(itemCount / 10000f);
+            itemCount -= (10000 * slot);
+
+            // 21 -- 1-999999 itemId 
+            int itemId = (int)reader.GetLongAtCell(bagItemsDataStart + 1);
+
+            // 22 -- 0-24 item bits
+            int itemBits = (int)reader.GetLongAtCell(bagItemsDataStart + 2);
+
+            bool isSoulbound = itemBits == 1;
+
+            var existingItem = BagItems.Where(b => b.BagIndex == slot).Where(b => b.Bag == bag).FirstOrDefault();
+
+            if (itemCount > 0)
             {
-                var cellIndex = bagItemsDataStart + (bag * 2);
-                var itemCount = reader.Get5Numbers(cellIndex, SquareReader.Part.Left);
+                bool addItem = true;
 
-                var bagInfoIndex = bagInfoDataStart + bag;
-                var isSoulbound = reader.GetLongAtCell(bagInfoIndex) == 1;
-
-                // get bag and slot
-                var val = reader.GetLongAtCell(cellIndex + 1);
-                var bagNumber = val / 20;
-                var slot = (int)(val - bagNumber * 20);
-
-                var existingItem = BagItems.Where(b => b.BagIndex == slot).Where(b => b.Bag == bag).FirstOrDefault();
-
-                if (itemCount > 0)
+                if (existingItem != null)
                 {
-                    var itemId = reader.Get5Numbers(cellIndex, SquareReader.Part.Right);
-
-                    bool addItem = true;
-
-                    if (existingItem != null)
-                    {
-                        if (existingItem.ItemId != itemId)
-                        {
-                            BagItems.Remove(existingItem);
-                            addItem = true;
-                        }
-                        else
-                        {
-                            addItem = false;
-
-                            if (existingItem.Count != itemCount)
-                            {
-                                existingItem.UpdateCount(itemCount);
-                                hasChanged = true;
-                            }
-                        }
-                    }
-
-                    if (addItem)
-                    {
-                        var item = new Item { Name = "Unknown" };
-                        if (itemDb.Items.ContainsKey(itemId))
-                        {
-                            item = itemDb.Items[itemId];
-                        }
-                        BagItems.Add(new BagItem(bag, slot, itemId, itemCount, item, isSoulbound));
-                        hasChanged = true;
-                    }
-                }
-                else
-                {
-                    if (existingItem != null)
+                    if (existingItem.ItemId != itemId)
                     {
                         BagItems.Remove(existingItem);
-                        hasChanged = true;
+                        addItem = true;
                     }
+                    else
+                    {
+                        addItem = false;
+
+                        if (existingItem.Count != itemCount)
+                        {
+                            existingItem.UpdateCount(itemCount);
+                            hasChanged = true;
+                        }
+                    }
+                }
+
+                if (addItem)
+                {
+                    var item = new Item { Name = "Unknown" };
+                    if (itemDb.Items.ContainsKey(itemId))
+                    {
+                        item = itemDb.Items[itemId];
+                    }
+                    BagItems.Add(new BagItem(bag, slot, itemId, itemCount, item, isSoulbound));
+                    hasChanged = true;
+                }
+            }
+            else
+            {
+                if (existingItem != null)
+                {
+                    BagItems.Remove(existingItem);
+                    hasChanged = true;
                 }
             }
 

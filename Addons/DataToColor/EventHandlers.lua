@@ -31,6 +31,7 @@ function DataToColor:RegisterEvents()
     DataToColor:RegisterEvent('BAG_UPDATE','OnBagUpdate')
     DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
     DataToColor:RegisterEvent('PLAYER_TARGET_CHANGED', 'OnPlayerTargetChanged')
+    DataToColor:RegisterEvent('PLAYER_EQUIPMENT_CHANGED', 'OnPlayerEquipmentChanged')
 end
 
 function DataToColor:OnUIErrorMessage(event, messageType, message)
@@ -95,12 +96,14 @@ end
 
 function DataToColor:OnLootClosed(event)
     DataToColor.lastLoot = DataToColor.globalTime
-    DataToColor.inventoryChanged = true
     --DataToColor:Print("OnLootClosed:"..DataToColor.lastLoot)
 end
 
 function DataToColor:OnBagUpdate(event, containerID)
-    DataToColor.inventoryChanged = true
+    if containerID >= 0 and containerID <=4 then
+        DataToColor.stack:push(DataToColor.bagQueue, containerID)
+        DataToColor:InitInventoryQueue(containerID)
+    end
     --DataToColor:Print("OnBagUpdate "..containerID)
 end
 
@@ -130,6 +133,12 @@ end
 
 function DataToColor:OnPlayerTargetChanged(event)
     DataToColor.targetChanged = true
+end
+
+function DataToColor:OnPlayerEquipmentChanged(event, equipmentSlot, hasCurrent)
+    DataToColor.stack:push(DataToColor.equipmentQueue, equipmentSlot)
+    --local c = hasCurrent and 1 or 0
+    --DataToColor:Print("OnPlayerEquipmentChanged "..equipmentSlot.." -> "..c)
 end
 
 DataToColor.playerInteractIterator = 0
