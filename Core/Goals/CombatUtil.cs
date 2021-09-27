@@ -91,7 +91,7 @@ namespace Core
         public bool IsPlayerMoving(WowPoint lastPos)
         {
             var distance = WowPoint.DistanceTo(lastPos, playerReader.PlayerLocation);
-            return distance > 0.5f;
+            return distance > 0.01f;
         }
 
         public async Task<Tuple<bool, bool>> FoundTargetWhileMoved()
@@ -100,14 +100,14 @@ namespace Core
             var startedMoving = await wait.InterruptTask(200, () => lastPosition != playerReader.PlayerLocation);
             if (!startedMoving.Item1)
             {
-                Log($"Goto corpse({startedMoving.Item2}ms) - Wait till player become stil!");
+                Log($"  Goto corpse({startedMoving.Item2}ms) - Wait till player become stil!");
                 hadToMove = true;
             }
 
             while (IsPlayerMoving(lastPosition))
             {
                 lastPosition = playerReader.PlayerLocation;
-                if (!await Wait(200, EnteredCombat()))
+                if (!await Wait(100, EnteredCombat()))
                 {
                     if (await AquiredTarget())
                         return Tuple.Create(true, hadToMove);
