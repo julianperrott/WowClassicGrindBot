@@ -593,30 +593,38 @@ e.g. "Requirements": ["Health%<80", "SpellInRange:4"]
 
 In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tries to get a list of spells unique to each class that are in range. This is read by Libs.SpellInRange.cs.
 
-| Class | Spell | id |   
-| --- | --- | --- | 
+| Class | Spell | id |
+| --- | --- | --- |
 | ROGUE | Sinister Strike | 0 |
 | ROGUE | Throw | 1 |
 | ROGUE | Shoot Gun | 2 |
+| --- | --- | --- |
 | DRUID | Wrath | 0 |
 | DRUID | Bash| 1 |
+| --- | --- | --- |
 | WARRIOR | Charge | 0 |
 | WARRIOR | Rend | 1 |
-| WARRIOR | Shoot Gun | 2 | 
+| WARRIOR | Shoot Gun | 2 |
+| --- | --- | --- |
 | PRIEST | Shadow Word: Pain | 0 |
 | PRIEST | Mind Blast | 1 |
 | PRIEST | Mind Flay | 2 |
-| PRIEST | Shoot | 3 |   
+| PRIEST | Shoot | 3 |
+| --- | --- | --- |
 | PALADIN | Judgement | 0 |
+| --- | --- | --- |
 | MAGE | Fireball | 0 |
 | MAGE | Shoot| 1 |
 | MAGE | Pyroblast | 2 |
 | MAGE | Frostbolt | 3 |
-| MAGE | Fire Blast | 4 |  
+| MAGE | Fire Blast | 4 |
+| --- | --- | --- |
 | HUNTER | Raptor Strike | 0 |
-| HUNTER | Auto Shot | 1 |  
+| HUNTER | Auto Shot | 1 |
+| --- | --- | --- |
 | WARLOCK | Shadow Bolt | 0 |
 | WARLOCK | Shoot | 1 |
+| --- | --- | --- |
 | SHAMAN | Lightning Bolt | 0 |
 | SHAMAN | Earth Shock | 1 |
 
