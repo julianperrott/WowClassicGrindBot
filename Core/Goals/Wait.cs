@@ -17,7 +17,7 @@ namespace Core
             var s = playerReader.GlobalTime;
             while (Math.Abs(s - playerReader.GlobalTime) <= n)
             {
-                await Task.Delay(2 * (int)playerReader.AvgUpdateLatency);
+                await Task.Delay((int)playerReader.AvgUpdateLatency / 2);
             }
         }
 
