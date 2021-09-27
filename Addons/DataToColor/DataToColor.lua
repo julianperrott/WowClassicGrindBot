@@ -349,10 +349,11 @@ function DataToColor:CreateFrames(n)
                 globalCounter = 1000
             end
 
-            -- 23 not used
-            -- 24 not used
-            -- 25 not used
-            -- 26 not used
+            MakePixelSquareArrI(DataToColor:isCurrentAction(1, 24), 23)
+            MakePixelSquareArrI(DataToColor:isCurrentAction(25, 48), 24)
+            MakePixelSquareArrI(DataToColor:isCurrentAction(49, 72), 25)
+            MakePixelSquareArrI(DataToColor:isCurrentAction(73, 96), 26)
+
             -- 27 not used
             -- 28 not used
             -- 29 not used
