@@ -289,7 +289,7 @@ function DataToColor:CreateFrames(n)
                     local _, itemCount, _, _, _, _, 
                     _, _, _, itemID = GetContainerItemInfo(bagNum, bagSlotNum)
 
-                    if not itemCount then
+                    if itemID == nil then
                         itemCount = 0
                         itemID = 0
                     end
