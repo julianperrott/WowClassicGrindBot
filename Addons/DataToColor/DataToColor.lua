@@ -53,13 +53,15 @@ stack = {}
 DataToColor.stack = stack
 
 function stack:push(t, item)
-    if not t[item] then
-        table.insert(t, item)
-    end
+    t[item] = item
 end
 
 function stack:pop(t)
-    return table.remove(t)
+    local key, value = next(t)
+    if key ~= nil then
+        t[key] = nil
+    end
+    return key, value
 end
 
 DataToColor.equipmentQueue = {}
