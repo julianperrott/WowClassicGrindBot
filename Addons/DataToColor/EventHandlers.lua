@@ -96,14 +96,13 @@ end
 
 function DataToColor:OnLootClosed(event)
     DataToColor.lastLoot = DataToColor.globalTime
-    DataToColor.inventoryChanged = true
     --DataToColor:Print("OnLootClosed:"..DataToColor.lastLoot)
 end
 
 function DataToColor:OnBagUpdate(event, containerID)
-    DataToColor.inventoryChanged = true
-    if containerID >= 0 then
+    if containerID >= 0 and containerID <=4 then
         DataToColor.stack:push(DataToColor.bagQueue, containerID)
+        DataToColor:InitInventoryQueue(containerID)
     end
     --DataToColor:Print("OnBagUpdate "..containerID)
 end

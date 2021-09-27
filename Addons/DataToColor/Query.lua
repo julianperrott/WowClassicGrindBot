@@ -2,11 +2,6 @@ local Load = select(2, ...)
 local DataToColor = unpack(Load)
 local Range = DataToColor.Libs.RangeCheck
 
--- Global table of all items player has
-local items = {}
-local itemsPlaceholderComparison = {}
-local enchantedItemsList = {}
-
 -- Discover player's direction in radians (360 degrees = 2π radians)
 function DataToColor:GetPlayerFacing()
     return GetPlayerFacing() or 0
@@ -251,55 +246,6 @@ function DataToColor:actionbarCost(slot)
     end
     return DataToColor.C.MAX_ACTION_IDX * slot
 end
-
--- A function used to check which items we have.
--- Find item IDs on wowhead in the url: e.g: http://www.wowhead.com/item=5571/small-black-pouch. Best to confirm ingame if possible, though.
-function DataToColor:itemName(bag, slot)
-    local item
-    local itemCount
-    _, itemCount, _, _, _, _, _ = GetContainerItemInfo(bag, slot)
-    -- If no item in the slot, returns nil. We assign this as zero for sake of pixel reading.
-    if GetContainerItemLink(bag, slot) == nil then
-        item = 0
-        -- Formatting to isolate the ID in the ItemLink
-    else _, _, item = string.find(GetContainerItemLink(bag, slot), DataToColor.C.ItemPattern)
-        item = string.gsub(item, 'm:', '')
-    end
-    if item == nil then item = 0
-    end
-    if(itemCount ~= nil and itemCount > 0) then 
-        if (itemCount>100) then itemCount=100 end
-        item = item + itemCount * 100000
-    end
-    -- Sets global variable to current list of items
-    items[(bag * 16) + slot] = item
-    return tonumber(item)
-end
-
-function DataToColor:itemInfo(bag, slot)
-    local itemCount
-    _, itemCount, _, _, _, _, _ = GetContainerItemInfo(bag, slot)
-    local value=0
-    if itemCount ~= nil and itemCount > 0 then 
-        local isSoulBound = C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag,slot))
-        if isSoulBound == true then value=1 end
-    else
-        value=2
-    end
-    return value
-end
-
--- Returns item id from specific index in global items table
-function DataToColor:returnItemFromIndex(index)
-    return items[index]
-end
-
-function DataToColor:enchantedItems()
-    if DataToColor:ValuesAreEqual(items, itemsPlaceholderComparison) then
-    end
-end
-
-
 
 function DataToColor:equipSlotItemId(slot)
     local equip
