@@ -3,11 +3,11 @@ using System.Text;
 
 namespace Core
 {
-    public class ActionBarUsableStatus
+    public class ActionBarBitStatus
     {
         private readonly long value;
 
-        public ActionBarUsableStatus(long value)
+        public ActionBarBitStatus(long value)
         {
             this.value = value;
         }
