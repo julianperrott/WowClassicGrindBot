@@ -500,6 +500,8 @@ e.g.
 
 | Condition | Desciption |
 | --- | --- |
+| "TargetYieldXP" | The target yields experience upon death. (Grey Level) |
+| --- | --- |
 | "Has Pet" | The player's pet is alive |
 | "Pet Happy" | Only true when the pet happienss is green |
 | --- | --- |

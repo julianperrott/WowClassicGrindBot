@@ -162,6 +162,16 @@ namespace Core
         public long GlobalTime => reader.GetLongAtCell(70);
         public long LastLootTime => reader.GetLongAtCell(71);
 
+        // https://wowpedia.fandom.com/wiki/Mob_experience
+        public bool TargetYieldXP => PlayerLevel switch
+        {
+            long n when n < 5 => true,
+            long n when n >= 6 && n <= 39 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 10f) - 5),
+            long n when n >= 40 && n <= 59 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 5f) - 5),
+            long n when n >= 60 && n <= 70 => TargetLevel > PlayerLevel - 9,
+            _ => false
+        };
+
 
         #region Combat Creatures
         public int CombatCreatureCount => CombatCreatures.Count;

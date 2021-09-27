@@ -36,7 +36,7 @@
         "School": "Shadow",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Requirements": ["TargetHealth%<40", "not BagItem:6265:72"],
+        "Requirements": ["TargetHealth%<40", "not BagItem:6265:72", "TargetYieldXP"],
         "MinMana": 55
       },
       {

@@ -37,7 +37,7 @@
         "Key": "9",
         "HasCastBar": true,
         "StopBeforeCast": true,
-        "Requirements": ["TargetHealth%<25", "not BagItem:6265:3"],
+        "Requirements": ["TargetHealth%<25", "not BagItem:6265:3", "TargetYieldXP"],
         "MinMana": 55
       },
       {

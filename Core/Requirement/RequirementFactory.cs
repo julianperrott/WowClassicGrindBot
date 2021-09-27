@@ -104,6 +104,8 @@ namespace Core
             {
                 BuffDictionary = new Dictionary<string, Func<bool>>
                 {
+                    // Target Based
+                    { "TargetYieldXP", () => playerReader.TargetYieldXP },
                     // Range
                     { "InMeleeRange", ()=> playerReader.IsInMeleeRange },
                     { "InDeadZoneRange", ()=> playerReader.IsInDeadZone },
