@@ -98,6 +98,8 @@ namespace Core.Goals
             }
 
             key.SetClicked();
+
+            await wait.Update(1);
         }
 
         public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
