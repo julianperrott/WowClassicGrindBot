@@ -19,9 +19,7 @@ local CELL_SIZE = 1 -- 1-9
 local CELL_SPACING = 1 -- 0 or 1
 -- Item slot trackers initialization
 local itemNum = 0
-local equipNum = 0
 local actionNum = 1
-local bagNum = -1
 local globalCounter = 0
 
 -- How often item frames change
@@ -50,9 +48,29 @@ DataToColor.lastCombatCreatureDied = 0
 
 DataToColor.targetChanged = true
 DataToColor.inventoryChanged = true
-DataToColor.equipmentChanged = true
 
 DataToColor.updateActionBarCost = true
+
+-- Update Queue
+stack = {}
+DataToColor.stack = stack
+
+function stack:push(t, item)
+    if item ~= stack:peek(t) then
+        table.insert(t, item)
+    end
+end
+
+function stack:pop(t)
+    return table.remove(t)
+end
+
+function stack:peek(t)
+    return t[#t]
+end
+
+DataToColor.equipmentQueue = {}
+DataToColor.bagQueue = {}
 
 -- Note: Coordinates where player is standing (max: 10, min: -10)
 -- Note: Player direction is in radians (360 degrees = 2π radians)
@@ -101,6 +119,8 @@ function DataToColor:OnInitialize()
 
     local version = GetAddOnMetadata('DataToColor', 'Version')
     DataToColor:Print("Welcome. Using "..version)
+
+    DataToColor:InitUpdateQueues()
 end
 
 function DataToColor:SetupRequirements()
@@ -136,8 +156,10 @@ end
 function DataToColor:FushState()
     DataToColor.targetChanged = true
     DataToColor.inventoryChanged = true
-    DataToColor.equipmentChanged = true
     DataToColor.updateActionBarCost = true
+
+    DataToColor:InitEquipmentQueue()
+    DataToColor:InitBagQueue()
 
     DataToColor:Print('Flush State')
 end
@@ -145,6 +167,24 @@ end
 function DataToColor:ConsumeChanges()
     if DataToColor.targetChanged then
         DataToColor.targetChanged = false
+    end
+end
+
+function DataToColor:InitUpdateQueues()
+    DataToColor:InitEquipmentQueue()
+    -- login or /reload -> DataToColor.bagQueue will be populated by BAG_UPDATE
+    -- DataToColor:InitBagQueue()
+end
+
+function DataToColor:InitEquipmentQueue()
+    for eqNum = 1, 23 do
+        DataToColor.stack:push(DataToColor.equipmentQueue, eqNum)
+    end
+end
+
+function DataToColor:InitBagQueue()
+    for bagNum = 0, 5 do
+        DataToColor.stack:push(DataToColor.bagQueue, bagNum)
     end
 end
 
@@ -223,29 +263,36 @@ function DataToColor:CreateFrames(n)
             -- there are 5 item slots: main backpack and 4 pouches
             -- Indexes one slot from each bag each frame. SlotN (1-16) and bag (0-4) calculated here:
             if DataToColor:Modulo(globalCounter, ITEM_ITERATION_FRAME_CHANGE_RATE) == 0 then
+
                 if DataToColor.inventoryChanged then
                     itemNum = itemNum + 1
-                    bagNum = bagNum + 1
                 end
 
-                if DataToColor.equipmentChanged then
-                    equipNum = equipNum + 1
+                local equipNum = DataToColor.stack:pop(DataToColor.equipmentQueue)
+                if equipNum then
+                    local equipName = DataToColor:equipName(equipNum)
+                    -- Equipment ID
+                    MakePixelSquareArrI(equipName, 30)
+                    -- Equipment slot
+                    MakePixelSquareArrI(equipNum, 31)
+
+                    --DataToColor:Print("equipmentQueue "..equipNum.." -> "..equipName)
+                end
+
+                local bagNum = DataToColor.stack:pop(DataToColor.bagQueue)
+                if bagNum then
+                    local freeSlots, bagType = GetContainerNumFreeSlots(bagNum)
+                    if bagType == nil then
+                        bagType = 0
+                    end
+                    MakePixelSquareArrI(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + DataToColor:bagSlots(bagNum), 37) -- BagType + Index + FreeSpace + BagSlots
+
+                    --DataToColor:Print("bagQueue "..bagType.." -> "..bagNum.." -> "..freeSlots.." -> "..DataToColor:bagSlots(bagNum))
                 end
 
                 if itemNum >= 21 then
                     itemNum = 1
                     DataToColor.inventoryChanged = false
-                end
-
-                if bagNum >= 5 then
-                    bagNum = 0
-                end
-
-                -- Worn inventory start.
-                -- Starts at beginning once we have looked at all desired slots.
-                if equipNum > 24 then
-                    equipNum = 1
-                    DataToColor.equipmentChanged = false
                 end
 
                 -- Reseting global counter to prevent integer overflow
@@ -277,14 +324,6 @@ function DataToColor:CreateFrames(n)
                 end
             end
 
-            if DataToColor.equipmentChanged then
-                local equipName = DataToColor:equipName(equipNum)
-                -- Equipment ID
-                MakePixelSquareArrI(equipName, 30)
-                -- Equipment slot
-                MakePixelSquareArrI(equipNum, 31)
-            end
-
             -- Amount of money in coppers
             MakePixelSquareArrI(DataToColor:Modulo(DataToColor:getMoneyTotal(), 1000000), 32) -- 13 Represents amount of money held (in copper)
             MakePixelSquareArrI(floor(DataToColor:getMoneyTotal() / 1000000), 33) -- 14 Represents amount of money held (in gold)  
@@ -294,14 +333,6 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor:isActionUseable(25, 48), 35)
             MakePixelSquareArrI(DataToColor:isActionUseable(49, 72), 36)
             MakePixelSquareArrI(DataToColor:isActionUseable(73, 96), 42)
-
-            if DataToColor.inventoryChanged then
-                local freeSlots, bagType = GetContainerNumFreeSlots(bagNum)
-                if bagType == nil then
-                    bagType = 0
-                end
-                MakePixelSquareArrI(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + DataToColor:bagSlots(bagNum), 37) -- BagType + Index + FreeSpace + BagSlots
-            end
 
             MakePixelSquareArrI(DataToColor:getHealthMax(DataToColor.C.unitPet), 38)
             MakePixelSquareArrI(DataToColor:getHealthCurrent(DataToColor.C.unitPet), 39)

@@ -102,6 +102,9 @@ end
 
 function DataToColor:OnBagUpdate(event, containerID)
     DataToColor.inventoryChanged = true
+    if containerID >= 0 then
+        DataToColor.stack:push(DataToColor.bagQueue, containerID)
+    end
     --DataToColor:Print("OnBagUpdate "..containerID)
 end
 
@@ -134,7 +137,9 @@ function DataToColor:OnPlayerTargetChanged(event)
 end
 
 function DataToColor:OnPlayerEquipmentChanged(event, equipmentSlot, hasCurrent)
-    DataToColor.equipmentChanged = true
+    DataToColor.stack:push(DataToColor.equipmentQueue, equipmentSlot)
+    --local c = hasCurrent and 1 or 0
+    --DataToColor:Print("OnPlayerEquipmentChanged "..equipmentSlot.." -> "..c)
 end
 
 DataToColor.playerInteractIterator = 0
