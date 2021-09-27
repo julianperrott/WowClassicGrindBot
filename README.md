@@ -617,6 +617,8 @@ In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tri
 | HUNTER | Auto Shot | 1 |  
 | WARLOCK | Shadow Bolt | 0 |
 | WARLOCK | Shoot | 1 |
+| SHAMAN | Lightning Bolt | 0 |
+| SHAMAN | Earth Shock | 1 |
 
 ----
 
