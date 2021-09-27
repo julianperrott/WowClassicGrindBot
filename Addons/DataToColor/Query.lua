@@ -301,17 +301,14 @@ end
 
 
 
-function DataToColor:equipName(slot)
+function DataToColor:equipSlotItemId(slot)
     local equip
     if GetInventoryItemLink(DataToColor.C.unitPlayer, slot) == nil then
         equip = 0
     else _, _, equip = string.find(GetInventoryItemLink(DataToColor.C.unitPlayer, slot), DataToColor.C.ItemPattern)
         equip = string.gsub(equip, 'm:', '')
     end
-    if equip == nil then
-        equip = 0
-    end
-    return tonumber(equip)
+    return tonumber(equip or 0)
 end
 -- -- Function to tell if a spell is on cooldown and if the specified slot has a spell assigned to it
 -- -- Slot ID information can be found on WoW Wiki. Slots we are using: 1-12 (main action bar), Bottom Right Action Bar maybe(49-60), and  Bottom Left (61-72)

@@ -270,7 +270,7 @@ function DataToColor:CreateFrames(n)
 
                 local equipmentSlot = DataToColor.stack:pop(DataToColor.equipmentQueue)
                 if equipmentSlot then
-                    local itemId = DataToColor:equipName(equipmentSlot)
+                    local itemId = DataToColor:equipSlotItemId(equipmentSlot)
                     MakePixelSquareArrI(itemId, 30)
                     MakePixelSquareArrI(equipmentSlot, 31)
                     --DataToColor:Print("equipmentQueue "..equipmentSlot.." -> "..itemId)
