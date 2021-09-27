@@ -1,0 +1,135 @@
+{
+  "ClassName": "Shaman",
+  "Loot": true,
+  "Skin": true,
+  "PathFilename": "_pack\\40-50\\Tanaris\\41-43.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "NPCMaxLevels_Below": 7,
+  "NPCMaxLevels_Above": 2,
+  "MountKey": "N1",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+        "MinMana": 95,
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+	  {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+		"Requirement": "not InMeleeRange",
+        "MinMana": 95,
+      },
+	  {
+        "Name": "Stoneclaw Totem",
+        "Key": "F9",
+        "Requirement": "MobCount>2",
+        "Cooldown": 30,
+        "Log": false,
+        "MinMana": 30
+      },
+	  {
+        "Name": "Searing Totem",
+        "Key": "F7",
+        "Requirement": "MobCount>2",
+        "Cooldown": 15,
+        "Log": false,
+        "MinMana": 95
+      },
+	   {
+        "Name": "War Stomp",
+        "Key": "0",
+        "Requirements": ["Health%<45","MobCount>2"],
+        "Cooldown": 120,
+        "Log": false,
+        "MinMana": 10
+      },
+      {
+        "Name": "Healing Wave",
+        "Key": "3",
+		"StopBeforeCast": true,
+        "Requirements": ["Health%<40","TargetHealth%>15"],
+		"Cooldown": 5,
+        "HasCastBar": true,
+        "Log": false,
+        "MinMana": 200
+      },
+	  {
+        "Name": "Stormstrike",
+        "Key": "1",
+        "Requirements": ["Mana%>40", "InMeleeRange"],
+        "Log": false,
+		"Cooldown": 5,
+        "MinMana": 87
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": ["not AutoAttacking"]
+      },	  
+	  {
+        "Name": "Fire shock",
+        "Key": "4",
+        "Requirements": ["Mana%>40","TargetHealth%>30"],
+        "Log": false,
+		"Cooldown": 12,
+        "MinMana": 80
+      },
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Windfury Weapon",
+        "StopBeforeCast": false,
+        "Key": "5",
+        "MinMana": 90,
+        "Requirement": "not HasMainHandEnchant"
+      },
+	  {
+        "Name": "Windfury/Falme Weapon",
+        "StopBeforeCast": false,
+        "Key": "5",
+        "MinMana": 90,
+        "Requirement": "not HasOffHandEnchant"
+      },
+	  {
+        "Name": "Lightning Shield",
+        "StopBeforeCast": false,
+        "Key": "7",
+        "MinMana": 45,
+        "Requirement": "not Lightning Shield",
+		"Cost": 1
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+	  
+      {
+        "Name": "Water",
+        "StopBeforeCast": true,
+        "Key": "9",
+        "Requirement": "Mana%<35",
+        "Cooldown": 6,
+        "Log": false
+      },
+	  {
+        "Name": "Food",
+        "StopBeforeCast": true,
+        "Key": "8",
+        "Requirement": "Health%<35",
+        "Cooldown": 6,
+        "Log": false
+      }
+    ]
+  }
+}
