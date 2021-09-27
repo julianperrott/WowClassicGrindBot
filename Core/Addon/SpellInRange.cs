@@ -69,7 +69,7 @@ namespace Core
 
         public bool WithinPullRange(PlayerReader playerReader, PlayerClassEnum playerClass) => playerClass switch
         {
-            PlayerClassEnum.Warrior => Warrior_Charge,
+            PlayerClassEnum.Warrior => (playerReader.PlayerLevel >= 4 && Warrior_Charge) || playerReader.IsInMeleeRange,
             PlayerClassEnum.Rogue => Rogue_Throw,
             PlayerClassEnum.Priest => Priest_ShadowWordPain,
             PlayerClassEnum.Druid => playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Bear ? Druid_Bash : playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Cat ? Druid_Rip : Druid_Wrath,
@@ -83,7 +83,7 @@ namespace Core
 
         public bool WithinCombatRange(PlayerReader playerReader, PlayerClassEnum playerClass) => playerClass switch
         {
-            PlayerClassEnum.Warrior => Warrior_Rend,
+            PlayerClassEnum.Warrior => (playerReader.PlayerLevel >= 4 && Warrior_Rend) || playerReader.IsInMeleeRange,
             PlayerClassEnum.Rogue => Rogue_SinisterStrike,
             PlayerClassEnum.Priest => Priest_Shoot,
             PlayerClassEnum.Druid => playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Bear ? Druid_Bash : playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Cat ? Druid_Rip : Druid_Wrath,
