@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -21,8 +21,8 @@ namespace Core.Goals
         private readonly StopMoving stopMoving;
 
         private readonly KeyAction defaultKeyAction = new KeyAction();
-        private const int MaxWaitCastTimeMs = 300;
-        private const int MaxWaitBuffTimeMs = 300;
+        private const int MaxWaitCastTimeMs = 500;
+        private const int MaxWaitBuffTimeMs = 500;
         private const int MaxCastTimeMs = 15000;
         private const int GCD = 1500;
 
@@ -341,7 +341,6 @@ namespace Core.Goals
                     logger.LogInformation($"Stop moving: We have moved since the last interact: {distance}");
                     await input.TapStopKey();
                     classConfig.Interact.SetClicked();
-                    await wait.Update(1);
                 }
             }
 
