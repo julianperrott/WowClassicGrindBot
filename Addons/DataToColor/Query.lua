@@ -39,7 +39,7 @@ function DataToColor:Base2Converter()
     DataToColor:MakeIndexBase2(DataToColor:playerCombatStatus(), 14) +
     DataToColor:MakeIndexBase2(DataToColor:IsTargetOfTargetPlayer(), 15) +
     DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.AutoShotId), 16) +
-    DataToColor:MakeIndexBase2(DataToColor:ProcessExitStatus(), 17) +
+    DataToColor:MakeIndexBase2(DataToColor:hasTarget(), 17) +
     DataToColor:MakeIndexBase2(DataToColor:IsPlayerMounted(), 18) +
     DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.ShootId), 19) +
     DataToColor:MakeIndexBase2(DataToColor:IsCurrentSpell(6603), 20) + -- AutoAttack enabled
@@ -378,6 +378,10 @@ end
 -- Only put functions here that are part of a boolean sequence --
 -- Sew BELOW for examples ---------------------------------------
 -----------------------------------------------------------------
+
+function DataToColor:hasTarget()
+    return UnitExists(DataToColor.C.unitTarget) and 1 or 0
+end
 
 function DataToColor:mainhandEnchantActive() 
     local hasMainHandEnchant = GetWeaponEnchantInfo()

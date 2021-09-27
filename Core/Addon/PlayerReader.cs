@@ -77,7 +77,7 @@ namespace Core
 
         public long TargetHealth => reader.GetLongAtCell(19);
 
-        public bool HasTarget => !string.IsNullOrEmpty(Target) || TargetHealth > 0;
+        public bool HasTarget => PlayerBitValues.HasTarget || TargetHealth > 0;
 
         // 32 - 33
         public long Gold => reader.GetLongAtCell(32) + reader.GetLongAtCell(33) * 1000000;
