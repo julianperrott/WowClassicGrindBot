@@ -31,6 +31,7 @@ function DataToColor:RegisterEvents()
     DataToColor:RegisterEvent('BAG_UPDATE','OnBagUpdate')
     DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
     DataToColor:RegisterEvent('PLAYER_TARGET_CHANGED', 'OnPlayerTargetChanged')
+    DataToColor:RegisterEvent('PLAYER_EQUIPMENT_CHANGED', 'OnPlayerEquipmentChanged')
 end
 
 function DataToColor:OnUIErrorMessage(event, messageType, message)
@@ -130,6 +131,10 @@ end
 
 function DataToColor:OnPlayerTargetChanged(event)
     DataToColor.targetChanged = true
+end
+
+function DataToColor:OnPlayerEquipmentChanged(event, equipmentSlot, hasCurrent)
+    DataToColor.equipmentChanged = true
 end
 
 DataToColor.playerInteractIterator = 0
