@@ -43,56 +43,56 @@ end
 function CreateSpellInRangeList()
     if DataToColor.C.CHARACTER_CLASS == "ROGUE" then
         DataToColor.S.spellInRangeList = {
-            "Sinister Strike", --1
-            "Throw", --2
-            "Shoot Gun" --4
+            1752, -- "Sinister Strike"
+            2764, -- "Throw"
+            3018, -- "Shoot" for classic -> 7918, -- "Shoot Gun"
         }
     elseif DataToColor.C.CHARACTER_CLASS == "DRUID" then
         DataToColor.S.spellInRangeList = {
-            "Wrath", --1
-            "Bash", --2
-            "Rip" --3
+            5176, -- "Wrath"
+            5211, -- "Bash"
+            1079 -- "Rip"
         }
     elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
         DataToColor.S.spellInRangeList = {
-            "Charge", --1
-            "Rend", --2
-            "Shoot Gun", --4
+            100, -- "Charge"
+            772, -- "Rend"
+            3018 -- "Shoot" for classic -> 7918, -- "Shoot Gun"
         }       
     elseif DataToColor.C.CHARACTER_CLASS == "PRIEST" then
         DataToColor.S.spellInRangeList = {
-            "Shadow Word: Pain", --1
-            "Mind Blast", --2
-            "Mind Flay", --4
-            "Shoot", --8
+            589,   -- "Shadow Word: Pain"
+            8092,  -- "Mind Blast"
+            15407, -- "Mind Flay"
+            5019   -- "Shoot"
         }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
         DataToColor.S.spellInRangeList = {
-            "Judgement" --1
+            20271 -- "Judgement"
         }
     elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
         DataToColor.S.spellInRangeList = {
-            "Fireball", --1
-            "Shoot",
-            "Pyroblast",
-            "Frostbolt",
-            "Fire Blast"
+            133,    -- "Fireball"
+            5019,   -- "Shoot"
+            11366,  -- "Pyroblast"
+            116,    -- "Frostbolt"
+            2136    -- "Fire Blast"
         }     
     elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
         DataToColor.S.spellInRangeList = {
-            "Raptor Strike", --1
-            "Auto Shot", --2
-            "Serpent Sting" --3
+            2973, -- "Raptor Strike"
+            75,   -- "Auto Shot"
+            1978  -- "Serpent Sting"
         }      
     elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then
         DataToColor.S.spellInRangeList = {
-            "Shadow Bolt",
-            "Shoot"
+            686,  -- "Shadow Bolt",
+            5019  -- "Shoot"
         }
     elseif DataToColor.C.CHARACTER_CLASS == "SHAMAN" then
         DataToColor.S.spellInRangeList = {
-            "Lightning Bolt",
-            "Earth Shock"
+            403, -- "Lightning Bolt",
+            8042 -- "Earth Shock"
         }
     end
 end

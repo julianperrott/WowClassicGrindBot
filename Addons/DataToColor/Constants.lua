@@ -1,6 +1,10 @@
 local Load = select(2, ...)
 local DataToColor = unpack(Load)
 
+-- Expansion
+DataToColor.C.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+DataToColor.C.IsClassic_BCC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
+
 DataToColor.C.unitPlayer = "player"
 DataToColor.C.unitTarget = "target"
 DataToColor.C.unitPet = "pet"
