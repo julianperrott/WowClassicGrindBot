@@ -219,9 +219,9 @@ namespace Core.Goals
             // check for targets attacking me
             await input.TapNearestTarget();
             await wait.Update(1);
-            if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
+            if (playerReader.HasTarget)
             {
-                if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                if (playerReader.PlayerBitValues.TargetInCombat && playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
                 {
                     ResetCooldowns();
 
@@ -230,15 +230,11 @@ namespace Core.Goals
                     await wait.Update(1);
                     return true;
                 }
+
+                await input.TapClearTarget();
+                await wait.Update(1);
             }
 
-            if (playerReader.HasTarget)
-            {
-                return true;
-            }
-
-            await input.TapClearTarget();
-            await wait.Update(1);
             logger.LogWarning("---- No Threat has been found!");
 
             return false;
