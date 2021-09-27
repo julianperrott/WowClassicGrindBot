@@ -2,7 +2,7 @@
 {
     public class PlayerBitValues
     {
-        private long value;
+        private readonly long value;
 
         public PlayerBitValues(long value)
         {
@@ -14,35 +14,28 @@
             return (value & (1 << pos)) != 0;
         }
 
-        public bool TargetCanBeHostile { get => IsBitSet(5); }
-        public bool IsTagged { get => IsBitSet(22); }
-        public bool TargetIsNormal { get => IsBitSet(21); }
-        public bool IsAutoRepeatSpellOn_AutoAttack { get => IsBitSet(20); }
-        public bool IsAutoRepeatSpellOn_Shoot { get => IsBitSet(19); }
-        public bool IsAutoRepeatSpellOn_AutoShot { get => IsBitSet(16); }
-        public bool IsMounted { get => IsBitSet(18); }
-        public bool ProcessExitStatus { get => IsBitSet(17); }
-
-        public bool TargetOfTargetIsPlayer { get => IsBitSet(15); }
-        public bool PlayerInCombat { get => IsBitSet(14); }
-
-        public bool IsSwimming { get => IsBitSet(11); }
-        public bool IsFlying { get => IsBitSet(10); }
-        public bool ItemsAreBroken { get => IsBitSet(9); }
-
-        public bool IsInDeadZoneRange { get => IsBitSet(4); }
-
-        public bool HasPet { get => IsBitSet(6); }
-        public bool PetHappy { get => IsBitSet(12); }
-
-        public bool HasAmmo { get => IsBitSet(13); }
-
-        public bool TalentPoints { get => IsBitSet(3); }
-        public bool DeadStatus { get => IsBitSet(2); }
-        public bool TargetIsDead { get => IsBitSet(1); }
-        public bool TargetInCombat { get => IsBitSet(0); }
-
-        public bool MainHandEnchant_Active { get => IsBitSet(7); }
-        public bool OffHandEnchant_Active { get => IsBitSet(8); }
+        public bool TargetInCombat => IsBitSet(0);
+        public bool TargetIsDead => IsBitSet(1);
+        public bool DeadStatus => IsBitSet(2);
+        public bool TalentPoints => IsBitSet(3);
+        public bool IsInDeadZoneRange => IsBitSet(4);
+        public bool TargetCanBeHostile => IsBitSet(5);
+        public bool HasPet => IsBitSet(6);
+        public bool MainHandEnchant_Active => IsBitSet(7);
+        public bool OffHandEnchant_Active => IsBitSet(8);
+        public bool ItemsAreBroken => IsBitSet(9);
+        public bool IsFlying => IsBitSet(10);
+        public bool IsSwimming => IsBitSet(11);
+        public bool PetHappy => IsBitSet(12);
+        public bool HasAmmo => IsBitSet(13);
+        public bool PlayerInCombat => IsBitSet(14);
+        public bool TargetOfTargetIsPlayer => IsBitSet(15);
+        public bool IsAutoRepeatSpellOn_AutoShot => IsBitSet(16);
+        public bool HasTarget => IsBitSet(17);
+        public bool IsMounted => IsBitSet(18);
+        public bool IsAutoRepeatSpellOn_Shoot => IsBitSet(19);
+        public bool IsAutoRepeatSpellOn_AutoAttack => IsBitSet(20);
+        public bool TargetIsNormal => IsBitSet(21);
+        public bool IsTagged => IsBitSet(22);
     }
 }

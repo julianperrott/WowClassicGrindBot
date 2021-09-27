@@ -4,12 +4,6 @@
     {
         public long Value { get; private set; }
 
-        public BuffStatus(string name)
-        {
-            this.name = name;
-            this.Value = 0;
-        }
-
         public BuffStatus(long value)
         {
             this.Value = value;
@@ -20,64 +14,57 @@
             return (Value & (1 << pos)) != 0;
         }
 
-        public string name { get; set; } = string.Empty;
-
         // All
-        public bool Eating { get => IsBitSet(0); }
-        public bool Drinking { get => IsBitSet(1); }
-        public bool WellFed { get => IsBitSet(2); }
-        public bool ManaRegeneration { get => IsBitSet(3); }
+        public bool Eating => IsBitSet(0);
+        public bool Drinking => IsBitSet(1);
+        public bool WellFed => IsBitSet(2);
+        public bool ManaRegeneration => IsBitSet(3);
 
         // Priest
-        public bool Fortitude { get => IsBitSet(10); }
-
-        public bool InnerFire { get => IsBitSet(11); }
-        public bool Renew { get => IsBitSet(12); }
-        public bool Shield { get => IsBitSet(13); }
-        public bool DivineSpirit { get => IsBitSet(14); }
+        public bool Fortitude => IsBitSet(10);
+        public bool InnerFire => IsBitSet(11);
+        public bool Renew => IsBitSet(12);
+        public bool Shield => IsBitSet(13);
+        public bool DivineSpirit => IsBitSet(14);
 
         // Druid
-        public bool MarkOfTheWild { get => IsBitSet(10); }
-        public bool Thorns { get => IsBitSet(11); }
-        public bool TigersFury { get => IsBitSet(12); }
+        public bool MarkOfTheWild => IsBitSet(10);
+        public bool Thorns => IsBitSet(11);
+        public bool TigersFury => IsBitSet(12);
 
         // Paladin
-        public bool Aura { get => IsBitSet(10); }
-
-        public bool Blessing { get => IsBitSet(11); }
-        public bool Seal { get => IsBitSet(12); }
+        public bool Aura => IsBitSet(10);
+        public bool Blessing => IsBitSet(11);
+        public bool Seal => IsBitSet(12);
 
         // Mage
-        public bool FrostArmor { get => IsBitSet(10); }
-
-        public bool ArcaneIntellect { get => IsBitSet(11); }
-        public bool IceBarrier { get => IsBitSet(12); }
-        public bool Ward { get => IsBitSet(13); }
-        public bool FirePower { get => IsBitSet(14); }
-
-        public bool ManaShield { get => IsBitSet(15); }
+        public bool FrostArmor => IsBitSet(10);
+        public bool ArcaneIntellect => IsBitSet(11);
+        public bool IceBarrier => IsBitSet(12);
+        public bool Ward => IsBitSet(13);
+        public bool FirePower => IsBitSet(14);
+        public bool ManaShield => IsBitSet(15);
 
         // Rogue
-        public bool SliceAndDice { get => IsBitSet(10); }
+        public bool SliceAndDice => IsBitSet(10);
 
         // Warrior
-        public bool BattleShout { get => IsBitSet(10); }
+        public bool BattleShout => IsBitSet(10);
 
         // Warlock
-        public bool Demon { get => IsBitSet(10); } //Skin and Armor
-
-        public bool SoulLink { get => IsBitSet(11); }
-        public bool SoulstoneResurrection { get => IsBitSet(12); }
-        public bool ShadowTrance { get => IsBitSet(13); }
+        public bool Demon => IsBitSet(10); //Skin and Armor
+        public bool SoulLink => IsBitSet(11);
+        public bool SoulstoneResurrection => IsBitSet(12);
+        public bool ShadowTrance => IsBitSet(13);
 
         // Shaman
-        public bool LightningShield { get => IsBitSet(10); }
-        public bool WaterShield { get => IsBitSet(11); }
-        public bool ShamanisticFocus { get => IsBitSet(12); }
+        public bool LightningShield => IsBitSet(10);
+        public bool WaterShield => IsBitSet(11);
+        public bool ShamanisticFocus => IsBitSet(12);
 
         // Hunter
-        public bool Aspect { get => IsBitSet(10); } //Any Aspect of
-        public bool RapidFire { get => IsBitSet(11); }
-        public bool QuickShots { get => IsBitSet(12); }
+        public bool Aspect => IsBitSet(10); //Any Aspect of
+        public bool RapidFire => IsBitSet(11);
+        public bool QuickShots => IsBitSet(12);
     }
 }

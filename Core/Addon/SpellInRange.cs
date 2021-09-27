@@ -17,55 +17,49 @@ namespace Core
         }
 
         // Warrior
-        public bool Warrior_Charge { get => IsBitSet(0); }
-
-        public bool Warrior_Rend { get => IsBitSet(1); }
-        public bool Warrior_ShootGun { get => IsBitSet(2); }
+        public bool Warrior_Charge => IsBitSet(0);
+        public bool Warrior_Rend => IsBitSet(1);
+        public bool Warrior_ShootGun => IsBitSet(2);
 
         // Rogue
-        public bool Rogue_SinisterStrike { get => IsBitSet(0); }
-
-        public bool Rogue_Throw { get => IsBitSet(1); }
-        public bool Rogue_ShootGun { get => IsBitSet(2); }
+        public bool Rogue_SinisterStrike => IsBitSet(0);
+        public bool Rogue_Throw => IsBitSet(1);
+        public bool Rogue_ShootGun => IsBitSet(2);
 
         // Priest
-        public bool Priest_ShadowWordPain { get => IsBitSet(0); }
+        public bool Priest_ShadowWordPain => IsBitSet(0);
 
-        public bool Priest_MindBlast { get => IsBitSet(1); }
-        public bool Priest_MindFlay { get => IsBitSet(2); }
-        public bool Priest_Shoot { get => IsBitSet(3); }
+        public bool Priest_MindBlast => IsBitSet(1);
+        public bool Priest_MindFlay => IsBitSet(2);
+        public bool Priest_Shoot => IsBitSet(3);
 
         // Druid
-        public bool Druid_Wrath { get => IsBitSet(0); }
-        public bool Druid_Bash { get => IsBitSet(1); }
-        public bool Druid_Rip { get => IsBitSet(2); }
+        public bool Druid_Wrath => IsBitSet(0);
+        public bool Druid_Bash => IsBitSet(1);
+        public bool Druid_Rip => IsBitSet(2);
 
         //Paladin
-        public bool Paladin_Judgement { get => IsBitSet(0); }
+        public bool Paladin_Judgement => IsBitSet(0);
 
         //Mage
-        public bool Mage_Fireball { get => IsBitSet(0); }
-
-        public bool Mage_Shoot { get => IsBitSet(1); }
-        public bool Mage_Pyroblast { get => IsBitSet(2); }
-        public bool Mage_Frostbolt { get => IsBitSet(3); }
-        public bool Mage_Fireblast { get => IsBitSet(4); }
+        public bool Mage_Fireball => IsBitSet(0);
+        public bool Mage_Shoot => IsBitSet(1);
+        public bool Mage_Pyroblast => IsBitSet(2);
+        public bool Mage_Frostbolt => IsBitSet(3);
+        public bool Mage_Fireblast => IsBitSet(4);
 
         //Hunter
-        public bool Hunter_RaptorStrike { get => IsBitSet(0); }
-
-        public bool Hunter_AutoShoot { get => IsBitSet(1); }
-
-        public bool Hunter_SerpentSting { get => IsBitSet(2); }
+        public bool Hunter_RaptorStrike => IsBitSet(0);
+        public bool Hunter_AutoShoot => IsBitSet(1);
+        public bool Hunter_SerpentSting => IsBitSet(2);
 
         // Warlock
-        public bool Warlock_ShadowBolt { get => IsBitSet(0); }
-
-        public bool Warlock_Shoot { get => IsBitSet(1); }
+        public bool Warlock_ShadowBolt => IsBitSet(0);
+        public bool Warlock_Shoot => IsBitSet(1);
 
         // Shaman
-        public bool Shaman_LightningBolt { get => IsBitSet(0); }
-        public bool Shaman_EarthShock { get => IsBitSet(1); }
+        public bool Shaman_LightningBolt => IsBitSet(0);
+        public bool Shaman_EarthShock => IsBitSet(1);
 
         public bool WithinPullRange(PlayerReader playerReader, PlayerClassEnum playerClass) => playerClass switch
         {
