@@ -272,12 +272,21 @@ end
 
 function DataToColor:isActionUseable(min,max)
     local isUsableBits = 0
-    -- Loops through main action bar slots 1-12
     local start, isUsable, notEnough
     for i = min, max do
         start = GetActionCooldown(i)
         isUsable, notEnough = IsUsableAction(i)
         if start == 0 and isUsable == true and notEnough == false then
+            isUsableBits = isUsableBits + (2 ^ (i - min))
+        end
+    end
+    return isUsableBits
+end
+
+function DataToColor:isCurrentAction(min,max)
+    local isUsableBits = 0
+    for i = min, max do
+        if IsCurrentAction(i) then
             isUsableBits = isUsableBits + (2 ^ (i - min))
         end
     end

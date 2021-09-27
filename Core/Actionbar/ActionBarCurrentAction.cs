@@ -1,13 +1,14 @@
-﻿namespace Core
+﻿
+namespace Core
 {
-    public class ActionBarUsable
+    public class ActionBarCurrentAction
     {
         private readonly ActionBarBitStatus bits_1To24;
         private readonly ActionBarBitStatus bits_25To48;
         private readonly ActionBarBitStatus bits_49To72;
         private readonly ActionBarBitStatus bits_73To96;
 
-        public ActionBarUsable(ISquareReader reader, int idx1, int idx2, int idx3, int idx4)
+        public ActionBarCurrentAction(ISquareReader reader, int idx1, int idx2, int idx3, int idx4)
         {
             bits_1To24 = new ActionBarBitStatus(reader.GetLongAtCell(idx1));
             bits_25To48 = new ActionBarBitStatus(reader.GetLongAtCell(idx2));
@@ -17,7 +18,7 @@
 
         // https://wowwiki-archive.fandom.com/wiki/ActionSlot
         // valid range 1-96
-        public bool Usable(string keyName)
+        public bool Is(string keyName)
         {
             if (KeyReader.ActionBarSlotMap.TryGetValue(keyName, out var slot))
             {

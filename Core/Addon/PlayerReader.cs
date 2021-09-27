@@ -79,6 +79,9 @@ namespace Core
 
         public bool HasTarget => PlayerBitValues.HasTarget || TargetHealth > 0;
 
+        // 23 - 26
+        public ActionBarCurrentAction CurrentAction => new ActionBarCurrentAction(reader, 23, 24, 25, 26);
+
         // 32 - 33
         public long Gold => reader.GetLongAtCell(32) + reader.GetLongAtCell(33) * 1000000;
 
