@@ -268,15 +268,12 @@ function DataToColor:CreateFrames(n)
                     itemNum = itemNum + 1
                 end
 
-                local equipNum = DataToColor.stack:pop(DataToColor.equipmentQueue)
-                if equipNum then
-                    local equipName = DataToColor:equipName(equipNum)
-                    -- Equipment ID
-                    MakePixelSquareArrI(equipName, 30)
-                    -- Equipment slot
-                    MakePixelSquareArrI(equipNum, 31)
-
-                    --DataToColor:Print("equipmentQueue "..equipNum.." -> "..equipName)
+                local equipmentSlot = DataToColor.stack:pop(DataToColor.equipmentQueue)
+                if equipmentSlot then
+                    local itemId = DataToColor:equipName(equipmentSlot)
+                    MakePixelSquareArrI(itemId, 30)
+                    MakePixelSquareArrI(equipmentSlot, 31)
+                    --DataToColor:Print("equipmentQueue "..equipmentSlot.." -> "..itemId)
                 end
 
                 local bagNum = DataToColor.stack:pop(DataToColor.bagQueue)
