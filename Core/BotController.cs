@@ -141,8 +141,7 @@ namespace Core
             {
                 this.AddonReader.AddonRefresh();
                 this.GoapAgent?.UpdateWorldState();
-                int update = (int)(AddonReader.PlayerReader.AvgUpdateLatency / 2);
-                System.Threading.Thread.Sleep(update);
+                System.Threading.Thread.Sleep(5);
             }
             this.logger.LogInformation("Addon thread stoppped!");
         }
