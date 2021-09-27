@@ -103,7 +103,7 @@ namespace Core.Goals
             await PressKeyAction(item);
 
             (bool input, double inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
-                () => playerReader.LastUIErrorMessage != UI_ERROR.NONE);
+                () => playerReader.LastUIErrorMessage != UI_ERROR.NONE || !playerReader.CurrentAction.Is(item.Key));
             if (!input)
             {
                 item.LogInformation($" ... instant input after {inputElapsedMs}ms");
