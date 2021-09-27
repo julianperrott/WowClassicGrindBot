@@ -262,7 +262,7 @@ end
 function DataToColor:areSpellsInRange()
     local inRange = 0
     for i = 1, table.getn(DataToColor.S.spellInRangeList), 1 do
-        local isInRange = IsSpellInRange(DataToColor.S.spellInRangeList[i], DataToColor.C.unitTarget)
+        local isInRange = IsSpellInRange(GetSpellInfo(DataToColor.S.spellInRangeList[i]), DataToColor.C.unitTarget)
         if isInRange==1 then
             inRange = inRange + (2 ^ (i - 1))
         end
