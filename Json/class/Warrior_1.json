@@ -1,0 +1,31 @@
+{
+  "ClassName": "Warrior",
+  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\1-4_Dun Morogh.json",
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Heroic Strike",
+        "Key": "2",
+        "WhenUsable": true,
+        "MinRage": 10
+      },
+      {
+        "Name": "Approach",
+        "Cooldown": 5
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "Key": "=",
+        "Requirement": "Health%<60",
+        "Cooldown": 5,
+        "Cost": 3
+      }
+    ]
+  }
+}

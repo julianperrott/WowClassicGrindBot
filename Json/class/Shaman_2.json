@@ -37,7 +37,7 @@
       {
         "Name": "AutoAttack",
         "Cooldown": 3,
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Requirements": ["not AutoAttacking"]
       }
     ]
   },
@@ -56,23 +56,19 @@
     "Sequence": [
       {
         "Name": "Food",
+        "Key": "=",
         "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "6",
         "Requirement": "Health%<30",
-        "Cooldown": 10,
-        "Log": false
+        "Cooldown": 10
       },
       {
         "Name": "Water",
+        "Key": "-",
         "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "7",
         "Requirement": "Mana%<30",
-        "Cooldown": 10,
-        "Log": false
+        "Cooldown": 10
       }
     ]
   }
