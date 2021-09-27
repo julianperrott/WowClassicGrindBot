@@ -1,6 +1,10 @@
 local Load = select(2, ...)
 local DataToColor = unpack(Load)
 
+-- Expansion
+DataToColor.C.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+DataToColor.C.IsClassic_BCC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
+
 DataToColor.C.unitPlayer = "player"
 DataToColor.C.unitTarget = "target"
 DataToColor.C.unitPet = "pet"
@@ -24,8 +28,8 @@ DataToColor.C.MAX_POWER_TYPE = 1000000
 DataToColor.C.MAX_ACTION_IDX = 1000
 
 -- Spells
-DataToColor.C.Spell.AutoShot = "Auto Shot"
-DataToColor.C.Spell.Shoot = "Shoot"
+DataToColor.C.Spell.AutoShotId = 75 -- Auto shot
+DataToColor.C.Spell.ShootId = 5019 -- Shoot
 
 -- Item / Inventory
 DataToColor.C.ItemPattern = "(m:%d+)"

@@ -4,7 +4,7 @@
 
 # MasterOfPuppets - World of Warcraft Classic Grind Bot - Now Includes Pathing
 
-- Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-Pixels to read the game state. Sorry but the addon is coded for an english wow client and would need to be modified to work with any other languages.
+- Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-Pixels to read the game state. 
 
 - Uses Blazor Server to show the bot state in a browser, and so can be monitored from your phone or a tablet while you do something else.
 https://docs.microsoft.com/en-us/aspnet/core/blazor
@@ -62,6 +62,7 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 * Exclude ammo pouch and quiver from containers
 * ActionBarSlot usable
 * Retrive ActionBarSlot power cost to get more precise resource usage
+* Addon supports all available languages
 
 # Issues and Ideas
 
