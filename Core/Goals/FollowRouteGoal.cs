@@ -165,7 +165,7 @@ namespace Core.Goals
                 if(routeToWaypoint.Count > 0)
                 {
                     var distanceToRoute = WowPoint.DistanceTo(playerLocation, routeToWaypoint.Peek());
-                    if (routeToWaypoint.Count <= 1 && distanceToRoute > 200)
+                    if (routeToWaypoint.Count < 1 && distanceToRoute > 200)
                     {
                         logger.LogError($"No route To Waypoint or too far {distanceToRoute}>200");
                         routeToWaypoint.Pop();
