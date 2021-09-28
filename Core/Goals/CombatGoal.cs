@@ -19,7 +19,6 @@ namespace Core.Goals
         private readonly CastingHandler castingHandler;
         
         private readonly ClassConfiguration classConfiguration;
-        private DateTime lastPulled = DateTime.Now;
 
         private int lastKilledGuid;
 
@@ -84,11 +83,6 @@ namespace Core.Goals
                 logger.LogInformation("?Reset cooldowns");
 
                 ResetCooldowns();
-            }
-
-            if (e.Key == GoapKey.pulled)
-            {
-                this.lastPulled = DateTime.Now;
             }
         }
 
