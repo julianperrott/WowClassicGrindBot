@@ -34,23 +34,26 @@ namespace Core
     {
         private const int MAX_EQUIPMENT_COUNT = 24;
 
-        private readonly int cellStart;
         private readonly ISquareReader reader;
+        private readonly int cItemId;
+        private readonly int cSlotNum;
 
         private readonly long[] equipment = new long[MAX_EQUIPMENT_COUNT];
 
-        public EquipmentReader(ISquareReader reader, int cellStart)
+        public EquipmentReader(ISquareReader reader, int cSlotNum, int cItemId)
         {
-            this.cellStart = cellStart;
             this.reader = reader;
+
+            this.cSlotNum = cSlotNum;
+            this.cItemId = cItemId;
         }
 
         public void Read()
         {
-            var index = reader.GetLongAtCell(cellStart + 1);
+            int index = (int)reader.GetLongAtCell(cSlotNum);
             if (index < MAX_EQUIPMENT_COUNT && index >= 0)
             {
-                equipment[index] = reader.GetLongAtCell(cellStart);
+                equipment[index] = reader.GetLongAtCell(cItemId);
             }
         }
 
@@ -66,7 +69,7 @@ namespace Core
 
         public bool HasItem(int itemId)
         {
-            for(int i=0; i<equipment.Length; i++)
+            for (int i = 0; i < equipment.Length; i++)
             {
                 if (equipment[i] == itemId)
                     return true;
