@@ -15,8 +15,13 @@
         "MinEnergy": 45
       },
       {
-        "Name": "AutoAttack",
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
         "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },

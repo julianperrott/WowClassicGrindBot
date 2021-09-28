@@ -4,7 +4,10 @@
   "PathFilename": "_pack\\1-20\\Troll.Orc\\15-18_The Barrens_North.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
-  "Blacklist": ["Kolkar","Legashi"],
+  "Blacklist": [
+    "Kolkar",
+    "Legashi"
+  ],
   "NPCMaxLevels_Below": 5,
   "NPCMaxLevels_Above": 1,
   "Pull": {
@@ -26,12 +29,18 @@
         "StopBeforeCast": true,
         "HasCastBar": true,
         "MinMana": 30,
-        "Requirements": ["not InMeleeRange", "Mana%>30"]
+        "Requirements": [
+          "not InMeleeRange",
+          "Mana%>30"
+        ]
       },
-	   {
+      {
         "Name": "War Stomp",
         "Key": "0",
-        "Requirements": ["Health%<49","MobCount>2"],
+        "Requirements": [
+          "Health%<49",
+          "MobCount>2"
+        ],
         "Cooldown": 120,
         "Log": false,
         "MinMana": 10
@@ -39,32 +48,40 @@
       {
         "Name": "Healing Wave",
         "Key": "3",
-		"StopBeforeCast": true,
+        "StopBeforeCast": true,
         "Requirement": "Health%<45",
-		"Cooldown": 5,
+        "Cooldown": 5,
         "HasCastBar": true,
         "Log": false,
         "MinMana": 80
       },
       {
-        "Name": "AutoAttack",
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
-      },
-	  {
         "Name": "Fire shock",
         "Key": "4",
-        "Requirements": ["Mana%>40", "InMeleeRange"],
+        "Requirements": [
+          "Mana%>40",
+          "InMeleeRange"
+        ],
         "Cooldown": 6,
         "Log": false,
         "MinMana": 80
       },
-	  {
+      {
         "Name": "Stoneskin Totem",
         "Key": "7",
         "Requirement": "MobCount>2",
         "Cooldown": 30,
         "Log": false,
         "MinMana": 30
+      },
+      {
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },
@@ -77,7 +94,7 @@
         "MinMana": 25,
         "Requirement": "not HasMainHandEnchant"
       },
-	  {
+      {
         "Name": "Lightning Shield",
         "StopBeforeCast": false,
         "Key": "6",

@@ -41,9 +41,13 @@
         "Requirement": "not Seal"
       },
       {
-        "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking",
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
         "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },

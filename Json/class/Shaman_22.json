@@ -4,7 +4,10 @@
   "PathFilename": "_pack\\20-30\\Stonetalon Mountains\\21-23 Mirkfallonlage.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
-  "Blacklist": ["Kolkar","Legashi"],
+  "Blacklist": [
+    "Kolkar",
+    "Legashi"
+  ],
   "NPCMaxLevels_Below": 6,
   "NPCMaxLevels_Above": 1,
   "Pull": {
@@ -20,7 +23,7 @@
   },
   "Combat": {
     "Sequence": [
-	  {
+      {
         "Name": "Stoneclaw Totem",
         "Key": "7",
         "Requirement": "MobCount>2",
@@ -28,7 +31,7 @@
         "Log": false,
         "MinMana": 30
       },
-	  {
+      {
         "Name": "Searing Totem",
         "Key": "F7",
         "Requirement": "MobCount>2",
@@ -36,10 +39,13 @@
         "Log": false,
         "MinMana": 95
       },
-	   {
+      {
         "Name": "War Stomp",
         "Key": "0",
-        "Requirements": ["Health%<49","MobCount>2"],
+        "Requirements": [
+          "Health%<49",
+          "MobCount>2"
+        ],
         "Cooldown": 120,
         "Log": false,
         "MinMana": 10
@@ -50,30 +56,43 @@
         "StopBeforeCast": true,
         "HasCastBar": true,
         "MinMana": 75,
-        "Requirements": ["not InMeleeRange", "Mana%>30"]
+        "Requirements": [
+          "not InMeleeRange",
+          "Mana%>30"
+        ]
       },
-	  
       {
         "Name": "Healing Wave",
         "Key": "3",
-		"StopBeforeCast": true,
-        "Requirements": ["Health%<45","TargetHealth%>20"],
-		"Cooldown": 5,
+        "StopBeforeCast": true,
+        "Requirements": [
+          "Health%<45",
+          "TargetHealth%>20"
+        ],
+        "Cooldown": 5,
         "HasCastBar": true,
         "Log": false,
         "MinMana": 80
       },
       {
-        "Name": "AutoAttack",
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
-      },
-	  {
         "Name": "Fire shock",
         "Key": "4",
-        "Requirements": ["Mana%>40", "InMeleeRange"],
+        "Requirements": [
+          "Mana%>40",
+          "InMeleeRange"
+        ],
         "Cooldown": 6,
         "Log": false,
         "MinMana": 80
+      },
+      {
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },
@@ -86,7 +105,7 @@
         "MinMana": 25,
         "Requirement": "not HasMainHandEnchant"
       },
-	  {
+      {
         "Name": "Lightning Shield",
         "StopBeforeCast": false,
         "Key": "6",
@@ -97,12 +116,12 @@
   },
   "Parallel": {
     "Sequence": [
-	  {
+      {
         "Name": "Healing Wave",
-		"StopBeforeCast": true,
+        "StopBeforeCast": true,
         "Key": "3",
         "Requirement": "Health%<50",
-		"Cooldown": 5,
+        "Cooldown": 5,
         "HasCastBar": true,
         "Log": false,
         "MinMana": 80

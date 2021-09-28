@@ -22,10 +22,6 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Approach",
-        "Cooldown": 10
-      },
-      {
         "Name": "Bloodrage",
         "Key": "2",
         "Cooldown": 60
@@ -53,6 +49,15 @@
         "Name": "Heroic Strike",
         "Key": "4",
         "MinRage": 10
+      },
+      {
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },

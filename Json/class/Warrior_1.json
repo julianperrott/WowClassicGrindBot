@@ -11,7 +11,12 @@
       },
       {
         "Name": "Approach",
-        "Cooldown": 5
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },

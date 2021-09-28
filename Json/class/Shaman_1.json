@@ -34,9 +34,13 @@
         "MinMana": 25
       },
       {
-        "Name": "AutoAttack",
-        "Cooldown": 3,
-        "Requirements": ["not AutoAttacking"]
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },

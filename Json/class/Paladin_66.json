@@ -6,61 +6,72 @@
   "PathFilename": "_pack\\60-70\\Terokkar Forest\\62-64.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
-  "Blacklist": ["Hive","Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
   "MountKey": "N1",
-  "Pull": {
-    "Sequence": []
-  },
   "Combat": {
     "Sequence": [
-	  {
+      {
         "Name": "Divine Shield",
         "Key": "5",
         "Requirement": "Health%<20",
         "Cooldown": 60,
         "Log": false
       },
-	  {
+      {
         "Name": "Healing Potion",
         "Key": "N2",
         "Requirement": "Health%<10",
         "Cooldown": 120,
         "Log": false
       },
-	  {"Name": "Holy Light",
+      {
+        "Name": "Holy Light",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "4",
-        "Requirements": ["Health%<35","TargetHealth%>20"],
+        "Requirements": [
+          "Health%<35",
+          "TargetHealth%>20"
+        ],
         "Cooldown": 3,
-        "MinMana": 460,
-	  },
-	  {
+        "MinMana": 460
+      },
+      {
         "Name": "Hammer of Justice",
         "Key": "N3",
         "Cooldown": 6,
         "MinMana": 300,
-		"Requirements": ["TargetHealth%<20"]
+        "Requirements": [
+          "TargetHealth%<20"
+        ]
       },
-	  {
+      {
         "Name": "Seal of Wisdom",
         "Key": "N6",
         "Cooldown": 3,
         "MinMana": 82,
-        "Requirements": ["Mana%<50", "not Seal"]
+        "Requirements": [
+          "Mana%<50",
+          "not Seal"
+        ]
       },
-	  {
+      {
         "Name": "Seal of Command",
         "Key": "2",
         "Cooldown": 3,
         "MinMana": 82,
-        "Requirements": ["Mana%>50", "not Seal"]
+        "Requirements": [
+          "Mana%>50",
+          "not Seal"
+        ]
       },
       {
         "Name": "Judgement",
         "Key": "3",
         "Cooldown": 8,
-		"Requirements": ["Mana%>60","TargetHealth%>30"],
+        "Requirements": [
+          "Mana%>60",
+          "TargetHealth%>30"
+        ],
         "MinMana": 10
       },
       {
@@ -68,25 +79,37 @@
         "Key": "6",
         "Cooldown": 60,
         "MinMana": 100,
-		"Requirements": ["Health%<50"]
+        "Requirements": [
+          "Health%<50"
+        ]
       },
-	  {
+      {
         "Name": "Consecreation",
         "Key": "F4",
         "Cooldown": 8,
         "MinMana": 100,
-		"Requirements": [ "MobCount>2","Mana%>60"]
+        "Requirements": [
+          "MobCount>2",
+          "Mana%>60"
+        ]
       },
-	  {
+      {
         "Name": "Crusader Strike",
         "Key": "1",
         "Cooldown": 6,
         "MinMana": 300,
-		"Requirements":  ["Mana%>60"]
+        "Requirements": [
+          "Mana%>60"
+        ]
       },
       {
-        "Name": "AutoAttack",
-        "Requirements": ["not AutoAttacking"]
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },
@@ -111,15 +134,18 @@
   },
   "Parallel": {
     "Sequence": [
-	  {
+      {
         "Name": "Holy Light",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "4",
-        "Requirements": ["Health%<40","Mana%>50"],
+        "Requirements": [
+          "Health%<40",
+          "Mana%>50"
+        ],
         "Cooldown": 3,
         "MinMana": 710,
-        "Cost": 10,
+        "Cost": 10
       },
       {
         "Name": "Water",
@@ -129,7 +155,7 @@
         "Cooldown": 6,
         "Log": false
       },
-	  {
+      {
         "Name": "Food",
         "StopBeforeCast": true,
         "Key": "7",

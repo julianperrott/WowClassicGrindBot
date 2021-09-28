@@ -47,7 +47,6 @@
       {
         "Name": "Rockbiter Weapon",
         "StopBeforeCast": false,
-        "DelayAfterCast": 1000,
         "Key": "5",
         "MinMana": 15,
         "Requirement": "not HasMainHandEnchant"

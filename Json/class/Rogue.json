@@ -40,10 +40,6 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Approach",
-        "Cooldown": 5
-      },
-      {
         "Name": "Cold Blood",
         "Key": "1",
         "Cooldown": 180
@@ -80,6 +76,15 @@
         "Name": "Sinister Strike",
         "Key": "2",
         "MinEnergy": 40
+      },
+      {
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },

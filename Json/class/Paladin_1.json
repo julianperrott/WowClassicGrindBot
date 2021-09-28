@@ -5,13 +5,19 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Approach"
-      },
-      {
         "Name": "Seal of Righteousness",
         "Key": "2",
         "Cooldown": 2,
         "Requirement": "not Seal"
+      },
+      {
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },

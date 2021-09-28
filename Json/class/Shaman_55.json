@@ -9,24 +9,19 @@
   "NPCMaxLevels_Above": 2,
   "MountKey": "N1",
   "Pull": {
-    "Sequence": 
-	[]
+    "Sequence": []
   },
   "Combat": {
     "Sequence": [
-	  {
-        "Name": "AutoAttack",
-        "Requirement": "not AutoAttack"
-      },
-	  {
+      {
         "Name": "Shaman Ferry",
         "Key": "F3",
         "StopBeforeCast": false,
         "HasCastBar": false,
-		"Requirement": "Mana%<50",
-		"Cooldown":120,
+        "Requirement": "Mana%<50",
+        "Cooldown": 120,
       },
-	  {
+      {
         "Name": "Stoneclaw Totem",
         "Key": "F9",
         "Requirement": "MobCount>2",
@@ -34,7 +29,7 @@
         "Log": false,
         "MinMana": 30
       },
-	  {
+      {
         "Name": "Searing Totem",
         "Key": "F7",
         "Requirement": "MobCount>2",
@@ -42,7 +37,7 @@
         "Log": false,
         "MinMana": 95
       },
-	   {
+      {
         "Name": "War Stomp",
         "Key": "0",
         "Requirement": "Health%<50",
@@ -53,30 +48,48 @@
       {
         "Name": "Healing Wave",
         "Key": "3",
-		"StopBeforeCast": true,
-        "Requirements": ["Health%<40","TargetHealth%>15"],
-		"Cooldown": 5,
+        "StopBeforeCast": true,
+        "Requirements": [
+          "Health%<40",
+          "TargetHealth%>15"
+        ],
+        "Cooldown": 5,
         "HasCastBar": true,
         "Log": false,
         "MinMana": 200
       },
-	  {
+      {
         "Name": "Stormstrike",
         "Key": "1",
-        "Requirements": ["Mana%>45", "InMeleeRange"],
+        "Requirements": [
+          "Mana%>45",
+          "InMeleeRange"
+        ],
         "Log": false,
-		"StopBeforeCast": true,
-		"Cooldown": 5,
+        "StopBeforeCast": true,
+        "Cooldown": 5,
         "MinMana": 87
-      },	  
-	  {
+      },
+      {
         "Name": "Fire shock",
         "Key": "4",
-        "Requirements": ["Mana%>40","TargetHealth%>10"],
+        "Requirements": [
+          "Mana%>40",
+          "TargetHealth%>10"
+        ],
         "Log": false,
-		"Cooldown": 12,
+        "Cooldown": 12,
         "MinMana": 80
       },
+      {
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
+      }
     ]
   },
   "Adhoc": {
@@ -88,14 +101,14 @@
         "MinMana": 90,
         "Requirement": "not HasMainHandEnchant"
       },
-	  {
+      {
         "Name": "Windfury/Falme Weapon",
         "StopBeforeCast": false,
         "Key": "5",
         "MinMana": 90,
         "Requirement": "not HasOffHandEnchant"
       },
-	  {
+      {
         "Name": "Lightning Shield",
         "StopBeforeCast": false,
         "Key": "7",
@@ -106,12 +119,15 @@
   },
   "Parallel": {
     "Sequence": [
-	  {
+      {
         "Name": "Healing Wave",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "4",
-        "Requirements": ["Health%<40","Mana%>65"],
+        "Requirements": [
+          "Health%<40",
+          "Mana%>65"
+        ],
         "Cooldown": 3,
         "MinMana": 310,
         "Cost": 6,
@@ -124,7 +140,7 @@
         "Cooldown": 6,
         "Log": false
       },
-	  {
+      {
         "Name": "Food",
         "StopBeforeCast": true,
         "Key": "8",
