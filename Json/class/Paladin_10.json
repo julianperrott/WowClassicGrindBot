@@ -6,6 +6,8 @@
       {
         "Name": "Seal of the Crusader",
         "Key": "3",
+        "Requirement": "not Seal",
+        "WaitBuffAfterCast": true,
         "DelayAfterCast": 0
       }
     ]
@@ -17,7 +19,7 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "6",
-        "Requirement": "Health%<60",
+        "Requirements": ["Health%<60", "TargetHealth%>20"],
         "Cooldown": 5
       },
       {
@@ -27,8 +29,15 @@
         "Key": "1"
       },
       {
+        "Name": "Hammer of Justice",
+        "Key": "7",
+        "WhenUsable": true,
+        "Requirement": "TargetHealth%>50"
+      },
+      {
         "Name": "Seal of the Righteousness",
         "Key": "2",
+        "WaitBuffAfterCast": true,
         "Requirement": "not Seal"
       },
       {
@@ -43,6 +52,13 @@
         "Key": "8",
         "Requirement": "not Aura",
         "Cooldown": 5
+      },
+      {
+        "Name": "Blessing of Might",
+        "Key": "4",
+        "WaitBuffAfterCast": true,
+        "Requirement": "not Blessing",
+        "Cooldown": 5
       }
     ]
   },
@@ -54,7 +70,7 @@
         "AfterCastWaitBuff": true,
         "DelayAfterCast": 0,
         "Key": "-",
-        "Requirement": "Mana%<35",
+        "Requirement": "Mana%<50",
         "Cooldown": 5
       },
       {
@@ -63,7 +79,7 @@
         "AfterCastWaitBuff": true,
         "DelayAfterCast": 0,
         "Key": "=",
-        "Requirement": "Health%<35",
+        "Requirement": "Health%<50",
         "Cooldown": 5
       }
 
