@@ -14,7 +14,7 @@ namespace Core
     public class ActionBarCostReader
     {
         private readonly ISquareReader reader;
-        private readonly int cellIdx;
+        private readonly int cActionbarNum;
 
         private readonly float MAX_POWER_TYPE = 1000000f;
         private readonly float MAX_ACTION_IDX = 1000f;
@@ -24,9 +24,9 @@ namespace Core
 
         private readonly Tuple<PowerType, int> empty = new Tuple<PowerType, int>(PowerType.Mana,0);
 
-        public ActionBarCostReader(ISquareReader reader, int cellIdx)
+        public ActionBarCostReader(ISquareReader reader, int cActionbarNum)
         {
-            this.cellIdx = cellIdx;
+            this.cActionbarNum = cActionbarNum;
             this.reader = reader;
         }
 
@@ -34,13 +34,13 @@ namespace Core
         {
             // formula
             // MAX_POWER_TYPE * type + MAX_ACTION_IDX * slot + cost
-            int data = (int)reader.GetLongAtCell(cellIdx);
+            int data = (int)reader.GetLongAtCell(cActionbarNum);
 
             int type = (int)(data / MAX_POWER_TYPE);
-            data -= ((int)MAX_POWER_TYPE * type);
+            data -= (int)MAX_POWER_TYPE * type;
 
             int index = (int)(data / MAX_ACTION_IDX);
-            data -= ((int)MAX_ACTION_IDX * index);
+            data -= (int)MAX_ACTION_IDX * index;
 
             int cost = data;
 
@@ -58,11 +58,11 @@ namespace Core
             }
         }
 
-        public Tuple<PowerType,int> GetCostByActionBarSlot(string slot)
+        public Tuple<PowerType, int> GetCostByActionBarSlot(string slot)
         {
-            if(KeyReader.ActionBarSlotMap.TryGetValue(slot, out var slotName))
+            if (KeyReader.ActionBarSlotMap.TryGetValue(slot, out var slotName))
             {
-                if(dict.TryGetValue(slotName, out var tuple))
+                if (dict.TryGetValue(slotName, out var tuple))
                 {
                     return tuple;
                 }
