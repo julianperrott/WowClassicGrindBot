@@ -131,13 +131,17 @@ namespace Core.Goals
                 await input.TapClearTarget("");
                 await wait.Update(1);
                 await input.KeyPress(random.Next(2) == 0 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow, 1000, "Seems stuck! Clear Target. Turn away.");
+
+                approachStart = DateTime.Now;
             }
 
-            if (SecondsSinceApproachStarted > 10)
+            if (SecondsSinceApproachStarted > 15)
             {
                 await input.TapClearTarget("");
                 await wait.Update(1);
                 await input.KeyPress(random.Next(2) == 0 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow, 1000, "Too long time. Clear Target. Turn away.");
+
+                approachStart = DateTime.Now;
             }
 
             if (playerReader.TargetGuid == initialTargetGuid)
@@ -174,6 +178,8 @@ namespace Core.Goals
                 Log($"We are going away from the target! {initialMinRange} < {playerReader.MinRange}");
                 await input.TapClearTarget();
                 await wait.Update(1);
+
+                approachStart = DateTime.Now;
             }
 
             await RandomJump();

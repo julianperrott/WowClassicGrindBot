@@ -70,6 +70,8 @@ namespace Core.Goals
             {
                 await input.TapClearTarget();
                 await input.KeyPress(random.Next(2) == 0 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow, 1000, "Too much time to pull!");
+                pullStart = DateTime.Now;
+
                 return;
             }
 
@@ -97,6 +99,7 @@ namespace Core.Goals
 
                     await input.TapClearTarget();
                     await wait.Update(1);
+                    pullStart = DateTime.Now;
 
                     return;
                 }
