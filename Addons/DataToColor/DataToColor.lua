@@ -27,10 +27,7 @@ local ITEM_ITERATION_FRAME_CHANGE_RATE = 5
 local ACTION_BAR_ITERATION_FRAME_CHANGE_RATE = 5
 
 -- Action bar configuration for which spells are tracked
-local MAIN_MIN = 1
-local MAIN_MAX = 12
-local BOTTOM_LEFT_MIN = 61
-local BOTTOM_LEFT_MAX = 72
+local MAX_ACTIONBAR_SLOT = 108
 
 -- Timers
 DataToColor.timeUpdateSec = 0.1
@@ -247,17 +244,15 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrF(y * 10, 2) --2 The y-coordinate
 
             MakePixelSquareArrF(DataToColor:GetPlayerFacing(), 3) --3 The direction the player is facing in radians
-            MakePixelSquareArrI(DataToColor:GetZoneName(0), 4) -- Get name of first 3 characters of zone
-            MakePixelSquareArrI(DataToColor:GetZoneName(3), 5) -- Get name of last 3 characters of zone
+            MakePixelSquareArrI(DataToColor:GetBestMap(), 4) -- MapId
+            MakePixelSquareArrI(DataToColor:getPlayerLevel(), 5) --12 Represents character level
 
             x, y = DataToColor:CorpsePosition()
-
             MakePixelSquareArrF(x * 10, 6) -- Returns the x coordinates of corpse
             MakePixelSquareArrF(y * 10, 7) -- Return y coordinates of corpse
 
             -- Boolean variables --
             MakePixelSquareArrI(DataToColor:Base2Converter(), 8)
-
             -- 9 not used
 
             -- Start combat/NPC related variables --
@@ -265,7 +260,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor:getHealthCurrent(DataToColor.C.unitPlayer), 11) --9 Represents current amount of health
             MakePixelSquareArrI(DataToColor:getManaMax(DataToColor.C.unitPlayer), 12) --10 Represents maximum amount of mana
             MakePixelSquareArrI(DataToColor:getManaCurrent(DataToColor.C.unitPlayer), 13) --11 Represents current amount of mana
-            MakePixelSquareArrI(DataToColor:getPlayerLevel(), 14) --12 Represents character level
+            -- 14 unused
             MakePixelSquareArrI(DataToColor:getRange(), 15) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
 
             if DataToColor.targetChanged then
@@ -278,8 +273,16 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor:getHealthCurrent(DataToColor.C.unitTarget), 19) -- Returns the current amount of health the target currently has
 
             if DataToColor:Modulo(globalCounter, ITEM_ITERATION_FRAME_CHANGE_RATE) == 0 then
+                -- 20
+                bagNum = DataToColor.stack:pop(DataToColor.bagQueue)
+                if bagNum then
+                    local freeSlots, bagType = GetContainerNumFreeSlots(bagNum) or 0, 0
+                    -- BagType + Index + FreeSpace + BagSlots
+                    MakePixelSquareArrI(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + DataToColor:bagSlots(bagNum), 20)
+                    --DataToColor:Print("bagQueue "..bagType.." -> "..bagNum.." -> "..freeSlots.." -> "..DataToColor:bagSlots(bagNum))
+                end
 
-                -- 20 21 22
+                -- 21 22 23
                 bagSlotNum = DataToColor.stack:pop(DataToColor.inventoryQueue)
                 if bagSlotNum then
 
@@ -301,96 +304,71 @@ function DataToColor:CreateFrames(n)
                         soulbound = C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bagNum, bagSlotNum)) and 1 or 0
                     end
 
-                    -- 20 -- 0-4 bagNum + 1-21 itenNum + 1-1000 quantity
-                    MakePixelSquareArrI(bagNum * 1000000 + bagSlotNum * 10000 + itemCount, 20)
+                    -- 0-4 bagNum + 1-21 itenNum + 1-1000 quantity
+                    MakePixelSquareArrI(bagNum * 1000000 + bagSlotNum * 10000 + itemCount, 21)
 
-                    -- 21 -- itemId 1-999999
-                    MakePixelSquareArrI(itemID, 21)
+                    -- itemId 1-999999
+                    MakePixelSquareArrI(itemID, 22)
 
-                    -- 22 -- item bits
-                    MakePixelSquareArrI(soulbound, 22)
+                    -- item bits
+                    MakePixelSquareArrI(soulbound, 23)
                 end
 
-                -- 30 31
+                -- 24 25
                 equipmentSlot = DataToColor.stack:pop(DataToColor.equipmentQueue)
                 if equipmentSlot then
-                    MakePixelSquareArrI(DataToColor:equipSlotItemId(equipmentSlot), 30)
-                    MakePixelSquareArrI(equipmentSlot, 31)
+                    MakePixelSquareArrI(equipmentSlot, 24)
+                    MakePixelSquareArrI(DataToColor:equipSlotItemId(equipmentSlot), 25)
                     --DataToColor:Print("equipmentQueue "..equipmentSlot.." -> "..itemId)
-                end
-
-                -- 37
-                bagNum = DataToColor.stack:pop(DataToColor.bagQueue)
-                if bagNum then
-                    local freeSlots, bagType = GetContainerNumFreeSlots(bagNum)
-                    if not bagType then
-                        bagType = 0
-                    end
-                    MakePixelSquareArrI(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + DataToColor:bagSlots(bagNum), 37) -- BagType + Index + FreeSpace + BagSlots
-
-                    --DataToColor:Print("bagQueue "..bagType.." -> "..bagNum.." -> "..freeSlots.." -> "..DataToColor:bagSlots(bagNum))
                 end
             end
 
-            if DataToColor.updateActionBarCost then
-                if DataToColor:Modulo(globalCounter, ACTION_BAR_ITERATION_FRAME_CHANGE_RATE) == 0 then
+            if DataToColor:Modulo(globalCounter, ACTION_BAR_ITERATION_FRAME_CHANGE_RATE) == 0 then
+                if DataToColor.updateActionBarCost then
                     actionNum = actionNum + 1
-                    if actionNum >= 84 then
+                    if actionNum > MAX_ACTIONBAR_SLOT then
                         actionNum = 1
                         DataToColor.updateActionBarCost = false
                     end
                 end
             end
-            -- Controls rate at which item frames change.
+
             globalCounter = globalCounter + 1
 
-            -- Reseting global counter to prevent integer overflow
-            if globalCounter > 10000 then
-                globalCounter = 1000
-            end
+            MakePixelSquareArrI(DataToColor:isCurrentAction(1, 24), 26)
+            MakePixelSquareArrI(DataToColor:isCurrentAction(25, 48), 27)
+            MakePixelSquareArrI(DataToColor:isCurrentAction(49, 72), 28)
+            MakePixelSquareArrI(DataToColor:isCurrentAction(73, 96), 29)
+            MakePixelSquareArrI(DataToColor:isCurrentAction(97, 108), 30)
 
-            MakePixelSquareArrI(DataToColor:isCurrentAction(1, 24), 23)
-            MakePixelSquareArrI(DataToColor:isCurrentAction(25, 48), 24)
-            MakePixelSquareArrI(DataToColor:isCurrentAction(49, 72), 25)
-            MakePixelSquareArrI(DataToColor:isCurrentAction(73, 96), 26)
+            MakePixelSquareArrI(DataToColor:isActionUseable(1, 24), 31)
+            MakePixelSquareArrI(DataToColor:isActionUseable(25, 48), 32)
+            MakePixelSquareArrI(DataToColor:isActionUseable(49, 72), 33)
+            MakePixelSquareArrI(DataToColor:isActionUseable(73, 96), 34)
+            MakePixelSquareArrI(DataToColor:isActionUseable(97, 108), 35)
 
-            -- 27 not used
-            -- 28 not used
-            -- 29 not used
+            MakePixelSquareArrI(DataToColor:actionbarCost(actionNum), 36)
 
-            -- Amount of money in coppers
-            MakePixelSquareArrI(DataToColor:Modulo(DataToColor:getMoneyTotal(), 1000000), 32) -- 13 Represents amount of money held (in copper)
-            MakePixelSquareArrI(floor(DataToColor:getMoneyTotal() / 1000000), 33) -- 14 Represents amount of money held (in gold)  
-
-            -- Start main action page (page 1)
-            MakePixelSquareArrI(DataToColor:isActionUseable(1, 24), 34)
-            MakePixelSquareArrI(DataToColor:isActionUseable(25, 48), 35)
-            MakePixelSquareArrI(DataToColor:isActionUseable(49, 72), 36)
-            MakePixelSquareArrI(DataToColor:isActionUseable(73, 96), 42)
+            -- 37 not used
 
             MakePixelSquareArrI(DataToColor:getHealthMax(DataToColor.C.unitPet), 38)
             MakePixelSquareArrI(DataToColor:getHealthCurrent(DataToColor.C.unitPet), 39)
 
-            -- 40 not used
-
-            -- Profession levels:
-            -- tracks our skinning level
-            --MakePixelSquareArr(DataToColor:integerToColor(DataToColor:GetProfessionLevel("Skinning")), 41) -- Skinning profession level
-            -- tracks our fishing level
-            --MakePixelSquareArr(DataToColor:integerToColor(DataToColor:GetProfessionLevel("Fishing")), 42) -- Fishing profession level
+            MakePixelSquareArrI(DataToColor:areSpellsInRange(), 40)
             MakePixelSquareArrI(DataToColor:getAuraMaskForClass(UnitBuff, DataToColor.C.unitPlayer, DataToColor.S.playerBuffs), 41);
-            -- 42 used by keys
-            
+            MakePixelSquareArrI(DataToColor:getAuraMaskForClass(UnitDebuff, DataToColor.C.unitTarget, DataToColor.S.targetDebuffs), 42);
             MakePixelSquareArrI(DataToColor:getTargetLevel(), 43)
 
-            MakePixelSquareArrI(DataToColor:actionbarCost(actionNum), 44)
-            -- 45 not used
+            -- Amount of money in coppers
+            MakePixelSquareArrI(DataToColor:Modulo(DataToColor:getMoneyTotal(), 1000000), 44) -- Represents amount of money held (in copper)
+            MakePixelSquareArrI(floor(DataToColor:getMoneyTotal() / 1000000), 45) -- Represents amount of money held (in gold) 
+
             --MakePixelSquareArrI(DataToColor:GetGossipIcons(), 45) -- Returns which gossip icons are on display in dialogue box
 
             MakePixelSquareArrI(DataToColor.S.PlayerClass, 46) -- Returns player class as an integer
             MakePixelSquareArrI(DataToColor:isUnskinnable(), 47) -- Returns 1 if creature is unskinnable
             MakePixelSquareArrI(DataToColor:shapeshiftForm(), 48) -- Shapeshift id https://wowwiki.fandom.com/wiki/API_GetShapeshiftForm
-            MakePixelSquareArrI(DataToColor:areSpellsInRange(), 49) -- Are spells in range
+            -- 49 not used
 
             MakePixelSquareArrI(DataToColor:getUnitXP(DataToColor.C.unitPlayer), 50) -- Player Xp
             MakePixelSquareArrI(DataToColor:getUnitXPMax(DataToColor.C.unitPlayer), 51) -- Player Level Xp
@@ -399,27 +377,29 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor:CastingInfoSpellId(), 53) -- Spell being cast
             MakePixelSquareArrI(DataToColor:ComboPoints(), 54) -- Combo points for rogue / druid
-            MakePixelSquareArrI(DataToColor:getAuraMaskForClass(UnitDebuff, DataToColor.C.unitTarget, DataToColor.S.targetDebuffs), 55); -- target debuffs
+            -- 55 unused
 
             if DataToColor.targetChanged then
                 MakePixelSquareArrI(DataToColor:targetNpcId(), 56) -- target id
                 MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitTarget),57) -- target reasonably uniqueId
             end
 
-            MakePixelSquareArrI(DataToColor:GetBestMap(),58) -- MapId
+            -- 58 unused
 
             MakePixelSquareArrI(DataToColor:IsTargetOfTargetPlayerAsNumber(),59) -- IsTargetOfTargetPlayerAsNumber
+
             -- 60 not used
             -- 61 not used
             -- 62 not used
             -- 63 not used
             -- 64 not used
-            MakePixelSquareArrI(DataToColor.lastCombatCreature,65) -- Combat message creature
-            MakePixelSquareArrI(DataToColor.lastCombatDamageDealerCreature,66) -- Combat message last damage dealer creature
-            MakePixelSquareArrI(DataToColor.lastCombatCreatureDied,67) -- Last Killed Unit
 
-            MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPet),68) -- pet guid
-            MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPetTarget),69) -- pet target
+            MakePixelSquareArrI(DataToColor.lastCombatCreature, 65) -- Combat message creature
+            MakePixelSquareArrI(DataToColor.lastCombatDamageDealerCreature, 66) -- Combat message last damage dealer creature
+            MakePixelSquareArrI(DataToColor.lastCombatCreatureDied, 67) -- Last Killed Unit
+
+            MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPet), 68) -- pet guid
+            MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPetTarget), 69) -- pet target
 
             -- Timers
             MakePixelSquareArrI(DataToColor.globalTime, 70)

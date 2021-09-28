@@ -8,8 +8,10 @@ namespace Core
 {
     public class BagReader
     {
-        private int bagItemsDataStart = 20;
-        private int bagSlotCountStart = 37;
+        private readonly int cBagMeta;
+        private readonly int cItemNumCount;
+        private readonly int cItemId;
+        private readonly int cItemBits;
 
         private readonly ISquareReader reader;
         private readonly ItemDB itemDb;
@@ -23,29 +25,46 @@ namespace Core
 
         public event EventHandler? DataChanged;
 
-        public BagReader(ISquareReader reader, int bagItemsDataStart, ItemDB itemDb, EquipmentReader equipmentReader)
+        public BagReader(ISquareReader reader, ItemDB itemDb, EquipmentReader equipmentReader, int cbagMeta, int citemNumCount, int cItemId, int cItemBits)
         {
-            this.bagItemsDataStart = bagItemsDataStart;
             this.reader = reader;
             this.itemDb = itemDb;
             this.equipmentReader = equipmentReader;
+
+            this.cBagMeta = cbagMeta;
+            this.cItemNumCount = citemNumCount;
+            this.cItemId = cItemId;
+            this.cItemBits = cItemBits;
         }
 
         public void Read()
         {
-            bool hasChanged = false;
+            bool hasChanged;
 
+            ReadBagMeta();
+
+            ReadInventory(out hasChanged);
+
+            if (hasChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
+            {
+                DataChanged?.Invoke(this, new EventArgs());
+                lastEvent = DateTime.Now;
+            }
+        }
+
+        private void ReadBagMeta()
+        {
             //bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)
-            int data = (int)reader.GetLongAtCell(bagSlotCountStart);
+            int data = (int)reader.GetLongAtCell(cBagMeta);
 
             int bagType = (int)(data / 1000000f);
-            data -= (1000000 * bagType);
+            data -= 1000000 * bagType;
 
             int index = (int)(data / 100000f);
-            data -= (100000 * index);
+            data -= 100000 * index;
 
             int freeSlots = (int)(data / 1000f);
-            data -= (1000 * freeSlots);
+            data -= 1000 * freeSlots;
 
             int slotCount = data;
 
@@ -59,22 +78,26 @@ namespace Core
                 bags[index].SlotCount = slotCount;
                 bags[index].FreeSlot = freeSlots;
             }
+        }
 
+        private void ReadInventory(out bool hasChanged)
+        {
+            hasChanged = false;
 
             // 20 -- 0-4 bagNum + 1-21 itenNum + 1-1000 quantity
-            int itemCount = (int)reader.GetLongAtCell(bagItemsDataStart);
+            int itemCount = (int)reader.GetLongAtCell(cItemNumCount);
 
             int bag = (int)(itemCount / 1000000f);
-            itemCount -= (1000000 * bag);
+            itemCount -= 1000000 * bag;
 
             int slot = (int)(itemCount / 10000f);
-            itemCount -= (10000 * slot);
+            itemCount -= 10000 * slot;
 
-            // 21 -- 1-999999 itemId 
-            int itemId = (int)reader.GetLongAtCell(bagItemsDataStart + 1);
+            // 21 -- 1-999999 itemId
+            int itemId = (int)reader.GetLongAtCell(cItemId);
 
             // 22 -- 0-24 item bits
-            int itemBits = (int)reader.GetLongAtCell(bagItemsDataStart + 2);
+            int itemBits = (int)reader.GetLongAtCell(cItemBits);
 
             bool isSoulbound = itemBits == 1;
 
@@ -121,12 +144,6 @@ namespace Core
                     BagItems.Remove(existingItem);
                     hasChanged = true;
                 }
-            }
-
-            if (hasChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
-            {
-                DataChanged?.Invoke(this, new EventArgs());
-                lastEvent = DateTime.Now;
             }
         }
 

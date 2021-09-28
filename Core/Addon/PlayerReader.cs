@@ -29,7 +29,9 @@ namespace Core
         public double YCoord => reader.GetFixedPointAtCell(2) * 10;
         public double Direction => reader.GetFixedPointAtCell(3);
 
-        public string Zone => reader.GetStringAtCell(4) + reader.GetStringAtCell(5); // Checks current geographic zone
+        public int UIMapId => (int)reader.GetLongAtCell(4);
+
+        public long PlayerLevel => reader.GetLongAtCell(5);
 
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
 
@@ -49,8 +51,6 @@ namespace Core
         public long ManaMax => reader.GetLongAtCell(12); // Maximum amount of mana
         public long ManaCurrent => reader.GetLongAtCell(13); // Current amount of mana
         public long ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
-
-        public long PlayerLevel => reader.GetLongAtCell(14); // Level is our character's exact level ranging from 1-60
 
         public bool IsInMeleeRange => MinRange == 0 && MaxRange == 5;
         public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
@@ -79,36 +79,40 @@ namespace Core
 
         public bool HasTarget => PlayerBitValues.HasTarget || TargetHealth > 0;
 
-        // 23 - 26
-        public ActionBarCurrentAction CurrentAction => new ActionBarCurrentAction(reader, 23, 24, 25, 26);
+        public ActionBarBits CurrentAction => new ActionBarBits(reader, 26, 27, 28, 29, 30);
+        public ActionBarBits UsableAction => new ActionBarBits(reader, 31, 32, 33, 34, 35);
 
-        // 32 - 33
-        public long Gold => reader.GetLongAtCell(32) + reader.GetLongAtCell(33) * 1000000;
+        // 36 Actionbar cost
 
-        // 34 -36 Loops through binaries of three pixels. Currently does 24 slots. 1-12 and 61-72.
-        public ActionBarUsable ActionBarUsable => new ActionBarUsable(reader, 34, 35, 36, 42);
-
-        // 37 Bag Slots - BadReader handles it
+        // 37 unused
 
         public long PetMaxHealth => reader.GetLongAtCell(38);
         public long PetHealth => reader.GetLongAtCell(39);
 
         public long PetHealthPercentage => PetMaxHealth == 0 || PetHealth == 1 ? 0 : (PetHealth * 100) / PetMaxHealth;
 
-        // 40 - empty
+        public SpellInRange SpellInRange => new SpellInRange(reader.GetLongAtCell(40));
+
+        public bool WithInPullRange => SpellInRange.WithinPullRange(this, PlayerClass);
+        public bool WithInCombatRange => SpellInRange.WithinCombatRange(this, PlayerClass);
+
 
         public BuffStatus Buffs => new BuffStatus(reader.GetLongAtCell(41));
-        public DebuffStatus Debuffs => new DebuffStatus(reader.GetLongAtCell(55));
+        public DebuffStatus Debuffs => new DebuffStatus(reader.GetLongAtCell(42));
 
         public long TargetLevel => reader.GetLongAtCell(43);
 
-        // cell 44 reserved to ActionBarCostReader
+        public long Gold => reader.GetLongAtCell(44) + (reader.GetLongAtCell(45) * 1000000);
 
         public PlayerClassEnum PlayerClass => (PlayerClassEnum)reader.GetLongAtCell(46);
 
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
 
         public ShapeshiftForm Druid_ShapeshiftForm => (ShapeshiftForm)reader.GetLongAtCell(48);
+
+        public Stance Stance => new Stance(reader.GetLongAtCell(48));
+
+        public Form Form => Stance.Get(PlayerClass);
 
         public long PlayerXp => reader.GetLongAtCell(50);
         public long PlayerMaxXp => reader.GetLongAtCell(51);
@@ -117,23 +121,6 @@ namespace Core
         private long UIErrorMessage => reader.GetLongAtCell(52);
         public UI_ERROR LastUIErrorMessage { get; set; }
 
-        private SpellInRange spellInRange = new SpellInRange(0);
-
-        public SpellInRange SpellInRange
-        {
-            get
-            {
-                var x = reader.GetLongAtCell(49);
-                if (x < 1024) // ignore odd values
-                {
-                    spellInRange = new SpellInRange(x);
-                }
-                return spellInRange;
-            }
-        }
-
-        public bool WithInPullRange => SpellInRange.WithinPullRange(this, this.PlayerClass);
-        public bool WithInCombatRange => SpellInRange.WithinCombatRange(this, this.PlayerClass);
 
         public bool IsAutoAttacking => PlayerBitValues.IsAutoRepeatSpellOn_AutoAttack;
         public bool IsShooting => PlayerBitValues.IsAutoRepeatSpellOn_Shoot;
@@ -146,13 +133,9 @@ namespace Core
         public int TargetId => (int)reader.GetLongAtCell(56);
         public long TargetGuid => reader.GetLongAtCell(57);
 
-        public int UIMapId => (int)reader.GetLongAtCell(58);
-
         public bool IsCasting => SpellBeingCast != 0;
 
         public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetLongAtCell(59);
-
-        public bool TargetIsFrostbitten => this.PlayerClass == PlayerClassEnum.Mage && this.Debuffs.Frostbite;
 
         public int LastDamageDealerGuid => (int)reader.GetLongAtCell(66);
 
