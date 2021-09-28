@@ -136,9 +136,21 @@ namespace Core.Goals
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
-            if (playerReader.HasTarget || await AquireTarget())
+            if (playerReader.HasTarget)
             {
+                if (playerReader.PlayerBitValues.TargetIsDead)
+                {
+                    await input.TapClearTarget("Target is dead.");
+                    await wait.Update(1);
+                    return;
+                }
+
                 await stopMoving.StopTurn();
+                return;
+            }
+
+            if (await AquireTarget())
+            {
                 return;
             }
 
