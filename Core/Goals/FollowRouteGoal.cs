@@ -27,7 +27,7 @@ namespace Core.Goals
         private readonly IPPather pather;
         private readonly MountHandler mountHandler;
 
-        private const int MinDistance = 8;
+        private readonly int MinDistance;
 
         private double lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
@@ -77,6 +77,8 @@ namespace Core.Goals
             this.classConfiguration = classConfiguration;
             this.pather = pather;
             this.mountHandler = mountHandler;
+
+            MinDistance = !(pather is RemotePathingAPIV2) || !(pather is RemotePathingAPIV3) ? 15 : 8;
 
             if (classConfiguration.Mode != Mode.AttendedGather)
             {
@@ -325,7 +327,7 @@ namespace Core.Goals
 
         private void SimplyfyRouteToWaypoint()
         {
-            var simple = PathSimplify.Simplify(routeToWaypoint.ToArray(), 0.01f);
+            var simple = PathSimplify.Simplify(routeToWaypoint.ToArray(), 0.05f);
             simple.Reverse();
             routeToWaypoint = new Stack<WowPoint>(simple);
         }
