@@ -388,6 +388,7 @@ namespace Core.Goals
                     {
                         logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_BADATTACKPOS} -- Interact!");
                         await input.TapInteractKey("");
+                        await stopMoving.Stop();
                         playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     }
                     else
