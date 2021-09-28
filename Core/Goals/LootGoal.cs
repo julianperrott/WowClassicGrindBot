@@ -57,6 +57,8 @@ namespace Core.Goals
         public override async Task PerformAction()
         {
             lastLoot = playerReader.LastLootTime;
+
+            await stopMoving.Stop();
             combatUtil.Update();
 
             Log("Search for corpse");
