@@ -18,7 +18,6 @@ namespace Core.Goals
         private readonly StopMoving stopMoving;
         private readonly CastingHandler castingHandler;
         
-        private DateTime lastActive = DateTime.Now;
         private readonly ClassConfiguration classConfiguration;
         private DateTime lastPulled = DateTime.Now;
 
@@ -52,11 +51,6 @@ namespace Core.Goals
 
         protected async Task Fight()
         {
-            if ((DateTime.Now - lastActive).TotalSeconds > 5)
-            {
-                classConfiguration.Interact.ResetCooldown();
-            }
-
             if (playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
             {
                 await input.TapPetAttack("");
@@ -67,14 +61,13 @@ namespace Core.Goals
                 if (!playerReader.HasTarget)
                 {
                     logger.LogInformation($"{GetType().Name}: Lost Target!");
+                    await stopMoving.Stop();
                     break;
                 }
 
-                bool isFightold=(DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5;
-                if (item.Name == "Interact" && !isFightold) // don't interact at the start of the fight
+                if (playerReader.IsAutoAttacking)
                 {
-                    item.SetClicked();
-                    continue;
+                    await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}: Fight AutoAttacking");
                 }
 
                 if (await castingHandler.CastIfReady(item, item.DelayBeforeCast))
@@ -82,8 +75,6 @@ namespace Core.Goals
                     break;
                 }
             }
-
-            lastActive = DateTime.Now;
         }
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
@@ -132,26 +123,19 @@ namespace Core.Goals
             {
                 await input.TapDismount();
             }
+
+            await stopMoving.Stop();
+
+            logger.LogInformation($"{GetType().Name}: OnEnter");
+            SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
         }
 
         public override async Task PerformAction()
         {
             bool hasTarget = playerReader.HasTarget;
 
-            /*
-            if ((DateTime.Now - lastActive).TotalSeconds > 5 && (DateTime.Now - lastPulled).TotalSeconds > 5)
-            {
-                await stopMoving.Stop();
-                await input.TapInteractKey($"{GetType().Name}: Interact and stop");
-            }
-            */
-
-            SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
-
             await Fight();
             await KillCheck(hasTarget);
-
-            lastActive = DateTime.Now;
 
             await Task.Delay((int)(playerReader.AvgUpdateLatency / 2));
         }
