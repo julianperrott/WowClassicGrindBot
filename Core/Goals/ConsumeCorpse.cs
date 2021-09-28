@@ -14,7 +14,6 @@ namespace Core.Goals
         private readonly ILogger logger;
         private readonly Wait wait;
         private readonly PlayerReader playerReader;
-        private DateTime lastActive = DateTime.Now;
 
         public ConsumeCorpse(ILogger logger, Wait wait, PlayerReader playerReader)
         {

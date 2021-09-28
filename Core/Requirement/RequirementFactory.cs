@@ -68,7 +68,7 @@ namespace Core
             {
                 RequirementObjects.Add(new Requirement
                 {
-                    HasRequirement = () => playerReader.ActionBarUsable.Usable(item.Key),
+                    HasRequirement = () => playerReader.UsableAction.Is(item.Key),
                     LogMessage = () => $"Usable"
                 });
             }

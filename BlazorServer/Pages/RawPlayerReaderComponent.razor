@@ -1,0 +1,103 @@
+﻿@using Core
+@inject Core.IBotController botController
+@inject Core.IAddonReader addonReader
+
+@if (addonReader.PlayerReader != null)
+{
+    <div class="card">
+        <div class="card-header">
+            Raw PlayerReader
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <table class="table table-bordered">
+
+                @foreach (var property in GetPropertyValues(addonReader.PlayerReader))
+                {
+                <tr>
+                    <td>@(property.Name)</td>
+                    <td>
+                        <input value="@property.Value" Disabled="true" />
+                    </td>
+                </tr>
+                }
+            </table>
+        </div>
+    </div>
+    }
+
+@using SharedLib; 
+@code {
+
+    protected override void OnInitialized()
+    {
+        if (DataFrameConfiguration.Exists())
+        {
+            ((Core.AddonReader)addonReader).AddonDataChanged += (o, e) =>
+            {
+                base.InvokeAsync(() =>
+                {
+                    try
+                    {
+                        StateHasChanged();
+                    }
+                    catch { }
+                });
+            };
+        }
+    }
+
+    public class ObjectField
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+
+    static List<ObjectField> GetPropertyValues(object obj)
+    {
+        List<ObjectField> propList = new List<ObjectField>();
+        string objName = obj.ToString() ?? "";
+        if (objName.Length > 0) objName += ".";
+
+        foreach (var pinfo in obj.GetType().GetProperties())
+        {
+            if (pinfo.GetIndexParameters().Length != 0) return propList;
+
+            var value = pinfo.GetValue(obj, null);
+            if (value == null) continue;
+
+            if (pinfo.PropertyType.IsArray)
+            {
+                var arr = value as object[];
+                if (arr == null) continue;
+                for (var i = 0; i < arr.Length; i++)
+                {
+                    if (arr[i] != null && arr[i].GetType().IsPrimitive)
+                    {
+                        propList.Add(new ObjectField() { Name = objName + pinfo.Name + i.ToString(), Value = arr[i].ToString() ?? "" });
+                    }
+                    else
+                    {
+                        var lst = GetPropertyValues(arr[i]);
+                        if (lst != null && lst.Count > 0)
+                            propList.AddRange(lst);
+                    }
+                }
+            }
+            else
+            {
+                if (pinfo.PropertyType.IsPrimitive || pinfo.PropertyType.IsEnum || value.GetType() == typeof(string))
+                {
+                    propList.Add(new ObjectField() { Name = objName + pinfo.Name, Value = value.ToString() ?? "" });
+                }
+                else
+                {
+                    var lst = GetPropertyValues(value);
+                    if (lst != null && lst.Count > 0)
+                        propList.AddRange(lst);
+                }
+            }
+        }
+        return propList;
+    }
+
+}

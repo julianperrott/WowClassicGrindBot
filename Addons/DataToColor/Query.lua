@@ -444,7 +444,7 @@ function DataToColor:checkTalentPoints()
 end
 
 function DataToColor:shapeshiftForm()
-    local form = GetShapeshiftForm(true)
+    local form = GetShapeshiftForm(false)
     if form == nil then
         form = 0
     end
