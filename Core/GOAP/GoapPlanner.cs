@@ -68,7 +68,7 @@ namespace Core.GOAP
             if (!success)
             {
                 // oh no, we didn't get a plan
-                logger.LogInformation("NO PLAN");
+                logger.LogInformation("New Plan= NO PLAN");
 
                 return new Queue<GoapGoal>();
             }
