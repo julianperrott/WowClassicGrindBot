@@ -11,12 +11,12 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction { get => 4.1f; }
 
+        public override bool Repeatable { get; } = false;
+
         private readonly ILogger logger;
         private readonly PlayerReader playerReader;
         private readonly ClassConfiguration classConfig;
 
-        private DateTime lastActive = DateTime.Now;
-        
         public CreatureKilledGoal(ILogger logger, PlayerReader playerReader, ClassConfiguration classConfig)
         {
             this.logger = logger;
@@ -42,23 +42,18 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
-            if((DateTime.Now - lastActive).TotalSeconds > 0.25f)
+            logger.LogWarning("------    Safe to consume the kill");
+            playerReader.ProduceCorpse();
+
+            SendActionEvent(new ActionEventArgs(GoapKey.producedcorpse, false));
+            SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, true));
+
+            if (classConfig.Loot)
             {
-                logger.LogWarning("------    Safe to consume the kill");
-                playerReader.ProduceCorpse();
-
-                SendActionEvent(new ActionEventArgs(GoapKey.producedcorpse, false));
-                SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, true));
-
-                if(classConfig.Loot)
-                {
-                    SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
-                }
-
-                lastActive = DateTime.Now;
+                SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
             }
 
-            await Task.Delay(0);
+            await Task.Delay(10);
         }
     }
 }

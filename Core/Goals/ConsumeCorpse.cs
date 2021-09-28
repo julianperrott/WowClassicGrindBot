@@ -35,18 +35,13 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
+            playerReader.DecrementKillCount();
+            logger.LogInformation("----- Consumed a corpse. Remaining:" + playerReader.LastCombatKillCount);
+
+            playerReader.ConsumeCorpse();
+            SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, false));
+
             await wait.Update(1);
-
-            if ((DateTime.Now - lastActive).TotalSeconds > 0.25f)
-            {
-                playerReader.DecrementKillCount();
-                logger.LogInformation("----- Consumed a corpse. Remaining:" + playerReader.LastCombatKillCount);
-
-                playerReader.ConsumeCorpse();
-                SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, false));
-
-                lastActive = DateTime.Now;
-            }
         }
     }
 }
