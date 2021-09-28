@@ -42,7 +42,7 @@ function DataToColor:Base2Converter()
     DataToColor:MakeIndexBase2(DataToColor:hasTarget(), 17) +
     DataToColor:MakeIndexBase2(DataToColor:IsPlayerMounted(), 18) +
     DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.ShootId), 19) +
-    DataToColor:MakeIndexBase2(DataToColor:IsCurrentSpell(6603), 20) + -- AutoAttack enabled
+    DataToColor:MakeIndexBase2(DataToColor:IsCurrentSpell(DataToColor.C.Spell.AttackId), 20) +
     DataToColor:MakeIndexBase2(DataToColor:targetIsNormal(), 21)+
     DataToColor:MakeIndexBase2(DataToColor:IsTagged(), 22)
 end

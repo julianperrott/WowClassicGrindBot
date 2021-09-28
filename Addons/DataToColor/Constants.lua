@@ -30,6 +30,7 @@ DataToColor.C.MAX_ACTION_IDX = 1000
 -- Spells
 DataToColor.C.Spell.AutoShotId = 75 -- Auto shot
 DataToColor.C.Spell.ShootId = 5019 -- Shoot
+DataToColor.C.Spell.AttackId = 6603 -- Attack
 
 -- Item / Inventory
 DataToColor.C.ItemPattern = "(m:%d+)"

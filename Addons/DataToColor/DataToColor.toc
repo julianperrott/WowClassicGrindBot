@@ -2,7 +2,7 @@
 ## Title: DataToColor
 ## Author: FreeHongKongMMO
 ## Notes: An addon that displays player position as color
-## Version: 1.1.4
+## Version: 1.1.5
 ## RequiredDeps:
 ## OptionalDeps: Ace3, LibDataBroker-1.1, LibCompress, LibRangeCheck
 ## SavedVariables:
