@@ -12,7 +12,8 @@
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "1",
-        "MinMana": 25
+        "MinMana": 25,
+        "Requirement": "SpellInRange:3"
       }
     ]
   },
