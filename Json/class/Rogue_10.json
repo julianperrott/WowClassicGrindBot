@@ -1,6 +1,7 @@
 {
   "ClassName": "Rogue",
   "PathFilename": "10_Gnome.json",
+  "NPCMaxLevels_Below": 10,
   "Combat": {
     "Sequence": [
       {
@@ -30,6 +31,7 @@
       },
       {
         "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking",
         "Cooldown": 1
       }
     ]

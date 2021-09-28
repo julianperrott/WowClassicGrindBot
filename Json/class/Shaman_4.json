@@ -32,9 +32,13 @@
         "MinMana": 25
       },
       {
-        "Name": "AutoAttack",
-        "Cooldown": 3,
-        "Requirements": ["not AutoAttacking"]
+        "Name": "Approach",
+        "Requirement": "not InMeleeRange",
+        "Cooldown": 1
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },
@@ -43,6 +47,7 @@
       {
         "Name": "Rockbiter Weapon",
         "StopBeforeCast": false,
+        "DelayAfterCast": 1000,
         "Key": "5",
         "MinMana": 15,
         "Requirement": "not HasMainHandEnchant"
