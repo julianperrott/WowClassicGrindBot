@@ -31,7 +31,7 @@
                     return bits_73To96.IsBitSet(slot - 1);
             }
 
-            return false;
+            return true;
         }
 
     }
