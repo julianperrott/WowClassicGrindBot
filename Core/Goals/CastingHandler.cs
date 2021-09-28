@@ -382,6 +382,18 @@ namespace Core.Goals
                 case UI_ERROR.ERR_SPELL_COOLDOWN:
                     logger.LogInformation($"{source} -- Cant react to {UI_ERROR.ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS}");
                     break;
+                case UI_ERROR.ERR_BADATTACKPOS:
+                    if (playerReader.IsAutoAttacking)
+                    {
+                        logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_BADATTACKPOS} -- Interact!");
+                        await input.TapInteractKey("");
+                        playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+                    }
+                    else
+                    {
+                        logger.LogInformation($"{source} -- Didn't know how to React to {playerReader.LastUIErrorMessage}");
+                    }
+                    break;
                 default:
                     logger.LogInformation($"{source} -- Didn't know how to React to {playerReader.LastUIErrorMessage}");
                     break;
