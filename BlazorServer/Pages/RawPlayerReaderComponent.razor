@@ -85,7 +85,7 @@
             }
             else
             {
-                if (pinfo.PropertyType.IsPrimitive || value.GetType() == typeof(string))
+                if (pinfo.PropertyType.IsPrimitive || pinfo.PropertyType.IsEnum || value.GetType() == typeof(string))
                 {
                     propList.Add(new ObjectField() { Name = objName + pinfo.Name, Value = value.ToString() ?? "" });
                 }
