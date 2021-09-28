@@ -12,10 +12,8 @@ namespace Core.GOAP
     public sealed class GoapAgent
     {
         private ILogger logger;
-        private WowProcess wowProcess;
         private ConfigurableInput input;
-
-        private readonly BagReader bagReader;
+        private StopMoving stopMoving;
 
         private GoapPlanner planner;
         public IEnumerable<GoapGoal> AvailableGoals { get; set; }
@@ -29,19 +27,20 @@ namespace Core.GOAP
 
         private readonly Wait wait;
 
-        public GoapAgent(ILogger logger, WowProcess wowProcess, ConfigurableInput input, PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist,  ClassConfiguration classConfiguration, BagReader bagReader, Wait wait)
+        public GoapAgent(ILogger logger, ConfigurableInput input, PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist, ClassConfiguration classConfiguration, Wait wait)
         {
             this.logger = logger;
-            this.wowProcess = wowProcess;
             this.input = input;
 
             this.playerReader = playerReader;
+
+            this.stopMoving = new StopMoving(input, playerReader);
+
             this.AvailableGoals = availableGoals.OrderBy(a => a.CostOfPerformingAction);
             this.blacklist = blacklist;
 
             this.planner = new GoapPlanner(logger);
             this.classConfiguration = classConfiguration;
-            this.bagReader = bagReader;
 
             this.wait = wait;
         }
@@ -75,6 +74,8 @@ namespace Core.GOAP
 
                 if (classConfiguration.Mode != Mode.AttendedGrind)
                 {
+                    await stopMoving.Stop();
+
                     await input.TapNearestTarget("GoapAgent");
                     await wait.Update(1);
                     if (playerReader.HasTarget && !playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
