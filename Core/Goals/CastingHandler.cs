@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -332,18 +332,6 @@ namespace Core.Goals
 
         public async Task PressKey(ConsoleKey key, string description = "", int duration = 50)
         {
-            if (lastKeyPressed == classConfig.Interact.ConsoleKey)
-            {
-                var distance = WowPoint.DistanceTo(classConfig.Interact.LastClickPostion, this.playerReader.PlayerLocation);
-
-                if (distance > 1)
-                {
-                    logger.LogInformation($"Stop moving: We have moved since the last interact: {distance}");
-                    await input.TapStopKey();
-                    classConfig.Interact.SetClicked();
-                }
-            }
-
             await input.KeyPress(key, duration, description);
 
             lastKeyPressed = key;
