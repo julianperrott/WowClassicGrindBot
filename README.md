@@ -286,6 +286,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
 | DelayAfterCast | The delay in milliseconds after the spell is cast | 1450 |
 | AfterCastWaitBuff | After the cast happened, should wait until player buffs changed | false |
+| AfterCastWaitNextSwing | After the cast wait for the next melee swing to land | false | 
 | Cost | For Adhoc goals the priority | 18 |
 | InCombat | Can it be cast in combat | false |
 | StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | 0 |

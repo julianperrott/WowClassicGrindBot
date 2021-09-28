@@ -91,6 +91,7 @@
         "Name": "Raptor Strike",
         "Key": "4",
         "WhenUsable": true,
+        "AfterCastWaitNextSwing": true,
         "Cooldown": 6,
         "MinMana": 15,
         "Requirement": "InMeleeRange"

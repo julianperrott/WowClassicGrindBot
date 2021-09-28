@@ -24,6 +24,7 @@ namespace Core.Goals
         private const int MaxWaitCastTimeMs = 500;
         private const int MaxWaitBuffTimeMs = 500;
         private const int MaxCastTimeMs = 15000;
+        private const int MaxSwingTimeMs = 4000;
         private const int GCD = 1500;
 
         public CastingHandler(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder, StopMoving stopMoving)
@@ -89,7 +90,7 @@ namespace Core.Goals
         {
             playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
-            await PressKey(item.ConsoleKey, item.Name, item.PressDuration);
+            await PressKey(item.ConsoleKey, item.Name + (item.AfterCastWaitNextSwing ? " and wait for next swing!" : ""), item.PressDuration);
             item.SetClicked();
         }
 
@@ -102,7 +103,7 @@ namespace Core.Goals
 
             await PressKeyAction(item);
 
-            (bool input, double inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
+            (bool input, double inputElapsedMs) = await wait.InterruptTask(item.AfterCastWaitNextSwing ? MaxSwingTimeMs : MaxWaitCastTimeMs,
                 () => playerReader.LastUIErrorMessage != UI_ERROR.NONE || !playerReader.CurrentAction.Is(item.Key));
             if (!input)
             {

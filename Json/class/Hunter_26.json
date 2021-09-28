@@ -14,6 +14,7 @@
         "Name": "Raptor Strike",
         "Key": "4",
         "WhenUsable": true,
+        "AfterCastWaitNextSwing": true,
         "MinMana": 15,
         "StepBackAfterCast": 1000,
         "Requirement": "InMeleeRange"
@@ -70,6 +71,7 @@
         "Name": "Raptor Strike",
         "Key": "4",
         "WhenUsable": true,
+        "AfterCastWaitNextSwing": true,
         "MinMana": 15,
         "StepBackAfterCast": 1000,
         "Requirement": "InMeleeRange"

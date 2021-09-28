@@ -6,6 +6,7 @@
       {
         "Name": "Heroic Strike",
         "Key": "2",
+        "AfterCastWaitNextSwing": true,
         "WhenUsable": true,
         "MinRage": 10
       },
