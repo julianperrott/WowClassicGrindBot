@@ -80,8 +80,8 @@ function DataToColor:GetTargetName(partition)
     return 0
 end
 
-function DataToColor:CastingInfoSpellId()
-    local _, _, texture, _, _, _, _, _, spellID = CastingInfo()
+function DataToColor:CastingInfoSpellId(target)
+    local _, _, texture, _, _, _, _, _, spellID = UnitCastingInfo(target)
     if spellID ~= nil then
         return spellID
     end
@@ -89,7 +89,7 @@ function DataToColor:CastingInfoSpellId()
         return texture
     end
 
-    _, _, texture, _, _, _, _, spellID = ChannelInfo()
+    _, _, texture, _, _, _, _, spellID = UnitChannelInfo(target)
     if spellID ~= nil then
         return spellID
     end

@@ -384,7 +384,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor.uiErrorMessage, 52) -- Last UI Error message
             DataToColor.uiErrorMessage=0;
 
-            MakePixelSquareArrI(DataToColor:CastingInfoSpellId(), 53) -- Spell being cast
+            MakePixelSquareArrI(DataToColor:CastingInfoSpellId(DataToColor.C.unitPlayer), 53) -- Spell being cast
             MakePixelSquareArrI(DataToColor:ComboPoints(), 54) -- Combo points for rogue / druid
             -- 55 unused
 
@@ -393,7 +393,7 @@ function DataToColor:CreateFrames(n)
                 MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitTarget),57) -- target reasonably uniqueId
             end
 
-            -- 58 unused
+            MakePixelSquareArrI(DataToColor:CastingInfoSpellId(DataToColor.C.unitTarget), 58) -- Spell being cast by target
 
             MakePixelSquareArrI(DataToColor:IsTargetOfTargetPlayerAsNumber(),59) -- IsTargetOfTargetPlayerAsNumber
 
