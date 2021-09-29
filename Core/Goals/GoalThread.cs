@@ -1,6 +1,7 @@
-using Core.GOAP;
+﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +16,19 @@ namespace Core.Goals
         private readonly GoapAgent goapAgent;
 
         private GoapGoal? currentGoal;
-        public bool Active { get; set; }
+
+        private bool active;
+        public bool Active
+        {
+            get => active;
+            set
+            {
+                active = value;
+
+                if(!active)
+                    goapAgent?.AvailableGoals.ToList().ForEach(goal => goal.OnActionEvent(this, new ActionEventArgs(GoapKey.abort, true)));
+            }
+        }
 
         public GoalThread(ILogger logger, ConfigurableInput input, PlayerReader playerReader, GoapAgent goapAgent)
         {
@@ -27,14 +40,6 @@ namespace Core.Goals
 
         public void OnActionEvent(object sender, ActionEventArgs e)
         {
-            if (e.Key == GoapKey.abort)
-            {
-                logger.LogInformation($"Abort from: {sender.GetType().Name}");
-
-                var location = this.playerReader.PlayerLocation;
-                input?.TapHearthstone();
-                Active = false;
-            }
         }
 
         public async Task GoapPerformGoal()

@@ -1,4 +1,4 @@
-using Core.Goals;
+﻿using Core.Goals;
 using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -262,7 +262,7 @@ namespace Core
 
             Wait wait = new Wait(AddonReader.PlayerReader);
 
-            this.GoapAgent = new GoapAgent(logger, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config, wait);
+            this.GoapAgent = new GoapAgent(logger, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config);
 
             this.actionThread = new GoalThread(logger, ConfigurableInput, AddonReader.PlayerReader, GoapAgent);
 
@@ -315,8 +315,6 @@ namespace Core
             if (actionThread != null)
             {
                 actionThread.Active = false;
-                this.GoapAgent?.AvailableGoals.ToList().ForEach(goal => goal.OnActionEvent(this, new ActionEventArgs(GoapKey.abort, true)));
-
                 StatusChanged?.Invoke(this, actionThread.Active);
             }
         }

@@ -64,6 +64,14 @@ namespace Core.Goals
             pullStart = DateTime.Now;
         }
 
+        public override void OnActionEvent(object sender, ActionEventArgs e)
+        {
+            if (e.Key == GoapKey.resume)
+            {
+                pullStart = DateTime.Now;
+            }
+        }
+
         public override async Task PerformAction()
         {
             if (SecondsSincePullStarted > 7)

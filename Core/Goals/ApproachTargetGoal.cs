@@ -185,6 +185,14 @@ namespace Core.Goals
             await RandomJump();
         }
 
+        public override void OnActionEvent(object sender, ActionEventArgs e)
+        {
+            if (e.Key == GoapKey.resume)
+            {
+                approachStart = DateTime.Now;
+            }
+        }
+
         private async Task RandomJump()
         {
             if (classConfig.Jump.MillisecondsSinceLastClick > random.Next(5000, 7000))

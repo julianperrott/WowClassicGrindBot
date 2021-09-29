@@ -19,6 +19,7 @@
         producedcorpse = 130,
         consumecorpse = 131,
         abort = 140,
+        resume = 141,
         shoulddrink = 150,
         classMount = 160,
         isalive=170,
