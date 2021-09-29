@@ -346,6 +346,12 @@ namespace Core.Goals
                 case UI_ERROR.NONE:
                     break;
                 case UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
+                    if (playerReader.PlayerClass == PlayerClassEnum.Hunter && playerReader.IsInMeleeRange)
+                    {
+                        logger.LogInformation($"{source} -- As a Hunter didn't know how to react {UI_ERROR.ERR_SPELL_OUT_OF_RANGE}");
+                        return;
+                    }
+
                     logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_OUT_OF_RANGE} -- Start moving forward");
 
                     input.SetKeyState(ConsoleKey.UpArrow, true, false, "");
