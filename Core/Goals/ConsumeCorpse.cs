@@ -10,6 +10,7 @@ namespace Core.Goals
     class ConsumeCorpse : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.7f; }
+        public override bool Repeatable => false;
 
         private readonly ILogger logger;
         private readonly Wait wait;
