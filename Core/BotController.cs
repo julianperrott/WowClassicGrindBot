@@ -1,4 +1,4 @@
-﻿using Core.Goals;
+using Core.Goals;
 using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -219,9 +219,10 @@ namespace Core
         {
             if (this.actionThread != null)
             {
+                actionThread.ResumeIfNeeded();
+
                 while (this.actionThread.Active && this.Enabled)
                 {
-
                     await actionThread.GoapPerformGoal();
                 }
             }

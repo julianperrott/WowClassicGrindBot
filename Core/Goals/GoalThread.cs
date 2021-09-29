@@ -1,4 +1,4 @@
-﻿using Core.GOAP;
+using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
@@ -93,6 +93,11 @@ namespace Core.Goals
                     Thread.Sleep(50);
                 }
             }
+        }
+
+        public void ResumeIfNeeded()
+        {
+            currentGoal?.OnActionEvent(this, new ActionEventArgs(GoapKey.resume, true));
         }
     }
 }
