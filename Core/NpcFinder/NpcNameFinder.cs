@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SharedLib;
 using Game;
+using System.Threading;
 
 namespace Core
 {
@@ -114,7 +115,7 @@ namespace Core
             }
         }
 
-        public async Task TargetingAndClickNpc(int threshold, bool leftClick)
+        public async Task TargetingAndClickNpc(int threshold, bool leftClick, CancellationToken cancellationToken)
         {
             var npc = GetClosestNpc();
             if (npc != null)
@@ -123,6 +124,9 @@ namespace Core
                 {
                     foreach (var location in locTargetingAndClickNpc)
                     {
+                        if (cancellationToken.IsCancellationRequested)
+                            return;
+
                         var clickPostion = bitmapProvider.DirectBitmap.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                         mouseInput.SetCursorPosition(clickPostion);
                         await Task.Delay(MOUSE_DELAY);
@@ -141,7 +145,7 @@ namespace Core
                 }
                 else
                 {
-                    logger.LogInformation($"{this.GetType().Name}.FindAndClickNpc: NPC found but below threshold {threshold}! Height={npc.Height}, width={npc.Width}");
+                    logger.LogInformation($"{this.GetType().Name}: NPC found but below threshold {threshold}! Height={npc.Height}, width={npc.Width}");
                 }
             }
             else
