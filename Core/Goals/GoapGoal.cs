@@ -92,6 +92,11 @@ namespace Core.Goals
             await Task.Delay(0);
         }
 
+        public virtual async Task OnExit()
+        {
+            await Task.Delay(0);
+        }
+
         public abstract Task PerformAction();
 
         public virtual async Task Abort()

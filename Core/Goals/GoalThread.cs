@@ -47,25 +47,35 @@ namespace Core.Goals
                 {
                     if (newGoal != this.currentGoal)
                     {
+                        if (this.currentGoal != null)
+                        {
+                            try
+                            {
+                                await this.currentGoal.OnExit();
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.LogError(ex, $"OnExit on {currentGoal.GetType().Name}");
+                            }
+                        }
+
                         this.currentGoal?.DoReset();
                         this.currentGoal = newGoal;
 
                         logger.LogInformation("---------------------------------");
                         logger.LogInformation($"New Plan= {newGoal.GetType().Name}");
                         
-                        try
+                        if (currentGoal != null)
                         {
-                            await this.currentGoal.OnEnter();
+                            try
+                            {
+                                await this.currentGoal.OnEnter();
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.LogError(ex, $"OnEnter on {newGoal.GetType().Name}");
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            logger.LogError(ex, $"OnEnter on {newGoal.GetType().Name}");
-                        }
-                    }
-                    else if(!this.currentGoal.Repeatable)
-                    {
-                        logger.LogInformation($"Current Plan= {newGoal.GetType().Name} is not Repeatable!");
-                        return;
                     }
 
                     try
