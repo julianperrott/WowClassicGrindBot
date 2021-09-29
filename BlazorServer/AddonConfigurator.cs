@@ -343,19 +343,17 @@ namespace BlazorServer
             try
             {
                 repo = GetVersion(Path.Join(AddonSourcePath, DefaultAddonName), DefaultAddonName);
-            }
-            catch (Exception)
-            {
-                // This only should be happen when running from IDE
-                string parentFolder = ".";
-                try
+
+                if (repo == null)
                 {
+                    string parentFolder = ".";
+
                     repo = GetVersion(Path.Join(parentFolder + AddonSourcePath, DefaultAddonName), DefaultAddonName);
                 }
-                catch (Exception e)
-                {
-                    logger.LogError(e.Message);
-                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
             }
             return repo;
         }
