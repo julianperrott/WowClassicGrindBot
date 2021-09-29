@@ -83,10 +83,10 @@ namespace Core
             {
                 new Point(0, 0),
                 new Point(0, 25).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(-25, 50).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(25, 50).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(0, 90).Scale(scaleToRefWidth, scaleToRefHeight),
-                new Point(0, 130).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(-45, 50).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(45, 50).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(25, 90).Scale(scaleToRefWidth, scaleToRefHeight),
+                new Point(-25, 130).Scale(scaleToRefWidth, scaleToRefHeight),
                 new Point(0, 160).Scale(scaleToRefWidth, scaleToRefHeight),
             };
 

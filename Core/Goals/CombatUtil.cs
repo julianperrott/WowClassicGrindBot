@@ -47,6 +47,7 @@ namespace Core
             if (outOfCombat && playerReader.PlayerBitValues.PlayerInCombat)
             {
                 Log("Combat Enter");
+                outOfCombat = false;
                 return true;
             }
 

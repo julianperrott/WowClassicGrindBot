@@ -11,6 +11,8 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction { get => 4.6f; }
 
+        public override bool Repeatable => false;
+
         private ILogger logger;
         private readonly ConfigurableInput input;
 
@@ -67,66 +69,69 @@ namespace Core.Goals
 
             Log("Try to find Corpse");
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Corpse);
-            //await stopMoving.Stop();
             await npcNameFinder.WaitForNUpdate(1);
 
-            if (await combatUtil.EnteredCombat())
+            int attempts = 1;
+            while (attempts < 5)
             {
-                if(await combatUtil.AquiredTarget())
+                if (await combatUtil.EnteredCombat())
                 {
-                    EmergencyExit();
-                    return;
-                }
-            }
-
-            bool foundCursor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Skin);
-            if (foundCursor)
-            {
-                Log("Found corpse - interacted with right click");
-                await wait.Update(1);
-
-                (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
-                if (foundTarget)
-                {
-                    Log("Interrupted!");
-                    EmergencyExit();
-                    return;
+                    if (await combatUtil.AquiredTarget())
+                    {
+                        Log("Interrupted!");
+                        return;
+                    }
                 }
 
-                if (moved)
+                bool foundCursor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Skin);
+                if (foundCursor)
                 {
-                    await input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
+                    Log("Found corpse - interacted with right click");
                     await wait.Update(1);
-                }
 
-                //this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+                    (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
+                    if (foundTarget)
+                    {
+                        Log("Interrupted!");
+                        return;
+                    }
 
-                // wait until start casting
-                await wait.Interrupt(500, () => playerReader.IsCasting);
-                Log("Started casting...");
+                    if (moved)
+                    {
+                        await input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
+                        await wait.Update(1);
+                    }
 
-                await wait.Interrupt(3000, () => !playerReader.IsCasting);
-                Log("Cast finished!");
+                    // wait until start casting
+                    await wait.Interrupt(500, () => playerReader.IsCasting);
+                    Log("Started casting...");
 
-                // Wait for to update the LastUIErrorMessage
-                await wait.Update(1);
-                var lastError = playerReader.LastUIErrorMessage;
-                if (lastError != UI_ERROR.ERR_SPELL_FAILED_S /*&& lastLoot != playerReader.LastLootTime*/)
-                {
-                    this.playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-                    Log("Skinning Successful!");
-                    await GoalExit();
+                    playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+
+                    await wait.Interrupt(3000, () => !playerReader.IsCasting || playerReader.LastUIErrorMessage != UI_ERROR.NONE);
+                    Log("Cast finished!");
+
+                    if (playerReader.LastUIErrorMessage != UI_ERROR.ERR_SPELL_FAILED_S)
+                    {
+                        playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+                        Log($"Skinning Successful! {playerReader.LastUIErrorMessage}");
+                        await GoalExit();
+                        return;
+                    }
+                    else
+                    {
+                        Log($"Skinning Failed! Retry... Attempts: {attempts}");
+                        attempts++;
+                    }
                 }
                 else
                 {
-                    Log("Skinning Failed! Retry...");
+                    Log($"Target is not skinnable - NPC Count: {npcNameFinder.NpcCount}");
+                    await GoalExit();
+                    return;
                 }
             }
-            else
-            {
-                Log($"Target is not skinnable - NPC Count: {npcNameFinder.NpcCount}");
-                await GoalExit();
-            }
+
         }
 
         private async Task GoalExit()
@@ -142,22 +147,14 @@ namespace Core.Goals
 
             lastLoot = playerReader.LastLootTime;
 
-            EmergencyExit();
-            await npcNameFinder.WaitForNUpdate(1);
+            playerReader.NeedSkin = false;
+            SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
 
             if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
             {
                 await input.TapClearTarget();
                 await wait.Update(1);
             }
-        }
-
-        private void EmergencyExit()
-        {
-            npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
-
-            playerReader.NeedSkin = false;
-            SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
         }
 
         private void Log(string text)

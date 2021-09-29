@@ -81,7 +81,6 @@ namespace Core.Goals
                 if (foundTarget)
                 {
                     Log("Interrupted!");
-                    EmergencyExit();
                     return;
                 }
 
@@ -108,7 +107,6 @@ namespace Core.Goals
                         if (foundTarget)
                         {
                             Log("Goal interrupted!");
-                            EmergencyExit();
                             return;
                         }
 
@@ -170,25 +168,11 @@ namespace Core.Goals
             playerReader.NeedLoot = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
 
-            if (!classConfiguration.Skin)
-            {
-                npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
-                await npcNameFinder.WaitForNUpdate(1);
-            }
-
             if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
             {
                 await input.TapClearTarget($"{GetType().Name}: Exit Goal");
                 await wait.Update(1);
             }
-        }
-
-        private void EmergencyExit()
-        {
-            playerReader.NeedLoot = false;
-            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-
-            npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
         }
 
         private void Log(string text)
