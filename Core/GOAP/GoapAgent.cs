@@ -66,7 +66,14 @@ namespace Core.GOAP
             Queue<GoapGoal> plan = planner.Plan(AvailableGoals, WorldState, goal);
             if (plan != null && plan.Count > 0)
             {
-                CurrentGoal = plan.Peek();
+                if (CurrentGoal == plan.Peek() && !CurrentGoal.Repeatable)
+                {
+                    CurrentGoal = null;
+                }
+                else
+                {
+                    CurrentGoal = plan.Peek();
+                }
             }
             else
             {
@@ -96,7 +103,9 @@ namespace Core.GOAP
                 new KeyValuePair<GoapKey, object>(GoapKey.isswimming, playerReader.PlayerBitValues.IsSwimming),
                 new KeyValuePair<GoapKey, object>(GoapKey.itemsbroken,playerReader.PlayerBitValues.ItemsAreBroken),
                 new KeyValuePair<GoapKey, object>(GoapKey.producedcorpse, playerReader.LastCombatKillCount>0),
-                new KeyValuePair<GoapKey, object>(GoapKey.consumecorpse, playerReader.ShouldConsumeCorpse)
+                new KeyValuePair<GoapKey, object>(GoapKey.consumecorpse, playerReader.ShouldConsumeCorpse),
+                new KeyValuePair<GoapKey, object>(GoapKey.shouldloot, playerReader.NeedLoot),
+                new KeyValuePair<GoapKey, object>(GoapKey.shouldskin, playerReader.NeedSkin)
         };
 
             actionState.ToList().ForEach(kv => state.Add(kv));
