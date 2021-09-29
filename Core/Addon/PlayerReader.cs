@@ -20,8 +20,12 @@ namespace Core
         public double AvgUpdateLatency = 5;
 
         public int Sequence { get; private set; } = 0;
-        public List<CombatCreature> TargetHistory { get; } = new List<CombatCreature>();
-        public List<CombatCreature> CombatCreatures { get; } = new List<CombatCreature>();
+
+        public List<CreatureHistory> Creatures { get; } = new List<CreatureHistory>();
+        public List<CreatureHistory> Targets { get; } = new List<CreatureHistory>();
+        public List<CreatureHistory> DamageDone { get; } = new List<CreatureHistory>();
+        public List<CreatureHistory> DamageTaken { get; } = new List<CreatureHistory>();
+        public List<CreatureHistory> Deads { get; } = new List<CreatureHistory>();
 
         public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord);
 
@@ -137,9 +141,15 @@ namespace Core
 
         public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetLongAtCell(59);
 
-        public int LastDamageDealerGuid => (int)reader.GetLongAtCell(66);
 
-        public int LastKilledGuid => (int)reader.GetLongAtCell(67);
+        public int LastCombatCreatureGuid => (int)reader.GetLongAtCell(64);
+
+        public int LastCombatDamageDoneGuid => (int)reader.GetLongAtCell(65);
+
+        public int LastCombatDamageTakenGuid => (int)reader.GetLongAtCell(66);
+
+        public int LastDeadGuid => (int)reader.GetLongAtCell(67);
+
 
         public int PetGuid => (int)reader.GetLongAtCell(68);
         public int PetTargetGuid => (int)reader.GetLongAtCell(69);
@@ -160,12 +170,27 @@ namespace Core
 
 
         #region Combat Creatures
-        public int CombatCreatureCount => CombatCreatures.Count;
+        public int CombatCreatureCount => Creatures.Count;
 
         public void UpdateCreatureLists()
         {
-            CombatCreature.UpdateCombatCreatureCount((int)reader.GetLongAtCell(65), CombatCreatures);
-            CombatCreature.UpdateCombatCreatureCount((int)TargetGuid, TargetHistory);
+            CreatureHistory.Update(LastCombatCreatureGuid, 100f, Creatures);
+            CreatureHistory.Update(LastCombatDamageTakenGuid, 100f, DamageTaken);
+            CreatureHistory.Update(LastCombatDamageDoneGuid, (int)TargetHealthPercentage, DamageDone);
+
+            // set dead mob health everywhere
+            CreatureHistory.Update(LastDeadGuid, 0, Deads);
+            CreatureHistory.Update(LastDeadGuid, 0, Creatures);
+            CreatureHistory.Update(LastDeadGuid, 0, DamageTaken);
+            CreatureHistory.Update(LastDeadGuid, 0, DamageDone);
+
+            CreatureHistory.Update((int)TargetGuid, (int)TargetHealthPercentage, Targets);
+
+            // Update last target health from LastDeadGuid
+            if (Targets.FindIndex(x => x.CreatureId == LastDeadGuid) != -1)
+            {
+                CreatureHistory.Update(LastDeadGuid, 0, Targets);
+            }
         }
 
         #endregion

@@ -70,19 +70,12 @@ namespace Core.GOAP
             }
             else
             {
-                logger.LogInformation($"Target Health: {playerReader.TargetHealth}, max {playerReader.TargetMaxHealth}, dead {playerReader.PlayerBitValues.TargetIsDead}");
-
-                if (classConfiguration.Mode != Mode.AttendedGrind)
+                if (CurrentGoal != null && !CurrentGoal.Repeatable)
                 {
-                    await stopMoving.Stop();
+                    logger.LogInformation($"Plan= {CurrentGoal.GetType().Name} is not Repeatable!");
+                    CurrentGoal = null;
 
-                    await input.TapNearestTarget("GoapAgent");
-                    await wait.Update(1);
-                    if (playerReader.HasTarget && !playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
-                    {
-                        await input.TapClearTarget("GoapAgent");
-                        await wait.Update(1);
-                    }
+                    await stopMoving.Stop();
                 }
             }
 

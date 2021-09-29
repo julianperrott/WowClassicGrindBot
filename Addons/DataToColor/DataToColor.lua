@@ -38,12 +38,17 @@ DataToColor.frames = nil
 DataToColor.r = 0
 
 DataToColor.uiErrorMessage = 0
-DataToColor.lastCombatDamageDealerCreature = 0
+
+DataToColor.lastCombatDamageTakenCreature = 0
+DataToColor.lastCombatDamageDoneCreature = 0
 DataToColor.lastCombatCreature = 0
 DataToColor.lastCombatCreatureDied = 0
 
 DataToColor.targetChanged = true
 DataToColor.updateActionBarCost = true
+
+DataToColor.playerGUID = UnitGUID(DataToColor.C.unitPlayer)
+DataToColor.petGUID = UnitGUID(DataToColor.C.unitPet)
 
 -- Update Queue
 stack = {}
@@ -229,6 +234,10 @@ function DataToColor:CreateFrames(n)
         end
 
         if not SETUP_SEQUENCE then
+
+            DataToColor.playerGUID = UnitGUID(DataToColor.C.unitPlayer)
+            DataToColor.petGUID = UnitGUID(DataToColor.C.unitPet)
+
             MakePixelSquareArrI(0, 0)
             -- The final data square, reserved for additional metadata.
             MakePixelSquareArrI(2000001, NUMBER_OF_FRAMES - 1)
@@ -394,8 +403,9 @@ function DataToColor:CreateFrames(n)
             -- 63 not used
             -- 64 not used
 
-            MakePixelSquareArrI(DataToColor.lastCombatCreature, 65) -- Combat message creature
-            MakePixelSquareArrI(DataToColor.lastCombatDamageDealerCreature, 66) -- Combat message last damage dealer creature
+            MakePixelSquareArrI(DataToColor.lastCombatCreature, 64) -- Combat message creature
+            MakePixelSquareArrI(DataToColor.lastCombatDamageDoneCreature, 65) -- Last Combat damage done
+            MakePixelSquareArrI(DataToColor.lastCombatDamageTakenCreature, 66) -- Last Combat Damage taken
             MakePixelSquareArrI(DataToColor.lastCombatCreatureDied, 67) -- Last Killed Unit
 
             MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPet), 68) -- pet guid
