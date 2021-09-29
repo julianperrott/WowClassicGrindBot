@@ -330,16 +330,6 @@ namespace Core.Goals
             return (DateTime.Now - LastActive).TotalSeconds < 2;
         }
 
-        public async Task Reset()
-        {
-            await this.stopMoving.Stop();
-        }
-
-        public override async Task Abort()
-        {
-            await this.stopMoving.Stop();
-        }
-
         public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
 
 

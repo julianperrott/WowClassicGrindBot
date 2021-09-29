@@ -99,11 +99,6 @@ namespace Core.Goals
 
         public abstract Task PerformAction();
 
-        public virtual async Task Abort()
-        {
-            await Task.Delay(0);
-        }
-
         public void AddPrecondition(GoapKey key, object value)
         {
             var precondition = new GoapPreCondition(GoapKeyDescription.ToString(key, value), value);

@@ -219,9 +219,10 @@ namespace Core
         {
             if (this.actionThread != null)
             {
+                actionThread.ResumeIfNeeded();
+
                 while (this.actionThread.Active && this.Enabled)
                 {
-
                     await actionThread.GoapPerformGoal();
                 }
             }
@@ -261,7 +262,7 @@ namespace Core
 
             Wait wait = new Wait(AddonReader.PlayerReader);
 
-            this.GoapAgent = new GoapAgent(logger, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config, wait);
+            this.GoapAgent = new GoapAgent(logger, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config);
 
             this.actionThread = new GoalThread(logger, ConfigurableInput, AddonReader.PlayerReader, GoapAgent);
 
@@ -314,8 +315,6 @@ namespace Core
             if (actionThread != null)
             {
                 actionThread.Active = false;
-                this.GoapAgent?.AvailableGoals.ToList().ForEach(goal => goal.OnActionEvent(this, new ActionEventArgs(GoapKey.abort, true)));
-
                 StatusChanged?.Invoke(this, actionThread.Active);
             }
         }

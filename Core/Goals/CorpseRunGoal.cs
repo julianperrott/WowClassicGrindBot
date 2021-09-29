@@ -177,10 +177,5 @@ namespace Core.Goals
             //logger.LogInformation($"distance:{x} {y} {distance.ToString()}");
             return distance;
         }
-
-        public override async Task Abort()
-        {
-            await this.stopMoving.Stop();
-        }
     }
 }
