@@ -155,6 +155,8 @@ namespace Core.Goals
         private void EmergencyExit()
         {
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
+
+            playerReader.NeedSkin = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
         }
 

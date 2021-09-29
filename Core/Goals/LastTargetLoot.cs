@@ -37,6 +37,7 @@ namespace Core.Goals
             long lastHealth = playerReader.HealthCurrent;
             WowPoint lastPosition = playerReader.PlayerLocation;
 
+            playerReader.NeedSkin = !playerReader.Unskinnable;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, !playerReader.Unskinnable));
 
             await input.TapInteractKey("interact target");
@@ -54,6 +55,7 @@ namespace Core.Goals
             if (!await wait.Interrupt(200, () => playerReader.HealthCurrent < lastHealth)) { return; }
 
             logger.LogDebug("Loot was Successfull");
+            playerReader.NeedLoot = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
 
             //clear target

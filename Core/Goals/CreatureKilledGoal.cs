@@ -50,6 +50,7 @@ namespace Core.Goals
 
             if (classConfig.Loot)
             {
+                playerReader.NeedLoot = true;
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
             }
 

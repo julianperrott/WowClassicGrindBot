@@ -69,7 +69,11 @@ namespace Core.Goals
             if (foundCursor)
             {
                 Log("Found corpse - clicked");
-                await wait.Update(1);
+                (bool notFoundTarget, double elapsedMs) = await wait.InterruptTask(200, () => playerReader.TargetId != 0);
+                if (!notFoundTarget)
+                {
+                    Log($"Found target after {elapsedMs}ms");
+                }
 
                 CheckForSkinning();
 
@@ -90,7 +94,7 @@ namespace Core.Goals
             else
             {
                 await input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
-                await wait.Update(2);
+                await wait.Update(1);
                 if (playerReader.HasTarget)
                 {
                     if(playerReader.PlayerBitValues.TargetIsDead)
@@ -132,10 +136,17 @@ namespace Core.Goals
                 if (areaDb.CurrentArea != null && areaDb.CurrentArea.skinnable != null)
                 {
                     targetSkinnable = areaDb.CurrentArea.skinnable.Contains(playerReader.TargetId);
+                    Log($"{playerReader.TargetId} is skinnable? {targetSkinnable}");
+                }
+                else
+                {
+                    Log($"{playerReader.TargetId} was not found in the database!");
                 }
 
                 Log($"Should skin ? {targetSkinnable}");
                 AddEffect(GoapKey.shouldskin, targetSkinnable);
+
+                playerReader.NeedSkin = targetSkinnable;
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, targetSkinnable));
             }
         }
@@ -149,10 +160,14 @@ namespace Core.Goals
             else
             {
                 Log($"Loot Failed");
+
+                playerReader.NeedSkin = false;
+                SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
             }
 
             lastLoot = playerReader.LastLootTime;
 
+            playerReader.NeedLoot = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
 
             if (!classConfiguration.Skin)
@@ -170,7 +185,9 @@ namespace Core.Goals
 
         private void EmergencyExit()
         {
+            playerReader.NeedLoot = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+
             npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
         }
 

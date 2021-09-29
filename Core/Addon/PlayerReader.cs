@@ -225,6 +225,9 @@ namespace Core
 
         #region Corpse Consumption
 
+        public bool NeedLoot { get; set; } = false;
+        public bool NeedSkin { get; set; } = false;
+
         private bool shouldConsumeCorpse;
         public bool ShouldConsumeCorpse => shouldConsumeCorpse;
 
