@@ -25,9 +25,7 @@ namespace Core.GOAP
         public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
         private IBlacklist blacklist;
 
-        private readonly Wait wait;
-
-        public GoapAgent(ILogger logger, ConfigurableInput input, PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist, ClassConfiguration classConfiguration, Wait wait)
+        public GoapAgent(ILogger logger, ConfigurableInput input, PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist, ClassConfiguration classConfiguration)
         {
             this.logger = logger;
             this.input = input;
@@ -41,8 +39,6 @@ namespace Core.GOAP
 
             this.planner = new GoapPlanner(logger);
             this.classConfiguration = classConfiguration;
-
-            this.wait = wait;
         }
 
         public void UpdateWorldState()
