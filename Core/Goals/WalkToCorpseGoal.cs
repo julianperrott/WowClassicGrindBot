@@ -360,11 +360,6 @@ namespace Core.Goals
             return distance;
         }
 
-        public override async Task Abort()
-        {
-            await this.stopMoving.Stop();
-        }
-
         public static Vector2 GetClosestPointOnLineSegment(Vector2 A, Vector2 B, Vector2 P)
         {
             Vector2 AP = P - A;       //Vector from A to P
