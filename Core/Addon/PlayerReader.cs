@@ -146,7 +146,7 @@ namespace Core
 
         public int LastCombatDamageDoneGuid => (int)reader.GetLongAtCell(65);
 
-        public int LastDamageTakenGuid => (int)reader.GetLongAtCell(66);
+        public int LastCombatDamageTakenGuid => (int)reader.GetLongAtCell(66);
 
         public int LastDeadGuid => (int)reader.GetLongAtCell(67);
 
@@ -175,7 +175,7 @@ namespace Core
         public void UpdateCreatureLists()
         {
             CreatureHistory.Update(LastCombatCreatureGuid, 100f, Creatures);
-            CreatureHistory.Update(LastDamageTakenGuid, 100f, DamageTaken);
+            CreatureHistory.Update(LastCombatDamageTakenGuid, 100f, DamageTaken);
             CreatureHistory.Update(LastCombatDamageDoneGuid, (int)TargetHealthPercentage, DamageDone);
 
             // set dead mob health everywhere
