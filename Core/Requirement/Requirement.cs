@@ -2,6 +2,31 @@
 
 namespace Core
 {
+    public static class RequirementExt
+    {
+        public static Requirement Or(this Requirement f1, Requirement f2)
+        {
+            return new Requirement
+            {
+                HasRequirement = () => f1.HasRequirement() || f2.HasRequirement(),
+                LogMessage = () => string.IsNullOrEmpty(f1.LogMessage()) ?
+                f2.LogMessage() :
+                string.Join(" or ", f1.LogMessage(), f2.LogMessage())
+            };
+        }
+
+        public static Requirement And(this Requirement f1, Requirement f2)
+        {
+            return new Requirement
+            {
+                HasRequirement = () => f1.HasRequirement() && f2.HasRequirement(),
+                LogMessage = () => string.IsNullOrEmpty(f1.LogMessage()) ?
+                f2.LogMessage() :
+                string.Join(" and ", f1.LogMessage(), f2.LogMessage())
+            };
+        }
+    }
+
     public class Requirement
     {
         public Func<bool> HasRequirement { get; set; } = () => false;

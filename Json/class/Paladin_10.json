@@ -32,7 +32,7 @@
         "Name": "Hammer of Justice",
         "Key": "7",
         "WhenUsable": true,
-        "Requirement": "TargetHealth%>50"
+        "Requirement": "TargetCastingSpell||TargetHealth%<50"
       },
       {
         "Name": "Seal of the Righteousness",

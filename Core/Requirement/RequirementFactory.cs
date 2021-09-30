@@ -26,7 +26,38 @@ namespace Core
             item.RequirementObjects.Clear();
             foreach (string requirement in item.Requirements)
             {
-                item.RequirementObjects.Add(GetRequirement(item.Name, requirement));
+                if (requirement.Contains("||"))
+                {
+                    Requirement orCombinedRequirement = new Requirement
+                    {
+                        LogMessage = () => ""
+                    };
+                    foreach (string part in requirement.Split("||"))
+                    {
+                        var sub = GetRequirement(item.Name, part);
+                        orCombinedRequirement = orCombinedRequirement.Or(sub);
+                    }
+
+                    item.RequirementObjects.Add(orCombinedRequirement);
+                }
+                else if (requirement.Contains("&&"))
+                {
+                    Requirement andCombinedRequirement = new Requirement
+                    {
+                        LogMessage = () => ""
+                    };
+                    foreach (string part in requirement.Split("&&"))
+                    {
+                        var sub = GetRequirement(item.Name, part);
+                        andCombinedRequirement = andCombinedRequirement.And(sub);
+                    }
+
+                    item.RequirementObjects.Add(andCombinedRequirement);
+                }
+                else
+                {
+                    item.RequirementObjects.Add(GetRequirement(item.Name, requirement));
+                }
             }
 
             CreateMinRequirement(item.RequirementObjects, "Mana", item.MinMana);
