@@ -42,8 +42,7 @@
       },
       {
         "Name": "Approach",
-        "Requirement": "not InMeleeRange",
-        "Cooldown": 1
+        "Log": false
       },
       {
         "Name": "Auto Attack",

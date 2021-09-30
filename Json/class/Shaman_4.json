@@ -2,6 +2,7 @@
   "ClassName": "Shaman",
   "Loot": true,
   "PathFilename": "_pack\\1-20\\Draenei\\1-5_Azuremyst Isle.json",
+  "KillIfGivesExp": true,
   "Pull": {
     "Sequence": [
       {
@@ -33,8 +34,7 @@
       },
       {
         "Name": "Approach",
-        "Requirement": "not InMeleeRange",
-        "Cooldown": 1
+        "Log": false
       },
       {
         "Name": "Auto Attack",
@@ -70,6 +70,24 @@
         "AfterCastWaitBuff": true,
         "Requirement": "Mana%<30",
         "Cooldown": 10
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "1_Draenei_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "1_Draenei_Vendor.json",
+        "Cost": 6
       }
     ]
   }
