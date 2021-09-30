@@ -410,7 +410,9 @@ namespace Core
                 {  "BagCount", ()=> bagReader.BagItems.Count },
                 {  "MobCount", ()=> playerReader.CombatCreatureCount },
                 {  "MinRange", ()=> playerReader.MinRange },
-                {  "MaxRange", ()=> playerReader.MaxRange }
+                {  "MaxRange", ()=> playerReader.MaxRange },
+                {  "LastAutoShotMs", () => playerReader.AutoShot.ElapsedMs },
+                {  "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }
             };
 
             if (!valueDictionary.Keys.Contains(parts[0]))
