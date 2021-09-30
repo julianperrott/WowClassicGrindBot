@@ -48,17 +48,28 @@ namespace Core.Goals
 
         public override bool CheckIfActionCanRun()
         {
-            return !bagReader.BagsFull && 
-                playerReader.ShouldConsumeCorpse && 
-                (
-                bagReader.HasItem(7005) ||
-                bagReader.HasItem(12709) ||
-                bagReader.HasItem(19901) ||
+            return
+            (
+            bagReader.HasItem(7005) ||
+            bagReader.HasItem(12709) ||
+            bagReader.HasItem(19901) ||
 
-                equipmentReader.HasItem(7005) ||
-                equipmentReader.HasItem(12709) ||
-                equipmentReader.HasItem(19901)
-                );
+            equipmentReader.HasItem(7005) ||
+            equipmentReader.HasItem(12709) ||
+            equipmentReader.HasItem(19901)
+            );
+        }
+
+        public override async Task OnEnter()
+        {
+            await base.OnEnter();
+
+            if (bagReader.BagsFull)
+            {
+                logger.LogWarning("Inventory is full");
+                playerReader.NeedSkin = false;
+                SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
+            }
         }
 
         public override async Task PerformAction()

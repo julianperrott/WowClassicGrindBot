@@ -91,16 +91,7 @@ namespace Core.Goals
             if (classConfiguration.Mode != Mode.AttendedGather)
             {
                 AddPrecondition(GoapKey.incombat, false);
-
-                if(classConfiguration.Loot)
-                {
-                    AddPrecondition(GoapKey.shouldloot, false);
-                }
-
-                if (classConfiguration.Skin)
-                {
-                    AddPrecondition(GoapKey.shouldskin, false);
-                }
+                AddPrecondition(GoapKey.consumecorpse, false);
             }
         }
 

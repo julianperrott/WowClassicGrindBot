@@ -13,13 +13,11 @@ namespace Core.Goals
         public override bool Repeatable => false;
 
         private readonly ILogger logger;
-        private readonly Wait wait;
         private readonly PlayerReader playerReader;
 
-        public ConsumeCorpse(ILogger logger, Wait wait, PlayerReader playerReader)
+        public ConsumeCorpse(ILogger logger, PlayerReader playerReader)
         {
             this.logger = logger;
-            this.wait = wait;
             this.playerReader = playerReader;
 
             AddPrecondition(GoapKey.incombat, false);
@@ -41,7 +39,7 @@ namespace Core.Goals
             playerReader.ConsumeCorpse();
             SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, false));
 
-            await wait.Update(1);
+            await Task.Delay(10);
         }
     }
 }

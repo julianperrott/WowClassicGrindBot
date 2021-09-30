@@ -113,7 +113,7 @@ namespace Core
                     availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, castingHandler, stuckDetector, classConfig));
 
                     availableActions.Add(new CreatureKilledGoal(logger, addonReader.PlayerReader, classConfig));
-                    availableActions.Add(new ConsumeCorpse(logger, wait, addonReader.PlayerReader));
+                    availableActions.Add(new ConsumeCorpse(logger, addonReader.PlayerReader));
 
                     foreach (var item in classConfig.Adhoc.Sequence)
                     {

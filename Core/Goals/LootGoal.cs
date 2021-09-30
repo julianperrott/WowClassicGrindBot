@@ -49,9 +49,16 @@ namespace Core.Goals
             AddEffect(GoapKey.shouldloot, false);
         }
 
-        public override bool CheckIfActionCanRun()
+        public override async Task OnEnter()
         {
-            return !bagReader.BagsFull && playerReader.ShouldConsumeCorpse;
+            await base.OnEnter();
+
+            if (bagReader.BagsFull)
+            {
+                logger.LogWarning("Inventory is full");
+                playerReader.NeedLoot = false;
+                SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+            }
         }
 
         public override async Task PerformAction()
