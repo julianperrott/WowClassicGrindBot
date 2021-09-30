@@ -18,7 +18,8 @@
           "Key": 6,
           "WhenUsable": true,
           "UseWhenTargetIsCasting": true,
-          "MinEnergy": 25
+          "MinEnergy": 25,
+          "Requirement": ["TargetCastingSpell:9053|11443"]
         },
         {
           "Name": "Evasion",
