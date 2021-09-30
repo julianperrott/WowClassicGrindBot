@@ -463,7 +463,7 @@ For the `MinRange` and `MaxRange` gives an approximation to the target distance 
 | 45 | 99 | "OutOfCombatRange" |
 
 
-`LastAutoShotMs` and `LastMainHandMs` - Upon evaluating the previously mentioned fields, it will compare the current time, compares how many `Milliseconds` have passed 
+`LastAutoShotMs` and `LastMainHandMs` - Upon evaluating the previously mentioned fields, it will compares the current time, many `Milliseconds` have passed 
 
 * `LastAutoShotMs` - since the last Auto Shot spell casted
 * `LastMainHandMs` - since the last Main Hand weapon swing has happened
