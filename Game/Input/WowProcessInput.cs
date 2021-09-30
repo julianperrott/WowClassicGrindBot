@@ -103,7 +103,7 @@ namespace Game
         public async Task KeyPress(ConsoleKey key, int milliseconds, string description = "")
         {
             if (!string.IsNullOrEmpty(description))
-                Log($"{description}[{key}] pressing for {milliseconds}ms");
+                Log($"[{key}] {description} pressing for {milliseconds}ms");
 
             await nativeInput.KeyPress((int)key, milliseconds);
         }
@@ -114,7 +114,7 @@ namespace Game
                 return;
 
             if (!string.IsNullOrEmpty(description))
-                Log($"{description}[{key}] pressing for {milliseconds}ms");
+                Log($"[{key}] {description} pressing for {milliseconds}ms");
 
             nativeInput.KeyPressSleep((int)key, milliseconds);
         }
