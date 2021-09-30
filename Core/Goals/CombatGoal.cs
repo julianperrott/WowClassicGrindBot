@@ -133,7 +133,13 @@ namespace Core.Goals
         {
             await base.OnExit();
 
-            logger.LogInformation($"{GetType().Name}: OnExit -> Killed anyone? {DidIKilledAnyone()}");
+            bool killCredit = DidIKilledAnyone();
+            logger.LogInformation($"{GetType().Name}: OnExit -> Killed anyone? {killCredit}");
+
+            if (killCredit)
+            {
+                await CreatureTargetMeOrMyPet();
+            }
         }
 
         public override async Task PerformAction()
