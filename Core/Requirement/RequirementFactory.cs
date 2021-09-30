@@ -33,10 +33,23 @@ namespace Core
             CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
             CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
+            CreateTargetIsCastingRequirement(item.RequirementObjects, item.UseWhenTargetIsCasting);
             CreateActionUsableRequirement(item.RequirementObjects, item);
 
             item.CreateCooldownRequirement();
             item.CreateChargeRequirement();
+        }
+
+        private void CreateTargetIsCastingRequirement(List<Requirement> itemRequirementObjects, bool? value)
+        {
+            if (value != null)
+            {
+                itemRequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => playerReader.IsTargetCasting == value.Value,
+                    LogMessage = () => "Target casting"
+                });
+            }
         }
 
         private void CreateMinRequirement(List<Requirement> RequirementObjects, string type, int value)
