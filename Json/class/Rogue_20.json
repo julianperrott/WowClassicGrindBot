@@ -1,0 +1,99 @@
+{
+    "ClassName": "Rogue",
+    "PathFilename": "10_Gnome.json",
+    "Pull": {
+      "Sequence": [
+        {
+          "Name": "Shoot",
+          "Key": "9",
+          "DelayAfterCast": 1000,
+          "WaitForWithinMelleRange": false
+        }
+      ]
+    },
+    "Combat": {
+      "Sequence": [
+        {
+          "Name": "Kick",
+          "Key": 6,
+          "WhenUsable": true,
+          "UseWhenTargetIsCasting": true,
+          "MinEnergy": 25,
+          //"Requirement": "TargetCastingSpell:9053|11443"
+        },
+        {
+          "Name": "Evasion",
+          "Key": 5,
+          "WhenUsable": true,
+          "Requirement": "Health%<40"
+        },
+        {
+          "Name": "Slice and Dice",
+          "Key": "4",
+          "MinEnergy": 25,
+          "MinComboPoints": 1,
+          "Requirements": ["not Slice and Dice"]
+        },
+        {
+          "Name": "Eviscerate",
+          "Key": "3",
+          "MinEnergy": 35,
+          "MinComboPoints": 2,
+          "Requirements": ["TargetHealth%>20"]
+        },
+        {
+          "Name": "Sinister Strike",
+          "Key": "2",
+          "MinEnergy": 40
+        },
+        {
+          "Name": "AutoAttack",
+          "Cooldown": 1
+        }
+      ]
+    },
+    "Adhoc": {
+      "Sequence": [
+        {
+          "Name": "potionhp",
+          "Key": "N4",
+          "Requirement": "Health%<5",
+          "Cooldown": 60,
+          "InCombat": "true",
+          "Log": false,
+          "Cost": 3
+        },
+        {
+          "Name": "Food",
+          "HasCastBar": true,
+          "StopBeforeCast": true,
+          "Key": "N1",
+          "Requirement": "Health%<50",
+          "Cooldown": 15,
+          "Log": false
+        },
+        {
+          "Name": "poisonmh",
+          "StopBeforeCast": true,
+          "DelayAfterCast": 500,
+          "Key": "N2",
+          "Requirement": "not HasMainHandEnchant"
+        },
+        {
+          "Name": "poisonoh",
+          "StopBeforeCast": true,
+          "DelayAfterCast": 500,
+          "Key": "N3",
+          "Requirement": "not HasOffHandEnchant"
+        },
+        {
+          "Name": "openstuff",
+          "Key": "N5",
+          "Cooldown": 30,
+          "Requirements": ["BagItem:20768:1"],
+          "Log": false
+        }
+      ]
+    }
+  }
+  

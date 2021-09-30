@@ -33,10 +33,23 @@ namespace Core
             CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
             CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
+            CreateTargetIsCastingRequirement(item.RequirementObjects, item.UseWhenTargetIsCasting);
             CreateActionUsableRequirement(item.RequirementObjects, item);
 
             item.CreateCooldownRequirement();
             item.CreateChargeRequirement();
+        }
+
+        private void CreateTargetIsCastingRequirement(List<Requirement> itemRequirementObjects, bool? value)
+        {
+            if (value != null)
+            {
+                itemRequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => playerReader.IsTargetCasting == value.Value,
+                    LogMessage = () => "Target casting"
+                });
+            }
         }
 
         private void CreateMinRequirement(List<Requirement> RequirementObjects, string type, int value)
@@ -98,6 +111,11 @@ namespace Core
             if (requirement.Contains("SpellInRange:"))
             {
                 return CreateSpellInRangeRequirement(requirement);
+            }
+
+            if (requirement.Contains("TargetCastingSpell:"))
+            {
+                return CreateTargetCastingSpellRequirement(requirement);
             }
 
             if (BuffDictionary.Count == 0)
@@ -239,6 +257,32 @@ namespace Core
             {
                 HasRequirement = () => false,
                 LogMessage = () => $"UNKNOWN REQUIREMENT! {requirementText}"
+            };
+        }
+
+        private Requirement CreateTargetCastingSpellRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var spellsPart = parts[1].Split("|");
+            var spellIds = spellsPart.Select(x=> long.Parse(x.Trim())).ToArray();
+
+            var spellIdsStringFormatted = string.Join(", ", spellIds);
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => !spellIds.Contains(this.playerReader.SpellBeingCastByTarget),
+                    LogMessage = () =>
+                        $"not Target casting {this.playerReader.SpellBeingCastByTarget} ∈ [{spellIdsStringFormatted}]"
+                };
+            }
+
+            return new Requirement
+            {
+                HasRequirement = () => spellIds.Contains(this.playerReader.SpellBeingCastByTarget),
+                LogMessage = () =>
+                    $"Target casting {this.playerReader.SpellBeingCastByTarget} ∈ [{spellIdsStringFormatted}]"
             };
         }
 

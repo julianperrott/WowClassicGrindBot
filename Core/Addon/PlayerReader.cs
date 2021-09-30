@@ -139,6 +139,9 @@ namespace Core
 
         public bool IsCasting => SpellBeingCast != 0;
 
+        public long SpellBeingCastByTarget => reader.GetLongAtCell(58);
+        public bool IsTargetCasting => SpellBeingCastByTarget != 0;
+
         public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetLongAtCell(59);
 
 

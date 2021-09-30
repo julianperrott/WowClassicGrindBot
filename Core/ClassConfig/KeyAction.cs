@@ -47,6 +47,8 @@ namespace Core
         public float Cost { get; set; } = 18;
         public string InCombat { get; set; } = "false";
 
+        public bool? UseWhenTargetIsCasting { get; set; }
+
         public string PathFilename { get; set; } = string.Empty;
         public List<WowPoint> Path { get; } = new List<WowPoint>();
 
