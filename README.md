@@ -291,7 +291,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | InCombat | Can it be cast in combat | false |
 | StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | 0 |
 | PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | "Tanaris_GadgetzanKrinkleGoodsteel.json" |
-| UseWhenTargetIsCasting | Checks for the target casting/channeling any spell (possible values: null -> ignore / false -> off / true -> on) | null |
+| UseWhenTargetIsCasting | Checks for the target casting/channeling any spell (possible values: null -> ignore / false -> when enemy not casting / true -> when enemy casting) | null |
 
 ### Pull Goal
 
