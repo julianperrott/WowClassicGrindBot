@@ -90,7 +90,7 @@ namespace Core.Goals
         {
             playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
-            await PressKey(item.ConsoleKey, item.Name + (item.AfterCastWaitNextSwing ? " and wait for next swing!" : ""), item.PressDuration);
+            await PressKey(item.ConsoleKey, item.Log ? item.Name + (item.AfterCastWaitNextSwing ? " and wait for next swing!" : "") : string.Empty, item.PressDuration);
             item.SetClicked();
         }
 

@@ -23,7 +23,7 @@ namespace Core
 
         public async Task TapInteractKey(string source)
         {
-            await KeyPress(classConfig.Interact.ConsoleKey, defaultKeyPress, $"TapInteract ({source})");
+            await KeyPress(classConfig.Interact.ConsoleKey, defaultKeyPress, string.IsNullOrEmpty(source) ? "" : $"TapInteract ({source})");
             this.classConfig.Interact.SetClicked();
         }
 
@@ -41,13 +41,13 @@ namespace Core
 
         public async Task TapClearTarget(string desc = "")
         {
-            await KeyPress(classConfig.ClearTarget.ConsoleKey, defaultKeyPress, $"TapClearTarget: {desc}");
+            await KeyPress(classConfig.ClearTarget.ConsoleKey, defaultKeyPress, string.IsNullOrEmpty(desc) ? "" : $"TapClearTarget: {desc}");
             this.classConfig.ClearTarget.SetClicked();
         }
 
         public async Task TapStopAttack(string desc = "")
         {
-            await KeyPress(classConfig.StopAttack.ConsoleKey, defaultKeyPress, $"TapStopAttack: {desc}");
+            await KeyPress(classConfig.StopAttack.ConsoleKey, defaultKeyPress, string.IsNullOrEmpty(desc) ? "" : $"TapStopAttack: {desc}");
             this.classConfig.StopAttack.SetClicked();
         }
 
