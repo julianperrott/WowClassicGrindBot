@@ -12,8 +12,7 @@
       },
       {
         "Name": "Approach",
-        "Requirement": "not InMeleeRange",
-        "Cooldown": 1
+        "Log": false
       },
       {
         "Name": "Auto Attack",
@@ -31,6 +30,24 @@
         "Requirement": "Health%<60",
         "Cooldown": 5,
         "Cost": 3
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
       }
     ]
   }
