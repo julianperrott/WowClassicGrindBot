@@ -42,6 +42,8 @@ namespace Core
 
         public int NPCMaxLevels_Above { get; set; } = 1;
         public int NPCMaxLevels_Below { get; set; } = 7;
+
+        public bool CheckTargetGivesExp { get; set; } = false;
         public List<string> Blacklist { get; } = new List<string>();
 
         public Dictionary<int, List<SchoolMask>> ImmunityBlacklist { get; } = new Dictionary<int, List<SchoolMask>>();

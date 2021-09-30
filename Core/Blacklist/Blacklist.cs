@@ -12,15 +12,18 @@ namespace Core
         private readonly ILogger logger;
         private readonly int above;
         private readonly int below;
+        private readonly bool checkTargetGivesExp;
 
         private long LastWarningTargetGuid = 0;
 
-        public Blacklist(PlayerReader playerReader, int above, int below, List<string> blacklisted, ILogger logger)
+        public Blacklist(PlayerReader playerReader, int above, int below, bool checkTargetGivesExp, List<string> blacklisted, ILogger logger)
         {
             this.playerReader = playerReader;
             this.logger = logger;
             this.above = above;
             this.below = below;
+
+            this.checkTargetGivesExp = checkTargetGivesExp;
 
             blacklisted.ForEach(npc => blacklist.Add(npc.ToUpper()));
         }
@@ -65,16 +68,24 @@ namespace Core
                 return true; // ignore tagged mobs
             }
 
-            if (this.playerReader.TargetLevel > this.playerReader.PlayerLevel + above)
-            {
-                Warn($"Target is too high a level {playerReader.TargetGuid} - {playerReader.TargetId}");
-                return true; // ignore if current level + 2
-            }
 
-            if (this.playerReader.TargetLevel < this.playerReader.PlayerLevel - below)
+            if (checkTargetGivesExp)
             {
-                Warn($"Target is too low a level {playerReader.TargetGuid} - {playerReader.TargetId}");
-                return true; // ignore if current level - 7
+                return !this.playerReader.TargetYieldXP;
+            }
+            else
+            {
+                if (this.playerReader.TargetLevel > this.playerReader.PlayerLevel + above)
+                {
+                    Warn($"Target is too high a level {playerReader.TargetGuid} - {playerReader.TargetId}");
+                    return true; // ignore if current level + 2
+                }
+
+                if (this.playerReader.TargetLevel < this.playerReader.PlayerLevel - below)
+                {
+                    Warn($"Target is too low a level {playerReader.TargetGuid} - {playerReader.TargetId}");
+                    return true; // ignore if current level - 7
+                }
             }
 
             var blacklistMatch = blacklist.Where(s => this.playerReader.Target.ToUpper().StartsWith(s)).FirstOrDefault();

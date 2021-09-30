@@ -254,7 +254,7 @@ namespace Core
 
             ActionBarPopulator = new ActionBarPopulator(logger, config, AddonReader, ExecGameCommand);
 
-            var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.Blacklist, logger);
+            var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist, logger);
 
             var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, pather, areaDb);
             var availableActions = actionFactory.CreateGoals(config, blacklist);
