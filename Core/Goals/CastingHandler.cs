@@ -111,7 +111,7 @@ namespace Core.Goals
             }
             else
             {
-                item.LogInformation($" ... instant input not registered!");
+                item.LogInformation($" ... instant input not registered! {inputElapsedMs}ms");
                 return false;
             }
 
@@ -155,7 +155,7 @@ namespace Core.Goals
             }
             else
             {
-                item.LogInformation($" ... castbar input not registered!");
+                item.LogInformation($" ... castbar input not registered! {inputElapsedMs}ms");
                 return false;
             }
 
@@ -222,16 +222,23 @@ namespace Core.Goals
             long beforeBuff = playerReader.Buffs.Value;
             bool beforeHasTarget = playerReader.HasTarget;
 
-            (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
-                () => playerReader.UsableAction.Is(item.Key) || beforeHasTarget != playerReader.HasTarget);
-            if (!gcd)
+            if (item.WaitForGCD)
             {
-                item.LogInformation($" ... waited for gcd {gcdElapsedMs}ms");
-
-                if (beforeHasTarget != playerReader.HasTarget)
+                (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
+                    () => playerReader.UsableAction.Is(item.Key) || beforeHasTarget != playerReader.HasTarget);
+                if (!gcd)
                 {
-                    item.LogInformation($" ... lost target!");
-                    return false;
+                    item.LogInformation($" ... gcd interrupted {gcdElapsedMs}ms");
+
+                    if (beforeHasTarget != playerReader.HasTarget)
+                    {
+                        item.LogInformation($" ... lost target!");
+                        return false;
+                    }
+                }
+                else
+                {
+                    item.LogInformation($" ... gcd fully waited {gcdElapsedMs}ms");
                 }
             }
 
@@ -261,7 +268,10 @@ namespace Core.Goals
             if (item.AfterCastWaitBuff)
             {
                 (bool notappeared, double elapsedMs) = await wait.InterruptTask(MaxWaitBuffTimeMs, () => beforeBuff != playerReader.Buffs.Value);
-                logger.LogInformation($" ... AfterCastWaitBuff: Buff: {!notappeared} | Delay: {elapsedMs}ms");
+                if (!notappeared)
+                    logger.LogInformation($" ... AfterCastWaitBuff: Buff: {!notappeared} | Delay: {elapsedMs}ms");
+                else
+                    logger.LogInformation($" ... AfterCastWaitBuff: No buff | Delay: {elapsedMs}ms");
             }
 
             if (item.DelayAfterCast != defaultKeyAction.DelayAfterCast)
@@ -281,13 +291,17 @@ namespace Core.Goals
                         }
                     }
                 }
-                else
+                else if(item.DelayAfterCast > 0)
                 {
                     item.LogInformation($" ... delay after cast {item.DelayAfterCast}ms");
                     var result = await wait.InterruptTask(item.DelayAfterCast, () => beforeHasTarget != playerReader.HasTarget);
                     if (!result.Item1)
                     {
-                        item.LogInformation($" .... wait interrupted {result.Item2}ms");
+                        item.LogInformation($" .... delay after cast interrupted, target changed {result.Item2}ms");
+                    }
+                    else
+                    {
+                        item.LogInformation($" .... delay after cast not interrupted {result.Item2}ms");
                     }
                 }
             }
@@ -295,7 +309,7 @@ namespace Core.Goals
             if (item.StepBackAfterCast > 0)
             {
                 input.SetKeyState(ConsoleKey.DownArrow, true, false, $"Step back for {item.StepBackAfterCast}ms");
-                (bool notStepback, double stepbackElapsedMs) = 
+                (bool notStepback, double stepbackElapsedMs) =
                     await wait.InterruptTask(item.StepBackAfterCast, () => beforeHasTarget != playerReader.HasTarget);
                 if (!notStepback)
                 {

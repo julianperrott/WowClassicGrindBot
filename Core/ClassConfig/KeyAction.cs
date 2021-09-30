@@ -38,6 +38,8 @@ namespace Core
         public bool Log { get; set; } = true;
         public int DelayAfterCast { get; set; } = 1450; // GCD 1500 - but spell queue window 400 ms
 
+        public bool WaitForGCD { get; set; } = true;
+
         public bool AfterCastWaitBuff = false;
 
         public bool AfterCastWaitNextSwing = false;

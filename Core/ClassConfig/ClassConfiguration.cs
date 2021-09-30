@@ -100,14 +100,19 @@ namespace Core
 
             Interact.Key = InteractKey;
             Interact.Name = "Interact";
+            Interact.WaitForGCD = false;
+            Interact.DelayAfterCast = 0;
             Interact.Initialise(addonReader, requirementFactory, logger);
 
             Approach.Key = InteractKey;
             Approach.Name = "Approach";
+            Approach.WaitForGCD = false;
+            Approach.DelayAfterCast = 0;
             Approach.Initialise(addonReader, requirementFactory, logger);
 
             AutoAttack.Key = InteractKey;
             AutoAttack.Name = "AutoAttack";
+            AutoAttack.WaitForGCD = false;
             AutoAttack.DelayAfterCast = 0;
             AutoAttack.Initialise(addonReader, requirementFactory, logger);
 
@@ -179,9 +184,11 @@ namespace Core
             {
                 list.ForEach(l =>
                 {
-                    if(a.Name == l.Name)
+                    if (a.Name == l.Name)
                     {
                         a.Key = l.Key;
+                        a.DelayAfterCast = l.DelayAfterCast;
+                        a.WaitForGCD = l.WaitForGCD;
                     }
                 });
             });

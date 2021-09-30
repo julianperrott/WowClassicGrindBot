@@ -120,7 +120,10 @@ namespace Core.Goals
                 await input.TapDismount();
             }
 
+            // this one is important for melees
+            // if not waiting a bit, the player will constantly moving forward
             await stopMoving.Stop();
+            await wait.Update(1);
 
             logger.LogInformation($"{GetType().Name}: OnEnter");
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
