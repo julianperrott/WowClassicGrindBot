@@ -291,6 +291,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | InCombat | Can it be cast in combat | false |
 | StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | 0 |
 | PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | "Tanaris_GadgetzanKrinkleGoodsteel.json" |
+| UseWhenTargetIsCasting | Checks for the target casting/channeling any spell (possible values: null -> ignore / false -> off / true -> on) | null |
 
 ### Pull Goal
 
@@ -631,8 +632,26 @@ In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tri
 | SHAMAN | Lightning Bolt | 0 |
 | SHAMAN | Earth Shock | 1 |
 
-----
 
+#### Target Casting Spell requirement
+
+Combined with the 'UseWhenTargetIsCasting' command parameter, this requirement can limit on which enemy target spell your character will react or ignore.
+
+Format is the following "TargetCastingSpell:spellID1|spellID2|..." which translates to "if Target is casting spellID1 OR spellID2 OR ...".
+
+It also supports negated variant, if you put '!' or "not" in front of the requirement, basically you can define ignored spells and react on everything else like "not TargetCastingSpell:spellID1|spellID2|...".
+
+e.g. Rogue_20.json
+
+        {
+          ...
+
+          "Name": "Kick",
+          "UseWhenTargetIsCasting": true,  // <---------
+          "Requirement": "TargetCastingSpell:9053|11443"  // <---------
+        }
+
+----
 # Modes
 
 The default mode for the bot is to grind, but there are other modes. The mode is set in the root of the class file.
