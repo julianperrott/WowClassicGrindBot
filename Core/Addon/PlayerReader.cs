@@ -2,7 +2,7 @@
 using Core.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace Core
 {
@@ -144,13 +144,16 @@ namespace Core
 
         public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetLongAtCell(59);
 
-
+        private int lastKnownCombatCreature;
         public int LastCombatCreatureGuid => (int)reader.GetLongAtCell(64);
 
+        private int lastKnownDamageDone = 0;
         public int LastCombatDamageDoneGuid => (int)reader.GetLongAtCell(65);
 
+        private int lastKnownDamageTaken = 0;
         public int LastCombatDamageTakenGuid => (int)reader.GetLongAtCell(66);
 
+        private int lastKnownDead = 0;
         public int LastDeadGuid => (int)reader.GetLongAtCell(67);
 
 
@@ -173,26 +176,45 @@ namespace Core
 
 
         #region Combat Creatures
-        public int CombatCreatureCount => Creatures.Count;
+        public int CombatCreatureCount => DamageTaken.Count(c => c.LastKnownHealthPercent > 0);  //Creatures.Count;
 
         public void UpdateCreatureLists()
         {
-            CreatureHistory.Update(LastCombatCreatureGuid, 100f, Creatures);
-            CreatureHistory.Update(LastCombatDamageTakenGuid, 100f, DamageTaken);
-            CreatureHistory.Update(LastCombatDamageDoneGuid, (int)TargetHealthPercentage, DamageDone);
+            if (lastKnownCombatCreature != LastCombatCreatureGuid)
+            {
+                lastKnownCombatCreature = LastCombatCreatureGuid;
+                CreatureHistory.Update(LastCombatCreatureGuid, 100f, Creatures);
+            }
 
-            // set dead mob health everywhere
-            CreatureHistory.Update(LastDeadGuid, 0, Deads);
-            CreatureHistory.Update(LastDeadGuid, 0, Creatures);
-            CreatureHistory.Update(LastDeadGuid, 0, DamageTaken);
-            CreatureHistory.Update(LastDeadGuid, 0, DamageDone);
+            if (lastKnownDamageTaken != LastCombatDamageTakenGuid)
+            {
+                lastKnownDamageTaken = LastCombatDamageTakenGuid;
+                CreatureHistory.Update(LastCombatDamageTakenGuid, 100f, DamageTaken);
+            }
+
+            if (lastKnownDamageDone != LastCombatDamageDoneGuid)
+            {
+                lastKnownDamageDone = LastCombatDamageDoneGuid;
+                CreatureHistory.Update(LastCombatDamageDoneGuid, (int)TargetHealthPercentage, DamageDone);
+            }
 
             CreatureHistory.Update((int)TargetGuid, (int)TargetHealthPercentage, Targets);
 
-            // Update last target health from LastDeadGuid
-            if (Targets.FindIndex(x => x.CreatureId == LastDeadGuid) != -1)
+            // set dead mob health everywhere
+            if (lastKnownDead != LastDeadGuid)
             {
-                CreatureHistory.Update(LastDeadGuid, 0, Targets);
+                lastKnownDead = LastDeadGuid;
+
+                CreatureHistory.Update(LastDeadGuid, 0, Deads);
+                CreatureHistory.Update(LastDeadGuid, 0, Creatures);
+                CreatureHistory.Update(LastDeadGuid, 0, DamageTaken);
+                CreatureHistory.Update(LastDeadGuid, 0, DamageDone);
+
+                // Update last target health from LastDeadGuid
+                if (Targets.FindIndex(x => x.CreatureId == LastDeadGuid) != -1)
+                {
+                    CreatureHistory.Update(LastDeadGuid, 0, Targets);
+                }
             }
         }
 
