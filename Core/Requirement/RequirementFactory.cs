@@ -113,7 +113,7 @@ namespace Core
                 return CreateSpellInRangeRequirement(requirement);
             }
 
-            if (requirement.Contains("TargetCastingSpell:"))
+            if (requirement.Contains("TargetCastingSpell"))
             {
                 return CreateTargetCastingSpellRequirement(requirement);
             }
@@ -262,28 +262,39 @@ namespace Core
 
         private Requirement CreateTargetCastingSpellRequirement(string requirement)
         {
-            var parts = requirement.Split(":");
-            var spellsPart = parts[1].Split("|");
-            var spellIds = spellsPart.Select(x=> long.Parse(x.Trim())).ToArray();
+            if (requirement.Contains(":"))
+            {
+                var parts = requirement.Split(":");
+                var spellsPart = parts[1].Split("|");
+                var spellIds = spellsPart.Select(x => long.Parse(x.Trim())).ToArray();
 
-            var spellIdsStringFormatted = string.Join(", ", spellIds);
+                var spellIdsStringFormatted = string.Join(", ", spellIds);
 
-            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+                if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+                {
+                    return new Requirement
+                    {
+                        HasRequirement = () => !spellIds.Contains(this.playerReader.SpellBeingCastByTarget),
+                        LogMessage = () =>
+                            $"not Target casting {this.playerReader.SpellBeingCastByTarget} ∈ [{spellIdsStringFormatted}]"
+                    };
+                }
+
+                return new Requirement
+                {
+                    HasRequirement = () => spellIds.Contains(this.playerReader.SpellBeingCastByTarget),
+                    LogMessage = () =>
+                        $"Target casting {this.playerReader.SpellBeingCastByTarget} ∈ [{spellIdsStringFormatted}]"
+                };
+            }
+            else
             {
                 return new Requirement
                 {
-                    HasRequirement = () => !spellIds.Contains(this.playerReader.SpellBeingCastByTarget),
-                    LogMessage = () =>
-                        $"not Target casting {this.playerReader.SpellBeingCastByTarget} ∈ [{spellIdsStringFormatted}]"
+                    HasRequirement = () => playerReader.IsTargetCasting,
+                    LogMessage = () => "Target casting"
                 };
             }
-
-            return new Requirement
-            {
-                HasRequirement = () => spellIds.Contains(this.playerReader.SpellBeingCastByTarget),
-                LogMessage = () =>
-                    $"Target casting {this.playerReader.SpellBeingCastByTarget} ∈ [{spellIdsStringFormatted}]"
-            };
         }
 
         private Requirement CreateNpcRequirement(string requirement)

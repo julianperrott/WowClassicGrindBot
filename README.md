@@ -503,6 +503,7 @@ e.g.
 | Condition | Desciption |
 | --- | --- |
 | "TargetYieldXP" | The target yields experience upon death. (Grey Level) |
+| "TargetCastingSpell" | Target casts any spell |
 | --- | --- |
 | "Has Pet" | The player's pet is alive |
 | "Pet Happy" | Only true when the pet happienss is green |
@@ -637,7 +638,9 @@ In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tri
 
 Combined with the 'UseWhenTargetIsCasting' command parameter, this requirement can limit on which enemy target spell your character will react or ignore.
 
-Format is the following "TargetCastingSpell:spellID1|spellID2|..." which translates to "if Target is casting spellID1 OR spellID2 OR ...".
+Firstly "TargetCastingSpell" as it is without mentioning any spellID. Simply tells if the target is doing any cast at all.
+
+Secondly can specify the following Format "TargetCastingSpell:spellID1|spellID2|..." which translates to "if Target is casting spellID1 OR spellID2 OR ...".
 
 It also supports negated variant, if you put '!' or "not" in front of the requirement, basically you can define ignored spells and react on everything else like "not TargetCastingSpell:spellID1|spellID2|...".
 
