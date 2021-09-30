@@ -34,7 +34,7 @@ namespace Core.Goals
             this.classConfiguration = classConfiguration;
             this.castingHandler = castingHandler;
 
-            lastKilledGuid = playerReader.LastDeadGuid;
+            lastKilledGuid = playerReader.CombatDeadGuid.Value;
 
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
@@ -113,7 +113,7 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            lastKilledGuid = playerReader.LastDeadGuid;
+            lastKilledGuid = playerReader.CombatDeadGuid.Value;
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
@@ -156,11 +156,11 @@ namespace Core.Goals
 
         private bool DidIKilledAnyone()
         {
-            if (lastKilledGuid != playerReader.LastDeadGuid
-                && playerReader.Targets.Any(x => x.CreatureId == playerReader.LastDeadGuid)
-                && playerReader.DamageDone.Any(x => x.CreatureId == playerReader.LastDeadGuid))
+            if (lastKilledGuid != playerReader.CombatDeadGuid.Value
+                && playerReader.Targets.Any(x => x.CreatureId == playerReader.CombatDeadGuid.Value)
+                && playerReader.DamageDone.Any(x => x.CreatureId == playerReader.CombatDeadGuid.Value))
             {
-                lastKilledGuid = playerReader.LastDeadGuid;
+                lastKilledGuid = playerReader.CombatDeadGuid.Value;
                 playerReader.IncrementKillCount();
 
                 logger.LogInformation($"----- Target is dead! Known kills: {playerReader.LastCombatKillCount}");
@@ -174,7 +174,7 @@ namespace Core.Goals
         private async Task<bool> CreatureTargetMeOrMyPet()
         {
             await wait.Update(1);
-            if (playerReader.PetHasTarget && playerReader.LastDeadGuid != playerReader.PetTargetGuid)
+            if (playerReader.PetHasTarget && playerReader.CombatDeadGuid.Value != playerReader.PetTargetGuid)
             {
                 logger.LogWarning("---- My pet has a target!");
                 ResetCooldowns();

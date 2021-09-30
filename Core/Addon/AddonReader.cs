@@ -79,6 +79,7 @@ namespace Core
 
             LevelTracker.Update();
 
+            PlayerReader.CheckChanges();
             PlayerReader.UpdateCreatureLists();
 
             areaDb.Update(WorldMapAreaDb.GetAreaId(PlayerReader.UIMapId));

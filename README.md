@@ -431,7 +431,7 @@ e.g.
 
 #### Value base requirements
 
-Value base requirements are made up on a [ `Health%` or `TargetHealth%` or `PetHealth%` or `Mana%` or `BagCount` or `MobCount` or `MinRange` or `MaxRange`] [< or >] [Numeric Value].
+Value base requirements are made up on a [ `Health%` or `TargetHealth%` or `PetHealth%` or `Mana%` or `BagCount` or `MobCount` or `MinRange` or `MaxRange` or `LastAutoShotMs` or `LastMainHandMs`] [< or >] [Numeric Value].
 
 e.g.
 * "Health%>70",
@@ -444,6 +444,8 @@ e.g.
 * "MinRange>15",
 * "MaxRange>20",
 * "MaxRange>35",
+* "LastAutoShotMs<500",
+* "LastMainHandMs<500",
 
 For the `MinRange` and `MaxRange` gives an approximation to the target distance to the player
 
@@ -459,6 +461,12 @@ For the `MinRange` and `MaxRange` gives an approximation to the target distance 
 | 35 | 99 | "OutOfCombatRange" |
 | 40 | 45 | "OutOfCombatRange" |
 | 45 | 99 | "OutOfCombatRange" |
+
+
+`LastAutoShotMs` and `LastMainHandMs` - Upon evaluating the previously mentioned fields, it will compare the current time, compares how many `Milliseconds` have passed 
+
+* `LastAutoShotMs` - since the last Auto Shot spell casted
+* `LastMainHandMs` - since the last Main Hand weapon swing has happened
 
 
 #### npcID requirements

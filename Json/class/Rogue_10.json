@@ -1,5 +1,6 @@
 {
   "ClassName": "Rogue",
+  "Skin": true,
   "PathFilename": "10_Gnome.json",
   "Combat": {
     "Sequence": [
@@ -7,11 +8,13 @@
         "Name": "Evasion",
         "Key": 5,
         "WhenUsable": true,
+        "WaitBuffAfterCast": true,
         "Requirement": "Health%<40"
       },
       {
         "Name": "Slice and Dice",
         "Key": "4",
+        "WaitBuffAfterCast": true,
         "MinEnergy": 25,
         "MinComboPoints": 1,
         "Requirements": ["not Slice and Dice"]
@@ -21,12 +24,17 @@
         "Key": "3",
         "MinEnergy": 35,
         "MinComboPoints": 2,
-        "Requirements": ["TargetHealth%>20"]
+        "Requirements": ["TargetHealth%>20", "LastMainHandMs<500"]
       },
       {
         "Name": "Sinister Strike",
         "Key": "2",
-        "MinEnergy": 42
+        "MinEnergy": 42,
+        "Requirement": "LastMainHandMs<500"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       },
       {
         "Name": "AutoAttack",
@@ -41,11 +49,9 @@
         "Name": "Food",
         "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "N1",
         "Requirement": "Health%<30",
-        "Cooldown": 15,
-        "Log": false
+        "Cooldown": 15
       }
     ]
   },

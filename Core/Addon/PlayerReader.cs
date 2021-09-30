@@ -144,18 +144,13 @@ namespace Core
 
         public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetLongAtCell(59);
 
-        private int lastKnownCombatCreature;
-        public int LastCombatCreatureGuid => (int)reader.GetLongAtCell(64);
+        public RecordInt AutoShot = new RecordInt(60);
+        public RecordInt MainHandSwing = new RecordInt(61);
 
-        private int lastKnownDamageDone = 0;
-        public int LastCombatDamageDoneGuid => (int)reader.GetLongAtCell(65);
-
-        private int lastKnownDamageTaken = 0;
-        public int LastCombatDamageTakenGuid => (int)reader.GetLongAtCell(66);
-
-        private int lastKnownDead = 0;
-        public int LastDeadGuid => (int)reader.GetLongAtCell(67);
-
+        public RecordInt CombatCreatureGuid = new RecordInt(64);
+        public RecordInt CombatDamageDoneGuid = new RecordInt(65);
+        public RecordInt CombatDamageTakenGuid = new RecordInt(66);
+        public RecordInt CombatDeadGuid = new RecordInt(67);
 
         public int PetGuid => (int)reader.GetLongAtCell(68);
         public int PetTargetGuid => (int)reader.GetLongAtCell(69);
@@ -180,45 +175,47 @@ namespace Core
 
         public void UpdateCreatureLists()
         {
-            if (lastKnownCombatCreature != LastCombatCreatureGuid)
+            if (CombatCreatureGuid.Updated(reader))
             {
-                lastKnownCombatCreature = LastCombatCreatureGuid;
-                CreatureHistory.Update(LastCombatCreatureGuid, 100f, Creatures);
+                CreatureHistory.Update(CombatCreatureGuid.Value, 100f, Creatures);
             }
 
-            if (lastKnownDamageTaken != LastCombatDamageTakenGuid)
+            if (CombatDamageTakenGuid.Updated(reader))
             {
-                lastKnownDamageTaken = LastCombatDamageTakenGuid;
-                CreatureHistory.Update(LastCombatDamageTakenGuid, 100f, DamageTaken);
+                CreatureHistory.Update(CombatDamageTakenGuid.Value, 100f, DamageTaken);
             }
 
-            if (lastKnownDamageDone != LastCombatDamageDoneGuid)
+            if (CombatDamageDoneGuid.Updated(reader))
             {
-                lastKnownDamageDone = LastCombatDamageDoneGuid;
-                CreatureHistory.Update(LastCombatDamageDoneGuid, (int)TargetHealthPercentage, DamageDone);
+                CreatureHistory.Update(CombatDamageDoneGuid.Value, 100f, DamageDone);
             }
 
             CreatureHistory.Update((int)TargetGuid, (int)TargetHealthPercentage, Targets);
 
             // set dead mob health everywhere
-            if (lastKnownDead != LastDeadGuid)
-            {
-                lastKnownDead = LastDeadGuid;
 
-                CreatureHistory.Update(LastDeadGuid, 0, Deads);
-                CreatureHistory.Update(LastDeadGuid, 0, Creatures);
-                CreatureHistory.Update(LastDeadGuid, 0, DamageTaken);
-                CreatureHistory.Update(LastDeadGuid, 0, DamageDone);
+            if (CombatDeadGuid.Updated(reader))
+            {
+                CreatureHistory.Update(CombatDeadGuid.Value, 0, Deads);
+                CreatureHistory.Update(CombatDeadGuid.Value, 0, Creatures);
+                CreatureHistory.Update(CombatDeadGuid.Value, 0, DamageTaken);
+                CreatureHistory.Update(CombatDeadGuid.Value, 0, DamageDone);
 
                 // Update last target health from LastDeadGuid
-                if (Targets.FindIndex(x => x.CreatureId == LastDeadGuid) != -1)
+                if (Targets.FindIndex(x => x.CreatureId == CombatDeadGuid.Value) != -1)
                 {
-                    CreatureHistory.Update(LastDeadGuid, 0, Targets);
+                    CreatureHistory.Update(CombatDeadGuid.Value, 0, Targets);
                 }
             }
         }
 
         #endregion
+
+        public void CheckChanges()
+        {
+            AutoShot.Updated(reader);
+            MainHandSwing.Updated(reader);
+        }
 
 
         #region Last Combat Kill Count

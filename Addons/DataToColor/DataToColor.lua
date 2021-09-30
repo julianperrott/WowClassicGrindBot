@@ -44,6 +44,9 @@ DataToColor.lastCombatDamageDoneCreature = 0
 DataToColor.lastCombatCreature = 0
 DataToColor.lastCombatCreatureDied = 0
 
+DataToColor.lastAutoShot = 0
+DataToColor.lastMainHandMeleeSwing = 0
+
 DataToColor.targetChanged = true
 DataToColor.updateActionBarCost = true
 
@@ -397,8 +400,8 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor:IsTargetOfTargetPlayerAsNumber(),59) -- IsTargetOfTargetPlayerAsNumber
 
-            -- 60 not used
-            -- 61 not used
+            MakePixelSquareArrI(DataToColor.lastAutoShot, 60)
+            MakePixelSquareArrI(DataToColor.lastMainHandMeleeSwing, 61)
             -- 62 not used
             -- 63 not used
             -- 64 not used

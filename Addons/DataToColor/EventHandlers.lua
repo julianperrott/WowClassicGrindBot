@@ -71,8 +71,15 @@ function DataToColor:OnUIErrorMessage(event, messageType, message)
     end
 end
 
-function DataToColor:OnCombatEvent(event)
-    local timestamp, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, spellName, spellSchool = CombatLogGetCurrentEventInfo();
+local watchedSpells = {
+    [DataToColor.C.Spell.AutoShotId] = function ()
+        --DataToColor:Print("Auto Shot detected")
+        DataToColor.lastAutoShot = DataToColor.globalTime
+     end
+  }
+
+function DataToColor:OnCombatEvent(...)
+    local _, eventType, _, sourceGUID, _, _, _, destGUID, destName, _, _, spellId, _, _ = CombatLogGetCurrentEventInfo();
     --print(CombatLogGetCurrentEventInfo())
     if eventType=="SPELL_PERIODIC_DAMAGE" then
         DataToColor.lastCombatCreature=0;
@@ -86,9 +93,22 @@ function DataToColor:OnCombatEvent(event)
         --print("Other "..eventType);
     end
 
-    if string.find(eventType, "_DAMAGE") and ((sourceGUID == DataToColor.playerGUID) or (sourceGUID == DataToColor.petGUID)) then
-        --print(CombatLogGetCurrentEventInfo())
-        DataToColor.lastCombatDamageDoneCreature = DataToColor:getGuidFromUUID(destGUID);
+    if eventType=="SPELL_CAST_SUCCESS" and sourceGUID == DataToColor.playerGUID then
+          if watchedSpells[spellId] then watchedSpells[spellId]() end
+    end
+
+    if string.find(eventType, "_DAMAGE") then
+        if sourceGUID == DataToColor.playerGUID or sourceGUID == DataToColor.petGUID then
+            DataToColor.lastCombatDamageDoneCreature = DataToColor:getGuidFromUUID(destGUID);
+        end
+
+        if sourceGUID == DataToColor.playerGUID and string.find(eventType, "SWING") then
+            local _, _, _, _, _, _, _, _, _, isOffHand = select(12, ...)
+            if not isOffHand then
+                --DataToColor:Print("Melee Swing detected")
+                DataToColor.lastMainHandMeleeSwing = DataToColor.globalTime
+            end
+        end
     end
 
     if eventType=="UNIT_DIED" then

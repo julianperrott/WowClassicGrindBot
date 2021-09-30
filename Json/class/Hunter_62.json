@@ -1,0 +1,155 @@
+{
+  "ClassName": "Hunter",
+  "Skin": true,
+  "UseMount": false,
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "NPCMaxLevels_Above": 3,
+  "MountKey": "N0",
+  "PathFilename": "60_Hellfire_Ravager.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Concussive Shot",
+        "Key": "9",
+        "StopBeforeCast": true,
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "AfterCastWaitNextSwing": true,
+        "WhenUsable": true,
+        "MinMana": 15,
+        "Requirement": "InMeleeRange"
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Gift of the Naaru",
+        "Key": "1",
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirement": "Health%<45"
+      },
+      {
+        "Name": "Mend Pet",
+        "Key": "N7",
+        "MinMana": 200,
+        "Cooldown": 15,
+        "Requirements": ["Has Pet", "PetHealth%<50"]
+      },
+      {
+        "Name": "Intimidation",
+        "Key": "N4",
+        "MinMana": 15,
+        "Cooldown": 60,
+        "WhenUsable": true,
+        "Requirements": ["Has Pet", "TargetHealth%<70||TargetCastingSpell"]
+      },
+      {
+        "Name": "Bestial Wrath",
+        "Key": "N2",
+        "MinMana": 15,
+        "Cooldown": 8,
+        "WhenUsable": true,
+        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "Has Pet", "TargetHealth%>85"]
+      },
+      {
+        "Name": "Rapid Fire",
+        "Key": "N3",
+        "MinMana": 15,
+        "Cooldown": 8,
+        "WhenUsable": true,
+        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "TargetHealth%>75"]
+      },
+      {
+        "Name": "Auto Shot",
+        "StopBeforeCast": true,
+        "Key": "3",
+        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "not AutoShot", "HasAmmo"]
+      },
+      {
+        "Name": "Steady Shot",
+        "Key": "6",
+        "WhenUsable": true,
+        "HasCastBar": true,
+        "Charge": 2,
+        "Cooldown": 5,
+        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "LastAutoShotMs<500"]
+      },
+      {
+        "Name": "Disengage",
+        "Key": "N8",
+        "WhenUsable": true,
+        "Cooldown": 5,
+        "MinMana": 15,
+        "Requirement": "InMeleeRange"
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "AfterCastWaitNextSwing": true,
+        "MinMana": 15,
+        "StepBackAfterCast": 1000,
+        "Requirement": "InMeleeRange"
+      },
+      {
+        "Name": "AutoAttack",
+        "Cooldown": 3,
+        "DelayAfterCast": 0,
+        "Requirements": ["InMeleeRange", "not AutoAttacking"]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Aspect of the Hawk",
+        "Key": "5",
+        "MinMana": 20,
+        "Requirement": "not Aspect of the Hawk"
+      },
+      {
+        "Name": "feedpet",
+        "Key": "N5",
+        "Cooldown": 20,
+        "Requirements": ["Has Pet", "not Pet Happy"]
+      },
+      {
+        "Name": "sumpet",
+        "Key": "N6",
+        "MinMana": 20,
+        "HasCastBar": true,
+        "Cooldown": 4,
+        "Requirement": "not Has Pet"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Key": "-",
+        "Requirement": "Health%<40",
+        "Cooldown": 10
+      },
+      {
+        "Name": "Water",
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Key": "=",
+        "Requirement": "Mana%<40",
+        "Cooldown": 10
+      }
+    ]
+  }
+}
