@@ -2,6 +2,23 @@
   "ClassName": "Rogue",
   "Skin": true,
   "PathFilename": "10_Gnome.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Stealth",
+        "Key": "N2",
+        "WhenUsable": true,
+        "WaitBuffAfterCast": true,
+        "Requirements": ["not Stealth","not InMeleeRange"]
+      },
+      {
+        "Name": "Backstab",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirement": "Stealth&&InMeleeRange"
+      }
+    ]
+  },
   "Combat": {
     "Sequence": [
       {

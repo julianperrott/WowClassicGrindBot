@@ -11,21 +11,21 @@
 
   "Blacklist": ["Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
-  "ShapeshiftForm": [
+  "Form": [
     {
       "Name": "/cancelform",
       "Key": "F8",
-      "ShapeShiftForm": "None"
+      "Form": "None"
     },
     {
       "Name": "Druid_Cat",
       "Key": "2",
-      "ShapeShiftForm": "Druid_Cat"
+      "Form": "Druid_Cat"
     },
     {
       "Name": "Druid_Travel",
       "Key": "1",
-      "ShapeShiftForm": "Druid_Travel"
+      "Form": "Druid_Travel"
     }
   ],
 
@@ -35,7 +35,7 @@
         "Name": "Wrath",
         "Key": "2",
         "StopBeforeCast": true,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "HasCastBar": true,
         "MinMana": 20
       }
@@ -57,14 +57,14 @@
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "MinMana": 25
       },
       {
         "Name": "Wrath",
         "Key": "2",
         "StopBeforeCast": true,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "HasCastBar": true,
         "MinMana": 20
       }
@@ -80,7 +80,7 @@
         "Requirement": "Mana%<30",
         "Cooldown": 10,
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       }
     ]
   }

@@ -14,8 +14,8 @@ namespace Core
         public ConsoleKey ConsoleKey { get; set; } = 0;
         public string Key { get; set; } = string.Empty;
         public int PressDuration { get; set; } = 50;
-        public string ShapeShiftForm { get; set; } = string.Empty;
-        public ShapeshiftForm ShapeShiftFormEnum { get; set; } = ShapeshiftForm.None;
+        public string Form { get; set; } = string.Empty;
+        public Form FormEnum { get; set; } = Core.Form.None;
         public string CastIfAddsVisible { get; set; } = "";
         public float Cooldown { get; set; } = 0;
 
@@ -96,15 +96,22 @@ namespace Core
 
             requirementFactory.InitialiseRequirements(this);
 
-            if (!string.IsNullOrEmpty(ShapeShiftForm))
+            if (!string.IsNullOrEmpty(Form))
             {
-                if (Enum.TryParse(typeof(ShapeshiftForm), ShapeShiftForm, out var desiredForm))
+                if (Enum.TryParse(typeof(Form), Form, out var desiredForm))
                 {
-                    this.ShapeShiftFormEnum = (ShapeshiftForm)desiredForm;
+                    this.FormEnum = (Form)desiredForm;
+                    this.logger.LogInformation($"[{Name}] Required Form: {FormEnum}");
+
+                    if (KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot))
+                    {
+                        int offset = Stance.MapActionBar(playerReader, slot);
+                        this.logger.LogInformation($"[{Name}] Actionbar Form key map: Key:{Key} -> Actionbar:{slot} -> Form Map:{slot + offset}");
+                    }
                 }
                 else
                 {
-                    logger.LogInformation($"Unknown shapeshift form: {ShapeShiftForm}");
+                    logger.LogInformation($"Unknown form: {Form}");
                 }
             }
         }

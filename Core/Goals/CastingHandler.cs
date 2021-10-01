@@ -105,7 +105,7 @@ namespace Core.Goals
             await PressKeyAction(item);
 
             (bool input, double inputElapsedMs) = await wait.InterruptTask(item.AfterCastWaitNextSwing ? MaxSwingTimeMs : MaxWaitCastTimeMs,
-                () => playerReader.LastUIErrorMessage != UI_ERROR.NONE || !playerReader.CurrentAction.Is(item.Key));
+                () => playerReader.LastUIErrorMessage != UI_ERROR.NONE || !playerReader.CurrentAction.Is(item));
             if (!input)
             {
                 item.LogInformation($" ... instant input after {inputElapsedMs}ms");
@@ -116,15 +116,15 @@ namespace Core.Goals
                 return false;
             }
 
-            item.LogInformation($" ... usable: {playerReader.UsableAction.Is(item.Key)} -- {playerReader.LastUIErrorMessage}");
+            item.LogInformation($" ... usable: {playerReader.UsableAction.Is(item)} -- {playerReader.LastUIErrorMessage}");
 
             if (playerReader.LastUIErrorMessage != UI_ERROR.NONE)
             {
                 if (playerReader.LastUIErrorMessage == UI_ERROR.ERR_SPELL_COOLDOWN)
                 {
                     item.LogInformation($" ... instant wait until its ready");
-                    bool before = playerReader.UsableAction.Is(item.Key);
-                    await wait.While(() => before != playerReader.UsableAction.Is(item.Key));
+                    bool before = playerReader.UsableAction.Is(item);
+                    await wait.While(() => before != playerReader.UsableAction.Is(item));
                 }
                 else
                 {
@@ -160,15 +160,15 @@ namespace Core.Goals
                 return false;
             }
 
-            item.LogInformation($" ... usable: {playerReader.UsableAction.Is(item.Key)} -- {playerReader.LastUIErrorMessage}");
+            item.LogInformation($" ... usable: {playerReader.UsableAction.Is(item)} -- {playerReader.LastUIErrorMessage}");
 
             if (playerReader.LastUIErrorMessage != UI_ERROR.NONE)
             {
                 if (playerReader.LastUIErrorMessage == UI_ERROR.ERR_SPELL_COOLDOWN)
                 {
                     item.LogInformation($" ... castbar wait until its ready");
-                    bool before = playerReader.UsableAction.Is(item.Key);
-                    await wait.While(() => before != playerReader.UsableAction.Is(item.Key));
+                    bool before = playerReader.UsableAction.Is(item);
+                    await wait.While(() => before != playerReader.UsableAction.Is(item));
                 }
                 else
                 {
@@ -196,7 +196,7 @@ namespace Core.Goals
                 return false;
             }
 
-            if (!await SwitchToCorrectShapeShiftForm(item))
+            if (!await SwitchToCorrectStanceForm(item))
             {
                 return false;
             }
@@ -206,7 +206,7 @@ namespace Core.Goals
                 await input.TapStopAttack("Stop AutoRepeat Shoot");
 
                 (bool interrupted, double elapsedMs) = await wait.InterruptTask(GCD, 
-                    () => playerReader.UsableAction.Is(item.Key));
+                    () => playerReader.UsableAction.Is(item));
 
                 if (!interrupted)
                 {
@@ -226,7 +226,7 @@ namespace Core.Goals
             if (item.WaitForGCD)
             {
                 (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
-                    () => playerReader.UsableAction.Is(item.Key) || beforeHasTarget != playerReader.HasTarget);
+                    () => playerReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
                 if (!gcd)
                 {
                     item.LogInformation($" ... gcd interrupted {gcdElapsedMs}ms");
@@ -323,27 +323,33 @@ namespace Core.Goals
             return true;
         }
 
-        protected async Task<bool> SwitchToCorrectShapeShiftForm(KeyAction item)
+        protected async Task<bool> SwitchToCorrectStanceForm(KeyAction item)
         {
-            if (this.playerReader.PlayerClass != PlayerClassEnum.Druid || string.IsNullOrEmpty(item.ShapeShiftForm)
-                || this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum)
+            if (playerReader.PlayerClass != PlayerClassEnum.Druid ||
+                playerReader.PlayerClass != PlayerClassEnum.Warrior ||
+                playerReader.PlayerClass != PlayerClassEnum.Rogue ||
+                playerReader.PlayerClass != PlayerClassEnum.Priest ||
+                string.IsNullOrEmpty(item.Form) || playerReader.Form == item.FormEnum)
             {
                 return true;
             }
 
-            var desiredFormKey = this.classConfig.ShapeshiftForm
-                .Where(s => s.ShapeShiftFormEnum == item.ShapeShiftFormEnum)
+            if (playerReader.Form == item.FormEnum)
+                return true;
+
+            var desiredFormKey = classConfig.Form
+                .Where(s => s.FormEnum == item.FormEnum)
                 .FirstOrDefault();
 
             if (desiredFormKey == null)
             {
-                logger.LogWarning($"Unable to find key in ShapeshiftForm to transform into {item.ShapeShiftFormEnum}");
+                logger.LogWarning($"Unable to find key in ShapeshiftForm to transform into {item.FormEnum}");
                 return false;
             }
 
-            await this.input.KeyPress(desiredFormKey.ConsoleKey, 325);
+            await input.KeyPress(desiredFormKey.ConsoleKey, item.PressDuration);
 
-            return this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum;
+            return playerReader.Form == item.FormEnum;
         }
 
         public async Task PressKey(ConsoleKey key, string description = "", int duration = 50)

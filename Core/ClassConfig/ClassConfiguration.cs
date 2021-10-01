@@ -54,7 +54,7 @@ namespace Core
         public KeyActions Parallel { get; set; } = new KeyActions();
         public KeyActions NPC { get; set; } = new KeyActions();
 
-        public List<KeyAction> ShapeshiftForm { get; } = new List<KeyAction>();
+        public List<KeyAction> Form { get; } = new List<KeyAction>();
         public List<KeyAction> GatherFindKeyConfig { get; } = new List<KeyAction>();
         public List<string> GatherFindKeys { get; } = new List<string>();
 
@@ -94,7 +94,7 @@ namespace Core
         public string MountKey { get; set; } = "O";
 
 
-        public static Dictionary<ShapeshiftForm, ConsoleKey> ShapeshiftFormKeys { get; private set; } = new Dictionary<ShapeshiftForm, ConsoleKey>();
+        public static Dictionary<Form, ConsoleKey> FormKeys { get; private set; } = new Dictionary<Form, ConsoleKey>();
 
         public void Initialise(DataConfig dataConfig, AddonReader addonReader, RequirementFactory requirementFactory, ILogger logger, string? overridePathProfileFile)
         {
@@ -126,7 +126,7 @@ namespace Core
             Adhoc.Initialise(addonReader, requirementFactory, logger);
             NPC.Initialise(addonReader, requirementFactory, logger);
             Parallel.Initialise(addonReader, requirementFactory, logger);
-            ShapeshiftForm.ForEach(i => i.Initialise(addonReader, requirementFactory, logger));
+            Form.ForEach(i => i.Initialise(addonReader, requirementFactory, logger));
 
             Jump.Key = JumpKey;
             Jump.Initialise(addonReader, requirementFactory, logger);

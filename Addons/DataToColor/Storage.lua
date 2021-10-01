@@ -114,6 +114,7 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[10] = { "Mark of the Wild", [136078]=1 }
         DataToColor.S.playerBuffs[11] = { "Thorns", [136104]=1 }
         DataToColor.S.playerBuffs[12] = { "Fury", [132242]=1 }
+        DataToColor.S.playerBuffs[13] = { "Prowl", [132089]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
         DataToColor.S.playerBuffs[10] = { "Aura", [135933]=1, [135890]=1, [135893]=1, [135824]=1, [135865]=1, [135873]=1, [135934]=1, [136192]=1 }
         DataToColor.S.playerBuffs[11] = { "Blessing", [1359682]=1, [135995]=1, [135943]=1, [135906]=1, [135964]=1, [135966]=1, [135967]=1, [136051]=1, [135970]=1, [135993]=1, [135909]=1, [135908]=1, [135910]=1, [135911]=1, [135912]=1 }
@@ -127,6 +128,7 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[15] = { "Mana Shield", [136153]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
         DataToColor.S.playerBuffs[10] = { "Slice and Dice", [132306]=1 }
+        DataToColor.S.playerBuffs[11] = { "Stealth", [132320]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
         DataToColor.S.playerBuffs[10] = { "Battle Shout", [132333]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then

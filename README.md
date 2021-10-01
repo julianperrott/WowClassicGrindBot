@@ -543,6 +543,7 @@ e.g.
 | Druid | "Mark of the Wild" |
 | Druid | "Thorns" |
 | Druid | "TigersFury" |
+| Druid | "Prowl" |
 | Mage | "Frost Armor" |
 | Mage | "Ice Armor" |
 | Mage | "Arcane Intellect" |
@@ -560,6 +561,7 @@ e.g.
 | Priest | "Renew" |
 | Priest | "Shield" |
 | Rogue | "Slice And Dice" |
+| Rogue | "Stealth" |
 | Warlock | "Demon Armor" |
 | Warlock | "Demon Skin" |
 | Warlock | "Shadow Trance" |

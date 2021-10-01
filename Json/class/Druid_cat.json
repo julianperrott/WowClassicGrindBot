@@ -10,21 +10,21 @@
 
   "Blacklist": ["Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
-  "ShapeshiftForm": [
+  "Form": [
     {
       "Name": "/cancelform",
       "Key": "F8",
-      "ShapeShiftForm": "None"
+      "Form": "None"
     },
     {
       "Name": "Druid_Cat",
       "Key": "2",
-      "ShapeShiftForm": "Druid_Cat"
+      "Form": "Druid_Cat"
     },
     {
       "Name": "Druid_Travel",
       "Key": "1",
-      "ShapeShiftForm": "Druid_Travel"
+      "Form": "Druid_Travel"
     }
   ],
 
@@ -34,20 +34,20 @@
         "Name": "Rejuvenation",
         "Key": "1",
         "Requirement": "Health%<70",
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Wrath",
         "Key": "7",
         "Requirement": "OutOfCombatRange",
         "StopBeforeCast": true,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "HasCastBar": true
       },
       {
         "Name": "Moonfire",
         "Key": "8",
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "MinMana": 235,
         "DelayBeforeCast": 300
       },
@@ -55,14 +55,14 @@
         "Name": "Wrath",
         "Key": "7",
         "Requirement": "OutOfCombatRange",
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "HasCastBar": true,
         "WaitForWithinMelleRange": true
       },
       {
         "Name": "Cat form",
         "Key": "2",
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "WaitForWithinMelleRange": true
       },
       {
@@ -72,7 +72,7 @@
         "Cooldown": 10,
         "HasCastBar": false,
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       }
     ]
   },
@@ -92,7 +92,7 @@
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Tigers Fury",
@@ -102,7 +102,7 @@
         "Cooldown": 6,
         "DelayAfterCast": "200",
         "Log": false,
-        "ShapeShiftForm": "Druid_Cat"
+        "Form": "Druid_Cat"
       },
       {
         "Name": "Faerie Fire",
@@ -110,7 +110,7 @@
         "Key": "7",
         "MinRage": 10,
         "Cooldown": 10,
-        "ShapeShiftForm": "Druid_Cat",
+        "Form": "Druid_Cat",
         "Log": false,
         "ResetOnNewTarget": true
       },
@@ -122,7 +122,7 @@
         "MinComboPoints": 3,
         "Cooldown": 10,
         "Log": false,
-        "ShapeShiftForm": "Druid_Cat"
+        "Form": "Druid_Cat"
       },
       {
         "Name": "Rake",
@@ -130,7 +130,7 @@
         "MinRage": 35,
         "Cooldown": 1,
         "Log": false,
-        "ShapeShiftForm": "Druid_Cat"
+        "Form": "Druid_Cat"
       }
     ]
   },
@@ -141,7 +141,7 @@
         "Key": "-",
         "Requirement": "Health%<8",
         "Cooldown": 60,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "InCombat": "true",
         "Log": false,
         "Cost": 3
@@ -154,7 +154,7 @@
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "Cost": 3
       },
       {
@@ -164,7 +164,7 @@
         "Requirement": "not Well Fed",
         "Cooldown": 120,
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Drink",
@@ -174,7 +174,7 @@
         "Requirement": "Mana%<40",
         "Cooldown": 10,
         "Log": false,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "Cost": 3
       },
       {
@@ -184,7 +184,7 @@
         "Cooldown": 10,
         "Requirement": "not Thorns",
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Mark of the Wild",
@@ -193,7 +193,7 @@
         "Cooldown": 10,
         "Requirement": "not Mark of the Wild",
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Del1",
