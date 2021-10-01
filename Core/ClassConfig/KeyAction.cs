@@ -101,6 +101,13 @@ namespace Core
                 if (Enum.TryParse(typeof(Form), Form, out var desiredForm))
                 {
                     this.FormEnum = (Form)desiredForm;
+                    this.logger.LogInformation($"[{Name}] Required Form: {FormEnum}");
+
+                    if (KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot))
+                    {
+                        int offset = Stance.MapActionBar(playerReader, slot);
+                        this.logger.LogInformation($"[{Name}] Actionbar Form key map: Key:{Key} -> Actionbar:{slot} -> Form Map:{slot + offset}");
+                    }
                 }
                 else
                 {
