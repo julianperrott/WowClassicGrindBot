@@ -63,9 +63,13 @@ namespace Core
             CreateMinRequirement(item.RequirementObjects, "Mana", item.MinMana);
             CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
             CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
+
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
             CreateTargetIsCastingRequirement(item.RequirementObjects, item.UseWhenTargetIsCasting);
             CreateActionUsableRequirement(item.RequirementObjects, item);
+
+            CreateWaterRequirement(item);
+            CreateFoodRequirement(item);
 
             item.CreateCooldownRequirement();
             item.CreateChargeRequirement();
@@ -114,6 +118,30 @@ namespace Core
                 {
                     HasRequirement = () => playerReader.UsableAction.Is(item.Key),
                     LogMessage = () => $"Usable"
+                });
+            }
+        }
+
+        private void CreateWaterRequirement(KeyAction item)
+        {
+            if (item.Name == "Water")
+            {
+                item.RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => bagReader.ItemCount(bagReader.HighestQuantityOfWaterId()) > 0,
+                    LogMessage = () => $"Has Water"
+                });
+            }
+        }
+
+        private void CreateFoodRequirement(KeyAction item)
+        {
+            if (item.Name == "Food")
+            {
+                item.RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => bagReader.ItemCount(bagReader.HighestQuantityOfFoodId()) > 0,
+                    LogMessage = () => $"Has Food"
                 });
             }
         }
@@ -451,5 +479,6 @@ namespace Core
                 };
             }
         }
+
     }
 }
