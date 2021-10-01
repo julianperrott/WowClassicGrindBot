@@ -1,4 +1,4 @@
-﻿using SharedLib.NpcFinder;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -105,7 +105,7 @@ namespace Core.Goals
             await PressKeyAction(item);
 
             (bool input, double inputElapsedMs) = await wait.InterruptTask(item.AfterCastWaitNextSwing ? MaxSwingTimeMs : MaxWaitCastTimeMs,
-                () => playerReader.LastUIErrorMessage != UI_ERROR.NONE || !playerReader.CurrentAction.Is(item.Key));
+                () => playerReader.LastUIErrorMessage != UI_ERROR.NONE || !playerReader.CurrentAction.Is(item));
             if (!input)
             {
                 item.LogInformation($" ... instant input after {inputElapsedMs}ms");
@@ -116,15 +116,15 @@ namespace Core.Goals
                 return false;
             }
 
-            item.LogInformation($" ... usable: {playerReader.UsableAction.Is(item.Key)} -- {playerReader.LastUIErrorMessage}");
+            item.LogInformation($" ... usable: {playerReader.UsableAction.Is(item)} -- {playerReader.LastUIErrorMessage}");
 
             if (playerReader.LastUIErrorMessage != UI_ERROR.NONE)
             {
                 if (playerReader.LastUIErrorMessage == UI_ERROR.ERR_SPELL_COOLDOWN)
                 {
                     item.LogInformation($" ... instant wait until its ready");
-                    bool before = playerReader.UsableAction.Is(item.Key);
-                    await wait.While(() => before != playerReader.UsableAction.Is(item.Key));
+                    bool before = playerReader.UsableAction.Is(item);
+                    await wait.While(() => before != playerReader.UsableAction.Is(item));
                 }
                 else
                 {
@@ -160,15 +160,15 @@ namespace Core.Goals
                 return false;
             }
 
-            item.LogInformation($" ... usable: {playerReader.UsableAction.Is(item.Key)} -- {playerReader.LastUIErrorMessage}");
+            item.LogInformation($" ... usable: {playerReader.UsableAction.Is(item)} -- {playerReader.LastUIErrorMessage}");
 
             if (playerReader.LastUIErrorMessage != UI_ERROR.NONE)
             {
                 if (playerReader.LastUIErrorMessage == UI_ERROR.ERR_SPELL_COOLDOWN)
                 {
                     item.LogInformation($" ... castbar wait until its ready");
-                    bool before = playerReader.UsableAction.Is(item.Key);
-                    await wait.While(() => before != playerReader.UsableAction.Is(item.Key));
+                    bool before = playerReader.UsableAction.Is(item);
+                    await wait.While(() => before != playerReader.UsableAction.Is(item));
                 }
                 else
                 {
@@ -206,7 +206,7 @@ namespace Core.Goals
                 await input.TapStopAttack("Stop AutoRepeat Shoot");
 
                 (bool interrupted, double elapsedMs) = await wait.InterruptTask(GCD, 
-                    () => playerReader.UsableAction.Is(item.Key));
+                    () => playerReader.UsableAction.Is(item));
 
                 if (!interrupted)
                 {
@@ -226,7 +226,7 @@ namespace Core.Goals
             if (item.WaitForGCD)
             {
                 (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
-                    () => playerReader.UsableAction.Is(item.Key) || beforeHasTarget != playerReader.HasTarget);
+                    () => playerReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
                 if (!gcd)
                 {
                     item.LogInformation($" ... gcd interrupted {gcdElapsedMs}ms");

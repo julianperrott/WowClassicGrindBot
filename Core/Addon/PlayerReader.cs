@@ -83,8 +83,8 @@ namespace Core
 
         public bool HasTarget => PlayerBitValues.HasTarget || TargetHealth > 0;
 
-        public ActionBarBits CurrentAction => new ActionBarBits(reader, 26, 27, 28, 29, 30);
-        public ActionBarBits UsableAction => new ActionBarBits(reader, 31, 32, 33, 34, 35);
+        public ActionBarBits CurrentAction => new ActionBarBits(this, reader, 26, 27, 28, 29, 30);
+        public ActionBarBits UsableAction => new ActionBarBits(this, reader, 31, 32, 33, 34, 35);
 
         // 36 Actionbar cost
 
@@ -111,8 +111,6 @@ namespace Core
         public PlayerClassEnum PlayerClass => (PlayerClassEnum)reader.GetLongAtCell(46);
 
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
-
-        public ShapeshiftForm Druid_ShapeshiftForm => (ShapeshiftForm)reader.GetLongAtCell(48);
 
         public Stance Stance => new Stance(reader.GetLongAtCell(48));
 
