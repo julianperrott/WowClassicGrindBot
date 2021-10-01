@@ -1,8 +1,7 @@
 ﻿using Core.GOAP;
-using Core.Looting;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Core.Goals
@@ -21,12 +20,12 @@ namespace Core.Goals
         private readonly StopMoving stopMoving;
         private readonly BagReader bagReader;
         private readonly EquipmentReader equipmentReader;
-        private readonly NpcNameFinder npcNameFinder;
+        private readonly NpcNameTargeting npcNameTargeting;
         private readonly CombatUtil combatUtil;
 
         private long lastLoot;
 
-        public SkinningGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving,  NpcNameFinder npcNameFinder, CombatUtil combatUtil)
+        public SkinningGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
         {
             this.logger = logger;
             this.input = input;
@@ -37,7 +36,7 @@ namespace Core.Goals
             this.bagReader = bagReader;
             this.equipmentReader = equipmentReader;
 
-            this.npcNameFinder = npcNameFinder;
+            this.npcNameTargeting = npcNameTargeting;
             this.combatUtil = combatUtil;
 
             AddPrecondition(GoapKey.incombat, false);
@@ -70,6 +69,8 @@ namespace Core.Goals
                 playerReader.NeedSkin = false;
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
             }
+
+            npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
         }
 
         public override async Task PerformAction()
@@ -78,9 +79,8 @@ namespace Core.Goals
 
             combatUtil.Update();
 
-            Log("Try to find Corpse");
-            npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Corpse);
-            await npcNameFinder.WaitForNUpdate(1);
+            Log($"Try to find {NpcNames.Corpse}");
+            await npcNameTargeting.WaitForNUpdate(1);
 
             int attempts = 1;
             while (attempts < 5)
@@ -94,7 +94,7 @@ namespace Core.Goals
                     }
                 }
 
-                bool foundCursor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Skin);
+                bool foundCursor = await npcNameTargeting.FindByCursorType(Cursor.CursorClassification.Skin);
                 if (foundCursor)
                 {
                     Log("Found corpse - interacted with right click");
@@ -137,7 +137,7 @@ namespace Core.Goals
                 }
                 else
                 {
-                    Log($"Target is not skinnable - NPC Count: {npcNameFinder.NpcCount}");
+                    Log($"Target is not skinnable - NPC Count: {npcNameTargeting.NpcCount}");
                     await GoalExit();
                     return;
                 }

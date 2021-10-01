@@ -1,4 +1,5 @@
 ﻿using Core.GOAP;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Core.Goals
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
-        private readonly NpcNameFinder npcNameFinder;
+        private readonly NpcNameTargeting npcNameTargeting;
         private readonly IBlacklist blacklist;
         private readonly IPPather pather;
         private readonly MountHandler mountHandler;
@@ -42,14 +43,14 @@ namespace Core.Goals
         
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler)
+        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler)
         {
             this.logger = logger;
             this.input = input;
             this.playerReader = playerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
-            this.npcNameFinder = npcNameFinder;
+            this.npcNameTargeting = npcNameTargeting;
             
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
@@ -158,9 +159,9 @@ namespace Core.Goals
                         await this.stopMoving.Stop();
                         await input.TapClearTarget();
 
-                        npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.FriendlyOrNeutral);
-                        await npcNameFinder.WaitForNUpdate(2);
-                        var foundVendor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Vendor, Cursor.CursorClassification.Repair);
+                        npcNameTargeting.ChangeNpcType(NpcNames.Friendly | NpcNames.Neutral);
+                        await npcNameTargeting.WaitForNUpdate(2);
+                        var foundVendor = await npcNameTargeting.FindByCursorType(Cursor.CursorClassification.Vendor, Cursor.CursorClassification.Repair);
 
                         await InteractWithTarget();
                         await input.TapClearTarget();

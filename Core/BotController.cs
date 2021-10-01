@@ -15,6 +15,7 @@ using SharedLib;
 using Game;
 using WinAPI;
 using Microsoft.Extensions.Configuration;
+using SharedLib.NpcFinder;
 
 namespace Core
 {
@@ -51,6 +52,8 @@ namespace Core
         public ConfigurableInput? ConfigurableInput { get; set; }
 
         private NpcNameFinder npcNameFinder;
+
+        private NpcNameTargeting npcNameTargeting;
 
         private AreaDB areaDb;
 
@@ -126,7 +129,8 @@ namespace Core
 
             logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerClass}.");
 
-            npcNameFinder = new NpcNameFinder(logger, WowScreen, WowProcessInput);
+            npcNameFinder = new NpcNameFinder(logger, WowScreen);
+            npcNameTargeting = new NpcNameTargeting(logger, npcNameFinder, WowProcessInput);
             WowScreen.AddDrawAction(npcNameFinder.ShowNames);
 
             //ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
@@ -256,7 +260,7 @@ namespace Core
 
             var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist, logger);
 
-            var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, pather, areaDb);
+            var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, areaDb);
             var availableActions = actionFactory.CreateGoals(config, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 

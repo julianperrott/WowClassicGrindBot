@@ -12,6 +12,7 @@ namespace CoreTests
         {
             var logConfig = new LoggerConfiguration()
                 .WriteTo.File("names.log")
+                .WriteTo.Debug()
                 .CreateLogger();
 
             Log.Logger = logConfig;

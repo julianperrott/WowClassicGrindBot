@@ -1,4 +1,4 @@
-﻿namespace Core.NpcFinder
+﻿namespace SharedLib.NpcFinder
 {
     public class LineOfNpcName
     {
