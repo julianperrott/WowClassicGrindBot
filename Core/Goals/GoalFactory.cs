@@ -1,5 +1,6 @@
 ﻿using Core.Database;
 using Core.Goals;
+using SharedLib.NpcFinder;
 using Core.PPather;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -18,19 +19,21 @@ namespace Core
 
         private readonly AddonReader addonReader;
         private readonly NpcNameFinder npcNameFinder;
+        private readonly NpcNameTargeting npcNameTargeting;
         private readonly IPPather pather;
 
         private readonly AreaDB areaDb;
 
         public RouteInfo? RouteInfo { get; private set; }
 
-        public GoalFactory(ILogger logger, AddonReader addonReader, ConfigurableInput input, DataConfig dataConfig, NpcNameFinder npcNameFinder, IPPather pather, AreaDB areaDb)
+        public GoalFactory(ILogger logger, AddonReader addonReader, ConfigurableInput input, DataConfig dataConfig, NpcNameFinder npcNameFinder, NpcNameTargeting npcNameTargeting, IPPather pather, AreaDB areaDb)
         {
             this.logger = logger;
             this.addonReader = addonReader;
             this.input = input;
             this.dataConfig = dataConfig;
             this.npcNameFinder = npcNameFinder;
+            this.npcNameTargeting = npcNameTargeting;
             this.pather = pather;
             this.areaDb = areaDb;
         }
@@ -53,7 +56,7 @@ namespace Core
             var combatUtil = new CombatUtil(logger, input, wait, addonReader.PlayerReader);
             var mountHandler = new MountHandler(logger, input, classConfig, wait, addonReader.PlayerReader, stopMoving);
 
-            var targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameFinder);
+            var targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameFinder, npcNameTargeting);
 
             var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader.PlayerReader, playerDirection, pathPoints, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, mountHandler, targetFinder);
             var walkToCorpseAction = new WalkToCorpseGoal(logger, input, addonReader.PlayerReader, playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
@@ -96,13 +99,13 @@ namespace Core
 
                 if (classConfig.Loot)
                 {
-                    var lootAction = new LootGoal(logger, input, wait, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameFinder, combatUtil, areaDb);
+                    var lootAction = new LootGoal(logger, input, wait, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameTargeting, combatUtil, areaDb);
                     lootAction.AddPreconditions();
                     availableActions.Add(lootAction);
 
                     if (classConfig.Skin)
                     {
-                        availableActions.Add(new SkinningGoal(logger, input, wait, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, npcNameFinder, combatUtil));
+                        availableActions.Add(new SkinningGoal(logger, input, wait, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, npcNameTargeting, combatUtil));
                     }
                 }
 
@@ -128,7 +131,7 @@ namespace Core
 
                 foreach (var item in classConfig.NPC.Sequence)
                 {
-                    availableActions.Add(new AdhocNPCGoal(logger, input, addonReader.PlayerReader, playerDirection, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, item, blacklist, mountHandler));
+                    availableActions.Add(new AdhocNPCGoal(logger, input, addonReader.PlayerReader, playerDirection, stopMoving, npcNameTargeting, stuckDetector, classConfig, pather, item, blacklist, mountHandler));
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 

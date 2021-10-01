@@ -1,4 +1,5 @@
 using Core.GOAP;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

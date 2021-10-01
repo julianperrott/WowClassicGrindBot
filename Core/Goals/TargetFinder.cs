@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using SharedLib.NpcFinder;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,10 +16,11 @@ namespace Core.Goals
 
         private readonly IBlacklist blacklist;
         private readonly NpcNameFinder npcNameFinder;
+        private readonly NpcNameTargeting npcNameTargeting;
 
         private readonly Random random = new Random();
 
-        public TargetFinder(ILogger logger, ConfigurableInput input, ClassConfiguration classConfig, Wait wait, PlayerReader playerReader, IBlacklist blacklist, NpcNameFinder npcNameFinder)
+        public TargetFinder(ILogger logger, ConfigurableInput input, ClassConfiguration classConfig, Wait wait, PlayerReader playerReader, IBlacklist blacklist, NpcNameFinder npcNameFinder, NpcNameTargeting npcNameTargeting)
         {
             this.logger = logger;
             this.classConfig = classConfig;
@@ -28,6 +30,7 @@ namespace Core.Goals
 
             this.blacklist = blacklist;
             this.npcNameFinder = npcNameFinder;
+            this.npcNameTargeting = npcNameTargeting;
         }
 
         public async Task<bool> Search(string source, CancellationToken cancellationToken)
@@ -69,10 +72,10 @@ namespace Core.Goals
 
                 if (!playerReader.HasTarget && !cancellationToken.IsCancellationRequested)
                 {
-                    npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
-                    if (npcNameFinder.NpcCount > 0 && !cancellationToken.IsCancellationRequested)
+                    npcNameTargeting.ChangeNpcType(NpcNames.Enemy);
+                    if (npcNameTargeting.NpcCount > 0 && !cancellationToken.IsCancellationRequested)
                     {
-                        await npcNameFinder.TargetingAndClickNpc(0, true, cancellationToken);
+                        await npcNameTargeting.TargetingAndClickNpc(0, true, cancellationToken);
 
                         if(!cancellationToken.IsCancellationRequested)
                             await wait.Update(1);

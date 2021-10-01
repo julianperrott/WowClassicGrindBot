@@ -1,5 +1,6 @@
-﻿using System.Drawing;
-using Core;
+using System.Drawing;
+using Core.Goals;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using SharedLib;
 
@@ -9,6 +10,7 @@ namespace CoreTests
     {
         private readonly ILogger logger;
         private readonly NpcNameFinder npcNameFinder;
+        private readonly NpcNameTargeting npcNameTargeting;
         private readonly RectProvider rectProvider;
         private readonly DirectBitmapCapturer capturer;
 
@@ -21,7 +23,8 @@ namespace CoreTests
             rectProvider.GetRectangle(out var rect);
             capturer = new DirectBitmapCapturer(rect);
 
-            npcNameFinder = new NpcNameFinder(logger, capturer, mockWoWProcess);
+            npcNameFinder = new NpcNameFinder(logger, capturer);
+            npcNameTargeting = new NpcNameTargeting(logger, npcNameFinder, mockWoWProcess);
         }
 
         public void Execute()
@@ -51,7 +54,7 @@ namespace CoreTests
 
                         npcNameFinder.Npcs.ForEach(n =>
                         {
-                            npcNameFinder.locTargetingAndClickNpc.ForEach(l =>
+                            npcNameTargeting.locTargetingAndClickNpc.ForEach(l =>
                             {
                                 gr.DrawEllipse(whitePen, l.X + n.ClickPoint.X, l.Y + n.ClickPoint.Y, 5, 5);
                             });

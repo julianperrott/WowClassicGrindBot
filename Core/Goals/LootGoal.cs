@@ -1,9 +1,8 @@
 ﻿using Core.Database;
 using Core.GOAP;
-using Core.Looting;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Core.Goals
@@ -22,13 +21,13 @@ namespace Core.Goals
         private readonly StopMoving stopMoving;
         private readonly BagReader bagReader;
         private readonly ClassConfiguration classConfiguration;
-        private readonly NpcNameFinder npcNameFinder;
+        private readonly NpcNameTargeting npcNameTargeting;
         private readonly CombatUtil combatUtil;
 
         private bool debug = true;
         private long lastLoot;
 
-        public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameFinder npcNameFinder, CombatUtil combatUtil, AreaDB areaDb)
+        public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil, AreaDB areaDb)
         {
             this.logger = logger;
             this.input = input;
@@ -39,7 +38,7 @@ namespace Core.Goals
             this.bagReader = bagReader;
             
             this.classConfiguration = classConfiguration;
-            this.npcNameFinder = npcNameFinder;
+            this.npcNameTargeting = npcNameTargeting;
             this.combatUtil = combatUtil;
         }
 
@@ -59,6 +58,9 @@ namespace Core.Goals
                 playerReader.NeedLoot = false;
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
             }
+
+            Log($"Search for {NpcNames.Corpse}");
+            npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
         }
 
         public override async Task PerformAction()
@@ -68,11 +70,8 @@ namespace Core.Goals
             await stopMoving.Stop();
             combatUtil.Update();
 
-            Log("Search for corpse");
-            npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Corpse);
-
-            await npcNameFinder.WaitForNUpdate(1);
-            bool foundCursor = await npcNameFinder.FindByCursorType(Cursor.CursorClassification.Loot);
+            await npcNameTargeting.WaitForNUpdate(1);
+            bool foundCursor = await npcNameTargeting.FindByCursorType(Cursor.CursorClassification.Loot);
             if (foundCursor)
             {
                 Log("Found corpse - clicked");
