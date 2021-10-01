@@ -128,6 +128,7 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[15] = { "Mana Shield", [136153]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
         DataToColor.S.playerBuffs[10] = { "Slice and Dice", [132306]=1 }
+        DataToColor.S.playerBuffs[11] = { "Stealth", [132320]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
         DataToColor.S.playerBuffs[10] = { "Battle Shout", [132333]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then

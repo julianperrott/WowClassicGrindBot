@@ -561,6 +561,7 @@ e.g.
 | Priest | "Renew" |
 | Priest | "Shield" |
 | Rogue | "Slice And Dice" |
+| Rogue | "Stealth" |
 | Warlock | "Demon Armor" |
 | Warlock | "Demon Skin" |
 | Warlock | "Shadow Trance" |

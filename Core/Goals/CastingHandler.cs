@@ -1,4 +1,4 @@
-using SharedLib.NpcFinder;
+﻿using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -196,7 +196,7 @@ namespace Core.Goals
                 return false;
             }
 
-            if (!await SwitchToCorrectShapeShiftForm(item))
+            if (!await SwitchToCorrectStanceForm(item))
             {
                 return false;
             }
@@ -323,27 +323,33 @@ namespace Core.Goals
             return true;
         }
 
-        protected async Task<bool> SwitchToCorrectShapeShiftForm(KeyAction item)
+        protected async Task<bool> SwitchToCorrectStanceForm(KeyAction item)
         {
-            if (this.playerReader.PlayerClass != PlayerClassEnum.Druid || string.IsNullOrEmpty(item.ShapeShiftForm)
-                || this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum)
+            if (playerReader.PlayerClass != PlayerClassEnum.Druid ||
+                playerReader.PlayerClass != PlayerClassEnum.Warrior ||
+                playerReader.PlayerClass != PlayerClassEnum.Rogue ||
+                playerReader.PlayerClass != PlayerClassEnum.Priest ||
+                string.IsNullOrEmpty(item.Form) || playerReader.Form == item.FormEnum)
             {
                 return true;
             }
 
-            var desiredFormKey = this.classConfig.ShapeshiftForm
-                .Where(s => s.ShapeShiftFormEnum == item.ShapeShiftFormEnum)
+            if (playerReader.Form == item.FormEnum)
+                return true;
+
+            var desiredFormKey = classConfig.Form
+                .Where(s => s.FormEnum == item.FormEnum)
                 .FirstOrDefault();
 
             if (desiredFormKey == null)
             {
-                logger.LogWarning($"Unable to find key in ShapeshiftForm to transform into {item.ShapeShiftFormEnum}");
+                logger.LogWarning($"Unable to find key in ShapeshiftForm to transform into {item.FormEnum}");
                 return false;
             }
 
-            await this.input.KeyPress(desiredFormKey.ConsoleKey, 325);
+            await input.KeyPress(desiredFormKey.ConsoleKey, item.PressDuration);
 
-            return this.playerReader.Druid_ShapeshiftForm == item.ShapeShiftFormEnum;
+            return playerReader.Form == item.FormEnum;
         }
 
         public async Task PressKey(ConsoleKey key, string description = "", int duration = 50)

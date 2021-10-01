@@ -10,21 +10,21 @@
 
   "Blacklist": ["BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
-  "ShapeshiftForm": [
+  "Form": [
     {
       "Name": "/cancelform",
       "Key": "F8",
-      "ShapeShiftForm": "None"
+      "Form": "None"
     },
     {
       "Name": "Druid_Bear",
       "Key": "2",
-      "ShapeShiftForm": "Druid_Bear"
+      "Form": "Druid_Bear"
     },
     {
       "Name": "Druid_Travel",
       "Key": "1",
-      "ShapeShiftForm": "Druid_Travel"
+      "Form": "Druid_Travel"
     }
   ],
 
@@ -34,20 +34,20 @@
         "Name": "Rejuvenation",
         "Key": "1",
         "Requirement": "Health%<70",
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Wrath",
         "Key": "7",
         "Requirement": "OutOfCombatRange",
         "StopBeforeCast": true,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "HasCastBar": true
       },
       {
         "Name": "Moonfire",
         "Key": "8",
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "MinMana": 235,
         "DelayBeforeCast": 300
       },
@@ -55,14 +55,14 @@
         "Name": "Wrath",
         "Key": "7",
         "Requirement": "OutOfCombatRange",
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "HasCastBar": true,
         "WaitForWithinMelleRange": true
       },
       {
         "Name": "Bear form",
         "Key": "2",
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "WaitForWithinMelleRange": true
       }
     ]
@@ -83,7 +83,7 @@
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Enrage",
@@ -91,7 +91,7 @@
         "Cooldown": 15,
         "DelayAfterCast": "200",
         "Log": false,
-        "ShapeShiftForm": "Druid_Bear"
+        "Form": "Druid_Bear"
       },
       {
         "Name": "Faerie Fire",
@@ -99,7 +99,7 @@
         "Key": "7",
         "MinRage": 10,
         "Cooldown": 10,
-        "ShapeShiftForm": "Druid_Bear",
+        "Form": "Druid_Bear",
         "Log": false,
         "ResetOnNewTarget": true
       },
@@ -110,7 +110,7 @@
         "MinRage": 6,
         "Cooldown": 10,
         "Log": false,
-        "ShapeShiftForm": "Druid_Bear"
+        "Form": "Druid_Bear"
       },
       {
         "Name": "Bash",
@@ -118,7 +118,7 @@
         "MinRage": 10,
         "Cooldown": 31,
         "Log": false,
-        "ShapeShiftForm": "Druid_Bear"
+        "Form": "Druid_Bear"
       },
       {
         "Name": "Maul",
@@ -127,7 +127,7 @@
         "Cooldown": 2,
         "DelayAfterCast": "500",
         "Log": false,
-        "ShapeShiftForm": "Druid_Bear"
+        "Form": "Druid_Bear"
       }
     ]
   },
@@ -138,7 +138,7 @@
         "Key": "-",
         "Requirement": "Health%<8",
         "Cooldown": 60,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "InCombat": "true",
         "Log": false,
         "Cost": 3
@@ -150,7 +150,7 @@
         "Cooldown": 10,
         "HasCastBar": true,
         "Log": false,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "Cost": 3
       },
       {
@@ -160,7 +160,7 @@
         "Requirement": "not Well Fed",
         "Cooldown": 120,
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Drink",
@@ -170,7 +170,7 @@
         "Requirement": "Mana%<40",
         "Cooldown": 10,
         "Log": false,
-        "ShapeShiftForm": "None",
+        "Form": "None",
         "Cost": 3
       },
       {
@@ -180,7 +180,7 @@
         "Cooldown": 10,
         "Requirement": "not Thorns",
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Mark of the Wild",
@@ -189,7 +189,7 @@
         "Cooldown": 10,
         "Requirement": "not Mark of the Wild",
         "Log": false,
-        "ShapeShiftForm": "None"
+        "Form": "None"
       },
       {
         "Name": "Del1",

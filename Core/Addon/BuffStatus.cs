@@ -48,6 +48,7 @@
 
         // Rogue
         public bool SliceAndDice => IsBitSet(10);
+        public bool Stealth => IsBitSet(11);
 
         // Warrior
         public bool BattleShout => IsBitSet(10);

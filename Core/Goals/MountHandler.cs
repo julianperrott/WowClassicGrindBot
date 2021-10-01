@@ -34,8 +34,8 @@ namespace Core
             {
                 if(playerReader.PlayerClass == PlayerClassEnum.Druid)
                 {
-                    classConfig.ShapeshiftForm
-                      .Where(s => s.ShapeShiftFormEnum == ShapeshiftForm.Druid_Travel)
+                    classConfig.Form
+                      .Where(s => s.FormEnum == Form.Druid_Travel)
                       .ToList()
                       .ForEach(async k => await input.KeyPress(k.ConsoleKey, 50));
                 }

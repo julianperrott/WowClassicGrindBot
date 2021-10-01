@@ -236,6 +236,7 @@ namespace Core
                     {  "Mana Shield", ()=>playerReader.Buffs.ManaShield },
                     // Rogue
                     {  "Slice and Dice", ()=> playerReader.Buffs.SliceAndDice },
+                    {  "Stealth", ()=> playerReader.Buffs.Stealth },
                     // Warrior
                     {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
                     // Warlock
@@ -460,7 +461,7 @@ namespace Core
 
             if (this.playerReader.PlayerClass == PlayerClassEnum.Druid && parts[0] == "Mana%")
             {
-                shapeshiftCheck = () => playerReader.Druid_ShapeshiftForm == ShapeshiftForm.None || playerReader.Druid_ShapeshiftForm == ShapeshiftForm.Druid_Travel;
+                shapeshiftCheck = () => playerReader.Form == Form.None || playerReader.Form == Form.Druid_Travel;
             }
 
             if (symbol == ">")
