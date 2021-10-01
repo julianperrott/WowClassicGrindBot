@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Core
+namespace SharedLib.NpcFinder
 {
     public class NpcPosition
     {
