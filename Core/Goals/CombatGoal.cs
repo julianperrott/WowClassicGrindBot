@@ -21,6 +21,7 @@ namespace Core.Goals
         private readonly ClassConfiguration classConfiguration;
 
         private int lastKilledGuid;
+        private double lastDirection;
 
         public CombatGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, CastingHandler castingHandler)
         {
@@ -125,6 +126,8 @@ namespace Core.Goals
             await stopMoving.Stop();
             await wait.Update(1);
 
+            lastDirection = playerReader.Direction;
+
             logger.LogInformation($"{GetType().Name}: OnEnter");
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
         }
@@ -144,6 +147,14 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
+            if (Math.Abs(lastDirection - playerReader.Direction) > Math.PI / 2)
+            {
+                logger.LogInformation($"{GetType().Name}: Turning too fast!");
+                await stopMoving.Stop();
+
+                lastDirection = playerReader.Direction;
+            }
+
             await Fight();
 
             if (DidIKilledAnyone() && !await CreatureTargetMeOrMyPet())
