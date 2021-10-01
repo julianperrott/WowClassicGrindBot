@@ -219,6 +219,7 @@ namespace Core
                     {  "Mark of the Wild", ()=> playerReader.Buffs.MarkOfTheWild },
                     {  "Thorns", ()=> playerReader.Buffs.Thorns },
                     {  "TigersFury", ()=> playerReader.Buffs.TigersFury },
+                    {  "Prowl", ()=> playerReader.Buffs.Prowl },
                     // Paladin
                     {  "Seal", ()=> playerReader.Buffs.Seal },
                     {  "Aura", ()=>playerReader.Buffs.Aura },

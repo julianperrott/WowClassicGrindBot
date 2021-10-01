@@ -543,6 +543,7 @@ e.g.
 | Druid | "Mark of the Wild" |
 | Druid | "Thorns" |
 | Druid | "TigersFury" |
+| Druid | "Prowl" |
 | Mage | "Frost Armor" |
 | Mage | "Ice Armor" |
 | Mage | "Arcane Intellect" |
