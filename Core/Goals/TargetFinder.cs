@@ -20,6 +20,8 @@ namespace Core.Goals
 
         private readonly Random random = new Random();
 
+        public NpcNames NpcNameToFind = NpcNames.Enemy | NpcNames.Neutral;
+
         public TargetFinder(ILogger logger, ConfigurableInput input, ClassConfiguration classConfig, Wait wait, PlayerReader playerReader, IBlacklist blacklist, NpcNameFinder npcNameFinder, NpcNameTargeting npcNameTargeting)
         {
             this.logger = logger;
@@ -72,7 +74,7 @@ namespace Core.Goals
 
                 if (!playerReader.HasTarget && !cancellationToken.IsCancellationRequested)
                 {
-                    npcNameTargeting.ChangeNpcType(NpcNames.Enemy);
+                    npcNameTargeting.ChangeNpcType(NpcNameToFind);
                     if (npcNameTargeting.NpcCount > 0 && !cancellationToken.IsCancellationRequested)
                     {
                         await npcNameTargeting.TargetingAndClickNpc(0, true, cancellationToken);

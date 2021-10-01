@@ -1,4 +1,4 @@
-using System.Drawing;
+﻿using System.Drawing;
 using Core.Goals;
 using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
@@ -29,7 +29,7 @@ namespace CoreTests
 
         public void Execute()
         {
-            npcNameFinder.ChangeNpcType(NpcNameFinder.NPCType.Enemy);
+            npcNameFinder.ChangeNpcType(NpcNames.Enemy | NpcNames.Neutral);
 
             capturer.Capture();
 

@@ -22,20 +22,6 @@ namespace SharedLib.NpcFinder
     {
         private NpcNames nameType = NpcNames.Enemy;
 
-        private bool ColorMatch(Color p)
-        {
-            return nameType switch
-            {
-                NpcNames.Enemy | NpcNames.Neutral => (p.R > 240 && p.G <= 35 && p.B <= 35) || (p.R > 250 && p.G > 250 && p.B == 0),
-                NpcNames.Friendly | NpcNames.Neutral => (p.R == 0 && p.G > 250 && p.B == 0) || (p.R > 250 && p.G > 250 && p.B == 0),
-                NpcNames.Enemy => p.R > 240 && p.G <= 35 && p.B <= 35,
-                NpcNames.Friendly => p.R == 0 && p.G > 250 && p.B == 0,
-                NpcNames.Neutral => p.R > 250 && p.G > 250 && p.B == 0,
-                NpcNames.Corpse => p.R == 128 && p.G == 128 && p.B == 128,
-                _ => false,
-            };
-        }
-
         private List<LineOfNpcName> npcNameLine { get; set; } = new List<LineOfNpcName>();
         private List<List<LineOfNpcName>> npcs { get; set; } = new List<List<LineOfNpcName>>();
 
@@ -52,6 +38,9 @@ namespace SharedLib.NpcFinder
 
         public List<NpcPosition> Npcs { get; private set; } = new List<NpcPosition>();
         public int NpcCount => npcs.Count;
+        public bool MobsVisible => npcs.Count > 0;
+        public bool PotentialAddsExist { get; private set; }
+        public DateTime LastPotentialAddsSeen { get; private set; } = default;
 
         public int Sequence { get; private set; } = 0;
 
@@ -105,6 +94,21 @@ namespace SharedLib.NpcFinder
             }
         }
 
+        private bool ColorMatch(Color p)
+        {
+            return nameType switch
+            {
+                NpcNames.Enemy | NpcNames.Neutral => (p.R > 240 && p.G <= 35 && p.B <= 35) || (p.R > 250 && p.G > 250 && p.B == 0),
+                NpcNames.Friendly | NpcNames.Neutral => (p.R == 0 && p.G > 250 && p.B == 0) || (p.R > 250 && p.G > 250 && p.B == 0),
+                NpcNames.Enemy => p.R > 240 && p.G <= 35 && p.B <= 35,
+                NpcNames.Friendly => p.R == 0 && p.G > 250 && p.B == 0,
+                NpcNames.Neutral => p.R > 250 && p.G > 250 && p.B == 0,
+                NpcNames.Corpse => p.R == 128 && p.G == 128 && p.B == 128,
+                _ => false,
+            };
+        }
+
+
         public void Update()
         {
             scaleToRefWidth = ScaleWidth(1);
@@ -129,11 +133,6 @@ namespace SharedLib.NpcFinder
 
             Sequence++;
         }
-
-        public bool MobsVisible => npcs.Count > 0;
-
-        public bool PotentialAddsExist { get; private set; }
-        public DateTime LastPotentialAddsSeen { get; private set; } = default;
 
         public void UpdatePotentialAddsExist()
         {
