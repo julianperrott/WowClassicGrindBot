@@ -187,11 +187,10 @@ namespace Core.Goals
                     }
                 }
 
-                //wowProcess.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 1");
                 input.SetKeyState(ConsoleKey.UpArrow, true, false);
             }
 
-            bool jumped = await RandomJump();
+            await RandomJump();
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
@@ -249,7 +248,7 @@ namespace Core.Goals
             }
 
             // should mount
-            await MountIfRequired(jumped);
+            await MountIfRequired();
 
             LastActive = DateTime.Now;
 
@@ -322,7 +321,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task MountIfRequired(bool jumped)
+        private async Task MountIfRequired()
         {
             if (shouldMount && !playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
             {
@@ -335,9 +334,6 @@ namespace Core.Goals
                 Log("Mounting if level >=40 (druid 30) and no NPC in sight");
                 if (!npcNameFinder.MobsVisible)
                 {
-                    if (jumped)
-                        await Task.Delay(700);
-
                     await mountHandler.MountUp();
                 }
                 else
@@ -472,15 +468,12 @@ namespace Core.Goals
             }
         }
 
-        private async Task<bool> RandomJump()
+        private async Task RandomJump()
         {
             if (classConfiguration.Jump.MillisecondsSinceLastClick > random.Next(10000, 15000))
             {
-                Log("Random jump");
-                await input.TapJump();
-                return true;
+                await input.TapJump($"{GetType().Name}: Random jump");
             }
-            return false;
         }
 
         public static Vector2 GetClosestPointOnLineSegment(Vector2 A, Vector2 B, Vector2 P)

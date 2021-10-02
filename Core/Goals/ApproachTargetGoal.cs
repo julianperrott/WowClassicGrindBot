@@ -15,7 +15,6 @@ namespace Core.Goals
 
         private readonly Wait wait;
         private readonly PlayerReader playerReader;
-        private readonly ClassConfiguration classConfig;
         private readonly StopMoving stopMoving;
 
         private readonly bool debug = true;
@@ -41,7 +40,7 @@ namespace Core.Goals
             }
         }
 
-        public ApproachTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, ClassConfiguration classConfig, StopMoving stopMoving)
+        public ApproachTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving)
         {
             this.logger = logger;
             this.input = input;
@@ -49,8 +48,6 @@ namespace Core.Goals
             this.wait = wait;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
-
-            this.classConfig = classConfig;
 
             lastPlayerDistance = 0;
             lastPlayerLocation = playerReader.PlayerLocation;
@@ -195,7 +192,7 @@ namespace Core.Goals
 
         private async Task RandomJump()
         {
-            if (classConfig.Jump.MillisecondsSinceLastClick > random.Next(5000, 7000))
+            if (input.ClassConfig.Jump.MillisecondsSinceLastClick > random.Next(5000, 7000))
             {
                 await input.TapJump();
             }

@@ -35,8 +35,7 @@ namespace Core.Goals
         public List<WowPoint> Deaths { get; } = new List<WowPoint>();
 
         private Random random = new Random();
-        
-        private DateTime LastJump = DateTime.Now;
+
         private DateTime LastReset = DateTime.Now;
         private DateTime LastEventReceived = DateTime.Now;
 
@@ -385,16 +384,10 @@ namespace Core.Goals
 
         private async Task RandomJump()
         {
-            if ((DateTime.Now - LastJump).TotalSeconds > 5)
+            if (input.ClassConfig.Jump.MillisecondsSinceLastClick > random.Next(5000, 7000))
             {
-                if (random.Next(1) == 0)
-                {
-                    logger.LogInformation($"Random jump");
-
-                    await input.TapJump();
-                }
+                await input.TapJump($"{GetType().Name}: Random jump");
             }
-            LastJump = DateTime.Now;
         }
     }
 }

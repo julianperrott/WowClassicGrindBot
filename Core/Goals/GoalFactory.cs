@@ -85,7 +85,7 @@ namespace Core
                     availableActions.Add(walkToCorpseAction);
                 }
 
-                availableActions.Add(new ApproachTargetGoal(logger, input, wait, addonReader.PlayerReader, classConfig, stopMoving));
+                availableActions.Add(new ApproachTargetGoal(logger, input, wait, addonReader.PlayerReader, stopMoving));
 
                 if (classConfig.WrongZone.ZoneId > 0)
                 {
