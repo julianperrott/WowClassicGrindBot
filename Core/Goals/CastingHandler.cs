@@ -1,4 +1,4 @@
-﻿using SharedLib.NpcFinder;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -27,6 +27,7 @@ namespace Core.Goals
         private const int MaxCastTimeMs = 15000;
         private const int MaxSwingTimeMs = 4000;
         private const int GCD = 1500;
+        private const int MaxAirTimeMs = 10000;
 
         public CastingHandler(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder, StopMoving stopMoving)
         {
@@ -142,6 +143,15 @@ namespace Core.Goals
             if (item.StopBeforeCast)
             {
                 await stopMoving.Stop();
+            }
+
+            if (playerReader.PlayerBitValues.IsFalling)
+            {
+                (bool notfalling, double fallingElapsedMs) = await wait.InterruptTask(MaxAirTimeMs, () => !playerReader.PlayerBitValues.IsFalling);
+                if (!notfalling)
+                {
+                    item.LogInformation($" ... castbar waited for landing {fallingElapsedMs}ms");
+                }
             }
 
             bool beforeHasTarget = playerReader.HasTarget;

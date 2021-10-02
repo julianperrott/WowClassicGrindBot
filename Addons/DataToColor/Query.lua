@@ -44,7 +44,8 @@ function DataToColor:Base2Converter()
     DataToColor:MakeIndexBase2(DataToColor:IsAutoRepeatSpellOn(DataToColor.C.Spell.ShootId), 19) +
     DataToColor:MakeIndexBase2(DataToColor:IsCurrentSpell(DataToColor.C.Spell.AttackId), 20) +
     DataToColor:MakeIndexBase2(DataToColor:targetIsNormal(), 21)+
-    DataToColor:MakeIndexBase2(DataToColor:IsTagged(), 22)
+    DataToColor:MakeIndexBase2(DataToColor:IsTagged(), 22) +
+    DataToColor:MakeIndexBase2(DataToColor:IsPlayerFalling(), 23)
 end
 
 function DataToColor:getAuraMaskForClass(func, unitId, table)
@@ -463,6 +464,10 @@ end
 
 function DataToColor:IsPlayerSwimming()
     return IsSwimming() and 1 or 0
+end
+
+function DataToColor:IsPlayerFalling()
+    return IsFalling() and 1 or 0
 end
 
 function DataToColor:IsPlayerMounted()

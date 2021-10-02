@@ -37,5 +37,6 @@
         public bool IsAutoRepeatSpellOn_AutoAttack => IsBitSet(20);
         public bool TargetIsNormal => IsBitSet(21);
         public bool IsTagged => IsBitSet(22);
+        public bool IsFalling => IsBitSet(23);
     }
 }
