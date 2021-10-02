@@ -77,6 +77,7 @@ namespace Core.Goals
         {
             lastLoot = playerReader.LastLootTime;
 
+            await stopMoving.Stop();
             combatUtil.Update();
 
             Log($"Try to find {NpcNames.Corpse}");
