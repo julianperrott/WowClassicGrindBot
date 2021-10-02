@@ -20,7 +20,7 @@ namespace SharedLib.NpcFinder
 
     public class NpcNameFinder
     {
-        private NpcNames nameType = NpcNames.Enemy;
+        private NpcNames nameType = NpcNames.Enemy | NpcNames.Neutral;
 
         private List<LineOfNpcName> npcNameLine { get; set; } = new List<LineOfNpcName>();
         private List<List<LineOfNpcName>> npcs { get; set; } = new List<List<LineOfNpcName>>();
@@ -49,8 +49,8 @@ namespace SharedLib.NpcFinder
 
         public int topOffset { get; set; } = 30;
 
-        public int npcPosYOffset { get; set; } = 20;
-        public int npcPosYHeightMul { get; set; } = 5;
+        public int npcPosYOffset { get; set; } = 0;
+        public int npcPosYHeightMul { get; set; } = 10;
 
         public int npcNameMaxWidth { get; set; } = 250;
 
@@ -90,6 +90,16 @@ namespace SharedLib.NpcFinder
             if (nameType != type)
             {
                 nameType = type;
+
+                if (nameType.HasFlag(NpcNames.Corpse))
+                {
+                    npcPosYHeightMul = 15;
+                }
+                else
+                {
+                    npcPosYHeightMul = 10;
+                }
+
                 logger.LogInformation($"{GetType().Name}.ChangeNpcType = {type}");
             }
         }
@@ -115,7 +125,7 @@ namespace SharedLib.NpcFinder
             scaleToRefHeight = ScaleHeight(1);
 
             Area = new Rectangle(new Point(0, (int)ScaleHeight(topOffset)),
-                new Size(bitmapProvider.DirectBitmap.Width, bitmapProvider.DirectBitmap.Height / 2));
+                new Size(bitmapProvider.DirectBitmap.Width, (int)(bitmapProvider.DirectBitmap.Height * 0.6f)));
 
             PopulateLinesOfNpcNames();
 
@@ -255,16 +265,6 @@ namespace SharedLib.NpcFinder
             using (var whitePen = new Pen(Color.White, 3))
             {
                 Npcs.ForEach(n => gr.DrawRectangle(whitePen, new Rectangle(n.Min, new Size(n.Width, n.Height))));
-
-                /*
-                Npcs.ForEach(n =>
-                {
-                    locFindByCursorType.ForEach(l =>
-                    {
-                        gr.DrawEllipse(whitePen, l.X + n.ClickPoint.X, l.Y + n.ClickPoint.Y, 5, 5);
-                    });
-                });
-                */
             }
         }
 

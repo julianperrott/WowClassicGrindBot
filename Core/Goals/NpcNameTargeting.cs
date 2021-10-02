@@ -43,14 +43,7 @@ namespace Core.Goals
             {
                 new Point(0, 0),
                 new Point(0, 25).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight),
-                new Point(-45, 50).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight),
-                new Point(45, 50).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight),
-                new Point(25, 90).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight),
-                new Point(-25, 130).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight),
-                new Point(0, 160).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight),
             };
-
-            locFindByCursorType.Reverse();
         }
 
         public void ChangeNpcType(NpcNames npcNames)
@@ -105,8 +98,14 @@ namespace Core.Goals
 
         public async Task<bool> FindByCursorType(params CursorClassification[] cursor)
         {
+            List<Point> attemptPoints = new List<Point>();
+
             foreach (var npc in npcNameFinder.Npcs)
             {
+                attemptPoints.AddRange(locFindByCursorType);
+                attemptPoints.Add(new Point(npc.ClickPoint.X + (npc.Width / 2), npc.ClickPoint.Y));
+                attemptPoints.Add(new Point(npc.ClickPoint.X - (npc.Width / 2), npc.ClickPoint.Y));
+
                 foreach (var location in locFindByCursorType)
                 {
                     var clickPostion = npcNameFinder.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
@@ -119,6 +118,7 @@ namespace Core.Goals
                         return true;
                     }
                 }
+                attemptPoints.Clear();
             }
             return false;
         }
@@ -131,6 +131,25 @@ namespace Core.Goals
                 await input.RightClickMouse(clickPostion);
 
             logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}, pos={clickPostion}");
+        }
+
+        public void ShowClickPositions(Graphics gr)
+        {
+            if (NpcCount <= 0)
+            {
+                return;
+            }
+
+            using (var whitePen = new Pen(Color.White, 3))
+            {
+                npcNameFinder.Npcs.ForEach(n =>
+                {
+                    locFindByCursorType.ForEach(l =>
+                    {
+                        gr.DrawEllipse(whitePen, l.X + n.ClickPoint.X, l.Y + n.ClickPoint.Y, 5, 5);
+                    });
+                });
+            }
         }
 
     }

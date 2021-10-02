@@ -132,6 +132,7 @@ namespace Core
             npcNameFinder = new NpcNameFinder(logger, WowScreen);
             npcNameTargeting = new NpcNameTargeting(logger, npcNameFinder, WowProcessInput);
             WowScreen.AddDrawAction(npcNameFinder.ShowNames);
+            WowScreen.AddDrawAction(npcNameTargeting.ShowClickPositions);
 
             //ActionFactory = new GoalFactory(AddonReader, logger, wowProcess, npcNameFinder);
 
