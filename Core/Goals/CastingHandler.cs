@@ -1,4 +1,4 @@
-using SharedLib.NpcFinder;
+﻿using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -15,7 +15,6 @@ namespace Core.Goals
         private readonly Wait wait;
         private readonly PlayerReader playerReader;
         
-        private ConsoleKey lastKeyPressed = ConsoleKey.Escape;
         private readonly ClassConfiguration classConfig;
         private readonly IPlayerDirection direction;
         private readonly NpcNameFinder npcNameFinder;
@@ -365,8 +364,6 @@ namespace Core.Goals
         public async Task PressKey(ConsoleKey key, string description = "", int duration = 50)
         {
             await input.KeyPress(key, duration, description);
-
-            lastKeyPressed = key;
         }
 
         public virtual async Task ReactToLastUIErrorMessage(string source)

@@ -15,14 +15,13 @@ namespace Core.Goals
         private readonly PlayerReader playerReader;
 
         private readonly IBlacklist blacklist;
-        private readonly NpcNameFinder npcNameFinder;
         private readonly NpcNameTargeting npcNameTargeting;
 
         private readonly Random random = new Random();
 
         public NpcNames NpcNameToFind = NpcNames.Enemy | NpcNames.Neutral;
 
-        public TargetFinder(ILogger logger, ConfigurableInput input, ClassConfiguration classConfig, Wait wait, PlayerReader playerReader, IBlacklist blacklist, NpcNameFinder npcNameFinder, NpcNameTargeting npcNameTargeting)
+        public TargetFinder(ILogger logger, ConfigurableInput input, ClassConfiguration classConfig, Wait wait, PlayerReader playerReader, IBlacklist blacklist, NpcNameTargeting npcNameTargeting)
         {
             this.logger = logger;
             this.classConfig = classConfig;
@@ -31,7 +30,6 @@ namespace Core.Goals
             this.playerReader = playerReader;
 
             this.blacklist = blacklist;
-            this.npcNameFinder = npcNameFinder;
             this.npcNameTargeting = npcNameTargeting;
         }
 
