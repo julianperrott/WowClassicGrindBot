@@ -18,6 +18,9 @@ namespace Core
         public EquipmentReader equipmentReader { get; set; }
 
         public ActionBarCostReader ActionBarCostReader { get; set; }
+
+        public GossipReader GossipReader { get; set; }
+
         public LevelTracker LevelTracker { get; set; }
 
         public event EventHandler? AddonDataChanged;
@@ -50,8 +53,11 @@ namespace Core
 
             this.equipmentReader = new EquipmentReader(squareReader, 24, 25);
             this.BagReader = new BagReader(squareReader, itemDb, equipmentReader, 20, 21, 22, 23);
-            
+
             this.ActionBarCostReader = new ActionBarCostReader(squareReader, 36);
+
+            this.GossipReader = new GossipReader(squareReader, 37);
+
             this.PlayerReader = new PlayerReader(squareReader, creatureDb);
             this.LevelTracker = new LevelTracker(PlayerReader);
 
@@ -68,14 +74,12 @@ namespace Core
             if(seq == 0 || uiMapId != PlayerReader.UIMapId)
                 ZoneChanged?.Invoke(this, EventArgs.Empty);
 
-            // 20 - 29
             BagReader.Read();
-
-            // 30 - 31
             equipmentReader.Read();
 
-            // 44
             ActionBarCostReader.Read();
+
+            GossipReader.Read();
 
             LevelTracker.Update();
 

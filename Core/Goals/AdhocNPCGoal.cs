@@ -25,6 +25,10 @@ namespace Core.Goals
         private readonly IPPather pather;
         private readonly MountHandler mountHandler;
 
+        private readonly Wait wait;
+        private readonly ExecGameCommand execGameCommand;
+        private readonly GossipReader gossipReader;
+
         private Stack<WowPoint> routeToWaypoint = new Stack<WowPoint>();
 
         public List<WowPoint> PathingRoute()
@@ -43,7 +47,7 @@ namespace Core.Goals
         
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler)
+        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler, Wait wait, ExecGameCommand exec, GossipReader gossipReader)
         {
             this.logger = logger;
             this.input = input;
@@ -58,6 +62,10 @@ namespace Core.Goals
             this.key = key;
             this.blacklist = blacklist;
             this.mountHandler = mountHandler;
+
+            this.wait = wait;
+            this.execGameCommand = exec;
+            this.gossipReader = gossipReader;
 
             if (key.InCombat == "false")
             {
@@ -158,6 +166,7 @@ namespace Core.Goals
 
                         await this.stopMoving.Stop();
                         await input.TapClearTarget();
+                        await wait.Update(1);
 
                         npcNameTargeting.ChangeNpcType(NpcNames.Friendly | NpcNames.Neutral);
                         await npcNameTargeting.WaitForNUpdate(2);
@@ -336,14 +345,36 @@ namespace Core.Goals
 
         private async Task InteractWithTarget()
         {
-            if (this.playerReader.HealthPercent == 0) { return; }
+            if (playerReader.HealthPercent == 0) 
+            {
+                logger.LogInformation("Target is dead!");
+                return;
+            }
 
             logger.LogInformation("Interacting with NPC");
 
-            var location = this.playerReader.PlayerLocation;
-
             for (int i = 0; i < 5; i++)
             {
+                await input.TapInteractKey("Make sure to the gossip window is open!");
+
+                DateTime start = DateTime.Now;
+                while (!gossipReader.MerchantWindowOpened && (DateTime.Now - start).TotalMilliseconds < 1)
+                {
+                    await wait.Update(1);
+
+                    if (gossipReader.Count != 0)
+                    {
+                        logger.LogInformation($"There are gossip options! {gossipReader.Count}");
+
+                        if (gossipReader.Gossips.TryGetValue(Gossip.Vendor, out int orderNum))
+                        {
+                            logger.LogInformation($"Pick {Gossip.Vendor} -> {orderNum}");
+                            await execGameCommand.Run($"/run SelectGossipOption({orderNum})--");
+                            await wait.Update(2);
+                        }
+                    }
+                }
+
                 // Macro runs: targets NPC and does action such as sell
                 await this.input.KeyPress(key.ConsoleKey, 100);
 
@@ -361,8 +392,8 @@ namespace Core.Goals
                     break;
                 }
 
-                System.Threading.Thread.Sleep(2000);
-                await this.input.KeyPress(ConsoleKey.Escape, 100);
+                System.Threading.Thread.Sleep(1000);
+                await this.input.KeyPress(ConsoleKey.Escape, 50);
             }
 
             if(CheckIfActionCanRun())

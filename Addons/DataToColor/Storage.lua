@@ -7,6 +7,20 @@ DataToColor.S.spellInRangeList = {}
 DataToColor.S.playerBuffs = {}
 DataToColor.S.targetDebuffs = {}
 
+DataToColor.S.Gossip = {
+    ["banker"] = 0,
+    ["battlemaster"] = 1,
+    ["binder"] = 2,
+    ["gossip"] = 3,
+    ["healer"] = 4,
+    ["petition"] = 5,
+    ["tabard"] = 6,
+    ["taxi"] = 7,
+    ["trainer"] = 8,
+    ["unlearn"] = 9,
+    ["vendor"] = 10,
+}
+
 function DataToColor:InitStorage()
     CreatePlayerClass()
     CreateSpellInRangeList()

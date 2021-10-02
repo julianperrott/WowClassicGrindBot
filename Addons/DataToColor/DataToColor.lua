@@ -25,6 +25,8 @@ local globalCounter = 0
 local ITEM_ITERATION_FRAME_CHANGE_RATE = 5
 -- How often the actionbar frames change
 local ACTION_BAR_ITERATION_FRAME_CHANGE_RATE = 5
+-- How often the gossip frames change
+local GOSSIP_ITERATION_FRAME_CHANGE_RATE = 5
 
 -- Action bar configuration for which spells are tracked
 local MAX_ACTIONBAR_SLOT = 108
@@ -62,20 +64,32 @@ function stack:push(t, item)
 end
 
 function stack:pop(t)
-    local key, value = next(t)
+    local key, value = minKey(t)
     if key ~= nil then
+        value = t[key]
         t[key] = nil
+        return key, value
     end
-    return key, value
+end
+
+function minKey(t)
+    local k
+    for i, v in pairs(t) do
+      k = k or i
+      if v < t[k] then k = i end
+    end
+    return k
 end
 
 DataToColor.equipmentQueue = {}
 DataToColor.bagQueue = {}
 DataToColor.inventoryQueue = {}
+DataToColor.gossipQueue = {}
 
 local equipmentSlot = nil
 local bagNum = nil
 local bagSlotNum = nil
+local gossipNum = nil
 
 -- Note: Coordinates where player is standing (max: 10, min: -10)
 -- Note: Player direction is in radians (360 degrees = 2π radians)
@@ -361,7 +375,12 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor:actionbarCost(actionNum), 36)
 
-            -- 37 not used
+            if DataToColor:Modulo(globalCounter, GOSSIP_ITERATION_FRAME_CHANGE_RATE) == 0 then
+                gossipNum = DataToColor.stack:pop(DataToColor.gossipQueue)
+                if gossipNum then
+                    MakePixelSquareArrI(gossipNum, 37)
+                end
+            end
 
             MakePixelSquareArrI(DataToColor:getHealthMax(DataToColor.C.unitPet), 38)
             MakePixelSquareArrI(DataToColor:getHealthCurrent(DataToColor.C.unitPet), 39)
