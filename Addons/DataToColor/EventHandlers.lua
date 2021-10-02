@@ -31,8 +31,10 @@ function DataToColor:RegisterEvents()
     DataToColor:RegisterEvent('BAG_UPDATE','OnBagUpdate')
     DataToColor:RegisterEvent('BAG_CLOSED','OnBagUpdate')
     DataToColor:RegisterEvent('MERCHANT_SHOW','OnMerchantShow')
+    DataToColor:RegisterEvent('MERCHANT_CLOSED','OnMerchantClosed')
     DataToColor:RegisterEvent('PLAYER_TARGET_CHANGED', 'OnPlayerTargetChanged')
     DataToColor:RegisterEvent('PLAYER_EQUIPMENT_CHANGED', 'OnPlayerEquipmentChanged')
+    DataToColor:RegisterEvent('GOSSIP_SHOW', 'OnGossipShow')
 end
 
 function DataToColor:OnUIErrorMessage(event, messageType, message)
@@ -137,6 +139,7 @@ end
 
 function DataToColor:OnMerchantShow(event)
     
+    DataToColor.stack:push(DataToColor.gossipQueue, 9999999)
     TotalPrice = 0
     for myBags = 0,4 do
         for bagSlots = 1, GetContainerNumSlots(myBags) do
@@ -159,6 +162,10 @@ function DataToColor:OnMerchantShow(event)
     end
 end
 
+function DataToColor:OnMerchantClosed(event)
+    DataToColor.stack:push(DataToColor.gossipQueue, 9999998)
+end
+
 function DataToColor:OnPlayerTargetChanged(event)
     DataToColor.targetChanged = true
 end
@@ -167,6 +174,27 @@ function DataToColor:OnPlayerEquipmentChanged(event, equipmentSlot, hasCurrent)
     DataToColor.stack:push(DataToColor.equipmentQueue, equipmentSlot)
     --local c = hasCurrent and 1 or 0
     --DataToColor:Print("OnPlayerEquipmentChanged "..equipmentSlot.." -> "..c)
+end
+
+function DataToColor:OnGossipShow(event)
+    local options = GetGossipOptions()
+    if not options then
+        return
+    end
+
+    DataToColor.stack:push(DataToColor.gossipQueue, 0)
+    
+    -- returns variable string - format of one entry
+    -- [1] localized name
+    -- [2] gossip_type
+    local GossipOptions = { GetGossipOptions() }
+    local count = table.getn(GossipOptions) / 2
+    for k, v in pairs(GossipOptions) do
+        -- do something
+        if k % 2 == 0 then
+            DataToColor.stack:push(DataToColor.gossipQueue, 10000 * count + 100 * (k/2) + DataToColor.S.Gossip[v])
+        end
+    end
 end
 
 DataToColor.playerInteractIterator = 0

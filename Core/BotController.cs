@@ -261,7 +261,7 @@ namespace Core
 
             var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist, logger);
 
-            var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, areaDb);
+            var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, areaDb, ExecGameCommand);
             var availableActions = actionFactory.CreateGoals(config, blacklist);
             RouteInfo = actionFactory.RouteInfo;
 
