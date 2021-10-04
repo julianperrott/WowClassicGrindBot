@@ -86,13 +86,15 @@ namespace Core
                 Vector3 start = worldMapAreaDB.GetWorldLocation(uiMapId, fromPoint, true);
                 Vector3 end = worldMapAreaDB.GetWorldLocation(uiMapId, toPoint, true);
 
-                logger.LogInformation($"Finding route from {fromPoint} map {uiMapId} to {toPoint} map {targetMapId}...");
-
                 var result = new List<WowPoint>();
 
                 var area = worldMapAreaDB.Get(uiMapId);
                 if (area == null)
                     return result;
+
+                start.Z = area.LocTop / 2;
+                end.Z = area.LocTop / 2;
+                logger.LogInformation($"Finding route from {fromPoint}({start}) map {uiMapId} to {toPoint}({end}) map {targetMapId}...");
 
                 var path = Client.Send((byte)EMessageType.PATH_LOCATIONS, (area.MapID, start, end, 2)).AsArray<Vector3>();
                 if (path == null)
