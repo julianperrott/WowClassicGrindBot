@@ -1,4 +1,4 @@
-using SharedLib.NpcFinder;
+﻿using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -102,10 +102,12 @@ namespace Core.Goals
                 await stopMoving.Stop();
             }
 
+            float minRange = playerReader.MinRange;
+
             await PressKeyAction(item);
 
             (bool input, double inputElapsedMs) = await wait.InterruptTask(item.AfterCastWaitNextSwing ? MaxSwingTimeMs : MaxWaitCastTimeMs,
-                () => playerReader.LastUIErrorMessage != UI_ERROR.NONE || !playerReader.CurrentAction.Is(item));
+                () => playerReader.LastUIErrorMessage != UI_ERROR.NONE || !playerReader.CurrentAction.Is(item) || minRange != playerReader.MinRange);
             if (!input)
             {
                 item.LogInformation($" ... instant input after {inputElapsedMs}ms");
