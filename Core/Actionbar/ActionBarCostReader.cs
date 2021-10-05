@@ -58,11 +58,28 @@ namespace Core
             }
         }
 
-        public Tuple<PowerType, int> GetCostByActionBarSlot(string slot)
+        public Tuple<PowerType, int> GetCostByActionBarSlot(PlayerReader playerReader, KeyAction keyAction)
         {
-            if (KeyReader.ActionBarSlotMap.TryGetValue(slot, out var slotName))
+            if (KeyReader.ActionBarSlotMap.TryGetValue(keyAction.Key, out int slot))
             {
-                if (dict.TryGetValue(slotName, out var tuple))
+                if (keyAction.FormEnum != Form.None)
+                {
+                    if (keyAction.Name != keyAction.FormEnum.ToString())
+                    {
+                        slot += Stance.FormToActionBar(playerReader.PlayerClass, keyAction.FormEnum);
+                    }
+                    else
+                    {
+                        if (playerReader.FormCost.ContainsKey(keyAction.FormEnum))
+                        {
+                            playerReader.FormCost.Remove(keyAction.FormEnum);
+                        }
+
+                        playerReader.FormCost.Add(keyAction.FormEnum, keyAction.MinMana);
+                    }
+                }
+
+                if (dict.TryGetValue(slot, out var tuple))
                 {
                     return tuple;
                 }

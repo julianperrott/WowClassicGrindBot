@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Core.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -26,6 +26,8 @@ namespace Core
         public List<CreatureHistory> DamageDone { get; } = new List<CreatureHistory>();
         public List<CreatureHistory> DamageTaken { get; } = new List<CreatureHistory>();
         public List<CreatureHistory> Deads { get; } = new List<CreatureHistory>();
+
+        public Dictionary<Form, int> FormCost { get; set; } = new Dictionary<Form, int>();
 
         public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord, ZCoord);
 
