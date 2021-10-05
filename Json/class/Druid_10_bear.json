@@ -7,12 +7,14 @@
 
   "Form": [
     {
-      "Name": "/cancelform",
+      //macro: /cancelform
+      "Name": "cancelform",
       "Key": "F1",
       "Form": "None"
     },
     {
-      "Name": "Druid_Bear",
+      //macro: #showtooltip Bear form /cast [nostance:1] Bear form
+      "Name": "bearform",
       "Key": "F2",
       "Form": "Druid_Bear"
     }
