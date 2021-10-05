@@ -115,6 +115,8 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[11] = { "Thorns", [136104]=1 }
         DataToColor.S.playerBuffs[12] = { "Fury", [132242]=1 }
         DataToColor.S.playerBuffs[13] = { "Prowl", [132089]=1 }
+        DataToColor.S.playerBuffs[14] = { "Rejuvenation", [136081]=1 }
+        DataToColor.S.playerBuffs[15] = { "Regrowth", [136085]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
         DataToColor.S.playerBuffs[10] = { "Aura", [135933]=1, [135890]=1, [135893]=1, [135824]=1, [135865]=1, [135873]=1, [135934]=1, [136192]=1 }
         DataToColor.S.playerBuffs[11] = { "Blessing", [1359682]=1, [135995]=1, [135943]=1, [135906]=1, [135964]=1, [135966]=1, [135967]=1, [136051]=1, [135970]=1, [135993]=1, [135909]=1, [135908]=1, [135910]=1, [135911]=1, [135912]=1 }
@@ -155,6 +157,8 @@ function CreateTargetDebuffList()
         DataToColor.S.targetDebuffs[0] = { "Roar", [132121]=1 }
         DataToColor.S.targetDebuffs[1] = { "Faerie Fire", [136033]=1 }
         DataToColor.S.targetDebuffs[2] = { "Rip", [132152]=1 }
+        DataToColor.S.targetDebuffs[3] = { "Moonfire", [136096]=1 }
+        DataToColor.S.targetDebuffs[4] = { "Entangling Roots", [136100]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
     elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
         DataToColor.S.targetDebuffs[0] = { "Frostbite", [135842]=1 }

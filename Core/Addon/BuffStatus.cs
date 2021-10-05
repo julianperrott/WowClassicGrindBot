@@ -32,6 +32,8 @@
         public bool Thorns => IsBitSet(11);
         public bool TigersFury => IsBitSet(12);
         public bool Prowl => IsBitSet(13);
+        public bool Rejuvenation => IsBitSet(14);
+        public bool Regrowth => IsBitSet(15);
 
         // Paladin
         public bool Aura => IsBitSet(10);

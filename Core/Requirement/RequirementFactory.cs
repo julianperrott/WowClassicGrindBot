@@ -220,6 +220,8 @@ namespace Core
                     {  "Thorns", ()=> playerReader.Buffs.Thorns },
                     {  "TigersFury", ()=> playerReader.Buffs.TigersFury },
                     {  "Prowl", ()=> playerReader.Buffs.Prowl },
+                    {  "Rejuvenation", ()=> playerReader.Buffs.Rejuvenation },
+                    {  "Regrowth", ()=> playerReader.Buffs.Regrowth },
                     // Paladin
                     {  "Seal", ()=> playerReader.Buffs.Seal },
                     {  "Aura", ()=>playerReader.Buffs.Aura },
@@ -264,6 +266,8 @@ namespace Core
                     {  "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
                     {  "Faerie Fire", ()=> playerReader.Debuffs.FaerieFire },
                     {  "Rip", ()=> playerReader.Debuffs.Rip },
+                    {  "Moonfire", ()=> playerReader.Debuffs.Moonfire },
+                    {  "Entangling Roots", ()=> playerReader.Debuffs.EntanglingRoots },
                     // Warrior Debuff
                     {  "Rend", ()=> playerReader.Debuffs.Rend },
                     // Priest Debuff

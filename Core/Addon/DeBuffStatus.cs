@@ -29,6 +29,8 @@
         public bool Roar { get => IsBitSet(0); }
         public bool FaerieFire { get => IsBitSet(1); }
         public bool Rip { get => IsBitSet(2); }
+        public bool Moonfire { get => IsBitSet(3); }
+        public bool EntanglingRoots { get => IsBitSet(4); }
 
         // Paladin
 
