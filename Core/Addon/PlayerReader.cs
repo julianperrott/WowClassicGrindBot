@@ -58,11 +58,8 @@ namespace Core
         public long ManaCurrent => reader.GetLongAtCell(13); // Current amount of mana
         public long ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
 
-        public bool IsInMeleeRange => MinRange == 0 && MaxRange == 5;
-        public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
-
-        public long MinRange => (long)(reader.GetLongAtCell(15) / 100000f);
-        public long MaxRange => (long)((reader.GetLongAtCell(15)-(MinRange*100000f)) / 100f);
+        // 14
+        // 15
 
         public string Target
         {
@@ -115,8 +112,13 @@ namespace Core
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
 
         public Stance Stance => new Stance(reader.GetLongAtCell(48));
+        public Form Form => Stance.Get(this, PlayerClass);
 
-        public Form Form => Stance.Get(PlayerClass);
+        public long MinRange => (long)(reader.GetLongAtCell(49) / 100000f);
+        public long MaxRange => (long)((reader.GetLongAtCell(49) - (MinRange * 100000f)) / 100f);
+
+        public bool IsInMeleeRange => MinRange == 0 && (PlayerClass == PlayerClassEnum.Druid && PlayerLevel >= 10 ? MaxRange == 2 : MaxRange == 5);
+        public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
 
         public long PlayerXp => reader.GetLongAtCell(50);
         public long PlayerMaxXp => reader.GetLongAtCell(51);

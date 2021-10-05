@@ -287,7 +287,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor:getManaMax(DataToColor.C.unitPlayer), 12) --10 Represents maximum amount of mana
             MakePixelSquareArrI(DataToColor:getManaCurrent(DataToColor.C.unitPlayer), 13) --11 Represents current amount of mana
             -- 14 unused
-            MakePixelSquareArrI(DataToColor:getRange(), 15) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
+            -- 15 unused
 
             if DataToColor.targetChanged then
                 MakePixelSquareArrI(DataToColor:GetTargetName(0), 16) -- Characters 1-3 of target's name
@@ -399,7 +399,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor.S.PlayerClass, 46) -- Returns player class as an integer
             MakePixelSquareArrI(DataToColor:isUnskinnable(), 47) -- Returns 1 if creature is unskinnable
             MakePixelSquareArrI(DataToColor:shapeshiftForm(), 48) -- Shapeshift id https://wowwiki.fandom.com/wiki/API_GetShapeshiftForm
-            -- 49 not used
+            MakePixelSquareArrI(DataToColor:getRange(), 49) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
 
             MakePixelSquareArrI(DataToColor:getUnitXP(DataToColor.C.unitPlayer), 50) -- Player Xp
             MakePixelSquareArrI(DataToColor:getUnitXPMax(DataToColor.C.unitPlayer), 51) -- Player Level Xp
