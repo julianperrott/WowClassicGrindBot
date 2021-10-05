@@ -27,11 +27,16 @@
         "Name": "Wrath",
         "Key": "2",
         "StopBeforeCast": true,
+        "Requirement": "TargetHealth%>50",
         "HasCastBar": true
       },
       {
         "Name": "Approach",
-        "Cooldown": 5
+        "Log": false
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
       }
     ]
   },
