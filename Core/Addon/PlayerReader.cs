@@ -27,11 +27,13 @@ namespace Core
         public List<CreatureHistory> DamageTaken { get; } = new List<CreatureHistory>();
         public List<CreatureHistory> Deads { get; } = new List<CreatureHistory>();
 
-        public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord);
+        public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord, ZCoord);
 
         public double XCoord => reader.GetFixedPointAtCell(1) * 10;
         public double YCoord => reader.GetFixedPointAtCell(2) * 10;
         public double Direction => reader.GetFixedPointAtCell(3);
+
+        public double ZCoord { get; set; }
 
         public int UIMapId => (int)reader.GetLongAtCell(4);
 

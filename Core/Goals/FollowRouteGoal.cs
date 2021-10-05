@@ -175,7 +175,7 @@ namespace Core.Goals
             }
             else
             {
-                var playerLocation = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+                var playerLocation = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
                 if(routeToWaypoint.Count > 0)
                 {
                     var distanceToRoute = WowPoint.DistanceTo(playerLocation, routeToWaypoint.Peek());
@@ -193,7 +193,7 @@ namespace Core.Goals
             await RandomJump();
             await StopDrowning();
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
             var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
 
@@ -231,6 +231,12 @@ namespace Core.Goals
             if (distance < PointReachedDistance(MinDistance))
             {
                 Log($"Move to next point");
+
+                if (routeToWaypoint.Any())
+                {
+                    playerReader.ZCoord = routeToWaypoint.Peek().Z;
+                    Log($"PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                }
 
                 ReduceRouteByDistance(MinDistance);
 
@@ -349,7 +355,7 @@ namespace Core.Goals
         {
             if (routeToWaypoint.Any())
             {
-                var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+                var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
                 var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
                 while (distance < PointReachedDistance(minDistance - 1) && routeToWaypoint.Any())
                 {
@@ -380,7 +386,7 @@ namespace Core.Goals
 
             this.routeToWaypoint.Clear();
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
             var heading = DirectionCalculator.CalculateHeading(location, wayPoints.Peek());
             await playerDirection.SetDirection(heading, wayPoints.Peek(), "Reached waypoint").ConfigureAwait(false);
 

@@ -5,8 +5,9 @@ using System.Numerics;
 
 public class WowPoint : IEquatable<WowPoint>
 {
-    public double X { get; set; }
-    public double Y { get; set; }
+    public double X { get; set; } // local UImap coordinate 0-100
+    public double Y { get; set; } // local UImap coordinate 0-100
+    public double Z { get; private set; } // world coordinate
 
     public Vector2 Vector2() => new Vector2((float)X, (float)Y);
 
@@ -16,6 +17,12 @@ public class WowPoint : IEquatable<WowPoint>
     {
         this.X = x;
         this.Y = y;
+    }
+    public WowPoint(double x, double y, double z)
+    {
+        this.X = x;
+        this.Y = y;
+        this.Z = z;
     }
 
     public static List<WowPoint> ShortenRouteFromLocation(WowPoint location, List<WowPoint> pointsList)

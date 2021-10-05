@@ -46,13 +46,13 @@ namespace Core.Database
 
             if(flipXY)
             {
-                return new Vector3(worldMapArea.ToWorldX((float)p.Y), worldMapArea.ToWorldY((float)p.X), 0);
+                return new Vector3(worldMapArea.ToWorldX((float)p.Y), worldMapArea.ToWorldY((float)p.X), (float)p.Z);
             }
             else
             {
                 var worldX = worldMapArea.ToWorldX((float)p.X);
                 var worldY = worldMapArea.ToWorldY((float)p.Y);
-                return new Vector3(worldX, worldY, 0);
+                return new Vector3(worldX, worldY, (float)p.Z);
             }
         }
 

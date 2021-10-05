@@ -112,7 +112,7 @@ namespace Core.Goals
                 input.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 1");
             }
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
             var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
 
@@ -143,6 +143,11 @@ namespace Core.Goals
             if (distance < PointReachedDistance())
             {
                 logger.LogInformation($"Move to next point");
+                if (routeToWaypoint.Any())
+                {
+                    playerReader.ZCoord = routeToWaypoint.Peek().Z;
+                    logger.LogInformation($"{GetType().Name}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                }
 
                 ReduceRoute();
 
@@ -255,7 +260,7 @@ namespace Core.Goals
         {
             if (routeToWaypoint.Any())
             {
-                var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+                var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
                 var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
                 while (distance < PointReachedDistance() && routeToWaypoint.Any())
                 {
@@ -272,7 +277,7 @@ namespace Core.Goals
         {
             this.routeToWaypoint.Clear();
             WowPoint target = StartOfPathToNPC();
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
             var heading = DirectionCalculator.CalculateHeading(location, target);
             await playerDirection.SetDirection(heading, target, "Set Location target").ConfigureAwait(false);
 
@@ -281,6 +286,12 @@ namespace Core.Goals
             var path = await this.pather.FindRouteTo(this.playerReader, target);
             path.Reverse();
             path.ForEach(p => this.routeToWaypoint.Push(p));
+
+            if (routeToWaypoint.Any())
+            {
+                playerReader.ZCoord = routeToWaypoint.Peek().Z;
+                logger.LogInformation($"{GetType().Name}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+            }
 
             this.ReduceRoute();
             if (this.routeToWaypoint.Count == 0)

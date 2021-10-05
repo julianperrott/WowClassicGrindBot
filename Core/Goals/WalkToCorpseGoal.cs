@@ -75,6 +75,13 @@ namespace Core.Goals
             LastEventReceived = DateTime.Now;
         }
 
+        public override async Task OnEnter()
+        {
+            await base.OnEnter();
+            playerReader.ZCoord = 0;
+            logger.LogInformation($"{GetType().Name} Player got teleported to the graveyard!");
+        }
+
         public override async Task PerformAction()
         {
             // is corpse visible
@@ -93,7 +100,7 @@ namespace Core.Goals
 
                 while (this.playerReader.PlayerBitValues.DeadStatus)
                 {
-                    this.corpseLocation = new WowPoint(playerReader.CorpseX, playerReader.CorpseY);
+                    this.corpseLocation = new WowPoint(playerReader.CorpseX, playerReader.CorpseY, playerReader.ZCoord);
                     if (this.corpseLocation.X >= 1 || this.corpseLocation.Y > 0) { break; }
                     logger.LogInformation($"Waiting for corpse location to update {playerReader.CorpseX},{playerReader.CorpseY}");
                     await Task.Delay(1000);
@@ -117,7 +124,7 @@ namespace Core.Goals
 
             if (!this.playerReader.PlayerBitValues.DeadStatus) { return; }
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
             double distance = 0;
             double heading = 0;
 
@@ -187,6 +194,12 @@ namespace Core.Goals
 
             if (distance < PointReachedDistance() && points.Any())
             {
+                if (points.Any())
+                {
+                    playerReader.ZCoord = points.Peek().Z;
+                    logger.LogInformation($"{GetType().Name}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                }
+
                 while (distance < PointReachedDistance() && points.Any())
                 {
                     points.Pop();
@@ -247,6 +260,12 @@ namespace Core.Goals
 
             if (path.Any())
             {
+                if (path.Any())
+                {
+                    playerReader.ZCoord = path[0].Z;
+                    logger.LogInformation($"{GetType().Name}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                }
+
                 path.Reverse();
                 path.ForEach(p => points.Push(p));
             }
@@ -287,7 +306,7 @@ namespace Core.Goals
                 var routeToCorpse = spiritWalkerLeg.Select(s => s).ToList();
                 routeToCorpse.AddRange(legFromSpiritEndToCorpse);
 
-                var myLocation = new WowPoint(playerReader.XCoord, playerReader.YCoord);
+                var myLocation = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
                 var truncatedRoute = WowPoint.ShortenRouteFromLocation(myLocation, routeToCorpse);
 
                 for (int i = truncatedRoute.Count - 1; i > -1; i--)

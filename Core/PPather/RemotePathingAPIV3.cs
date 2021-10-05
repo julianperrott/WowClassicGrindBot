@@ -69,6 +69,17 @@ namespace Core
 
         public async Task<List<WowPoint>> FindRoute(int uiMapId, WowPoint fromPoint, WowPoint toPoint)
         {
+            await Task.Delay(0);
+            throw new NotImplementedException();
+            //return new List<WowPoint>();
+        }
+
+        public async Task<List<WowPoint>> FindRouteTo(PlayerReader playerReader, WowPoint destination)
+        {
+            int uiMapId = playerReader.UIMapId;
+            WowPoint fromPoint = playerReader.PlayerLocation;
+            WowPoint toPoint = destination;
+
             if (!Client.IsConnected)
             {
                 return new List<WowPoint>();
@@ -92,8 +103,14 @@ namespace Core
                 if (area == null)
                     return result;
 
-                start.Z = area.LocTop / 2;
-                end.Z = area.LocTop / 2;
+                // incase haven't asked a pathfinder for a route this value will be 0
+                // that case use the highest location
+                if (start.Z == 0)
+                {
+                    start.Z = area.LocTop / 2;
+                    end.Z = area.LocTop / 2;
+                }
+
                 logger.LogInformation($"Finding route from {fromPoint}({start}) map {uiMapId} to {toPoint}({end}) map {targetMapId}...");
 
                 var path = Client.Send((byte)EMessageType.PATH_LOCATIONS, (area.MapID, start, end, 2)).AsArray<Vector3>();
@@ -104,9 +121,14 @@ namespace Core
                 {
                     // Z X Y -> X Y Z
                     var p = worldMapAreaDB.ToMapAreaSpot(path[i].Z, path[i].X, path[i].Y, area.Continent, uiMapId);
-                    result.Add(new WowPoint(p.X, p.Y));
-
+                    result.Add(new WowPoint(p.X, p.Y, p.Z));
                     logger.LogInformation($"new float[] {{ {path[i].Z}f, {path[i].X}f, {path[i].Y}f }},");
+                }
+
+                if (result.Count > 0)
+                {
+                    playerReader.ZCoord = result[0].Z;
+                    logger.LogInformation($"PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
                 }
 
                 return result;
@@ -117,11 +139,7 @@ namespace Core
                 Console.WriteLine(ex);
                 return new List<WowPoint>();
             }
-        }
 
-        public Task<List<WowPoint>> FindRouteTo(PlayerReader playerReader, WowPoint destination)
-        {
-            return FindRoute(playerReader.UIMapId, playerReader.PlayerLocation, destination);
         }
 
 
