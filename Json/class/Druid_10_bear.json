@@ -1,0 +1,137 @@
+{
+  "ClassName": "Druid",
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Night elf\\09-11_Teldrassil_Near Lake Al'Ameth.json",
+  "PathReduceSteps": true,
+  "CheckTargetGivesExp": true,
+
+  "Form": [
+    {
+      "Name": "/cancelform",
+      "Key": "F1",
+      "Form": "None"
+    },
+    {
+      "Name": "Druid_Bear",
+      "Key": "F2",
+      "Form": "Druid_Bear"
+    }
+  ],
+  "Pull": {
+    "Sequence": [
+/*
+      {
+        "Name": "Wrath",
+        "Key": "2",
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+        "Requirement": "SpellInRange:0",
+        "Form": "None"
+      },
+*/
+      {
+        "Name": "Moonfire",
+        "Key": "5",
+        "Requirement": "SpellInRange:0",
+        "Form": "None"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Healing Touch",
+        "Key": "3",
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+        "Requirement": "Health%<25",
+        "Cooldown": 5,
+        "Form": "None"
+      },
+      {
+        "Name": "Rejuvenation",
+        "Key": "6",
+        "AfterCastWaitBuff": true,
+        "Requirements": ["Health%<55", "not Rejuvenation"],
+        "Cooldown": 5,
+        "Form": "None"
+      },
+      {
+        "Name": "Demoralizing Roar",
+        "Key": "3",
+        "Requirements": ["InMeleeRange", "not Demoralizing Roar"],
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Maul",
+        "Key": "2",
+        "MinRage": 15,
+        "Requirement": "InMeleeRange",
+        "AfterCastWaitNextSwing": true,
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Mark of the Wild",
+        "Key": "4",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Mark of the Wild",
+        "Form": "None"
+      },
+      {
+        "Name": "Thorns",
+        "Key": "7",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Thorns",
+        "Form": "None"
+      },
+      {
+        "Name": "Water",
+        "Key": "-",
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "Mana%<40",
+        "Cooldown": 10,
+        "Form": "None"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Form": "None",
+        "Requirement": "Items Broken",
+        "PathFilename": "5_NightElf_Vendor.json",
+        "Cost": 19
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Form": "None",
+        "Requirement": "BagFull",
+        "PathFilename": "5_NightElf_Vendor.json",
+        "Cost": 19
+      }
+    ]
+  }
+}
