@@ -121,7 +121,7 @@ namespace Core
             InitializeKeyActions(Pull, Interact, Approach, AutoAttack);
             InitializeKeyActions(Combat, Interact, Approach, AutoAttack);
 
-            Form.ForEach(i => i.Initialise(addonReader, requirementFactory, logger));
+            Form.ForEach(i => i.InitialiseForm(addonReader, requirementFactory, logger));
             Pull.Initialise(addonReader, requirementFactory, logger);
             Combat.Initialise(addonReader, requirementFactory, logger);
             Adhoc.Initialise(addonReader, requirementFactory, logger);

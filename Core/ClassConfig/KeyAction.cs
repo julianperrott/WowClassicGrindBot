@@ -116,6 +116,22 @@ namespace Core
             requirementFactory.InitialiseRequirements(this);
         }
 
+        public void InitialiseForm(AddonReader addonReader, RequirementFactory requirementFactory, ILogger logger)
+        {
+            Initialise(addonReader, requirementFactory, logger);
+
+            if (!string.IsNullOrEmpty(Form))
+            {
+                if (addonReader.PlayerReader.FormCost.ContainsKey(FormEnum))
+                {
+                    addonReader.PlayerReader.FormCost.Remove(FormEnum);
+                }
+
+                addonReader.PlayerReader.FormCost.Add(FormEnum, MinMana);
+                LogInformation($"Added {FormEnum} to FormCost with {MinMana}");
+            }
+        }
+
         public void CreateCooldownRequirement()
         {
             if (this.Cooldown > 0)

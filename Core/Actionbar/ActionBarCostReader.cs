@@ -66,21 +66,9 @@ namespace Core
         {
             if (KeyReader.ActionBarSlotMap.TryGetValue(keyAction.Key, out int slot))
             {
-                if (keyAction.FormEnum != Form.None)
+                if (keyAction.FormEnum != Form.None && slot < 12)
                 {
-                    if (keyAction.Name != keyAction.FormEnum.ToString())
-                    {
-                        slot += Stance.FormToActionBar(playerReader.PlayerClass, keyAction.FormEnum);
-                    }
-                    else
-                    {
-                        if (playerReader.FormCost.ContainsKey(keyAction.FormEnum))
-                        {
-                            playerReader.FormCost.Remove(keyAction.FormEnum);
-                        }
-
-                        playerReader.FormCost.Add(keyAction.FormEnum, keyAction.MinMana);
-                    }
+                    slot += Stance.FormToActionBar(playerReader.PlayerClass, keyAction.FormEnum);
                 }
 
                 if (dict.TryGetValue(slot, out var tuple))
