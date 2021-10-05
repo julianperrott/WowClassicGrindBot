@@ -221,7 +221,9 @@ function DataToColor:actionbarCost(slot)
     if HasAction(slot) then
         local actionName, _
         local actionType, id = GetActionInfo(slot)
-        if actionType == 'macro' then _, _ , id = GetMacroSpell(id) end
+        if actionType == 'macro' then
+            id = GetMacroSpell(id)
+        end
         if actionType == 'item' then
             actionName = GetItemInfo(id)
         elseif actionType == 'spell' or (actionType == 'macro' and id) then
@@ -235,11 +237,14 @@ function DataToColor:actionbarCost(slot)
                 for key, costInfo in pairs(costTable) do
                     cost = costInfo.cost
                     type = costInfo.type
+                    print(slot.." "..actionName.." "..cost)
                     break
                 end
             end
             --DataToColor:Print(button:GetName(), actionType, (GetSpellLink(id)), actionName, type, cost, id)
             return DataToColor.C.MAX_POWER_TYPE * type + DataToColor.C.MAX_ACTION_IDX * slot + cost
+        --else
+        --    print(slot.. " no action name")
         end
     end
     return DataToColor.C.MAX_ACTION_IDX * slot
