@@ -279,7 +279,7 @@ function DataToColor:CreateFrames(n)
 
             -- Boolean variables --
             MakePixelSquareArrI(DataToColor:Base2Converter(), 8)
-            -- 9 not used
+            MakePixelSquareArrI(DataToColor:Base2Converter2(), 9)
 
             -- Start combat/NPC related variables --
             MakePixelSquareArrI(DataToColor:getHealthMax(DataToColor.C.unitPlayer), 10) --8 Represents maximum amount of health

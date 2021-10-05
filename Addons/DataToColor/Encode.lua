@@ -36,7 +36,7 @@ end
 -- MakeIndexBase2(1, 4) --> returns 16
 -- MakeIndexBase2(0, 9) --> returns 0
 function DataToColor:MakeIndexBase2(number, power)
-    if number ~= nil and number > 0 then
+    if number > 0 then
         return math.pow(2, power)
     end
     return 0

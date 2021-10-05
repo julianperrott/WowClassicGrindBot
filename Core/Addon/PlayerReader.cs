@@ -44,7 +44,7 @@ namespace Core
 
         public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
 
-        public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetLongAtCell(8));
+        public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetLongAtCell(8), reader.GetLongAtCell(9));
 
         // Player health and mana
         public long HealthMax => reader.GetLongAtCell(10); // Maximum amount of health of player

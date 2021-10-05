@@ -49,3 +49,6 @@ DataToColor.C.Gossip = {
     ["unlearn"] = 9,
     ["vendor"] = 10,
 }
+
+-- Mirror timer labels
+DataToColor.C.MIRRORTIMER.BREATH = "BREATH"

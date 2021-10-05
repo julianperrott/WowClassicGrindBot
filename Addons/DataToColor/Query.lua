@@ -48,6 +48,11 @@ function DataToColor:Base2Converter()
     DataToColor:MakeIndexBase2(DataToColor:IsPlayerFalling(), 23)
 end
 
+function DataToColor:Base2Converter2()
+    return
+    DataToColor:MakeIndexBase2(DataToColor:IsPlayerDrowning(), 0)
+end
+
 function DataToColor:getAuraMaskForClass(func, unitId, table)
     local num = 0
     for k, v in pairs(table) do
@@ -468,6 +473,14 @@ end
 
 function DataToColor:IsPlayerFalling()
     return IsFalling() and 1 or 0
+end
+
+function DataToColor:IsPlayerDrowning()
+    local id = GetMirrorTimerInfo(2) -- 2 BREATH
+    if id == DataToColor.C.MIRRORTIMER.BREATH then
+        return 1
+    end
+    return 0
 end
 
 function DataToColor:IsPlayerMounted()
