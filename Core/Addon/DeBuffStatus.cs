@@ -23,32 +23,32 @@
         public string name { get; set; } = string.Empty;
 
         // Priest
-        public bool ShadowWordPain { get => IsBitSet(0); }
+        public bool ShadowWordPain => IsBitSet(0);
 
         // Druid
-        public bool Roar { get => IsBitSet(0); }
-        public bool FaerieFire { get => IsBitSet(1); }
-        public bool Rip { get => IsBitSet(2); }
-        public bool Moonfire { get => IsBitSet(3); }
-        public bool EntanglingRoots { get => IsBitSet(4); }
+        public bool Roar => IsBitSet(0);
+        public bool FaerieFire => IsBitSet(1);
+        public bool Rip => IsBitSet(2);
+        public bool Moonfire => IsBitSet(3);
+        public bool EntanglingRoots => IsBitSet(4);
 
         // Paladin
 
         // Mage
-        public bool Frostbite { get => IsBitSet(0); }
+        public bool Frostbite => IsBitSet(0);
 
         // Rogue
 
         // Warrior
-        public bool Rend { get => IsBitSet(0); }
+        public bool Rend => IsBitSet(0);
 
         // Warlock
-        public bool Curseof { get => IsBitSet(0); }
-        public bool Corruption { get => IsBitSet(1); }
-        public bool Immolate { get => IsBitSet(2); }
-        public bool SiphonLife { get => IsBitSet(3); }
+        public bool Curseof => IsBitSet(0);
+        public bool Corruption => IsBitSet(1);
+        public bool Immolate => IsBitSet(2);
+        public bool SiphonLife => IsBitSet(3);
 
         // Hunter
-        public bool SerpentSting { get => IsBitSet(0); }
+        public bool SerpentSting => IsBitSet(0);
     }
 }
