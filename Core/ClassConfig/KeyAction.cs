@@ -87,14 +87,10 @@ namespace Core
 
             KeyReader.ReadKey(logger, this);
 
-            UpdateMinResourceRequirement(addonReader.ActionBarCostReader);
-
             if (!string.IsNullOrEmpty(this.Requirement))
             {
                 Requirements.Add(this.Requirement);
             }
-
-            requirementFactory.InitialiseRequirements(this);
 
             if (!string.IsNullOrEmpty(Form))
             {
@@ -105,7 +101,7 @@ namespace Core
 
                     if (KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot))
                     {
-                        int offset = Stance.MapActionBar(playerReader, slot);
+                        int offset = Stance.FormToActionBar(playerReader.PlayerClass, FormEnum);
                         this.logger.LogInformation($"[{Name}] Actionbar Form key map: Key:{Key} -> Actionbar:{slot} -> Form Map:{slot + offset}");
                     }
                 }
@@ -114,6 +110,10 @@ namespace Core
                     logger.LogInformation($"Unknown form: {Form}");
                 }
             }
+
+            UpdateMinResourceRequirement(playerReader, addonReader.ActionBarCostReader);
+
+            requirementFactory.InitialiseRequirements(this);
         }
 
         public void CreateCooldownRequirement()
@@ -228,9 +228,9 @@ namespace Core
             return !this.RequirementObjects.Any(r => !r.HasRequirement());
         }
 
-        private void UpdateMinResourceRequirement(ActionBarCostReader actionBarCostReader)
+        private void UpdateMinResourceRequirement(PlayerReader playerReader, ActionBarCostReader actionBarCostReader)
         {
-            var tuple = actionBarCostReader.GetCostByActionBarSlot(Key);
+            var tuple = actionBarCostReader.GetCostByActionBarSlot(playerReader, this);
             if (tuple.Item2 != 0)
             {
                 int oldValue = 0;

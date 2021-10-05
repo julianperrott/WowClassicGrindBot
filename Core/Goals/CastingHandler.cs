@@ -1,4 +1,4 @@
-﻿using SharedLib.NpcFinder;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -334,29 +334,26 @@ namespace Core.Goals
 
         protected async Task<bool> SwitchToCorrectStanceForm(KeyAction item)
         {
-            if (playerReader.PlayerClass != PlayerClassEnum.Druid ||
-                playerReader.PlayerClass != PlayerClassEnum.Warrior ||
-                playerReader.PlayerClass != PlayerClassEnum.Rogue ||
-                playerReader.PlayerClass != PlayerClassEnum.Priest ||
-                string.IsNullOrEmpty(item.Form) || playerReader.Form == item.FormEnum)
+            if (string.IsNullOrEmpty(item.Form))
+                return true;
+
+            if (playerReader.Form == item.FormEnum)
             {
                 return true;
             }
 
-            if (playerReader.Form == item.FormEnum)
-                return true;
-
-            var desiredFormKey = classConfig.Form
+            var formKeyKey = classConfig.Form
                 .Where(s => s.FormEnum == item.FormEnum)
                 .FirstOrDefault();
 
-            if (desiredFormKey == null)
+            if (formKeyKey == null)
             {
-                logger.LogWarning($"Unable to find key in ShapeshiftForm to transform into {item.FormEnum}");
+                logger.LogWarning($"Unable to find key in Form to transform into {item.FormEnum}");
                 return false;
             }
 
-            await input.KeyPress(desiredFormKey.ConsoleKey, item.PressDuration);
+            await input.KeyPress(formKeyKey.ConsoleKey, item.PressDuration);
+            await wait.Update(1);
 
             return playerReader.Form == item.FormEnum;
         }

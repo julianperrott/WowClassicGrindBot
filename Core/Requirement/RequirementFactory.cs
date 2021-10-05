@@ -34,7 +34,7 @@ namespace Core
                     };
                     foreach (string part in requirement.Split("||"))
                     {
-                        var sub = GetRequirement(item.Name, part);
+                        var sub = GetRequirement(item.Name, part, item.FormEnum);
                         orCombinedRequirement = orCombinedRequirement.Or(sub);
                     }
 
@@ -48,7 +48,7 @@ namespace Core
                     };
                     foreach (string part in requirement.Split("&&"))
                     {
-                        var sub = GetRequirement(item.Name, part);
+                        var sub = GetRequirement(item.Name, part, item.FormEnum);
                         andCombinedRequirement = andCombinedRequirement.And(sub);
                     }
 
@@ -56,7 +56,7 @@ namespace Core
                 }
                 else
                 {
-                    item.RequirementObjects.Add(GetRequirement(item.Name, requirement));
+                    item.RequirementObjects.Add(GetRequirement(item.Name, requirement, item.FormEnum));
                 }
             }
 
@@ -157,7 +157,7 @@ namespace Core
             }
         }
 
-        public Requirement GetRequirement(string name, string requirement)
+        public Requirement GetRequirement(string name, string requirement, Form form)
         {
             this.logger.LogInformation($"[{name}] Processing requirement: {requirement}");
 
@@ -165,7 +165,7 @@ namespace Core
 
             if (requirement.Contains(">") || requirement.Contains("<"))
             {
-                return GetValueBasedRequirement(name, requirement);
+                return GetValueBasedRequirement(name, requirement, form);
             }
 
             if (requirement.Contains("npcID:"))
@@ -435,7 +435,7 @@ namespace Core
             };
         }
 
-        private Requirement GetValueBasedRequirement(string name, string requirement)
+        private Requirement GetValueBasedRequirement(string name, string requirement, Form form)
         {
             var symbol = "<";
             if (requirement.Contains(">"))
@@ -472,27 +472,22 @@ namespace Core
 
             var valueCheck = valueDictionary[parts[0]];
 
-            Func<bool> shapeshiftCheck = () => true;
-
-            if (this.playerReader.PlayerClass == PlayerClassEnum.Druid && parts[0] == "Mana%")
-            {
-                shapeshiftCheck = () => playerReader.Form == Form.None || playerReader.Form == Form.Druid_Travel;
-            }
+            Func<long> formChangeCost = () => playerReader.Form != form ? (playerReader.FormCost.TryGetValue(form, out int cost) ? cost : 0) : 0;
 
             if (symbol == ">")
             {
                 return new Requirement
                 {
-                    HasRequirement = () => shapeshiftCheck() && valueCheck() >= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck()} > {value}"
+                    HasRequirement = () => valueCheck() + formChangeCost() >= value,
+                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} > {value}"
                 };
             }
             else
             {
                 return new Requirement
                 {
-                    HasRequirement = () => shapeshiftCheck() && valueCheck() <= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck()} < {value}"
+                    HasRequirement = () => valueCheck() + formChangeCost() <= value,
+                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} < {value}"
                 };
             }
         }
