@@ -92,6 +92,8 @@ local bagSlotNum = nil
 local gossipNum = nil
 local actionNum = nil
 
+local x, y = 0, 0
+
 -- Note: Coordinates where player is standing (max: 10, min: -10)
 -- Note: Player direction is in radians (360 degrees = 2π radians)
 -- Note: Player health/mana is taken out of 100% (0 - 1)
@@ -271,7 +273,7 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(2000001, NUMBER_OF_FRAMES - 1)
 
             -- Position related variables --
-            local x, y = DataToColor:GetCurrentPlayerPosition()
+            x, y = DataToColor:GetCurrentPlayerPosition()
             if x == nil or y == nil then
                 x = 0
                 y = 0

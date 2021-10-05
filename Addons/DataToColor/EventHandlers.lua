@@ -248,11 +248,11 @@ function DataToColor:HandlePlayerInteractionEvents()
     end
     -- Handles learning talents, only works after level 10
     if DATA_CONFIG.AUTO_LEARN_TALENTS then
-        DataToColor:LearnTalents()
+        --DataToColor:LearnTalents()
     end
     -- Handles train new spells and talents
     if DATA_CONFIG.AUTO_TRAIN_SPELLS then
-        DataToColor:CheckTrainer()  
+        --DataToColor:CheckTrainer()  
     end
     -- Resurrect player
     if DATA_CONFIG.AUTO_RESURRECT then
