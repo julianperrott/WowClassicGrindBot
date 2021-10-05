@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Core.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -54,15 +54,14 @@ namespace Core
         public long HealthCurrent => reader.GetLongAtCell(11); // Current amount of health of player
         public long HealthPercent => HealthMax == 0 || HealthCurrent == 1 ? 0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
 
-        public long ManaMax => reader.GetLongAtCell(12); // Maximum amount of mana
-        public long ManaCurrent => reader.GetLongAtCell(13); // Current amount of mana
+        public long PTMax => reader.GetLongAtCell(12); // Maximum amount of Power Type (dynamic)
+        public long PTCurrent => reader.GetLongAtCell(13); // Current amount of Power Type (dynamic)
+        public long PTPercentage => PTMax == 0 ? 0 : (PTCurrent * 100) / PTMax; // Power Type (dynamic) in terms of a percentage
+
+
+        public long ManaMax => reader.GetLongAtCell(14); // Maximum amount of mana
+        public long ManaCurrent => reader.GetLongAtCell(15); // Current amount of mana
         public long ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
-
-        public bool IsInMeleeRange => MinRange == 0 && MaxRange == 5;
-        public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
-
-        public long MinRange => (long)(reader.GetLongAtCell(15) / 100000f);
-        public long MaxRange => (long)((reader.GetLongAtCell(15)-(MinRange*100000f)) / 100f);
 
         public string Target
         {
@@ -115,8 +114,13 @@ namespace Core
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
 
         public Stance Stance => new Stance(reader.GetLongAtCell(48));
+        public Form Form => Stance.Get(this, PlayerClass);
 
-        public Form Form => Stance.Get(PlayerClass);
+        public long MinRange => (long)(reader.GetLongAtCell(49) / 100000f);
+        public long MaxRange => (long)((reader.GetLongAtCell(49) - (MinRange * 100000f)) / 100f);
+
+        public bool IsInMeleeRange => MinRange == 0 && (PlayerClass == PlayerClassEnum.Druid && PlayerLevel >= 10 ? MaxRange == 2 : MaxRange == 5);
+        public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
 
         public long PlayerXp => reader.GetLongAtCell(50);
         public long PlayerMaxXp => reader.GetLongAtCell(51);

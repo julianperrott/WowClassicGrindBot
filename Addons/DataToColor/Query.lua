@@ -119,13 +119,13 @@ function DataToColor:getHealthCurrent(unit)
 end
 
 -- Finds maximum amount of mana a character can store
-function DataToColor:getManaMax(unit)
-    return UnitPowerMax(unit)
+function DataToColor:getPowerTypeMax(unit, type)
+    return UnitPowerMax(unit, type)
 end
 
 -- Finds exact amount of mana player is storing
-function DataToColor:getManaCurrent(unit)
-    return UnitPower(unit)
+function DataToColor:getPowerTypeCurrent(unit, type)
+    return UnitPower(unit, type)
 end
 
 -- Finds player current level
