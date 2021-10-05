@@ -28,8 +28,6 @@ namespace Core
 
         public int Count => dict.Count;
 
-        public bool Ready => Count == MaxCount;
-
         public ActionBarCostReader(ISquareReader reader, int cActionbarNum)
         {
             this.cActionbarNum = cActionbarNum;

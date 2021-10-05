@@ -17,8 +17,8 @@ local FRAME_ROWS = 1
 local CELL_SIZE = 1 -- 1-9 
 -- Spacing in px between data squares.
 local CELL_SPACING = 1 -- 0 or 1
+
 -- Item slot trackers initialization
-local actionNum = 1
 local globalCounter = 0
 
 -- How often item frames change
@@ -50,7 +50,6 @@ DataToColor.lastAutoShot = 0
 DataToColor.lastMainHandMeleeSwing = 0
 
 DataToColor.targetChanged = true
-DataToColor.updateActionBarCost = true
 
 DataToColor.playerGUID = UnitGUID(DataToColor.C.unitPlayer)
 DataToColor.petGUID = UnitGUID(DataToColor.C.unitPet)
@@ -85,11 +84,13 @@ DataToColor.equipmentQueue = {}
 DataToColor.bagQueue = {}
 DataToColor.inventoryQueue = {}
 DataToColor.gossipQueue = {}
+DataToColor.actionBarCostQueue = {}
 
 local equipmentSlot = nil
 local bagNum = nil
 local bagSlotNum = nil
 local gossipNum = nil
+local actionNum = nil
 
 -- Note: Coordinates where player is standing (max: 10, min: -10)
 -- Note: Player direction is in radians (360 degrees = 2π radians)
@@ -174,7 +175,6 @@ end
 
 function DataToColor:FushState()
     DataToColor.targetChanged = true
-    DataToColor.updateActionBarCost = true
 
     DataToColor:InitEquipmentQueue()
     DataToColor:InitBagQueue()
@@ -184,6 +184,8 @@ function DataToColor:FushState()
     DataToColor:InitInventoryQueue(2)
     DataToColor:InitInventoryQueue(1)
     DataToColor:InitInventoryQueue(0)
+
+    DataToColor:InitActionBarCostQueue()
 
     DataToColor:Print('Flush State')
 end
@@ -199,6 +201,7 @@ function DataToColor:InitUpdateQueues()
 
     DataToColor:InitBagQueue(0, 0)
     DataToColor:InitInventoryQueue(0)
+    DataToColor:InitActionBarCostQueue()
 end
 
 function DataToColor:InitEquipmentQueue()
@@ -220,6 +223,14 @@ function DataToColor:InitBagQueue(min, max)
     max = max or 4
     for bag = min, max do
         DataToColor.stack:push(DataToColor.bagQueue, bag)
+    end
+end
+
+function DataToColor:InitActionBarCostQueue()
+    for slot=1, MAX_ACTIONBAR_SLOT do
+        if DataToColor:actionbarCost(slot) then
+            DataToColor.stack:push(DataToColor.actionBarCostQueue, slot)
+        end
     end
 end
 
@@ -351,18 +362,6 @@ function DataToColor:CreateFrames(n)
                 end
             end
 
-            if DataToColor:Modulo(globalCounter, ACTION_BAR_ITERATION_FRAME_CHANGE_RATE) == 0 then
-                if DataToColor.updateActionBarCost then
-                    actionNum = actionNum + 1
-                    if actionNum > MAX_ACTIONBAR_SLOT then
-                        actionNum = 1
-                        DataToColor.updateActionBarCost = false
-                    end
-                end
-            end
-
-            globalCounter = globalCounter + 1
-
             MakePixelSquareArrI(DataToColor:isCurrentAction(1, 24), 26)
             MakePixelSquareArrI(DataToColor:isCurrentAction(25, 48), 27)
             MakePixelSquareArrI(DataToColor:isCurrentAction(49, 72), 28)
@@ -375,7 +374,12 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor:isActionUseable(73, 96), 34)
             MakePixelSquareArrI(DataToColor:isActionUseable(97, 108), 35)
 
-            MakePixelSquareArrI(DataToColor:actionbarCost(actionNum), 36)
+            if DataToColor:Modulo(globalCounter, ACTION_BAR_ITERATION_FRAME_CHANGE_RATE) == 0 then
+                actionNum = DataToColor.stack:pop(DataToColor.actionBarCostQueue)
+                if actionNum then
+                    MakePixelSquareArrI(DataToColor:actionbarCost(actionNum), 36)
+                end
+            end
 
             if DataToColor:Modulo(globalCounter, GOSSIP_ITERATION_FRAME_CHANGE_RATE) == 0 then
                 gossipNum = DataToColor.stack:pop(DataToColor.gossipQueue)
@@ -383,6 +387,8 @@ function DataToColor:CreateFrames(n)
                     MakePixelSquareArrI(gossipNum, 37)
                 end
             end
+
+            globalCounter = globalCounter + 1
 
             MakePixelSquareArrI(DataToColor:getHealthMax(DataToColor.C.unitPet), 38)
             MakePixelSquareArrI(DataToColor:getHealthCurrent(DataToColor.C.unitPet), 39)

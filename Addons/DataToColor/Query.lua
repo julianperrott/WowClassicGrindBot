@@ -243,11 +243,13 @@ function DataToColor:actionbarCost(slot)
             end
             --DataToColor:Print(button:GetName(), actionType, (GetSpellLink(id)), actionName, type, cost, id)
             return DataToColor.C.MAX_POWER_TYPE * type + DataToColor.C.MAX_ACTION_IDX * slot + cost
-        --else
+        else
         --    print(slot.. " no action name")
+            return nil
         end
     end
-    return DataToColor.C.MAX_ACTION_IDX * slot
+    --return DataToColor.C.MAX_ACTION_IDX * slot
+    return nil
 end
 
 function DataToColor:equipSlotItemId(slot)

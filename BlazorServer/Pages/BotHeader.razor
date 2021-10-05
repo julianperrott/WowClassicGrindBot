@@ -55,14 +55,7 @@
                         <div>Kills: @levelTracker.MobsKilled</div>
                     }
                 </td>
-                @if (!addonReader.ActionBarCostReader.Ready)
-                {
-                    <td>@addonReader.ActionBarCostReader.Count / @addonReader.ActionBarCostReader.MaxCount</td>
-                }
-                else
-                {
-                    <td>Ready</td>
-                }
+                <td>@addonReader.ActionBarCostReader.Count</td>
             </tr>
         </table>
 
