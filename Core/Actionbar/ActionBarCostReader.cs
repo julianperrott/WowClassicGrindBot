@@ -24,6 +24,12 @@ namespace Core
 
         private readonly Tuple<PowerType, int> empty = new Tuple<PowerType, int>(PowerType.Mana,0);
 
+        public int MaxCount { get; } = 108; // maximum amount of actionbar slot which tracked
+
+        public int Count => dict.Count;
+
+        public bool Ready => Count == MaxCount;
+
         public ActionBarCostReader(ISquareReader reader, int cActionbarNum)
         {
             this.cActionbarNum = cActionbarNum;

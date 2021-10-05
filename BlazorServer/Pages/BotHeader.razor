@@ -15,6 +15,7 @@
                 <th>Health:</th>
                 <th>Mana / Rage / Energy:</th>
                 <th>Target:</th>
+                <th>Actionbar:</th>
             </tr>
             <tr>
                 <td>
@@ -27,15 +28,11 @@
                 <td>
                     @if (!string.IsNullOrEmpty(playerReader.Target))
                     {
-                        <a href="https://tbc.wowhead.com/npc=@playerReader.TargetId"
-                           target="_blank"
-                           onmousemove="showTooltip(event, '@playerReader.TargetId (GUID: @playerReader.TargetGuid)');"
-                           onmouseout="hideTooltip();">
-
+                        <a href="https://tbc.wowhead.com/npc=@playerReader.TargetId" target="_blank">
                             <div>
-                                @playerReader.Target
-                                (@playerReader.TargetLevel)
-                                @((int)playerReader.TargetHealthPercentage) %
+                                @playerReader.Target<br/>
+                                (@playerReader.TargetLevel) @((int)playerReader.TargetHealthPercentage) %<br/>
+                                GUID: @playerReader.TargetGuid
 
                                 @if (!playerReader.PlayerBitValues.TargetIsNormal)
                                 {
@@ -58,6 +55,14 @@
                         <div>Kills: @levelTracker.MobsKilled</div>
                     }
                 </td>
+                @if (!addonReader.ActionBarCostReader.Ready)
+                {
+                    <td>@addonReader.ActionBarCostReader.Count / @addonReader.ActionBarCostReader.MaxCount</td>
+                }
+                else
+                {
+                    <td>Ready</td>
+                }
             </tr>
         </table>
 
