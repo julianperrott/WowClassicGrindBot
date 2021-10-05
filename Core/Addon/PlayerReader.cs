@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Core.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -54,12 +54,14 @@ namespace Core
         public long HealthCurrent => reader.GetLongAtCell(11); // Current amount of health of player
         public long HealthPercent => HealthMax == 0 || HealthCurrent == 1 ? 0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
 
-        public long ManaMax => reader.GetLongAtCell(12); // Maximum amount of mana
-        public long ManaCurrent => reader.GetLongAtCell(13); // Current amount of mana
-        public long ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
+        public long PTMax => reader.GetLongAtCell(12); // Maximum amount of Power Type (dynamic)
+        public long PTCurrent => reader.GetLongAtCell(13); // Current amount of Power Type (dynamic)
+        public long PTPercentage => PTMax == 0 ? 0 : (PTCurrent * 100) / PTMax; // Power Type (dynamic) in terms of a percentage
 
-        // 14
-        // 15
+
+        public long ManaMax => reader.GetLongAtCell(14); // Maximum amount of mana
+        public long ManaCurrent => reader.GetLongAtCell(15); // Current amount of mana
+        public long ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
 
         public string Target
         {

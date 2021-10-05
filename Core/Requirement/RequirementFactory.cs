@@ -91,11 +91,22 @@ namespace Core
         {
             if (value > 0)
             {
-                RequirementObjects.Add(new Requirement
+                if( type == "Mana")
                 {
-                    HasRequirement = () => playerReader.ManaCurrent >= value,
-                    LogMessage = () => $"{type} {playerReader.ManaCurrent} >= {value}"
-                });
+                    RequirementObjects.Add(new Requirement
+                    {
+                        HasRequirement = () => playerReader.ManaCurrent >= value,
+                        LogMessage = () => $"{type} {playerReader.ManaCurrent} >= {value}"
+                    });
+                }
+                else
+                {
+                    RequirementObjects.Add(new Requirement
+                    {
+                        HasRequirement = () => playerReader.PTCurrent >= value,
+                        LogMessage = () => $"{type} {playerReader.PTCurrent} >= {value}"
+                    });
+                }
             }
         }
 
