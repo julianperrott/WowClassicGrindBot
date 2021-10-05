@@ -1,0 +1,101 @@
+{
+  "ClassName": "Druid",
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Night elf\\05-08_Teldrassil_Lake Al Ameth - Elementals.json",
+  "PathReduceSteps": true,
+  "CheckTargetGivesExp": true,
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Wrath",
+        "Key": "2",
+        "StopBeforeCast": true,
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Healing Touch",
+        "Key": "3",
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+        "Requirement": "Health%<25",
+        "Cooldown": 5
+      },
+      {
+        "Name": "Rejuvenation",
+        "Key": "6",
+        "AfterCastWaitBuff": true,
+        "Requirements": ["Health%<55", "not Rejuvenation"],
+        "Cooldown": 5
+      },
+      {
+        "Name": "Moonfire",
+        "Requirements": ["not Moonfire", "TargetHealth%>25"],
+        "Key": "5"
+      },
+      {
+        "Name": "Wrath",
+        "Key": "2",
+        "StopBeforeCast": true,
+        "Requirement": "TargetHealth%>50",
+        "HasCastBar": true
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Mark of the Wild",
+        "Key": "4",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Mark of the Wild"
+      },
+      {
+        "Name": "Thorns",
+        "Key": "7",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Thorns"
+      },
+      {
+        "Name": "Water",
+        "Key": "-",
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "Mana%<30",
+        "Cooldown": 10
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "5_NightElf_Vendor.json",
+        "Cost": 19
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "5_NightElf_Vendor.json",
+        "Cost": 19
+      }
+    ]
+  }
+}
