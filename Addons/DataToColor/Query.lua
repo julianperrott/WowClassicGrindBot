@@ -237,7 +237,7 @@ function DataToColor:actionbarCost(slot)
                 for key, costInfo in pairs(costTable) do
                     cost = costInfo.cost
                     type = costInfo.type
-                    print(slot.." "..actionName.." "..cost)
+                    --print(slot.." "..actionName.." "..cost)
                     break
                 end
             end
