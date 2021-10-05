@@ -12,6 +12,7 @@ namespace Core
             public string Key;
             public bool Item;
             public string Requirement;
+            public Form Form;
         }
 
         private readonly ILogger logger;
@@ -40,6 +41,7 @@ namespace Core
         {
             sources.Clear();
 
+            config.Form.ForEach(k => AddUnique(k));
             config.Adhoc.Sequence.ForEach(k => AddUnique(k));
             config.Parallel.Sequence.ForEach(k => AddUnique(k));
             config.Pull.Sequence.ForEach(k => AddUnique(k));
@@ -55,14 +57,15 @@ namespace Core
         private void AddUnique(KeyAction a)
         {
             if (!KeyReader.KeyMapping.ContainsKey(a.Key)) return;
-            if (sources.Any(i => i.Key == a.Key)) return;
+            if (sources.Any(i => i.Key == a.Key && i.Form == a.FormEnum)) return;
 
             var source = new ActionBarSource
             {
                 Name = a.Name,
                 Key = a.Key,
                 Item = false,
-                Requirement = a.Requirement
+                Requirement = a.Requirement,
+                Form = a.FormEnum
             };
 
             sources.Add(source);
@@ -104,7 +107,7 @@ namespace Core
         #endregion
 
 
-        private static string ScriptBuilder(ActionBarSource a)
+        private string ScriptBuilder(ActionBarSource a)
         {
             string nameOrId = $"\"{a.Name}\"";
             if (int.TryParse(a.Name, out int id))
@@ -128,28 +131,33 @@ namespace Core
             return "PickupSpellBookItem";
         }
         
-        private static string GetActionBarSlotHotkey(ActionBarSource a)
+        private string GetActionBarSlotHotkey(ActionBarSource a)
         {
             if(a.Key.StartsWith(KeyReader.BR))
-                return CalculateActionNumber(a.Key, KeyReader.BR, KeyReader.BRIdx);
+                return CalculateActionNumber(a, a.Key, KeyReader.BR, KeyReader.BRIdx);
 
             if (a.Key.StartsWith(KeyReader.BL))
-                return CalculateActionNumber(a.Key, KeyReader.BL, KeyReader.BLIdx);
+                return CalculateActionNumber(a, a.Key, KeyReader.BL, KeyReader.BLIdx);
 
             // "-" "=" keys
             if (KeyReader.ActionBarSlotMap.ContainsKey(a.Key))
-                return CalculateActionNumber(KeyReader.ActionBarSlotMap[a.Key].ToString(), "", 0);
+                return CalculateActionNumber(a, KeyReader.ActionBarSlotMap[a.Key].ToString(), "", 0);
 
-            return CalculateActionNumber(a.Key, "", 0);
+            return CalculateActionNumber(a, a.Key, "", 0);
         }
 
-        private static string CalculateActionNumber(string key, string prefix, int offset)
+        private string CalculateActionNumber(ActionBarSource a, string key, string prefix, int offset)
         {
             if (!string.IsNullOrEmpty(prefix))
                 key = key.Replace(prefix, "");
 
             if (int.TryParse(key, out int hotkey))
             {
+                if (offset == 0 && hotkey < 12)
+                {
+                    offset += Stance.FormToActionBar(addonReader.PlayerReader.PlayerClass, a.Form);
+                }
+
                 if (hotkey == 0)
                     return (offset + 10).ToString();
 
