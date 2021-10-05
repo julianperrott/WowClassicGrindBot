@@ -192,7 +192,7 @@ function DataToColor:OnGossipShow(event)
     for k, v in pairs(GossipOptions) do
         -- do something
         if k % 2 == 0 then
-            DataToColor.stack:push(DataToColor.gossipQueue, 10000 * count + 100 * (k/2) + DataToColor.S.Gossip[v])
+            DataToColor.stack:push(DataToColor.gossipQueue, 10000 * count + 100 * (k/2) + DataToColor.C.Gossip[v])
         end
     end
 end
