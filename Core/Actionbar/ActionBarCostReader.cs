@@ -66,7 +66,7 @@ namespace Core
         {
             if (KeyReader.ActionBarSlotMap.TryGetValue(keyAction.Key, out int slot))
             {
-                if (keyAction.FormEnum != Form.None && slot < 12)
+                if (keyAction.FormEnum != Form.None && slot <= 12)
                 {
                     slot += Stance.FormToActionBar(playerReader.PlayerClass, keyAction.FormEnum);
                 }

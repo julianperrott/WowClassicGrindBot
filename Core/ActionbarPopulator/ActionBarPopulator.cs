@@ -153,7 +153,7 @@ namespace Core
 
             if (int.TryParse(key, out int hotkey))
             {
-                if (offset == 0 && hotkey < 12)
+                if (offset == 0 && hotkey <= 12)
                 {
                     offset += Stance.FormToActionBar(addonReader.PlayerReader.PlayerClass, a.Form);
                 }
