@@ -139,8 +139,6 @@ namespace Core.Goals
         {
             await base.OnExit();
             targetFinderCts?.Cancel();
-
-            StopDrowning();
         }
 
         public override async Task PerformAction()
@@ -193,7 +191,7 @@ namespace Core.Goals
             }
 
             await RandomJump();
-            StopDrowning();
+            await StopDrowning();
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
             var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
@@ -503,21 +501,11 @@ namespace Core.Goals
         }
 
 
-        private void StopDrowning()
+        private async Task StopDrowning()
         {
             if (playerReader.PlayerBitValues.IsDrowning)
             {
-                if (!input.IsKeyDown(ConsoleKey.Spacebar))
-                {
-                    input.SetKeyState(ConsoleKey.Spacebar, true, false, "Drowning! Swim up");
-                }
-            }
-            else
-            {
-                if (input.IsKeyDown(ConsoleKey.Spacebar))
-                {
-                    input.SetKeyState(ConsoleKey.Spacebar, false, false, "Drowning has stopped!");
-                }
+                await input.KeyPress(ConsoleKey.Spacebar, 100, "Drowning! Swim up");
             }
         }
 
