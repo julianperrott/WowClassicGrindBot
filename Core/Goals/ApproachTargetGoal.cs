@@ -123,7 +123,7 @@ namespace Core.Goals
                 await wait.Update(1);
             }
 
-            if (SecondsSinceApproachStarted > 1 && lastPlayerDistance < 0.5)
+            if (SecondsSinceApproachStarted > 1 && lastPlayerDistance < 0.5 && !playerReader.PlayerBitValues.PlayerInCombat)
             {
                 await input.TapClearTarget("");
                 await wait.Update(1);
@@ -132,7 +132,7 @@ namespace Core.Goals
                 approachStart = DateTime.Now;
             }
 
-            if (SecondsSinceApproachStarted > 15)
+            if (SecondsSinceApproachStarted > 15 && !playerReader.PlayerBitValues.PlayerInCombat)
             {
                 await input.TapClearTarget("");
                 await wait.Update(1);
@@ -144,8 +144,11 @@ namespace Core.Goals
             if (playerReader.TargetGuid == initialTargetGuid)
             {
                 var initialTargetMinRange = playerReader.MinRange;
-                await input.TapNearestTarget("Try to find closer target...");
-                await wait.Update(1);
+                if (!playerReader.PlayerBitValues.PlayerInCombat)
+                {
+                    await input.TapNearestTarget("Try to find closer target...");
+                    await wait.Update(1);
+                }
 
                 if (playerReader.TargetGuid != initialTargetGuid)
                 {
@@ -170,7 +173,7 @@ namespace Core.Goals
                 }
             }
 
-            if (initialMinRange < playerReader.MinRange)
+            if (initialMinRange < playerReader.MinRange && !playerReader.PlayerBitValues.PlayerInCombat)
             {
                 Log($"We are going away from the target! {initialMinRange} < {playerReader.MinRange}");
                 await input.TapClearTarget();
