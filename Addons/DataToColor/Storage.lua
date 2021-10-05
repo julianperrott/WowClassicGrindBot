@@ -51,7 +51,8 @@ function CreateSpellInRangeList()
         DataToColor.S.spellInRangeList = {
             5176, -- "Wrath"
             5211, -- "Bash"
-            1079 -- "Rip"
+            1079, -- "Rip"
+            6807  -- "Maul"
         }
     elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
         DataToColor.S.spellInRangeList = {
