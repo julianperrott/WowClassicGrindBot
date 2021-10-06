@@ -47,7 +47,6 @@ namespace Core.Goals
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.pulled, false);
             AddPrecondition(GoapKey.withinpullrange, true);
-            AddPrecondition(GoapKey.isswimming, false);
 
             AddEffect(GoapKey.pulled, true);
         }

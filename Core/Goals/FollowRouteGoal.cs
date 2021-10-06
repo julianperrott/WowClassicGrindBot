@@ -511,7 +511,8 @@ namespace Core.Goals
         {
             if (playerReader.PlayerBitValues.IsDrowning)
             {
-                await input.KeyPress(ConsoleKey.Spacebar, 100, "Drowning! Swim up");
+                await input.TapJump("Drowning! Swim up");
+                await wait.Update(1);
             }
         }
 

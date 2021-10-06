@@ -155,6 +155,11 @@ namespace Core.Goals
                 lastDirection = playerReader.Direction;
             }
 
+            if (await StopDrowning())
+            {
+                return;
+            }
+
             await Fight();
 
             if (DidIKilledAnyone() && !await CreatureTargetMeOrMyPet())
@@ -225,6 +230,18 @@ namespace Core.Goals
             }
 
             logger.LogWarning("---- No Threat has been found!");
+
+            return false;
+        }
+
+        private async Task<bool> StopDrowning()
+        {
+            if (playerReader.PlayerBitValues.IsDrowning)
+            {
+                await input.TapJump("Drowning! Swim up");
+                await wait.Update(1);
+                return true;
+            }
 
             return false;
         }
