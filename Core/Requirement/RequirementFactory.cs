@@ -142,6 +142,18 @@ namespace Core
                     HasRequirement = () => bagReader.ItemCount(bagReader.HighestQuantityOfWaterId()) > 0,
                     LogMessage = () => $"Has Water"
                 });
+
+                item.RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => !playerReader.PlayerBitValues.IsSwimming,
+                    LogMessage = () => $"Not swim"
+                });
+
+                item.RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => !playerReader.PlayerBitValues.IsFalling,
+                    LogMessage = () => $"Not falling"
+                });
             }
         }
 
@@ -153,6 +165,18 @@ namespace Core
                 {
                     HasRequirement = () => bagReader.ItemCount(bagReader.HighestQuantityOfFoodId()) > 0,
                     LogMessage = () => $"Has Food"
+                });
+
+                item.RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => !playerReader.PlayerBitValues.IsSwimming,
+                    LogMessage = () => $"Not swim"
+                });
+
+                item.RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => !playerReader.PlayerBitValues.IsFalling,
+                    LogMessage = () => $"Not falling"
                 });
             }
         }
