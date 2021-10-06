@@ -1,0 +1,144 @@
+{
+  "ClassName": "Druid",
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Night elf\\10-12_Darkshore_Crawlers.json",
+  "PathReduceSteps": true,
+  "CheckTargetGivesExp": true,
+
+  "Form": [
+    {
+      //macro: /cancelform
+      "Name": "cancelform",
+      "Key": "F1",
+      "Form": "None"
+    },
+    {
+      //macro: #showtooltip Bear form /cast [nostance:1] Bear form
+      "Name": "bearform",
+      "Key": "F2",
+      "Form": "Druid_Bear",
+      "MinMana": 50
+    }
+  ],
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Rejuvenation",
+        "Key": "6",
+        "AfterCastWaitBuff": true,
+        "Requirements": ["Health%<75", "not Rejuvenation"],
+        "Cooldown": 5,
+        "Form": "None"
+      },
+      {
+        "Name": "Moonfire",
+        "Key": "5",
+        "Requirements": ["SpellInRange:0", "not InMeleeRange", "Mana%>50"],
+        "Form": "None"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Healing Touch",
+        "Key": "3",
+        "StopBeforeCast": true,
+        "HasCastBar": true,
+        "Requirement": "Health%<30",
+        "Cooldown": 5,
+        "Form": "None"
+      },
+      {
+        "Name": "Enrage",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirement": "TargetHealth%>40",
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Demoralizing Roar",
+        "Key": "3",
+        "Requirements": ["InMeleeRange", "not Demoralizing Roar"],
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Maul",
+        "Key": "2",
+        "MinRage": 15,
+        "Requirement": "InMeleeRange",
+        "AfterCastWaitNextSwing": true,
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      },
+      {
+        "Name": "Auto Attack",
+        "Requirement": "not AutoAttacking"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        //macro: #showtooltip Small Barnacled Clam /use Small Barnacled Clam
+        "Name": "clam",
+        "Key": "F12",
+        "DelayAfterCast": 0,
+        "Requirement": "BagItem:5523"
+      },
+      {
+        "Name": "Mark of the Wild",
+        "Key": "4",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Mark of the Wild",
+        "Form": "None"
+      },
+      {
+        "Name": "Thorns",
+        "Key": "7",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Thorns",
+        "Form": "None"
+      },
+      {
+        "Name": "Water",
+        "Key": "-",
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "Mana%<40",
+        "Cooldown": 10,
+        "Form": "None"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Form": "None",
+        "Requirement": "Items Broken",
+        "PathFilename": "10_NightElf_Vendor.json",
+        "Cost": 19
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Form": "None",
+        "Requirement": "BagFull",
+        "PathFilename": "10_NightElf_Vendor.json",
+        "Cost": 19
+      }
+    ]
+  }
+}
