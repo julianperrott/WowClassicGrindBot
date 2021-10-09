@@ -1,4 +1,4 @@
-using Core.Database;
+﻿using Core.Database;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
@@ -31,11 +31,6 @@ namespace Core
         private readonly ItemDB itemDb;
         private readonly CreatureDB creatureDb;
 
-
-        private int seq = 0;
-
-        private long lastGlobalTime = 0;
-        private DateTime lastGlobalTimeChange = DateTime.Now;
         private readonly CircularBuffer<double> UpdateLatencys;
 
         private DateTime lastFrontendUpdate = DateTime.Now;
@@ -67,6 +62,17 @@ namespace Core
             UpdateLatencys = new CircularBuffer<double>(10);
 
             PlayerReader.UIMapId.Changed += (object obj, EventArgs e) => ZoneChanged?.Invoke(this, EventArgs.Empty);
+
+            PlayerReader.GlobalTime.Changed += (object obj, EventArgs e) =>
+            {
+                UpdateLatencys.Put((DateTime.Now - PlayerReader.GlobalTime.LastChanged).TotalMilliseconds);
+                PlayerReader.AvgUpdateLatency = 0;
+                for (int i = 0; i < UpdateLatencys.Size; i++)
+                {
+                    PlayerReader.AvgUpdateLatency += UpdateLatencys.PeekAt(i);
+                }
+                PlayerReader.AvgUpdateLatency /= UpdateLatencys.Size;
+            };
         }
 
         public void AddonRefresh()
@@ -82,33 +88,11 @@ namespace Core
 
             LevelTracker.Update();
 
-            PlayerReader.CheckChanges();
-            PlayerReader.UpdateCreatureLists();
-
             areaDb.Update(WorldMapAreaDb.GetAreaId(PlayerReader.UIMapId.Value));
-
-            seq++;
-
-            if (PlayerReader.GlobalTime != lastGlobalTime)
-            {
-                UpdateLatencys.Put((DateTime.Now - lastGlobalTimeChange).TotalMilliseconds);
-
-                lastGlobalTime = PlayerReader.GlobalTime;
-                lastGlobalTimeChange = DateTime.Now;
-
-                PlayerReader.AvgUpdateLatency = 0;
-                for (int i = 0; i < UpdateLatencys.Size; i++)
-                {
-                    PlayerReader.AvgUpdateLatency += UpdateLatencys.PeekAt(i);
-                }
-                PlayerReader.AvgUpdateLatency /= UpdateLatencys.Size;
-            }
 
             if ((DateTime.Now - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
             {
-                seq = 0;
-                AddonDataChanged?.Invoke(this, new EventArgs());
-
+                AddonDataChanged?.Invoke(this, EventArgs.Empty);
                 lastFrontendUpdate = DateTime.Now;
             }
         }
@@ -121,6 +105,8 @@ namespace Core
 
         public void Reset()
         {
+            PlayerReader.Initialized = false;
+            PlayerReader.Reset();
         }
 
         public Color GetColorAt(int index)

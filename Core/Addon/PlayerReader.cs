@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Core.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -164,7 +164,7 @@ namespace Core
         public int PetTargetGuid => (int)reader.GetLongAtCell(69);
         public bool PetHasTarget => PetTargetGuid != 0;
 
-        public long GlobalTime => reader.GetLongAtCell(70);
+        public RecordInt GlobalTime = new RecordInt(70);
         public long LastLootTime => reader.GetLongAtCell(71);
 
         // https://wowpedia.fandom.com/wiki/Mob_experience
@@ -219,13 +219,6 @@ namespace Core
 
         #endregion
 
-        public void CheckChanges()
-        {
-            AutoShot.Updated(reader);
-            MainHandSwing.Updated(reader);
-        }
-
-
         #region Last Combat Kill Count
 
         private int lastCombatKillCount;
@@ -278,7 +271,17 @@ namespace Core
         {
             Sequence++;
 
+            if (GlobalTime.Updated(reader) && (GlobalTime.Value <= 3 || !Initialized))
+            {
+                Reset();
+            }
+
             UIMapId.Update(reader);
+
+            AutoShot.Update(reader);
+            MainHandSwing.Update(reader);
+
+            UpdateCreatureLists();
 
             if (UIErrorMessage > 0)
             {

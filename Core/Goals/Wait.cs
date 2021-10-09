@@ -14,10 +14,10 @@ namespace Core
 
         public async Task Update(int n)
         {
-            var s = playerReader.GlobalTime;
-            while (Math.Abs(s - playerReader.GlobalTime) <= n)
+            var s = playerReader.GlobalTime.Value;
+            while (Math.Abs(s - playerReader.GlobalTime.Value) <= n)
             {
-                await Task.Delay((int)playerReader.AvgUpdateLatency / 2);
+                await Task.Delay(4);
             }
         }
 
