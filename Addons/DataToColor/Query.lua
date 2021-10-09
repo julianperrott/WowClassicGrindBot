@@ -71,6 +71,18 @@ function DataToColor:getAuraMaskForClass(func, unitId, table)
     return num
 end
 
+function DataToColor:getAuraCount(func, unitId)
+    local num = 0
+    for i = 1, 10 do
+        local name = func(unitId, i)
+        if name == nil then
+            break
+        end
+        num = num + 1
+    end
+    return num
+end
+
 -- Grabs current targets name
 function DataToColor:GetTargetName(partition)
     if UnitExists(DataToColor.C.unitTarget) then

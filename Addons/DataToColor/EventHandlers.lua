@@ -22,6 +22,7 @@ local errorList = {
     "SPELL_FAILED_MOVING", --6 "Can't do that while moving";
     "ERR_SPELL_COOLDOWN",  --7 "Spell is not ready yet."
     "ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS", --8 "Another action is in progress"
+    "ERR_SPELL_FAILED_STUNNED", -- 9 "Can't do that while stunned"
 };
 
 function DataToColor:RegisterEvents()
@@ -59,6 +60,11 @@ function DataToColor:OnUIErrorMessage(event, messageType, message)
                         message = message.." ("..ERR_BADATTACKFACING..")"
                     elseif message==SPELL_FAILED_MOVING then
                         DataToColor.uiErrorMessage = 6
+                    elseif message==SPELL_FAILED_STUNNED then
+                        DataToColor.uiErrorMessage = 9
+                        --message = message.." ("..SPELL_FAILED_STUNNED..")"
+                    --else
+                    --    message = message.." (Spell related)"
                     end
                 end
                 

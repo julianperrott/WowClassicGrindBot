@@ -437,7 +437,7 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor:CastingInfoSpellId(DataToColor.C.unitPlayer), 53) -- Spell being cast
             MakePixelSquareArrI(DataToColor:ComboPoints(), 54) -- Combo points for rogue / druid
-            -- 55 unused
+            MakePixelSquareArrI(DataToColor:getAuraCount(UnitDebuff, DataToColor.C.unitPlayer), 55)
 
             if DataToColor.targetChanged then
                 MakePixelSquareArrI(DataToColor:targetNpcId(), 56) -- target id

@@ -1,4 +1,4 @@
-using SharedLib.NpcFinder;
+﻿using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -376,6 +376,20 @@ namespace Core.Goals
             switch (playerReader.LastUIErrorMessage)
             {
                 case UI_ERROR.NONE:
+                    break;
+                case UI_ERROR.ERR_SPELL_FAILED_STUNNED:
+                    long debuffCount = playerReader.PlayerDebuffCount;
+                    if (debuffCount != 0)
+                    {
+                        logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_FAILED_STUNNED} -- Wait till losing debuff!");
+                        await wait.While(() => debuffCount == playerReader.PlayerDebuffCount);
+
+                        playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+                    }
+                    else
+                    {
+                        logger.LogInformation($"{source} -- Didn't know how to react {UI_ERROR.ERR_SPELL_FAILED_STUNNED} when PlayerDebuffCount: {debuffCount}");
+                    }
                     break;
                 case UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
                     if (playerReader.PlayerClass == PlayerClassEnum.Hunter && playerReader.IsInMeleeRange)

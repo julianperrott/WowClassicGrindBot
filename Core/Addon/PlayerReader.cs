@@ -142,6 +142,8 @@ namespace Core
         public long SpellBeingCast => reader.GetLongAtCell(53);
         public long ComboPoints => reader.GetLongAtCell(54);
 
+        public long PlayerDebuffCount => reader.GetLongAtCell(55);
+
         public int TargetId => (int)reader.GetLongAtCell(56);
         public long TargetGuid => reader.GetLongAtCell(57);
 
