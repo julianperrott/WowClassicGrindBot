@@ -25,7 +25,10 @@ namespace Core
 
                 if (creature != null)
                 {
-                    creature.LastKnownHealthPercent = healthPercent;
+                    if (creature.LastKnownHealthPercent > healthPercent)
+                    {
+                        creature.LastKnownHealthPercent = healthPercent;
+                    }
                     creature.LastEvent = DateTime.Now;
                 }
                 else
