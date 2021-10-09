@@ -81,7 +81,7 @@ local watchedSpells = {
   }
 
 function DataToColor:OnCombatEvent(...)
-    local _, eventType, _, sourceGUID, _, _, _, destGUID, destName, _, _, spellId, _, _ = CombatLogGetCurrentEventInfo();
+    local _, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, _, _ = CombatLogGetCurrentEventInfo();
     --print(CombatLogGetCurrentEventInfo())
     if eventType=="SPELL_PERIODIC_DAMAGE" then
         DataToColor.lastCombatCreature=0;
@@ -95,7 +95,7 @@ function DataToColor:OnCombatEvent(...)
 
     if string.find(sourceGUID, "Creature") and (destGUID == DataToColor.playerGUID or destGUID == DataToColor.petGUID) then
         DataToColor.lastCombatDamageTakenCreature = DataToColor:getGuidFromUUID(sourceGUID);
-        --print(sourceGUID.." "..DataToColor.lastCombatDamageTakenCreature);
+        --print(sourceGUID.." "..DataToColor.lastCombatDamageTakenCreature.." "..sourceName);
     end
 
     if eventType=="SPELL_CAST_SUCCESS" and sourceGUID == DataToColor.playerGUID then
