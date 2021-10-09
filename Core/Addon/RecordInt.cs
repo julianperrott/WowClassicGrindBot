@@ -25,9 +25,8 @@ namespace Core
             if (temp != Value)
             {
                 Value = temp;
-                LastChanged = DateTime.Now;
-
                 Changed?.Invoke(this, EventArgs.Empty);
+                LastChanged = DateTime.Now;
                 return true;
             }
 
@@ -40,10 +39,15 @@ namespace Core
             if (temp != Value)
             {
                 Value = temp;
-                LastChanged = DateTime.Now;
-
                 Changed?.Invoke(this, EventArgs.Empty);
+                LastChanged = DateTime.Now;
             }
+        }
+
+        public void Reset()
+        {
+            Value = 0;
+            temp = 0;
         }
     }
 }
