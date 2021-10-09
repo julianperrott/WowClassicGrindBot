@@ -615,7 +615,9 @@ In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tri
 | ROGUE | Shoot Gun | 2 |
 | --- | --- | --- |
 | DRUID | Wrath | 0 |
-| DRUID | Bash| 1 |
+| DRUID | Bash | 1 |
+| DRUID | Rip | 2 |
+| DRUID | Maul | 3 |
 | --- | --- | --- |
 | WARRIOR | Charge | 0 |
 | WARRIOR | Rend | 1 |
@@ -636,6 +638,7 @@ In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tri
 | --- | --- | --- |
 | HUNTER | Raptor Strike | 0 |
 | HUNTER | Auto Shot | 1 |
+| HUNTER | Serpent Sting | 2 |
 | --- | --- | --- |
 | WARLOCK | Shadow Bolt | 0 |
 | WARLOCK | Shoot | 1 |
