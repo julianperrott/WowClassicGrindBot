@@ -167,7 +167,7 @@ namespace Core.Goals
                 logger.LogInformation("Exit CombatGoal!!!");
             }
 
-            await Task.Delay((int)(playerReader.AvgUpdateLatency / 2));
+            await wait.Update(1);
         }
 
         private bool DidIKilledAnyone()
