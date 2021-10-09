@@ -87,12 +87,15 @@ function DataToColor:OnCombatEvent(...)
         DataToColor.lastCombatCreature=0;
     elseif string.find(sourceGUID, "Creature") then
         DataToColor.lastCombatCreature = DataToColor:getGuidFromUUID(sourceGUID);
-        DataToColor.lastCombatDamageTakenCreature = DataToColor.lastCombatCreature;
-        --print(sourceGUID.." "..DataToColor.lastCombatCreature);
         --print(CombatLogGetCurrentEventInfo())
     else
         DataToColor.lastCombatCreature=0;
         --print("Other "..eventType);
+    end
+
+    if string.find(sourceGUID, "Creature") and (destGUID == DataToColor.playerGUID or destGUID == DataToColor.petGUID) then
+        DataToColor.lastCombatDamageTakenCreature = DataToColor:getGuidFromUUID(sourceGUID);
+        print(sourceGUID.." "..DataToColor.lastCombatDamageTakenCreature);
     end
 
     if eventType=="SPELL_CAST_SUCCESS" and sourceGUID == DataToColor.playerGUID then
