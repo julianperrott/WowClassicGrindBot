@@ -1,4 +1,4 @@
-﻿using SharedLib.NpcFinder;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -328,6 +328,11 @@ namespace Core.Goals
                     item.LogInformation($" .... interrupted stepback | lost target? {beforeHasTarget != playerReader.HasTarget} | {stepbackElapsedMs}ms");
                 }
                 input.SetKeyState(ConsoleKey.DownArrow, false, false);
+            }
+
+            if (item.AfterCastWaitNextSwing)
+            {
+                await wait.Update(1);
             }
 
             item.ConsumeCharge();
