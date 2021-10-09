@@ -1,7 +1,7 @@
 {
   "ClassName": "Druid",
   "Loot": true,
-  "PathFilename": "_pack\\1-20\\Night elf\\10-12_Darkshore_Crawlers.json",
+  "PathFilename": "_pack\\1-20\\Night elf\\11-14_Darkshore_Ameth'Aran Ruins.json",
   "PathReduceSteps": true,
   "CheckTargetGivesExp": true,
 
@@ -58,6 +58,15 @@
         "Key": "4",
         "WhenUsable": true,
         "Requirement": "TargetHealth%>40",
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Bash",
+        "Key": "5",
+        "Requirement": "InMeleeRange",
+        "UseWhenTargetIsCasting": true,
+        "WhenUsable": true,
+        "MinRage": 10,
         "Form": "Druid_Bear"
       },
       {

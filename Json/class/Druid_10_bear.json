@@ -65,6 +65,8 @@
       {
         "Name": "Demoralizing Roar",
         "Key": "3",
+        "MinRage": 10,
+        "WhenUsable": true,
         "Requirements": ["InMeleeRange", "not Demoralizing Roar"],
         "Form": "Druid_Bear"
       },
@@ -72,7 +74,7 @@
         "Name": "Maul",
         "Key": "2",
         "MinRage": 15,
-        "Requirement": "InMeleeRange",
+        "Requirements": ["InMeleeRange", "LastMainHandMs>2100"], // bear swing speed fixed at 2.5
         "AfterCastWaitNextSwing": true,
         "Form": "Druid_Bear"
       },
