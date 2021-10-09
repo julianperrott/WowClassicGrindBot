@@ -11,7 +11,9 @@ namespace Core
         public DateTime LastChanged { private set; get; }
 
         public long ElapsedMs => (long)(DateTime.Now - LastChanged).TotalMilliseconds;
-        
+
+        public event EventHandler? Changed;
+
         public RecordInt(int cell)
         {
             this.cell = cell;
@@ -24,10 +26,24 @@ namespace Core
             {
                 Value = temp;
                 LastChanged = DateTime.Now;
+
+                Changed?.Invoke(this, EventArgs.Empty);
                 return true;
             }
 
             return false;
+        }
+
+        public void Update(ISquareReader reader)
+        {
+            temp = (int)reader.GetLongAtCell(cell);
+            if (temp != Value)
+            {
+                Value = temp;
+                LastChanged = DateTime.Now;
+
+                Changed?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }
