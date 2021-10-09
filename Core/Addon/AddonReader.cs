@@ -119,6 +119,10 @@ namespace Core
             PlayerReader.Updated();
         }
 
+        public void Reset()
+        {
+        }
+
         public Color GetColorAt(int index)
         {
             return addonDataProvider.GetColor(index);

@@ -11,6 +11,8 @@ namespace Core
         private readonly ISquareReader reader;
         private readonly CreatureDB creatureDb;
 
+        public bool Initialized = false;
+
         public PlayerReader(ISquareReader reader, CreatureDB creatureDb)
         {
             this.reader = reader;
@@ -282,6 +284,29 @@ namespace Core
             {
                 LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
             }
+        }
+
+        internal void Reset()
+        {
+            // Reset all CreatureHistory
+            Creatures.Clear();
+            DamageTaken.Clear();
+            DamageDone.Clear();
+            Targets.Clear();
+            Deads.Clear();
+
+            // Reset all RecordInt
+            UIMapId.Reset();
+
+            AutoShot.Reset();
+            MainHandSwing.Reset();
+
+            CombatCreatureGuid.Reset();
+            CombatDamageDoneGuid.Reset();
+            CombatDamageTakenGuid.Reset();
+            CombatDeadGuid.Reset();
+
+            Initialized = true;
         }
     }
 }

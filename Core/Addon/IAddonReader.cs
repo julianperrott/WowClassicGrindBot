@@ -6,6 +6,7 @@ namespace Core
     public interface IAddonReader
     {
         void Refresh();
+        void Reset();
 
         Color GetColorAt(int index);
 

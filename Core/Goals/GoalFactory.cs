@@ -1,4 +1,4 @@
-using Core.Database;
+﻿using Core.Database;
 using Core.Goals;
 using SharedLib.NpcFinder;
 using Core.PPather;

@@ -29,5 +29,10 @@ namespace Core.Addon
         {
             throw new NotImplementedException();
         }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
