@@ -103,13 +103,13 @@ function DataToColor:OnCombatEvent(...)
         if sourceGUID == DataToColor.playerGUID or sourceGUID == DataToColor.petGUID then
             DataToColor.lastCombatDamageDoneCreature = DataToColor:getGuidFromUUID(destGUID);
         end
+    end
 
-        if sourceGUID == DataToColor.playerGUID and string.find(eventType, "SWING") then
-            local _, _, _, _, _, _, _, _, _, isOffHand = select(12, ...)
-            if not isOffHand then
-                --DataToColor:Print("Melee Swing detected")
-                DataToColor.lastMainHandMeleeSwing = DataToColor.globalTime
-            end
+    if sourceGUID == DataToColor.playerGUID and string.find(eventType, "SWING_") then
+        local _, _, _, _, _, _, _, _, _, isOffHand = select(12, ...)
+        if not isOffHand then
+            --DataToColor:Print("Melee Swing detected")
+            DataToColor.lastMainHandMeleeSwing = DataToColor.globalTime
         end
     end
 
