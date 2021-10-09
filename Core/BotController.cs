@@ -1,4 +1,4 @@
-﻿using Core.Goals;
+using Core.Goals;
 using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -178,7 +178,7 @@ namespace Core
                     {
                         Colour = AddonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? 1 : !string.IsNullOrEmpty(AddonReader.PlayerReader.Target)? 6: 2,
                         Name = "Player",
-                        MapId = this.AddonReader.PlayerReader.UIMapId,
+                        MapId = this.AddonReader.PlayerReader.UIMapId.Value,
                         Spot = this.AddonReader.PlayerReader.PlayerLocation
                     });
                     updatePlayerPostion.Reset();

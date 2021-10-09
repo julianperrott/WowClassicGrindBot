@@ -82,7 +82,7 @@ namespace BlazorServer
 
         public Task<List<WowPoint>> FindRouteTo(PlayerReader playerReader, WowPoint destination)
         {
-            return FindRoute((int)playerReader.UIMapId, playerReader.PlayerLocation, destination);
+            return FindRoute((int)playerReader.UIMapId.Value, playerReader.PlayerLocation, destination);
         }
 
         public bool SelfTest()

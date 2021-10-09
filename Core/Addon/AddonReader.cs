@@ -1,4 +1,4 @@
-﻿using Core.Database;
+using Core.Database;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
@@ -65,14 +65,13 @@ namespace Core
             this.WorldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
 
             UpdateLatencys = new CircularBuffer<double>(10);
+
+            PlayerReader.UIMapId.Changed += (object obj, EventArgs e) => ZoneChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void AddonRefresh()
         {
-            int uiMapId = PlayerReader.UIMapId;
             Refresh();
-            if(seq == 0 || uiMapId != PlayerReader.UIMapId)
-                ZoneChanged?.Invoke(this, EventArgs.Empty);
 
             BagReader.Read();
             equipmentReader.Read();
@@ -86,7 +85,7 @@ namespace Core
             PlayerReader.CheckChanges();
             PlayerReader.UpdateCreatureLists();
 
-            areaDb.Update(WorldMapAreaDb.GetAreaId(PlayerReader.UIMapId));
+            areaDb.Update(WorldMapAreaDb.GetAreaId(PlayerReader.UIMapId.Value));
 
             seq++;
 

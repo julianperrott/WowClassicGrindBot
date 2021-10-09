@@ -1,4 +1,4 @@
-﻿using Core.Database;
+using Core.Database;
 using Core.Goals;
 using SharedLib.NpcFinder;
 using Core.PPather;
@@ -146,8 +146,8 @@ namespace Core
 
                 this.pather.DrawLines(new List<LineArgs>()
                 {
-                      new LineArgs  { Spots = pathPoints, Name = "grindpath", Colour = 2, MapId = addonReader.PlayerReader.UIMapId },
-                      new LineArgs { Spots = spiritPath, Name = "spirithealer", Colour = 3, MapId = addonReader.PlayerReader.UIMapId }
+                      new LineArgs  { Spots = pathPoints, Name = "grindpath", Colour = 2, MapId = addonReader.PlayerReader.UIMapId.Value },
+                      new LineArgs { Spots = spiritPath, Name = "spirithealer", Colour = 3, MapId = addonReader.PlayerReader.UIMapId.Value }
                 });
             }
 

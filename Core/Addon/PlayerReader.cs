@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Core.Database;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace Core
 
         public double ZCoord { get; set; }
 
-        public int UIMapId => (int)reader.GetLongAtCell(4);
+        public RecordInt UIMapId = new RecordInt(4);
 
         public long PlayerLevel => reader.GetLongAtCell(5);
 
@@ -275,6 +275,8 @@ namespace Core
         internal void Updated()
         {
             Sequence++;
+
+            UIMapId.Update(reader);
 
             if (UIErrorMessage > 0)
             {

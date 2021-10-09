@@ -104,7 +104,7 @@ namespace Core
 
         public Task<List<WowPoint>> FindRouteTo(PlayerReader playerReader, WowPoint destination)
         {
-            return FindRoute(playerReader.UIMapId, playerReader.PlayerLocation, destination);
+            return FindRoute(playerReader.UIMapId.Value, playerReader.PlayerLocation, destination);
         }
 
         public async Task<bool> PingServer()

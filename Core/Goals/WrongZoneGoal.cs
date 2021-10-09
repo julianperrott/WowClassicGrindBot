@@ -31,7 +31,7 @@ namespace Core.Goals
 
         public override bool CheckIfActionCanRun()
         {
-            return this.playerReader.UIMapId == this.classConfiguration.WrongZone.ZoneId;
+            return this.playerReader.UIMapId.Value == this.classConfiguration.WrongZone.ZoneId;
         }
 
         public override float CostOfPerformingAction { get => 19f; }

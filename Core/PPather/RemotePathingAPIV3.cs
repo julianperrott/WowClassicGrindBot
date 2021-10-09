@@ -76,7 +76,7 @@ namespace Core
 
         public async Task<List<WowPoint>> FindRouteTo(PlayerReader playerReader, WowPoint destination)
         {
-            int uiMapId = playerReader.UIMapId;
+            int uiMapId = playerReader.UIMapId.Value;
             WowPoint fromPoint = playerReader.PlayerLocation;
             WowPoint toPoint = destination;
 
