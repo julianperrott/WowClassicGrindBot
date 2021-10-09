@@ -137,7 +137,7 @@ function DataToColor:OnInitialize()
     UIErrorsFrame:UnregisterEvent("UI_ERROR_MESSAGE")
 
     DataToColor:RegisterEvents()
-    DataToColor:UpdateTimer()
+    --DataToColor:UpdateTimer()
 
     local version = GetAddOnMetadata('DataToColor', 'Version')
     DataToColor:Print("Welcome. Using "..version)
@@ -152,6 +152,23 @@ function DataToColor:SetupRequirements()
 	SetCVar('Contrast',50,'[]')
 	SetCVar('Brightness',50,'[]')
 	SetCVar('Gamma',1,'[]')
+end
+
+function DataToColor:Reset()
+    DataToColor.playerGUID = UnitGUID(DataToColor.C.unitPlayer)
+    DataToColor.petGUID = UnitGUID(DataToColor.C.unitPet)
+
+    DataToColor.globalTime = 0
+    DataToColor.lastLoot = 0
+    DataToColor.uiErrorMessage = 0
+
+    DataToColor.lastCombatDamageTakenCreature = 0
+    DataToColor.lastCombatDamageDoneCreature = 0
+    DataToColor.lastCombatCreature = 0
+    DataToColor.lastCombatCreatureDied = 0
+
+    DataToColor.lastAutoShot = 0
+    DataToColor.lastMainHandMeleeSwing = 0
 end
 
 function DataToColor:Update()
@@ -177,6 +194,8 @@ end
 
 function DataToColor:FushState()
     DataToColor.targetChanged = true
+
+    DataToColor:Reset()
 
     DataToColor:InitEquipmentQueue()
     DataToColor:InitBagQueue()
