@@ -10,12 +10,10 @@ namespace Core.Goals
     public class GoalThread
     {
         private readonly ILogger logger;
-        private readonly ConfigurableInput input;
-
-        private readonly PlayerReader playerReader;
         private readonly GoapAgent goapAgent;
 
         private GoapGoal? currentGoal;
+        private RouteInfo? routeInfo;
 
         private bool active;
         public bool Active
@@ -30,16 +28,32 @@ namespace Core.Goals
             }
         }
 
-        public GoalThread(ILogger logger, ConfigurableInput input, PlayerReader playerReader, GoapAgent goapAgent)
+        public GoalThread(ILogger logger, GoapAgent goapAgent, RouteInfo? routeInfo)
         {
             this.logger = logger;
-            this.input = input;
-            this.playerReader = playerReader;
             this.goapAgent = goapAgent;
+            this.routeInfo = routeInfo;
         }
 
         public void OnActionEvent(object sender, ActionEventArgs e)
         {
+            if (e.Key == GoapKey.corpselocation && e.Value is CorpseLocation corpseLocation)
+            {
+                routeInfo?.PoiList.Add(new RouteInfoPoi(corpseLocation.WowPoint, "Corpse", "black", corpseLocation.Radius));
+                logger.LogInformation($"{GetType().Name} Corpse added to list");
+            }
+            else if (e.Key == GoapKey.consumecorpse && (bool)e.Value == false)
+            {
+                if (routeInfo != null && routeInfo.PoiList.Any())
+                {
+                    var closest = routeInfo.PoiList.Where(p => p.Name == "Corpse").
+                        Min(i => (WowPoint.DistanceTo(goapAgent.PlayerReader.PlayerLocation, i.Location), i));
+                    if (closest.i != null)
+                    {
+                        routeInfo.PoiList.Remove(closest.i);
+                    }
+                }
+            }
         }
 
         public async Task GoapPerformGoal()

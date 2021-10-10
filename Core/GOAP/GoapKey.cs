@@ -18,6 +18,7 @@
         fighting = 120,
         producedcorpse = 130,
         consumecorpse = 131,
+        corpselocation = 999,
         abort = 140,
         resume = 141,
         shoulddrink = 150,

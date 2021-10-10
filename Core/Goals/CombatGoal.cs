@@ -1,6 +1,7 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,9 +22,13 @@ namespace Core.Goals
         private readonly ClassConfiguration classConfiguration;
 
         private int lastKilledGuid;
-        private double lastDirection;
+        private double lastDirectionForTurnAround;
 
-        public CombatGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, CastingHandler castingHandler)
+        private double lastKnwonPlayerDirection;
+        private double lastKnownMinDistance;
+        private double lastKnownMaxDistance;
+
+        public CombatGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving, ClassConfiguration classConfiguration, CastingHandler castingHandler)
         {
             this.logger = logger;
             this.input = input;
@@ -63,6 +68,12 @@ namespace Core.Goals
                     logger.LogInformation($"{GetType().Name}: Lost Target!");
                     await stopMoving.Stop();
                     return;
+                }
+                else
+                {
+                    lastKnwonPlayerDirection = playerReader.Direction;
+                    lastKnownMinDistance = playerReader.MinRange;
+                    lastKnownMaxDistance = playerReader.MaxRange;
                 }
 
                 if (playerReader.IsAutoAttacking)
@@ -126,7 +137,7 @@ namespace Core.Goals
             await stopMoving.Stop();
             await wait.Update(1);
 
-            lastDirection = playerReader.Direction;
+            lastDirectionForTurnAround = playerReader.Direction;
 
             logger.LogInformation($"{GetType().Name}: OnEnter");
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
@@ -147,12 +158,12 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
-            if (Math.Abs(lastDirection - playerReader.Direction) > Math.PI / 2)
+            if (Math.Abs(lastDirectionForTurnAround - playerReader.Direction) > Math.PI / 2)
             {
                 logger.LogInformation($"{GetType().Name}: Turning too fast!");
                 await stopMoving.Stop();
 
-                lastDirection = playerReader.Direction;
+                lastDirectionForTurnAround = playerReader.Direction;
             }
 
             if (await StopDrowning())
@@ -176,6 +187,12 @@ namespace Core.Goals
                 && playerReader.Targets.Any(x => x.CreatureId == playerReader.CombatDeadGuid.Value)
                 && playerReader.DamageDone.Any(x => x.CreatureId == playerReader.CombatDeadGuid.Value))
             {
+                // have to check range
+                // ex. target died far away have to consider the range and approximate
+                logger.LogInformation($"----- Target is dead! Record death location.");
+                double distance = (lastKnownMaxDistance + lastKnownMinDistance) / 2;
+                SendActionEvent(new ActionEventArgs(GoapKey.corpselocation, new CorpseLocation(GetCorpseLocation(distance), distance)));
+
                 lastKilledGuid = playerReader.CombatDeadGuid.Value;
                 playerReader.IncrementKillCount();
 
@@ -244,6 +261,11 @@ namespace Core.Goals
             }
 
             return false;
+        }
+
+        private WowPoint GetCorpseLocation(double distance)
+        {
+            return PointEsimator.GetPoint(playerReader.PlayerLocation, playerReader.Direction, distance);
         }
     }
 }

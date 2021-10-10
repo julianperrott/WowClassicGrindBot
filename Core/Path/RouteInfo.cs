@@ -14,11 +14,22 @@ namespace Core
         public string Name { get; }
         public string Color { get; }
 
+        public double Radius { get; }
+
         public RouteInfoPoi(NPC npc, string color)
         {
             Location = npc.points.First();
             Name = npc.name;
             Color = color;
+            Radius = 1;
+        }
+
+        public RouteInfoPoi(WowPoint wowPoint, string name, string color, double radius)
+        {
+            Location = wowPoint;
+            Name = name;
+            Color = color;
+            Radius = radius;
         }
     }
 
@@ -126,6 +137,9 @@ namespace Core
             var allPoints = this.PathPoints.Select(s => s).ToList();
             allPoints.AddRange(this.SpiritPath);
             allPoints.AddRange(this.RouteToWaypoint);
+
+            var pois = this.PoiList.Select(p => p.Location).ToList();
+            allPoints.AddRange(pois);
             allPoints.Add(this.playerReader.PlayerLocation);
 
             var maxX = allPoints.Max(s => s.X);
@@ -195,7 +209,7 @@ namespace Core
         public string DrawPoi(RouteInfoPoi pt)
         {
             var size = 4;
-            return $"<circle onmousemove=\"showTooltip(evt, '{pt.Name}');\" onmouseout=\"hideTooltip();\" cx='{ToCanvasPointX(pt.Location.X) - size / 2}' cy='{ToCanvasPointY(pt.Location.Y) - size / 2}' r='{4}' fill='{pt.Color}' />";
+            return $"<circle onmousemove=\"showTooltip(evt, '{pt.Name}');\" onmouseout=\"hideTooltip();\" cx='{ToCanvasPointX(pt.Location.X) - size / 2}' cy='{ToCanvasPointY(pt.Location.Y) - size / 2}' " + (pt.Radius == 1 ? $"fill='{pt.Color}' r='{size}'" : $"r='{size * pt.Radius}' stroke='{pt.Color}' stroke-width='1' fill='none'") + " />";
         }
     }
 }

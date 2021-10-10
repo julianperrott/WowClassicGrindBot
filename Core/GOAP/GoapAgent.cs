@@ -18,7 +18,7 @@ namespace Core.GOAP
         private GoapPlanner planner;
         public IEnumerable<GoapGoal> AvailableGoals { get; set; }
         
-        private PlayerReader playerReader;
+        public PlayerReader PlayerReader { get; private set; }
         private ClassConfiguration classConfiguration;
 
         public GoapGoal? CurrentGoal { get; set; }
@@ -30,7 +30,7 @@ namespace Core.GOAP
             this.logger = logger;
             this.input = input;
 
-            this.playerReader = playerReader;
+            this.PlayerReader = playerReader;
 
             this.stopMoving = new StopMoving(input, playerReader);
 
@@ -43,12 +43,12 @@ namespace Core.GOAP
 
         public void UpdateWorldState()
         {
-            WorldState = GetWorldState(playerReader);
+            WorldState = GetWorldState(PlayerReader);
         }
 
         public async Task<GoapGoal?> GetAction()
         {
-            if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
+            if (PlayerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
                 logger.LogWarning($"{GetType().Name}: Target is blacklisted - StopAttack & ClearTarget");
                 await input.TapStopAttack("");
@@ -90,7 +90,7 @@ namespace Core.GOAP
             var state = new HashSet<KeyValuePair<GoapKey, object>>
             {
                 new KeyValuePair<GoapKey, object>(GoapKey.hastarget,!blacklist.IsTargetBlacklisted() && (!string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0)),
-                new KeyValuePair<GoapKey, object>(GoapKey.targetisalive,!string.IsNullOrEmpty(this.playerReader.Target) &&  (!playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0)),
+                new KeyValuePair<GoapKey, object>(GoapKey.targetisalive,!string.IsNullOrEmpty(this.PlayerReader.Target) &&  (!playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0)),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.PlayerBitValues.PlayerInCombat ),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, playerReader.WithInCombatRange),

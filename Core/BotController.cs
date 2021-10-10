@@ -269,7 +269,7 @@ namespace Core
 
             this.GoapAgent = new GoapAgent(logger, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config);
 
-            this.actionThread = new GoalThread(logger, ConfigurableInput, AddonReader.PlayerReader, GoapAgent);
+            this.actionThread = new GoalThread(logger, GoapAgent, RouteInfo);
 
             // hookup events between actions
             availableActions.ToList().ForEach(a =>
