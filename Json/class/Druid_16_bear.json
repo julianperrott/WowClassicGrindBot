@@ -1,7 +1,7 @@
 {
   "ClassName": "Druid",
   "Loot": true,
-  "PathFilename": "_pack\\1-20\\Night elf\\11-14_Darkshore_Ameth'Aran Ruins.json",
+  "PathFilename": "_pack\\1-20\\Night elf\\15-18_Darkshore_Twilight Vale - Blackwood.json",
   "PathReduceSteps": true,
   "CheckTargetGivesExp": true,
 
