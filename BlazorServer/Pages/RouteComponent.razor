@@ -36,7 +36,11 @@
 
                         @if (botController.RouteInfo != null)
                         {
-                            <circle cx="@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord)" cy="@botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)" r="4" fill="@colour" />
+                            <g transform='translate(@botController.RouteInfo.ToCanvasPointX(addonReader.PlayerReader.XCoord), @botController.RouteInfo.ToCanvasPointY(addonReader.PlayerReader.YCoord)) rotate(@PlayerDirectionInDegree 5 5)'>
+                                <svg width="10" height="10">
+                                    <polygon points="5,0 8.5,8.5 1.5,8.5 5,0" fill="@colour" />
+                                </svg>
+                            </g>
                         }
                     }
 
@@ -102,6 +106,8 @@
     private MarkupString SpiritPathPoints = new MarkupString();
     private System.Timers.Timer refreshTimer = new System.Timers.Timer();
 
+    private double PlayerDirectionInDegree => -addonReader.PlayerReader.Direction * (180f / Math.PI);
+
     private bool CanvasInitialised = false;
 
     private List<WowPoint> Deaths = new List<WowPoint>();
@@ -164,7 +170,7 @@
 
             if (!refreshTimer.Enabled)
             {
-                refreshTimer.Interval = 10000;
+                refreshTimer.Interval = 5000;
                 refreshTimer.Enabled = true;
 
                 refreshTimer.Elapsed += (s, e) =>
