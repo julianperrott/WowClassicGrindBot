@@ -503,7 +503,7 @@ namespace Core
                 return new Requirement
                 {
                     HasRequirement = () => valueCheck() + formChangeCost() >= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} > {value}"
+                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} >= {value}"
                 };
             }
             else
@@ -511,7 +511,7 @@ namespace Core
                 return new Requirement
                 {
                     HasRequirement = () => valueCheck() + formChangeCost() <= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} < {value}"
+                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} <= {value}"
                 };
             }
         }
