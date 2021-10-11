@@ -53,6 +53,7 @@
         "Name": "Food",
         "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Key": "=",
         "Requirement": "Health%<60",
         "Cooldown": 5,

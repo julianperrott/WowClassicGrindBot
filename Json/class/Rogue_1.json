@@ -34,8 +34,7 @@
         "DelayAfterCast": 0,
         "Key": "N1",
         "Requirement": "Health%<30",
-        "Cooldown": 15,
-        "Log": false
+        "Cooldown": 15
       }
     ]
   },

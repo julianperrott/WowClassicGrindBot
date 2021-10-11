@@ -130,23 +130,25 @@
         ],
         "Cooldown": 3,
         "MinMana": 310,
-        "Cost": 6,
+        "Cost": 6
       },
       {
         "Name": "Water",
         "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Key": "9",
         "Requirement": "Mana%<45",
-        "Cooldown": 6,
-        "Log": false
+        "Cooldown": 6
       },
       {
         "Name": "Food",
         "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Key": "8",
         "Requirement": "Health%<45",
-        "Cooldown": 6,
-        "Log": false
+        "Cooldown": 6
       }
     ]
   }

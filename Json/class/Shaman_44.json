@@ -133,18 +133,20 @@
       {
         "Name": "Water",
         "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Key": "9",
         "Requirement": "Mana%<35",
-        "Cooldown": 6,
-        "Log": false
+        "Cooldown": 6
       },
       {
         "Name": "Food",
         "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Key": "8",
         "Requirement": "Health%<35",
-        "Cooldown": 6,
-        "Log": false
+        "Cooldown": 6
       }
     ]
   }

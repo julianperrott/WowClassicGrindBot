@@ -95,8 +95,7 @@
         "DelayAfterCast": 0,
         "Key": "N1",
         "Requirement": "Health%<50",
-        "Cooldown": 5,
-        "Log": false
+        "Cooldown": 5
       },
       {
         "Name": "Water",
@@ -105,8 +104,7 @@
         "DelayAfterCast": 0,
         "Key": "N2",
         "Requirement": "Mana%<50",
-        "Cooldown": 5,
-        "Log": false
+        "Cooldown": 5
       }
     ]
     },

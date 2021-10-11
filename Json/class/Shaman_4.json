@@ -60,6 +60,7 @@
         "Key": "=",
         "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Requirement": "Health%<30",
         "Cooldown": 10
       },
@@ -68,6 +69,7 @@
         "Key": "-",
         "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Requirement": "Mana%<30",
         "Cooldown": 10
       }

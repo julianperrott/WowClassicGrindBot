@@ -58,18 +58,16 @@
         "DelayAfterCast": 0,
         "Key": "=",
         "Requirement": "Health%<30",
-        "Cooldown": 15,
-        "Log": false
+        "Cooldown": 15
       },
       {
         "Name": "Water",
         "StopBeforeCast": true,
-        "DelayAfterCast": 0,
         "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Key": "-",
         "Requirement": "Mana%<30",
-        "Cooldown": 15,
-        "Log": false
+        "Cooldown": 15
       }
     ]
   },
