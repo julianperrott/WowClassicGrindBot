@@ -32,7 +32,7 @@ namespace Core
 
         public bool WhenUsable { get; set; } = false;
 
-        public bool WaitForWithinMelleRange { get; set; } = false;
+        public bool WaitForWithinMeleeRange { get; set; } = false;
         public bool ResetOnNewTarget { get; set; } = false;
 
         public bool Log { get; set; } = true;

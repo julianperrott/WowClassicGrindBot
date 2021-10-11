@@ -148,18 +148,23 @@ namespace Core.Goals
 
         protected async Task WaitForWithinMeleeRange(KeyAction item)
         {
-            Log("Waiting for Melee range - max 10s");
+            await stopMoving.Stop();
 
             var start = DateTime.Now;
+            var playerHealth = playerReader.HealthCurrent;
+            int maxWaitTime = 10;
 
-            while (playerReader.HasTarget && !playerReader.IsInMeleeRange && (DateTime.Now - start).TotalSeconds < 10)
+            Log($"Waiting for the target to reach melee range - max {maxWaitTime}s");
+
+            while (playerReader.HasTarget && !playerReader.IsInMeleeRange && (DateTime.Now - start).TotalSeconds < maxWaitTime)
             {
-                await wait.Update(1);
-
-                if (!item.StopBeforeCast)
+                if (playerHealth < playerReader.HealthCurrent)
                 {
-                    await Interact("");
+                    Log("Got damage. Stop waiting for melee range.");
+                    break;
                 }
+
+                await wait.Update(1);
             }
         }
 
@@ -193,7 +198,7 @@ namespace Core.Goals
                     return false;
                 }
 
-                if (item.WaitForWithinMelleRange)
+                if (item.WaitForWithinMeleeRange)
                 {
                     await WaitForWithinMeleeRange(item);
                 }

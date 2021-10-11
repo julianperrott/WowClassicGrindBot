@@ -7,7 +7,7 @@
           "Name": "Shoot",
           "Key": "9",
           "DelayAfterCast": 1000,
-          "WaitForWithinMelleRange": false
+          "WaitForWithinMeleeRange": false
         }
       ]
     },

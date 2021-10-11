@@ -15,7 +15,7 @@
         "Name": "Shoot Gun",
         "Key": "9",
         "DelayAfterCast": 1000,
-        "WaitForWithinMelleRange": true
+        "WaitForWithinMeleeRange": true
       }
     ]
   },

@@ -18,7 +18,7 @@
         "Key": "D9",
         "DelayAfterCast": 1000,
         //"Requirement": "not npcID:6195",
-        "WaitForWithinMelleRange": true
+        "WaitForWithinMeleeRange": true
       }
       /*,
       {
@@ -26,13 +26,13 @@
         "Key": "0",
         "DelayAfterCast": 100,
         "Requirement": "npcID:6195",
-        "WaitForWithinMelleRange": false
+        "WaitForWithinMeleeRange": false
       },
       {
         "Name": "Approach",
         "DelayAfterCast": 1000,
         "Requirement": "npcID:6195",
-        "WaitForWithinMelleRange": false
+        "WaitForWithinMeleeRange": false
       }
       */
     ]
