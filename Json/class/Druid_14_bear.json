@@ -90,7 +90,7 @@
         "Log": false
       },
       {
-        "Name": "Auto Attack",
+        "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
       }
     ]

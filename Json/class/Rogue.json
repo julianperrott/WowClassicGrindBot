@@ -83,7 +83,7 @@
         "Cooldown": 1
       },
       {
-        "Name": "Auto Attack",
+        "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
       }
     ]
