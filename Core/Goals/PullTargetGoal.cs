@@ -146,9 +146,10 @@ namespace Core.Goals
             }
         }
 
-        protected async Task WaitForWithinMeleeRange(KeyAction item)
+        protected async Task WaitForWithinMeleeRange(KeyAction item, bool lastCastSuccess)
         {
             await stopMoving.Stop();
+            await wait.Update(1);
 
             var start = DateTime.Now;
             var playerHealth = playerReader.HealthCurrent;
@@ -168,6 +169,13 @@ namespace Core.Goals
                 {
                     Log("Target started casting. Stop waiting for melee range.");
                     break;
+                }
+
+                if (lastCastSuccess && playerReader.UsableAction.Is(item))
+                {
+                    Log($"While waiting, repeat current action: {item.Name}");
+                    lastCastSuccess = await castingHandler.CastIfReady(item, item.DelayBeforeCast);
+                    Log($"Repeat current action: {lastCastSuccess}");
                 }
 
                 await wait.Update(1);
@@ -206,7 +214,7 @@ namespace Core.Goals
 
                 if (success && item.WaitForWithinMeleeRange)
                 {
-                    await WaitForWithinMeleeRange(item);
+                    await WaitForWithinMeleeRange(item, success);
                 }
             }
 
