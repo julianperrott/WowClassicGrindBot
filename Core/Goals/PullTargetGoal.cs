@@ -164,6 +164,12 @@ namespace Core.Goals
                     break;
                 }
 
+                if (playerReader.IsTargetCasting)
+                {
+                    Log("Target started casting. Stop waiting for melee range.");
+                    break;
+                }
+
                 await wait.Update(1);
             }
         }
@@ -198,7 +204,7 @@ namespace Core.Goals
                     return false;
                 }
 
-                if (item.WaitForWithinMeleeRange)
+                if (success && item.WaitForWithinMeleeRange)
                 {
                     await WaitForWithinMeleeRange(item);
                 }
