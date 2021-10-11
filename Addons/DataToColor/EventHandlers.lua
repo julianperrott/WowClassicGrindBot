@@ -1,6 +1,9 @@
 local Load = select(2, ...)
 local DataToColor = unpack(Load)
 
+local CAST_START = 999998
+local CAST_SUCCESS = 999999
+
 local ignoreErrorList = {
     "ERR_ABILITY_COOLDOWN",
     "ERR_OUT_OF_RAGE",
@@ -104,8 +107,21 @@ local watchedSpells = {
     [DataToColor.C.Spell.AutoShotId] = function ()
         --DataToColor:Print("Auto Shot detected")
         DataToColor.lastAutoShot = DataToColor.globalTime
-     end
+    end
   }
+
+local swing_reset_spells = {
+    --[[ Maul ]]
+    [132136]=1,
+    --[[ Raptor Strike ]]
+    [132223]=1,
+    --[[ Cleave ]]
+    [132338]=1,
+    --[[ Heroic Strike ]]
+    [132282]=1,
+    --[[ Slam ]]
+    [132340]=1
+}
 
 function DataToColor:OnCombatEvent(...)
     local _, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, _, _ = CombatLogGetCurrentEventInfo();
@@ -114,32 +130,56 @@ function DataToColor:OnCombatEvent(...)
         DataToColor.lastCombatCreature=0;
     elseif string.find(sourceGUID, "Creature") then
         DataToColor.lastCombatCreature = DataToColor:getGuidFromUUID(sourceGUID);
-        --print(CombatLogGetCurrentEventInfo())
     else
         DataToColor.lastCombatCreature=0;
-        --print("Other "..eventType);
     end
 
     if string.find(sourceGUID, "Creature") and (destGUID == DataToColor.playerGUID or destGUID == DataToColor.petGUID) then
         DataToColor.lastCombatDamageTakenCreature = DataToColor:getGuidFromUUID(sourceGUID);
-        --print(sourceGUID.." "..DataToColor.lastCombatDamageTakenCreature.." "..sourceName);
     end
 
-    if eventType=="SPELL_CAST_SUCCESS" and sourceGUID == DataToColor.playerGUID then
-          if watchedSpells[spellId] then watchedSpells[spellId]() end
-    end
+    if sourceGUID == DataToColor.playerGUID then
+        if eventType=="SPELL_CAST_SUCCESS" then
+            if watchedSpells[spellId] then watchedSpells[spellId]() end
 
-    if string.find(eventType, "_DAMAGE") then
-        if sourceGUID == DataToColor.playerGUID or sourceGUID == DataToColor.petGUID then
+            local _, _, icon = GetSpellInfo(spellId)
+            if swing_reset_spells[icon] then
+                --DataToColor:Print("Special Melee Swing detected")
+                DataToColor.lastMainHandMeleeSwing = DataToColor.globalTime
+            end
+        end
+
+        if string.find(eventType, "_CAST_START") then
+            DataToColor.lastCastEvent = CAST_START
+            DataToColor.lastCastSpellId = spellId
+            --rint(CombatLogGetCurrentEventInfo())
+        end
+
+        if string.find(eventType, "_CAST_SUCCESS") or string.find(eventType, "_CAST_FAILED") then
+            --print(CombatLogGetCurrentEventInfo())
+            DataToColor.lastCastSpellId = spellId
+
+            if string.find(eventType, "_CAST_FAILED") then
+                local failedType = select(15, CombatLogGetCurrentEventInfo())
+                DataToColor.lastCastEvent = DataToColor:GetErrorCode(nil, failedType)
+                --print(lastCastEvent.." -> "..DataToColor.lastCastEvent.." "..failedType.." "..spellId)
+            else
+                DataToColor.lastCastEvent = CAST_SUCCESS
+            end
+        end
+
+        -- matches SWING_ RANGE_ SPELL_ but not SPELL_PERIODIC
+        if not string.find(eventType, "SPELL_PERIODIC") and
+            (string.find(eventType, "_DAMAGE") or string.find(eventType, "_MISSED")) then
             DataToColor.lastCombatDamageDoneCreature = DataToColor:getGuidFromUUID(destGUID);
         end
-    end
 
-    if sourceGUID == DataToColor.playerGUID and string.find(eventType, "SWING_") then
-        local _, _, _, _, _, _, _, _, _, isOffHand = select(12, ...)
-        if not isOffHand then
-            --DataToColor:Print("Melee Swing detected")
-            DataToColor.lastMainHandMeleeSwing = DataToColor.globalTime
+        if string.find(eventType, "SWING_") then
+            local _, _, _, _, _, _, _, _, _, isOffHand = select(12, ...)
+            if not isOffHand then
+                --DataToColor:Print("Normal Melee Swing detected")
+                DataToColor.lastMainHandMeleeSwing = DataToColor.globalTime
+            end
         end
     end
 
