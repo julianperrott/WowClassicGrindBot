@@ -48,6 +48,8 @@ DataToColor.lastCombatCreatureDied = 0
 
 DataToColor.lastAutoShot = 0
 DataToColor.lastMainHandMeleeSwing = 0
+DataToColor.lastCastEvent = 0
+DataToColor.lastCastSpellId = 0
 
 DataToColor.targetChanged = true
 
@@ -169,6 +171,8 @@ function DataToColor:Reset()
 
     DataToColor.lastAutoShot = 0
     DataToColor.lastMainHandMeleeSwing = 0
+    DataToColor.lastCastEvent = 0
+    DataToColor.lastCastSpellId = 0
 end
 
 function DataToColor:Update()
@@ -450,9 +454,8 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor.lastAutoShot, 60)
             MakePixelSquareArrI(DataToColor.lastMainHandMeleeSwing, 61)
-            -- 62 not used
-            -- 63 not used
-            -- 64 not used
+            MakePixelSquareArrI(DataToColor.lastCastEvent, 62)
+            MakePixelSquareArrI(DataToColor.lastCastSpellId, 63)
 
             MakePixelSquareArrI(DataToColor.lastCombatCreature, 64) -- Combat message creature
             MakePixelSquareArrI(DataToColor.lastCombatDamageDoneCreature, 65) -- Last Combat damage done

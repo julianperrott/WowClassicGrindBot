@@ -156,6 +156,8 @@ namespace Core
 
         public RecordInt AutoShot = new RecordInt(60);
         public RecordInt MainHandSwing = new RecordInt(61);
+        public RecordInt CastEvent = new RecordInt(62);
+        public RecordInt CastSpellId = new RecordInt(63);
 
         public RecordInt CombatCreatureGuid = new RecordInt(64);
         public RecordInt CombatDamageDoneGuid = new RecordInt(65);
@@ -278,17 +280,19 @@ namespace Core
                 Reset();
             }
 
-            UIMapId.Update(reader);
-
-            AutoShot.Update(reader);
-            MainHandSwing.Update(reader);
-
-            UpdateCreatureLists();
-
             if (UIErrorMessage > 0)
             {
                 LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
             }
+
+            UIMapId.Update(reader);
+
+            AutoShot.Update(reader);
+            MainHandSwing.Update(reader);
+            CastEvent.Update(reader);
+            CastSpellId.Update(reader);
+
+            UpdateCreatureLists();
         }
 
         internal void Reset()
@@ -305,6 +309,8 @@ namespace Core
 
             AutoShot.Reset();
             MainHandSwing.Reset();
+            CastEvent.Reset();
+            CastSpellId.Reset();
 
             CombatCreatureGuid.Reset();
             CombatDamageDoneGuid.Reset();
