@@ -152,7 +152,8 @@ function DataToColor:OnCombatEvent(...)
         if string.find(eventType, "_CAST_START") then
             DataToColor.lastCastEvent = CAST_START
             DataToColor.lastCastSpellId = spellId
-            --rint(CombatLogGetCurrentEventInfo())
+            --print(CombatLogGetCurrentEventInfo())
+            --print("_CAST_START "..spellId)
         end
 
         if string.find(eventType, "_CAST_SUCCESS") or string.find(eventType, "_CAST_FAILED") then
@@ -160,6 +161,7 @@ function DataToColor:OnCombatEvent(...)
             DataToColor.lastCastSpellId = spellId
 
             if string.find(eventType, "_CAST_FAILED") then
+                --local lastCastEvent = DataToColor.lastCastEvent
                 local failedType = select(15, CombatLogGetCurrentEventInfo())
                 DataToColor.lastCastEvent = DataToColor:GetErrorCode(nil, failedType)
                 --print(lastCastEvent.." -> "..DataToColor.lastCastEvent.." "..failedType.." "..spellId)
