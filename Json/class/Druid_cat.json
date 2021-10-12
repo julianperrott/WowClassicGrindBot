@@ -57,13 +57,13 @@
         "Requirement": "OutOfCombatRange",
         "Form": "None",
         "HasCastBar": true,
-        "WaitForWithinMelleRange": true
+        "WaitForWithinMeleeRange": true
       },
       {
         "Name": "Cat form",
         "Key": "2",
         "Form": "None",
-        "WaitForWithinMelleRange": true
+        "WaitForWithinMeleeRange": true
       },
       {
         "Name": "Heal",
