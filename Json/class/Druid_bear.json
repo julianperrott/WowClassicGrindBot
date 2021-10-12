@@ -84,7 +84,7 @@
         "Name": "Healing Touch",
         "Key": "6",
         "Requirement": "Health%<50",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Form": "None"
@@ -100,7 +100,7 @@
         "Requirement": "not Faerie Fire",
         "Key": "7",
         "MinRage": 10,
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Form": "Druid_Bear",
         "ResetOnNewTarget": true
       },
@@ -109,14 +109,14 @@
         "Requirements": ["InMeleeRange", "not Demoralizing Roar"],
         "Key": "5",
         "MinRage": 6,
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Form": "Druid_Bear"
       },
       {
         "Name": "Bash",
         "Key": "4",
         "MinRage": 10,
-        "Cooldown": 31,
+        "Cooldown": 31000,
         "Form": "Druid_Bear"
       },
       {
@@ -151,7 +151,7 @@
         "Name": "Healing Potion",
         "Key": "-",
         "Requirement": "Health%<8",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "Form": "None",
         "InCombat": "true",
         "Cost": 3
@@ -160,7 +160,7 @@
         "Name": "Heal",
         "Key": "6",
         "Requirement": "Health%<60",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "HasCastBar": true,
         "Form": "None",
         "Cost": 3
@@ -170,7 +170,7 @@
         "StopBeforeCast": false,
         "Key": "9",
         "Requirement": "not Well Fed",
-        "Cooldown": 120,
+        "Cooldown": 120000,
         "Form": "None"
       },
       {
@@ -179,7 +179,7 @@
         "StopBeforeCast": true,
         "Key": "0",
         "Requirement": "Mana%<40",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Form": "None",
         "Cost": 3
       },
@@ -187,7 +187,7 @@
         "Name": "Thorns",
         "StopBeforeCast": false,
         "Key": "3",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Requirement": "not Thorns",
         "Form": "None"
       },
@@ -195,14 +195,14 @@
         "Name": "Mark of the Wild",
         "StopBeforeCast": false,
         "Key": "4",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Requirement": "not Mark of the Wild",
         "Form": "None"
       },
       {
         "Name": "Del1",
         "Key": "F5",
-        "Cooldown": 120
+        "Cooldown": 120000
       }
     ]
   }

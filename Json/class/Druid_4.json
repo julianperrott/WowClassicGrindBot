@@ -21,7 +21,7 @@
         "StopBeforeCast": true,
         "HasCastBar": true,
         "Requirement": "Health%<50",
-        "Cooldown": 5
+        "Cooldown": 5000
       },
       {
         "Name": "Wrath",
@@ -31,7 +31,7 @@
       },
       {
         "Name": "Approach",
-        "Cooldown": 5
+        "Log": false
       }
     ]
   },
@@ -44,13 +44,13 @@
         "AfterCastWaitBuff": true,
         "DelayAfterCast": 0,
         "Requirement": "Mana%<30",
-        "Cooldown": 10
+        "Cooldown": 10000
       },
       {
         "Name": "Mark of the Wild",
         "Key": "4",
         "Requirement": "not Mark of the Wild",
-        "Cooldown": 10
+        "Cooldown": 10000
       }
     ]
   },

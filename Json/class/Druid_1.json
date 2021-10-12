@@ -21,7 +21,7 @@
         "StopBeforeCast": true,
         "HasCastBar": true,
         "Requirement": "Health%<50",
-        "Cooldown": 5
+        "Cooldown": 5000
       },
       {
         "Name": "Wrath",
@@ -49,7 +49,7 @@
         "AfterCastWaitBuff": true,
         "DelayAfterCast": 0,
         "Requirement": "Mana%<30",
-        "Cooldown": 10
+        "Cooldown": 10000
       }
     ]
   },

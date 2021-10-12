@@ -28,12 +28,13 @@
         "Key": "6",
         "AfterCastWaitBuff": true,
         "Requirements": ["Health%<75", "not Rejuvenation"],
-        "Cooldown": 5,
+        "Cooldown": 5000,
         "Form": "None"
       },
       {
         "Name": "Moonfire",
         "Key": "5",
+        "AfterCastWaitBuff": true,
         "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire", "Mana%>50"],
         "WaitForWithinMeleeRange": true,
         "StopBeforeCast": true,
@@ -53,7 +54,7 @@
         "StopBeforeCast": true,
         "HasCastBar": true,
         "Requirement": "Health%<30",
-        "Cooldown": 5,
+        "Cooldown": 5000,
         "Form": "None"
       },
       {
@@ -138,7 +139,7 @@
         "AfterCastWaitBuff": true,
         "DelayAfterCast": 0,
         "Requirement": "Mana%<40",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Form": "None"
       }
     ]
