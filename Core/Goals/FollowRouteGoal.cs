@@ -156,6 +156,11 @@ namespace Core.Goals
                 return;
             }
 
+            if (playerReader.PlayerBitValues.IsDrowning)
+            {
+                await StopDrowning();
+            }
+
             await SwitchGatherType();
 
             if (this.playerReader.PlayerBitValues.PlayerInCombat && classConfiguration.Mode != Mode.AttendedGather) { return; }
@@ -191,7 +196,6 @@ namespace Core.Goals
             }
 
             await RandomJump();
-            await StopDrowning();
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
             var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
@@ -509,11 +513,8 @@ namespace Core.Goals
 
         private async Task StopDrowning()
         {
-            if (playerReader.PlayerBitValues.IsDrowning)
-            {
-                await input.TapJump("Drowning! Swim up");
-                await wait.Update(1);
-            }
+            await input.TapJump("Drowning! Swim up");
+            await wait.Update(1);
         }
 
         private void Log(string text)
