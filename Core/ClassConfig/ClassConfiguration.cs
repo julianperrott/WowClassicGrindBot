@@ -104,12 +104,15 @@ namespace Core
             Interact.Name = "Interact";
             Interact.WaitForGCD = false;
             Interact.DelayAfterCast = 0;
+            Interact.PressDuration = 30;
             Interact.Initialise(addonReader, requirementFactory, logger);
 
             Approach.Key = InteractKey;
             Approach.Name = "Approach";
             Approach.WaitForGCD = false;
             Approach.DelayAfterCast = 0;
+            Approach.PressDuration = 10;
+            Approach.Cooldown = 50;
             Approach.Initialise(addonReader, requirementFactory, logger);
 
             AutoAttack.Key = InteractKey;
@@ -191,6 +194,8 @@ namespace Core
                         a.Key = l.Key;
                         a.DelayAfterCast = l.DelayAfterCast;
                         a.WaitForGCD = l.WaitForGCD;
+                        a.PressDuration = l.PressDuration;
+                        a.Cooldown = l.Cooldown;
                     }
                 });
             });
