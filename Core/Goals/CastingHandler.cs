@@ -23,7 +23,7 @@ namespace Core.Goals
         private readonly KeyAction defaultKeyAction = new KeyAction();
         private const int GCD = 1500;
         private const int MaxWaitCastTimeMs = GCD;
-        private const int MaxWaitBuffTimeMs = 500;
+        private const int MaxWaitBuffTimeMs = GCD;
         private const int MaxCastTimeMs = 15000;
         private const int MaxSwingTimeMs = 4000;
         private const int MaxAirTimeMs = 10000;
@@ -284,8 +284,8 @@ namespace Core.Goals
                 await Task.Delay(sleepBeforeCast);
             }
 
-            long beforeBuff = playerReader.Buffs.Value;
             bool beforeHasTarget = playerReader.HasTarget;
+            int auraHash = playerReader.AuraCount.Hash;
 
             if (item.WaitForGCD)
             {
@@ -332,11 +332,8 @@ namespace Core.Goals
 
             if (item.AfterCastWaitBuff)
             {
-                (bool notappeared, double elapsedMs) = await wait.InterruptTask(MaxWaitBuffTimeMs, () => beforeBuff != playerReader.Buffs.Value);
-                if (!notappeared)
-                    item.LogInformation($" ... AfterCastWaitBuff: Buff: {!notappeared} | Delay: {elapsedMs}ms");
-                else
-                    item.LogInformation($" ... AfterCastWaitBuff: No buff | Delay: {elapsedMs}ms");
+                (bool notappeared, double elapsedMs) = await wait.InterruptTask(MaxWaitBuffTimeMs, () => auraHash != playerReader.AuraCount.Hash);
+                item.LogInformation($" ... AfterCastWaitBuff: Buff: {!notappeared} | pb: {playerReader.AuraCount.PlayerBuff} | pd: {playerReader.AuraCount.PlayerDebuff} | tb: {playerReader.AuraCount.TargetBuff} | td: {playerReader.AuraCount.TargetDebuff} | Delay: {elapsedMs}ms");
             }
 
             if (item.DelayAfterCast != defaultKeyAction.DelayAfterCast)

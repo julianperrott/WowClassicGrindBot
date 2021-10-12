@@ -56,6 +56,12 @@ DataToColor.targetChanged = true
 DataToColor.playerGUID = UnitGUID(DataToColor.C.unitPlayer)
 DataToColor.petGUID = UnitGUID(DataToColor.C.unitPet)
 
+-- buff / debuff counters
+local playerDebuffCount = 0
+local playerBuffCount = 0
+local targetDebuffCount = 0
+local targetBuffCount = 0
+
 -- Update Queue
 stack = {}
 DataToColor.stack = stack
@@ -173,6 +179,11 @@ function DataToColor:Reset()
     DataToColor.lastMainHandMeleeSwing = 0
     DataToColor.lastCastEvent = 0
     DataToColor.lastCastSpellId = 0
+
+    playerDebuffCount = 0
+    playerBuffCount = 0
+    targetDebuffCount = 0
+    targetBuffCount = 0
 end
 
 function DataToColor:Update()
@@ -445,7 +456,25 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor:CastingInfoSpellId(DataToColor.C.unitPlayer), 53) -- Spell being cast
             MakePixelSquareArrI(DataToColor:ComboPoints(), 54) -- Combo points for rogue / druid
-            MakePixelSquareArrI(DataToColor:getAuraCount(UnitDebuff, DataToColor.C.unitPlayer), 55)
+
+            playerDebuffCount = DataToColor:getAuraCount(UnitDebuff, DataToColor.C.unitPlayer)
+            playerBuffCount = DataToColor:getAuraCount(UnitBuff, DataToColor.C.unitPlayer)
+
+            if UnitExists(DataToColor.C.unitTarget) then
+                targetDebuffCount = DataToColor:getAuraCount(UnitDebuff, DataToColor.C.unitTarget)
+                targetBuffCount = DataToColor:getAuraCount(UnitBuff, DataToColor.C.unitTarget)
+            else
+                targetDebuffCount = 0
+                targetBuffCount = 0
+            end
+
+            if playerDebuffCount > 16 then
+                playerDebuffCount = 16
+            end
+            
+            -- player/target buff and debuff counts
+            -- formula playerDebuffCount + playerBuffCount + targetDebuffCount + targetBuffCount
+            MakePixelSquareArrI(playerDebuffCount * 1000000 + playerBuffCount * 10000 + targetDebuffCount * 100 + targetBuffCount, 55)
 
             if DataToColor.targetChanged then
                 MakePixelSquareArrI(DataToColor:targetNpcId(), 56) -- target id
