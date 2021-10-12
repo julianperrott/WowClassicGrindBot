@@ -154,7 +154,7 @@ namespace Core
                     return 0;
                 }
 
-                var remaining = this.Cooldown - ((int)(DateTime.Now - LastClicked[this.ConsoleKey]).TotalSeconds);
+                var remaining = this.Cooldown - ((int)(DateTime.Now - LastClicked[this.ConsoleKey]).Milliseconds);
 
                 return remaining < 0 ? 0 : remaining;
             }
