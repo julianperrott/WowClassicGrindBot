@@ -166,8 +166,9 @@ namespace Core.Goals
                 lastDirectionForTurnAround = playerReader.Direction;
             }
 
-            if (await StopDrowning())
+            if (playerReader.PlayerBitValues.IsDrowning)
             {
+                await StopDrowning();
                 return;
             }
 
@@ -251,16 +252,10 @@ namespace Core.Goals
             return false;
         }
 
-        private async Task<bool> StopDrowning()
+        private async Task StopDrowning()
         {
-            if (playerReader.PlayerBitValues.IsDrowning)
-            {
-                await input.TapJump("Drowning! Swim up");
-                await wait.Update(1);
-                return true;
-            }
-
-            return false;
+            await input.TapJump("Drowning! Swim up");
+            await wait.Update(1);
         }
 
         private WowPoint GetCorpseLocation(double distance)
