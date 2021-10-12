@@ -7,8 +7,12 @@
         "Name": "Charge",
         "Key": "3",
         "Form": "Warrior_BattleStance",
-        "WhenUsable": true,
-        "Cooldown": 15
+        "Requirement": "not InMeleeRange",
+        "WhenUsable": true
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
