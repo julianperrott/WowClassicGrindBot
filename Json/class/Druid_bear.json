@@ -81,11 +81,12 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Heal",
+        "Name": "Healing Touch",
         "Key": "6",
         "Requirement": "Health%<50",
         "Cooldown": 10,
         "HasCastBar": true,
+        "StopBeforeCast": true,
         "Form": "None"
       },
       {
