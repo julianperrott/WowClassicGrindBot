@@ -1,0 +1,94 @@
+{
+  "ClassName": "Rogue",
+  "Skin": true,
+  "PathFilename": "10_Gnome.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Throw",
+        "Key": "6",
+        "StopBeforeCast": true,
+        "HasCastbar": true,
+        "WhenUsable": true,
+        "WaitForWithinMeleeRange": true,
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "SpellInRange:1", "not Items Broken"]
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Evasion",
+        "Key": 5,
+        "WhenUsable": true,
+        "WaitBuffAfterCast": true,
+        "Requirement": "Health%<40"
+      },
+      {
+        "Name": "Slice and Dice",
+        "Key": "4",
+        "WaitBuffAfterCast": true,
+        "MinEnergy": 25,
+        "MinComboPoints": 1,
+        "Requirements": ["not Slice and Dice"]
+      },
+      {
+        "Name": "Eviscerate",
+        "Key": "3",
+        "MinEnergy": 35,
+        "MinComboPoints": 2,
+        "Requirements": ["TargetHealth%>20", "LastMainHandMs<500"]
+      },
+      {
+        "Name": "Sinister Strike",
+        "Key": "2",
+        "MinEnergy": 42,
+        "Requirement": "LastMainHandMs<500"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking",
+        "Cooldown": 1
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Key": "N1",
+        "Requirement": "Health%<30",
+        "Cooldown": 15
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}
