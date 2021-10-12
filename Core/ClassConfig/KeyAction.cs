@@ -139,7 +139,7 @@ namespace Core
                 this.RequirementObjects.Add(new Requirement
                 {
                     HasRequirement = () => GetCooldownRemaining() == 0,
-                    LogMessage = () => $"Cooldown {GetCooldownRemaining()}",
+                    LogMessage = () => $"Cooldown {GetCooldownRemaining() / 1000:F1}",
                     VisibleIfHasRequirement = false
                 });
             }
