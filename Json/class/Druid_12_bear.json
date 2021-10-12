@@ -33,7 +33,7 @@
       {
         "Name": "Moonfire",
         "Key": "5",
-        "Requirements": ["SpellInRange:0", "not InMeleeRange", "Mana%>50"],
+        "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire", "Mana%>50"],
         "Form": "None"
       },
       {

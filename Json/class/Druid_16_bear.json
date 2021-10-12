@@ -4,6 +4,7 @@
   "PathFilename": "_pack\\1-20\\Night elf\\15-18_Darkshore_Twilight Vale - Blackwood.json",
   "PathReduceSteps": true,
   "CheckTargetGivesExp": true,
+  "NPCMaxLevels_Below": 10,
 
   "Form": [
     {
@@ -33,7 +34,9 @@
       {
         "Name": "Moonfire",
         "Key": "5",
-        "Requirements": ["SpellInRange:0", "not InMeleeRange", "Mana%>50"],
+        "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire", "Mana%>50"],
+        "WaitForWithinMeleeRange": true,
+        "StopBeforeCast": true,
         "Form": "None"
       },
       {

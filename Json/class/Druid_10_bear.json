@@ -21,20 +21,10 @@
   ],
   "Pull": {
     "Sequence": [
-/*
-      {
-        "Name": "Wrath",
-        "Key": "2",
-        "StopBeforeCast": true,
-        "HasCastBar": true,
-        "Requirement": "SpellInRange:0",
-        "Form": "None"
-      },
-*/
       {
         "Name": "Moonfire",
         "Key": "5",
-        "Requirement": "SpellInRange:0",
+        "Requirements": ["SpellInRange:0", "not Moonfire"],
         "Form": "None"
       },
       {
