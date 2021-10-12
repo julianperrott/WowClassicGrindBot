@@ -27,6 +27,12 @@ namespace Core
             this.ClassConfig.Interact.SetClicked();
         }
 
+        public async Task TapApproachKey(string source)
+        {
+            await KeyPress(ClassConfig.Approach.ConsoleKey, ClassConfig.Approach.PressDuration, string.IsNullOrEmpty(source) ? "" : $"TapApproachKey ({source})");
+            this.ClassConfig.Approach.SetClicked();
+        }
+
         public async Task TapLastTargetKey(string source)
         {
             await KeyPress(ClassConfig.TargetLastTarget.ConsoleKey, defaultKeyPress, $"TapLastTarget ({source})");
