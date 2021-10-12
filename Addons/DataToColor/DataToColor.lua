@@ -340,10 +340,14 @@ function DataToColor:CreateFrames(n)
                 -- 20
                 bagNum = DataToColor.stack:pop(DataToColor.bagQueue)
                 if bagNum then
-                    local freeSlots, bagType = GetContainerNumFreeSlots(bagNum) or 0, 0
+                    local freeSlots, bagType = GetContainerNumFreeSlots(bagNum)
+                    if not bagType then
+                        bagType = 0
+                    end
+
                     -- BagType + Index + FreeSpace + BagSlots
                     MakePixelSquareArrI(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + DataToColor:bagSlots(bagNum), 20)
-                    --DataToColor:Print("bagQueue "..bagType.." -> "..bagNum.." -> "..freeSlots.." -> "..DataToColor:bagSlots(bagNum))
+                    --DataToColor:Print("bagQueue bagType:"..bagType.." | bagNum: "..bagNum.." | freeSlots: "..freeSlots.." | BagSlots: "..DataToColor:bagSlots(bagNum))
                 end
 
                 -- 21 22 23
