@@ -297,6 +297,8 @@ namespace Core
 
         internal void Reset()
         {
+            FormCost.Clear();
+
             // Reset all CreatureHistory
             Creatures.Clear();
             DamageTaken.Clear();
