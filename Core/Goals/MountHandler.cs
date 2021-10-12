@@ -53,9 +53,9 @@ namespace Core
                         }
                     }
 
-                    playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+                    int beforeCastEventValue = playerReader.CastEvent.Value;
                     await input.TapMount();
-                    await wait.Interrupt(mountCastTimeMs, () => playerReader.PlayerBitValues.IsMounted || playerReader.LastUIErrorMessage != UI_ERROR.NONE);
+                    await wait.Interrupt(mountCastTimeMs, () => playerReader.PlayerBitValues.IsMounted || beforeCastEventValue != playerReader.CastEvent.Value);
                 }
             }
         }
