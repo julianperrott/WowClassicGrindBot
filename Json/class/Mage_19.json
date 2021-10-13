@@ -19,7 +19,6 @@
       {
         "Name": "Frostbolt",
         "HasCastBar": true,
-        "StopBeforeCast": false,
         "Key": "5",
         "MinMana": 35
       },
@@ -27,7 +26,6 @@
         "Name": "Fireball",
         "DelayBeforeCast": 1500,
         "HasCastBar": true,
-        "StopBeforeCast": false,
         "Key": "2",
         "MinMana": 65
       }
@@ -60,7 +58,6 @@
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 65
       },
@@ -83,8 +80,9 @@
     "Sequence": [
       {
         "Name": "Low Health",
-        "HasCastBar": true,
         "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Key": "6",
         "Requirement": "Health%<90",
         "Cooldown": 10000,
@@ -92,8 +90,9 @@
       },
       {
         "Name": "Water",
-        "HasCastBar": true,
         "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Key": "7",
         "Requirement": "Mana%<90",
         "Cooldown": 10000,
@@ -106,14 +105,12 @@
     "Sequence": [
       {
         "Name": "Frost Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 60,
         "Requirement": "not Frost Armor"
       },
       {
         "Name": "Arcane Intellect",
-        "StopBeforeCast": false,
         "Key": "4",
         "MinMana": 60,
         "Requirement": "not Arcane Intellect",
@@ -122,7 +119,6 @@
       {
         "Name": "Conjure Water",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:2288:4",
         "Cooldown": 30000,
@@ -131,7 +127,6 @@
       {
         "Name": "Conjure Food",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "not BagItem:1113:4",
         "Cooldown": 30000,
@@ -140,6 +135,8 @@
       {
         "Name": "Well Fed",
         "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Key": "-",
         "Requirement": "not Well Fed",
         "Cooldown": 120000,
@@ -147,7 +144,6 @@
       },
       {
         "Name": "Fire Power",
-        "StopBeforeCast": false,
         "Key": "1",
         "Requirement": "not Fire Power",
         "Cooldown": 120000,

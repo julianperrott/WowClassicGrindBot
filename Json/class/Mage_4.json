@@ -11,7 +11,6 @@
       {
         "Name": "Frostbolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "1",
         "MinMana": 25
       }
@@ -22,7 +21,6 @@
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 30,
         "Requirement": "TargetHealth%>10"
@@ -69,14 +67,12 @@
     "Sequence": [
       {
         "Name": "Frost Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 60,
         "Requirement": "not Frost Armor"
       },
       {
         "Name": "Arcane Intellect",
-        "StopBeforeCast": false,
         "Key": "4",
         "MinMana": 60,
         "Requirement": "not Arcane Intellect",
@@ -85,7 +81,6 @@
       {
         "Name": "Conjure Water",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:5350:4",
         "Cooldown": 30000,

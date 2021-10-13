@@ -11,7 +11,6 @@
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 65
       }
@@ -22,7 +21,6 @@
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 30,
         "Requirement": "TargetHealth%>10"
@@ -46,7 +44,6 @@
     "Sequence": [
       {
         "Name": "Frost Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 60,
         "Requirement": "not Frost Armor"

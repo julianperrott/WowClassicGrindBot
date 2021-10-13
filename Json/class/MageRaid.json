@@ -68,7 +68,6 @@
     "Sequence": [
       {
         "Name": "Low Health",
-        "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "6",
         "Requirement": "Health%<90",
@@ -77,7 +76,6 @@
       },
       {
         "Name": "Water",
-        "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "7",
         "Requirement": "Mana%<90",
@@ -91,7 +89,6 @@
     "Sequence": [
       {
         "Name": "Frost Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 110,
         "Requirement": "not Frost Armor",
@@ -99,7 +96,6 @@
       },
       {
         "Name": "Arcane Intellect",
-        "StopBeforeCast": false,
         "Key": "4",
         "MinMana": 60,
         "Requirement": "not Arcane Intellect",
@@ -108,7 +104,6 @@
       {
         "Name": "Conjure Water",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:8079:4",
         "Cooldown": 30000,
@@ -117,7 +112,6 @@
       {
         "Name": "Conjure Food",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "not BagItem:8076:4",
         "Cooldown": 30000,

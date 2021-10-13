@@ -19,7 +19,6 @@
       {
         "Name": "Frostbolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "1",
         "MinMana": 25,
         "Requirement": "MaxRange<36"
@@ -63,7 +62,6 @@
       {
         "Name": "Frostbolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "1",
         "MinMana": 25,
         "Requirements": [ "MaxRange>31", "MaxRange<36"]
@@ -71,7 +69,6 @@
       {
         "Name": "Arcane Missiles",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["MaxRange<30", "TargetHealth%>30"],
         "Key": "2",
         "MinMana": 500
@@ -114,7 +111,6 @@
       {
         "Name": "Evocation",
         "Key": "N9",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "Cooldown": 600000,
         "Cost": 2,
@@ -122,14 +118,12 @@
       },
       {
         "Name": "Ice Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 60,
         "Requirement": "not Frost Armor"
       },
       {
         "Name": "Arcane Intellect",
-        "StopBeforeCast": false,
         "Key": "4",
         "MinMana": 60,
         "Requirement": "not Arcane Intellect",
@@ -138,7 +132,6 @@
       {
         "Name": "Conjure Water",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:8078:4",
         "Cooldown": 30000,
@@ -147,7 +140,6 @@
       {
         "Name": "Conjure Food",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "not BagItem:8076:4",
         "Cooldown": 30000,

@@ -12,7 +12,6 @@
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 30
       }
@@ -23,7 +22,6 @@
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 30
       },
@@ -46,14 +44,12 @@
     "Sequence": [
       {
         "Name": "Frost Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 60,
         "Requirement": "not Frost Armor"
       },
       {
         "Name": "Eat",
-        "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "=",
         "Requirement": "Health%<50",
@@ -61,7 +57,6 @@
       },
       {
         "Name": "Water",
-        "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "-",
         "Requirement": "Mana%<50",
