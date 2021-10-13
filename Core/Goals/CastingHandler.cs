@@ -1,4 +1,4 @@
-using SharedLib.NpcFinder;
+﻿using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -21,7 +21,10 @@ namespace Core.Goals
         private readonly StopMoving stopMoving;
 
         private readonly KeyAction defaultKeyAction = new KeyAction();
+
         private const int GCD = 1500;
+        private const int SpellQueueTimeMs = 325;
+
         private const int MaxWaitCastTimeMs = GCD;
         private const int MaxWaitBuffTimeMs = GCD;
         private const int MaxCastTimeMs = 15000;
@@ -164,10 +167,12 @@ namespace Core.Goals
 
             if (item.RequirementObjects.Any())
             {
-                (bool firstReq, double firstReqElapsedMs) = await wait.InterruptTask(100,
-                    () => !item.CanRun() || !playerReader.UsableAction.Is(item)
+                // Rockbiter Weapon -> !item.CanRun()
+                // Serpent Sting -> !item.CanRun() && !playerReader.UsableAction.Is(item)
+                (bool firstReq, double firstReqElapsedMs) = await wait.InterruptTask(SpellQueueTimeMs,
+                    () => !item.CanRun()
                 );
-                item.LogInformation($" ... instant interrupt: {!firstReq} | CanRun:{item.CanRun()} | Usable:{playerReader.UsableAction.Is(item)} | Delay: {firstReqElapsedMs}ms");
+                item.LogInformation($" ... instant interrupt: {!firstReq} | CanRun:{item.CanRun()} | Delay: {firstReqElapsedMs}ms");
             }
 
             return true;
