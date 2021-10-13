@@ -1,4 +1,4 @@
-﻿using SharedLib.NpcFinder;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -271,8 +271,10 @@ namespace Core.Goals
 
             if (sleepBeforeCast > 0)
             {
-                if (item.StopBeforeCast)
+                if (item.StopBeforeCast || item.HasCastBar)
                 {
+                    await stopMoving.Stop();
+                    await wait.Update(1);
                     await stopMoving.Stop();
                     await wait.Update(1);
                 }
