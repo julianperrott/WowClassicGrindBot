@@ -12,7 +12,6 @@
       },
       {
         "Name": "autoshot",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]
@@ -31,7 +30,6 @@
     "Sequence": [
       {
         "Name": "autoshot",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]

@@ -30,7 +30,6 @@
       {
         "Name": "Gift of the Naaru",
         "Key": "1",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "WhenUsable": true,
         "Requirement": "Health%<45"
@@ -68,7 +67,6 @@
       },
       {
         "Name": "Auto Shot",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "WhenUsable": true,
         "Key": "3",

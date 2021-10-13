@@ -26,7 +26,6 @@
       {
         "Name": "Gift of the Naaru",
         "Key": "1",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "WhenUsable": true,
         "Requirement": "Health%<45"
@@ -55,7 +54,6 @@
       },
       {
         "Name": "autoshot",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]
