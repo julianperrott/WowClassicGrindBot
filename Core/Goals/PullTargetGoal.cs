@@ -60,6 +60,10 @@ namespace Core.Goals
                 await input.TapDismount();
             }
 
+            await input.TapApproachKey($"{GetType().Name}: OnEnter - Face the target and stop");
+            await stopMoving.Stop();
+            await wait.Update(1);
+
             pullStart = DateTime.Now;
         }
 
@@ -116,25 +120,15 @@ namespace Core.Goals
                     await stuckDetector.Unstick();
                 }
 
-                await Interact("No pulled!");
-                await wait.Update(1);
+                if (classConfiguration.Approach.GetCooldownRemaining() == 0)
+                {
+                    await input.TapApproachKey($"{GetType().Name}");
+                    await wait.Update(1);
+                }
             }
             else
             {
                 SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
-                playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-            }
-        }
-
-        private async Task Interact(string source)
-        {
-            if (classConfiguration.Interact.GetCooldownRemaining() == 0)
-            {
-                playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-                await input.TapInteractKey($"{GetType().Name} {source}");
-                await wait.Update(1);
-
-                await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}-Interact: ");
             }
         }
 
@@ -188,8 +182,6 @@ namespace Core.Goals
             {
                 await input.TapStopAttack();
                 await wait.Update(1);
-
-                playerReader.LastUIErrorMessage = UI_ERROR.NONE;
             }
 
             if (playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
@@ -197,32 +189,33 @@ namespace Core.Goals
                 await input.TapPetAttack();
             }
 
+            bool castAny = false;
             foreach (var item in Keys)
             {
-                if (item.StopBeforeCast)
-                {
-                    await stopMoving.Stop();
-                    await wait.Update(1);
-                }
-
                 var success = await castingHandler.CastIfReady(item, item.DelayBeforeCast);
-
-                if (!playerReader.HasTarget)
+                if (success)
                 {
-                    return false;
-                }
+                    if (!playerReader.HasTarget)
+                    {
+                        return false;
+                    }
 
-                if (success && item.WaitForWithinMeleeRange)
-                {
-                    await WaitForWithinMeleeRange(item, success);
+                    castAny = true;
+
+                    if (item.WaitForWithinMeleeRange)
+                    {
+                        await WaitForWithinMeleeRange(item, success);
+                    }
                 }
             }
 
-            // Wait for combat
-            (bool interrupted, double elapsedMs) = await wait.InterruptTask(1000, () => playerReader.PlayerBitValues.PlayerInCombat);
-            if (!interrupted)
+            if (castAny)
             {
-                Log($"Entered combat after {elapsedMs}ms");
+                (bool interrupted, double elapsedMs) = await wait.InterruptTask(1000, () => playerReader.PlayerBitValues.PlayerInCombat);
+                if (!interrupted)
+                {
+                    Log($"Entered combat after {elapsedMs}ms");
+                }
             }
 
             return playerReader.PlayerBitValues.PlayerInCombat;

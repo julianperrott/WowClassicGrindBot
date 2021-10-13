@@ -132,14 +132,9 @@ namespace Core.Goals
                 await input.TapDismount();
             }
 
-            // this one is important for melees
-            // if not waiting a bit, the player will constantly moving forward
-            await stopMoving.Stop();
-            await wait.Update(1);
 
             lastDirectionForTurnAround = playerReader.Direction;
 
-            logger.LogInformation($"{GetType().Name}: OnEnter");
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
         }
 
@@ -229,6 +224,7 @@ namespace Core.Goals
 
                     logger.LogWarning("---- Somebody is attacking me!");
                     await input.TapInteractKey("Found new target to attack");
+                    await stopMoving.Stop();
                     await wait.Update(1);
                     return true;
                 }
