@@ -259,6 +259,8 @@ namespace Core.Goals
             if (playerReader.IsShooting)
             {
                 await input.TapStopAttack("Stop AutoRepeat Shoot");
+                await input.TapStopAttack("Stop AutoRepeat Shoot");
+                await wait.Update(1);
 
                 (bool interrupted, double elapsedMs) = await wait.InterruptTask(GCD, 
                     () => playerReader.UsableAction.Is(item));

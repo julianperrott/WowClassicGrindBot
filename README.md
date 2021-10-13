@@ -342,11 +342,6 @@ Repair macro example:
     /tar Vargus
     /script SelectGossipOption(1)
 
-Spammable wand macro `shoot` in many profiles
-
-    /#showtooltip
-    /cast !shoot
-
 Warlock `pull` macro used in warlock profiles
 
     #showtooltip

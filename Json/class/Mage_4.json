@@ -26,14 +26,6 @@
         "Requirement": "TargetHealth%>10"
       },
       {
-        "Name": "shoot",
-        "Key": "0",
-        "StopBeforeCast": true,
-        "Cooldown": 3000,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
-        "Log": false
-      },
-      {
         "Name": "AutoAttack",
         "Cooldown": 3000,
         "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]

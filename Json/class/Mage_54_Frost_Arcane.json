@@ -74,13 +74,11 @@
         "MinMana": 500
       },
       {
-        "Name": "shoot",
+        "Name": "Shoot",
         "Key": "0",
-        "Cooldown": 1000,
-        "StopBeforeCast": true,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
-        "Log": false
-      }
+        "HasCastbar": true,
+        "Requirements": ["HasRangedWeapon", "not Shooting"]
+      },
     ]
   },
   "Parallel": {

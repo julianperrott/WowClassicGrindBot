@@ -24,7 +24,7 @@
         "DelaybeforeCast": 1000
       },
       {
-        "Name": "shoot",
+        "Name": "Shoot",
         "Key": "0",
         "StopBeforeCast": true,
         "Cooldown": 3000,

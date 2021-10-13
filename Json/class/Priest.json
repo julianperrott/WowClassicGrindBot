@@ -23,8 +23,9 @@
       },
       {
         "Name": "Shoot",
-        "StopBeforeCast": true,
-        "Key": "0"
+        "Key": "0",
+        "HasCastbar": true,
+        "Requirements": ["HasRangedWeapon", "not Shooting"]
       }
     ]
   },

@@ -42,12 +42,10 @@
         "Cooldown": 8000
       },
       {
-        "Name": "shoot",
-        "StopBeforeCast": true,
+        "Name": "Shoot",
         "Key": "0",
-        "Cooldown": 3000,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
-        "Log": false
+        "HasCastbar": true,
+        "Requirements": ["HasRangedWeapon", "not Shooting"]
       },
       {
         "Name": "AutoAttack",

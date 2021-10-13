@@ -53,7 +53,7 @@ namespace Core
 
         public async Task TapStopAttack(string desc = "")
         {
-            await KeyPress(ClassConfig.StopAttack.ConsoleKey, defaultKeyPress, string.IsNullOrEmpty(desc) ? "" : $"TapStopAttack: {desc}");
+            await KeyPress(ClassConfig.StopAttack.ConsoleKey, ClassConfig.StopAttack.PressDuration, string.IsNullOrEmpty(desc) ? "" : $"TapStopAttack: {desc}");
             this.ClassConfig.StopAttack.SetClicked();
         }
 

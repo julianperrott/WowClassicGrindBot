@@ -121,6 +121,8 @@ namespace Core
             AutoAttack.DelayAfterCast = 0;
             AutoAttack.Initialise(addonReader, requirementFactory, logger);
 
+            StopAttack.PressDuration = 10;
+
             InitializeKeyActions(Pull, Interact, Approach, AutoAttack);
             InitializeKeyActions(Combat, Interact, Approach, AutoAttack);
 
