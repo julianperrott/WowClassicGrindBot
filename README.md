@@ -358,11 +358,6 @@ Warlock `heal` macro used in warlock profiles.
     /use Major Healthstone
     /use Master Healthstone
 
-Hunter `autoshot` spammable Auto Shoot macro
-
-    #showtooltip
-    /cast !Auto Shot
-
 Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
 
     #showtooltip

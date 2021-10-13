@@ -60,7 +60,7 @@
         "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "TargetHealth%>90"]
       },
       {
-        "Name": "autoshot",
+        "Name": "Auto Shot",
         "HasCastBar": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]

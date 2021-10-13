@@ -4,7 +4,7 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "autoshot",
+        "Name": "Auto Shot",
         "HasCastBar": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
@@ -23,7 +23,7 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "autoshot",
+        "Name": "Auto Shot",
         "HasCastBar": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]

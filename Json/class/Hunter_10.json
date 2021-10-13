@@ -45,7 +45,7 @@
         "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Serpent Sting"]
       },
       {
-        "Name": "autoshot",
+        "Name": "Auto Shot",
         "HasCastBar": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]
