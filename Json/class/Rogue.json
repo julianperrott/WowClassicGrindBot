@@ -100,7 +100,7 @@
         "Cost": 3
       },
       {
-        "Name": "Eat",
+        "Name": "Food",
         "StopBeforeCast": true,
         "Key": "=",
         "Requirement": "Health%<60",

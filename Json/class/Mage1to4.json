@@ -49,7 +49,7 @@
         "Requirement": "not Frost Armor"
       },
       {
-        "Name": "Eat",
+        "Name": "Food",
         "StopBeforeCast": true,
         "Key": "=",
         "Requirement": "Health%<50",

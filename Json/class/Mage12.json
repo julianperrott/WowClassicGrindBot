@@ -63,7 +63,7 @@
   "Parallel": {
     "Sequence": [
       {
-        "Name": "Low Health",
+        "Name": "Food",
         "StopBeforeCast": true,
         "Key": "6",
         "Requirement": "Health%<90",
