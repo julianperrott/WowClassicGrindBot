@@ -83,7 +83,7 @@ namespace Core
 
         public async Task TapPetAttack(string source = "")
         {
-            await KeyPress(ClassConfig.PetAttack.ConsoleKey, defaultKeyPress, $"TapPetAttack ({source})");
+            await KeyPress(ClassConfig.PetAttack.ConsoleKey, ClassConfig.PetAttack.PressDuration, $"TapPetAttack ({source})");
             this.ClassConfig.PetAttack.SetClicked();
         }
 

@@ -112,7 +112,7 @@ namespace Core
             Approach.WaitForGCD = false;
             Approach.DelayAfterCast = 0;
             Approach.PressDuration = 10;
-            Approach.Cooldown = 50;
+            Approach.Cooldown = 150;
             Approach.Initialise(addonReader, requirementFactory, logger);
 
             AutoAttack.Key = InteractKey;
@@ -156,6 +156,7 @@ namespace Core
             TargetTargetOfTarget.Initialise(addonReader, requirementFactory, logger);
 
             PetAttack.Key = PetAttackKey;
+            PetAttack.PressDuration = 10;
             PetAttack.Initialise(addonReader, requirementFactory, logger);
 
             Mount.Key = MountKey;
