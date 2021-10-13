@@ -87,7 +87,7 @@
         "Log": false
       },
       {
-        "Name": "Drink",
+        "Name": "Water",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "7",

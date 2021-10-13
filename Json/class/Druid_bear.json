@@ -172,7 +172,7 @@
         "Form": "None"
       },
       {
-        "Name": "Drink",
+        "Name": "Water",
         "StopBeforeCast": true,
         "Key": "0",
         "Requirement": "Mana%<40",

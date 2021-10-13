@@ -60,7 +60,7 @@
         "Cooldown": 60000
       },
       {
-        "Name": "Drink",
+        "Name": "Water",
         "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "-",
