@@ -24,7 +24,7 @@
       {
         "Name": "Bloodrage",
         "Key": "2",
-        "Cooldown": 60
+        "Cooldown": 60000
       },
       {
         "Name": "Battle Shout",
@@ -36,14 +36,14 @@
         "Name": "Overpower",
         "Key": "5",
         "MinRage": 5,
-        "Cooldown": 10
+        "Cooldown": 10000
       },
       {
         "Name": "Rend",
         "Key": "3",
         "MinRage": 10,
         "Requirement": "not Rend",
-        "Cooldown": 5
+        "Cooldown": 5000
       },
       {
         "Name": "Heroic Strike",
@@ -54,7 +54,7 @@
       {
         "Name": "Approach",
         "Requirement": "not InMeleeRange",
-        "Cooldown": 1
+        "Cooldown": 1000
       },
       {
         "Name": "AutoAttack",
@@ -68,7 +68,7 @@
         "Name": "Healing Potion",
         "Key": "F4",
         "Requirement": "Health%<5",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "InCombat": "true",
         "Log": false,
         "Cost": 3

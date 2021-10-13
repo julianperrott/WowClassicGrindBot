@@ -19,13 +19,13 @@
         "StopBeforeCast": false,
         "HasCastBar": false,
         "Requirement": "Mana%<50",
-        "Cooldown": 120,
+        "Cooldown": 120000,
       },
       {
         "Name": "Stoneclaw Totem",
         "Key": "F9",
         "Requirement": "MobCount>2",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false,
         "MinMana": 30
       },
@@ -33,7 +33,7 @@
         "Name": "Searing Totem",
         "Key": "F7",
         "Requirement": "MobCount>2",
-        "Cooldown": 20,
+        "Cooldown": 20000,
         "Log": false,
         "MinMana": 95
       },
@@ -41,7 +41,7 @@
         "Name": "War Stomp",
         "Key": "0",
         "Requirement": "Health%<50",
-        "Cooldown": 120,
+        "Cooldown": 120000,
         "Log": false,
         "MinMana": 10
       },
@@ -53,7 +53,7 @@
           "Health%<40",
           "TargetHealth%>15"
         ],
-        "Cooldown": 5,
+        "Cooldown": 5000,
         "HasCastBar": true,
         "Log": false,
         "MinMana": 200
@@ -67,7 +67,7 @@
         ],
         "Log": false,
         "StopBeforeCast": true,
-        "Cooldown": 5,
+        "Cooldown": 5000,
         "MinMana": 87
       },
       {
@@ -78,13 +78,13 @@
           "TargetHealth%>10"
         ],
         "Log": false,
-        "Cooldown": 12,
+        "Cooldown": 12000,
         "MinMana": 80
       },
       {
         "Name": "Approach",
         "Requirement": "not InMeleeRange",
-        "Cooldown": 1
+        "Cooldown": 1000
       },
       {
         "Name": "AutoAttack",
@@ -128,7 +128,7 @@
           "Health%<40",
           "Mana%>65"
         ],
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "MinMana": 310,
         "Cost": 6
       },
@@ -139,7 +139,7 @@
         "DelayAfterCast": 0,
         "Key": "9",
         "Requirement": "Mana%<45",
-        "Cooldown": 6
+        "Cooldown": 6000
       },
       {
         "Name": "Food",
@@ -148,7 +148,7 @@
         "DelayAfterCast": 0,
         "Key": "8",
         "Requirement": "Health%<45",
-        "Cooldown": 6
+        "Cooldown": 6000
       }
     ]
   }

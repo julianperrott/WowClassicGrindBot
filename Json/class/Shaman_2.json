@@ -29,14 +29,14 @@
         "Name": "Healing Wave",
         "Key": "3",
         "Requirement": "Health%<40",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "HasCastBar": true,
         "Log": false,
         "MinMana": 25
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirements": ["not AutoAttacking"]
       }
     ]
@@ -61,7 +61,7 @@
         "AfterCastWaitBuff": true,
         "DelayAfterCast": 0,
         "Requirement": "Health%<30",
-        "Cooldown": 10
+        "Cooldown": 10000
       },
       {
         "Name": "Water",
@@ -70,7 +70,7 @@
         "AfterCastWaitBuff": true,
         "DelayAfterCast": 0,
         "Requirement": "Mana%<30",
-        "Cooldown": 10
+        "Cooldown": 10000
       }
     ]
   }

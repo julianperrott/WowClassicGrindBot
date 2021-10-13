@@ -30,13 +30,13 @@
         "Name": "shoot",
         "StopBeforeCast": true,
         "Key": "0",
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirements": ["HasRangedWeapon", "not Shooting"],
         "Log": false
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       }
     ]
@@ -57,7 +57,7 @@
         "DelayAfterCast": 0,
         "Key": "N1",
         "Requirement": "Health%<50",
-        "Cooldown": 60
+        "Cooldown": 60000
       },
       {
         "Name": "Water",
@@ -66,7 +66,7 @@
         "DelayAfterCast": 0,
         "Key": "N2",
         "Requirement": "Mana%<50",
-        "Cooldown": 60
+        "Cooldown": 60000
       }
     ]
   },

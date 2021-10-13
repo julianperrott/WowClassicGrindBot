@@ -32,7 +32,7 @@
         "Name": "Ice Barrier",
         "Key": "7",
         "MinMana": 420,
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "WhenUsable": true,
         "Requirement": "not Ice Barrier"
       },
@@ -40,21 +40,21 @@
         "Name": "Cone of Cold",
         "Key": "N8",
         "MinMana": 40,
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Requirements": ["TargetHealth%>2", "TargetHealth%<20", "InMeleeRange"]
       },
       {
         "Name": "Fire Blast",
         "Key": "5",
         "MinMana": 40,
-        "Cooldown": 8,
+        "Cooldown": 8000,
         "Requirements": ["TargetHealth%>2", "TargetHealth%<20", "SpellInRange:4"]
       },
       {
         "Name": "Frost Nova",
         "Key": 6,
         "MinMana": 55,
-        "Cooldown": 25,
+        "Cooldown": 25000,
         "WhenUsable": true,
         "Requirements": ["InMeleeRange", "MobCount>1"],
         "StepBackAfterCast": 1000,
@@ -79,7 +79,7 @@
       {
         "Name": "shoot",
         "Key": "0",
-        "Cooldown": 1,
+        "Cooldown": 1000,
         "StopBeforeCast": true,
         "Requirements": ["HasRangedWeapon", "not Shooting"],
         "Log": false
@@ -95,7 +95,7 @@
         "DelayAfterCast": 0,
         "Key": "N1",
         "Requirement": "Health%<50",
-        "Cooldown": 5
+        "Cooldown": 5000
       },
       {
         "Name": "Water",
@@ -104,7 +104,7 @@
         "DelayAfterCast": 0,
         "Key": "N2",
         "Requirement": "Mana%<50",
-        "Cooldown": 5
+        "Cooldown": 5000
       }
     ]
     },
@@ -116,7 +116,7 @@
         "Key": "N9",
         "StopBeforeCast": true,
         "HasCastBar": true,
-        "Cooldown": 600,
+        "Cooldown": 600000,
         "Cost": 2,
         "Requirements": ["Mana%<50"]
       },
@@ -141,7 +141,7 @@
         "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:8078:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       },
       {
@@ -150,7 +150,7 @@
         "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "not BagItem:8076:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       }
     ]

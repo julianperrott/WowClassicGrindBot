@@ -48,7 +48,7 @@
         },
         {
           "Name": "AutoAttack",
-          "Cooldown": 1
+          "Cooldown": 1000
         }
       ]
     },
@@ -58,7 +58,7 @@
           "Name": "potionhp",
           "Key": "N4",
           "Requirement": "Health%<5",
-          "Cooldown": 60,
+          "Cooldown": 60000,
           "InCombat": "true",
           "Log": false,
           "Cost": 3
@@ -70,7 +70,7 @@
           "DelayAfterCast": 0,
           "Key": "N1",
           "Requirement": "Health%<50",
-          "Cooldown": 15
+          "Cooldown": 15000
         },
         {
           "Name": "poisonmh",
@@ -89,7 +89,7 @@
         {
           "Name": "openstuff",
           "Key": "N5",
-          "Cooldown": 30,
+          "Cooldown": 30000,
           "Requirements": ["BagItem:20768:1"],
           "Log": false
         }

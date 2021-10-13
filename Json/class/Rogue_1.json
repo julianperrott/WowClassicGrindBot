@@ -17,7 +17,7 @@
       {
         "Name": "Approach",
         "Requirement": "not InMeleeRange",
-        "Cooldown": 1
+        "Cooldown": 1000
       },
       {
         "Name": "AutoAttack",
@@ -34,7 +34,7 @@
         "DelayAfterCast": 0,
         "Key": "N1",
         "Requirement": "Health%<30",
-        "Cooldown": 15
+        "Cooldown": 15000
       }
     ]
   },

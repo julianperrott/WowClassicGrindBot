@@ -41,7 +41,7 @@
           "Health%<49",
           "MobCount>2"
         ],
-        "Cooldown": 120,
+        "Cooldown": 120000,
         "Log": false,
         "MinMana": 10
       },
@@ -50,7 +50,7 @@
         "Key": "3",
         "StopBeforeCast": true,
         "Requirement": "Health%<45",
-        "Cooldown": 5,
+        "Cooldown": 5000,
         "HasCastBar": true,
         "Log": false,
         "MinMana": 80
@@ -62,7 +62,7 @@
           "Mana%>40",
           "InMeleeRange"
         ],
-        "Cooldown": 6,
+        "Cooldown": 6000,
         "Log": false,
         "MinMana": 80
       },
@@ -70,14 +70,14 @@
         "Name": "Stoneskin Totem",
         "Key": "7",
         "Requirement": "MobCount>2",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false,
         "MinMana": 30
       },
       {
         "Name": "Approach",
         "Requirement": "not InMeleeRange",
-        "Cooldown": 1
+        "Cooldown": 1000
       },
       {
         "Name": "AutoAttack",
@@ -112,7 +112,7 @@
         "DelayAfterCast": 0,
         "Key": "8",
         "Requirement": "Health%<40",
-        "Cooldown": 6
+        "Cooldown": 6000
       },
       {
         "Name": "Water",
@@ -121,7 +121,7 @@
         "DelayAfterCast": 0,
         "Key": "9",
         "Requirement": "Mana%<40",
-        "Cooldown": 6
+        "Cooldown": 6000
       }
     ]
   },

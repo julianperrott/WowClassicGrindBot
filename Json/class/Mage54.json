@@ -27,7 +27,7 @@
         "Name": "Ice Barrier",
         "Key": "7",
         "MinMana": 60,
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "WhenUsable": true,
         "Requirement": "not Ice Barrier"
       },
@@ -35,14 +35,14 @@
         "Name": "Fire Blast",
         "Key": "5",
         "MinMana": 40,
-        "Cooldown": 8,
+        "Cooldown": 8000,
         "Requirements": ["TargetHealth%<45", "SpellInRange:4"]
       },
       {
         "Name": "Frost Nova",
         "Key": 6,
         "MinMana": 55,
-        "Cooldown": 25,
+        "Cooldown": 25000,
         "Requirement": "InMeleeRange",
         "StepBackAfterCast": 1000,
         "DelayAfterCast": 0
@@ -59,13 +59,13 @@
         "Name": "shoot",
         "Key": "0",
         "StopBeforeCast": true,
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirements": ["HasRangedWeapon", "not Shooting"],
         "Log": false
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       }
     ]
@@ -79,7 +79,7 @@
         "DelayAfterCast": 0,
         "Key": "N1",
         "Requirement": "Health%<60",
-        "Cooldown": 10
+        "Cooldown": 10000
       },
       {
         "Name": "Water",
@@ -88,7 +88,7 @@
         "DelayAfterCast": 0,
         "Key": "N2",
         "Requirement": "Mana%<60",
-        "Cooldown": 10
+        "Cooldown": 10000
       }
     ]
     },
@@ -106,7 +106,7 @@
         "Name": "Ice Barrier",
         "Key": "7",
         "MinMana": 60,
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Requirement": "not Ice Barrier"
       },
       {
@@ -123,7 +123,7 @@
         "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:8078:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       },
       {
@@ -132,7 +132,7 @@
         "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "not BagItem:8076:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       }
     ]

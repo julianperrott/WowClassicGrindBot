@@ -11,7 +11,7 @@
     "Sequence": [
       {
         "Name": "Interact",
-        "Cooldown": 12,
+        "Cooldown": 12000,
         "DelayAfterCast": 0
       },
       {
@@ -26,7 +26,7 @@
         "HasCastBar": true,
         "Key": "=",
         "MinMana": 140,
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "DelaybeforeCast": 1000
       }
     ]
@@ -35,7 +35,7 @@
     "Sequence": [
       {
         "Name": "Interact",
-        "Cooldown": 12,
+        "Cooldown": 12000,
         "DelayAfterCast": 0
       },
       {
@@ -44,7 +44,7 @@
         "StopBeforeCast": false,
         "Key": "0",
         "MinMana": 75,
-        "Cooldown": 8
+        "Cooldown": 8000
       },
       {
         "Name": "Fireball",
@@ -63,7 +63,7 @@
         "StopBeforeCast": true,
         "Key": "6",
         "Requirement": "Health%<90",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Log": false
       },
       {
@@ -72,7 +72,7 @@
         "StopBeforeCast": true,
         "Key": "7",
         "Requirement": "Mana%<90",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Log": false
       }
     ]
@@ -101,7 +101,7 @@
         "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:2288:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       },
       {
@@ -110,7 +110,7 @@
         "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "not BagItem:1113:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       },
       {
@@ -118,7 +118,7 @@
         "StopBeforeCast": true,
         "Key": "-",
         "Requirement": "not Well Fed",
-        "Cooldown": 120,
+        "Cooldown": 120000,
         "Log": false
       },
     ]

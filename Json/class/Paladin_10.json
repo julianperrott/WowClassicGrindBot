@@ -20,7 +20,7 @@
         "StopBeforeCast": true,
         "Key": "6",
         "Requirements": ["Health%<60", "TargetHealth%>20"],
-        "Cooldown": 5
+        "Cooldown": 5000
       },
       {
         "Name": "Judgement",
@@ -56,14 +56,14 @@
         "Name": "Retribution Aura",
         "Key": "8",
         "Requirement": "not Aura",
-        "Cooldown": 5
+        "Cooldown": 5000
       },
       {
         "Name": "Blessing of Might",
         "Key": "4",
         "WaitBuffAfterCast": true,
         "Requirement": "not Blessing",
-        "Cooldown": 5
+        "Cooldown": 5000
       }
     ]
   },
@@ -76,7 +76,7 @@
         "DelayAfterCast": 0,
         "Key": "-",
         "Requirement": "Mana%<50",
-        "Cooldown": 5
+        "Cooldown": 5000
       },
       {
         "Name": "Food",
@@ -85,7 +85,7 @@
         "DelayAfterCast": 0,
         "Key": "=",
         "Requirement": "Health%<50",
-        "Cooldown": 5
+        "Cooldown": 5000
       }
 
     ]

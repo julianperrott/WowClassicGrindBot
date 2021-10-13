@@ -35,7 +35,7 @@
         "Name": "Power Infusion",
         "Key": "F11",
         "MinMana": 229,
-        "Cooldown": 180,
+        "Cooldown": 180000,
         "Log": false
       },
       {
@@ -43,7 +43,7 @@
         "Key": "9",
         "Requirement": "Health%<60",
         "MinMana": 455,
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "HasCastBar": true,
         "Log": false
       },
@@ -51,7 +51,7 @@
         "Name": "Shadow Word Pain",
         "Key": "6",
         "Requirements": ["not Shadow Word: Pain","TargetHealth%>10","Health%>40"],
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "MinMana": 274,
         "ResetOnNewTarget": true,
         "Log": false
@@ -59,7 +59,7 @@
       {
         "Name": "Mind Blast",
         "Key": "5",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "StopBeforeCast": true,
         "Requirements": ["Health%>40"],
         "HasCastBar": true,
@@ -70,7 +70,7 @@
         "Name": "Shield",
         "Key": "3",
         "Requirements": ["Health%<75","not Shield","TargetHealth%>15"],
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "MinMana": 270,
         "Log": false
       },
@@ -78,12 +78,12 @@
         "Name": "Shooting",
         "Key": "0",
         "Requirement": "not Shooting",
-        "Cooldown": 2,
+        "Cooldown": 2000,
         "Log": false
       },
       {
         "Name": "Approach",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Log": false,
         "DelayAfterCast": "200"
       }
@@ -95,7 +95,7 @@
         "Name": "Healing Potion",
         "Key": "F4",
         "Requirement": "Health%<7",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "InCombat": "true",
         "Log": false,
         "Cost": 3
@@ -105,7 +105,7 @@
         "Key": "9",
         "Requirement": "Health%<60",
         "StopBeforeCast": true,
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "HasCastBar": true,
         "Log": false
       },
@@ -114,7 +114,7 @@
         "StopBeforeCast": true,
         "Key": "=",
         "Requirement": "not Well Fed",
-        "Cooldown": 120,
+        "Cooldown": 120000,
         "Log": false
       },
       {
@@ -123,34 +123,34 @@
         "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "Mana%<40",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Log": false
       },
       {
         "Name": "Fortitude",
         "Key": "1",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Requirement": "not Fortitude",
         "Log": false
       },
       {
         "Name": "InnerFire",
         "Key": "2",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Requirement": "not InnerFire",
         "Log": false
       },
       {
         "Name": "Divine Spirit",
         "Key": "7",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Requirement": "not Divine Spirit",
         "Log": false
       }//,
       //{
         //"Name": "Open Clam",
         //"Key": "-",
-        //"Cooldown": 30,
+        //"Cooldown": 30000,
         //"Log": false
       //}
     ]

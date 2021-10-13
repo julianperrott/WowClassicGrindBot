@@ -18,33 +18,33 @@
     "Sequence": [
       {
         "Name": "Approach",
-        "Cooldown": 3
+        "Cooldown": 3000
       },
       {
         "Name": "Healing Potion",
         "Key": "F4",
         "Requirement": "Health%<10",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "Log": false
       },
       {
         "Name": "Seal of Righteousness",
         "Key": "2",
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "MinMana": 82,
         "Requirements": [ "not Seal"]
       },
       {
         "Name": "Judgement",
         "Key": "3",
-        "Cooldown": 12,
+        "Cooldown": 12000,
         "Requirement":  "Mana%>40",
         "MinMana": 77
       },
       {
         "Name": "Hammer of Justice",
         "Key": "9",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "MinMana": 50
       }
     ]
@@ -57,7 +57,7 @@
         "StopBeforeCast": true,
         "Key": "6",
         "Requirement": "Health%<50",
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "MinMana": 580,
         "Cost": 2,
         "InCombat": "any"
@@ -82,7 +82,7 @@
         "StopBeforeCast": false,
         "Key": "7",
         "Requirement": "not Well Fed",
-        "Cooldown": 120,
+        "Cooldown": 120000,
         "Log": false
       },
       {
@@ -91,7 +91,7 @@
         "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "Mana%<80",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "Cost": 3,
         "Log": false
       },
@@ -106,7 +106,7 @@
       {
         "Name": "Del1",
         "Key": "F5",
-        "Cooldown": 120,
+        "Cooldown": 120000,
         "Log": false
       }
     ]

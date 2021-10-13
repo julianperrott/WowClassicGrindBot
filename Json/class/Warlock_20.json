@@ -28,7 +28,7 @@
         "Name": "heal",
         "Key": "N3",
         "Requirements": ["Health%<50", "BagItem:19005:1"],
-        "Cooldown": 120,
+        "Cooldown": 120000,
         "InCombat": "true",
         "Log": false
       },
@@ -83,19 +83,19 @@
         "MinMana": 110,
         "Requirement": "TargetHealth%>35",
         "Log": false,
-        "Cooldown": 8
+        "Cooldown": 8000
       },
       {
         "Name": "shoot",
         "Key": "0",
         "StopBeforeCast": true,
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirements": ["HasRangedWeapon", "not Shooting"],
         "Log": false
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       },
       {
@@ -116,7 +116,7 @@
         "DelayAfterCast": 0,
         "Key": "N1",
         "Requirement": "Health%<50",
-        "Cooldown": 20
+        "Cooldown": 20000
       },
       {
         "Name": "Water",
@@ -125,7 +125,7 @@
         "DelayAfterCast": 0,
         "Key": "N2",
         "Requirement": "Mana%<40",
-        "Cooldown": 20
+        "Cooldown": 20000
       }
     ]
     },
@@ -146,7 +146,7 @@
         "MinMana": 122,
         "Requirements": ["BagItem:6265:1", "not Has Pet"],
         "Log": false,
-        "Cooldown": 60
+        "Cooldown": 60000
       },
       {
         "Name": "Life Tap",

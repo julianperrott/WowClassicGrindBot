@@ -7,13 +7,13 @@
       {
         "Name": "Seal of Righteousness",
         "Key": "2",
-        "Cooldown": 2,
+        "Cooldown": 2000,
         "Requirement": "not Seal"
       },
       {
         "Name": "Approach",
         "Requirement": "not InMeleeRange",
-        "Cooldown": 1
+        "Cooldown": 1000
       },
       {
         "Name": "AutoAttack",
@@ -29,7 +29,7 @@
         "StopBeforeCast": true,
         "Key": "3",
         "Requirement": "Health%<50",
-        "Cooldown": 2
+        "Cooldown": 2000
       }
     ]
   }

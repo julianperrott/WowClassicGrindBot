@@ -21,7 +21,7 @@
     "Sequence": [
       {
         "Name": "Interact",
-        "Cooldown": 12,
+        "Cooldown": 12000,
         "DelayAfterCast": 0
       },
       {
@@ -46,7 +46,7 @@
         "Name": "Healing Potion",
         "Key": "F4",
         "Requirement": "Health%<10",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "Log": false
       },
       {
@@ -55,7 +55,7 @@
         "StopBeforeCast": false,
         "Key": "0",
         "MinMana": 75,
-        "Cooldown": 8
+        "Cooldown": 8000
       },
       {
         "Name": "Fireball",
@@ -67,13 +67,13 @@
         "Name": "shoot",
         "Key": "0",
         "StopBeforeCast": true,
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirements": ["HasRangedWeapon", "not Shooting"],
         "Log": false
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       }
     ]
@@ -86,7 +86,7 @@
         "StopBeforeCast": true,
         "Key": "6",
         "Requirement": "Health%<70",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Log": false
       },
       {
@@ -95,7 +95,7 @@
         "StopBeforeCast": true,
         "Key": "7",
         "Requirement": "Mana%<55",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Log": false
       }
     ]
@@ -124,7 +124,7 @@
         "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:8077:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       },
       {
@@ -133,7 +133,7 @@
         "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "not BagItem:1487:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       },
       {
@@ -141,7 +141,7 @@
         "StopBeforeCast": true,
         "Key": "-",
         "Requirement": "not Well Fed",
-        "Cooldown": 120,
+        "Cooldown": 120000,
         "Log": false
       },
       {
