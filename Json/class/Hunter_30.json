@@ -48,7 +48,7 @@
         "Name": "Serpent Sting",
         "Key": "2",
         "MinMana": 15,
-        "Cooldown": 15000,
+        "Cooldown": 4000,
         "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Serpent Sting", "Mana%>55"]
       },
       {

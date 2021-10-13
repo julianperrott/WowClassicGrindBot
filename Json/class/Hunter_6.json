@@ -7,7 +7,6 @@
         "Name": "Serpent Sting",
         "Key": "2",
         "MinMana": 15,
-        "Cooldown": 15000,
         "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Serpent Sting"]
       },
       {
@@ -22,13 +21,6 @@
   },
   "Combat": {
     "Sequence": [
-      {
-        "Name": "Serpent Sting",
-        "Key": "2",
-        "MinMana": 15,
-        "Cooldown": 15000,
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Serpent Sting"]
-      },
       {
         "Name": "Auto Shot",
         "HasCastBar": true,
