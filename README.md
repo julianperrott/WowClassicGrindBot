@@ -256,7 +256,7 @@ e.g.
         "Key": "3",
         "MinEnergy": 25,
         "MinComboPoints": 2,
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirement": "Slice And Dice"
       }, 
 
@@ -272,7 +272,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | ShapeShiftForm | For druids the shapeshift form to be in to cast this spell | None |
 | CastIfAddsVisible | If the bot can "See" any adds | false |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | 1 |
-| Cooldown | The cooldown in seconds until the command can be done again | 0 |
+| Cooldown | The cooldown in milliseconds until the command can be done again | 0 |
 | MinMana | (Optional) The minimum Mana required to cast the spell | 0 |
 | MinRage | (Optional) The minimum Rage required to cast the spell | 0 |
 | MinEnergy | (Optional) The minimum Energy required to cast the spell | 0 |
@@ -422,7 +422,7 @@ e.g.
       {
         "Name": "Curse of Weakness",
         "Key": "6",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "ResetOnNewTarget": true,
         "Requirement": "not Curse of Weakness", <--- Single Requirement
         "MinMana": 20,
