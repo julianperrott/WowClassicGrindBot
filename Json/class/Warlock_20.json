@@ -12,7 +12,7 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "pull",
+        "Name": "Immolate",
         "Key": "5",
         "HasCastBar": true,
         "ResetOnNewTarget": true,

@@ -9,7 +9,7 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "pull",
+        "Name": "Immolate",
         "HasCastBar": true,
         "Key": "5",
         "MinMana": 25

@@ -342,21 +342,17 @@ Repair macro example:
     /tar Vargus
     /script SelectGossipOption(1)
 
-Warlock `pull` macro used in warlock profiles
-
-    #showtooltip
-    /cast Immolate
-
 Warlock `heal` macro used in warlock profiles.
 
     #showtooltip
-    /cast Create Healthstone
+    /cast [nocombat] Create Healthstone
     /use Minor Healthstone
     /use Lesser Healthstone
     /use Healthstone
     /use Greater Healthstone
     /use Major Healthstone
     /use Master Healthstone
+
 
 Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
 
