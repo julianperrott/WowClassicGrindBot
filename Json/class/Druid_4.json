@@ -8,7 +8,6 @@
       {
         "Name": "Wrath",
         "Key": "2",
-        "StopBeforeCast": true,
         "HasCastBar": true
       }
     ]
@@ -18,7 +17,6 @@
       {
         "Name": "Healing Touch",
         "Key": "3",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "Requirement": "Health%<50",
         "Cooldown": 5000
@@ -26,7 +24,6 @@
       {
         "Name": "Wrath",
         "Key": "2",
-        "StopBeforeCast": true,
         "HasCastBar": true
       },
       {

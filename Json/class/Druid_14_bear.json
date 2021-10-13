@@ -47,7 +47,6 @@
       {
         "Name": "Healing Touch",
         "Key": "3",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "Requirement": "Health%<30",
         "Cooldown": 5000,

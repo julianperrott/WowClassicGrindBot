@@ -58,7 +58,6 @@
         "Name": "Wrath",
         "Key": "7",
         "Requirement": "OutOfCombatRange",
-        "StopBeforeCast": true,
         "Form": "None",
         "HasCastBar": true
       },
@@ -161,7 +160,6 @@
         "Name": "Healing Touch",
         "Key": "6",
         "Requirement": "Health%<80",
-        "StopBeforeCast": true,
         "Cooldown": 10000,
         "HasCastBar": true,
         "Form": "None",
@@ -176,7 +174,6 @@
       },
       {
         "Name": "Drink",
-        "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "0",
         "Requirement": "Mana%<40",

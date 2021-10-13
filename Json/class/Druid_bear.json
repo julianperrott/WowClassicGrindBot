@@ -51,7 +51,6 @@
         "Name": "Wrath",
         "Key": "7",
         "Requirement": "OutOfCombatRange",
-        "StopBeforeCast": true,
         "Form": "None",
         "HasCastBar": true
       },
@@ -86,7 +85,6 @@
         "Requirement": "Health%<50",
         "Cooldown": 10000,
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Form": "None"
       },
       {
@@ -175,7 +173,6 @@
       },
       {
         "Name": "Drink",
-        "HasCastBar": true,
         "StopBeforeCast": true,
         "Key": "0",
         "Requirement": "Mana%<40",
@@ -185,7 +182,6 @@
       },
       {
         "Name": "Thorns",
-        "StopBeforeCast": false,
         "Key": "3",
         "Cooldown": 10000,
         "Requirement": "not Thorns",
@@ -193,7 +189,6 @@
       },
       {
         "Name": "Mark of the Wild",
-        "StopBeforeCast": false,
         "Key": "4",
         "Cooldown": 10000,
         "Requirement": "not Mark of the Wild",
