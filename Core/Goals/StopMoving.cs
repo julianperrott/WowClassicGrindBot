@@ -41,7 +41,7 @@ namespace Core.Goals
 
                 input.SetKeyState(ConsoleKey.UpArrow, false, false, "");
                 input.SetKeyState(ConsoleKey.DownArrow, false, false, "StopForward");
-                await Task.Delay(1);
+                await Task.Delay(10);
             }
 
             this.XCoord = playerReader.XCoord;
