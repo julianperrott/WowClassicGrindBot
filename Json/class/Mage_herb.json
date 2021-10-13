@@ -43,8 +43,7 @@
         "Key": "F8",
         "Cooldown": 120000,
         "Log": false,
-        "Requirement": "Health%<80",
-        "HasCastBar": false
+        "Requirement": "Health%<80"
       },
       {
         "Name": "Healing Potion",

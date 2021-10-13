@@ -40,8 +40,6 @@
       },
       {
         "Name": "Fireblast",
-        "HasCastBar": false,
-        "StopBeforeCast": false,
         "Key": "0",
         "MinMana": 75,
         "Cooldown": 8000

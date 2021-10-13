@@ -48,8 +48,6 @@
       },
       {
         "Name": "Fireblast",
-        "HasCastBar": false,
-        "StopBeforeCast": false,
         "Key": "0",
         "MinMana": 75,
         "Requirements": ["Health%<80", "SpellInRange:4"],

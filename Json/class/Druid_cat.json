@@ -88,8 +88,7 @@
         "Key": "6",
         "Requirement": "Health%<40",
         "Cooldown": 10000,
-        "StopBeforeCast": true,
-        "HasCastBar": false,
+        "HasCastBar": true,
         "Form": "None"
       }
     ]

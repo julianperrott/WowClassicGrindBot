@@ -16,8 +16,6 @@
       {
         "Name": "Shaman Ferry",
         "Key": "F3",
-        "StopBeforeCast": false,
-        "HasCastBar": false,
         "Requirement": "Mana%<50",
         "Cooldown": 120000,
       },
