@@ -184,11 +184,8 @@ namespace Core.Goals
                 }
             }
 
-            if (item.StopBeforeCast)
-            {
-                await stopMoving.Stop();
-                await wait.Update(1);
-            }
+            await stopMoving.Stop();
+            await wait.Update(1);
 
             bool beforeHasTarget = playerReader.HasTarget;
             int beforeCastEventValue = playerReader.CastEvent.Value;
