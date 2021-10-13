@@ -64,10 +64,8 @@ namespace Core
 
         public static ConsoleKey LastKeyClicked()
         {
-            if (!LastClicked.Any()) { return ConsoleKey.NoName; }
-
-            var last = LastClicked.OrderByDescending(s => s.Value).First();
-            if ( (DateTime.Now- last.Value).TotalSeconds>2)
+            var last = LastClicked.OrderByDescending(s => s.Value).FirstOrDefault();
+            if (last.Key == 0 || (DateTime.Now - last.Value).TotalSeconds > 2)
             {
                 return ConsoleKey.NoName;
             }
