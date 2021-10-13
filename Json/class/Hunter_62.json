@@ -45,7 +45,6 @@
         "Name": "Intimidation",
         "Key": "N4",
         "MinMana": 15,
-        "Cooldown": 60000,
         "WhenUsable": true,
         "Requirements": ["Has Pet", "TargetHealth%<70||TargetCastingSpell"]
       },
@@ -53,7 +52,6 @@
         "Name": "Bestial Wrath",
         "Key": "N2",
         "MinMana": 15,
-        "Cooldown": 8000,
         "WhenUsable": true,
         "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "Has Pet", "TargetHealth%>85"]
       },
@@ -61,7 +59,6 @@
         "Name": "Rapid Fire",
         "Key": "N3",
         "MinMana": 15,
-        "Cooldown": 8000,
         "WhenUsable": true,
         "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "TargetHealth%>75"]
       },
