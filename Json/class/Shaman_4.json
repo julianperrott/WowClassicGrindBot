@@ -8,7 +8,6 @@
       {
         "Name": "Lightning Bolt",
         "Key": "2",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "MinMana": 15
       }
@@ -46,7 +45,6 @@
     "Sequence": [
       {
         "Name": "Rockbiter Weapon",
-        "StopBeforeCast": false,
         "Key": "5",
         "MinMana": 15,
         "Requirement": "not HasMainHandEnchant"

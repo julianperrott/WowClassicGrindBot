@@ -15,7 +15,6 @@
         "Name": "pull",
         "Key": "5",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 90,
         "Log": false
@@ -36,7 +35,6 @@
         "Name": "Drain Soul",
         "Key": "9",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["TargetHealth%<25", "not BagItem:6265:3", "TargetYieldXP"],
         "MinMana": 55
       },
@@ -44,7 +42,6 @@
         "Name": "Drain Life",
         "Key": "N4",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["Health%<30"],
         "MinMana": 55
       },
@@ -53,7 +50,6 @@
         "Key": "5",
         "Requirements": ["TargetHealth%>35", "not Immolate"],
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 90,
         "Log": false
@@ -78,7 +74,6 @@
         "Name": "Shadow Bolt",
         "Key": "2",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 110,
         "Requirement": "TargetHealth%>35",
@@ -102,7 +97,6 @@
         "Name": "Health Funnel",
         "Key": "N6",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["Has Pet", "Health%>70", "PetHealth%<30"]
       }
     ]
@@ -141,7 +135,6 @@
       {
         "Name": "Summon Voidwalker",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
         "MinMana": 122,
         "Requirements": ["BagItem:6265:1", "not Has Pet"],
@@ -158,7 +151,6 @@
       {
         "Name": "heal",
         "Key": "N3",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "Requirements": ["BagItem:6265:1", "not BagItem:19005:1"]
       }

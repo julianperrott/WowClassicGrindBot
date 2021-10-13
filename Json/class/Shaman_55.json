@@ -46,7 +46,6 @@
       {
         "Name": "Healing Wave",
         "Key": "3",
-        "StopBeforeCast": true,
         "Requirements": [
           "Health%<40",
           "TargetHealth%>15"
@@ -64,7 +63,6 @@
           "InMeleeRange"
         ],
         "Log": false,
-        "StopBeforeCast": true,
         "Cooldown": 5000,
         "MinMana": 87
       },
@@ -94,21 +92,18 @@
     "Sequence": [
       {
         "Name": "Windfury Weapon",
-        "StopBeforeCast": false,
         "Key": "5",
         "MinMana": 90,
         "Requirement": "not HasMainHandEnchant"
       },
       {
         "Name": "Windfury/Falme Weapon",
-        "StopBeforeCast": false,
         "Key": "5",
         "MinMana": 90,
         "Requirement": "not HasOffHandEnchant"
       },
       {
         "Name": "Lightning Shield",
-        "StopBeforeCast": false,
         "Key": "7",
         "MinMana": 45,
         "Requirement": "not Lightning Shield",
@@ -120,7 +115,6 @@
       {
         "Name": "Healing Wave",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
         "Requirements": [
           "Health%<40",

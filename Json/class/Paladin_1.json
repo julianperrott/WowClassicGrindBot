@@ -26,7 +26,6 @@
       {
         "Name": "Holy Light",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "3",
         "Requirement": "Health%<50",
         "Cooldown": 2000

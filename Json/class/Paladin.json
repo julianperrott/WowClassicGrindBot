@@ -54,7 +54,6 @@
       {
         "Name": "Holy Light",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "6",
         "Requirement": "Health%<50",
         "Cooldown": 3000,
@@ -64,14 +63,12 @@
       },
       {
         "Name": "Devotion Aura",
-        "StopBeforeCast": false,
         "Key": "5",
         "Requirement": "not Aura",
         "Log": false
       },
       {
         "Name": "Blessing of Might",
-        "StopBeforeCast": false,
         "Key": "4",
         "MinMana": 45,
         "Requirement": "not Blessing",
@@ -79,7 +76,6 @@
       },
       {
         "Name": "Well Fed",
-        "StopBeforeCast": false,
         "Key": "7",
         "Requirement": "not Well Fed",
         "Cooldown": 120000,
@@ -98,7 +94,6 @@
       {
         "Name": "Sharpen Weapon",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "F1",
         "Cooldown": 1800,
         "Log": false

@@ -74,14 +74,14 @@
         },
         {
           "Name": "poisonmh",
-          "StopBeforeCast": true,
+          "HasCastbar": true,
           "DelayAfterCast": 500,
           "Key": "N2",
           "Requirement": "not HasMainHandEnchant"
         },
         {
           "Name": "poisonoh",
-          "StopBeforeCast": true,
+          "HasCastbar": true,
           "DelayAfterCast": 500,
           "Key": "N3",
           "Requirement": "not HasOffHandEnchant"

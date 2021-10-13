@@ -20,7 +20,6 @@
         "DelayBeforeCast": 1500,
         "Requirements": ["TargetHealth%>35", "not Immolate"],
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 90,
         "School": "Fire",
@@ -42,7 +41,6 @@
         "Name": "Drain Soul",
         "Key": "9",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["TargetHealth%<25", "not BagItem:6265:3", "TargetYieldXP"],
         "School": "Shadow",
         "MinMana": 55
@@ -51,7 +49,6 @@
         "Name": "Drain Life",
         "Key": "N4",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["Health%<30"],
         "MinMana": 55
       },
@@ -60,7 +57,6 @@
         "Key": "5",
         "Requirements": ["TargetHealth%>35", "not Immolate", "not InMeleeRange"],
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 90,
         "School": "Fire",
@@ -70,7 +66,6 @@
         "Name": "Curse of Agony",
         "Key": "1",
         "ResetOnNewTarget": true,
-        "StopBeforeCast": true,
         "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
         "MinMana": 50,
         "School": "Shadow",
@@ -81,7 +76,6 @@
         "Key": "7",
         "Requirements": ["TargetHealth%>35", "not Corruption"],
         "ResetOnNewTarget": true,
-        "StopBeforeCast": true,
         "MinMana": 55,
         "School": "Shadow",
         "Log": false
@@ -90,7 +84,6 @@
         "Name": "Shadow Bolt",
         "Key": "2",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 110,
         "Requirements": ["TargetHealth%>35", "not InMeleeRange"],
@@ -115,7 +108,6 @@
         "Name": "Health Funnel",
         "Key": "N6",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["Has Pet", "Health%>70", "PetHealth%<30"]
       }
     ]
@@ -154,7 +146,6 @@
       {
         "Name": "Summon Voidwalker",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
         "MinMana": 122,
         "Requirements": ["BagItem:6265:1", "not Has Pet"],
@@ -172,7 +163,6 @@
         "Name": "heal",
         "Key": "N3",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["BagItem:6265:1", "not BagItem:19007:1"]
       }
     ]

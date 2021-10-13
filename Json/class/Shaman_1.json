@@ -9,7 +9,6 @@
       {
         "Name": "Lightning Bolt",
         "Key": "2",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "MinMana": 15
       }
@@ -20,7 +19,6 @@
       {
         "Name": "Lightning Bolt",
         "Key": "2",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "MinMana": 15,
         "Requirement": "not InMeleeRange"

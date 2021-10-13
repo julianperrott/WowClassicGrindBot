@@ -16,7 +16,6 @@
         "Name": "pull",
         "Key": "5",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 289,
         "School": "Fire",
@@ -38,7 +37,6 @@
         "Name": "Drain Soul",
         "Key": "9",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["TargetHealth%<25", "not BagItem:6265:3", "TargetYieldXP"],
         "School": "Shadow",
         "MinMana": 290
@@ -47,7 +45,6 @@
         "Name": "Drain Life",
         "Key": "N4",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["Health%<30"],
         "MinMana": 240
       },
@@ -56,7 +53,6 @@
         "Key": "5",
         "Requirements": ["TargetHealth%>35", "not Immolate"],
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 289,
         "School": "Fire",
@@ -84,7 +80,6 @@
         "Name": "Shadow Bolt",
         "Key": "2",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 309,
         "Requirement": "TargetHealth%>35",
@@ -151,7 +146,6 @@
       {
         "Name": "Summon Voidwalker",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
         "MinMana": 736,
         "Requirements": ["BagItem:6265:1", "not Has Pet"],

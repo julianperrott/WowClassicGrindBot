@@ -11,7 +11,6 @@
       {
         "Name": "pull",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "5",
         "MinMana": 25
       }
@@ -23,14 +22,12 @@
         "Name": "Drain Soul",
         "Key": "9",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["TargetHealth%<25", "not BagItem:6265:3", "TargetYieldXP"],
         "MinMana": 55
       },
       {
         "Name": "Immolate",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "5",
         "Requirements": ["TargetHealth%>35", "not Immolate"], 
         "ResetOnNewTarget": true,
@@ -49,7 +46,6 @@
       {
         "Name": "Corruption",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "DelayAfterCast": 200,
         "Key": "7",
         "Requirements": ["TargetHealth%>35", "not Corruption"], 
@@ -59,7 +55,6 @@
       {
         "Name": "Shadow Bolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirement": "TargetHealth%>35",
         "DelayAfterCast": 0,
         "Key": "2",
@@ -116,7 +111,6 @@
       {
         "Name": "Summon Voidwalker",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
         "MinMana": 122,
         "Requirements": ["BagItem:6265:1", "not Has Pet"],

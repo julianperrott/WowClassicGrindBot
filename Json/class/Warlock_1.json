@@ -11,7 +11,6 @@
       {
         "Name": "Shadow Bolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 25
       }
@@ -22,7 +21,6 @@
       {
         "Name": "Shadow Bolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 25
       },
@@ -45,7 +43,6 @@
     "Sequence": [
       {
         "Name": "Demon Skin",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 50,
         "Requirement": "not Demon Skin"

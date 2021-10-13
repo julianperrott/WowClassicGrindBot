@@ -7,7 +7,6 @@
       {
         "Name": "Throw",
         "Key": "6",
-        "StopBeforeCast": true,
         "HasCastbar": true,
         "WhenUsable": true,
         "WaitForWithinMeleeRange": true,

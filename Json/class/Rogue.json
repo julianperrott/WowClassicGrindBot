@@ -101,7 +101,7 @@
       },
       {
         "Name": "Eat",
-        "StopBeforeCast": false,
+        "StopBeforeCast": true,
         "Key": "=",
         "Requirement": "Health%<60",
         "DelayAfterCast": 1000,
@@ -110,7 +110,7 @@
       },
       {
         "Name": "Well Fed",
-        "StopBeforeCast": false,
+        "StopBeforeCast": true,
         "Key": "7",
         "Requirement": "not Well Fed",
         "Cooldown": 1200,
@@ -119,7 +119,6 @@
       {
         "Name": "Sharpen Weapon 1",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "F1",
         "Cooldown": 1800,
         "Log": false
@@ -127,7 +126,6 @@
       {
         "Name": "Sharpen Weapon 2",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "F2",
         "Cooldown": 1800,
         "Log": false

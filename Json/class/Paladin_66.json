@@ -26,7 +26,6 @@
       {
         "Name": "Holy Light",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
         "Requirements": [
           "Health%<35",
@@ -117,14 +116,12 @@
     "Sequence": [
       {
         "Name": "Devotion Aura",
-        "StopBeforeCast": false,
         "Key": "F8",
         "Requirement": "not Aura",
         "Log": false
       },
       {
         "Name": "Blessing of Might",
-        "StopBeforeCast": false,
         "Key": "0",
         "MinMana": 45,
         "Requirement": "not Blessing",
@@ -137,7 +134,6 @@
       {
         "Name": "Holy Light",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
         "Requirements": [
           "Health%<40",

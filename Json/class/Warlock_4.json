@@ -11,7 +11,6 @@
       {
         "Name": "pull",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "5",
         "MinMana": 25
       }
@@ -22,7 +21,6 @@
       {
         "Name": "Immolate",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "5",
         "Requirements": ["TargetHealth%>35", "not Immolate"], 
         "ResetOnNewTarget": true,
@@ -31,7 +29,6 @@
       {
         "Name": "Corruption",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "7",
         "Requirements": ["TargetHealth%>35", "not Corruption"], 
         "ResetOnNewTarget": true,
@@ -40,7 +37,6 @@
       {
         "Name": "Shadow Bolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 25,
         "Cooldown": 8000
@@ -72,7 +68,6 @@
       {
         "Name": "Summon Imp",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
         "MinMana": 122,
         "Requirement": "not Has Pet",
