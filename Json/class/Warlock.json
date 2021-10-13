@@ -162,14 +162,12 @@
         "Name": "Life Tap",
         "Key": "8",
         "Requirements": ["Health%>70","Mana%<60"],
-        "Cooldown": 0,
         "Log": false
       },
       {
         "Name": "Life Tap 2",
         "Key": "8",
         "Requirements": ["Health%>80","Mana%<80"],
-        "Cooldown": 0,
         "Log": false
       },
       {

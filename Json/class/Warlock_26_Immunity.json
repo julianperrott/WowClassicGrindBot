@@ -166,7 +166,6 @@
         "Key": "8",
         "Charge": 2,
         "Requirements": ["Health%>70","Mana%<60"],
-        "Cooldown": 0,
         "Log": false
       },
       {

@@ -22,8 +22,7 @@
         "Name": "Frost Bolt",
         "HasCastBar": true,
         "Key": "5",
-        "MinMana": 90,
-        "Cooldown": 0
+        "MinMana": 90
       },
       {
         "Name": "Arcane Missiles",
@@ -63,8 +62,7 @@
         "Name": "Frost Bolt",
         "HasCastBar": true,
         "Key": "5",
-        "MinMana": 221,
-        "Cooldown": 0
+        "MinMana": 221
       }
     ]
   },

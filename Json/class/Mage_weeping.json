@@ -24,8 +24,7 @@
         "Name": "Frost Bolt",
         "HasCastBar": true,
         "Key": "5",
-        "MinMana": 90,
-        "Cooldown": 0
+        "MinMana": 90
       },
       {
         "Name": "Arcane Missiles",
@@ -44,7 +43,6 @@
 //        "Name": "Arcane Explosion",
 //        "Key": "0",
 //        "Requirement": "npcID:8257",
-//        "Cooldown": 0,
 //        "Log": false
 //      },
       {
@@ -82,8 +80,7 @@
         "HasCastBar": true,
         "Key": "5",
         "Requirement": "not npcID:8257",
-        "MinMana": 221,
-        "Cooldown": 0
+        "MinMana": 221
       }
     ]
   },

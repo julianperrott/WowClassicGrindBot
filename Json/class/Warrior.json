@@ -78,7 +78,6 @@
         "StopBeforeCast": false,
         "Key": "=",
         "Requirement": "Health%<60",
-        "Cooldown": 0,
         "DelayAfterCast": 1000,
         "Log": false,
         "Cost": 3
