@@ -27,11 +27,10 @@
 
                 @if (this.goal.Keys != null)
                 {
-                    var lastKeyClicked = Core.KeyAction.LastKeyClicked();
-
+                    int lastKeyClicked = Core.KeyAction.LastKeyClicked();
                     foreach (var key in this.goal.Keys)
                     {
-                        <tr class="@ActionClass(lastKeyClicked==key.ConsoleKey)">
+                        <tr class="@ActionClass(lastKeyClicked==key.ConsoleKeyFormHash)">
                             <td>
                                 <b style="color:@DisplayColour(key.CanRun())">@key.Name [@key.ConsoleKey]</b>
                             </td>

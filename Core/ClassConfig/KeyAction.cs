@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -60,14 +60,16 @@ namespace Core
 
         public List<Requirement> RequirementObjects { get; } = new List<Requirement>();
 
-        protected static ConcurrentDictionary<ConsoleKey, DateTime> LastClicked { get; } = new ConcurrentDictionary<ConsoleKey, DateTime>();
+        public int ConsoleKeyFormHash;
 
-        public static ConsoleKey LastKeyClicked()
+        protected static ConcurrentDictionary<int, DateTime> LastClicked { get; } = new ConcurrentDictionary<int, DateTime>();
+
+        public static int LastKeyClicked()
         {
             var last = LastClicked.OrderByDescending(s => s.Value).FirstOrDefault();
             if (last.Key == 0 || (DateTime.Now - last.Value).TotalSeconds > 2)
             {
-                return ConsoleKey.NoName;
+                return (int)ConsoleKey.NoName;
             }
             return last.Key;
         }
@@ -109,6 +111,8 @@ namespace Core
                 }
             }
 
+            ConsoleKeyFormHash = ((int)FormEnum * 1000) + (int)ConsoleKey;
+
             UpdateMinResourceRequirement(playerReader, addonReader.ActionBarCostReader);
 
             requirementFactory.InitialiseRequirements(this);
@@ -147,12 +151,12 @@ namespace Core
         {
             try
             {
-                if (!LastClicked.ContainsKey(this.ConsoleKey))
+                if (!LastClicked.ContainsKey(ConsoleKeyFormHash))
                 {
                     return 0;
                 }
 
-                var remaining = this.Cooldown - ((int)(DateTime.Now - LastClicked[this.ConsoleKey]).TotalMilliseconds);
+                var remaining = this.Cooldown - ((int)(DateTime.Now - LastClicked[ConsoleKeyFormHash]).TotalMilliseconds);
 
                 return remaining < 0 ? 0 : remaining;
             }
@@ -172,13 +176,13 @@ namespace Core
                     LastClickPostion = this.playerReader.PlayerLocation;
                 }
 
-                if (LastClicked.ContainsKey(this.ConsoleKey))
+                if (LastClicked.ContainsKey(ConsoleKeyFormHash))
                 {
-                    LastClicked[this.ConsoleKey] = DateTime.Now;
+                    LastClicked[ConsoleKeyFormHash] = DateTime.Now;
                 }
                 else
                 {
-                    LastClicked.TryAdd(this.ConsoleKey, DateTime.Now);
+                    LastClicked.TryAdd(ConsoleKeyFormHash, DateTime.Now);
                 }
             }
             catch (Exception ex)
@@ -187,13 +191,13 @@ namespace Core
             }
         }
 
-        public double MillisecondsSinceLastClick => LastClicked.ContainsKey(this.ConsoleKey) ? (DateTime.Now - LastClicked[this.ConsoleKey]).TotalMilliseconds : double.MaxValue;
+        public double MillisecondsSinceLastClick => LastClicked.ContainsKey(ConsoleKeyFormHash) ? (DateTime.Now - LastClicked[ConsoleKeyFormHash]).TotalMilliseconds : double.MaxValue;
 
         internal void ResetCooldown()
         {
-            if (LastClicked.ContainsKey(ConsoleKey))
+            if (LastClicked.ContainsKey(ConsoleKeyFormHash))
             {
-                LastClicked.TryRemove(ConsoleKey, out _);
+                LastClicked.TryRemove(ConsoleKeyFormHash, out _);
             }
         }
 
