@@ -8,7 +8,7 @@
         "Key": "2",
         "AfterCastWaitNextSwing": true,
         "WhenUsable": true,
-        "MinRage": 10
+        "MinRage": 15
       },
       {
         "Name": "Approach",
