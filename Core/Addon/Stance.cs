@@ -78,7 +78,7 @@
             return 0;
         }
 
-        public static int FormToActionBar(PlayerClassEnum playerClass, Form form)
+        private static int FormToActionBar(PlayerClassEnum playerClass, Form form)
         {
             switch (playerClass)
             {

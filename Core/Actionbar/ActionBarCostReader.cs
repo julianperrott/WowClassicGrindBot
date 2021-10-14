@@ -71,9 +71,9 @@ namespace Core
         {
             if (KeyReader.ActionBarSlotMap.TryGetValue(keyAction.Key, out int slot))
             {
-                if (keyAction.FormEnum != Form.None && slot <= 12)
+                if (slot <= 12)
                 {
-                    slot += Stance.FormToActionBar(playerReader.PlayerClass, keyAction.FormEnum);
+                    slot += Stance.RuntimeSlotToActionBar(keyAction, playerReader, slot);
                 }
 
                 if (dict.TryGetValue(slot, out var tuple))

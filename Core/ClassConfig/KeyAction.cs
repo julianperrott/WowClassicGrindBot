@@ -101,7 +101,7 @@ namespace Core
 
                     if (KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot))
                     {
-                        int offset = Stance.FormToActionBar(playerReader.PlayerClass, FormEnum);
+                        int offset = Stance.RuntimeSlotToActionBar(this, playerReader, slot);
                         this.logger.LogInformation($"[{Name}] Actionbar Form key map: Key:{Key} -> Actionbar:{slot} -> Form Map:{slot + offset}");
                     }
                 }
