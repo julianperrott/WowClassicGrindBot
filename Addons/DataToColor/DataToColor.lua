@@ -50,7 +50,9 @@ DataToColor.lastAutoShot = 0
 DataToColor.lastMainHandMeleeSwing = 0
 DataToColor.lastCastEvent = 0
 DataToColor.lastCastSpellId = 0
-DataToColor.lastCastId = 0
+
+DataToColor.lastCastStartTime = 0
+DataToColor.CastNum = 0
 
 DataToColor.targetChanged = true
 
@@ -180,6 +182,9 @@ function DataToColor:Reset()
     DataToColor.lastMainHandMeleeSwing = 0
     DataToColor.lastCastEvent = 0
     DataToColor.lastCastSpellId = 0
+
+    DataToColor.lastCastStartTime = 0
+    DataToColor.CastNum = 0
 
     playerDebuffCount = 0
     playerBuffCount = 0
@@ -498,6 +503,7 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPet), 68) -- pet guid
             MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPetTarget), 69) -- pet target
+            MakePixelSquareArrI(DataToColor.CastNum, 70)
 
             -- Timers
             MakePixelSquareArrI(DataToColor.lastLoot, 97)

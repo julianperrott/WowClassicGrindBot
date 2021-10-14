@@ -175,6 +175,8 @@ namespace Core
         public int PetTargetGuid => (int)reader.GetLongAtCell(69);
         public bool PetHasTarget => PetTargetGuid != 0;
 
+        public int CastCount => (int)reader.GetLongAtCell(70);
+
         public long LastLootTime => reader.GetLongAtCell(97);
 
         public RecordInt GlobalTime = new RecordInt(98);

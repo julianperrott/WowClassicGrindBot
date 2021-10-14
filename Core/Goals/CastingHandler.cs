@@ -167,8 +167,6 @@ namespace Core.Goals
 
             if (item.RequirementObjects.Any())
             {
-                // Rockbiter Weapon -> !item.CanRun()
-                // Serpent Sting -> !item.CanRun() && !playerReader.UsableAction.Is(item)
                 (bool firstReq, double firstReqElapsedMs) = await wait.InterruptTask(SpellQueueTimeMs,
                     () => !item.CanRun()
                 );
@@ -195,13 +193,16 @@ namespace Core.Goals
             bool beforeHasTarget = playerReader.HasTarget;
             int beforeCastEventValue = playerReader.CastEvent.Value;
             int beforeSpellId = playerReader.CastSpellId.Value;
+            int beforeCastCount = playerReader.CastCount;
 
             await PressKeyAction(item);
 
             (bool input, double inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
                 interrupt: () =>
-                beforeCastEventValue != playerReader.CastEvent.Value // this worked really well
-                || beforeSpellId != playerReader.CastSpellId.Value);
+                beforeCastEventValue != playerReader.CastEvent.Value ||
+                beforeSpellId != playerReader.CastSpellId.Value ||
+                beforeCastCount != playerReader.CastCount
+                );
 
             if (!input)
             {
@@ -213,7 +214,7 @@ namespace Core.Goals
                 return false;
             }
 
-            item.LogInformation($" ... casting: {playerReader.IsCasting} -- usable: {playerReader.UsableAction.Is(item)} -- {(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value}");
+            item.LogInformation($" ... casting: {playerReader.IsCasting} -- count:{playerReader.CastCount} -- usable: {playerReader.UsableAction.Is(item)} -- {(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value}");
 
             if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value))
             {
