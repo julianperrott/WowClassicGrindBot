@@ -29,5 +29,16 @@
 
             return false;
         }
+
+        public int Num(KeyAction item)
+        {
+            if (KeyReader.ActionBarSlotMap.TryGetValue(item.Key, out int slot))
+            {
+                slot += Stance.RuntimeSlotToActionBar(item, playerReader, slot);
+                return slot;
+            }
+
+            return 0;
+        }
     }
 }

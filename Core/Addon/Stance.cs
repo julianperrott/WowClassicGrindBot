@@ -70,10 +70,12 @@
 
         public static int RuntimeSlotToActionBar(KeyAction item, PlayerReader playerReader, int slot)
         {
-            if (slot > 12 || item.FormEnum == Form.None)
-                return 0;
+            if (slot <= 12)
+            {
+                return FormToActionBar(playerReader.PlayerClass, item.HasFormRequirement() ? item.FormEnum : playerReader.Form);
+            }
 
-            return FormToActionBar(playerReader.PlayerClass, item.FormEnum);
+            return 0;
         }
 
         public static int FormToActionBar(PlayerClassEnum playerClass, Form form)
