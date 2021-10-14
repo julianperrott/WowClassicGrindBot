@@ -106,6 +106,7 @@ namespace Core
         public void Reset()
         {
             PlayerReader.Initialized = false;
+            ActionBarCostReader.Reset();
             PlayerReader.Reset();
         }
 

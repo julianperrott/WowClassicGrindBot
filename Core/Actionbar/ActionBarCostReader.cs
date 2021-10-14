@@ -62,6 +62,11 @@ namespace Core
             }
         }
 
+        public void Reset()
+        {
+            dict.Clear();
+        }
+
         public Tuple<PowerType, int> GetCostByActionBarSlot(PlayerReader playerReader, KeyAction keyAction)
         {
             if (KeyReader.ActionBarSlotMap.TryGetValue(keyAction.Key, out int slot))
