@@ -21,7 +21,7 @@
         {
             if (KeyReader.ActionBarSlotMap.TryGetValue(item.Key, out int slot))
             {
-                slot += Stance.RuntimeSlotToActionBar(playerReader, slot);
+                slot += Stance.RuntimeSlotToActionBar(item, playerReader, slot);
 
                 int array = (int)(slot / 24);
                 return bits[array].IsBitSet((slot - 1) % 24);
