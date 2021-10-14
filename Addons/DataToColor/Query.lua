@@ -98,18 +98,18 @@ function DataToColor:GetTargetName(partition)
     return 0
 end
 
-function DataToColor:CastingInfoSpellId(target)
-    local _, _, _, _, startTime, _, _, spellID = UnitCastingInfo(target)
+function DataToColor:CastingInfoSpellId(unitId)
+    local _, _, _, _, startTime, _, _, spellID = UnitCastingInfo(unitId)
     if spellID ~= nil then
-        if startTime ~= DataToColor.lastCastStartTime then
+        if unitId == DataToColor.C.unitPlayer and startTime ~= DataToColor.lastCastStartTime then
             DataToColor.lastCastStartTime = startTime
             DataToColor.CastNum = DataToColor.CastNum + 1
         end
         return spellID
     end
-    _, _, _, startTime, _, _, spellID = UnitChannelInfo(target)
+    _, _, _, startTime, _, _, spellID = UnitChannelInfo(unitId)
     if spellID ~= nil then
-        if startTime ~= DataToColor.lastCastStartTime then
+        if unitId == DataToColor.C.unitPlayer and startTime ~= DataToColor.lastCastStartTime then
             DataToColor.lastCastStartTime = startTime
             DataToColor.CastNum = DataToColor.CastNum + 1
         end
