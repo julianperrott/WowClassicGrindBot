@@ -59,7 +59,7 @@
           "Mana%>40",
           "InMeleeRange"
         ],
-        "Cooldown": 6000,
+        "WhenUsable": true,
         "Log": false,
         "MinMana": 80
       },

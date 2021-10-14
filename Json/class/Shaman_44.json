@@ -85,7 +85,7 @@
           "TargetHealth%>30"
         ],
         "Log": false,
-        "Cooldown": 12000,
+        "WhenUsable": true,
         "MinMana": 80
       },
       {

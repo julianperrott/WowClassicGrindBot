@@ -18,8 +18,8 @@
       {
         "Name": "Earth Shock",
         "Key": "6",
+        "WhenUsable": true,
         "Requirements": ["TargetHealth%>10", "SpellInRange:1"],
-		    "Cooldown": 6000,
         "MinMana": 30
       },
       {
