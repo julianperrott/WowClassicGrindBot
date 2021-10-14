@@ -31,7 +31,7 @@
         "Key": "5",
         "WhenUsable": true,
         "Requirement": "TargetHealth%>90",
-        "Cooldown": 60000,
+        "Form": "Warrior_BattleStance",
         "MinRage": 10
       },
       {
