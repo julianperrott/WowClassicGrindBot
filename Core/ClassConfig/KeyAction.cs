@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -92,7 +92,7 @@ namespace Core
                 Requirements.Add(this.Requirement);
             }
 
-            if (!string.IsNullOrEmpty(Form))
+            if (HasFormRequirement())
             {
                 if (Enum.TryParse(typeof(Form), Form, out var desiredForm))
                 {
@@ -122,7 +122,7 @@ namespace Core
         {
             Initialise(addonReader, requirementFactory, logger);
 
-            if (!string.IsNullOrEmpty(Form))
+            if (HasFormRequirement())
             {
                 if (addonReader.PlayerReader.FormCost.ContainsKey(FormEnum))
                 {
@@ -130,7 +130,7 @@ namespace Core
                 }
 
                 addonReader.PlayerReader.FormCost.Add(FormEnum, MinMana);
-                LogInformation($"Added {FormEnum} to FormCost with {MinMana}");
+                logger.LogInformation($"[{Name}] Added {FormEnum} to FormCost with {MinMana}");
             }
         }
 
@@ -165,6 +165,12 @@ namespace Core
                 this.logger.LogError(e, "GetCooldownRemaining()");
                 return 0;
             }
+        }
+
+        public bool CanDoFormChangeAndHaveMinimumMana()
+        {
+            return playerReader != null &&
+                (playerReader.FormCost.ContainsKey(FormEnum) && playerReader.ManaCurrent >= playerReader.FormCost[FormEnum] + MinMana);
         }
 
         internal void SetClicked()
@@ -246,6 +252,11 @@ namespace Core
             return !this.RequirementObjects.Any(r => !r.HasRequirement());
         }
 
+        public bool HasFormRequirement()
+        {
+            return !string.IsNullOrEmpty(Form);
+        }
+
         private void UpdateMinResourceRequirement(PlayerReader playerReader, ActionBarCostReader actionBarCostReader)
         {
             var tuple = actionBarCostReader.GetCostByActionBarSlot(playerReader, this);
@@ -268,7 +279,13 @@ namespace Core
                         break;
                 }
 
-                logger.LogInformation($"[{Name}] Update {tuple.Item1} cost to {tuple.Item2} from {oldValue}");
+                int formCost = 0;
+                if (HasFormRequirement() && FormEnum != Core.Form.None && playerReader.FormCost.ContainsKey(FormEnum))
+                {
+                    formCost = playerReader.FormCost[FormEnum];
+                }
+
+                logger.LogInformation($"[{Name}] Update {tuple.Item1} cost to {tuple.Item2} from {oldValue}" + (formCost > 0 ? $" +{formCost} Mana to change {FormEnum} Form" : ""));
             }
         }
 

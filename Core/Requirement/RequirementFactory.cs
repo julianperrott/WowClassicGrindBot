@@ -127,8 +127,15 @@ namespace Core
             {
                 RequirementObjects.Add(new Requirement
                 {
-                    HasRequirement = () => playerReader.UsableAction.Is(item),
-                    LogMessage = () => $"Usable"
+                    HasRequirement = () => 
+                        !item.HasFormRequirement() ? playerReader.UsableAction.Is(item) :
+                        (playerReader.Form == item.FormEnum && playerReader.UsableAction.Is(item)) ||
+                        (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()),
+
+                    LogMessage = () => 
+                        !item.HasFormRequirement() ? $"Usable" : // {playerReader.UsableAction.Num(item)}
+                        (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
+                        (playerReader.Form == item.FormEnum && playerReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
                 });
             }
         }
@@ -495,23 +502,20 @@ namespace Core
             }
 
             var valueCheck = valueDictionary[parts[0]];
-
-            Func<long> formChangeCost = () => playerReader.Form != form ? (playerReader.FormCost.TryGetValue(form, out int cost) ? cost : 0) : 0;
-
             if (symbol == ">")
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() + formChangeCost() >= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} >= {value}"
+                    HasRequirement = () => valueCheck() >= value,
+                    LogMessage = () => $"{parts[0]} {valueCheck()} >= {value}"
                 };
             }
             else
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() + formChangeCost() <= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} <= {value}"
+                    HasRequirement = () => valueCheck() <= value,
+                    LogMessage = () => $"{parts[0]} {valueCheck()} <= {value}"
                 };
             }
         }

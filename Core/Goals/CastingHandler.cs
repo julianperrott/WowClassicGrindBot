@@ -141,8 +141,7 @@ namespace Core.Goals
             {
                 (inputNotHappened, inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
                     interrupt: () =>
-                    (beforeSpellId != playerReader.CastSpellId.Value &&
-                    beforeCastEventValue != playerReader.CastEvent.Value) ||
+                    (beforeSpellId != playerReader.CastSpellId.Value && beforeCastEventValue != playerReader.CastEvent.Value) ||
                     beforeUsable != playerReader.UsableAction.Is(item)
                 );
             }
@@ -257,8 +256,17 @@ namespace Core.Goals
                 return true;
             }
 
-            if (!await SwitchToCorrectStanceForm(item))
+            bool beforeUsable = playerReader.UsableAction.Is(item);
+            var beforeForm = playerReader.Form;
+
+            if (!await SwitchToCorrectStanceForm(beforeForm, item))
             {
+                return false;
+            }
+
+            if (beforeForm != playerReader.Form && !beforeUsable && !playerReader.UsableAction.Is(item))
+            {
+                item.LogInformation(" ... after Form switch still not usable!");
                 return false;
             }
 
@@ -396,7 +404,7 @@ namespace Core.Goals
             return true;
         }
 
-        protected async Task<bool> SwitchToCorrectStanceForm(KeyAction item)
+        protected async Task<bool> SwitchToCorrectStanceForm(Form beforeForm, KeyAction item)
         {
             if (string.IsNullOrEmpty(item.Form))
                 return true;
@@ -416,16 +424,11 @@ namespace Core.Goals
                 return false;
             }
 
-            if (formKeyAction.CanRun())
-            {
-                var beforeForm = playerReader.Form;
-                await input.KeyPress(formKeyAction.ConsoleKey, item.PressDuration);
-                (bool notChanged, double elapsedMs) = await wait.InterruptTask(100, () => beforeForm != playerReader.Form);
-                item.LogInformation($" ... form changed: {!notChanged} | Delay: {elapsedMs}ms");
-                return playerReader.Form == item.FormEnum;
-            }
+            await input.KeyPress(formKeyAction.ConsoleKey, item.PressDuration);
+            (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => beforeForm != playerReader.Form);
+            item.LogInformation($" ... form changed: {!notChanged} | Delay: {elapsedMs}ms");
 
-            return false;
+            return playerReader.Form == item.FormEnum;
         }
 
         public async Task PressKey(ConsoleKey key, string description = "", int duration = 50)
