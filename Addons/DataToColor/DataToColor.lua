@@ -50,6 +50,7 @@ DataToColor.lastAutoShot = 0
 DataToColor.lastMainHandMeleeSwing = 0
 DataToColor.lastCastEvent = 0
 DataToColor.lastCastSpellId = 0
+DataToColor.lastCastId = 0
 
 DataToColor.targetChanged = true
 
@@ -499,8 +500,10 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPetTarget), 69) -- pet target
 
             -- Timers
-            MakePixelSquareArrI(DataToColor.globalTime, 70)
-            MakePixelSquareArrI(DataToColor.lastLoot, 71)
+            MakePixelSquareArrI(DataToColor.lastLoot, 97)
+            MakePixelSquareArrI(DataToColor.globalTime, 98)
+
+            -- 99 Reserved
 
             DataToColor:ConsumeChanges()
 
