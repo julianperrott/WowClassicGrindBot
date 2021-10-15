@@ -219,6 +219,11 @@ namespace Core
                 return CreateTargetCastingSpellRequirement(requirement);
             }
 
+            if(requirement.Contains("Form"))
+            {
+                return CreateFormRequirement(requirement);
+            }
+
             if (BuffDictionary.Count == 0)
             {
                 BuffDictionary = new Dictionary<string, Func<bool>>
@@ -403,6 +408,26 @@ namespace Core
                     LogMessage = () => "Target casting"
                 };
             }
+        }
+
+        private Requirement CreateFormRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var form = Enum.Parse<Form>(parts[1]);
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => playerReader.Form != form,
+                    LogMessage = () => $"not {form}"
+                };
+            }
+            return new Requirement
+            {
+                HasRequirement = () => playerReader.Form == form,
+                LogMessage = () => $"{playerReader.Form}"
+            };
         }
 
         private Requirement CreateNpcRequirement(string requirement)

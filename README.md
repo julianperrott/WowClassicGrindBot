@@ -480,6 +480,16 @@ e.g.
 * "not BagItem:19007:1" - Must have a lesser Healthstone in the bag https://classic.wowhead.com/item=19007
 * "not BagItem:6265:3"- Must not have 3 soulshards in the bag.
 
+#### Form requirements
+
+If the character must be - in or not - the specified `Form` use this requirement. Useful to determine when to switch Form for the given situation.
+
+It has the format Form:[Form]
+
+e.g. 
+* "Form:Druid_Bear - Must be in `Druid_Bear` form
+* "not Form:Druid_Cat" - Shoudn't be in `Druid_Cat` form
+
 #### Buff / Debuff
 
 Allow requirements about what buffs you have or the target has to be evaluated.
