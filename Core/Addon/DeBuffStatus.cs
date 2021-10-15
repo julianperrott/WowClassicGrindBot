@@ -31,6 +31,7 @@
         public bool Rip => IsBitSet(2);
         public bool Moonfire => IsBitSet(3);
         public bool EntanglingRoots => IsBitSet(4);
+        public bool Rake => IsBitSet(5);
 
         // Paladin
 

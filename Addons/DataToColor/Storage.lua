@@ -160,6 +160,7 @@ function CreateTargetDebuffList()
         DataToColor.S.targetDebuffs[2] = { "Rip", [132152]=1 }
         DataToColor.S.targetDebuffs[3] = { "Moonfire", [136096]=1 }
         DataToColor.S.targetDebuffs[4] = { "Entangling Roots", [136100]=1 }
+        DataToColor.S.targetDebuffs[5] = { "Rake", [132122]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
     elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
         DataToColor.S.targetDebuffs[0] = { "Frostbite", [135842]=1 }

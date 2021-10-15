@@ -310,6 +310,7 @@ namespace Core
                     {  "Rip", ()=> playerReader.Debuffs.Rip },
                     {  "Moonfire", ()=> playerReader.Debuffs.Moonfire },
                     {  "Entangling Roots", ()=> playerReader.Debuffs.EntanglingRoots },
+                    {  "Rake", ()=> playerReader.Debuffs.Rake },
                     // Warrior Debuff
                     {  "Rend", ()=> playerReader.Debuffs.Rend },
                     // Priest Debuff
