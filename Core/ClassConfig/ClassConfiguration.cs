@@ -126,12 +126,14 @@ namespace Core
             InitializeKeyActions(Pull, Interact, Approach, AutoAttack);
             InitializeKeyActions(Combat, Interact, Approach, AutoAttack);
 
+            logger.LogInformation("[Form] Initialise KeyActions.");
             Form.ForEach(i => i.InitialiseForm(addonReader, requirementFactory, logger));
-            Pull.Initialise(addonReader, requirementFactory, logger);
-            Combat.Initialise(addonReader, requirementFactory, logger);
-            Adhoc.Initialise(addonReader, requirementFactory, logger);
-            NPC.Initialise(addonReader, requirementFactory, logger);
-            Parallel.Initialise(addonReader, requirementFactory, logger);
+
+            Pull.Initialise("Pull", addonReader, requirementFactory, logger);
+            Combat.Initialise("Combat", addonReader, requirementFactory, logger);
+            Adhoc.Initialise("Adhoc", addonReader, requirementFactory, logger);
+            NPC.Initialise("AdhocNpc", addonReader, requirementFactory, logger);
+            Parallel.Initialise("Parallel", addonReader, requirementFactory, logger);
 
             Jump.Key = JumpKey;
             Jump.Initialise(addonReader, requirementFactory, logger);
