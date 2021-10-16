@@ -211,7 +211,9 @@ namespace Core.Goals
 
             if (castAny)
             {
-                (bool interrupted, double elapsedMs) = await wait.InterruptTask(1000, () => playerReader.PlayerBitValues.PlayerInCombat);
+                (bool interrupted, double elapsedMs) = await wait.InterruptTask(1000,
+                    () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe ||
+                          playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingPet);
                 if (!interrupted)
                 {
                     Log($"Entered combat after {elapsedMs}ms");
