@@ -157,7 +157,7 @@ namespace Core.Goals
 
             item.LogInformation($" ... usable: {beforeUsable}->{playerReader.UsableAction.Is(item)} -- ({(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value})");
 
-            if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value) || (beforeUsable && !playerReader.UsableAction.Is(item)))
+            if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value) || !(beforeUsable && !playerReader.UsableAction.Is(item)))
             {
                 await ReactToLastCastingEvent(item, $"{item.Name}-{GetType().Name}: CastInstant");
                 return false;
