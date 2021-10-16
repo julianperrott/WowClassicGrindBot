@@ -19,6 +19,7 @@
         public bool Drinking => IsBitSet(1);
         public bool WellFed => IsBitSet(2);
         public bool ManaRegeneration => IsBitSet(3);
+        public bool Clearcasting => IsBitSet(4);
 
         // Priest
         public bool Fortitude => IsBitSet(10);
@@ -47,6 +48,7 @@
         public bool Ward => IsBitSet(13);
         public bool FirePower => IsBitSet(14);
         public bool ManaShield => IsBitSet(15);
+        public bool PresenceOfMind => IsBitSet(16);
 
         // Rogue
         public bool SliceAndDice => IsBitSet(10);

@@ -228,6 +228,7 @@ namespace Core
                     {  "Drinking", ()=> playerReader.Buffs.Drinking },
                     {  "Mana Regeneration", ()=> playerReader.Buffs.ManaRegeneration },
                     {  "Well Fed", ()=> playerReader.Buffs.WellFed },
+                    {  "Clearcasting", ()=> playerReader.Buffs.Clearcasting },
                     //Priest
                     {  "Fortitude", ()=> playerReader.Buffs.Fortitude },
                     {  "InnerFire", ()=> playerReader.Buffs.InnerFire },
@@ -255,6 +256,7 @@ namespace Core
                     {  "Ward", ()=>playerReader.Buffs.Ward },
                     {  "Fire Power", ()=>playerReader.Buffs.FirePower },
                     {  "Mana Shield", ()=>playerReader.Buffs.ManaShield },
+                    {  "Presence of Mind", ()=>playerReader.Buffs.PresenceOfMind },
                     // Rogue
                     {  "Slice and Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Stealth", ()=> playerReader.Buffs.Stealth },

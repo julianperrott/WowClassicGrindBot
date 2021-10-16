@@ -104,6 +104,7 @@ function CreatePlayerBuffList()
     DataToColor.S.playerBuffs[1] = { "Drink", [132794]=1, [132800]=1, [132805]=1, [132802]=1 }
     DataToColor.S.playerBuffs[2] = { "Well Fed", [136000]=1 }
     DataToColor.S.playerBuffs[3] = { "Mana Regeneration", [2]=1 } -- potion?
+    DataToColor.S.playerBuffs[4] = { "Clearcasting", [136170]=1 } -- Druid / Mage / Shaman
 
     if DataToColor.C.CHARACTER_CLASS == "PRIEST" then
         DataToColor.S.playerBuffs[10] = { "Fortitude", [135987]=1, [135941]=1 }
@@ -129,6 +130,7 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[13] = { "Ward", [135806]=1, [135850]=1 }
         DataToColor.S.playerBuffs[14] = { "Fire Power", [135817]=1 } -- not sure what is this
         DataToColor.S.playerBuffs[15] = { "Mana Shield", [136153]=1 }
+        DataToColor.S.playerBuffs[16] = { "Presence of Mind", [136031]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
         DataToColor.S.playerBuffs[10] = { "Slice and Dice", [132306]=1 }
         DataToColor.S.playerBuffs[11] = { "Stealth", [132320]=1 }
