@@ -346,6 +346,7 @@ namespace Core.Goals
                 if (!npcNameFinder.MobsVisible)
                 {
                     await mountHandler.MountUp();
+                    stuckDetector.ResetStuckParameters();
                 }
                 else
                 {
