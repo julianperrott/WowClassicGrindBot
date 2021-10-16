@@ -91,11 +91,11 @@ namespace Core
         {
             if (value > 0)
             {
-                if( type == "Mana")
+                if (type == "Mana")
                 {
                     RequirementObjects.Add(new Requirement
                     {
-                        HasRequirement = () => playerReader.ManaCurrent >= value,
+                        HasRequirement = () => playerReader.ManaCurrent >= value || playerReader.Buffs.Clearcasting,
                         LogMessage = () => $"{type} {playerReader.ManaCurrent} >= {value}"
                     });
                 }
@@ -103,7 +103,7 @@ namespace Core
                 {
                     RequirementObjects.Add(new Requirement
                     {
-                        HasRequirement = () => playerReader.PTCurrent >= value,
+                        HasRequirement = () => playerReader.PTCurrent >= value || playerReader.Buffs.Clearcasting,
                         LogMessage = () => $"{type} {playerReader.PTCurrent} >= {value}"
                     });
                 }
