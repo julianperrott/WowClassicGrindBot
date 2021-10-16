@@ -28,7 +28,7 @@
         "Key": "0",
         "StopBeforeCast": true,
         "Cooldown": 3000,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
+        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"],
         "Log": false
       },
       {
