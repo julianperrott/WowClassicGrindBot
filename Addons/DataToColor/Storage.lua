@@ -131,6 +131,7 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[14] = { "Fire Power", [135817]=1 } -- not sure what is this
         DataToColor.S.playerBuffs[15] = { "Mana Shield", [136153]=1 }
         DataToColor.S.playerBuffs[16] = { "Presence of Mind", [136031]=1 }
+        DataToColor.S.playerBuffs[17] = { "Arcane Power", [136048]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
         DataToColor.S.playerBuffs[10] = { "Slice and Dice", [132306]=1 }
         DataToColor.S.playerBuffs[11] = { "Stealth", [132320]=1 }

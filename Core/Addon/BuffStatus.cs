@@ -49,6 +49,7 @@
         public bool FirePower => IsBitSet(14);
         public bool ManaShield => IsBitSet(15);
         public bool PresenceOfMind => IsBitSet(16);
+        public bool ArcanePower => IsBitSet(17);
 
         // Rogue
         public bool SliceAndDice => IsBitSet(10);

@@ -121,6 +121,7 @@ namespace Core
                 });
             }
         }
+
         private void CreateActionUsableRequirement(List<Requirement> RequirementObjects, KeyAction item)
         {
             if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
@@ -144,7 +145,9 @@ namespace Core
         {
             if (item.Name == name)
             {
+                item.StopBeforeCast = true;
                 item.WhenUsable = true;
+                item.AfterCastWaitBuff = true;
 
                 item.RequirementObjects.Add(new Requirement
                 {
@@ -257,6 +260,7 @@ namespace Core
                     {  "Fire Power", ()=>playerReader.Buffs.FirePower },
                     {  "Mana Shield", ()=>playerReader.Buffs.ManaShield },
                     {  "Presence of Mind", ()=>playerReader.Buffs.PresenceOfMind },
+                    {  "Arcane Power", ()=>playerReader.Buffs.ArcanePower },
                     // Rogue
                     {  "Slice and Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Stealth", ()=> playerReader.Buffs.Stealth },
