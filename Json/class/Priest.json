@@ -74,10 +74,10 @@
         "Log": false
       },
       {
-        "Name": "Shooting",
+        "Name": "Shoot",
         "Key": "0",
-        "Requirement": "not Shooting",
-        "Cooldown": 2000,
+        "HasCastBar": true,
+        "Requirements": ["HasRangedWeapon", "not Shooting"],
         "Log": false
       },
       {

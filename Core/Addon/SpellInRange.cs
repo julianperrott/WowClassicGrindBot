@@ -28,10 +28,9 @@ namespace Core
 
         // Priest
         public bool Priest_ShadowWordPain => IsBitSet(0);
-
-        public bool Priest_MindBlast => IsBitSet(1);
+        public bool Priest_Shoot => IsBitSet(1);
         public bool Priest_MindFlay => IsBitSet(2);
-        public bool Priest_Shoot => IsBitSet(3);
+        public bool Priest_MindBlast => IsBitSet(3);
 
         // Druid
         public bool Druid_Wrath => IsBitSet(0);

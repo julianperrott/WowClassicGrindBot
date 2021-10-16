@@ -620,9 +620,9 @@ In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tri
 | WARRIOR | Shoot Gun | 2 |
 | --- | --- | --- |
 | PRIEST | Shadow Word: Pain | 0 |
-| PRIEST | Mind Blast | 1 |
+| PRIEST | Shoot | 1 |
 | PRIEST | Mind Flay | 2 |
-| PRIEST | Shoot | 3 |
+| PRIEST | Mind Blast | 3 |
 | --- | --- | --- |
 | PALADIN | Judgement | 0 |
 | --- | --- | --- |
