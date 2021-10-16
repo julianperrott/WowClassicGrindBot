@@ -37,6 +37,7 @@
 
         // Mage
         public bool Frostbite => IsBitSet(0);
+        public bool Slow => IsBitSet(1);
 
         // Rogue
 

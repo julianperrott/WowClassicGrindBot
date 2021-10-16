@@ -300,6 +300,7 @@ namespace Core
                     {  "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },
                     // Mage Debuff
                     { "Frostbite", ()=> playerReader.Debuffs.Frostbite },
+                    { "Slow", ()=> playerReader.Debuffs.Slow },
                     // Warlock Debuff
                     {  "Curse of Weakness", ()=> playerReader.Debuffs.Curseof },
                     {  "Curse of Elements", ()=> playerReader.Debuffs.Curseof },

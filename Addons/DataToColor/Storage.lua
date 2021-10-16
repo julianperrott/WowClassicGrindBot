@@ -167,6 +167,7 @@ function CreateTargetDebuffList()
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
     elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
         DataToColor.S.targetDebuffs[0] = { "Frostbite", [135842]=1 }
+        DataToColor.S.targetDebuffs[1] = { "Slow", [136091]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
     elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
         DataToColor.S.targetDebuffs[0] = { "Rend", [132155]=1 }
