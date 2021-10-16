@@ -277,7 +277,7 @@ Commands have the following parameters, only a subset will be used by each comma
 | MinRage | (Optional) The minimum Rage required to cast the spell | 0 |
 | MinEnergy | (Optional) The minimum Energy required to cast the spell | 0 |
 | MinComboPoints | The minimum combo points required to cast the spell | 0 |
-| WhenUsable | When not in cooldown and have the min resource(mana,rage,energy) to use it. | false |
+| WhenUsable | When not in cooldown(GCD included) and have the min resource(mana,rage,energy) to use it. | false |
 | Requirement | A single "Requirement" (See below) which must be true | |
 | Requirements | A list of "Requirements" which must be true |  |
 | WaitForWithinMelleRange| Wait after casting for the mob to be in melee range | false |

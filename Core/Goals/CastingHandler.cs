@@ -103,8 +103,7 @@ namespace Core.Goals
             return
                 uiEvent == UI_ERROR.CAST_START ||
                 uiEvent == UI_ERROR.CAST_SUCCESS ||
-                uiEvent == UI_ERROR.NONE ||
-                uiEvent == UI_ERROR.SPELL_FAILED_ITEM_NOT_READY;
+                uiEvent == UI_ERROR.NONE;
         }
 
         private async Task<bool> CastInstant(KeyAction item)
@@ -156,9 +155,9 @@ namespace Core.Goals
                 return false;
             }
 
-            item.LogInformation($" ... usable: {playerReader.UsableAction.Is(item)} -- ({(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value})");
+            item.LogInformation($" ... usable: {beforeUsable}->{playerReader.UsableAction.Is(item)} -- ({(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value})");
 
-            if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value))
+            if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value) || (beforeUsable && !playerReader.UsableAction.Is(item)))
             {
                 await ReactToLastCastingEvent(item, $"{item.Name}-{GetType().Name}: CastInstant");
                 return false;
@@ -190,6 +189,8 @@ namespace Core.Goals
             await wait.Update(1);
 
             bool beforeHasTarget = playerReader.HasTarget;
+
+            bool beforeUsable = playerReader.UsableAction.Is(item);
             int beforeCastEventValue = playerReader.CastEvent.Value;
             int beforeSpellId = playerReader.CastSpellId.Value;
             int beforeCastCount = playerReader.CastCount;
@@ -213,7 +214,7 @@ namespace Core.Goals
                 return false;
             }
 
-            item.LogInformation($" ... casting: {playerReader.IsCasting} -- count:{playerReader.CastCount} -- usable: {playerReader.UsableAction.Is(item)} -- {(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value}");
+            item.LogInformation($" ... casting: {playerReader.IsCasting} -- count:{playerReader.CastCount} -- usable: {beforeUsable}->{playerReader.UsableAction.Is(item)} -- {(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value}");
 
             if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value))
             {
