@@ -64,12 +64,12 @@ namespace Core
             CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
             CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
 
+            CreateConsumableRequirement("Water", item);
+            CreateConsumableRequirement("Food", item);
+
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
             CreateTargetIsCastingRequirement(item.RequirementObjects, item.UseWhenTargetIsCasting);
             CreateActionUsableRequirement(item.RequirementObjects, item);
-
-            CreateWaterRequirement(item);
-            CreateFoodRequirement(item);
 
             item.CreateCooldownRequirement();
             item.CreateChargeRequirement();
@@ -140,39 +140,11 @@ namespace Core
             }
         }
 
-        private void CreateWaterRequirement(KeyAction item)
+        private void CreateConsumableRequirement(string name, KeyAction item)
         {
-            if (item.Name == "Water")
+            if (item.Name == name)
             {
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => bagReader.ItemCount(bagReader.HighestQuantityOfWaterId()) > 0,
-                    LogMessage = () => $"Has Water"
-                });
-
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => !playerReader.PlayerBitValues.IsSwimming,
-                    LogMessage = () => $"Not swim"
-                });
-
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => !playerReader.PlayerBitValues.IsFalling,
-                    LogMessage = () => $"Not falling"
-                });
-            }
-        }
-
-        private void CreateFoodRequirement(KeyAction item)
-        {
-            if (item.Name == "Food")
-            {
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => bagReader.ItemCount(bagReader.HighestQuantityOfFoodId()) > 0,
-                    LogMessage = () => $"Has Food"
-                });
+                item.WhenUsable = true;
 
                 item.RequirementObjects.Add(new Requirement
                 {
