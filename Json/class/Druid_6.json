@@ -41,12 +41,12 @@
         "HasCastBar": true
       },
       {
-        "Name": "Approach",
-        "Log": false
-      },
-      {
         "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },

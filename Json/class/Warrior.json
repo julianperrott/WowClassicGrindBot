@@ -52,13 +52,12 @@
         "MinRage": 10
       },
       {
-        "Name": "Approach",
-        "Requirement": "not InMeleeRange",
-        "Cooldown": 1000
-      },
-      {
         "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },

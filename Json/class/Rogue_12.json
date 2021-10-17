@@ -49,13 +49,12 @@
         "Requirement": "LastMainHandMs<500"
       },
       {
-        "Name": "Approach",
-        "Log": false
+        "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking"
       },
       {
-        "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking",
-        "Cooldown": 1000
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },

@@ -48,7 +48,11 @@
         },
         {
           "Name": "AutoAttack",
-          "Cooldown": 1000
+          "Requirement": "not AutoAttacking"
+        },
+        {
+          "Name": "Approach",
+          "Log": false
         }
       ]
     },

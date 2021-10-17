@@ -99,7 +99,6 @@
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3000,
         "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       },
       {

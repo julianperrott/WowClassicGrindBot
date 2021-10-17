@@ -32,12 +32,12 @@
         "MinMana": 25
       },
       {
-        "Name": "Approach",
-        "Log": false
-      },
-      {
         "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },

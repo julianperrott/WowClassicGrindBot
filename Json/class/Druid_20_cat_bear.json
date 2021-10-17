@@ -133,12 +133,12 @@
         "Requirements": ["not Form:Druid_Cat", "Health%>60", "MobCount<1"]
       },
       {
-        "Name": "Approach",
-        "Log": false
-      },
-      {
         "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },

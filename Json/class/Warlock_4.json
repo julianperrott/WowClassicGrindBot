@@ -42,15 +42,12 @@
         "Cooldown": 8000
       },
       {
-        "Name": "Shoot",
-        "Key": "0",
-        "HasCastbar": true,
-        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"]
+        "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking"
       },
       {
-        "Name": "AutoAttack",
-        "Cooldown": 3000,
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },

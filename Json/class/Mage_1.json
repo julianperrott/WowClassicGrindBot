@@ -23,12 +23,15 @@
         "HasCastBar": true,
         "Key": "2",
         "MinMana": 30,
-        "Requirement": "TargetHealth%>10"
+        "Requirement": "TargetHealth%>20"
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3000,
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
