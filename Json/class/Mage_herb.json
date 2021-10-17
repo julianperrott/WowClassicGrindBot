@@ -13,11 +13,6 @@
 
   "Blacklist": ["hive","tortured"],
 
-  "Blink":{
-      "Name": "Blink",
-      "Key": "T"
-    },
-
   "Pull": {
     "Sequence": [
       {
@@ -39,7 +34,7 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Hero Charm",
+        "Name": "Trinket Hero Charm",
         "Key": "F8",
         "Cooldown": 120000,
         "Log": false,

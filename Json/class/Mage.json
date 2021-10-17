@@ -11,12 +11,6 @@
 
   "Blacklist": ["Kolkar","Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
-
-  "Blink":{
-    "Name": "Blink",
-    "Key": "T"
-  },
-
   "Pull": {
     "Sequence": [
       {

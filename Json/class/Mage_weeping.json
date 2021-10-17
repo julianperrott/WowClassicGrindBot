@@ -13,11 +13,6 @@
 
   "Blacklist": ["hive","tortured"],
 
-  "Blink":{
-      "Name": "Blink",
-      "Key": "T"
-    },
-
   "Pull": {
     "Sequence": [
       {

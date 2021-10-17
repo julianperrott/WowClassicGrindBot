@@ -5,18 +5,12 @@
   "NPCMaxLevels_Below": 6,
   "NPCMaxLevels_Above": 2,
 
-  "PathFilename": "25_wetlands.json",
-  "SpiritPathFilename": "25_wetlands_spirithealer.json",
+  "PathFilename": "33_Arathi.json",
+  "SpiritPathFilename": "33_Arathi_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
 
   "Blacklist": ["Kolkar","Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
-
-
-  "Blink":{
-    "Name": "Blink",
-    "Key": "T"
-  },
 
   "Pull": {
     "Sequence": [
@@ -105,7 +99,7 @@
         "Name": "Conjure Water",
         "HasCastBar": true,
         "Key": "9",
-        "Requirement": "not BagItem:2136:4",
+        "Requirement": "not BagItem:3772:4",
         "Cooldown": 30000,
         "Log": false
       },

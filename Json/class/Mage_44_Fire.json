@@ -12,11 +12,6 @@
 
   "Blacklist": ["Loch Crocolisk","Stonesplinter","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
 
-  "Blink":{
-    "Name": "Blink",
-    "Key": "T"
-  },
-
   "Pull": {
     "Sequence": [
       {
