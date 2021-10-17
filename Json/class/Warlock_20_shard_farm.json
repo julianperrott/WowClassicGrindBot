@@ -84,6 +84,13 @@
         "Cooldown": 8000
       },
       {
+        "Name": "Health Funnel",
+        "Key": "N6",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": ["Has Pet", "Health%>70", "PetHealth%<30"]
+      },
+      {
         "Name": "Shoot",
         "Key": "0",
         "HasCastbar": true,
@@ -92,12 +99,6 @@
       {
         "Name": "AutoAttack",
         "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
-      },
-      {
-        "Name": "Health Funnel",
-        "Key": "N6",
-        "HasCastBar": true,
-        "Requirements": ["Has Pet", "Health%>70", "PetHealth%<30"]
       }
     ]
   },
