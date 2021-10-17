@@ -581,9 +581,44 @@ namespace Core.Goals
                         return;
                     }
 
-                    logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_OUT_OF_RANGE} -- Start moving forward");
+                    float minRange = playerReader.MinRange;
+                    if (playerReader.PlayerBitValues.PlayerInCombat && playerReader.HasTarget && !playerReader.IsTargetCasting)
+                    {
+                        await wait.Update(2);
+                        if (playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe)
+                        {
+                            logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_OUT_OF_RANGE} -- Just wait for the target to get in range.");
+                            
+                            (bool inputNotHappened, double inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
+                                () => minRange != playerReader.MinRange || playerReader.IsTargetCasting
+                            );
+                        }
+                    }
+                    else
+                    {
+                        double beforeDirection = playerReader.Direction;
+                        await input.TapInteractKey("");
+                        await input.TapStopAttack();
+                        await stopMoving.Stop();
+                        await wait.Update(1);
 
-                    input.SetKeyState(ConsoleKey.UpArrow, true, false, "");
+                        if (beforeDirection != playerReader.Direction)
+                        {
+                            await input.TapInteractKey("");
+
+                            (bool inputNotHappened, double inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
+                                () => minRange != playerReader.MinRange);
+
+                            logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_OUT_OF_RANGE} -- Approached target {minRange}->{playerReader.MinRange}");
+                        }
+                        else
+                        {
+                            logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_OUT_OF_RANGE} -- Start moving forward");
+                            input.SetKeyState(ConsoleKey.UpArrow, true, false, "");
+                        }
+
+
+                    }
 
                     break;
                 case UI_ERROR.ERR_BADATTACKFACING:
