@@ -10,11 +10,6 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "Interact",
-        "Cooldown": 12000,
-        "DelayAfterCast": 0
-      },
-      {
         "Name": "Frostbolt",
         "HasCastBar": true,
         "Key": "5",
@@ -32,11 +27,6 @@
   },
   "Combat": {
     "Sequence": [
-      {
-        "Name": "Interact",
-        "Cooldown": 12000,
-        "DelayAfterCast": 0
-      },
       {
         "Name": "Fireblast",
         "Key": "0",
