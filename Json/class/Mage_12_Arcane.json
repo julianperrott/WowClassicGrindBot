@@ -40,11 +40,6 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Interact",
-        "Cooldown": 12000,
-        "DelayAfterCast": 0
-      },
-      {
         "Name": "Fireblast",
         "Key": "0",
         "MinMana": 75,
