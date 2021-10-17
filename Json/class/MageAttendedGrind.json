@@ -75,19 +75,13 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
         "Key": "6",
-        "Requirement": "Health%<90",
-        "Cooldown": 10000,
-        "Log": false
+        "Requirement": "Health%<90"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
         "Key": "7",
-        "Requirement": "Mana%<90",
-        "Cooldown": 10000,
-        "Log": false
+        "Requirement": "Mana%<90"
       }
     ]
     },

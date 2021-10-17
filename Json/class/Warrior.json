@@ -75,11 +75,8 @@
       },
       {
         "Name": "Food",
-        "StopBeforeCast": true,
         "Key": "=",
         "Requirement": "Health%<60",
-        "DelayAfterCast": 1000,
-        "Log": false,
         "Cost": 3
       },
       {

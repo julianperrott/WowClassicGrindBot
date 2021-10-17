@@ -163,11 +163,7 @@
       {
         "Name": "Water",
         "Key": "-",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Requirement": "Mana%<40",
-        "Cooldown": 10000,
         "Form": "None"
       }
     ]

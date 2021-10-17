@@ -117,11 +117,8 @@
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
         "Key": "8",
-        "Requirement": "Mana%<40",
-        "Cooldown": 10000,
-        "Log": false
+        "Requirement": "Mana%<40"
       },
       {
         "Name": "Fortitude",

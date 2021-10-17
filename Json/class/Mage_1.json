@@ -42,21 +42,13 @@
       },
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "=",
-        "Requirement": "Health%<30",
-        "Cooldown": 15000
+        "Requirement": "Health%<30"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "-",
-        "Requirement": "Mana%<30",
-        "Cooldown": 15000
+        "Requirement": "Mana%<30"
       }
     ]
   },

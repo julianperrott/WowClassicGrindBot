@@ -63,12 +63,8 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "N1",
-        "Requirement": "Health%<30",
-        "Cooldown": 15000
+        "Requirement": "Health%<30"
       }
     ]
   },

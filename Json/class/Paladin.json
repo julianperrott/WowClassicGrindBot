@@ -83,13 +83,9 @@
       },
       {
         "Name": "Water",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "Mana%<80",
-        "Cooldown": 60000,
-        "Cost": 3,
-        "Log": false
+        "Cost": 3
       },
       {
         "Name": "Sharpen Weapon",

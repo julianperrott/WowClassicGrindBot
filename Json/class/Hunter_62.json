@@ -129,21 +129,13 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "-",
-        "Requirement": "Health%<40",
-        "Cooldown": 10000
+        "Requirement": "Health%<40"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "=",
-        "Requirement": "Mana%<40",
-        "Cooldown": 10000
+        "Requirement": "Mana%<40"
       }
     ]
   }
