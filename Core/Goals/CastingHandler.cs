@@ -425,7 +425,7 @@ namespace Core.Goals
                 return false;
             }
 
-            await input.KeyPress(formKeyAction.ConsoleKey, item.PressDuration);
+            await input.KeyPress(formKeyAction.ConsoleKey, formKeyAction.PressDuration);
             (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => beforeForm != playerReader.Form);
             item.LogInformation($" ... form changed: {!notChanged} | Delay: {elapsedMs}ms");
 
