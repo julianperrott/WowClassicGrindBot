@@ -1,4 +1,4 @@
-﻿using SharedLib.Extensions;
+using SharedLib.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -148,10 +148,10 @@ namespace SharedLib.NpcFinder
 
         public void UpdatePotentialAddsExist()
         {
-            TargetCount = Npcs.Where(c => !c.IsAdd).Where(c => Math.Abs(c.ClickPoint.X - c.screenMid) < c.screenTargetBuffer).Count();
+            TargetCount = Npcs.Where(c => !c.IsAdd && Math.Abs(c.ClickPoint.X - c.screenMid) < c.screenTargetBuffer).Count();
             AddCount = Npcs.Where(c => c.IsAdd).Count();
 
-            if (Npcs.Count > 1 && TargetCount >= 1 && AddCount > 0)
+            if (AddCount > 0 || TargetCount > 1)
             {
                 PotentialAddsExist = true;
                 LastPotentialAddsSeen = DateTime.Now;

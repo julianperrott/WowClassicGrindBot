@@ -32,7 +32,7 @@ namespace SharedLib.NpcFinder
             Max = max;
             screenMid = screenWidth / 2;
             screenMidBuffer = screenWidth / 15;
-            screenTargetBuffer = screenMidBuffer / 4;
+            screenTargetBuffer = screenMidBuffer / 2;
             screenAddBuffer = screenMidBuffer * 3;
 
             this.yOffset = yOffset;
