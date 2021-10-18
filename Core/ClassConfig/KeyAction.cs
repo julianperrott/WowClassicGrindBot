@@ -156,7 +156,7 @@ namespace Core
                     return 0;
                 }
 
-                var remaining = this.Cooldown - ((int)(DateTime.Now - LastClicked[ConsoleKeyFormHash]).TotalMilliseconds);
+                var remaining = Cooldown - (float)(DateTime.Now - LastClicked[ConsoleKeyFormHash]).TotalMilliseconds;
 
                 return remaining < 0 ? 0 : remaining;
             }
@@ -201,10 +201,7 @@ namespace Core
 
         internal void ResetCooldown()
         {
-            if (LastClicked.ContainsKey(ConsoleKeyFormHash))
-            {
-                LastClicked.TryRemove(ConsoleKeyFormHash, out _);
-            }
+            LastClicked.TryRemove(ConsoleKeyFormHash, out _);
         }
 
         public void CreateChargeRequirement()
