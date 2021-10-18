@@ -17,13 +17,12 @@
       {
         "Name": "Immolate",
         "Key": "5",
+        "HasCastBar": true,
         "DelayBeforeCast": 1500,
         "Requirements": ["TargetHealth%>35", "not Immolate"],
-        "HasCastBar": true,
         "ResetOnNewTarget": true,
         "MinMana": 90,
-        "School": "Fire",
-        "Log": false
+        "School": "Fire"
       }
     ]
   },
@@ -34,8 +33,7 @@
         "Key": "N3",
         "Requirements": ["Health%<50", "BagItem:19005:1"],
         "Cooldown": 120000,
-        "InCombat": "true",
-        "Log": false
+        "InCombat": "true"
       },
       {
         "Name": "Drain Soul",
@@ -55,12 +53,11 @@
       {
         "Name": "Immolate",
         "Key": "5",
-        "Requirements": ["TargetHealth%>35", "not Immolate", "not InMeleeRange"],
         "HasCastBar": true,
+        "Requirements": ["TargetHealth%>35", "not Immolate", "not InMeleeRange"],
         "ResetOnNewTarget": true,
         "MinMana": 90,
-        "School": "Fire",
-        "Log": false
+        "School": "Fire"
       },
       {
         "Name": "Curse of Agony",
@@ -68,8 +65,7 @@
         "ResetOnNewTarget": true,
         "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
         "MinMana": 50,
-        "School": "Shadow",
-        "Log": false
+        "School": "Shadow"
       },
       {
         "Name": "Corruption",
@@ -77,8 +73,7 @@
         "Requirements": ["TargetHealth%>35", "not Corruption"],
         "ResetOnNewTarget": true,
         "MinMana": 55,
-        "School": "Shadow",
-        "Log": false
+        "School": "Shadow"
       },
       {
         "Name": "Shadow Bolt",
@@ -88,7 +83,6 @@
         "MinMana": 110,
         "Requirements": ["TargetHealth%>35", "not InMeleeRange"],
         "School": "Shadow",
-        "Log": false,
         "Cooldown": 8000
       },
       {
@@ -114,12 +108,12 @@
     "Sequence": [
       {
         "Name": "Food",
-        "Key": "N1",
+        "Key": "=",
         "Requirement": "Health%<50"
       },
       {
         "Name": "Water",
-        "Key": "N2",
+        "Key": "-",
         "Requirement": "Mana%<40"
       }
     ]
@@ -130,24 +124,20 @@
         "Name": "Demon Armor",
         "Key": "3",
         "MinMana": 275,
-        "Requirement": "not Demon Armor",
-        "Log": false
+        "Requirement": "not Demon Armor"
       },
       {
         "Name": "Summon Voidwalker",
         "HasCastBar": true,
         "Key": "4",
         "MinMana": 122,
-        "Requirements": ["BagItem:6265:1", "not Has Pet"],
-        "Log": false,
-        "Cooldown": 60000
+        "Requirements": ["BagItem:6265:1", "not Has Pet"]
       },
       {
         "Name": "Life Tap",
         "Key": "8",
         "Charge": 2,
-        "Requirements": ["Health%>70","Mana%<60"],
-        "Log": false
+        "Requirements": ["Health%>70","Mana%<60"]
       },
       {
         "Name": "heal",

@@ -1,7 +1,6 @@
 {
   "ClassName": "Warlock",
   "Loot": true,
-  "NPCMaxLevels_Below": 3,
   "PathFilename": "1_Gnome.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
@@ -10,8 +9,8 @@
     "Sequence": [
       {
         "Name": "Shadow Bolt",
-        "HasCastBar": true,
         "Key": "2",
+        "HasCastBar": true,
         "MinMana": 25
       }
     ]
@@ -44,12 +43,12 @@
       },
       {
         "Name": "Food",
-        "Key": "N1",
+        "Key": "=",
         "Requirement": "Health%<50"
       },
       {
         "Name": "Water",
-        "Key": "N2",
+        "Key": "-",
         "Requirement": "Mana%<50"
       }
     ]

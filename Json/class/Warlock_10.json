@@ -10,8 +10,8 @@
     "Sequence": [
       {
         "Name": "Immolate",
-        "HasCastBar": true,
         "Key": "5",
+        "HasCastBar": true,
         "MinMana": 25
       }
     ]
@@ -27,40 +27,31 @@
       },
       {
         "Name": "Immolate",
-        "HasCastBar": true,
         "Key": "5",
+        "HasCastBar": true,
         "Requirements": ["TargetHealth%>35", "not Immolate"], 
-        "ResetOnNewTarget": true,
-        "DelayAfterCast": 200,
         "MinMana": 25
       },
       {
         "Name": "Curse of Agony",
         "Key": "1",
-        "ResetOnNewTarget": true,
         "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
-        "MinMana": 25,
-        "StepBackAfterCast": 50,
-        "Log": false
+        "MinMana": 25
       },
       {
         "Name": "Corruption",
-        "HasCastBar": true,
-        "DelayAfterCast": 200,
         "Key": "7",
-        "Requirements": ["TargetHealth%>35", "not Corruption"], 
-        "ResetOnNewTarget": true,
+        "HasCastBar": true,
+        "Requirements": ["TargetHealth%>35", "not Corruption"],
         "MinMana": 25
       },
       {
         "Name": "Shadow Bolt",
+        "Key": "2",
         "HasCastBar": true,
         "Requirement": "TargetHealth%>35",
-        "DelayAfterCast": 0,
-        "Key": "2",
         "MinMana": 25,
-        "Cooldown": 8000,
-        "Log": false
+        "Cooldown": 8000
       },
       {
         "Name": "Shoot",
@@ -78,12 +69,12 @@
     "Sequence": [
       {
         "Name": "Food",
-        "Key": "N1",
+        "Key": "=",
         "Requirement": "Health%<50"
       },
       {
         "Name": "Water",
-        "Key": "N2",
+        "Key": "-",
         "Requirement": "Mana%<40"
       }
     ]
@@ -94,24 +85,20 @@
         "Name": "Demon Skin",
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "not Demon Skin",
-        "Log": false
+        "Requirement": "not Demon Skin"
       },
       {
         "Name": "Summon Voidwalker",
-        "HasCastBar": true,
         "Key": "4",
+        "HasCastBar": true,
         "MinMana": 122,
-        "Requirements": ["BagItem:6265:1", "not Has Pet"],
-        "Log": false,
-        "Cooldown": 60000
+        "Requirements": ["BagItem:6265:1", "not Has Pet"]
       },
       {
         "Name": "Life Tap",
         "Key": "8",
         "Charge": 2,
-        "Requirements": ["Health%>70","Mana%<60"],
-        "Log": false
+        "Requirements": ["Health%>70","Mana%<60"]
       }
     ]
   },
