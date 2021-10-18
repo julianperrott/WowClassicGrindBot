@@ -11,25 +11,43 @@
     "Sequence": [
       {
         "Name": "Frostbolt",
+        "Key": "1",
         "HasCastBar": true,
-        "Key": "5",
+        "Requirement": "SpellInRange:3",
         "MinMana": 35
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Fire Blast",
+        "Key": "5",
+        "MinMana": 40,
+        "WhenUsable": true,
+        "Requirements": ["TargetHealth%<45", "SpellInRange:4"]
+      },
+      {
+        "Name": "Frost Nova",
+        "Key": "6",
+        "MinMana": 55,
+        "WhenUsable": true,
+        "Requirement": "InMeleeRange",
+        "StepBackAfterCast": 1000,
+        "DelayAfterCast": 0
       },
       {
         "Name": "Arcane Missiles",
+        "Key": "7",
         "HasCastBar": true,
-        "Key": "=",
         "MinMana": 140,
-        "Cooldown": 60000,
-        "DelaybeforeCast": 1000
+        "Requirement": "SpellInRange:3"
       },
       {
         "Name": "Shoot",
         "Key": "0",
-        "StopBeforeCast": true,
-        "Cooldown": 3000,
-        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"],
-        "Log": false
+        "HasCastBar": true,
+        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"]
       },
       {
         "Name": "AutoAttack",
@@ -37,33 +55,16 @@
       }
     ]
   },
-  "Combat": {
-    "Sequence": [
-      {
-        "Name": "Fireblast",
-        "Key": "0",
-        "MinMana": 75,
-        "Requirements": ["Health%<80", "SpellInRange:4"],
-        "Cooldown": 8000
-      },
-      {
-        "Name": "Fireball",
-        "HasCastBar": true,
-        "Key": "2",
-        "MinMana": 65
-      }
-    ]
-  },
   "Parallel": {
     "Sequence": [
       {
         "Name": "Food",
-        "Key": "6",
+        "Key": "=",
         "Requirement": "Health%<90"
       },
       {
         "Name": "Water",
-        "Key": "7",
+        "Key": "-",
         "Requirement": "Mana%<90"
       }
     ]
@@ -81,32 +82,21 @@
         "Name": "Arcane Intellect",
         "Key": "4",
         "MinMana": 60,
-        "Requirement": "not Arcane Intellect",
-        "Log": false
+        "Requirement": "not Arcane Intellect"
       },
       {
         "Name": "Conjure Water",
-        "HasCastBar": true,
         "Key": "9",
+        "HasCastBar": true,
         "Requirement": "not BagItem:2288:4",
-        "Cooldown": 30000,
-        "Log": false
+        "Cooldown": 30000
       },
       {
         "Name": "Conjure Food",
-        "HasCastBar": true,
         "Key": "8",
+        "HasCastBar": true,
         "Requirement": "not BagItem:1113:4",
-        "Cooldown": 30000,
-        "Log": false
-      },
-      {
-        "Name": "Well Fed",
-        "StopBeforeCast": true,
-        "Key": "-",
-        "Requirement": "not Well Fed",
-        "Cooldown": 120000,
-        "Log": false
+        "Cooldown": 30000
       }
     ]
   }

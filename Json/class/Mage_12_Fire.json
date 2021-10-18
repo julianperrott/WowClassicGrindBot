@@ -9,8 +9,9 @@
     "Sequence": [
       {
         "Name": "Frostbolt",
-        "HasCastBar": true,
         "Key": "1",
+        "HasCastBar": true,
+        "Requirement": "SpellInRange:3",
         "MinMana": 25
       }
     ]
@@ -21,14 +22,14 @@
         "Name": "Fire Blast",
         "Key": "5",
         "MinMana": 40,
-        "Cooldown": 8000,
+        "WhenUsable": true,
         "Requirements": ["TargetHealth%<45", "SpellInRange:4"]
       },
       {
         "Name": "Frost Nova",
-        "Key": 6,
+        "Key": "6",
         "MinMana": 55,
-        "Cooldown": 25000,
+        "WhenUsable": true,
         "Requirement": "InMeleeRange",
         "StepBackAfterCast": 1000,
         "DelayAfterCast": 0
@@ -56,12 +57,12 @@
     "Sequence": [
       {
         "Name": "Food",
-        "Key": "N1",
+        "Key": "=",
         "Requirement": "Health%<60"
       },
       {
         "Name": "Water",
-        "Key": "N2",
+        "Key": "-",
         "Requirement": "Mana%<60"
       }
     ]
@@ -79,24 +80,21 @@
         "Name": "Arcane Intellect",
         "Key": "4",
         "MinMana": 60,
-        "Requirement": "not Arcane Intellect",
-        "Log": false
+        "Requirement": "not Arcane Intellect"
       },
       {
         "Name": "Conjure Water",
-        "HasCastBar": true,
         "Key": "9",
+        "HasCastBar": true,
         "Requirement": "not BagItem:2288:4",
-        "Cooldown": 30000,
-        "Log": false
+        "Cooldown": 30000
       },
       {
         "Name": "Conjure Food",
-        "HasCastBar": true,
         "Key": "8",
+        "HasCastBar": true,
         "Requirement": "not BagItem:1113:4",
-        "Cooldown": 30000,
-        "Log": false
+        "Cooldown": 30000
       }
     ]},
     "NPC": {

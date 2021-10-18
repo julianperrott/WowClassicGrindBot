@@ -12,6 +12,7 @@
         "Name": "Frostbolt",
         "HasCastBar": true,
         "Key": "1",
+        "Requirement": "SpellInRange:3",
         "MinMana": 25
       }
     ]
@@ -39,12 +40,12 @@
     "Sequence": [
       {
         "Name": "Food",
-        "Key": "6",
+        "Key": "=",
         "Requirement": "Health%<30"
       },
       {
         "Name": "Water",
-        "Key": "7",
+        "Key": "-",
         "Requirement": "Mana%<30"
       }
     ]
@@ -62,16 +63,14 @@
         "Name": "Arcane Intellect",
         "Key": "4",
         "MinMana": 60,
-        "Requirement": "not Arcane Intellect",
-        "Log": false
+        "Requirement": "not Arcane Intellect"
       },
       {
         "Name": "Conjure Water",
         "HasCastBar": true,
         "Key": "9",
         "Requirement": "not BagItem:5350:4",
-        "Cooldown": 30000,
-        "Log": false
+        "Cooldown": 30000
       }
     ]},
     "NPC": {

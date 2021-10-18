@@ -10,8 +10,8 @@
     "Sequence": [
       {
         "Name": "Fireball",
-        "HasCastBar": true,
         "Key": "2",
+        "HasCastBar": true,
         "MinMana": 65
       }
     ]
@@ -20,8 +20,8 @@
     "Sequence": [
       {
         "Name": "Fireball",
-        "HasCastBar": true,
         "Key": "2",
+        "HasCastBar": true,
         "MinMana": 30,
         "Requirement": "TargetHealth%>20"
       },

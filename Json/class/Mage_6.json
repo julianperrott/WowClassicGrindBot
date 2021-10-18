@@ -12,6 +12,7 @@
           "Name": "Frostbolt",
           "HasCastBar": true,
           "Key": "1",
+          "Requirement": "SpellInRange:3",
           "MinMana": 25
         }
       ]
@@ -22,14 +23,13 @@
           "Name": "Fire Blast",
           "Key": "5",
           "MinMana": 40,
-          "Cooldown": 8000,
-          "Requirements": ["TargetHealth%<45", "SpellInRange:4"],
-          "DelayAfterCast": 0
+          "WhenUsable": true,
+          "Requirements": ["TargetHealth%<45", "SpellInRange:4"]
         },
         {
           "Name": "Fireball",
-          "HasCastBar": true,
           "Key": "2",
+          "HasCastBar": true,
           "MinMana": 45
         },
         {
@@ -48,12 +48,12 @@
       "Sequence": [
         {
           "Name": "Food",
-          "Key": "6",
+          "Key": "=",
           "Requirement": "Health%<50"
         },
         {
           "Name": "Water",
-          "Key": "7",
+          "Key": "-",
           "Requirement": "Mana%<50"
         }
       ]
@@ -76,19 +76,17 @@
         },
         {
           "Name": "Conjure Water",
-          "HasCastBar": true,
           "Key": "9",
+          "HasCastBar": true,
           "Requirement": "not BagItem:5350:4",
-          "Cooldown": 30000,
-          "Log": false
+          "Cooldown": 30000
         },
         {
           "Name": "Conjure Food",
-          "HasCastBar": true,
           "Key": "8",
+          "HasCastBar": true,
           "Requirement": "not BagItem:5349:4",
-          "Cooldown": 30000,
-          "Log": false
+          "Cooldown": 30000
         }
       ]},
   "NPC": {
