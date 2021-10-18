@@ -9,6 +9,15 @@
         "Name": "Lightning Bolt",
         "Key": "2",
         "HasCastBar": true,
+        "Requirements": ["SpellInRange:0", "Stoneskin", "Mana%>50"],
+        "WaitForWithinMeleeRange": true,
+        "MinMana": 15
+      },
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Requirements": ["SpellInRange:0", "not Stoneskin", "Mana%>70"],
         "MinMana": 15
       }
     ]
@@ -19,17 +28,25 @@
         "Name": "Earth Shock",
         "Key": "6",
         "WhenUsable": true,
-        "Requirements": ["TargetHealth%>10", "SpellInRange:1"],
+        "Requirements": ["TargetHealth%>10", "SpellInRange:1", "Mana%>50", "TargetHealth%>20"],
         "MinMana": 30
       },
       {
         "Name": "Healing Wave",
         "Key": "3",
-        "Requirement": "Health%<40",
-        "Cooldown": 10000,
         "HasCastBar": true,
-        "Log": false,
+        "WhenUsable": true,
+        "Requirement": "Health%<40",
+        "Cooldown": 5000,
         "MinMana": 25
+      },
+      {
+        "Name": "Stoneskin Totem",
+        "Key": "F2",
+        "WhenUsable": true,
+        "Cooldown": 30000,
+        "Requirements": ["InMeleeRange", "TargetHealth%>50", "Mana%>50", "BagItem:5175", "not Stoneskin"],
+        "MinMana": 30
       },
       {
         "Name": "AutoAttack",
