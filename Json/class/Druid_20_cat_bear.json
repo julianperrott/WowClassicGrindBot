@@ -40,6 +40,7 @@
         "Name": "Moonfire",
         "Key": "5",
         "AfterCastWaitBuff": true,
+        "CastIfAddsVisible": true,
         "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire", "Mana%>40"],
         "StopBeforeCast": true,
         "Form": "None"
@@ -47,8 +48,13 @@
       {
         "Name": "Cat Form",
         "Key": "F3",
-        "Requirements": ["not Form:Druid_Cat"],
-        "WaitForWithinMeleeRange": true
+        "WaitForWithinMeleeRange": true,
+        "Requirements": ["Moonfire", "not Form:Druid_Cat"]
+      },
+      {
+        "Name": "Cat Form",
+        "Key": "F3",
+        "Requirements": ["not Form:Druid_Cat"]
       },
       {
         "Name": "Approach",
