@@ -93,8 +93,11 @@ and copy next to the common-2.MPQ file.
 ## 3.2 Optional - Replace default game Font
 
 I would highly suggest to replace the default World of Warcraft font with a much **Bolder** one.
+
 Follow this guide (https://classic.wowhead.com/guides/changing-wow-text-font)
+
 Should be only concerned about `Friz Quadrata: the "Everything Else" Font` which is the `FRIZQT__.ttf` named file.
+
 By replacing the default with for example - `Robot-Medium` https://fonts.google.com/specimen/Roboto?thickness=5) - you can highly increase the success rate of the `NpcNameFinder` compontent which is responsible to find - friendly, enemy, corpse - names above NPCs head.
 
 ## 4. Build the bot
