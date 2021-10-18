@@ -76,13 +76,14 @@ namespace Core.Goals
                     lastKnownMaxDistance = playerReader.MaxRange;
                 }
 
-                if (playerReader.IsAutoAttacking)
-                {
-                    await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}: Fight AutoAttacking");
-                }
-
                 if (await castingHandler.CastIfReady(item, item.DelayBeforeCast))
                 {
+                    if (item.Name == classConfiguration.Approach.Name ||
+                        item.Name == classConfiguration.AutoAttack.Name)
+                    {
+                        await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}: Fight {item.Name}");
+                    }
+
                     break;
                 }
             }
