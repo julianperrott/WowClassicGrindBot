@@ -215,32 +215,35 @@ namespace Core.Goals
                 return playerReader.HasTarget;
             }
 
-            await input.TapNearestTarget($"{GetType().Name}: Checking target in front of me");
-            await wait.Update(1);
-            if (playerReader.HasTarget)
+            if (playerReader.CombatCreatureCount > 1)
             {
-                if (playerReader.PlayerBitValues.TargetInCombat && playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
-                {
-                    ResetCooldowns();
-
-                    logger.LogWarning("---- Somebody is attacking me!");
-                    await input.TapInteractKey("Found new target to attack");
-                    await stopMoving.Stop();
-                    await wait.Update(1);
-                    return true;
-                }
-
-                await input.TapClearTarget();
+                await input.TapNearestTarget($"{GetType().Name}: Checking target in front of me");
                 await wait.Update(1);
-            }
-            else
-            {
-                // threat must be behind me
-                var anyDamageTakens = playerReader.DamageTaken.Where(x => (DateTime.Now - x.LastEvent).TotalSeconds < 10 && x.LastKnownHealthPercent > 0);
-                if (anyDamageTakens.Any())
+                if (playerReader.HasTarget)
                 {
-                    logger.LogWarning($"---- Possible threats found behind {anyDamageTakens.Count()}. Waiting for my target to change!");
-                    await wait.Interrupt(2000, () => playerReader.HasTarget);
+                    if (playerReader.PlayerBitValues.TargetInCombat && playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                    {
+                        ResetCooldowns();
+
+                        logger.LogWarning("---- Somebody is attacking me!");
+                        await input.TapInteractKey("Found new target to attack");
+                        await stopMoving.Stop();
+                        await wait.Update(1);
+                        return true;
+                    }
+
+                    await input.TapClearTarget();
+                    await wait.Update(1);
+                }
+                else
+                {
+                    // threat must be behind me
+                    var anyDamageTakens = playerReader.DamageTaken.Where(x => (DateTime.Now - x.LastEvent).TotalSeconds < 10 && x.LastKnownHealthPercent > 0);
+                    if (anyDamageTakens.Any())
+                    {
+                        logger.LogWarning($"---- Possible threats found behind {anyDamageTakens.Count()}. Waiting for my target to change!");
+                        await wait.Interrupt(2000, () => playerReader.HasTarget);
+                    }
                 }
             }
 
