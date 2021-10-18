@@ -567,6 +567,7 @@ e.g.
 | Shaman | "Lightning Shield" |
 | Shaman | "Water Shield" |
 | Shaman | "Shamanistic Focus" |
+| Shaman | "Stoneskin" |
 | Hunter | "Aspect of the Cheetah" |
 | Hunter | "Aspect of the Pack" |
 | Hunter | "Aspect of the Beast" |
