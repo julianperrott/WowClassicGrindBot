@@ -200,14 +200,14 @@ From the main menu (ESC) set the following:
 ## 7.1. Actionbar Key Bindings:
 
 The default class profiles assumes the following `Keybinds` setup and using English Keyboard layout.
-In total, `32` key supported.
+In total, `34` key supported.
 Highly recommended to use the default setup, in order to get properly working the `ActionBarSlotCost` and `ActionBarSlotUsable` features! 
 https://wowwiki-archive.fandom.com/wiki/ActionSlot
 
 
 | ActionSlot | Key | Description |
 | --- | --- | --- |
-| 1-10 | 1,2,3 .. 9,0 | 0 is the 10th key |
+| 1-10 | 1,2,3 .. 9,0,-,= | 0 is the 10th key. |
 | Bottom Right ActionBar | - | - |
 | 49-58 | N1,N2,N3 .. N9,N0 | N means Numpad - 0 is the 10th key |
 | Bottom Left ActionBar | - | - |
@@ -345,7 +345,7 @@ The "Key" is a key that is bound to a macro. The macro needs to target the NPC, 
 Sell macro example bound to the "C" key using BindPad or Key bindings.
 
     /tar Jannos Ironwill
-    /run DataToColor:sell({"Light Leather","Cheese","Light Feather"});
+    /run DataToColor[1]:sell({"Light Leather","Cheese","Light Feather"});
 
 Repair macro example:
 
@@ -418,11 +418,10 @@ e.g.
       {
         "Name": "Curse of Weakness",
         "Key": "6",
-        "Cooldown": 10000,
+        "WhenUsable": true,
         "ResetOnNewTarget": true,
         "Requirement": "not Curse of Weakness", <--- Single Requirement
-        "MinMana": 20,
-        "Log": false
+        "MinMana": 20
       },
 
 #### Value base requirements
@@ -613,7 +612,6 @@ Allow requirements about spell range to be used, the spell in question depends u
 e.g. "Requirement": "SpellInRange:4"
 e.g. "Requirements": ["Health%<80", "SpellInRange:4"]
 
-In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tries to get a list of spells unique to each class that are in range. This is read by Libs.SpellInRange.cs.
 
 | Class | Spell | id |
 | --- | --- | --- |
