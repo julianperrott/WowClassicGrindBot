@@ -1,4 +1,4 @@
-using SharedLib.NpcFinder;
+﻿using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -54,6 +54,10 @@ namespace Core.Goals
                 {
                     item.LogInformation($"Only cast if adds exist = {item.CastIfAddsVisible} and it is {npcNameFinder.PotentialAddsExist} - Targets:{npcNameFinder.TargetCount} - Adds:{npcNameFinder.AddCount}");
                     return false;
+                }
+                else
+                {
+                    item.LogInformation($"Only cast if adds exist = {item.CastIfAddsVisible} and it is {npcNameFinder.PotentialAddsExist} - Targets:{npcNameFinder.TargetCount} - Adds:{npcNameFinder.AddCount}");
                 }
             }
 
