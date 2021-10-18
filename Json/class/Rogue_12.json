@@ -10,11 +10,8 @@
         "HasCastbar": true,
         "WhenUsable": true,
         "WaitForWithinMeleeRange": true,
+        "CastIfAddsVisible": true,
         "Requirements": ["HasRangedWeapon", "not InMeleeRange", "SpellInRange:1", "not Items Broken"]
-      },
-      {
-        "Name": "Approach",
-        "Log": false
       }
     ]
   },
