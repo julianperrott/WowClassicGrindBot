@@ -1,4 +1,4 @@
-﻿using SharedLib.NpcFinder;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -303,24 +303,10 @@ namespace Core.Goals
             bool beforeHasTarget = playerReader.HasTarget;
             int auraHash = playerReader.AuraCount.Hash;
 
-            if (item.WaitForGCD)
-            {
-                (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
-                    () => playerReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
-                if (!gcd)
-                {
-                    item.LogInformation($" ... gcd interrupted {gcdElapsedMs}ms");
 
-                    if (beforeHasTarget != playerReader.HasTarget)
-                    {
-                        item.LogInformation($" ... lost target!");
-                        return false;
-                    }
-                }
-                else
-                {
-                    item.LogInformation($" ... gcd fully waited {gcdElapsedMs}ms");
-                }
+            if (!await WaitForGCD(item, beforeHasTarget))
+            {
+                return false;
             }
 
             if (!item.HasCastBar)
@@ -405,6 +391,31 @@ namespace Core.Goals
             return true;
         }
 
+        private async Task<bool> WaitForGCD(KeyAction item, bool beforeHasTarget)
+        {
+            if (item.WaitForGCD)
+            {
+                (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
+                    () => playerReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
+                if (!gcd)
+                {
+                    item.LogInformation($" ... gcd interrupted {gcdElapsedMs}ms");
+
+                    if (beforeHasTarget != playerReader.HasTarget)
+                    {
+                        item.LogInformation($" ... lost target!");
+                        return false;
+                    }
+                }
+                else
+                {
+                    item.LogInformation($" ... gcd fully waited {gcdElapsedMs}ms");
+                }
+            }
+
+            return true;
+        }
+
         protected async Task<bool> SwitchToCorrectStanceForm(Form beforeForm, KeyAction item)
         {
             if (string.IsNullOrEmpty(item.Form))
@@ -428,6 +439,12 @@ namespace Core.Goals
             await input.KeyPress(formKeyAction.ConsoleKey, formKeyAction.PressDuration);
             (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => beforeForm != playerReader.Form);
             item.LogInformation($" ... form changed: {!notChanged} | Delay: {elapsedMs}ms");
+
+            if (playerReader.Form == Form.None)
+            {
+                item.LogInformation($" ... wait for GCD after form change {beforeForm}->{playerReader.Form}!");
+                await WaitForGCD(item, playerReader.HasTarget);
+            }
 
             return playerReader.Form == item.FormEnum;
         }
