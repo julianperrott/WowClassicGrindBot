@@ -52,7 +52,7 @@ namespace Core.Goals
                 var needAdds = bool.Parse(item.CastIfAddsVisible);
                 if (needAdds != npcNameFinder.PotentialAddsExist)
                 {
-                    item.LogInformation($"Only cast if adds exist = {item.CastIfAddsVisible} and it is {npcNameFinder.PotentialAddsExist}");
+                    item.LogInformation($"Only cast if adds exist = {item.CastIfAddsVisible} and it is {npcNameFinder.PotentialAddsExist} - Targets:{npcNameFinder.TargetCount} - Adds:{npcNameFinder.AddCount}");
                     return false;
                 }
             }
@@ -550,6 +550,7 @@ namespace Core.Goals
                 case UI_ERROR.NONE:
                     break;
                 case UI_ERROR.ERR_SPELL_FAILED_INTERRUPTED:
+                    item.SetClicked();
                     break;
                 case UI_ERROR.CAST_START:
                     break;

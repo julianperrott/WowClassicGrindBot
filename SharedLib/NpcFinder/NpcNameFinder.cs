@@ -38,6 +38,8 @@ namespace SharedLib.NpcFinder
 
         public List<NpcPosition> Npcs { get; private set; } = new List<NpcPosition>();
         public int NpcCount => npcs.Count;
+        public int AddCount { private set; get; }
+        public int TargetCount { private set; get; }
         public bool MobsVisible => npcs.Count > 0;
         public bool PotentialAddsExist { get; private set; }
         public DateTime LastPotentialAddsSeen { get; private set; } = default;
@@ -146,19 +148,20 @@ namespace SharedLib.NpcFinder
 
         public void UpdatePotentialAddsExist()
         {
-            var countAdds = Npcs.Where(c => c.IsAdd).Where(c => c.Height > ScaleHeight(2)).Count();
-            var MobsVisible = Npcs.Where(c => c.Height > ScaleHeight(2)).Any();
+            TargetCount = Npcs.Where(c => !c.IsAdd).Where(c => Math.Abs(c.ClickPoint.X - c.screenMid) < c.screenTargetBuffer).Count();
+            AddCount = Npcs.Where(c => c.IsAdd).Count();
 
-            if (countAdds > 0)
+            if (Npcs.Count > 1 && TargetCount >= 1 && AddCount > 0)
             {
                 PotentialAddsExist = true;
                 LastPotentialAddsSeen = DateTime.Now;
             }
             else
             {
-                if (PotentialAddsExist && (DateTime.Now - LastPotentialAddsSeen).TotalSeconds > 2)
+                if (PotentialAddsExist && (DateTime.Now - LastPotentialAddsSeen).TotalSeconds > 1)
                 {
                     PotentialAddsExist = false;
+                    AddCount = 0;
                 }
             }
         }
@@ -262,10 +265,24 @@ namespace SharedLib.NpcFinder
             {
                 return;
             }
-            using (var whitePen = new Pen(Color.White, 3))
+
+            using var whitePen = new Pen(Color.White, 3);
+            using var greyPen = new Pen(Color.Gray, 3);
+
+            /*
+            if (Npcs.Any())
             {
-                Npcs.ForEach(n => gr.DrawRectangle(whitePen, new Rectangle(n.Min, new Size(n.Width, n.Height))));
+                // target area
+                gr.DrawLine(whitePen, new Point(Npcs[0].screenMid - Npcs[0].screenTargetBuffer, Area.Top), new Point(Npcs[0].screenMid - Npcs[0].screenTargetBuffer, Area.Bottom));
+                gr.DrawLine(whitePen, new Point(Npcs[0].screenMid + Npcs[0].screenTargetBuffer, Area.Top), new Point(Npcs[0].screenMid + Npcs[0].screenTargetBuffer, Area.Bottom));
+
+                // adds area
+                gr.DrawLine(greyPen, new Point(Npcs[0].screenMid - Npcs[0].screenAddBuffer, Area.Top), new Point(Npcs[0].screenMid - Npcs[0].screenAddBuffer, Area.Bottom));
+                gr.DrawLine(greyPen, new Point(Npcs[0].screenMid + Npcs[0].screenAddBuffer, Area.Top), new Point(Npcs[0].screenMid + Npcs[0].screenAddBuffer, Area.Bottom));
             }
+            */
+
+            Npcs.ForEach(n => gr.DrawRectangle(n.IsAdd ? greyPen : whitePen, new Rectangle(n.Min, new Size(n.Width, n.Height))));
         }
 
         public Point ToScreenCoordinates(int x, int y)
