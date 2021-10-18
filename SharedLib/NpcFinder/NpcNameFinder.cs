@@ -64,7 +64,7 @@ namespace SharedLib.NpcFinder
 
         public int DetermineNpcsHeightOffset2 { get; set; } = 2;
 
-        public int incX { get; set; } = 2;
+        public int incX { get; set; } = 1;
 
         public int incY { get; set; } = 1;
 
