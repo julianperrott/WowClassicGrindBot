@@ -31,6 +31,7 @@
       {
         "Name": "Rejuvenation",
         "Key": "6",
+        "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
         "Requirements": ["Health%<75", "not Rejuvenation"],
         "Cooldown": 5000,
@@ -98,7 +99,7 @@
       {
         "Name": "Bash",
         "Key": "5",
-        "Requirements": ["SpellInRange:1", "TargetCastingSpell"],
+        "Requirements": ["SpellInRange:1", "TargetCastingSpell||Health%<38"],
         "WhenUsable": true,
         "MinRage": 10,
         "Form": "Druid_Bear"
