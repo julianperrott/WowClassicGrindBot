@@ -47,7 +47,7 @@
       {
         "Name": "Cat Form",
         "Key": "F3",
-        "Requirements": ["Moonfire", "not Form:Druid_Cat"],
+        "Requirements": ["not Form:Druid_Cat"],
         "WaitForWithinMeleeRange": true
       },
       {
@@ -62,8 +62,8 @@
         "Name": "Healing Touch",
         "Key": "3",
         "HasCastBar": true,
+        "WhenUsable": true,
         "Requirement": "Health%<30",
-        "Cooldown": 5000,
         "Form": "None"
       },
       {
