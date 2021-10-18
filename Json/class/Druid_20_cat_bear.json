@@ -64,6 +64,7 @@
         "HasCastBar": true,
         "WhenUsable": true,
         "Requirement": "Health%<30",
+        "Cooldown": 5000,
         "Form": "None"
       },
       {
@@ -72,7 +73,7 @@
         "MinEnergy": 30,
         "MinComboPoints": 1,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "not Rip", "MobCount<1", "Form:Druid_Cat"],
+        "Requirements": ["SpellInRange:2", "not Rip", "MobCount<1", "Form:Druid_Cat"],
         "Form": "Druid_Cat"
       },
       {
@@ -80,7 +81,7 @@
         "Key": "2",
         "MinEnergy": 40,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "MobCount<1", "Form:Druid_Cat"],
+        "Requirements": ["SpellInRange:2", "MobCount<1", "Form:Druid_Cat"],
         "Form": "Druid_Cat"
       },
       {
@@ -91,7 +92,7 @@
       {
         "Name": "Bash",
         "Key": "5",
-        "Requirements": ["InMeleeRange", "TargetCastingSpell"],
+        "Requirements": ["SpellInRange:1", "TargetCastingSpell"],
         "WhenUsable": true,
         "MinRage": 10,
         "Form": "Druid_Bear"
@@ -163,7 +164,7 @@
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<40",
+        "Requirement": "Mana%<30",
         "Form": "None"
       }
     ]
