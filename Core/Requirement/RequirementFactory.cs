@@ -276,6 +276,7 @@ namespace Core
                     {  "Lightning Shield", ()=> playerReader.Buffs.LightningShield },
                     {  "Water Shield", ()=> playerReader.Buffs.WaterShield },
                     {  "Shamanistic Focus", ()=> playerReader.Buffs.ShamanisticFocus },
+                    {  "Stoneskin", ()=> playerReader.Buffs.Stoneskin },
                     //Hunter
                     {  "Aspect of the Cheetah", ()=> playerReader.Buffs.Aspect },
                     {  "Aspect of the Pack", ()=> playerReader.Buffs.Aspect },

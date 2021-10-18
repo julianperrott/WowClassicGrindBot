@@ -146,6 +146,7 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[10] = { "Lightning Shield", [136051]=1 }
         DataToColor.S.playerBuffs[11] = { "Water Shield", [132315]=1 }
         DataToColor.S.playerBuffs[12] = { "Focused", [136027]=1 } -- Shamanistic Focus
+        DataToColor.S.playerBuffs[13] = { "Stoneskin", [136098]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
         DataToColor.S.playerBuffs[10] = { "Aspect of", [136076]=1, [132159]=1, [132252]=1, [132267]=1, [132160]=1, [136074]=1 }
         DataToColor.S.playerBuffs[11] = { "Rapid Fire", [132208]=1 }

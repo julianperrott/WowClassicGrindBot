@@ -68,6 +68,7 @@
         public bool LightningShield => IsBitSet(10);
         public bool WaterShield => IsBitSet(11);
         public bool ShamanisticFocus => IsBitSet(12);
+        public bool Stoneskin => IsBitSet(13);
 
         // Hunter
         public bool Aspect => IsBitSet(10); //Any Aspect of
