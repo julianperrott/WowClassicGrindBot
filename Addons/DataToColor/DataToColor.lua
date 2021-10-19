@@ -450,7 +450,7 @@ function DataToColor:CreateFrames(n)
 
             --MakePixelSquareArrI(DataToColor:GetGossipIcons(), 45) -- Returns which gossip icons are on display in dialogue box
 
-            MakePixelSquareArrI(DataToColor.S.PlayerClass, 46) -- Returns player class as an integer
+            MakePixelSquareArrI(DataToColor.C.CHARACTER_RACE_ID * 100 + DataToColor.C.CHARACTER_CLASS_ID, 46)
             MakePixelSquareArrI(DataToColor:isUnskinnable(), 47) -- Returns 1 if creature is unskinnable
             MakePixelSquareArrI(DataToColor:shapeshiftForm(), 48) -- Shapeshift id https://wowwiki.fandom.com/wiki/API_GetShapeshiftForm
             MakePixelSquareArrI(DataToColor:getRange(), 49) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards

@@ -113,7 +113,9 @@ namespace Core
 
         public long Gold => reader.GetLongAtCell(44) + (reader.GetLongAtCell(45) * 1000000);
 
-        public PlayerClassEnum PlayerClass => (PlayerClassEnum)reader.GetLongAtCell(46);
+        public RaceEnum PlayerRace => (RaceEnum)(int)(reader.GetLongAtCell(46) / 100f);
+
+        public PlayerClassEnum PlayerClass => (PlayerClassEnum)(int)(reader.GetLongAtCell(46) - ((int)PlayerRace * 100f));
 
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
 

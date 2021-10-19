@@ -21,7 +21,8 @@ DataToColor.C.Totem = "Totem"
 -- Character's name
 DataToColor.C.CHARACTER_NAME = UnitName(DataToColor.C.unitPlayer)
 DataToColor.C.CHARACTER_GUID = UnitGUID(DataToColor.C.unitPlayer)
-_, DataToColor.C.CHARACTER_CLASS = UnitClass(DataToColor.C.unitPlayer)
+_, DataToColor.C.CHARACTER_CLASS, DataToColor.C.CHARACTER_CLASS_ID = UnitClass(DataToColor.C.unitPlayer)
+_, _, DataToColor.C.CHARACTER_RACE_ID = UnitRace(DataToColor.C.unitPlayer)
 
 -- Actionbar power cost
 DataToColor.C.MAX_POWER_TYPE = 1000000

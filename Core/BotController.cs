@@ -127,7 +127,7 @@ namespace Core
                 Thread.Sleep(100);
             }
 
-            logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerClass}.");
+            logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerRace} {AddonReader.PlayerReader.PlayerClass}.");
 
             npcNameFinder = new NpcNameFinder(logger, WowScreen);
             npcNameTargeting = new NpcNameTargeting(logger, npcNameFinder, WowProcessInput);

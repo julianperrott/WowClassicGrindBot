@@ -1,43 +1,16 @@
 local Load = select(2, ...)
 local DataToColor = unpack(Load)
 
-DataToColor.S.PlayerClass = 0
 DataToColor.S.spellInRangeList = {}
 
 DataToColor.S.playerBuffs = {}
 DataToColor.S.targetDebuffs = {}
 
 function DataToColor:InitStorage()
-    CreatePlayerClass()
     CreateSpellInRangeList()
 
     CreatePlayerBuffList()
     CreateTargetDebuffList()
-end
-
-function CreatePlayerClass()
-    -- UnitClass returns class and the class in uppercase e.g. "Mage" and "MAGE"
-    if DataToColor.C.CHARACTER_CLASS == "MAGE" then
-        DataToColor.S.PlayerClass = 128
-    elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
-        DataToColor.S.PlayerClass = 64
-    elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
-        DataToColor.S.PlayerClass = 32
-    elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
-        DataToColor.S.PlayerClass = 16
-    elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
-        DataToColor.S.PlayerClass = 8
-    elseif DataToColor.C.CHARACTER_CLASS == "PRIEST" then
-        DataToColor.S.PlayerClass = 4
-    elseif DataToColor.C.CHARACTER_CLASS == "SHAMAN" then
-        DataToColor.S.PlayerClass = 2
-    elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then
-        DataToColor.S.PlayerClass = 1    
-    elseif DataToColor.C.CHARACTER_CLASS == "DRUID" then
-        DataToColor.S.PlayerClass = 256
-    else
-        DataToColor.S.PlayerClass = 0
-    end
 end
 
 function CreateSpellInRangeList()
