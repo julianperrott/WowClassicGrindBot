@@ -50,9 +50,11 @@
       {
         "Name": "War Stomp",
         "Key": "0",
-        "Requirement": "Health%<50",
-        "Cooldown": 120000,
-        "Log": false,
+        "Requirements": [
+          "Race:Tauren",
+          "Health%<49"
+        ],
+        "WhenUsable": true,
         "MinMana": 10
       },
       {

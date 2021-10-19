@@ -45,11 +45,11 @@
         "Name": "War Stomp",
         "Key": "0",
         "Requirements": [
+          "Race:Tauren",
           "Health%<49",
           "MobCount>2"
         ],
-        "Cooldown": 120000,
-        "Log": false,
+        "WhenUsable": true,
         "MinMana": 10
       },
       {
