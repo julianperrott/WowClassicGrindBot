@@ -1,0 +1,66 @@
+{
+  "ClassName": "Priest",
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Draenei\\1-5_Azuremyst Isle.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Smite",
+        "Key": "2",
+        "HasCastBar": true,
+        "MinMana": 15,
+        "Requirement": "Mana%>50"
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Gift of the Naaru",
+        "Key": "4",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": ["Race:Draenei", "Health%<50"]
+      },
+      {
+        "Name": "Lesser Heal",
+        "Key": "3",
+        "Requirement": "Health%<40",
+        "Cooldown": 10000,
+        "HasCastBar": true,
+        "MinMana": 25
+      },
+      {
+        "Name": "Smite",
+        "Key": "2",
+        "HasCastBar": true,
+        "MinMana": 15,
+        "Requirements": ["not InMeleeRange", "Mana%>50"]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health%<30"
+      },
+      {
+        "Name": "Water",
+        "Key": "-",
+        "Requirement": "Mana%<30"
+      }
+    ]
+  }
+}
