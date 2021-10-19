@@ -17,13 +17,6 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Lightning Bolt",
-        "Key": "2",
-        "HasCastBar": true,
-        "MinMana": 15,
-        "Requirement": "not InMeleeRange"
-      },
-      {
         "Name": "Healing Wave",
         "Key": "3",
         "Requirement": "Health%<40",
@@ -31,6 +24,13 @@
         "HasCastBar": true,
         "Log": false,
         "MinMana": 25
+      },
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "MinMana": 15,
+        "Requirement": "not InMeleeRange"
       },
       {
         "Name": "AutoAttack",

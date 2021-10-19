@@ -25,13 +25,6 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Earth Shock",
-        "Key": "6",
-        "WhenUsable": true,
-        "Requirements": ["TargetHealth%>10", "SpellInRange:1", "Mana%>50", "TargetHealth%>20"],
-        "MinMana": 30
-      },
-      {
         "Name": "Healing Wave",
         "Key": "3",
         "HasCastBar": true,
@@ -39,6 +32,13 @@
         "Requirement": "Health%<40",
         "Cooldown": 5000,
         "MinMana": 25
+      },
+      {
+        "Name": "Earth Shock",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": ["TargetHealth%>10", "SpellInRange:1", "Mana%>50", "TargetHealth%>20"],
+        "MinMana": 30
       },
       {
         "Name": "Stoneskin Totem",

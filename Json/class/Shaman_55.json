@@ -14,6 +14,18 @@
   "Combat": {
     "Sequence": [
       {
+        "Name": "Healing Wave",
+        "Key": "3",
+        "Requirements": [
+          "Health%<40",
+          "TargetHealth%>15"
+        ],
+        "Cooldown": 5000,
+        "HasCastBar": true,
+        "Log": false,
+        "MinMana": 200
+      },
+      {
         "Name": "Shaman Ferry",
         "Key": "F3",
         "Requirement": "Mana%<50",
@@ -42,18 +54,6 @@
         "Cooldown": 120000,
         "Log": false,
         "MinMana": 10
-      },
-      {
-        "Name": "Healing Wave",
-        "Key": "3",
-        "Requirements": [
-          "Health%<40",
-          "TargetHealth%>15"
-        ],
-        "Cooldown": 5000,
-        "HasCastBar": true,
-        "Log": false,
-        "MinMana": 200
       },
       {
         "Name": "Stormstrike",

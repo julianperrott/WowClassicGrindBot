@@ -21,6 +21,18 @@
   "Combat": {
     "Sequence": [
       {
+        "Name": "Healing Wave",
+        "Key": "3",
+        "Requirements": [
+          "Health%<40",
+          "TargetHealth%>15"
+        ],
+        "Cooldown": 5000,
+        "HasCastBar": true,
+        "Log": false,
+        "MinMana": 200
+      },
+      {
         "Name": "Lightning Bolt",
         "Key": "2",
         "HasCastBar": true,
@@ -53,18 +65,6 @@
         "Cooldown": 120000,
         "Log": false,
         "MinMana": 10
-      },
-      {
-        "Name": "Healing Wave",
-        "Key": "3",
-        "Requirements": [
-          "Health%<40",
-          "TargetHealth%>15"
-        ],
-        "Cooldown": 5000,
-        "HasCastBar": true,
-        "Log": false,
-        "MinMana": 200
       },
       {
         "Name": "Stormstrike",
