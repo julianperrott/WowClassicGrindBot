@@ -27,7 +27,7 @@
         "Key": "1",
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirement": "Health%<45"
+        "Requirements": ["Race:Draenei", "Health%<45"]
       },
       {
         "Name": "Mend Pet",
