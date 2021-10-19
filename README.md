@@ -526,7 +526,7 @@ e.g.
 
 #### Race requirements
 
-If the character must be - in or not - the specified `Race` use this requirement. Useful to determine Racial abilities.
+If the character must be - or not - the specified `Race` use this requirement. Useful to determine Racial abilities.
 
 It has the format `Race:Race`
 
