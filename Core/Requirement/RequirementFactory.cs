@@ -34,7 +34,7 @@ namespace Core
                     };
                     foreach (string part in requirement.Split("||"))
                     {
-                        var sub = GetRequirement(item.Name, part, item.FormEnum);
+                        var sub = GetRequirement(item.Name, part);
                         orCombinedRequirement = orCombinedRequirement.Or(sub);
                     }
 
@@ -48,7 +48,7 @@ namespace Core
                     };
                     foreach (string part in requirement.Split("&&"))
                     {
-                        var sub = GetRequirement(item.Name, part, item.FormEnum);
+                        var sub = GetRequirement(item.Name, part);
                         andCombinedRequirement = andCombinedRequirement.And(sub);
                     }
 
@@ -56,7 +56,7 @@ namespace Core
                 }
                 else
                 {
-                    item.RequirementObjects.Add(GetRequirement(item.Name, requirement, item.FormEnum));
+                    item.RequirementObjects.Add(GetRequirement(item.Name, requirement));
                 }
             }
 
@@ -163,7 +163,7 @@ namespace Core
             }
         }
 
-        public Requirement GetRequirement(string name, string requirement, Form form)
+        public Requirement GetRequirement(string name, string requirement)
         {
             this.logger.LogInformation($"[{name}] Processing requirement: {requirement}");
 
@@ -171,7 +171,7 @@ namespace Core
 
             if (requirement.Contains(">") || requirement.Contains("<"))
             {
-                return GetValueBasedRequirement(name, requirement, form);
+                return GetValueBasedRequirement(name, requirement);
             }
 
             if (requirement.Contains("npcID:"))
@@ -498,7 +498,7 @@ namespace Core
             };
         }
 
-        private Requirement GetValueBasedRequirement(string name, string requirement, Form form)
+        private Requirement GetValueBasedRequirement(string name, string requirement)
         {
             var symbol = "<";
             if (requirement.Contains(">"))
