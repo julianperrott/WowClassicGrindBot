@@ -682,6 +682,7 @@ e.g. "Requirements": ["Health%<80", "SpellInRange:4"]
 | PRIEST | Shoot | 1 |
 | PRIEST | Mind Flay | 2 |
 | PRIEST | Mind Blast | 3 |
+| PRIEST | Smite | 4 |
 | --- | --- | --- |
 | PALADIN | Judgement | 0 |
 | --- | --- | --- |

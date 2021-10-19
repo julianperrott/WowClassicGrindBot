@@ -38,7 +38,8 @@ function CreateSpellInRangeList()
             589,   -- "Shadow Word: Pain"
             5019,  -- "Shoot"
             15407, -- "Mind Flay"
-            8092   -- "Mind Blast"
+            8092,  -- "Mind Blast"
+            585    -- "Smite"
         }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
         DataToColor.S.spellInRangeList = {
