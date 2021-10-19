@@ -13,8 +13,7 @@
       "Form": "None"
     },
     {
-      //macro: #showtooltip Bear form /cast [nostance:1] Bear form
-      "Name": "bearform",
+      "Name": "Bear Form",
       "Key": "F2",
       "Form": "Druid_Bear",
       "MinMana": 50
@@ -33,12 +32,23 @@
       {
         "Name": "Moonfire",
         "Key": "5",
+        "AfterCastWaitBuff": true,
+        "CastIfAddsVisible": true,
         "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire", "Mana%>50"],
+        "WaitForWithinMeleeRange": true,
+        "StopBeforeCast": true,
         "Form": "None"
       },
       {
-        "Name": "Approach",
-        "Log": false
+        "Name": "Bear Form",
+        "Key": "F2",
+        "WaitForWithinMeleeRange": true,
+        "Requirements": ["Moonfire", "not Form:Druid_Bear"]
+      },
+      {
+        "Name": "Bear Form",
+        "Key": "F2",
+        "Requirements": ["not Form:Druid_Bear"]
       }
     ]
   },
@@ -62,10 +72,9 @@
       {
         "Name": "Bash",
         "Key": "5",
-        "Requirement": "InMeleeRange",
-        "UseWhenTargetIsCasting": true,
         "WhenUsable": true,
         "MinRage": 10,
+        "Requirements": ["SpellInRange:1", "TargetCastingSpell||Health%<38"],
         "Form": "Druid_Bear"
       },
       {
@@ -73,14 +82,14 @@
         "Key": "3",
         "MinRage": 10,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "not Demoralizing Roar"],
+        "Requirements": ["InMeleeRange", "not Demoralizing Roar", "Form:Druid_Bear"],
         "Form": "Druid_Bear"
       },
       {
         "Name": "Maul",
         "Key": "2",
         "MinRage": 15,
-        "Requirements": ["InMeleeRange", "LastMainHandMs>2100"], // bear swing speed fixed at 2.5
+        "Requirements": ["InMeleeRange", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
         "AfterCastWaitNextSwing": true,
         "Form": "Druid_Bear"
       },

@@ -11,16 +11,14 @@
       "Key": "F1",
       "Form": "None"
     },
-    //macro: #showtooltip Bear form /cast [nostance:1] Bear form
     {
-      "Name": "bearform",
+      "Name": "Bear Form",
       "Key": "F2",
       "Form": "Druid_Bear",
       "MinMana": 50
     },
-    //macro: #showtooltip Cat form /cast [nostance:3] Cat form
     {
-      "Name": "catform",
+      "Name": "Cat form",
       "Key": "F3",
       "Form": "Druid_Cat",
       "MinMana": 123
@@ -56,10 +54,6 @@
         "Name": "Cat Form",
         "Key": "F3",
         "Requirements": ["not Form:Druid_Cat"]
-      },
-      {
-        "Name": "Approach",
-        "Log": false
       }
     ]
   },

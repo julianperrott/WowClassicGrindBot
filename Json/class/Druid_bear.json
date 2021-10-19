@@ -28,13 +28,13 @@
       "Form": "None"
     },
     {
-      "Name": "Druid_Bear",
-      "Key": "2",
+      "Name": "Bear Form",
+      "Key": "F2",
       "Form": "Druid_Bear"
     },
     {
-      "Name": "Druid_Travel",
-      "Key": "1",
+      "Name": "Travel Form",
+      "Key": "F1",
       "Form": "Druid_Travel"
     }
   ],
@@ -70,8 +70,8 @@
         "WaitForWithinMeleeRange": true
       },
       {
-        "Name": "Bear form",
-        "Key": "2",
+        "Name": "Bear Form",
+        "Key": "F2",
         "Form": "None",
         "WaitForWithinMeleeRange": true
       }

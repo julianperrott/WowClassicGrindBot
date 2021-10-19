@@ -35,13 +35,13 @@
       "Form": "None"
     },
     {
-      "Name": "Druid_Cat",
-      "Key": "2",
+      "Name": "Cat Form",
+      "Key": "F2",
       "Form": "Druid_Cat"
     },
     {
-      "Name": "Druid_Travel",
-      "Key": "1",
+      "Name": "Travel Form",
+      "Key": "F1",
       "Form": "Druid_Travel"
     }
   ],
@@ -77,8 +77,8 @@
         "WaitForWithinMeleeRange": true
       },
       {
-        "Name": "Cat form",
-        "Key": "2",
+        "Name": "Cat Form",
+        "Key": "F2",
         "Form": "None",
         "WaitForWithinMeleeRange": true
       },
