@@ -12,12 +12,7 @@
   "Mode": "AttendedGrind",
 
   "Blacklist": ["hive","tortured"],
-
-  "Blink":{
-      "Name": "Blink",
-      "Key": "T"
-    },
-
+  
   "Pull": {
     "Sequence": [
       {
@@ -25,8 +20,7 @@
         "HasCastBar": true,
         "Key": "5",
         "Requirement": "not npcID:8257",
-        "MinMana": 221,
-        "Cooldown": 0
+        "MinMana": 221
       }
     ]
   },
@@ -36,14 +30,14 @@
         "Name": "Healing Potion",
         "Key": "F4",
         "Requirement": "Health%<10",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "Log": false
       },
       {
         "Name": "Ice Barrier",
         "Key": "L",
         "Requirements": [ "not Ice Barrier","not npcID:8257"],
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "MinMana": 400,
         "Log": false
       },
@@ -51,7 +45,7 @@
         "Name": "Fire Ward",
         "Key": "=",
         "Requirements": [ "not Ward"],
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "MinMana": 400,
         "Log": false
       },
@@ -60,8 +54,7 @@
         "HasCastBar": true,
         "Key": "5",
         "Requirement": "not npcID:8257",
-        "MinMana": 221,
-        "Cooldown": 0
+        "MinMana": 221
       }
     ]
   },
@@ -69,22 +62,14 @@
   "Parallel": {
     "Sequence": [
       {
-        "Name": "Low Health",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
+        "Name": "Food",
         "Key": "6",
-        "Requirement": "Health%<90",
-        "Cooldown": 10,
-        "Log": false
+        "Requirement": "Health%<90"
       },
       {
-        "Name": "Drink",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
+        "Name": "Water",
         "Key": "7",
-        "Requirement": "Mana%<90",
-        "Cooldown": 10,
-        "Log": false
+        "Requirement": "Mana%<90"
       }
     ]
     },
@@ -93,7 +78,6 @@
     "Sequence": [
       {
         "Name": "Frost Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 110,
         "Requirement": "not Frost Armor",
@@ -101,7 +85,6 @@
       },
       {
         "Name": "Arcane Intellect",
-        "StopBeforeCast": false,
         "Key": "4",
         "MinMana": 60,
         "Requirement": "not Arcane Intellect",
@@ -110,19 +93,17 @@
       {
         "Name": "Conjure Water",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:8079:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       },
       {
         "Name": "Conjure Food",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "not BagItem:8076:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       }
     ]

@@ -1,7 +1,9 @@
 {
   "ClassName": "Mage",
-  "Loot": true,
-  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\10-12_Loch Modan.json",
+  "Loot": false,
+
+  "PathFilename": "16_LochModan.json",
+  "SpiritPathFilename": "16_LochModan_Spirithealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
 
@@ -9,10 +11,10 @@
     "Sequence": [
       {
         "Name": "Frostbolt",
-        "Key": "1",
         "HasCastBar": true,
-        "MinMana": 25,
-        "Requirement": "SpellInRange:3"
+        "Key": "1",
+        "Requirement": "SpellInRange:3",
+        "MinMana": 35
       }
     ]
   },
@@ -35,10 +37,18 @@
         "DelayAfterCast": 0
       },
       {
-        "Name": "Arcane Missiles",
+        "Name": "Fireball",
+        "Key": "2",
         "HasCastBar": true,
+        "Requirement": "not InMeleeRange",
+        "MinMana": 65
+      },
+      {
+        "Name": "Arcane Missiles",
         "Key": "7",
-        "MinMana": 30
+        "HasCastBar": true,
+        "MinMana": 140,
+        "Requirements": ["SpellInRange:3", "InMeleeRange"]
       },
       {
         "Name": "Shoot",
@@ -57,12 +67,12 @@
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health%<60"
+        "Requirement": "Health%<90"
       },
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<60"
+        "Requirement": "Mana%<90"
       }
     ]
     },
@@ -95,23 +105,6 @@
         "Requirement": "not BagItem:1113:4",
         "Cooldown": 30000
       }
-    ]},
-    "NPC": {
-      "Sequence": [
-        {
-          "Name": "Repair",
-          "Key": "C",
-          "Requirement": "Items Broken",
-          "PathFilename": "10_Gnome_Vendor.json",
-          "Cost": 6
-        },
-        {
-          "Name": "Sell",
-          "Key": "C",
-          "Requirement": "BagFull",
-          "PathFilename": "10_Gnome_Vendor.json",
-          "Cost": 6
-        }
-      ]
-    }
+    ]
+  }
 }

@@ -9,10 +9,9 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "pull",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
+        "Name": "Immolate",
         "Key": "5",
+        "HasCastBar": true,
         "MinMana": 25
       }
     ]
@@ -21,42 +20,32 @@
     "Sequence": [
       {
         "Name": "Immolate",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "5",
+        "HasCastBar": true,
         "Requirements": ["TargetHealth%>35", "not Immolate"], 
-        "ResetOnNewTarget": true,
         "MinMana": 25
       },
       {
         "Name": "Corruption",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "7",
+        "HasCastBar": true,
         "Requirements": ["TargetHealth%>35", "not Corruption"], 
-        "ResetOnNewTarget": true,
         "MinMana": 25
       },
       {
         "Name": "Shadow Bolt",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
+        "HasCastBar": true,
         "MinMana": 25,
-        "Cooldown": 8
-      },
-      {
-        "Name": "shoot",
-        "StopBeforeCast": true,
-        "Key": "0",
-        "Cooldown": 3,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
-        "Log": false
+        "Cooldown": 8000
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -66,35 +55,24 @@
         "Name": "Demon Skin",
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "not Demon Skin",
-        "Log": false
+        "Requirement": "not Demon Skin"
       },
       {
         "Name": "Summon Imp",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
+        "HasCastBar": true,
         "MinMana": 122,
-        "Requirement": "not Has Pet",
-        "Log": false
+        "Requirement": "not Has Pet"
       },
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "N1",
-        "Requirement": "Health%<50",
-        "Cooldown": 60
+        "Key": "=",
+        "Requirement": "Health%<50"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "N2",
-        "Requirement": "Mana%<50",
-        "Cooldown": 60
+        "Key": "-",
+        "Requirement": "Mana%<50"
       }
     ]
   },

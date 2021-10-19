@@ -68,7 +68,10 @@ namespace Core.Goals
             else
             {
                 if (!cancellationToken.IsCancellationRequested)
+                {
+                    npcNameTargeting.ChangeNpcType(NpcNameToFind);
                     await input.TapNearestTarget(source);
+                }
 
                 if (!playerReader.HasTarget && !cancellationToken.IsCancellationRequested)
                 {

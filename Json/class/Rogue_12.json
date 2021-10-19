@@ -5,17 +5,13 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "Stealth",
-        "Key": "N2",
+        "Name": "Throw",
+        "Key": "6",
+        "HasCastbar": true,
         "WhenUsable": true,
-        "WaitBuffAfterCast": true,
-        "Requirements": ["not Stealth","not InMeleeRange"]
-      },
-      {
-        "Name": "Backstab",
-        "Key": "1",
-        "WhenUsable": true,
-        "Requirement": "Stealth&&InMeleeRange"
+        "WaitForWithinMeleeRange": true,
+        "CastIfAddsVisible": true,
+        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "SpellInRange:1", "not Items Broken"]
       }
     ]
   },

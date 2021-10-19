@@ -34,7 +34,7 @@ namespace Core
                     };
                     foreach (string part in requirement.Split("||"))
                     {
-                        var sub = GetRequirement(item.Name, part, item.FormEnum);
+                        var sub = GetRequirement(item.Name, part);
                         orCombinedRequirement = orCombinedRequirement.Or(sub);
                     }
 
@@ -48,7 +48,7 @@ namespace Core
                     };
                     foreach (string part in requirement.Split("&&"))
                     {
-                        var sub = GetRequirement(item.Name, part, item.FormEnum);
+                        var sub = GetRequirement(item.Name, part);
                         andCombinedRequirement = andCombinedRequirement.And(sub);
                     }
 
@@ -56,7 +56,7 @@ namespace Core
                 }
                 else
                 {
-                    item.RequirementObjects.Add(GetRequirement(item.Name, requirement, item.FormEnum));
+                    item.RequirementObjects.Add(GetRequirement(item.Name, requirement));
                 }
             }
 
@@ -64,12 +64,12 @@ namespace Core
             CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
             CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
 
+            CreateConsumableRequirement("Water", item);
+            CreateConsumableRequirement("Food", item);
+
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
             CreateTargetIsCastingRequirement(item.RequirementObjects, item.UseWhenTargetIsCasting);
             CreateActionUsableRequirement(item.RequirementObjects, item);
-
-            CreateWaterRequirement(item);
-            CreateFoodRequirement(item);
 
             item.CreateCooldownRequirement();
             item.CreateChargeRequirement();
@@ -91,11 +91,11 @@ namespace Core
         {
             if (value > 0)
             {
-                if( type == "Mana")
+                if (type == "Mana")
                 {
                     RequirementObjects.Add(new Requirement
                     {
-                        HasRequirement = () => playerReader.ManaCurrent >= value,
+                        HasRequirement = () => playerReader.ManaCurrent >= value || playerReader.Buffs.Clearcasting,
                         LogMessage = () => $"{type} {playerReader.ManaCurrent} >= {value}"
                     });
                 }
@@ -103,7 +103,7 @@ namespace Core
                 {
                     RequirementObjects.Add(new Requirement
                     {
-                        HasRequirement = () => playerReader.PTCurrent >= value,
+                        HasRequirement = () => playerReader.PTCurrent >= value || playerReader.Buffs.Clearcasting,
                         LogMessage = () => $"{type} {playerReader.PTCurrent} >= {value}"
                     });
                 }
@@ -121,27 +121,33 @@ namespace Core
                 });
             }
         }
+
         private void CreateActionUsableRequirement(List<Requirement> RequirementObjects, KeyAction item)
         {
             if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
             {
                 RequirementObjects.Add(new Requirement
                 {
-                    HasRequirement = () => playerReader.UsableAction.Is(item),
-                    LogMessage = () => $"Usable"
+                    HasRequirement = () => 
+                        !item.HasFormRequirement() ? playerReader.UsableAction.Is(item) :
+                        (playerReader.Form == item.FormEnum && playerReader.UsableAction.Is(item)) ||
+                        (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()),
+
+                    LogMessage = () => 
+                        !item.HasFormRequirement() ? $"Usable" : // {playerReader.UsableAction.Num(item)}
+                        (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
+                        (playerReader.Form == item.FormEnum && playerReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
                 });
             }
         }
 
-        private void CreateWaterRequirement(KeyAction item)
+        private void CreateConsumableRequirement(string name, KeyAction item)
         {
-            if (item.Name == "Water")
+            if (item.Name == name)
             {
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => bagReader.ItemCount(bagReader.HighestQuantityOfWaterId()) > 0,
-                    LogMessage = () => $"Has Water"
-                });
+                item.StopBeforeCast = true;
+                item.WhenUsable = true;
+                item.AfterCastWaitBuff = true;
 
                 item.RequirementObjects.Add(new Requirement
                 {
@@ -157,31 +163,7 @@ namespace Core
             }
         }
 
-        private void CreateFoodRequirement(KeyAction item)
-        {
-            if (item.Name == "Food")
-            {
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => bagReader.ItemCount(bagReader.HighestQuantityOfFoodId()) > 0,
-                    LogMessage = () => $"Has Food"
-                });
-
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => !playerReader.PlayerBitValues.IsSwimming,
-                    LogMessage = () => $"Not swim"
-                });
-
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => !playerReader.PlayerBitValues.IsFalling,
-                    LogMessage = () => $"Not falling"
-                });
-            }
-        }
-
-        public Requirement GetRequirement(string name, string requirement, Form form)
+        public Requirement GetRequirement(string name, string requirement)
         {
             this.logger.LogInformation($"[{name}] Processing requirement: {requirement}");
 
@@ -189,7 +171,7 @@ namespace Core
 
             if (requirement.Contains(">") || requirement.Contains("<"))
             {
-                return GetValueBasedRequirement(name, requirement, form);
+                return GetValueBasedRequirement(name, requirement);
             }
 
             if (requirement.Contains("npcID:"))
@@ -210,6 +192,16 @@ namespace Core
             if (requirement.Contains("TargetCastingSpell"))
             {
                 return CreateTargetCastingSpellRequirement(requirement);
+            }
+
+            if (requirement.Contains("Form"))
+            {
+                return CreateFormRequirement(requirement);
+            }
+
+            if (requirement.Contains("Race"))
+            {
+                return CreateRaceRequirement(requirement);
             }
 
             if (BuffDictionary.Count == 0)
@@ -244,6 +236,7 @@ namespace Core
                     {  "Drinking", ()=> playerReader.Buffs.Drinking },
                     {  "Mana Regeneration", ()=> playerReader.Buffs.ManaRegeneration },
                     {  "Well Fed", ()=> playerReader.Buffs.WellFed },
+                    {  "Clearcasting", ()=> playerReader.Buffs.Clearcasting },
                     //Priest
                     {  "Fortitude", ()=> playerReader.Buffs.Fortitude },
                     {  "InnerFire", ()=> playerReader.Buffs.InnerFire },
@@ -271,6 +264,8 @@ namespace Core
                     {  "Ward", ()=>playerReader.Buffs.Ward },
                     {  "Fire Power", ()=>playerReader.Buffs.FirePower },
                     {  "Mana Shield", ()=>playerReader.Buffs.ManaShield },
+                    {  "Presence of Mind", ()=>playerReader.Buffs.PresenceOfMind },
+                    {  "Arcane Power", ()=>playerReader.Buffs.ArcanePower },
                     // Rogue
                     {  "Slice and Dice", ()=> playerReader.Buffs.SliceAndDice },
                     {  "Stealth", ()=> playerReader.Buffs.Stealth },
@@ -286,6 +281,7 @@ namespace Core
                     {  "Lightning Shield", ()=> playerReader.Buffs.LightningShield },
                     {  "Water Shield", ()=> playerReader.Buffs.WaterShield },
                     {  "Shamanistic Focus", ()=> playerReader.Buffs.ShamanisticFocus },
+                    {  "Stoneskin", ()=> playerReader.Buffs.Stoneskin },
                     //Hunter
                     {  "Aspect of the Cheetah", ()=> playerReader.Buffs.Aspect },
                     {  "Aspect of the Pack", ()=> playerReader.Buffs.Aspect },
@@ -303,12 +299,14 @@ namespace Core
                     {  "Rip", ()=> playerReader.Debuffs.Rip },
                     {  "Moonfire", ()=> playerReader.Debuffs.Moonfire },
                     {  "Entangling Roots", ()=> playerReader.Debuffs.EntanglingRoots },
+                    {  "Rake", ()=> playerReader.Debuffs.Rake },
                     // Warrior Debuff
                     {  "Rend", ()=> playerReader.Debuffs.Rend },
                     // Priest Debuff
                     {  "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },
                     // Mage Debuff
                     { "Frostbite", ()=> playerReader.Debuffs.Frostbite },
+                    { "Slow", ()=> playerReader.Debuffs.Slow },
                     // Warlock Debuff
                     {  "Curse of Weakness", ()=> playerReader.Debuffs.Curseof },
                     {  "Curse of Elements", ()=> playerReader.Debuffs.Curseof },
@@ -397,6 +395,47 @@ namespace Core
             }
         }
 
+        private Requirement CreateFormRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var form = Enum.Parse<Form>(parts[1]);
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => playerReader.Form != form,
+                    LogMessage = () => $"not {form}"
+                };
+            }
+            return new Requirement
+            {
+                HasRequirement = () => playerReader.Form == form,
+                LogMessage = () => $"{playerReader.Form}"
+            };
+        }
+
+        private Requirement CreateRaceRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var race = Enum.Parse<RaceEnum>(parts[1]);
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => playerReader.PlayerRace != race,
+                    LogMessage = () => $"not {race}"
+                };
+            }
+            return new Requirement
+            {
+                HasRequirement = () => playerReader.PlayerRace == race,
+                LogMessage = () => $"{playerReader.PlayerRace}"
+            };
+        }
+
+
         private Requirement CreateNpcRequirement(string requirement)
         {
             var parts = requirement.Split(":");
@@ -459,7 +498,7 @@ namespace Core
             };
         }
 
-        private Requirement GetValueBasedRequirement(string name, string requirement, Form form)
+        private Requirement GetValueBasedRequirement(string name, string requirement)
         {
             var symbol = "<";
             if (requirement.Contains(">"))
@@ -495,23 +534,20 @@ namespace Core
             }
 
             var valueCheck = valueDictionary[parts[0]];
-
-            Func<long> formChangeCost = () => playerReader.Form != form ? (playerReader.FormCost.TryGetValue(form, out int cost) ? cost : 0) : 0;
-
             if (symbol == ">")
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() + formChangeCost() >= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} >= {value}"
+                    HasRequirement = () => valueCheck() >= value,
+                    LogMessage = () => $"{parts[0]} {valueCheck()} >= {value}"
                 };
             }
             else
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() + formChangeCost() <= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck() + formChangeCost()} <= {value}"
+                    HasRequirement = () => valueCheck() <= value,
+                    LogMessage = () => $"{parts[0]} {valueCheck()} <= {value}"
                 };
             }
         }

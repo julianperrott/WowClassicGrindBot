@@ -2,14 +2,32 @@
   "ClassName": "Druid",
   "Loot": true,
   "NPCMaxLevels_Below": 20,
-
   "PathFilename": "56_Azshara.json",
-  "SpiritPathFilename": "56_Azshara_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
-
-  "Blacklist": ["Legashi","Blood Elf","Elf Reclaim","Elf Survey","Searing Roc","Living Storm","Land Rager","BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
-
+  "Blacklist": [
+    "Legashi",
+    "Blood Elf",
+    "Elf Reclaim",
+    "Elf Survey",
+    "Searing Roc",
+    "Living Storm",
+    "Land Rager",
+    "BLUEGI",
+    "Tunnel",
+    "OL' SO",
+    "HAREN S",
+    "THRAGO",
+    "Elder Razormaw",
+    "Highland Razormaw",
+    "Boulderfist",
+    "witherbark",
+    "venomhide",
+    "tar beast",
+    "toxic horror",
+    "hive",
+    "hazzali"
+  ],
   "Form": [
     {
       "Name": "/cancelform",
@@ -17,30 +35,29 @@
       "Form": "None"
     },
     {
-      "Name": "Druid_Cat",
-      "Key": "2",
+      "Name": "Cat Form",
+      "Key": "F2",
       "Form": "Druid_Cat"
     },
     {
-      "Name": "Druid_Travel",
-      "Key": "1",
+      "Name": "Travel Form",
+      "Key": "F1",
       "Form": "Druid_Travel"
     }
   ],
-
   "Pull": {
     "Sequence": [
       {
         "Name": "Rejuvenation",
         "Key": "1",
-        "Requirement": "Health%<70",
+        "AfterCastWaitBuff": true,
+        "Requirements": ["Health%<70", "not Rejuvenation"],
         "Form": "None"
       },
       {
         "Name": "Wrath",
         "Key": "7",
         "Requirement": "OutOfCombatRange",
-        "StopBeforeCast": true,
         "Form": "None",
         "HasCastBar": true
       },
@@ -48,8 +65,8 @@
         "Name": "Moonfire",
         "Key": "8",
         "Form": "None",
-        "MinMana": 235,
-        "DelayBeforeCast": 300
+        "Requirements": ["SpellInRange:0", "not Moonfire"],
+        "MinMana": 235
       },
       {
         "Name": "Wrath",
@@ -57,41 +74,31 @@
         "Requirement": "OutOfCombatRange",
         "Form": "None",
         "HasCastBar": true,
-        "WaitForWithinMelleRange": true
+        "WaitForWithinMeleeRange": true
       },
       {
-        "Name": "Cat form",
-        "Key": "2",
+        "Name": "Cat Form",
+        "Key": "F2",
         "Form": "None",
-        "WaitForWithinMelleRange": true
+        "WaitForWithinMeleeRange": true
       },
       {
-        "Name": "Heal",
+        "Name": "Healing Touch",
         "Key": "6",
         "Requirement": "Health%<40",
-        "Cooldown": 10,
-        "HasCastBar": false,
-        "Log": false,
+        "Cooldown": 10000,
+        "HasCastBar": true,
         "Form": "None"
       }
     ]
   },
-
   "Combat": {
     "Sequence": [
       {
-        "Name": "Approach",
-        "Cooldown": 10,
-        "Log": false,
-        "DelayAfterCast": "200"
-      },
-      {
-        "Name": "Heal",
+        "Name": "Healing Potion",
         "Key": "-",
         "Requirement": "Health%<50",
-        "Cooldown": 10,
-        "HasCastBar": true,
-        "Log": false,
+        "Cooldown": 10000,
         "Form": "None"
       },
       {
@@ -99,9 +106,8 @@
         "Requirement": "not TigersFury",
         "Key": "3",
         "MinEnergy": 30,
-        "Cooldown": 6,
+        "Cooldown": 6000,
         "DelayAfterCast": "200",
-        "Log": false,
         "Form": "Druid_Cat"
       },
       {
@@ -109,9 +115,8 @@
         "Requirement": "not Faerie Fire",
         "Key": "7",
         "MinRage": 10,
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Form": "Druid_Cat",
-        "Log": false,
         "ResetOnNewTarget": true
       },
       {
@@ -120,17 +125,23 @@
         "Key": "2",
         "MinEnergy": 30,
         "MinComboPoints": 3,
-        "Cooldown": 10,
-        "Log": false,
+        "Cooldown": 10000,
         "Form": "Druid_Cat"
       },
       {
         "Name": "Rake",
         "Key": "1",
         "MinRage": 35,
-        "Cooldown": 1,
-        "Log": false,
+        "Cooldown": 1000,
         "Form": "Druid_Cat"
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -140,66 +151,54 @@
         "Name": "Healing Potion",
         "Key": "-",
         "Requirement": "Health%<8",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "Form": "None",
         "InCombat": "true",
-        "Log": false,
         "Cost": 3
       },
       {
-        "Name": "Heal",
+        "Name": "Healing Touch",
         "Key": "6",
         "Requirement": "Health%<80",
-        "StopBeforeCast": true,
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "HasCastBar": true,
-        "Log": false,
         "Form": "None",
         "Cost": 3
       },
       {
         "Name": "Well Fed",
-        "StopBeforeCast": false,
         "Key": "9",
         "Requirement": "not Well Fed",
-        "Cooldown": 120,
-        "Log": false,
+        "Cooldown": 120000,
         "Form": "None"
       },
       {
-        "Name": "Drink",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
+        "Name": "Water",
         "Key": "0",
         "Requirement": "Mana%<40",
-        "Cooldown": 10,
-        "Log": false,
         "Form": "None",
         "Cost": 3
       },
       {
         "Name": "Thorns",
-        "StopBeforeCast": false,
         "Key": "3",
-        "Cooldown": 10,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Requirement": "not Thorns",
-        "Log": false,
         "Form": "None"
       },
       {
         "Name": "Mark of the Wild",
-        "StopBeforeCast": false,
         "Key": "4",
-        "Cooldown": 10,
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
         "Requirement": "not Mark of the Wild",
-        "Log": false,
         "Form": "None"
       },
       {
         "Name": "Del1",
         "Key": "F5",
-        "Cooldown": 120,
-        "Log": false
+        "Cooldown": 120000
       }
     ]
   }

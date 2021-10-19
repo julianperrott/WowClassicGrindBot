@@ -18,13 +18,10 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "pull",
+        "Name": "Immolate",
         "Key": "5",
         "HasCastBar": true,
-        "StopBeforeCast": true,
-        "ResetOnNewTarget": true,
-        "MinMana": 90,
-        "Log": false
+        "MinMana": 90
       }
     ]
   },
@@ -35,7 +32,6 @@
         "Key": "9",
         "School": "Shadow",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["TargetHealth%<40", "not BagItem:6265:72", "TargetYieldXP"],
         "MinMana": 55
       },
@@ -44,7 +40,6 @@
         "Key": "N4",
         "School": "Shadow",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["Health%<30"],
         "MinMana": 55
       },
@@ -53,10 +48,8 @@
         "Key": "5",
         "Requirements": ["TargetHealth%>35", "not Immolate"],
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
-        "MinMana": 90,
-        "Log": false
+        "MinMana": 90
       },
       {
         "Name": "Curse of Agony",
@@ -64,8 +57,7 @@
         "School": "Shadow",
         "ResetOnNewTarget": true,
         "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
-        "MinMana": 50,
-        "Log": false
+        "MinMana": 50
       },
       {
         "Name": "Corruption",
@@ -81,32 +73,27 @@
         "Key": "2",
         "School": "Shadow",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "ResetOnNewTarget": true,
         "MinMana": 110,
         "Requirement": "TargetHealth%>35",
-        "Log": false,
-        "Cooldown": 8
-      },
-      {
-        "Name": "shoot",
-        "Key": "0",
-        "StopBeforeCast": true,
-        "Cooldown": 3,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
-        "Log": false
-      },
-      {
-        "Name": "AutoAttack",
-        "Cooldown": 3,
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Cooldown": 8000
       },
       {
         "Name": "Health Funnel",
         "Key": "N6",
         "HasCastBar": true,
-        "StopBeforeCast": true,
+        "WhenUsable": true,
         "Requirements": ["Has Pet", "Health%>70", "PetHealth%<30"]
+      },
+      {
+        "Name": "Shoot",
+        "Key": "0",
+        "HasCastbar": true,
+        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
       }
     ]
   },
@@ -114,21 +101,13 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "N1",
-        "Requirement": "Health%<50",
-        "Cooldown": 20
+        "Key": "=",
+        "Requirement": "Health%<50"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "N2",
-        "Requirement": "Mana%<40",
-        "Cooldown": 20
+        "Key": "-",
+        "Requirement": "Mana%<40"
       }
     ]
     },
@@ -138,26 +117,20 @@
         "Name": "Demon Armor",
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "not Demon Armor",
-        "Log": false
+        "Requirement": "not Demon Armor"
       },
       {
         "Name": "Summon Voidwalker",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "4",
+        "HasCastBar": true,
         "MinMana": 122,
-        "Requirements": ["BagItem:6265:1", "not Has Pet"],
-        "Log": false,
-        "Cooldown": 60
+        "Requirements": ["BagItem:6265:1", "not Has Pet"]
       },
       {
         "Name": "Life Tap",
         "Key": "8",
         "Charge": 2,
-        "Requirements": ["Health%>70","Mana%<60"],
-        "Cooldown": 0,
-        "Log": false
+        "Requirements": ["Health%>70","Mana%<60"]
       }
     ]
   }

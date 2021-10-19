@@ -41,21 +41,25 @@ namespace Core
                 }
                 else
                 {
-                    await stopMoving.Stop();
-                    await wait.Update(1);
-
                     if (playerReader.PlayerBitValues.IsFalling)
                     {
                         (bool notfalling, double fallingElapsedMs) = await wait.InterruptTask(10000, () => !playerReader.PlayerBitValues.IsFalling);
-                        if (!notfalling)
-                        {
-                            logger.LogInformation($"{GetType().Name}: waited for landing {fallingElapsedMs}ms");
-                        }
+                        logger.LogInformation($"{GetType().Name}: waited for landing interrupted: {!notfalling} - {fallingElapsedMs}ms");
                     }
 
-                    playerReader.LastUIErrorMessage = UI_ERROR.NONE;
+                    await stopMoving.Stop();
+                    await wait.Update(1);
+
                     await input.TapMount();
-                    await wait.Interrupt(mountCastTimeMs, () => playerReader.PlayerBitValues.IsMounted || playerReader.LastUIErrorMessage != UI_ERROR.NONE);
+
+                    (bool notStartedCasted, double castStartElapsedMs) = await wait.InterruptTask(400, () => playerReader.PlayerBitValues.IsMounted || playerReader.IsCasting);
+                    logger.LogInformation($"{GetType().Name}: casting: {!notStartedCasted} | Mounted: {playerReader.PlayerBitValues.IsMounted} | Delay: {castStartElapsedMs}ms");
+
+                    if (!playerReader.PlayerBitValues.IsMounted)
+                    {
+                        (bool notmounted, double elapsedMs) = await wait.InterruptTask(mountCastTimeMs, () => playerReader.PlayerBitValues.IsMounted || !playerReader.IsCasting);
+                        logger.LogInformation($"{GetType().Name}: interrupted: {!notmounted} | Mounted: {playerReader.PlayerBitValues.IsMounted} | Delay: {elapsedMs}ms");
+                    }
                 }
             }
         }

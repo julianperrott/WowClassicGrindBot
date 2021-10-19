@@ -60,6 +60,10 @@ namespace Core.Goals
                 await input.TapDismount();
             }
 
+            await input.TapApproachKey($"{GetType().Name}: OnEnter - Face the target and stop");
+            await stopMoving.Stop();
+            await wait.Update(1);
+
             pullStart = DateTime.Now;
         }
 
@@ -116,25 +120,15 @@ namespace Core.Goals
                     await stuckDetector.Unstick();
                 }
 
-                await Interact("No pulled!");
-                await wait.Update(1);
+                if (classConfiguration.Approach.GetCooldownRemaining() == 0)
+                {
+                    await input.TapApproachKey($"{GetType().Name}");
+                    await wait.Update(1);
+                }
             }
             else
             {
                 SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
-                playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-            }
-        }
-
-        private async Task Interact(string source)
-        {
-            if (classConfiguration.Interact.GetCooldownRemaining() == 0)
-            {
-                playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-                await input.TapInteractKey($"{GetType().Name} {source}");
-                await wait.Update(1);
-
-                await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}-Interact: ");
             }
         }
 
@@ -146,19 +140,20 @@ namespace Core.Goals
             }
         }
 
-        protected async Task WaitForWithinMeleeRange(KeyAction item)
+        protected async Task WaitForWithinMeleeRange(KeyAction item, bool lastCastSuccess)
         {
             await stopMoving.Stop();
+            await wait.Update(1);
 
             var start = DateTime.Now;
-            var playerHealth = playerReader.HealthCurrent;
+            var lastKnownHealth = playerReader.HealthCurrent;
             int maxWaitTime = 10;
 
             Log($"Waiting for the target to reach melee range - max {maxWaitTime}s");
 
             while (playerReader.HasTarget && !playerReader.IsInMeleeRange && (DateTime.Now - start).TotalSeconds < maxWaitTime)
             {
-                if (playerHealth < playerReader.HealthCurrent)
+                if (playerReader.HealthCurrent < lastKnownHealth)
                 {
                     Log("Got damage. Stop waiting for melee range.");
                     break;
@@ -168,6 +163,13 @@ namespace Core.Goals
                 {
                     Log("Target started casting. Stop waiting for melee range.");
                     break;
+                }
+
+                if (lastCastSuccess && playerReader.UsableAction.Is(item))
+                {
+                    Log($"While waiting, repeat current action: {item.Name}");
+                    lastCastSuccess = await castingHandler.CastIfReady(item, item.DelayBeforeCast);
+                    Log($"Repeat current action: {lastCastSuccess}");
                 }
 
                 await wait.Update(1);
@@ -180,8 +182,6 @@ namespace Core.Goals
             {
                 await input.TapStopAttack();
                 await wait.Update(1);
-
-                playerReader.LastUIErrorMessage = UI_ERROR.NONE;
             }
 
             if (playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
@@ -189,32 +189,35 @@ namespace Core.Goals
                 await input.TapPetAttack();
             }
 
+            bool castAny = false;
             foreach (var item in Keys)
             {
-                if (item.StopBeforeCast)
-                {
-                    await stopMoving.Stop();
-                    await wait.Update(1);
-                }
-
                 var success = await castingHandler.CastIfReady(item, item.DelayBeforeCast);
-
-                if (!playerReader.HasTarget)
+                if (success)
                 {
-                    return false;
-                }
+                    if (!playerReader.HasTarget)
+                    {
+                        return false;
+                    }
 
-                if (success && item.WaitForWithinMeleeRange)
-                {
-                    await WaitForWithinMeleeRange(item);
+                    castAny = true;
+
+                    if (item.WaitForWithinMeleeRange)
+                    {
+                        await WaitForWithinMeleeRange(item, success);
+                    }
                 }
             }
 
-            // Wait for combat
-            (bool interrupted, double elapsedMs) = await wait.InterruptTask(1000, () => playerReader.PlayerBitValues.PlayerInCombat);
-            if (!interrupted)
+            if (castAny)
             {
-                Log($"Entered combat after {elapsedMs}ms");
+                (bool interrupted, double elapsedMs) = await wait.InterruptTask(1000,
+                    () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe ||
+                          playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingPet);
+                if (!interrupted)
+                {
+                    Log($"Entered combat after {elapsedMs}ms");
+                }
             }
 
             return playerReader.PlayerBitValues.PlayerInCombat;

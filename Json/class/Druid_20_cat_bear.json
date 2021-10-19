@@ -1,11 +1,9 @@
 {
   "ClassName": "Druid",
   "Loot": true,
-  "PathFilename": "_pack\\1-20\\Night elf\\15-18_Darkshore_Twilight Vale - Blackwood.json",
+  "PathFilename": "\\_pack\\1-20\\Human\\15-18_Westfall_The Dagger Hills (defias).json",
   "PathReduceSteps": true,
   "CheckTargetGivesExp": true,
-  "NPCMaxLevels_Below": 10,
-
   "Form": [
     {
       //macro: /cancelform
@@ -18,6 +16,12 @@
       "Key": "F2",
       "Form": "Druid_Bear",
       "MinMana": 50
+    },
+    {
+      "Name": "Cat form",
+      "Key": "F3",
+      "Form": "Druid_Cat",
+      "MinMana": 123
     }
   ],
   "Pull": {
@@ -25,6 +29,7 @@
       {
         "Name": "Rejuvenation",
         "Key": "6",
+        "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
         "Requirements": ["Health%<75", "not Rejuvenation"],
         "Cooldown": 5000,
@@ -35,21 +40,20 @@
         "Key": "5",
         "AfterCastWaitBuff": true,
         "CastIfAddsVisible": true,
-        "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire", "Mana%>50"],
-        "WaitForWithinMeleeRange": true,
+        "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire", "Mana%>40"],
         "StopBeforeCast": true,
         "Form": "None"
       },
       {
-        "Name": "Bear Form",
-        "Key": "F2",
+        "Name": "Cat Form",
+        "Key": "F3",
         "WaitForWithinMeleeRange": true,
-        "Requirements": ["Moonfire", "not Form:Druid_Bear"]
+        "Requirements": ["Moonfire", "not Form:Druid_Cat"]
       },
       {
-        "Name": "Bear Form",
-        "Key": "F2",
-        "Requirements": ["not Form:Druid_Bear"]
+        "Name": "Cat Form",
+        "Key": "F3",
+        "Requirements": ["not Form:Druid_Cat"]
       }
     ]
   },
@@ -59,16 +63,32 @@
         "Name": "Healing Touch",
         "Key": "3",
         "HasCastBar": true,
+        "WhenUsable": true,
         "Requirement": "Health%<30",
         "Cooldown": 5000,
         "Form": "None"
       },
       {
-        "Name": "Enrage",
-        "Key": "4",
+        "Name": "Rip",
+        "Key": "3",
+        "MinEnergy": 30,
+        "MinComboPoints": 1,
         "WhenUsable": true,
-        "Requirement": "TargetHealth%>40",
-        "Form": "Druid_Bear"
+        "Requirements": ["SpellInRange:2", "not Rip", "MobCount<1", "Form:Druid_Cat"],
+        "Form": "Druid_Cat"
+      },
+      {
+        "Name": "Claw",
+        "Key": "2",
+        "MinEnergy": 40,
+        "WhenUsable": true,
+        "Requirements": ["SpellInRange:2", "MobCount<1", "Form:Druid_Cat"],
+        "Form": "Druid_Cat"
+      },
+      {
+        "Name": "Bear Form",
+        "Key": "F2",
+        "Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>2"]
       },
       {
         "Name": "Bash",
@@ -79,11 +99,18 @@
         "Form": "Druid_Bear"
       },
       {
+        "Name": "Enrage",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirement": "Form:Druid_Bear",
+        "Form": "Druid_Bear"
+      },
+      {
         "Name": "Demoralizing Roar",
         "Key": "3",
         "MinRage": 10,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "not Demoralizing Roar", "Form:Druid_Bear"],
+        "Requirements": ["InMeleeRange", "not Demoralizing Roar", "MobCount>2", "Form:Druid_Bear"],
         "Form": "Druid_Bear"
       },
       {
@@ -101,6 +128,11 @@
         "Requirements": ["InMeleeRange", "MobCount<1", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
         "AfterCastWaitNextSwing": true,
         "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Cat Form",
+        "Key": "F3",
+        "Requirements": ["not Form:Druid_Cat", "Health%>60", "MobCount<1"]
       },
       {
         "Name": "AutoAttack",
@@ -133,28 +165,8 @@
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<40",
+        "Requirement": "Mana%<30",
         "Form": "None"
-      }
-    ]
-  },
-  "NPC": {
-    "Sequence": [
-      {
-        "Name": "Repair",
-        "Key": "C",
-        "Form": "None",
-        "Requirement": "Items Broken",
-        "PathFilename": "10_NightElf_Vendor.json",
-        "Cost": 19
-      },
-      {
-        "Name": "Sell",
-        "Key": "C",
-        "Form": "None",
-        "Requirement": "BagFull",
-        "PathFilename": "10_NightElf_Vendor.json",
-        "Cost": 19
       }
     ]
   }

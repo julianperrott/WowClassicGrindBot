@@ -104,12 +104,15 @@ namespace Core
             Interact.Name = "Interact";
             Interact.WaitForGCD = false;
             Interact.DelayAfterCast = 0;
+            Interact.PressDuration = 30;
             Interact.Initialise(addonReader, requirementFactory, logger);
 
             Approach.Key = InteractKey;
             Approach.Name = "Approach";
             Approach.WaitForGCD = false;
             Approach.DelayAfterCast = 0;
+            Approach.PressDuration = 10;
+            Approach.Cooldown = 150;
             Approach.Initialise(addonReader, requirementFactory, logger);
 
             AutoAttack.Key = InteractKey;
@@ -118,15 +121,19 @@ namespace Core
             AutoAttack.DelayAfterCast = 0;
             AutoAttack.Initialise(addonReader, requirementFactory, logger);
 
+            StopAttack.PressDuration = 10;
+
             InitializeKeyActions(Pull, Interact, Approach, AutoAttack);
             InitializeKeyActions(Combat, Interact, Approach, AutoAttack);
 
+            logger.LogInformation("[Form] Initialise KeyActions.");
             Form.ForEach(i => i.InitialiseForm(addonReader, requirementFactory, logger));
-            Pull.Initialise(addonReader, requirementFactory, logger);
-            Combat.Initialise(addonReader, requirementFactory, logger);
-            Adhoc.Initialise(addonReader, requirementFactory, logger);
-            NPC.Initialise(addonReader, requirementFactory, logger);
-            Parallel.Initialise(addonReader, requirementFactory, logger);
+
+            Pull.Initialise("Pull", addonReader, requirementFactory, logger);
+            Combat.Initialise("Combat", addonReader, requirementFactory, logger);
+            Adhoc.Initialise("Adhoc", addonReader, requirementFactory, logger);
+            NPC.Initialise("AdhocNpc", addonReader, requirementFactory, logger);
+            Parallel.Initialise("Parallel", addonReader, requirementFactory, logger);
 
             Jump.Key = JumpKey;
             Jump.Initialise(addonReader, requirementFactory, logger);
@@ -153,6 +160,7 @@ namespace Core
             TargetTargetOfTarget.Initialise(addonReader, requirementFactory, logger);
 
             PetAttack.Key = PetAttackKey;
+            PetAttack.PressDuration = 10;
             PetAttack.Initialise(addonReader, requirementFactory, logger);
 
             Mount.Key = MountKey;
@@ -191,6 +199,8 @@ namespace Core
                         a.Key = l.Key;
                         a.DelayAfterCast = l.DelayAfterCast;
                         a.WaitForGCD = l.WaitForGCD;
+                        a.PressDuration = l.PressDuration;
+                        a.Cooldown = l.Cooldown;
                     }
                 });
             });

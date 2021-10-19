@@ -1,5 +1,5 @@
 {
-  "ClassName": "Shaman",
+  "ClassName": "Priest",
   "Loot": true,
   "PathFilename": "_pack\\1-20\\Draenei\\1-5_Azuremyst Isle.json",
   "PathThereAndBack": true,
@@ -7,10 +7,11 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "Lightning Bolt",
+        "Name": "Smite",
         "Key": "2",
         "HasCastBar": true,
-        "MinMana": 15
+        "MinMana": 15,
+        "Requirement": "Mana%>50"
       }
     ]
   },
@@ -24,7 +25,7 @@
         "Requirements": ["Race:Draenei", "Health%<50"]
       },
       {
-        "Name": "Healing Wave",
+        "Name": "Lesser Heal",
         "Key": "3",
         "Requirement": "Health%<40",
         "Cooldown": 10000,
@@ -32,11 +33,11 @@
         "MinMana": 25
       },
       {
-        "Name": "Lightning Bolt",
+        "Name": "Smite",
         "Key": "2",
         "HasCastBar": true,
         "MinMana": 15,
-        "Requirement": "not InMeleeRange"
+        "Requirements": ["not InMeleeRange", "Mana%>50"]
       },
       {
         "Name": "AutoAttack",

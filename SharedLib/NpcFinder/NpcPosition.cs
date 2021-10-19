@@ -12,22 +12,28 @@ namespace SharedLib.NpcFinder
         public int Height => Max.Y - Min.Y;
         public int Width => Max.X - Min.X;
 
-        private readonly int screenMid;
-        private readonly int screenMidBuffer;
+        public readonly int screenMid;
+        public readonly int screenTargetBuffer;
+        public readonly int screenMidBuffer;
+        public readonly int screenAddBuffer;
 
         private readonly float yOffset;
         private readonly float heightMul;
 
-        public bool IsAdd => ClickPoint.X < screenMid - screenMidBuffer || ClickPoint.X > screenMid + screenMidBuffer;
+        public bool IsAdd =>
+            (ClickPoint.X < screenMid - screenTargetBuffer && ClickPoint.X > screenMid - screenAddBuffer) ||
+            (ClickPoint.X > screenMid + screenTargetBuffer && ClickPoint.X < screenMid + screenAddBuffer);
 
         public Point ClickPoint => new Point(Min.X + (Width / 2), (int)(Max.Y + yOffset + (Height * heightMul)));
 
         public NpcPosition(Point min, Point max, int screenWidth, float yOffset, float heightMul)
         {
-            this.Min = min;
-            this.Max = max;
-            this.screenMid = screenWidth / 2;
-            this.screenMidBuffer = screenWidth / 10;
+            Min = min;
+            Max = max;
+            screenMid = screenWidth / 2;
+            screenMidBuffer = screenWidth / 15;
+            screenTargetBuffer = screenMidBuffer / 2;
+            screenAddBuffer = screenMidBuffer * 3;
 
             this.yOffset = yOffset;
             this.heightMul = heightMul;

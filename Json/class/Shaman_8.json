@@ -1,7 +1,7 @@
 {
   "ClassName": "Shaman",
   "Loot": true,
-  "PathFilename": "_pack\\1-20\\Draenei\\1-5_Azuremyst Isle.json",
+  "PathFilename": "_pack\\1-20\\Draenei\\5-9_Azuremyst Isle.json",
   "KillIfGivesExp": true,
   "Pull": {
     "Sequence": [
@@ -9,7 +9,7 @@
         "Name": "Lightning Bolt",
         "Key": "2",
         "HasCastBar": true,
-        "Requirements": ["not InMeleeRange", "SpellInRange:0", "Stoneskin", "Mana%>50"],
+        "Requirements": ["not InMeleeRange", "SpellInRange:0", "Stoneskin", "Mana%>60"],
         "WaitForWithinMeleeRange": true,
         "MinMana": 15
       },
@@ -44,7 +44,7 @@
         "Name": "Earth Shock",
         "Key": "6",
         "WhenUsable": true,
-        "Requirements": ["TargetHealth%>10", "SpellInRange:1", "Mana%>50", "TargetHealth%>20"],
+        "Requirements": ["TargetHealth%>10", "SpellInRange:1", "Mana%>55", "TargetHealth%>20"],
         "MinMana": 30
       },
       {
@@ -52,7 +52,7 @@
         "Key": "F2",
         "WhenUsable": true,
         "Cooldown": 30000,
-        "Requirements": ["InMeleeRange", "TargetHealth%>50", "Mana%>50", "BagItem:5175", "not Stoneskin"],
+        "Requirements": ["InMeleeRange", "TargetHealth%>50", "Mana%>55", "BagItem:5175", "not Stoneskin"],
         "MinMana": 30
       },
       {
@@ -72,6 +72,13 @@
         "Key": "5",
         "MinMana": 15,
         "Requirement": "not HasMainHandEnchant"
+      },
+      {
+        "Name": "Lightning Shield",
+        "Key": "7",
+        "MinMana": 25,
+        "Cooldown": 10000,
+        "Requirements": ["not Lightning Shield", "Mana%>50"]
       }
     ]
   },

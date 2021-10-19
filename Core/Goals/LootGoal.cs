@@ -70,7 +70,7 @@ namespace Core.Goals
             await stopMoving.Stop();
             combatUtil.Update();
 
-            await npcNameTargeting.WaitForNUpdate(1);
+            await npcNameTargeting.WaitForNUpdate(2);
             bool foundCursor = await npcNameTargeting.FindByCursorType(Cursor.CursorClassification.Loot);
             if (foundCursor)
             {

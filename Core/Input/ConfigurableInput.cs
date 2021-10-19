@@ -27,6 +27,12 @@ namespace Core
             this.ClassConfig.Interact.SetClicked();
         }
 
+        public async Task TapApproachKey(string source)
+        {
+            await KeyPress(ClassConfig.Approach.ConsoleKey, ClassConfig.Approach.PressDuration, string.IsNullOrEmpty(source) ? "" : $"TapApproachKey ({source})");
+            this.ClassConfig.Approach.SetClicked();
+        }
+
         public async Task TapLastTargetKey(string source)
         {
             await KeyPress(ClassConfig.TargetLastTarget.ConsoleKey, defaultKeyPress, $"TapLastTarget ({source})");
@@ -47,7 +53,7 @@ namespace Core
 
         public async Task TapStopAttack(string desc = "")
         {
-            await KeyPress(ClassConfig.StopAttack.ConsoleKey, defaultKeyPress, string.IsNullOrEmpty(desc) ? "" : $"TapStopAttack: {desc}");
+            await KeyPress(ClassConfig.StopAttack.ConsoleKey, ClassConfig.StopAttack.PressDuration, string.IsNullOrEmpty(desc) ? "" : $"TapStopAttack: {desc}");
             this.ClassConfig.StopAttack.SetClicked();
         }
 
@@ -77,7 +83,7 @@ namespace Core
 
         public async Task TapPetAttack(string source = "")
         {
-            await KeyPress(ClassConfig.PetAttack.ConsoleKey, defaultKeyPress, $"TapPetAttack ({source})");
+            await KeyPress(ClassConfig.PetAttack.ConsoleKey, ClassConfig.PetAttack.PressDuration, $"TapPetAttack ({source})");
             this.ClassConfig.PetAttack.SetClicked();
         }
 

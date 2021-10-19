@@ -4,8 +4,8 @@
   "Pull": {
     "Sequence": [
       {
-        "Name": "autoshot",
-        "StopBeforeCast": true,
+        "Name": "Auto Shot",
+        "HasCastBar": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
       },
@@ -15,6 +15,7 @@
         "WhenUsable": true,
         "AfterCastWaitNextSwing": true,
         "StepBackAfterCast": 1000,
+        "MinMana": 15,
         "Requirement": "InMeleeRange"
       }
     ]
@@ -22,8 +23,8 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "autoshot",
-        "StopBeforeCast": true,
+        "Name": "Auto Shot",
+        "HasCastBar": true,
         "Key": "3",
         "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
       },
@@ -37,8 +38,6 @@
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
-        "DelayAfterCast": 0,
         "Requirements": ["InMeleeRange", "not AutoAttacking"]
       }
     ]

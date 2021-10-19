@@ -2,14 +2,25 @@
   "ClassName": "Druid",
   "Loot": true,
   "NPCMaxLevels_Below": 8,
-
   "PathFilename": "52_Ongoro.json",
-  "SpiritPathFilename": "52_Ongoro_SpiritHealer.json",
   "PathThereAndBack": true,
   "PathReduceSteps": true,
-
-  "Blacklist": ["BLUEGI","Tunnel","OL' SO","HAREN S","THRAGO", "Elder Razormaw","Highland Razormaw","Boulderfist","witherbark","venomhide","tar beast","toxic horror","hive","hazzali"],
-
+  "Blacklist": [
+    "BLUEGI",
+    "Tunnel",
+    "OL' SO",
+    "HAREN S",
+    "THRAGO",
+    "Elder Razormaw",
+    "Highland Razormaw",
+    "Boulderfist",
+    "witherbark",
+    "venomhide",
+    "tar beast",
+    "toxic horror",
+    "hive",
+    "hazzali"
+  ],
   "Form": [
     {
       "Name": "/cancelform",
@@ -17,30 +28,29 @@
       "Form": "None"
     },
     {
-      "Name": "Druid_Bear",
-      "Key": "2",
+      "Name": "Bear Form",
+      "Key": "F2",
       "Form": "Druid_Bear"
     },
     {
-      "Name": "Druid_Travel",
-      "Key": "1",
+      "Name": "Travel Form",
+      "Key": "F1",
       "Form": "Druid_Travel"
     }
   ],
-
   "Pull": {
     "Sequence": [
       {
         "Name": "Rejuvenation",
         "Key": "1",
-        "Requirement": "Health%<70",
+        "AfterCastWaitBuff": true,
+        "Requirements": ["Health%<70", "not Rejuvenation"],
         "Form": "None"
       },
       {
         "Name": "Wrath",
         "Key": "7",
         "Requirement": "OutOfCombatRange",
-        "StopBeforeCast": true,
         "Form": "None",
         "HasCastBar": true
       },
@@ -48,8 +58,8 @@
         "Name": "Moonfire",
         "Key": "8",
         "Form": "None",
-        "MinMana": 235,
-        "DelayBeforeCast": 300
+        "Requirements": ["not Moonfire", "SpellInRange:0"],
+        "MinMana": 235
       },
       {
         "Name": "Wrath",
@@ -60,37 +70,27 @@
         "WaitForWithinMeleeRange": true
       },
       {
-        "Name": "Bear form",
-        "Key": "2",
+        "Name": "Bear Form",
+        "Key": "F2",
         "Form": "None",
         "WaitForWithinMeleeRange": true
       }
     ]
   },
-
   "Combat": {
     "Sequence": [
       {
-        "Name": "Approach",
-        "Cooldown": 10,
-        "Log": false,
-        "DelayAfterCast": "200"
-      },
-      {
-        "Name": "Heal",
+        "Name": "Healing Touch",
         "Key": "6",
         "Requirement": "Health%<50",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "HasCastBar": true,
-        "Log": false,
         "Form": "None"
       },
       {
         "Name": "Enrage",
         "Key": "3",
-        "Cooldown": 15,
-        "DelayAfterCast": "200",
-        "Log": false,
+        "WhenUsable": true,
         "Form": "Druid_Bear"
       },
       {
@@ -98,36 +98,48 @@
         "Requirement": "not Faerie Fire",
         "Key": "7",
         "MinRage": 10,
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Form": "Druid_Bear",
-        "Log": false,
         "ResetOnNewTarget": true
       },
       {
         "Name": "Roar",
-        "Requirement": "not Demoralizing Roar",
+        "Requirements": ["InMeleeRange", "not Demoralizing Roar"],
         "Key": "5",
         "MinRage": 6,
-        "Cooldown": 10,
-        "Log": false,
+        "Cooldown": 10000,
         "Form": "Druid_Bear"
       },
       {
         "Name": "Bash",
         "Key": "4",
         "MinRage": 10,
-        "Cooldown": 31,
-        "Log": false,
+        "Cooldown": 31000,
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Swipe",
+        "Key": "N1",
+        "MinRage": 20,
+        "WhenUsable": true,
+        "Requirements": ["InMeleeRange", "MobCount>2"],
         "Form": "Druid_Bear"
       },
       {
         "Name": "Maul",
         "Key": "2",
         "MinRage": 10,
-        "Cooldown": 2,
-        "DelayAfterCast": "500",
-        "Log": false,
+        "AfterCastWaitNextSwing": true,
+        "Requirements": ["InMeleeRange", "MobCount<1", "LastMainHandMs>2100"], // bear swing speed fixed at 2.5
         "Form": "Druid_Bear"
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -137,19 +149,17 @@
         "Name": "Healing Potion",
         "Key": "-",
         "Requirement": "Health%<8",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "Form": "None",
         "InCombat": "true",
-        "Log": false,
         "Cost": 3
       },
       {
         "Name": "Heal",
         "Key": "6",
         "Requirement": "Health%<60",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "HasCastBar": true,
-        "Log": false,
         "Form": "None",
         "Cost": 3
       },
@@ -158,44 +168,34 @@
         "StopBeforeCast": false,
         "Key": "9",
         "Requirement": "not Well Fed",
-        "Cooldown": 120,
-        "Log": false,
+        "Cooldown": 120000,
         "Form": "None"
       },
       {
-        "Name": "Drink",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
+        "Name": "Water",
         "Key": "0",
         "Requirement": "Mana%<40",
-        "Cooldown": 10,
-        "Log": false,
         "Form": "None",
         "Cost": 3
       },
       {
         "Name": "Thorns",
-        "StopBeforeCast": false,
         "Key": "3",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Requirement": "not Thorns",
-        "Log": false,
         "Form": "None"
       },
       {
         "Name": "Mark of the Wild",
-        "StopBeforeCast": false,
         "Key": "4",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Requirement": "not Mark of the Wild",
-        "Log": false,
         "Form": "None"
       },
       {
         "Name": "Del1",
         "Key": "F5",
-        "Cooldown": 120,
-        "Log": false
+        "Cooldown": 120000
       }
     ]
   }

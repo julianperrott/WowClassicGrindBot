@@ -1,43 +1,16 @@
 local Load = select(2, ...)
 local DataToColor = unpack(Load)
 
-DataToColor.S.PlayerClass = 0
 DataToColor.S.spellInRangeList = {}
 
 DataToColor.S.playerBuffs = {}
 DataToColor.S.targetDebuffs = {}
 
 function DataToColor:InitStorage()
-    CreatePlayerClass()
     CreateSpellInRangeList()
 
     CreatePlayerBuffList()
     CreateTargetDebuffList()
-end
-
-function CreatePlayerClass()
-    -- UnitClass returns class and the class in uppercase e.g. "Mage" and "MAGE"
-    if DataToColor.C.CHARACTER_CLASS == "MAGE" then
-        DataToColor.S.PlayerClass = 128
-    elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
-        DataToColor.S.PlayerClass = 64
-    elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
-        DataToColor.S.PlayerClass = 32
-    elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
-        DataToColor.S.PlayerClass = 16
-    elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
-        DataToColor.S.PlayerClass = 8
-    elseif DataToColor.C.CHARACTER_CLASS == "PRIEST" then
-        DataToColor.S.PlayerClass = 4
-    elseif DataToColor.C.CHARACTER_CLASS == "SHAMAN" then
-        DataToColor.S.PlayerClass = 2
-    elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then
-        DataToColor.S.PlayerClass = 1    
-    elseif DataToColor.C.CHARACTER_CLASS == "DRUID" then
-        DataToColor.S.PlayerClass = 256
-    else
-        DataToColor.S.PlayerClass = 0
-    end
 end
 
 function CreateSpellInRangeList()
@@ -63,9 +36,10 @@ function CreateSpellInRangeList()
     elseif DataToColor.C.CHARACTER_CLASS == "PRIEST" then
         DataToColor.S.spellInRangeList = {
             589,   -- "Shadow Word: Pain"
-            8092,  -- "Mind Blast"
+            5019,  -- "Shoot"
             15407, -- "Mind Flay"
-            5019   -- "Shoot"
+            8092,  -- "Mind Blast"
+            585    -- "Smite"
         }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
         DataToColor.S.spellInRangeList = {
@@ -104,6 +78,7 @@ function CreatePlayerBuffList()
     DataToColor.S.playerBuffs[1] = { "Drink", [132794]=1, [132800]=1, [132805]=1, [132802]=1 }
     DataToColor.S.playerBuffs[2] = { "Well Fed", [136000]=1 }
     DataToColor.S.playerBuffs[3] = { "Mana Regeneration", [2]=1 } -- potion?
+    DataToColor.S.playerBuffs[4] = { "Clearcasting", [136170]=1 } -- Druid / Mage / Shaman
 
     if DataToColor.C.CHARACTER_CLASS == "PRIEST" then
         DataToColor.S.playerBuffs[10] = { "Fortitude", [135987]=1, [135941]=1 }
@@ -129,6 +104,8 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[13] = { "Ward", [135806]=1, [135850]=1 }
         DataToColor.S.playerBuffs[14] = { "Fire Power", [135817]=1 } -- not sure what is this
         DataToColor.S.playerBuffs[15] = { "Mana Shield", [136153]=1 }
+        DataToColor.S.playerBuffs[16] = { "Presence of Mind", [136031]=1 }
+        DataToColor.S.playerBuffs[17] = { "Arcane Power", [136048]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
         DataToColor.S.playerBuffs[10] = { "Slice and Dice", [132306]=1 }
         DataToColor.S.playerBuffs[11] = { "Stealth", [132320]=1 }
@@ -143,6 +120,7 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[10] = { "Lightning Shield", [136051]=1 }
         DataToColor.S.playerBuffs[11] = { "Water Shield", [132315]=1 }
         DataToColor.S.playerBuffs[12] = { "Focused", [136027]=1 } -- Shamanistic Focus
+        DataToColor.S.playerBuffs[13] = { "Stoneskin", [136098]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
         DataToColor.S.playerBuffs[10] = { "Aspect of", [136076]=1, [132159]=1, [132252]=1, [132267]=1, [132160]=1, [136074]=1 }
         DataToColor.S.playerBuffs[11] = { "Rapid Fire", [132208]=1 }
@@ -160,9 +138,11 @@ function CreateTargetDebuffList()
         DataToColor.S.targetDebuffs[2] = { "Rip", [132152]=1 }
         DataToColor.S.targetDebuffs[3] = { "Moonfire", [136096]=1 }
         DataToColor.S.targetDebuffs[4] = { "Entangling Roots", [136100]=1 }
+        DataToColor.S.targetDebuffs[5] = { "Rake", [132122]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
     elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
         DataToColor.S.targetDebuffs[0] = { "Frostbite", [135842]=1 }
+        DataToColor.S.targetDebuffs[1] = { "Slow", [136091]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
     elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
         DataToColor.S.targetDebuffs[0] = { "Rend", [132155]=1 }

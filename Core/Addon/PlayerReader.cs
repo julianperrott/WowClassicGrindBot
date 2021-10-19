@@ -113,7 +113,9 @@ namespace Core
 
         public long Gold => reader.GetLongAtCell(44) + (reader.GetLongAtCell(45) * 1000000);
 
-        public PlayerClassEnum PlayerClass => (PlayerClassEnum)reader.GetLongAtCell(46);
+        public RaceEnum PlayerRace => (RaceEnum)(int)(reader.GetLongAtCell(46) / 100f);
+
+        public PlayerClassEnum PlayerClass => (PlayerClassEnum)(int)(reader.GetLongAtCell(46) - ((int)PlayerRace * 100f));
 
         public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
 
@@ -142,7 +144,14 @@ namespace Core
         public long SpellBeingCast => reader.GetLongAtCell(53);
         public long ComboPoints => reader.GetLongAtCell(54);
 
-        public long PlayerDebuffCount => reader.GetLongAtCell(55);
+        public AuraCount AuraCount => new AuraCount(reader, 55);
+
+        public int PlayerDebuffCount => AuraCount.PlayerDebuff;
+        public int PlayerBuffCount => AuraCount.PlayerBuff;
+
+        public int TargetBuffCount => AuraCount.TargetBuff;
+        public int TargetDebuffCount => AuraCount.TargetDebuff;
+
 
         public int TargetId => (int)reader.GetLongAtCell(56);
         public long TargetGuid => reader.GetLongAtCell(57);
@@ -156,6 +165,8 @@ namespace Core
 
         public RecordInt AutoShot = new RecordInt(60);
         public RecordInt MainHandSwing = new RecordInt(61);
+        public RecordInt CastEvent = new RecordInt(62);
+        public RecordInt CastSpellId = new RecordInt(63);
 
         public RecordInt CombatCreatureGuid = new RecordInt(64);
         public RecordInt CombatDamageDoneGuid = new RecordInt(65);
@@ -166,8 +177,11 @@ namespace Core
         public int PetTargetGuid => (int)reader.GetLongAtCell(69);
         public bool PetHasTarget => PetTargetGuid != 0;
 
-        public RecordInt GlobalTime = new RecordInt(70);
-        public long LastLootTime => reader.GetLongAtCell(71);
+        public int CastCount => (int)reader.GetLongAtCell(70);
+
+        public long LastLootTime => reader.GetLongAtCell(97);
+
+        public RecordInt GlobalTime = new RecordInt(98);
 
         // https://wowpedia.fandom.com/wiki/Mob_experience
         public bool TargetYieldXP => PlayerLevel switch
@@ -278,21 +292,25 @@ namespace Core
                 Reset();
             }
 
-            UIMapId.Update(reader);
-
-            AutoShot.Update(reader);
-            MainHandSwing.Update(reader);
-
-            UpdateCreatureLists();
-
             if (UIErrorMessage > 0)
             {
                 LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
             }
+
+            UIMapId.Update(reader);
+
+            AutoShot.Update(reader);
+            MainHandSwing.Update(reader);
+            CastEvent.Update(reader);
+            CastSpellId.Update(reader);
+
+            UpdateCreatureLists();
         }
 
         internal void Reset()
         {
+            FormCost.Clear();
+
             // Reset all CreatureHistory
             Creatures.Clear();
             DamageTaken.Clear();
@@ -305,6 +323,8 @@ namespace Core
 
             AutoShot.Reset();
             MainHandSwing.Reset();
+            CastEvent.Reset();
+            CastSpellId.Reset();
 
             CombatCreatureGuid.Reset();
             CombatDamageDoneGuid.Reset();

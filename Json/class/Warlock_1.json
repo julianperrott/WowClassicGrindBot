@@ -1,7 +1,6 @@
 {
   "ClassName": "Warlock",
   "Loot": true,
-  "NPCMaxLevels_Below": 3,
   "PathFilename": "1_Gnome.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
@@ -10,9 +9,8 @@
     "Sequence": [
       {
         "Name": "Shadow Bolt",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
+        "HasCastBar": true,
         "MinMana": 25
       }
     ]
@@ -22,22 +20,16 @@
       {
         "Name": "Shadow Bolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 25
       },
       {
-        "Name": "shoot",
-        "StopBeforeCast": true,
-        "Key": "0",
-        "Cooldown": 3,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
-        "Log": false
+        "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking"
       },
       {
-        "Name": "AutoAttack",
-        "Cooldown": 3,
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -45,28 +37,19 @@
     "Sequence": [
       {
         "Name": "Demon Skin",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 50,
         "Requirement": "not Demon Skin"
       },
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "N1",
-        "Requirement": "Health%<50",
-        "Cooldown": 60
+        "Key": "=",
+        "Requirement": "Health%<50"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "N2",
-        "Requirement": "Mana%<50",
-        "Cooldown": 60
+        "Key": "-",
+        "Requirement": "Mana%<50"
       }
     ]
   },

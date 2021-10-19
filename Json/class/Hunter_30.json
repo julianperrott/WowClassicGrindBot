@@ -7,8 +7,8 @@
         "Name": "Concussive Shot",
         "Key": "9",
         "MinMana": 15,
-        "Cooldown": 12,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+        "Cooldown": 12000,
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange"]
       },
       {
         "Name": "Raptor Strike",
@@ -25,23 +25,22 @@
       {
         "Name": "Gift of the Naaru",
         "Key": "1",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirement": "Health%<45"
+        "Requirements": ["Race:Draenei", "Health%<45"]
       },
       {
         "Name": "Mend Pet",
         "Key": "N7",
         "MinMana": 200,
-        "Cooldown": 15,
+        "Cooldown": 15000,
         "Requirements": ["Has Pet", "PetHealth%<50"]
       },
       {
         "Name": "Intimidation",
         "Key": "N4",
         "MinMana": 15,
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "WhenUsable": true,
         "Requirements": ["Has Pet"]
       },
@@ -49,30 +48,30 @@
         "Name": "Serpent Sting",
         "Key": "2",
         "MinMana": 15,
-        "Cooldown": 15,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "Mana%>55", "not Serpent Sting", "HasAmmo"]
+        "Cooldown": 4000,
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Serpent Sting", "Mana%>55"]
       },
       {
         "Name": "Rapid Fire",
         "Key": "N3",
         "MinMana": 15,
-        "Cooldown": 8,
+        "Cooldown": 8000,
         "WhenUsable": true,
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "HasAmmo", "TargetHealth%>90"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "TargetHealth%>90"]
       },
       {
-        "Name": "autoshot",
-        "StopBeforeCast": true,
+        "Name": "Auto Shot",
+        "HasCastBar": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]
       },
       {
         "Name": "Arcane Shot",
         "Key": "8",
         "MinMana": 15,
-        "Cooldown": 6,
+        "Cooldown": 6000,
         "WhenUsable": true,
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "HasAmmo", "TargetHealth%>60", "Mana%>70", "not Rapid Fire", "not Quick Shots"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Rapid Fire", "not Quick Shots", "TargetHealth%>60", "Mana%>70"]
       },
       {
         "Name": "Raptor Strike",
@@ -85,8 +84,6 @@
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
-        "DelayAfterCast": 0,
         "Requirements": ["InMeleeRange", "not AutoAttacking"]
       }
     ]
@@ -102,7 +99,7 @@
       {
         "Name": "feedpet",
         "Key": "N5",
-        "Cooldown": 20,
+        "Cooldown": 20000,
         "Requirements": ["Has Pet", "not Pet Happy"]
       },
       {
@@ -110,7 +107,7 @@
         "Key": "N6",
         "MinMana": 20,
         "HasCastBar": true,
-        "Cooldown": 4,
+        "Cooldown": 4000,
         "Requirement": "not Has Pet"
       }
     ]
@@ -119,21 +116,13 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "6",
-        "Requirement": "Health%<40",
-        "Cooldown": 10
+        "Requirement": "Health%<40"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "7",
-        "Requirement": "Mana%<40",
-        "Cooldown": 10
+        "Requirement": "Mana%<40"
       }
     ]
   }

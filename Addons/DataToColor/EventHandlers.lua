@@ -1,6 +1,9 @@
 local Load = select(2, ...)
 local DataToColor = unpack(Load)
 
+local CAST_START = 999998
+local CAST_SUCCESS = 999999
+
 local ignoreErrorList = {
     "ERR_ABILITY_COOLDOWN",
     "ERR_OUT_OF_RAGE",
@@ -23,6 +26,8 @@ local errorList = {
     "ERR_SPELL_COOLDOWN",  --7 "Spell is not ready yet."
     "ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS", --8 "Another action is in progress"
     "ERR_SPELL_FAILED_STUNNED", -- 9 "Can't do that while stunned"
+    "SPELL_FAILED_INTERRUPTED", -- 10 "Interrupted"
+    "SPELL_FAILED_ITEM_NOT_READY" -- 11 "Item is not ready yet"
 };
 
 function DataToColor:RegisterEvents()
@@ -39,52 +44,84 @@ function DataToColor:RegisterEvents()
 end
 
 function DataToColor:OnUIErrorMessage(event, messageType, message)
-    local errorName = GetGameMessageInfo(messageType)
+    local code, ignored, foundMessage, message = DataToColor:GetErrorCode(messageType, message)
 
-    local foundMessage=false;
+    if ignored then
+        UIErrorsFrame:AddMessage(message, 0.7, 0.7, 0.7) -- show as grey messasge
+    elseif foundMessage and code ~= 0 then
+        DataToColor.uiErrorMessage = code;
+        UIErrorsFrame:AddMessage(message, 0, 1, 0) -- show as green messasge
+    else
+        UIErrorsFrame:AddMessage(message, 0, 0, 1) -- show as blue message (unknown message)
+    end
+end
+
+function DataToColor:GetErrorCode(messageType, message)
+
+    local errorName
+    local foundMessage = false
+    local ignored = false
+    local code = 0
+
+    if messageType ~= nil then
+        errorName = GetGameMessageInfo(messageType)
+    end
+
     for i = 1, table.getn(ignoreErrorList), 1 do
-        if ignoreErrorList[i]==errorName then
-            foundMessage=true;
-            UIErrorsFrame:AddMessage(message, 0.7, 0.7, 0.7) -- show as grey messasge
+        if ignoreErrorList[i] == errorName then
+            foundMessage = true;
+            ignored = true
         end
     end
 
-    if not foundMessage then
+    if not ignored and not foundMessage then
         for i = 1, table.getn(errorList), 1 do
-            if errorList[i]==errorName then
-                DataToColor.uiErrorMessage = i;
-
-                if errorName==errorList[2] then -- ERR_SPELL_FAILED_S
-                    if message==SPELL_FAILED_UNIT_NOT_INFRONT then
-                        DataToColor.uiErrorMessage = 1
-                        message = message.." ("..ERR_BADATTACKFACING..")"
-                    elseif message==SPELL_FAILED_MOVING then
-                        DataToColor.uiErrorMessage = 6
-                    elseif message==SPELL_FAILED_STUNNED then
-                        DataToColor.uiErrorMessage = 9
-                        --message = message.." ("..SPELL_FAILED_STUNNED..")"
-                    --else
-                    --    message = message.." (Spell related)"
-                    end
-                end
-                
-                foundMessage=true;
-                UIErrorsFrame:AddMessage(message, 0, 1, 0) -- show as green messasge
+            if errorList[i] == errorName or
+            (_G[errorList[i]] ~= nil and string.find(_G[errorList[i]], message)) then
+                code = i;
+                foundMessage = true;
             end
         end
     end
 
-    if not foundMessage then
-        UIErrorsFrame:AddMessage(message, 0, 0, 1) -- show as blue message (unknown message)
+    -- ERR_SPELL_FAILED_S
+    -- find by message ex combatlog
+    if not ignored and (not foundMessage or errorName == errorList[2]) then
+        if string.find(message, SPELL_FAILED_UNIT_NOT_INFRONT) then
+            code = 1
+            foundMessage = true
+            message = message.." ("..ERR_BADATTACKFACING..")"
+        elseif string.find(message, SPELL_FAILED_MOVING) then
+            foundMessage = true
+            code = 6
+        elseif string.find(message, SPELL_FAILED_STUNNED) then
+            foundMessage = true
+            code = 9
+        end
     end
+
+    return code, ignored, foundMessage, message
 end
 
 local watchedSpells = {
     [DataToColor.C.Spell.AutoShotId] = function ()
         --DataToColor:Print("Auto Shot detected")
         DataToColor.lastAutoShot = DataToColor.globalTime
-     end
+    end
   }
+
+local swing_reset_spells = {
+    --[[ Maul ]]
+    [132136]=1,
+    --[[ Raptor Strike ]]
+    [132223]=1,
+    --[[ Cleave ]]
+    [132338]=1,
+    --[[ Heroic Strike ]]
+    [132282]=1,
+    --[[ Slam ]]
+    [132340]=1
+}
 
 function DataToColor:OnCombatEvent(...)
     local _, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, _, _ = CombatLogGetCurrentEventInfo();
@@ -93,32 +130,58 @@ function DataToColor:OnCombatEvent(...)
         DataToColor.lastCombatCreature=0;
     elseif string.find(sourceGUID, "Creature") then
         DataToColor.lastCombatCreature = DataToColor:getGuidFromUUID(sourceGUID);
-        --print(CombatLogGetCurrentEventInfo())
     else
         DataToColor.lastCombatCreature=0;
-        --print("Other "..eventType);
     end
 
     if string.find(sourceGUID, "Creature") and (destGUID == DataToColor.playerGUID or destGUID == DataToColor.petGUID) then
         DataToColor.lastCombatDamageTakenCreature = DataToColor:getGuidFromUUID(sourceGUID);
-        --print(sourceGUID.." "..DataToColor.lastCombatDamageTakenCreature.." "..sourceName);
     end
 
-    if eventType=="SPELL_CAST_SUCCESS" and sourceGUID == DataToColor.playerGUID then
-          if watchedSpells[spellId] then watchedSpells[spellId]() end
-    end
+    if sourceGUID == DataToColor.playerGUID then
+        if eventType=="SPELL_CAST_SUCCESS" then
+            if watchedSpells[spellId] then watchedSpells[spellId]() end
 
-    if string.find(eventType, "_DAMAGE") then
-        if sourceGUID == DataToColor.playerGUID or sourceGUID == DataToColor.petGUID then
+            local _, _, icon = GetSpellInfo(spellId)
+            if swing_reset_spells[icon] then
+                --DataToColor:Print("Special Melee Swing detected")
+                DataToColor.lastMainHandMeleeSwing = DataToColor.globalTime
+            end
+        end
+
+        if string.find(eventType, "_CAST_START") then
+            DataToColor.lastCastEvent = CAST_START
+            DataToColor.lastCastSpellId = spellId
+            --print(CombatLogGetCurrentEventInfo())
+            --print("_CAST_START "..spellId)
+        end
+
+        if string.find(eventType, "_CAST_SUCCESS") or string.find(eventType, "_CAST_FAILED") then
+            --print(CombatLogGetCurrentEventInfo())
+            DataToColor.lastCastSpellId = spellId
+
+            if string.find(eventType, "_CAST_FAILED") then
+                --local lastCastEvent = DataToColor.lastCastEvent
+                local failedType = select(15, CombatLogGetCurrentEventInfo())
+                DataToColor.lastCastEvent = DataToColor:GetErrorCode(nil, failedType)
+                --print(lastCastEvent.." -> "..DataToColor.lastCastEvent.." "..failedType.." "..spellId)
+            else
+                DataToColor.lastCastEvent = CAST_SUCCESS
+            end
+        end
+
+        -- matches SWING_ RANGE_ SPELL_ but not SPELL_PERIODIC
+        if not string.find(eventType, "SPELL_PERIODIC") and
+            (string.find(eventType, "_DAMAGE") or string.find(eventType, "_MISSED")) then
             DataToColor.lastCombatDamageDoneCreature = DataToColor:getGuidFromUUID(destGUID);
         end
-    end
 
-    if sourceGUID == DataToColor.playerGUID and string.find(eventType, "SWING_") then
-        local _, _, _, _, _, _, _, _, _, isOffHand = select(12, ...)
-        if not isOffHand then
-            --DataToColor:Print("Melee Swing detected")
-            DataToColor.lastMainHandMeleeSwing = DataToColor.globalTime
+        if string.find(eventType, "SWING_") then
+            local _, _, _, _, _, _, _, _, _, isOffHand = select(12, ...)
+            if not isOffHand then
+                --DataToColor:Print("Normal Melee Swing detected")
+                DataToColor.lastMainHandMeleeSwing = DataToColor.globalTime
+            end
         end
     end
 

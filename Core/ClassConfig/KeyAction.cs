@@ -60,16 +60,16 @@ namespace Core
 
         public List<Requirement> RequirementObjects { get; } = new List<Requirement>();
 
-        protected static ConcurrentDictionary<ConsoleKey, DateTime> LastClicked { get; } = new ConcurrentDictionary<ConsoleKey, DateTime>();
+        public int ConsoleKeyFormHash;
 
-        public static ConsoleKey LastKeyClicked()
+        protected static ConcurrentDictionary<int, DateTime> LastClicked { get; } = new ConcurrentDictionary<int, DateTime>();
+
+        public static int LastKeyClicked()
         {
-            if (!LastClicked.Any()) { return ConsoleKey.NoName; }
-
-            var last = LastClicked.OrderByDescending(s => s.Value).First();
-            if ( (DateTime.Now- last.Value).TotalSeconds>2)
+            var last = LastClicked.OrderByDescending(s => s.Value).FirstOrDefault();
+            if (last.Key == 0 || (DateTime.Now - last.Value).TotalSeconds > 2)
             {
-                return ConsoleKey.NoName;
+                return (int)ConsoleKey.NoName;
             }
             return last.Key;
         }
@@ -92,7 +92,7 @@ namespace Core
                 Requirements.Add(this.Requirement);
             }
 
-            if (!string.IsNullOrEmpty(Form))
+            if (HasFormRequirement())
             {
                 if (Enum.TryParse(typeof(Form), Form, out var desiredForm))
                 {
@@ -101,7 +101,7 @@ namespace Core
 
                     if (KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot))
                     {
-                        int offset = Stance.FormToActionBar(playerReader.PlayerClass, FormEnum);
+                        int offset = Stance.RuntimeSlotToActionBar(this, playerReader, slot);
                         this.logger.LogInformation($"[{Name}] Actionbar Form key map: Key:{Key} -> Actionbar:{slot} -> Form Map:{slot + offset}");
                     }
                 }
@@ -110,6 +110,8 @@ namespace Core
                     logger.LogInformation($"Unknown form: {Form}");
                 }
             }
+
+            ConsoleKeyFormHash = ((int)FormEnum * 1000) + (int)ConsoleKey;
 
             UpdateMinResourceRequirement(playerReader, addonReader.ActionBarCostReader);
 
@@ -120,7 +122,7 @@ namespace Core
         {
             Initialise(addonReader, requirementFactory, logger);
 
-            if (!string.IsNullOrEmpty(Form))
+            if (HasFormRequirement())
             {
                 if (addonReader.PlayerReader.FormCost.ContainsKey(FormEnum))
                 {
@@ -128,7 +130,7 @@ namespace Core
                 }
 
                 addonReader.PlayerReader.FormCost.Add(FormEnum, MinMana);
-                LogInformation($"Added {FormEnum} to FormCost with {MinMana}");
+                logger.LogInformation($"[{Name}] Added {FormEnum} to FormCost with {MinMana}");
             }
         }
 
@@ -139,7 +141,7 @@ namespace Core
                 this.RequirementObjects.Add(new Requirement
                 {
                     HasRequirement = () => GetCooldownRemaining() == 0,
-                    LogMessage = () => $"Cooldown {GetCooldownRemaining()}",
+                    LogMessage = () => $"Cooldown {GetCooldownRemaining() / 1000:F1}",
                     VisibleIfHasRequirement = false
                 });
             }
@@ -149,12 +151,12 @@ namespace Core
         {
             try
             {
-                if (!LastClicked.ContainsKey(this.ConsoleKey))
+                if (!LastClicked.ContainsKey(ConsoleKeyFormHash))
                 {
                     return 0;
                 }
 
-                var remaining = this.Cooldown - ((int)(DateTime.Now - LastClicked[this.ConsoleKey]).TotalSeconds);
+                var remaining = Cooldown - (float)(DateTime.Now - LastClicked[ConsoleKeyFormHash]).TotalMilliseconds;
 
                 return remaining < 0 ? 0 : remaining;
             }
@@ -163,6 +165,12 @@ namespace Core
                 this.logger.LogError(e, "GetCooldownRemaining()");
                 return 0;
             }
+        }
+
+        public bool CanDoFormChangeAndHaveMinimumMana()
+        {
+            return playerReader != null &&
+                (playerReader.FormCost.ContainsKey(FormEnum) && playerReader.ManaCurrent >= playerReader.FormCost[FormEnum] + MinMana);
         }
 
         internal void SetClicked()
@@ -174,13 +182,13 @@ namespace Core
                     LastClickPostion = this.playerReader.PlayerLocation;
                 }
 
-                if (LastClicked.ContainsKey(this.ConsoleKey))
+                if (LastClicked.ContainsKey(ConsoleKeyFormHash))
                 {
-                    LastClicked[this.ConsoleKey] = DateTime.Now;
+                    LastClicked[ConsoleKeyFormHash] = DateTime.Now;
                 }
                 else
                 {
-                    LastClicked.TryAdd(this.ConsoleKey, DateTime.Now);
+                    LastClicked.TryAdd(ConsoleKeyFormHash, DateTime.Now);
                 }
             }
             catch (Exception ex)
@@ -189,14 +197,11 @@ namespace Core
             }
         }
 
-        public double MillisecondsSinceLastClick => LastClicked.ContainsKey(this.ConsoleKey) ? (DateTime.Now - LastClicked[this.ConsoleKey]).TotalMilliseconds : double.MaxValue;
+        public double MillisecondsSinceLastClick => LastClicked.ContainsKey(ConsoleKeyFormHash) ? (DateTime.Now - LastClicked[ConsoleKeyFormHash]).TotalMilliseconds : double.MaxValue;
 
         internal void ResetCooldown()
         {
-            if (LastClicked.ContainsKey(ConsoleKey))
-            {
-                LastClicked.TryRemove(ConsoleKey, out _);
-            }
+            LastClicked.TryRemove(ConsoleKeyFormHash, out _);
         }
 
         public void CreateChargeRequirement()
@@ -244,6 +249,11 @@ namespace Core
             return !this.RequirementObjects.Any(r => !r.HasRequirement());
         }
 
+        public bool HasFormRequirement()
+        {
+            return !string.IsNullOrEmpty(Form);
+        }
+
         private void UpdateMinResourceRequirement(PlayerReader playerReader, ActionBarCostReader actionBarCostReader)
         {
             var tuple = actionBarCostReader.GetCostByActionBarSlot(playerReader, this);
@@ -266,7 +276,13 @@ namespace Core
                         break;
                 }
 
-                logger.LogInformation($"[{Name}] Update {tuple.Item1} cost to {tuple.Item2} from {oldValue}");
+                int formCost = 0;
+                if (HasFormRequirement() && FormEnum != Core.Form.None && playerReader.FormCost.ContainsKey(FormEnum))
+                {
+                    formCost = playerReader.FormCost[FormEnum];
+                }
+
+                logger.LogInformation($"[{Name}] Update {tuple.Item1} cost to {tuple.Item2} from {oldValue}" + (formCost > 0 ? $" +{formCost} Mana to change {FormEnum} Form" : ""));
             }
         }
 

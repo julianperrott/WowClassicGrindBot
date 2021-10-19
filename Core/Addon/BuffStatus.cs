@@ -19,6 +19,7 @@
         public bool Drinking => IsBitSet(1);
         public bool WellFed => IsBitSet(2);
         public bool ManaRegeneration => IsBitSet(3);
+        public bool Clearcasting => IsBitSet(4);
 
         // Priest
         public bool Fortitude => IsBitSet(10);
@@ -47,6 +48,8 @@
         public bool Ward => IsBitSet(13);
         public bool FirePower => IsBitSet(14);
         public bool ManaShield => IsBitSet(15);
+        public bool PresenceOfMind => IsBitSet(16);
+        public bool ArcanePower => IsBitSet(17);
 
         // Rogue
         public bool SliceAndDice => IsBitSet(10);
@@ -65,6 +68,7 @@
         public bool LightningShield => IsBitSet(10);
         public bool WaterShield => IsBitSet(11);
         public bool ShamanisticFocus => IsBitSet(12);
+        public bool Stoneskin => IsBitSet(13);
 
         // Hunter
         public bool Aspect => IsBitSet(10); //Any Aspect of

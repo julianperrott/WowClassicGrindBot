@@ -10,9 +10,8 @@
     "Sequence": [
       {
         "Name": "Fireball",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
+        "HasCastBar": true,
         "MinMana": 65
       }
     ]
@@ -21,24 +20,18 @@
     "Sequence": [
       {
         "Name": "Fireball",
-        "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
+        "HasCastBar": true,
         "MinMana": 30,
-        "Requirement": "TargetHealth%>10"
-      },
-      {
-        "Name": "shoot",
-        "Key": "0",
-        "StopBeforeCast": true,
-        "Cooldown": 3,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
-        "Log": false
+        "Requirement": "TargetHealth%>20"
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -46,28 +39,19 @@
     "Sequence": [
       {
         "Name": "Frost Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 60,
         "Requirement": "not Frost Armor"
       },
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "=",
-        "Requirement": "Health%<30",
-        "Cooldown": 15
+        "Requirement": "Health%<30"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "-",
-        "Requirement": "Mana%<30",
-        "Cooldown": 15
+        "Requirement": "Mana%<30"
       }
     ]
   },

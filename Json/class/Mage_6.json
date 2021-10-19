@@ -11,8 +11,8 @@
         {
           "Name": "Frostbolt",
           "HasCastBar": true,
-          "StopBeforeCast": true,
           "Key": "1",
+          "Requirement": "SpellInRange:3",
           "MinMana": 25
         }
       ]
@@ -23,28 +23,23 @@
           "Name": "Fire Blast",
           "Key": "5",
           "MinMana": 40,
-          "Cooldown": 8,
-          "Requirements": ["TargetHealth%<45", "SpellInRange:4"],
-          "DelayAfterCast": 0
+          "WhenUsable": true,
+          "Requirements": ["TargetHealth%<45", "SpellInRange:4"]
         },
         {
           "Name": "Fireball",
-          "HasCastBar": true,
-          "StopBeforeCast": true,
           "Key": "2",
+          "HasCastBar": true,
           "MinMana": 45
         },
         {
-          "Name": "shoot",
+          "Name": "Shoot",
           "Key": "0",
-          "StopBeforeCast": true,
-          "Cooldown": 3,
-          "Requirements": ["HasRangedWeapon", "not Shooting"],
-          "Log": false
+          "HasCastbar": true,
+          "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"]
         },
         {
           "Name": "AutoAttack",
-          "Cooldown": 3,
           "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
         }
       ]
@@ -53,21 +48,13 @@
       "Sequence": [
         {
           "Name": "Food",
-          "StopBeforeCast": true,
-          "AfterCastWaitBuff": true,
-          "DelayAfterCast": 0,
-          "Key": "6",
-          "Requirement": "Health%<50",
-          "Cooldown": 10
+          "Key": "=",
+          "Requirement": "Health%<50"
         },
         {
           "Name": "Water",
-          "StopBeforeCast": true,
-          "AfterCastWaitBuff": true,
-          "DelayAfterCast": 0,
-          "Key": "7",
-          "Requirement": "Mana%<50",
-          "Cooldown": 10
+          "Key": "-",
+          "Requirement": "Mana%<50"
         }
       ]
       },
@@ -76,14 +63,12 @@
       "Sequence": [
         {
           "Name": "Frost Armor",
-          "StopBeforeCast": false,
           "Key": "3",
           "MinMana": 60,
           "Requirement": "not Frost Armor"
         },
         {
           "Name": "Arcane Intellect",
-          "StopBeforeCast": false,
           "Key": "4",
           "MinMana": 60,
           "Requirement": "not Arcane Intellect",
@@ -91,21 +76,17 @@
         },
         {
           "Name": "Conjure Water",
-          "HasCastBar": true,
-          "StopBeforeCast": true,
           "Key": "9",
+          "HasCastBar": true,
           "Requirement": "not BagItem:5350:4",
-          "Cooldown": 30,
-          "Log": false
+          "Cooldown": 30000
         },
         {
           "Name": "Conjure Food",
-          "HasCastBar": true,
-          "StopBeforeCast": true,
           "Key": "8",
+          "HasCastBar": true,
           "Requirement": "not BagItem:5349:4",
-          "Cooldown": 30,
-          "Log": false
+          "Cooldown": 30000
         }
       ]},
   "NPC": {

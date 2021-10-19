@@ -90,6 +90,16 @@ and copy next to the common-2.MPQ file.
 1. Nvidia Control panel settings
     * Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings or Program Settings(for WoW) is set to `Sharpening Off, Scaling disabled`!
 
+## 3.2 Optional - Replace default game Font
+
+I would highly suggest to replace the default World of Warcraft font with a much **Bolder** one.
+
+Follow this guide (https://classic.wowhead.com/guides/changing-wow-text-font)
+
+Should be only concerned about `Friz Quadrata: the "Everything Else" Font` which is the `FRIZQT__.ttf` named file.
+
+By replacing the default with for example - `Robot-Medium` https://fonts.google.com/specimen/Roboto?thickness=5) - you can highly increase the success rate of the `NpcNameFinder` compontent which is responsible to find - friendly, enemy, corpse - names above NPCs head.
+
 ## 4. Build the bot
 
 You will probably already have Visual Studio or Visual Studio Code installed. You need to build the bot using either one of them, or use powershell.
@@ -190,14 +200,14 @@ From the main menu (ESC) set the following:
 ## 7.1. Actionbar Key Bindings:
 
 The default class profiles assumes the following `Keybinds` setup and using English Keyboard layout.
-In total, `32` key supported.
+In total, `34` key supported.
 Highly recommended to use the default setup, in order to get properly working the `ActionBarSlotCost` and `ActionBarSlotUsable` features! 
 https://wowwiki-archive.fandom.com/wiki/ActionSlot
 
 
 | ActionSlot | Key | Description |
 | --- | --- | --- |
-| 1-10 | 1,2,3 .. 9,0 | 0 is the 10th key |
+| 1-10 | 1,2,3 .. 9,0,-,= | 0 is the 10th key. |
 | Bottom Right ActionBar | - | - |
 | 49-58 | N1,N2,N3 .. N9,N0 | N means Numpad - 0 is the 10th key |
 | Bottom Left ActionBar | - | - |
@@ -256,7 +266,7 @@ e.g.
         "Key": "3",
         "MinEnergy": 25,
         "MinComboPoints": 2,
-        "Cooldown": 3,
+        "Cooldown": 3000,
         "Requirement": "Slice And Dice"
       }, 
 
@@ -272,12 +282,12 @@ Commands have the following parameters, only a subset will be used by each comma
 | ShapeShiftForm | For druids the shapeshift form to be in to cast this spell | None |
 | CastIfAddsVisible | If the bot can "See" any adds | false |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | 1 |
-| Cooldown | The cooldown in seconds until the command can be done again | 0 |
+| Cooldown | The cooldown in milliseconds until the command can be done again | 0 |
 | MinMana | (Optional) The minimum Mana required to cast the spell | 0 |
 | MinRage | (Optional) The minimum Rage required to cast the spell | 0 |
 | MinEnergy | (Optional) The minimum Energy required to cast the spell | 0 |
 | MinComboPoints | The minimum combo points required to cast the spell | 0 |
-| WhenUsable | When not in cooldown and have the min resource(mana,rage,energy) to use it. | false |
+| WhenUsable | When not in cooldown(GCD included) and have the min resource(mana,rage,energy) to use it. | false |
 | Requirement | A single "Requirement" (See below) which must be true | |
 | Requirements | A list of "Requirements" which must be true |  |
 | WaitForWithinMelleRange| Wait after casting for the mob to be in melee range | false |
@@ -335,27 +345,17 @@ The "Key" is a key that is bound to a macro. The macro needs to target the NPC, 
 Sell macro example bound to the "C" key using BindPad or Key bindings.
 
     /tar Jannos Ironwill
-    /run DataToColor:sell({"Light Leather","Cheese","Light Feather"});
+    /run DataToColor[1]:sell({"Light Leather","Cheese","Light Feather"});
 
 Repair macro example:
 
     /tar Vargus
     /script SelectGossipOption(1)
 
-Spammable wand macro `shoot` in many profiles
-
-    /#showtooltip
-    /cast !shoot
-
-Warlock `pull` macro used in warlock profiles
-
-    #showtooltip
-    /cast Immolate
-
 Warlock `heal` macro used in warlock profiles.
 
     #showtooltip
-    /cast Create Healthstone
+    /cast [nocombat] Create Healthstone
     /use Minor Healthstone
     /use Lesser Healthstone
     /use Healthstone
@@ -363,10 +363,6 @@ Warlock `heal` macro used in warlock profiles.
     /use Major Healthstone
     /use Master Healthstone
 
-Hunter `autoshot` spammable Auto Shoot macro
-
-    #showtooltip
-    /cast !Auto Shot
 
 Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
 
@@ -422,11 +418,10 @@ e.g.
       {
         "Name": "Curse of Weakness",
         "Key": "6",
-        "Cooldown": 10,
+        "WhenUsable": true,
         "ResetOnNewTarget": true,
         "Requirement": "not Curse of Weakness", <--- Single Requirement
-        "MinMana": 20,
-        "Log": false
+        "MinMana": 20
       },
 
 #### Value base requirements
@@ -493,6 +488,66 @@ e.g.
 * "BagItem:6265:1 - Must have a soulshard in the bag https://classic.wowhead.com/item=6265
 * "not BagItem:19007:1" - Must have a lesser Healthstone in the bag https://classic.wowhead.com/item=19007
 * "not BagItem:6265:3"- Must not have 3 soulshards in the bag.
+
+#### Form requirements
+
+If the character must be - in or not - the specified `Form` use this requirement. Useful to determine when to switch Form for the given situation.
+
+It has the format `Form:Form`
+
+e.g. 
+* "Form:Druid_Bear" - Must be in `Druid_Bear` form
+* "not Form:Druid_Cat" - Shoudn't be in `Druid_Cat` form
+
+| Form |
+| --- |
+| None
+| Druid_Bear |
+| Druid_Aquatic |
+| Druid_Cat |
+| Druid_Travel |
+| Druid_Moonkin |
+| Druid_Flight |
+| Druid_Cat_Prowl |
+| Priest_Shadowform |
+| Rogue_Stealth |
+| Rogue_Vanish |
+| Shaman_GhostWolf |
+| Warrior_BattleStance |
+| Warrior_DefensiveStance |
+| Warrior_BerserkerStance |
+| Paladin_Devotion_Aura |
+| Paladin_Retribution_Aura |
+| Paladin_Concentration_Aura |
+| Paladin_Shadow_Resistance_Aura |
+| Paladin_Frost_Resistance_Aura |
+| Paladin_Fire_Resistance_Aura |
+| Paladin_Crusader_Aura |
+
+#### Race requirements
+
+If the character must be - or not - the specified `Race` use this requirement. Useful to determine Racial abilities.
+
+It has the format `Race:Race`
+
+e.g. 
+* "Race:Orc" - Must be `Orc` race
+* "not Race:Human" - Shoudn't be `Human` race
+
+| Race | 
+| --- |
+| None |
+| Human |
+| Orc |
+| Dwarf |
+| NightElf |
+| Undead |
+| Tauren |
+| Gnome |
+| Troll |
+| Goblin |
+| BloodElf |
+| Draenei |
 
 #### Buff / Debuff
 
@@ -571,6 +626,7 @@ e.g.
 | Shaman | "Lightning Shield" |
 | Shaman | "Water Shield" |
 | Shaman | "Shamanistic Focus" |
+| Shaman | "Stoneskin" |
 | Hunter | "Aspect of the Cheetah" |
 | Hunter | "Aspect of the Pack" |
 | Hunter | "Aspect of the Beast" |
@@ -606,7 +662,6 @@ Allow requirements about spell range to be used, the spell in question depends u
 e.g. "Requirement": "SpellInRange:4"
 e.g. "Requirements": ["Health%<80", "SpellInRange:4"]
 
-In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tries to get a list of spells unique to each class that are in range. This is read by Libs.SpellInRange.cs.
 
 | Class | Spell | id |
 | --- | --- | --- |
@@ -624,9 +679,10 @@ In the Addon DataToColor.lua is function DataToColor:areSpellsInRange() this tri
 | WARRIOR | Shoot Gun | 2 |
 | --- | --- | --- |
 | PRIEST | Shadow Word: Pain | 0 |
-| PRIEST | Mind Blast | 1 |
+| PRIEST | Shoot | 1 |
 | PRIEST | Mind Flay | 2 |
-| PRIEST | Shoot | 3 |
+| PRIEST | Mind Blast | 3 |
+| PRIEST | Smite | 4 |
 | --- | --- | --- |
 | PALADIN | Judgement | 0 |
 | --- | --- | --- |

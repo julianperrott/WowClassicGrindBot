@@ -49,5 +49,10 @@ namespace Core
             Value = 0;
             temp = 0;
         }
+
+        public void ForceUpdate(int value)
+        {
+            Value = value;
+        }
     }
 }

@@ -7,8 +7,14 @@
         "Name": "Serpent Sting",
         "Key": "2",
         "MinMana": 15,
-        "Cooldown": 15,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting", "HasAmmo"]
+        "Cooldown": 2000,
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Serpent Sting"]
+      },
+      {
+        "Name": "Auto Shot",
+        "HasCastBar": true,
+        "Key": "3",
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]
       },
       {
         "Name": "Raptor Strike",
@@ -23,17 +29,10 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Serpent Sting",
-        "Key": "2",
-        "MinMana": 15,
-        "Cooldown": 15,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not Serpent Sting", "HasAmmo"]
-      },
-      {
-        "Name": "autoshot",
-        "StopBeforeCast": true,
+        "Name": "Auto Shot",
+        "HasCastBar": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]
       },
       {
         "Name": "Raptor Strike",
@@ -45,8 +44,6 @@
       },
       {
         "Name": "AutoAttack",
-        "Cooldown": 3,
-        "DelayAfterCast": 0,
         "Requirements": ["InMeleeRange", "not AutoAttacking"]
       }
     ]
@@ -65,21 +62,13 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "6",
-        "Requirement": "Health%<30",
-        "Cooldown": 10
+        "Requirement": "Health%<30"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "7",
-        "Requirement": "Mana%<30",
-        "Cooldown": 10
+        "Requirement": "Mana%<30"
       }
     ]
   },

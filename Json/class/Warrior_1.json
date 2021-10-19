@@ -8,15 +8,15 @@
         "Key": "2",
         "AfterCastWaitNextSwing": true,
         "WhenUsable": true,
-        "MinRage": 10
-      },
-      {
-        "Name": "Approach",
-        "Log": false
+        "MinRage": 15
       },
       {
         "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -24,12 +24,8 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "=",
         "Requirement": "Health%<60",
-        "Cooldown": 5,
         "Cost": 3
       }
     ]

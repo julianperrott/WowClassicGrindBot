@@ -82,6 +82,7 @@ namespace Core.Goals
         public override async Task PerformAction()
         {
             lastPlayerLocation = playerReader.PlayerLocation;
+            await wait.Update(1);
 
             if (!playerReader.PlayerBitValues.PlayerInCombat)
             {
@@ -110,12 +111,14 @@ namespace Core.Goals
                 playerWasInCombat = true;
             }
 
-            await input.TapInteractKey("");
-            await wait.Update(1);
+            if (input.ClassConfig.Approach.GetCooldownRemaining() == 0)
+            {
+                await input.TapApproachKey("");
+            }
 
             lastPlayerDistance = WowPoint.DistanceTo(lastPlayerLocation, playerReader.PlayerLocation);
 
-            if (lastPlayerDistance < 0.5 && playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
+            if (lastPlayerDistance < 0.05 && playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {
                 playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
@@ -123,11 +126,11 @@ namespace Core.Goals
                 await wait.Update(1);
             }
 
-            if (SecondsSinceApproachStarted > 1 && lastPlayerDistance < 0.5 && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (SecondsSinceApproachStarted > 1 && lastPlayerDistance < 0.05 && !playerReader.PlayerBitValues.PlayerInCombat)
             {
                 await input.TapClearTarget("");
                 await wait.Update(1);
-                await input.KeyPress(random.Next(2) == 0 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow, 1000, "Seems stuck! Clear Target. Turn away.");
+                await input.KeyPress(random.Next(2) == 0 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow, 1000, $"Seems stuck! Clear Target. Turn away. d: {lastPlayerDistance}");
 
                 approachStart = DateTime.Now;
             }

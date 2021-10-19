@@ -49,6 +49,21 @@ namespace Core
             return Tuple.Create(true, elapsedMs);
         }
 
+        public async Task<Tuple<bool, double>> InterruptTask(int durationMs, Func<bool> interrupt, Action repeat)
+        {
+            DateTime start = DateTime.Now;
+            double elapsedMs;
+            while ((elapsedMs = (DateTime.Now - start).TotalMilliseconds) < durationMs)
+            {
+                repeat();
+                await Update(1);
+                if (interrupt())
+                    return Tuple.Create(false, elapsedMs);
+            }
+
+            return Tuple.Create(true, elapsedMs);
+        }
+
         public async Task<bool> Interrupt(int durationMs, Task<bool> exit)
         {
             DateTime start = DateTime.Now;

@@ -19,7 +19,6 @@
       {
         "Name": "Frostbolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "1",
         "MinMana": 25,
         "Requirement": "MaxRange<36"
@@ -32,7 +31,7 @@
         "Name": "Ice Barrier",
         "Key": "7",
         "MinMana": 420,
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "WhenUsable": true,
         "Requirement": "not Ice Barrier"
       },
@@ -40,21 +39,21 @@
         "Name": "Cone of Cold",
         "Key": "N8",
         "MinMana": 40,
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "Requirements": ["TargetHealth%>2", "TargetHealth%<20", "InMeleeRange"]
       },
       {
         "Name": "Fire Blast",
         "Key": "5",
         "MinMana": 40,
-        "Cooldown": 8,
+        "Cooldown": 8000,
         "Requirements": ["TargetHealth%>2", "TargetHealth%<20", "SpellInRange:4"]
       },
       {
         "Name": "Frost Nova",
         "Key": 6,
         "MinMana": 55,
-        "Cooldown": 25,
+        "Cooldown": 25000,
         "WhenUsable": true,
         "Requirements": ["InMeleeRange", "MobCount>1"],
         "StepBackAfterCast": 1000,
@@ -63,7 +62,6 @@
       {
         "Name": "Frostbolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "1",
         "MinMana": 25,
         "Requirements": [ "MaxRange>31", "MaxRange<36"]
@@ -71,40 +69,29 @@
       {
         "Name": "Arcane Missiles",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Requirements": ["MaxRange<30", "TargetHealth%>30"],
         "Key": "2",
         "MinMana": 500
       },
       {
-        "Name": "shoot",
+        "Name": "Shoot",
         "Key": "0",
-        "Cooldown": 1,
-        "StopBeforeCast": true,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
-        "Log": false
-      }
+        "HasCastbar": true,
+        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"]
+      },
     ]
   },
   "Parallel": {
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "N1",
-        "Requirement": "Health%<50",
-        "Cooldown": 5
+        "Requirement": "Health%<50"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "N2",
-        "Requirement": "Mana%<50",
-        "Cooldown": 5
+        "Requirement": "Mana%<50"
       }
     ]
     },
@@ -114,22 +101,19 @@
       {
         "Name": "Evocation",
         "Key": "N9",
-        "StopBeforeCast": true,
         "HasCastBar": true,
-        "Cooldown": 600,
+        "Cooldown": 600000,
         "Cost": 2,
         "Requirements": ["Mana%<50"]
       },
       {
         "Name": "Ice Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 60,
         "Requirement": "not Frost Armor"
       },
       {
         "Name": "Arcane Intellect",
-        "StopBeforeCast": false,
         "Key": "4",
         "MinMana": 60,
         "Requirement": "not Arcane Intellect",
@@ -138,19 +122,17 @@
       {
         "Name": "Conjure Water",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:8078:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       },
       {
         "Name": "Conjure Food",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "8",
         "Requirement": "not BagItem:8076:4",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false
       }
     ]

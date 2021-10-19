@@ -15,13 +15,12 @@
         "MinEnergy": 45
       },
       {
-        "Name": "Approach",
-        "Requirement": "not InMeleeRange",
-        "Cooldown": 1
-      },
-      {
         "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -29,12 +28,8 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "N1",
-        "Requirement": "Health%<30",
-        "Cooldown": 15
+        "Requirement": "Health%<30"
       }
     ]
   },

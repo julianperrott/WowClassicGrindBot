@@ -9,7 +9,6 @@
       {
         "Name": "Lightning Bolt",
         "Key": "2",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "MinMana": 15
       }
@@ -18,26 +17,35 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Lightning Bolt",
-        "Key": "2",
-        "StopBeforeCast": true,
+        "Name": "Gift of the Naaru",
+        "Key": "4",
         "HasCastBar": true,
-        "MinMana": 15,
-        "Requirement": "not InMeleeRange"
+        "WhenUsable": true,
+        "Requirements": ["Race:Draenei", "Health%<50"]
       },
       {
         "Name": "Healing Wave",
         "Key": "3",
         "Requirement": "Health%<40",
-        "Cooldown": 10,
+        "Cooldown": 10000,
         "HasCastBar": true,
         "Log": false,
         "MinMana": 25
       },
       {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "MinMana": 15,
+        "Requirement": "not InMeleeRange"
+      },
+      {
         "Name": "AutoAttack",
-        "Cooldown": 3,
-        "Requirements": ["not AutoAttacking"]
+        "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -45,7 +53,6 @@
     "Sequence": [
       {
         "Name": "Rockbiter Weapon",
-        "StopBeforeCast": false,
         "Key": "5",
         "MinMana": 15,
         "Requirement": "not HasMainHandEnchant"
@@ -57,20 +64,12 @@
       {
         "Name": "Food",
         "Key": "=",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Requirement": "Health%<30",
-        "Cooldown": 10
+        "Requirement": "Health%<30"
       },
       {
         "Name": "Water",
         "Key": "-",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Requirement": "Mana%<30",
-        "Cooldown": 10
+        "Requirement": "Mana%<30"
       }
     ]
   }

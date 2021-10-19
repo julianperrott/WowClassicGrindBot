@@ -42,27 +42,27 @@
       {
         "Name": "Cold Blood",
         "Key": "1",
-        "Cooldown": 180
+        "Cooldown": 180000
       },
       {
         "Name": "Vanish",
         "Key": "8",
         "Requirement": "Health%<10",
         "DelayAfterCast": 10000,
-        "Cooldown": 300
+        "Cooldown": 300000
       },
       {
         "Name": "Evasion",
         "Key": "5",
         "Requirement": "Health%<50",
-        "Cooldown": 210
+        "Cooldown": 210000
       },
       {
         "Name": "Slice And Dice",
         "Key": "3",
         "MinEnergy": 25,
         "MinComboPoints": 2,
-        "Cooldown": 11,
+        "Cooldown": 11000,
         "Requirement": "not Slice And Dice"
       }, 
       {
@@ -70,7 +70,7 @@
         "Key": "4",
         "MinEnergy": 35,
         "MinComboPoints": 3,
-        "Cooldown": 10
+        "Cooldown": 10000
       },
       {
         "Name": "Sinister Strike",
@@ -78,13 +78,12 @@
         "MinEnergy": 40
       },
       {
-        "Name": "Approach",
-        "Requirement": "not InMeleeRange",
-        "Cooldown": 1
-      },
-      {
         "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -94,24 +93,20 @@
         "Name": "Healing Potion",
         "Key": "F4",
         "Requirement": "Health%<5",
-        "Cooldown": 60,
+        "Cooldown": 60000,
         "InCombat": "true",
         "Log": false,
         "Cost": 3
       },
       {
-        "Name": "Eat",
-        "StopBeforeCast": false,
+        "Name": "Food",
         "Key": "=",
         "Requirement": "Health%<60",
-        "Cooldown": 0,
-        "DelayAfterCast": 1000,
-        "Log": false,
         "Cost": 3
       },
       {
         "Name": "Well Fed",
-        "StopBeforeCast": false,
+        "StopBeforeCast": true,
         "Key": "7",
         "Requirement": "not Well Fed",
         "Cooldown": 1200,
@@ -120,7 +115,6 @@
       {
         "Name": "Sharpen Weapon 1",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "F1",
         "Cooldown": 1800,
         "Log": false
@@ -128,7 +122,6 @@
       {
         "Name": "Sharpen Weapon 2",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "F2",
         "Cooldown": 1800,
         "Log": false
@@ -136,13 +129,13 @@
       {
         "Name": "Equip Dagger",
         "Key": "F6",
-        "Cooldown": 600,
+        "Cooldown": 600000,
         "Log": false
       },
       {
         "Name": "Open Clam",
         "Key": "-",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Requirements": ["BagItem:7973:1"],
         "Log": false
       }

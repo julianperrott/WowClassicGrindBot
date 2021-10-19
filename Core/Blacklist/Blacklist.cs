@@ -43,6 +43,10 @@ namespace Core
                 LastWarningTargetGuid = 0;
                 return false;
             }
+            else if (playerReader.DamageTaken.Exists(x => x.LastKnownHealthPercent > 0 && x.CreatureId == playerReader.TargetGuid))
+            {
+                return false;
+            }
 
             if(this.playerReader.PetHasTarget &&
                 this.playerReader.TargetGuid == playerReader.PetGuid)

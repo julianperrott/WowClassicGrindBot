@@ -7,12 +7,12 @@ namespace Core
 {
     public class ActionBarPopulator
     {
-        struct ActionBarSource {
+        struct ActionBarSource
+        {
             public string Name;
             public string Key;
             public bool Item;
-            public string Requirement;
-            public Form Form;
+            public KeyAction KeyAction;
         }
 
         private readonly ILogger logger;
@@ -57,15 +57,14 @@ namespace Core
         private void AddUnique(KeyAction a)
         {
             if (!KeyReader.KeyMapping.ContainsKey(a.Key)) return;
-            if (sources.Any(i => i.Key == a.Key && i.Form == a.FormEnum)) return;
+            if (sources.Any(i => i.KeyAction.ConsoleKeyFormHash == a.ConsoleKeyFormHash)) return;
 
             var source = new ActionBarSource
             {
                 Name = a.Name,
                 Key = a.Key,
                 Item = false,
-                Requirement = a.Requirement,
-                Form = a.FormEnum
+                KeyAction = a
             };
 
             sources.Add(source);
@@ -155,7 +154,7 @@ namespace Core
             {
                 if (offset == 0 && hotkey <= 12)
                 {
-                    offset += Stance.FormToActionBar(addonReader.PlayerReader.PlayerClass, a.Form);
+                    offset += Stance.RuntimeSlotToActionBar(a.KeyAction, addonReader.PlayerReader, hotkey);
                 }
 
                 if (hotkey == 0)

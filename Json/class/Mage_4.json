@@ -11,8 +11,8 @@
       {
         "Name": "Frostbolt",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "1",
+        "Requirement": "SpellInRange:3",
         "MinMana": 25
       }
     ]
@@ -22,23 +22,17 @@
       {
         "Name": "Fireball",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "2",
         "MinMana": 30,
         "Requirement": "TargetHealth%>10"
       },
       {
-        "Name": "shoot",
-        "Key": "0",
-        "StopBeforeCast": true,
-        "Cooldown": 3,
-        "Requirements": ["HasRangedWeapon", "not Shooting"],
-        "Log": false
+        "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking"
       },
       {
-        "Name": "AutoAttack",
-        "Cooldown": 3,
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -46,21 +40,13 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "6",
-        "Requirement": "Health%<30",
-        "Cooldown": 10
+        "Key": "=",
+        "Requirement": "Health%<30"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Key": "7",
-        "Requirement": "Mana%<30",
-        "Cooldown": 10
+        "Key": "-",
+        "Requirement": "Mana%<30"
       }
     ]
     },
@@ -69,27 +55,22 @@
     "Sequence": [
       {
         "Name": "Frost Armor",
-        "StopBeforeCast": false,
         "Key": "3",
         "MinMana": 60,
         "Requirement": "not Frost Armor"
       },
       {
         "Name": "Arcane Intellect",
-        "StopBeforeCast": false,
         "Key": "4",
         "MinMana": 60,
-        "Requirement": "not Arcane Intellect",
-        "Log": false
+        "Requirement": "not Arcane Intellect"
       },
       {
         "Name": "Conjure Water",
         "HasCastBar": true,
-        "StopBeforeCast": true,
         "Key": "9",
         "Requirement": "not BagItem:5350:4",
-        "Cooldown": 30,
-        "Log": false
+        "Cooldown": 30000
       }
     ]},
     "NPC": {

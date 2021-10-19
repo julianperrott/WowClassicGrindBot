@@ -48,11 +48,22 @@ DataToColor.lastCombatCreatureDied = 0
 
 DataToColor.lastAutoShot = 0
 DataToColor.lastMainHandMeleeSwing = 0
+DataToColor.lastCastEvent = 0
+DataToColor.lastCastSpellId = 0
+
+DataToColor.lastCastStartTime = 0
+DataToColor.CastNum = 0
 
 DataToColor.targetChanged = true
 
 DataToColor.playerGUID = UnitGUID(DataToColor.C.unitPlayer)
 DataToColor.petGUID = UnitGUID(DataToColor.C.unitPet)
+
+-- buff / debuff counters
+local playerDebuffCount = 0
+local playerBuffCount = 0
+local targetDebuffCount = 0
+local targetBuffCount = 0
 
 -- Update Queue
 stack = {}
@@ -169,6 +180,16 @@ function DataToColor:Reset()
 
     DataToColor.lastAutoShot = 0
     DataToColor.lastMainHandMeleeSwing = 0
+    DataToColor.lastCastEvent = 0
+    DataToColor.lastCastSpellId = 0
+
+    DataToColor.lastCastStartTime = 0
+    DataToColor.CastNum = 0
+
+    playerDebuffCount = 0
+    playerBuffCount = 0
+    targetDebuffCount = 0
+    targetBuffCount = 0
 end
 
 function DataToColor:Update()
@@ -336,10 +357,14 @@ function DataToColor:CreateFrames(n)
                 -- 20
                 bagNum = DataToColor.stack:pop(DataToColor.bagQueue)
                 if bagNum then
-                    local freeSlots, bagType = GetContainerNumFreeSlots(bagNum) or 0, 0
+                    local freeSlots, bagType = GetContainerNumFreeSlots(bagNum)
+                    if not bagType then
+                        bagType = 0
+                    end
+
                     -- BagType + Index + FreeSpace + BagSlots
                     MakePixelSquareArrI(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + DataToColor:bagSlots(bagNum), 20)
-                    --DataToColor:Print("bagQueue "..bagType.." -> "..bagNum.." -> "..freeSlots.." -> "..DataToColor:bagSlots(bagNum))
+                    --DataToColor:Print("bagQueue bagType:"..bagType.." | bagNum: "..bagNum.." | freeSlots: "..freeSlots.." | BagSlots: "..DataToColor:bagSlots(bagNum))
                 end
 
                 -- 21 22 23
@@ -425,7 +450,7 @@ function DataToColor:CreateFrames(n)
 
             --MakePixelSquareArrI(DataToColor:GetGossipIcons(), 45) -- Returns which gossip icons are on display in dialogue box
 
-            MakePixelSquareArrI(DataToColor.S.PlayerClass, 46) -- Returns player class as an integer
+            MakePixelSquareArrI(DataToColor.C.CHARACTER_RACE_ID * 100 + DataToColor.C.CHARACTER_CLASS_ID, 46)
             MakePixelSquareArrI(DataToColor:isUnskinnable(), 47) -- Returns 1 if creature is unskinnable
             MakePixelSquareArrI(DataToColor:shapeshiftForm(), 48) -- Shapeshift id https://wowwiki.fandom.com/wiki/API_GetShapeshiftForm
             MakePixelSquareArrI(DataToColor:getRange(), 49) -- 15 Represents if target is within 0-5 5-15 15-20, 20-30, 30-35, or greater than 35 yards
@@ -437,7 +462,25 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor:CastingInfoSpellId(DataToColor.C.unitPlayer), 53) -- Spell being cast
             MakePixelSquareArrI(DataToColor:ComboPoints(), 54) -- Combo points for rogue / druid
-            MakePixelSquareArrI(DataToColor:getAuraCount(UnitDebuff, DataToColor.C.unitPlayer), 55)
+
+            playerDebuffCount = DataToColor:getAuraCount(UnitDebuff, DataToColor.C.unitPlayer)
+            playerBuffCount = DataToColor:getAuraCount(UnitBuff, DataToColor.C.unitPlayer)
+
+            if UnitExists(DataToColor.C.unitTarget) then
+                targetDebuffCount = DataToColor:getAuraCount(UnitDebuff, DataToColor.C.unitTarget)
+                targetBuffCount = DataToColor:getAuraCount(UnitBuff, DataToColor.C.unitTarget)
+            else
+                targetDebuffCount = 0
+                targetBuffCount = 0
+            end
+
+            if playerDebuffCount > 16 then
+                playerDebuffCount = 16
+            end
+            
+            -- player/target buff and debuff counts
+            -- formula playerDebuffCount + playerBuffCount + targetDebuffCount + targetBuffCount
+            MakePixelSquareArrI(playerDebuffCount * 1000000 + playerBuffCount * 10000 + targetDebuffCount * 100 + targetBuffCount, 55)
 
             if DataToColor.targetChanged then
                 MakePixelSquareArrI(DataToColor:targetNpcId(), 56) -- target id
@@ -450,9 +493,8 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor.lastAutoShot, 60)
             MakePixelSquareArrI(DataToColor.lastMainHandMeleeSwing, 61)
-            -- 62 not used
-            -- 63 not used
-            -- 64 not used
+            MakePixelSquareArrI(DataToColor.lastCastEvent, 62)
+            MakePixelSquareArrI(DataToColor.lastCastSpellId, 63)
 
             MakePixelSquareArrI(DataToColor.lastCombatCreature, 64) -- Combat message creature
             MakePixelSquareArrI(DataToColor.lastCombatDamageDoneCreature, 65) -- Last Combat damage done
@@ -461,10 +503,13 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPet), 68) -- pet guid
             MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPetTarget), 69) -- pet target
+            MakePixelSquareArrI(DataToColor.CastNum, 70)
 
             -- Timers
-            MakePixelSquareArrI(DataToColor.globalTime, 70)
-            MakePixelSquareArrI(DataToColor.lastLoot, 71)
+            MakePixelSquareArrI(DataToColor.lastLoot, 97)
+            MakePixelSquareArrI(DataToColor.globalTime, 98)
+
+            -- 99 Reserved
 
             DataToColor:ConsumeChanges()
 

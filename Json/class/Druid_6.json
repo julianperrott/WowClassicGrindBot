@@ -9,7 +9,6 @@
       {
         "Name": "Wrath",
         "Key": "2",
-        "StopBeforeCast": true,
         "HasCastBar": true
       }
     ]
@@ -19,17 +18,16 @@
       {
         "Name": "Healing Touch",
         "Key": "3",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "Requirement": "Health%<25",
-        "Cooldown": 5
+        "Cooldown": 5000
       },
       {
         "Name": "Rejuvenation",
         "Key": "6",
         "AfterCastWaitBuff": true,
         "Requirements": ["Health%<55", "not Rejuvenation"],
-        "Cooldown": 5
+        "Cooldown": 5000
       },
       {
         "Name": "Moonfire",
@@ -39,17 +37,16 @@
       {
         "Name": "Wrath",
         "Key": "2",
-        "StopBeforeCast": true,
         "Requirement": "TargetHealth%>50",
         "HasCastBar": true
       },
       {
-        "Name": "Approach",
-        "Log": false
-      },
-      {
         "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -72,11 +69,7 @@
       {
         "Name": "Water",
         "Key": "-",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Requirement": "Mana%<30",
-        "Cooldown": 10
+        "Requirement": "Mana%<30"
       }
     ]
   },

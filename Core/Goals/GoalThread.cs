@@ -47,7 +47,9 @@ namespace Core.Goals
                 if (routeInfo != null && routeInfo.PoiList.Any())
                 {
                     var closest = routeInfo.PoiList.Where(p => p.Name == "Corpse").
-                        Min(i => (WowPoint.DistanceTo(goapAgent.PlayerReader.PlayerLocation, i.Location), i));
+                        Select(i => new { i, d = WowPoint.DistanceTo(goapAgent.PlayerReader.PlayerLocation, i.Location) }).
+                        Aggregate((a, b) => a.d <= b.d ? a : b);
+
                     if (closest.i != null)
                     {
                         routeInfo.PoiList.Remove(closest.i);

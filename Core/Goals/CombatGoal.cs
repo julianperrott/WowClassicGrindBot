@@ -76,13 +76,14 @@ namespace Core.Goals
                     lastKnownMaxDistance = playerReader.MaxRange;
                 }
 
-                if (playerReader.IsAutoAttacking)
-                {
-                    await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}: Fight AutoAttacking");
-                }
-
                 if (await castingHandler.CastIfReady(item, item.DelayBeforeCast))
                 {
+                    if (item.Name == classConfiguration.Approach.Name ||
+                        item.Name == classConfiguration.AutoAttack.Name)
+                    {
+                        await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}: Fight {item.Name}");
+                    }
+
                     break;
                 }
             }
@@ -132,14 +133,9 @@ namespace Core.Goals
                 await input.TapDismount();
             }
 
-            // this one is important for melees
-            // if not waiting a bit, the player will constantly moving forward
-            await stopMoving.Stop();
-            await wait.Update(1);
 
             lastDirectionForTurnAround = playerReader.Direction;
 
-            logger.LogInformation($"{GetType().Name}: OnEnter");
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
         }
 
@@ -166,8 +162,9 @@ namespace Core.Goals
                 lastDirectionForTurnAround = playerReader.Direction;
             }
 
-            if (await StopDrowning())
+            if (playerReader.PlayerBitValues.IsDrowning)
             {
+                await StopDrowning();
                 return;
             }
 
@@ -218,31 +215,35 @@ namespace Core.Goals
                 return playerReader.HasTarget;
             }
 
-            await input.TapNearestTarget($"{GetType().Name}: Checking target in front of me");
-            await wait.Update(1);
-            if (playerReader.HasTarget)
+            if (playerReader.CombatCreatureCount > 1)
             {
-                if (playerReader.PlayerBitValues.TargetInCombat && playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
-                {
-                    ResetCooldowns();
-
-                    logger.LogWarning("---- Somebody is attacking me!");
-                    await input.TapInteractKey("Found new target to attack");
-                    await wait.Update(1);
-                    return true;
-                }
-
-                await input.TapClearTarget();
+                await input.TapNearestTarget($"{GetType().Name}: Checking target in front of me");
                 await wait.Update(1);
-            }
-            else
-            {
-                // threat must be behind me
-                var anyDamageTakens = playerReader.DamageTaken.Where(x => (DateTime.Now - x.LastEvent).TotalSeconds < 10 && x.LastKnownHealthPercent > 0);
-                if (anyDamageTakens.Any())
+                if (playerReader.HasTarget)
                 {
-                    logger.LogWarning($"---- Possible threats found behind {anyDamageTakens.Count()}. Waiting for my target to change!");
-                    await wait.Interrupt(2000, () => playerReader.HasTarget);
+                    if (playerReader.PlayerBitValues.TargetInCombat && playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                    {
+                        ResetCooldowns();
+
+                        logger.LogWarning("---- Somebody is attacking me!");
+                        await input.TapInteractKey("Found new target to attack");
+                        await stopMoving.Stop();
+                        await wait.Update(1);
+                        return true;
+                    }
+
+                    await input.TapClearTarget();
+                    await wait.Update(1);
+                }
+                else
+                {
+                    // threat must be behind me
+                    var anyDamageTakens = playerReader.DamageTaken.Where(x => (DateTime.Now - x.LastEvent).TotalSeconds < 10 && x.LastKnownHealthPercent > 0);
+                    if (anyDamageTakens.Any())
+                    {
+                        logger.LogWarning($"---- Possible threats found behind {anyDamageTakens.Count()}. Waiting for my target to change!");
+                        await wait.Interrupt(2000, () => playerReader.HasTarget);
+                    }
                 }
             }
 
@@ -251,16 +252,10 @@ namespace Core.Goals
             return false;
         }
 
-        private async Task<bool> StopDrowning()
+        private async Task StopDrowning()
         {
-            if (playerReader.PlayerBitValues.IsDrowning)
-            {
-                await input.TapJump("Drowning! Swim up");
-                await wait.Update(1);
-                return true;
-            }
-
-            return false;
+            await input.TapJump("Drowning! Swim up");
+            await wait.Update(1);
         }
 
         private WowPoint GetCorpseLocation(double distance)

@@ -15,18 +15,25 @@
       {
         "Name": "Lightning Bolt",
         "Key": "2",
-        "StopBeforeCast": true,
         "HasCastBar": true,
-        "MinMana": 30,
+        "MinMana": 30
       }
     ]
   },
   "Combat": {
     "Sequence": [
       {
+        "Name": "Healing Wave",
+        "Key": "3",
+        "Requirement": "Health%<45",
+        "Cooldown": 5000,
+        "HasCastBar": true,
+        "Log": false,
+        "MinMana": 80
+      },
+      {
         "Name": "Lightning Bolt",
         "Key": "2",
-        "StopBeforeCast": true,
         "HasCastBar": true,
         "MinMana": 30,
         "Requirements": [
@@ -38,22 +45,12 @@
         "Name": "War Stomp",
         "Key": "0",
         "Requirements": [
+          "Race:Tauren",
           "Health%<49",
           "MobCount>2"
         ],
-        "Cooldown": 120,
-        "Log": false,
+        "WhenUsable": true,
         "MinMana": 10
-      },
-      {
-        "Name": "Healing Wave",
-        "Key": "3",
-        "StopBeforeCast": true,
-        "Requirement": "Health%<45",
-        "Cooldown": 5,
-        "HasCastBar": true,
-        "Log": false,
-        "MinMana": 80
       },
       {
         "Name": "Fire shock",
@@ -62,7 +59,7 @@
           "Mana%>40",
           "InMeleeRange"
         ],
-        "Cooldown": 6,
+        "WhenUsable": true,
         "Log": false,
         "MinMana": 80
       },
@@ -70,18 +67,17 @@
         "Name": "Stoneskin Totem",
         "Key": "7",
         "Requirement": "MobCount>2",
-        "Cooldown": 30,
+        "Cooldown": 30000,
         "Log": false,
         "MinMana": 30
       },
       {
-        "Name": "Approach",
-        "Requirement": "not InMeleeRange",
-        "Cooldown": 1
-      },
-      {
         "Name": "AutoAttack",
         "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
       }
     ]
   },
@@ -89,14 +85,12 @@
     "Sequence": [
       {
         "Name": "Rockbiter Weapon",
-        "StopBeforeCast": false,
         "Key": "5",
         "MinMana": 25,
         "Requirement": "not HasMainHandEnchant"
       },
       {
         "Name": "Lightning Shield",
-        "StopBeforeCast": false,
         "Key": "6",
         "MinMana": 45,
         "Requirement": "not Lightning Shield"
@@ -107,21 +101,13 @@
     "Sequence": [
       {
         "Name": "Food",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "8",
-        "Requirement": "Health%<40",
-        "Cooldown": 6
+        "Requirement": "Health%<40"
       },
       {
         "Name": "Water",
-        "StopBeforeCast": true,
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
         "Key": "9",
-        "Requirement": "Mana%<40",
-        "Cooldown": 6
+        "Requirement": "Mana%<40"
       }
     ]
   },
