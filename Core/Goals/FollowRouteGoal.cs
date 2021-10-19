@@ -263,7 +263,7 @@ namespace Core.Goals
 
             LastActive = DateTime.Now;
 
-            await Task.Delay(10);
+            await wait.Update(1);
         }
 
         private void StartLookingForTarget()
@@ -278,6 +278,7 @@ namespace Core.Goals
                 while (!found && !targetFinderCts.IsCancellationRequested)
                 {
                     found = await targetFinder.Search(GetType().Name, targetFinderCts.Token);
+                    await wait.Update(1);
                 }
 
                 if (found)
