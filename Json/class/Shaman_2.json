@@ -17,6 +17,13 @@
   "Combat": {
     "Sequence": [
       {
+        "Name": "Gift of the Naaru",
+        "Key": "4",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": ["Race:Draenei", "Health%<50"]
+      },
+      {
         "Name": "Healing Wave",
         "Key": "3",
         "Requirement": "Health%<40",
