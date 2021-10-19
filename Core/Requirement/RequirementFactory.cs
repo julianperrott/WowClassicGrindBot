@@ -194,9 +194,14 @@ namespace Core
                 return CreateTargetCastingSpellRequirement(requirement);
             }
 
-            if(requirement.Contains("Form"))
+            if (requirement.Contains("Form"))
             {
                 return CreateFormRequirement(requirement);
+            }
+
+            if (requirement.Contains("Race"))
+            {
+                return CreateRaceRequirement(requirement);
             }
 
             if (BuffDictionary.Count == 0)
@@ -409,6 +414,27 @@ namespace Core
                 LogMessage = () => $"{playerReader.Form}"
             };
         }
+
+        private Requirement CreateRaceRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var race = Enum.Parse<RaceEnum>(parts[1]);
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => playerReader.PlayerRace != race,
+                    LogMessage = () => $"not {race}"
+                };
+            }
+            return new Requirement
+            {
+                HasRequirement = () => playerReader.PlayerRace == race,
+                LogMessage = () => $"{playerReader.PlayerRace}"
+            };
+        }
+
 
         private Requirement CreateNpcRequirement(string requirement)
         {

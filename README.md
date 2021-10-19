@@ -493,11 +493,61 @@ e.g.
 
 If the character must be - in or not - the specified `Form` use this requirement. Useful to determine when to switch Form for the given situation.
 
-It has the format Form:[Form]
+It has the format `Form:Form`
 
 e.g. 
-* "Form:Druid_Bear - Must be in `Druid_Bear` form
+* "Form:Druid_Bear" - Must be in `Druid_Bear` form
 * "not Form:Druid_Cat" - Shoudn't be in `Druid_Cat` form
+
+| Form |
+| --- |
+| None
+| Druid_Bear |
+| Druid_Aquatic |
+| Druid_Cat |
+| Druid_Travel |
+| Druid_Moonkin |
+| Druid_Flight |
+| Druid_Cat_Prowl |
+| Priest_Shadowform |
+| Rogue_Stealth |
+| Rogue_Vanish |
+| Shaman_GhostWolf |
+| Warrior_BattleStance |
+| Warrior_DefensiveStance |
+| Warrior_BerserkerStance |
+| Paladin_Devotion_Aura |
+| Paladin_Retribution_Aura |
+| Paladin_Concentration_Aura |
+| Paladin_Shadow_Resistance_Aura |
+| Paladin_Frost_Resistance_Aura |
+| Paladin_Fire_Resistance_Aura |
+| Paladin_Crusader_Aura |
+
+#### Race requirements
+
+If the character must be - in or not - the specified `Race` use this requirement. Useful to determine Racial abilities.
+
+It has the format `Race:Race`
+
+e.g. 
+* "Race:Orc" - Must be `Orc` race
+* "not Race:Human" - Shoudn't be `Human` race
+
+| Race | 
+| --- |
+| None |
+| Human |
+| Orc |
+| Dwarf |
+| NightElf |
+| Undead |
+| Tauren |
+| Gnome |
+| Troll |
+| Goblin |
+| BloodElf |
+| Draenei |
 
 #### Buff / Debuff
 
