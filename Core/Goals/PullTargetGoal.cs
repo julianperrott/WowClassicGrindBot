@@ -146,14 +146,14 @@ namespace Core.Goals
             await wait.Update(1);
 
             var start = DateTime.Now;
-            var playerHealth = playerReader.HealthCurrent;
+            var lastKnownHealth = playerReader.HealthCurrent;
             int maxWaitTime = 10;
 
             Log($"Waiting for the target to reach melee range - max {maxWaitTime}s");
 
             while (playerReader.HasTarget && !playerReader.IsInMeleeRange && (DateTime.Now - start).TotalSeconds < maxWaitTime)
             {
-                if (playerHealth < playerReader.HealthCurrent)
+                if (playerReader.HealthCurrent < lastKnownHealth)
                 {
                     Log("Got damage. Stop waiting for melee range.");
                     break;
