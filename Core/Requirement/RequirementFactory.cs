@@ -7,18 +7,23 @@ namespace Core
 {
     public class RequirementFactory
     {
+        private readonly ILogger logger;
         private readonly PlayerReader playerReader;
         private readonly BagReader bagReader;
         private readonly EquipmentReader equipmentReader;
-        private readonly ILogger logger;
+        private readonly SpellBookReader spellBookReader;
+        private readonly TalentReader talentReader;
+
         private Dictionary<string, Func<bool>> BuffDictionary = new Dictionary<string, Func<bool>>();
 
-        public RequirementFactory(PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, ILogger logger)
+        public RequirementFactory(ILogger logger, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, SpellBookReader spellBookReader, TalentReader talentReader)
         {
+            this.logger = logger;
             this.playerReader = playerReader;
             this.bagReader = bagReader;
             this.equipmentReader = equipmentReader;
-            this.logger = logger;
+            this.spellBookReader = spellBookReader;
+            this.talentReader = talentReader;
         }
 
         public void InitialiseRequirements(KeyAction item)
@@ -202,6 +207,16 @@ namespace Core
             if (requirement.Contains("Race"))
             {
                 return CreateRaceRequirement(requirement);
+            }
+
+            if (requirement.Contains("Spell"))
+            {
+                return CreateSpellRequirement(requirement);
+            }
+
+            if (requirement.Contains("Talent"))
+            {
+                return CreateTalentRequirement(requirement);
             }
 
             if (BuffDictionary.Count == 0)
@@ -428,6 +443,7 @@ namespace Core
                     LogMessage = () => $"not {race}"
                 };
             }
+
             return new Requirement
             {
                 HasRequirement = () => playerReader.PlayerRace == race,
@@ -435,6 +451,56 @@ namespace Core
             };
         }
 
+        private Requirement CreateSpellRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var spellName = parts[1];
+
+            if (int.TryParse(parts[1], out int spellId) && spellBookReader.SpellDB.Spells.TryGetValue(spellId, out Spell spell))
+            {
+                spellName = spell.Name + $"({spellId})";
+            }
+            else
+            {
+                spellId = spellBookReader.GetSpellIdByName(spellName);
+            }
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => !spellBookReader.Spells.ContainsKey(spellId),
+                    LogMessage = () => $"not Spell {spellName}"
+                };
+            }
+            return new Requirement
+            {
+                HasRequirement = () => spellBookReader.Spells.ContainsKey(spellId),
+                LogMessage = () => $"Spell {spellName}"
+            };
+        }
+
+        private Requirement CreateTalentRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            var talentName = parts[1];
+            var rank = parts.Length < 3 ? 1 : int.Parse(parts[2]);
+
+            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => !talentReader.HasTalent(talentName, rank),
+                    LogMessage = () => rank == 1 ? $"not Talent {talentName}" : $"not Talent {talentName} (Rank {rank})"
+                };
+            }
+
+            return new Requirement
+            {
+                HasRequirement = () => talentReader.HasTalent(talentName, rank),
+                LogMessage = () => rank == 1 ? $"Talent {talentName}" : $"Talent {talentName} (Rank {rank})"
+            };
+        }
 
         private Requirement CreateNpcRequirement(string requirement)
         {

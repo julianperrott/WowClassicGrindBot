@@ -549,6 +549,28 @@ e.g.
 | BloodElf |
 | Draenei |
 
+#### Spell requirements
+
+If a given `Spell id` or `Spell name` must be known by the player then you can use this requirement. Useful to determine when the given `Spell` is exists in the spellbook.
+
+It has the format Spell:[`name` or `id`]. The `name` only works with the English client name.
+
+e.g. 
+* "Spell:687 - Must have know the given `spell id` https://classic.wowhead.com/item=687
+* "Spell:Demon Skin" - Must not know the given `spell name`
+* "not Spell:702" - Must have know the given `spell id` https://classic.wowhead.com/item=702
+* "not Spell:Curse of Weakness"- Must have not know the given `spell name` 
+
+#### Talent requirements
+
+If a given `Talent` must be known by the player then you can use this requirement. Useful to determine when the given `Talent` is learned.
+
+It has the format Talent:[`name`]. The `name` only works with the English client name.
+
+e.g. 
+* "Talent:Improved Corruption" - Must not know the given `talent name`
+* "not Talent:Suppression"- Must have not know the given `spell name` 
+
 #### Buff / Debuff
 
 Allow requirements about what buffs you have or the target has to be evaluated.

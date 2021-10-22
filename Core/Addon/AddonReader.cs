@@ -22,6 +22,7 @@ namespace Core
         public GossipReader GossipReader { get; set; }
 
         public SpellBookReader SpellBookReader { get; set; }
+        public TalentReader TalentReader { get; set; }
 
         public LevelTracker LevelTracker { get; set; }
 
@@ -33,6 +34,7 @@ namespace Core
         private readonly ItemDB itemDb;
         private readonly CreatureDB creatureDb;
         private readonly SpellDB spellDb;
+        private readonly TalentDB talentDB;
 
         private readonly CircularBuffer<double> UpdateLatencys;
 
@@ -49,6 +51,7 @@ namespace Core
             this.itemDb = new ItemDB(logger, dataConfig);
             this.creatureDb = new CreatureDB(logger, dataConfig);
             this.spellDb = new SpellDB(logger, dataConfig);
+            this.talentDB = new TalentDB(logger, dataConfig, spellDb);
 
             this.equipmentReader = new EquipmentReader(squareReader, 24, 25);
             this.BagReader = new BagReader(squareReader, itemDb, equipmentReader, 20, 21, 22, 23);
@@ -61,6 +64,8 @@ namespace Core
 
             this.PlayerReader = new PlayerReader(squareReader, creatureDb);
             this.LevelTracker = new LevelTracker(PlayerReader);
+
+            this.TalentReader = new TalentReader(squareReader, 72, PlayerReader, talentDB);
 
             this.areaDb = areaDb;
             this.WorldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
@@ -93,6 +98,7 @@ namespace Core
             GossipReader.Read();
 
             SpellBookReader.Read();
+            TalentReader.Read();
 
             LevelTracker.Update();
 
@@ -116,6 +122,7 @@ namespace Core
             PlayerReader.Initialized = false;
             ActionBarCostReader.Reset();
             SpellBookReader.Reset();
+            TalentReader.Reset();
             PlayerReader.Reset();
         }
 

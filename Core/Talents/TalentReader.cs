@@ -57,5 +57,16 @@ namespace Core
         {
             Talents.Clear();
         }
+
+        public bool HasTalent(string name, int rank)
+        {
+            foreach (var kvp in Talents)
+            {
+                if (kvp.Value.Name.ToLower() == name.ToLower() && kvp.Value.CurrentRank >= rank)
+                    return true;
+            }
+
+            return false;
+        }
     }
 }
