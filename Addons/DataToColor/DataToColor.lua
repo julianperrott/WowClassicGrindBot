@@ -27,6 +27,8 @@ local ITEM_ITERATION_FRAME_CHANGE_RATE = 5
 local ACTION_BAR_ITERATION_FRAME_CHANGE_RATE = 5
 -- How often the gossip frames change
 local GOSSIP_ITERATION_FRAME_CHANGE_RATE = 5
+-- How ofthen the spellbook frames change
+local SPELLBOOK_ITERATION_FRAME_CHANGE_RATE = 5
 
 -- Action bar configuration for which spells are tracked
 local MAX_ACTIONBAR_SLOT = 108
@@ -96,12 +98,14 @@ DataToColor.bagQueue = {}
 DataToColor.inventoryQueue = {}
 DataToColor.gossipQueue = {}
 DataToColor.actionBarCostQueue = {}
+DataToColor.spellBookQueue = {}
 
 local equipmentSlot = nil
 local bagNum = nil
 local bagSlotNum = nil
 local gossipNum = nil
 local actionNum = nil
+local spellId = nil
 
 local x, y = 0, 0
 
@@ -228,6 +232,7 @@ function DataToColor:FushState()
     DataToColor:InitInventoryQueue(0)
 
     DataToColor:InitActionBarCostQueue()
+    DataToColor:InitSpellBookQueue()
 
     DataToColor:Print('Flush State')
 end
@@ -244,6 +249,7 @@ function DataToColor:InitUpdateQueues()
     DataToColor:InitBagQueue(0, 0)
     DataToColor:InitInventoryQueue(0)
     DataToColor:InitActionBarCostQueue()
+    DataToColor:InitSpellBookQueue()
 end
 
 function DataToColor:InitEquipmentQueue()
@@ -273,6 +279,19 @@ function DataToColor:InitActionBarCostQueue()
         if DataToColor:actionbarCost(slot) then
             DataToColor.stack:push(DataToColor.actionBarCostQueue, slot)
         end
+    end
+end
+
+function DataToColor:InitSpellBookQueue()
+    local num, type = 1, 1
+    local contextualID = nil
+    while true do
+        _, contextualID = GetSpellBookItemInfo(num, type)
+        if not contextualID then
+            break
+        end
+        DataToColor.stack:push(DataToColor.spellBookQueue, contextualID)
+        num = num + 1
     end
 end
 
@@ -504,6 +523,13 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPet), 68) -- pet guid
             MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPetTarget), 69) -- pet target
             MakePixelSquareArrI(DataToColor.CastNum, 70)
+
+            if DataToColor:Modulo(globalCounter, SPELLBOOK_ITERATION_FRAME_CHANGE_RATE) == 0 then
+                spellId = DataToColor.stack:pop(DataToColor.spellBookQueue)
+                if spellId then
+                    MakePixelSquareArrI(spellId, 71)
+                end
+            end
 
             -- Timers
             MakePixelSquareArrI(DataToColor.lastLoot, 97)
