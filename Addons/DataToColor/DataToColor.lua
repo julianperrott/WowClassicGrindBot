@@ -307,8 +307,9 @@ function DataToColor:InitTalentQueue()
             _, _, tier, column, currentRank = GetTalentInfo(tab, i)
             if currentRank > 0 then
                 --                     1-3 +         1-11 +          1-4 +         1-5
-                local hash = tab * 1000000 + tier * 10000 + column * 100 + currentRank
+                local hash = tab * 1000000 + tier * 10000 + column * 10 + currentRank
                 DataToColor.stack:push(DataToColor.talentQueue, hash)
+                --DataToColor:Print("talentQueue tab:"..tab.." | tier: "..tier.." | column: "..column.." | rank: "..currentRank)
             end
         end
     end
