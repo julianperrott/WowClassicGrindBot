@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Core.Database;
 
 namespace Core
 {
@@ -9,19 +10,24 @@ namespace Core
         private readonly int cSpellId;
 
         private readonly ISquareReader reader;
+        private readonly SpellDB spellDB;
 
-        public HashSet<int> Spells { get; private set; } = new HashSet<int>();
+        public Dictionary<int, Spell> Spells { get; private set; } = new Dictionary<int, Spell>();
 
-        public SpellBookReader(ISquareReader reader, int cSpellId)
+        public SpellBookReader(ISquareReader reader, int cSpellId, SpellDB spellDB)
         {
             this.reader = reader;
             this.cSpellId = cSpellId;
+            this.spellDB = spellDB;
         }
 
         public void Read()
         {
             int spellId = (int)reader.GetLongAtCell(cSpellId);
-            Spells.Add(spellId);
+            if (!Spells.ContainsKey(spellId) && spellDB.Spells.TryGetValue(spellId, out Spell spell))
+            {
+                Spells.Add(spellId, spell);
+            }
         }
 
         public void Reset()
