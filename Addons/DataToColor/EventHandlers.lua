@@ -41,6 +41,7 @@ function DataToColor:RegisterEvents()
     DataToColor:RegisterEvent('PLAYER_TARGET_CHANGED', 'OnPlayerTargetChanged')
     DataToColor:RegisterEvent('PLAYER_EQUIPMENT_CHANGED', 'OnPlayerEquipmentChanged')
     DataToColor:RegisterEvent('GOSSIP_SHOW', 'OnGossipShow')
+    DataToColor:RegisterEvent('SPELLS_CHANGED', 'OnSpellsChanged')
 end
 
 function DataToColor:OnUIErrorMessage(event, messageType, message)
@@ -267,6 +268,11 @@ function DataToColor:OnGossipShow(event)
             DataToColor.stack:push(DataToColor.gossipQueue, 10000 * count + 100 * (k/2) + DataToColor.C.Gossip[v])
         end
     end
+end
+
+function DataToColor:OnSpellsChanged(event)
+    DataToColor:InitTalentQueue()
+    DataToColor:InitSpellBookQueue()
 end
 
 DataToColor.playerInteractIterator = 0
