@@ -553,19 +553,21 @@ e.g.
 
 If a given `Spell id` or `Spell name` must be known by the player then you can use this requirement. Useful to determine when the given `Spell` is exists in the spellbook.
 
-It has the format Spell:[`name` or `id`]. The `name` only works with the English client name.
+It has the formats 
+* Spell:[name]. The `name` only works with the English client name.
+* Spell:[id]
 
 e.g. 
-* "Spell:687 - Must have know the given `spell id` https://classic.wowhead.com/item=687
-* "Spell:Demon Skin" - Must have known the given `spell name`
-* "not Spell:702" - Must have not know the given `spell id` https://classic.wowhead.com/item=702
-* "not Spell:Curse of Weakness"- Must have not know the given `spell name` 
+* "Spell:687 - Must have know the given `id` https://classic.wowhead.com/item=687
+* "Spell:Demon Skin" - Must have known the given `name`
+* "not Spell:702" - Must have not know the given `id` https://classic.wowhead.com/item=702
+* "not Spell:Curse of Weakness"- Must have not know the given `name` 
 
 #### Talent requirements
 
 If a given `Talent` must be known by the player then you can use this requirement. Useful to determine when the given `Talent` is learned. Also can specify how many points have to be spent minimium with `rank`.
 
-It has the format Talent:[`name`]:[`rank`]. The `name` only works with the English client name.
+It has the format Talent:[name]:[rank]. The `name` only works with the English client name.
 
 e.g. 
 * "Talent:Improved Corruption" - Must know the given `name`
