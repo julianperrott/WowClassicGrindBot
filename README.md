@@ -563,13 +563,14 @@ e.g.
 
 #### Talent requirements
 
-If a given `Talent` must be known by the player then you can use this requirement. Useful to determine when the given `Talent` is learned.
+If a given `Talent` must be known by the player then you can use this requirement. Useful to determine when the given `Talent` is learned. Also can specify how many points have to be spent minimium with `rank`.
 
-It has the format Talent:[`name`]. The `name` only works with the English client name.
+It has the format Talent:[`name`]:[`rank`]. The `name` only works with the English client name.
 
 e.g. 
-* "Talent:Improved Corruption" - Must not know the given `talent name`
-* "not Talent:Suppression"- Must have not know the given `spell name` 
+* "Talent:Improved Corruption" - Must know the given `name`
+* "Talent:Improved Corruption:5" - Must know the given `name` and atleast with `rank`
+* "not Talent:Suppression"- Must have not know the given `name` 
 
 #### Buff / Debuff
 
