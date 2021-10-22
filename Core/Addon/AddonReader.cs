@@ -21,6 +21,8 @@ namespace Core
 
         public GossipReader GossipReader { get; set; }
 
+        public SpellBookReader SpellBookReader { get; set; }
+
         public LevelTracker LevelTracker { get; set; }
 
         public event EventHandler? AddonDataChanged;
@@ -30,6 +32,7 @@ namespace Core
         public WorldMapAreaDB WorldMapAreaDb { get; set; }
         private readonly ItemDB itemDb;
         private readonly CreatureDB creatureDb;
+        private readonly SpellDB spellDb;
 
         private readonly CircularBuffer<double> UpdateLatencys;
 
@@ -45,6 +48,7 @@ namespace Core
 
             this.itemDb = new ItemDB(logger, dataConfig);
             this.creatureDb = new CreatureDB(logger, dataConfig);
+            this.spellDb = new SpellDB(logger, dataConfig);
 
             this.equipmentReader = new EquipmentReader(squareReader, 24, 25);
             this.BagReader = new BagReader(squareReader, itemDb, equipmentReader, 20, 21, 22, 23);
@@ -52,6 +56,8 @@ namespace Core
             this.ActionBarCostReader = new ActionBarCostReader(squareReader, 36);
 
             this.GossipReader = new GossipReader(squareReader, 37);
+
+            this.SpellBookReader = new SpellBookReader(squareReader, 71, spellDb);
 
             this.PlayerReader = new PlayerReader(squareReader, creatureDb);
             this.LevelTracker = new LevelTracker(PlayerReader);
@@ -86,6 +92,8 @@ namespace Core
 
             GossipReader.Read();
 
+            SpellBookReader.Read();
+
             LevelTracker.Update();
 
             areaDb.Update(WorldMapAreaDb.GetAreaId(PlayerReader.UIMapId.Value));
@@ -107,6 +115,7 @@ namespace Core
         {
             PlayerReader.Initialized = false;
             ActionBarCostReader.Reset();
+            SpellBookReader.Reset();
             PlayerReader.Reset();
         }
 
