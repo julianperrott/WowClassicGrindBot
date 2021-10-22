@@ -29,6 +29,8 @@ local ACTION_BAR_ITERATION_FRAME_CHANGE_RATE = 5
 local GOSSIP_ITERATION_FRAME_CHANGE_RATE = 5
 -- How ofthen the spellbook frames change
 local SPELLBOOK_ITERATION_FRAME_CHANGE_RATE = 5
+-- How ofthen the spellbook frames change
+local TALENT_ITERATION_FRAME_CHANGE_RATE = 5
 
 -- Action bar configuration for which spells are tracked
 local MAX_ACTIONBAR_SLOT = 108
@@ -68,7 +70,7 @@ local targetDebuffCount = 0
 local targetBuffCount = 0
 
 -- Update Queue
-stack = {}
+local stack = {}
 DataToColor.stack = stack
 
 function stack:push(t, item)
@@ -99,6 +101,7 @@ DataToColor.inventoryQueue = {}
 DataToColor.gossipQueue = {}
 DataToColor.actionBarCostQueue = {}
 DataToColor.spellBookQueue = {}
+DataToColor.talentQueue = {}
 
 local equipmentSlot = nil
 local bagNum = nil
@@ -106,6 +109,7 @@ local bagSlotNum = nil
 local gossipNum = nil
 local actionNum = nil
 local spellId = nil
+local talentNum = nil
 
 local x, y = 0, 0
 
@@ -233,6 +237,7 @@ function DataToColor:FushState()
 
     DataToColor:InitActionBarCostQueue()
     DataToColor:InitSpellBookQueue()
+    DataToColor:InitTalentQueue()
 
     DataToColor:Print('Flush State')
 end
@@ -250,6 +255,7 @@ function DataToColor:InitUpdateQueues()
     DataToColor:InitInventoryQueue(0)
     DataToColor:InitActionBarCostQueue()
     DataToColor:InitSpellBookQueue()
+    DataToColor:InitTalentQueue()
 end
 
 function DataToColor:InitEquipmentQueue()
@@ -292,6 +298,19 @@ function DataToColor:InitSpellBookQueue()
         end
         DataToColor.stack:push(DataToColor.spellBookQueue, contextualID)
         num = num + 1
+    end
+end
+
+function DataToColor:InitTalentQueue()
+    for tab=1, GetNumTalentTabs(false, false) do
+        for i=1, GetNumTalents(tab) do
+            _, _, tier, column, currentRank = GetTalentInfo(tab, i)
+            if currentRank > 0 then
+                --                     1-3 +         1-11 +          1-4 +         1-5
+                local hash = tab * 1000000 + tier * 10000 + column * 100 + currentRank
+                DataToColor.stack:push(DataToColor.talentQueue, hash)
+            end
+        end
     end
 end
 
@@ -528,6 +547,13 @@ function DataToColor:CreateFrames(n)
                 spellId = DataToColor.stack:pop(DataToColor.spellBookQueue)
                 if spellId then
                     MakePixelSquareArrI(spellId, 71)
+                end
+            end
+
+            if DataToColor:Modulo(globalCounter, TALENT_ITERATION_FRAME_CHANGE_RATE) == 0 then
+                talentNum = DataToColor.stack:pop(DataToColor.talentQueue)
+                if talentNum then
+                    MakePixelSquareArrI(talentNum, 72)
                 end
             end
 
