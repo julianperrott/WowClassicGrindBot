@@ -63,7 +63,7 @@
         "Name": "Corruption",
         "Key": "7",
         "School": "Shadow",
-        "Requirements": ["TargetHealth%>35", "not Corruption"],
+        "Requirements": ["TargetHealth%>35", "not Corruption", "Talent:Improved Corruption:5"],
         "ResetOnNewTarget": true,
         "MinMana": 55,
         "Log": false

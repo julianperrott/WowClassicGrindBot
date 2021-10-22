@@ -10,7 +10,7 @@ namespace Core
         private readonly int cSpellId;
 
         private readonly ISquareReader reader;
-        private readonly SpellDB spellDB;
+        public SpellDB SpellDB { private set; get; }
 
         public Dictionary<int, Spell> Spells { get; private set; } = new Dictionary<int, Spell>();
 
@@ -18,13 +18,13 @@ namespace Core
         {
             this.reader = reader;
             this.cSpellId = cSpellId;
-            this.spellDB = spellDB;
+            this.SpellDB = spellDB;
         }
 
         public void Read()
         {
             int spellId = (int)reader.GetLongAtCell(cSpellId);
-            if (!Spells.ContainsKey(spellId) && spellDB.Spells.TryGetValue(spellId, out Spell spell))
+            if (!Spells.ContainsKey(spellId) && SpellDB.Spells.TryGetValue(spellId, out Spell spell))
             {
                 Spells.Add(spellId, spell);
             }
@@ -33,6 +33,17 @@ namespace Core
         public void Reset()
         {
             Spells.Clear();
+        }
+
+        public int GetSpellIdByName(string name)
+        {
+            foreach (var kvp in Spells)
+            {
+                if (kvp.Value.Name.ToLower() == name.ToLower())
+                    return kvp.Key;
+            }
+
+            return 0;
         }
     }
 }
