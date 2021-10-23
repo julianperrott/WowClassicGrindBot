@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Database;
 
 namespace Core
 {
@@ -10,24 +11,209 @@ namespace Core
         private readonly ILogger logger;
         private readonly PlayerReader playerReader;
         private readonly BagReader bagReader;
-        private readonly EquipmentReader equipmentReader;
         private readonly SpellBookReader spellBookReader;
         private readonly TalentReader talentReader;
+        private readonly CreatureDB creatureDb;
+        private readonly ItemDB itemDb;
 
-        private Dictionary<string, Func<bool>> BuffDictionary = new Dictionary<string, Func<bool>>();
+        private readonly Dictionary<string, Func<long>> valueDictionary = new Dictionary<string, Func<long>>();
 
-        public RequirementFactory(ILogger logger, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, SpellBookReader spellBookReader, TalentReader talentReader)
+        private readonly Dictionary<string, Func<bool>> booleanDictionary = new Dictionary<string, Func<bool>>();
+
+        private readonly Dictionary<string, Func<string, Requirement>> keywordDictionary = new Dictionary<string, Func<string, Requirement>>();
+
+        private readonly List<string> negate = new List<string>()
+        {
+           "not ",
+           "!"
+        };
+
+        public RequirementFactory(ILogger logger, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, SpellBookReader spellBookReader, TalentReader talentReader, CreatureDB creatureDb, ItemDB itemDb)
         {
             this.logger = logger;
             this.playerReader = playerReader;
             this.bagReader = bagReader;
-            this.equipmentReader = equipmentReader;
             this.spellBookReader = spellBookReader;
             this.talentReader = talentReader;
+            this.creatureDb = creatureDb;
+            this.itemDb = itemDb;
+
+            keywordDictionary = new Dictionary<string, Func<string, Requirement>>()
+            {
+                { ">=", GetInclusiveValueBasedRequirement },
+                { "<=", GetInclusiveValueBasedRequirement },
+                { ">", GetExcusiveValueBasedRequirement },
+                { "<", GetExcusiveValueBasedRequirement },
+                { "==", GetEqualsValueBasedRequirement },
+                { "npcID:", CreateNpcRequirement },
+                { "BagItem:", CreateBagItemRequirement },
+                { "SpellInRange:", CreateSpellInRangeRequirement },
+                { "TargetCastingSpell", CreateTargetCastingSpellRequirement },
+                { "Form", CreateFormRequirement },
+                { "Race", CreateRaceRequirement },
+                { "Spell", CreateSpellRequirement },
+                { "Talent", CreateTalentRequirement }
+            };
+
+            booleanDictionary = new Dictionary<string, Func<bool>>
+            {
+                // Target Based
+                { "TargetYieldXP", () => playerReader.TargetYieldXP },
+
+                // Range
+                { "InMeleeRange", ()=> playerReader.IsInMeleeRange },
+                { "InDeadZoneRange", ()=> playerReader.IsInDeadZone },
+                { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
+                { "InCombatRange", ()=> playerReader.WithInCombatRange },
+                { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
+                
+                // Pet
+                { "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
+                { "Pet Happy", ()=> playerReader.PlayerBitValues.PetHappy },
+                
+                // Auto Spell
+                { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
+                { "Shooting", ()=> playerReader.IsShooting },
+                { "AutoShot", ()=> playerReader.IsAutoShoting },
+                
+                // Temporary Enchants
+                { "HasMainHandEnchant", ()=> playerReader.PlayerBitValues.MainHandEnchant_Active },
+                { "HasOffHandEnchant", ()=> playerReader.PlayerBitValues.OffHandEnchant_Active },
+                
+                // Equipment - Bag
+                { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
+                { "BagFull", ()=> bagReader.BagsFull },
+                { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
+                { "HasAmmo", ()=> playerReader.PlayerBitValues.HasAmmo },
+                
+                // General Buff Condition
+                { "Eating", ()=> playerReader.Buffs.Eating },
+                { "Drinking", ()=> playerReader.Buffs.Drinking },
+                { "Mana Regeneration", ()=> playerReader.Buffs.ManaRegeneration },
+                { "Well Fed", ()=> playerReader.Buffs.WellFed },
+                { "Clearcasting", ()=> playerReader.Buffs.Clearcasting },
+
+                // Player Affected
+                { "Swimming", ()=> playerReader.PlayerBitValues.IsSwimming },
+                { "Falling", ()=> playerReader.PlayerBitValues.IsFalling },
+
+                //Priest
+                { "Fortitude", ()=> playerReader.Buffs.Fortitude },
+                { "InnerFire", ()=> playerReader.Buffs.InnerFire },
+                { "Divine Spirit", ()=> playerReader.Buffs.DivineSpirit },
+                { "Renew", ()=> playerReader.Buffs.Renew },
+                { "Shield", ()=> playerReader.Buffs.Shield },
+
+                // Druid
+                { "Mark of the Wild", ()=> playerReader.Buffs.MarkOfTheWild },
+                { "Thorns", ()=> playerReader.Buffs.Thorns },
+                { "TigersFury", ()=> playerReader.Buffs.TigersFury },
+                { "Prowl", ()=> playerReader.Buffs.Prowl },
+                { "Rejuvenation", ()=> playerReader.Buffs.Rejuvenation },
+                { "Regrowth", ()=> playerReader.Buffs.Regrowth },
+                
+                // Paladin
+                { "Seal", ()=> playerReader.Buffs.Seal },
+                { "Aura", ()=>playerReader.Buffs.Aura },
+                { "Devotion Aura", ()=>playerReader.Buffs.Aura },
+                { "Blessing", ()=> playerReader.Buffs.Blessing },
+                { "Blessing of Might", ()=> playerReader.Buffs.Blessing },
+                
+                // Mage
+                { "Frost Armor", ()=> playerReader.Buffs.FrostArmor },
+                { "Ice Armor", ()=> playerReader.Buffs.FrostArmor },
+                { "Arcane Intellect", ()=> playerReader.Buffs.ArcaneIntellect },
+                { "Ice Barrier", ()=>playerReader.Buffs.IceBarrier },
+                { "Ward", ()=>playerReader.Buffs.Ward },
+                { "Fire Power", ()=>playerReader.Buffs.FirePower },
+                { "Mana Shield", ()=>playerReader.Buffs.ManaShield },
+                { "Presence of Mind", ()=>playerReader.Buffs.PresenceOfMind },
+                { "Arcane Power", ()=>playerReader.Buffs.ArcanePower },
+                
+                // Rogue
+                { "Slice and Dice", ()=> playerReader.Buffs.SliceAndDice },
+                { "Stealth", ()=> playerReader.Buffs.Stealth },
+                
+                // Warrior
+                { "Battle Shout", ()=> playerReader.Buffs.BattleShout },
+                
+                // Warlock
+                { "Demon Skin", ()=> playerReader.Buffs.Demon },
+                { "Demon Armor", ()=> playerReader.Buffs.Demon },
+                { "Soul Link", ()=> playerReader.Buffs.SoulLink },
+                { "Soulstone Resurrection", ()=> playerReader.Buffs.SoulstoneResurrection },
+                { "Shadow Trance", ()=> playerReader.Buffs.ShadowTrance },
+                
+                // Shaman
+                { "Lightning Shield", ()=> playerReader.Buffs.LightningShield },
+                { "Water Shield", ()=> playerReader.Buffs.WaterShield },
+                { "Shamanistic Focus", ()=> playerReader.Buffs.ShamanisticFocus },
+                { "Stoneskin", ()=> playerReader.Buffs.Stoneskin },
+                
+                //Hunter
+                { "Aspect of the Cheetah", ()=> playerReader.Buffs.Aspect },
+                { "Aspect of the Pack", ()=> playerReader.Buffs.Aspect },
+                { "Aspect of the Beast", ()=> playerReader.Buffs.Aspect },
+                { "Aspect of the Hawk", ()=> playerReader.Buffs.Aspect },
+                { "Aspect of the Wild", ()=> playerReader.Buffs.Aspect },
+                { "Aspect of the Monkey", ()=> playerReader.Buffs.Aspect },
+                { "Rapid Fire", ()=> playerReader.Buffs.RapidFire },
+                { "Quick Shots", ()=> playerReader.Buffs.QuickShots },
+
+                // Debuff Section
+                // Druid Debuff
+                { "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
+                { "Faerie Fire", ()=> playerReader.Debuffs.FaerieFire },
+                { "Rip", ()=> playerReader.Debuffs.Rip },
+                { "Moonfire", ()=> playerReader.Debuffs.Moonfire },
+                { "Entangling Roots", ()=> playerReader.Debuffs.EntanglingRoots },
+                { "Rake", ()=> playerReader.Debuffs.Rake },
+                
+                // Warrior Debuff
+                { "Rend", ()=> playerReader.Debuffs.Rend },
+                
+                // Priest Debuff
+                { "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },
+                
+                // Mage Debuff
+                { "Frostbite", ()=> playerReader.Debuffs.Frostbite },
+                { "Slow", ()=> playerReader.Debuffs.Slow },
+                
+                // Warlock Debuff
+                { "Curse of Weakness", ()=> playerReader.Debuffs.Curseof },
+                { "Curse of Elements", ()=> playerReader.Debuffs.Curseof },
+                { "Curse of Recklessness", ()=> playerReader.Debuffs.Curseof },
+                { "Curse of Shadow", ()=> playerReader.Debuffs.Curseof },
+                { "Curse of Agony", ()=> playerReader.Debuffs.Curseof },
+                { "Curse of", ()=> playerReader.Debuffs.Curseof },
+                { "Corruption", ()=> playerReader.Debuffs.Corruption },
+                { "Immolate", ()=> playerReader.Debuffs.Immolate },
+                { "Siphon Life", ()=> playerReader.Debuffs.SiphonLife },
+                
+                // Hunter Debuff
+                { "Serpent Sting", ()=> playerReader.Debuffs.SerpentSting },
+            };
+
+            valueDictionary = new Dictionary<string, Func<long>>
+            {
+                { "Health%", () => playerReader.HealthPercent },
+                { "TargetHealth%", () => playerReader.TargetHealthPercentage },
+                { "PetHealth%", () => playerReader.PetHealthPercentage },
+                { "Mana%", () => playerReader.ManaPercentage },
+                { "BagCount", () => bagReader.BagItems.Count },
+                { "MobCount", () => playerReader.CombatCreatureCount },
+                { "MinRange", () => playerReader.MinRange },
+                { "MaxRange", () => playerReader.MaxRange },
+                { "LastAutoShotMs", () => playerReader.AutoShot.ElapsedMs },
+                { "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }
+            };
         }
 
         public void InitialiseRequirements(KeyAction item)
         {
+            CreateConsumableRequirement("Water", item);
+            CreateConsumableRequirement("Food", item);
+
             item.RequirementObjects.Clear();
             foreach (string requirement in item.Requirements)
             {
@@ -65,38 +251,36 @@ namespace Core
                 }
             }
 
-            CreateMinRequirement(item.RequirementObjects, "Mana", item.MinMana);
-            CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
-            CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
-
-            CreateConsumableRequirement("Water", item);
-            CreateConsumableRequirement("Food", item);
+            CreateMinRequirement(item.RequirementObjects, PowerType.Mana, item.MinMana);
+            CreateMinRequirement(item.RequirementObjects, PowerType.Rage, item.MinRage);
+            CreateMinRequirement(item.RequirementObjects, PowerType.Energy, item.MinEnergy);
 
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
-            CreateTargetIsCastingRequirement(item.RequirementObjects, item.UseWhenTargetIsCasting);
+            CreateTargetIsCastingRequirement(item.RequirementObjects, item);
             CreateActionUsableRequirement(item.RequirementObjects, item);
 
-            item.CreateCooldownRequirement();
-            item.CreateChargeRequirement();
+            CreateCooldownRequirement(item.RequirementObjects, item);
+            CreateChargeRequirement(item.RequirementObjects, item);
         }
 
-        private void CreateTargetIsCastingRequirement(List<Requirement> itemRequirementObjects, bool? value)
+
+        private void CreateTargetIsCastingRequirement(List<Requirement> itemRequirementObjects, KeyAction item)
         {
-            if (value != null)
+            if (item.UseWhenTargetIsCasting != null)
             {
                 itemRequirementObjects.Add(new Requirement
                 {
-                    HasRequirement = () => playerReader.IsTargetCasting == value.Value,
+                    HasRequirement = () => playerReader.IsTargetCasting == item.UseWhenTargetIsCasting.Value,
                     LogMessage = () => "Target casting"
                 });
             }
         }
 
-        private void CreateMinRequirement(List<Requirement> RequirementObjects, string type, int value)
+        private void CreateMinRequirement(List<Requirement> RequirementObjects, PowerType type, int value)
         {
             if (value > 0)
             {
-                if (type == "Mana")
+                if (type == PowerType.Mana)
                 {
                     RequirementObjects.Add(new Requirement
                     {
@@ -146,7 +330,33 @@ namespace Core
             }
         }
 
-        private void CreateConsumableRequirement(string name, KeyAction item)
+        private static void CreateCooldownRequirement(List<Requirement> RequirementObjects, KeyAction item)
+        {
+            if (item.Cooldown > 0)
+            {
+                RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => item.GetCooldownRemaining() == 0,
+                    LogMessage = () => $"Cooldown {item.GetCooldownRemaining() / 1000:F1}",
+                    VisibleIfHasRequirement = false
+                });
+            }
+        }
+
+        private static void CreateChargeRequirement(List<Requirement> RequirementObjects, KeyAction item)
+        {
+            if (item.Charge > 1)
+            {
+                RequirementObjects.Add(new Requirement
+                {
+                    HasRequirement = () => item.GetChargeRemaining() != 0,
+                    LogMessage = () => $"Charge {item.GetChargeRemaining()}",
+                    VisibleIfHasRequirement = true
+                });
+            }
+        }
+
+        private static void CreateConsumableRequirement(string name, KeyAction item)
         {
             if (item.Name == name)
             {
@@ -154,224 +364,50 @@ namespace Core
                 item.WhenUsable = true;
                 item.AfterCastWaitBuff = true;
 
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => !playerReader.PlayerBitValues.IsSwimming,
-                    LogMessage = () => $"Not swim"
-                });
-
-                item.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => !playerReader.PlayerBitValues.IsFalling,
-                    LogMessage = () => $"Not falling"
-                });
+                item.Requirements.Add("not Swimming");
+                item.Requirements.Add("not Falling");
             }
         }
+
 
         public Requirement GetRequirement(string name, string requirement)
         {
-            this.logger.LogInformation($"[{name}] Processing requirement: {requirement}");
-
             var requirementText = requirement;
+            logger.LogInformation($"[{name}] Processing requirement: \"{requirementText}\"");
 
-            if (requirement.Contains(">") || requirement.Contains("<"))
+            bool negated = false;
+            string negateKeyword = negate.FirstOrDefault(x => requirement.StartsWith(x));
+            if (!string.IsNullOrEmpty(negateKeyword))
             {
-                return GetValueBasedRequirement(name, requirement);
+                requirement = requirement.Substring(negateKeyword.Length);
+                negated = true;
             }
 
-            if (requirement.Contains("npcID:"))
+            string? key = keywordDictionary.Keys.FirstOrDefault(x => requirement.Contains(x));
+            if (!string.IsNullOrEmpty(key))
             {
-                return CreateNpcRequirement(requirement);
+                var requirementObj = keywordDictionary[key](requirement);
+                return negated ? requirementObj.Negate(negateKeyword) : requirementObj;
             }
 
-            if (requirement.Contains("BagItem:"))
+            if (booleanDictionary.Keys.Contains(requirement))
             {
-                return CreateBagItemRequirement(requirement);
-            }
-
-            if (requirement.Contains("SpellInRange:"))
-            {
-                return CreateSpellInRangeRequirement(requirement);
-            }
-
-            if (requirement.Contains("TargetCastingSpell"))
-            {
-                return CreateTargetCastingSpellRequirement(requirement);
-            }
-
-            if (requirement.Contains("Form"))
-            {
-                return CreateFormRequirement(requirement);
-            }
-
-            if (requirement.Contains("Race"))
-            {
-                return CreateRaceRequirement(requirement);
-            }
-
-            if (requirement.Contains("Spell"))
-            {
-                return CreateSpellRequirement(requirement);
-            }
-
-            if (requirement.Contains("Talent"))
-            {
-                return CreateTalentRequirement(requirement);
-            }
-
-            if (BuffDictionary.Count == 0)
-            {
-                BuffDictionary = new Dictionary<string, Func<bool>>
+                var requirementObj = new Requirement
                 {
-                    // Target Based
-                    { "TargetYieldXP", () => playerReader.TargetYieldXP },
-                    // Range
-                    { "InMeleeRange", ()=> playerReader.IsInMeleeRange },
-                    { "InDeadZoneRange", ()=> playerReader.IsInDeadZone },
-                    { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
-                    { "InCombatRange", ()=> playerReader.WithInCombatRange },
-                    { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
-                    // Pet
-                    { "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
-                    { "Pet Happy", ()=> playerReader.PlayerBitValues.PetHappy },
-                    // Auto Spell
-                    { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
-                    { "Shooting", ()=> playerReader.IsShooting },
-                    { "AutoShot", ()=> playerReader.IsAutoShoting },
-                    // Temporary Enchants
-                    { "HasMainHandEnchant", ()=> playerReader.PlayerBitValues.MainHandEnchant_Active },
-                    { "HasOffHandEnchant", ()=> playerReader.PlayerBitValues.OffHandEnchant_Active },
-                    // Equipment - Bag
-                    { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
-                    { "BagFull", ()=> bagReader.BagsFull },
-                    { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
-                    { "HasAmmo", ()=> playerReader.PlayerBitValues.HasAmmo },
-                    // General Buff Condition
-                    {  "Eating", ()=> playerReader.Buffs.Eating },
-                    {  "Drinking", ()=> playerReader.Buffs.Drinking },
-                    {  "Mana Regeneration", ()=> playerReader.Buffs.ManaRegeneration },
-                    {  "Well Fed", ()=> playerReader.Buffs.WellFed },
-                    {  "Clearcasting", ()=> playerReader.Buffs.Clearcasting },
-                    //Priest
-                    {  "Fortitude", ()=> playerReader.Buffs.Fortitude },
-                    {  "InnerFire", ()=> playerReader.Buffs.InnerFire },
-                    {  "Divine Spirit", ()=> playerReader.Buffs.DivineSpirit },
-                    {  "Renew", ()=> playerReader.Buffs.Renew },
-                    {  "Shield", ()=> playerReader.Buffs.Shield },
-                    // Druid
-                    {  "Mark of the Wild", ()=> playerReader.Buffs.MarkOfTheWild },
-                    {  "Thorns", ()=> playerReader.Buffs.Thorns },
-                    {  "TigersFury", ()=> playerReader.Buffs.TigersFury },
-                    {  "Prowl", ()=> playerReader.Buffs.Prowl },
-                    {  "Rejuvenation", ()=> playerReader.Buffs.Rejuvenation },
-                    {  "Regrowth", ()=> playerReader.Buffs.Regrowth },
-                    // Paladin
-                    {  "Seal", ()=> playerReader.Buffs.Seal },
-                    {  "Aura", ()=>playerReader.Buffs.Aura },
-                    {  "Devotion Aura", ()=>playerReader.Buffs.Aura },
-                    {  "Blessing", ()=> playerReader.Buffs.Blessing },
-                    {  "Blessing of Might", ()=> playerReader.Buffs.Blessing },
-                    // Mage
-                    {  "Frost Armor", ()=> playerReader.Buffs.FrostArmor },
-                    {  "Ice Armor", ()=> playerReader.Buffs.FrostArmor },
-                    {  "Arcane Intellect", ()=> playerReader.Buffs.ArcaneIntellect },
-                    {  "Ice Barrier", ()=>playerReader.Buffs.IceBarrier },
-                    {  "Ward", ()=>playerReader.Buffs.Ward },
-                    {  "Fire Power", ()=>playerReader.Buffs.FirePower },
-                    {  "Mana Shield", ()=>playerReader.Buffs.ManaShield },
-                    {  "Presence of Mind", ()=>playerReader.Buffs.PresenceOfMind },
-                    {  "Arcane Power", ()=>playerReader.Buffs.ArcanePower },
-                    // Rogue
-                    {  "Slice and Dice", ()=> playerReader.Buffs.SliceAndDice },
-                    {  "Stealth", ()=> playerReader.Buffs.Stealth },
-                    // Warrior
-                    {  "Battle Shout", ()=> playerReader.Buffs.BattleShout },
-                    // Warlock
-                    {  "Demon Skin", ()=> playerReader.Buffs.Demon },
-                    {  "Demon Armor", ()=> playerReader.Buffs.Demon },
-                    {  "Soul Link", ()=> playerReader.Buffs.SoulLink },
-                    {  "Soulstone Resurrection", ()=> playerReader.Buffs.SoulstoneResurrection },
-                    {  "Shadow Trance", ()=> playerReader.Buffs.ShadowTrance },
-                    // Shaman
-                    {  "Lightning Shield", ()=> playerReader.Buffs.LightningShield },
-                    {  "Water Shield", ()=> playerReader.Buffs.WaterShield },
-                    {  "Shamanistic Focus", ()=> playerReader.Buffs.ShamanisticFocus },
-                    {  "Stoneskin", ()=> playerReader.Buffs.Stoneskin },
-                    //Hunter
-                    {  "Aspect of the Cheetah", ()=> playerReader.Buffs.Aspect },
-                    {  "Aspect of the Pack", ()=> playerReader.Buffs.Aspect },
-                    {  "Aspect of the Beast", ()=> playerReader.Buffs.Aspect },
-                    {  "Aspect of the Hawk", ()=> playerReader.Buffs.Aspect },
-                    {  "Aspect of the Wild", ()=> playerReader.Buffs.Aspect },
-                    {  "Aspect of the Monkey", ()=> playerReader.Buffs.Aspect },
-                    {  "Rapid Fire", ()=> playerReader.Buffs.RapidFire },
-                    {  "Quick Shots", ()=> playerReader.Buffs.QuickShots },
-
-                    // Debuff Section
-                    // Druid Debuff
-                    {  "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
-                    {  "Faerie Fire", ()=> playerReader.Debuffs.FaerieFire },
-                    {  "Rip", ()=> playerReader.Debuffs.Rip },
-                    {  "Moonfire", ()=> playerReader.Debuffs.Moonfire },
-                    {  "Entangling Roots", ()=> playerReader.Debuffs.EntanglingRoots },
-                    {  "Rake", ()=> playerReader.Debuffs.Rake },
-                    // Warrior Debuff
-                    {  "Rend", ()=> playerReader.Debuffs.Rend },
-                    // Priest Debuff
-                    {  "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },
-                    // Mage Debuff
-                    { "Frostbite", ()=> playerReader.Debuffs.Frostbite },
-                    { "Slow", ()=> playerReader.Debuffs.Slow },
-                    // Warlock Debuff
-                    {  "Curse of Weakness", ()=> playerReader.Debuffs.Curseof },
-                    {  "Curse of Elements", ()=> playerReader.Debuffs.Curseof },
-                    {  "Curse of Recklessness", ()=> playerReader.Debuffs.Curseof },
-                    {  "Curse of Shadow", ()=> playerReader.Debuffs.Curseof },
-                    {  "Curse of Agony", ()=> playerReader.Debuffs.Curseof },
-                    {  "Curse of", ()=> playerReader.Debuffs.Curseof },
-                    {  "Corruption", ()=> playerReader.Debuffs.Corruption },
-                    {  "Immolate", ()=> playerReader.Debuffs.Immolate },
-                    {  "Siphon Life", ()=> playerReader.Debuffs.SiphonLife },
-                    // Hunter Debuff
-                    {  "Serpent Sting", ()=> playerReader.Debuffs.SerpentSting },
+                    HasRequirement = booleanDictionary[requirement],
+                    LogMessage = () => $"{requirement}"
                 };
+                return negated ? requirementObj.Negate(negateKeyword) : requirementObj;
             }
 
-            if (BuffDictionary.Keys.Contains(requirement))
-            {
-                return new Requirement
-                {
-                    HasRequirement = BuffDictionary[requirement],
-                    LogMessage = () => $"{requirementText}"
-                };
-            }
-
-            if (requirement.StartsWith("not "))
-            {
-                requirement = requirement.Substring(4);
-            }
-
-            if (requirement.StartsWith("!"))
-            {
-                requirement = requirement.Substring(1);
-            }
-
-            if (BuffDictionary.Keys.Contains(requirement))
-            {
-                return new Requirement
-                {
-                    HasRequirement = () => !BuffDictionary[requirement](),
-                    LogMessage = () => $"{requirementText}"
-                };
-            }
-
-            logger.LogInformation($"[{name}] UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", BuffDictionary.Keys)}");
+            logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", booleanDictionary.Keys)}");
             return new Requirement
             {
                 HasRequirement = () => false,
-                LogMessage = () => $"UNKNOWN REQUIREMENT! {requirementText}"
+                LogMessage = () => $"UNKNOWN REQUIREMENT! {requirement}"
             };
         }
+
 
         private Requirement CreateTargetCastingSpellRequirement(string requirement)
         {
@@ -383,21 +419,11 @@ namespace Core
 
                 var spellIdsStringFormatted = string.Join(", ", spellIds);
 
-                if (requirement.StartsWith("!") || requirement.StartsWith("not "))
-                {
-                    return new Requirement
-                    {
-                        HasRequirement = () => !spellIds.Contains(this.playerReader.SpellBeingCastByTarget),
-                        LogMessage = () =>
-                            $"not Target casting {this.playerReader.SpellBeingCastByTarget} ∈ [{spellIdsStringFormatted}]"
-                    };
-                }
-
                 return new Requirement
                 {
-                    HasRequirement = () => spellIds.Contains(this.playerReader.SpellBeingCastByTarget),
+                    HasRequirement = () => spellIds.Contains(playerReader.SpellBeingCastByTarget),
                     LogMessage = () =>
-                        $"Target casting {this.playerReader.SpellBeingCastByTarget} ∈ [{spellIdsStringFormatted}]"
+                        $"Target casting {playerReader.SpellBeingCastByTarget} ∈ [{spellIdsStringFormatted}]"
                 };
             }
             else
@@ -415,14 +441,6 @@ namespace Core
             var parts = requirement.Split(":");
             var form = Enum.Parse<Form>(parts[1]);
 
-            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
-            {
-                return new Requirement
-                {
-                    HasRequirement = () => playerReader.Form != form,
-                    LogMessage = () => $"not {form}"
-                };
-            }
             return new Requirement
             {
                 HasRequirement = () => playerReader.Form == form,
@@ -434,15 +452,6 @@ namespace Core
         {
             var parts = requirement.Split(":");
             var race = Enum.Parse<RaceEnum>(parts[1]);
-
-            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
-            {
-                return new Requirement
-                {
-                    HasRequirement = () => playerReader.PlayerRace != race,
-                    LogMessage = () => $"not {race}"
-                };
-            }
 
             return new Requirement
             {
@@ -458,21 +467,13 @@ namespace Core
 
             if (int.TryParse(parts[1], out int spellId) && spellBookReader.SpellDB.Spells.TryGetValue(spellId, out Spell spell))
             {
-                spellName = spell.Name + $"({spellId})";
+                spellName = $"{spell.Name}({spellId})";
             }
             else
             {
                 spellId = spellBookReader.GetSpellIdByName(spellName);
             }
 
-            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
-            {
-                return new Requirement
-                {
-                    HasRequirement = () => !spellBookReader.Spells.ContainsKey(spellId),
-                    LogMessage = () => $"not Spell {spellName}"
-                };
-            }
             return new Requirement
             {
                 HasRequirement = () => spellBookReader.Spells.ContainsKey(spellId),
@@ -486,15 +487,6 @@ namespace Core
             var talentName = parts[1];
             var rank = parts.Length < 3 ? 1 : int.Parse(parts[2]);
 
-            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
-            {
-                return new Requirement
-                {
-                    HasRequirement = () => !talentReader.HasTalent(talentName, rank),
-                    LogMessage = () => rank == 1 ? $"not Talent {talentName}" : $"not Talent {talentName} (Rank {rank})"
-                };
-            }
-
             return new Requirement
             {
                 HasRequirement = () => talentReader.HasTalent(talentName, rank),
@@ -507,18 +499,16 @@ namespace Core
             var parts = requirement.Split(":");
             var npcId = int.Parse(parts[1]);
 
-            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            string npcName = string.Empty;
+            if (creatureDb.Entries.TryGetValue(npcId, out Addon.Creature creature))
             {
-                return new Requirement
-                {
-                    HasRequirement = () => this.playerReader.TargetId != npcId,
-                    LogMessage = () => $"not Target id {this.playerReader.TargetId} = {npcId}"
-                };
+                npcName = creature.Name;
             }
+
             return new Requirement
             {
-                HasRequirement = () => this.playerReader.TargetId == npcId,
-                LogMessage = () => $"Target id {this.playerReader.TargetId} = {npcId}"
+                HasRequirement = () => playerReader.TargetId == npcId,
+                LogMessage = () => $"TargetID {npcName}({npcId})"
             };
         }
 
@@ -528,18 +518,16 @@ namespace Core
             var itemId = int.Parse(parts[1]);
             var count = parts.Length < 3 ? 1 : int.Parse(parts[2]);
 
-            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
+            var itemName = string.Empty;
+            if (itemDb.Items.TryGetValue(itemId, out Addon.Item item))
             {
-                return new Requirement
-                {
-                    HasRequirement = () => this.bagReader.ItemCount(itemId) < count,
-                    LogMessage = () => count == 1 ? $"{itemId} not in bag" : $"{itemId} count < {count}"
-                };
+                itemName = item.Name;
             }
+
             return new Requirement
             {
-                HasRequirement = () => this.bagReader.ItemCount(itemId) >= count,
-                LogMessage = () => count == 1 ? $"{itemId} in bag" : $"{itemId} count >= {count}"
+                HasRequirement = () => bagReader.ItemCount(itemId) >= count,
+                LogMessage = () => count == 1 ? $"in bag {itemName}({itemId})" : $"{itemName}({itemId}) count >= {count}"
             };
         }
 
@@ -548,23 +536,15 @@ namespace Core
             var parts = requirement.Split(":");
             var bitId = int.Parse(parts[1]);
 
-            if (requirement.StartsWith("!") || requirement.StartsWith("not "))
-            {
-                return new Requirement
-                {
-                    HasRequirement = () => !this.playerReader.SpellInRange.IsBitSet(bitId),
-                    LogMessage = () => $"Not Spell In Range {bitId}"
-                };
-            }
-
             return new Requirement
             {
-                HasRequirement = () => this.playerReader.SpellInRange.IsBitSet(bitId),
-                LogMessage = () => $"Spell In Range {bitId}"
+                HasRequirement = () => playerReader.SpellInRange.IsBitSet(bitId),
+                LogMessage = () => $"SpellInRange {bitId}"
             };
         }
 
-        private Requirement GetValueBasedRequirement(string name, string requirement)
+
+        private Requirement GetExcusiveValueBasedRequirement(string requirement)
         {
             var symbol = "<";
             if (requirement.Contains(">"))
@@ -575,23 +555,9 @@ namespace Core
             var parts = requirement.Split(symbol);
             var value = int.Parse(parts[1]);
 
-            var valueDictionary = new Dictionary<string, Func<long>>
-            {
-                {  "Health%", ()=> playerReader.HealthPercent },
-                {  "TargetHealth%", ()=> playerReader.TargetHealthPercentage },
-                {  "PetHealth%", ()=> playerReader.PetHealthPercentage },
-                {  "Mana%", ()=> playerReader.ManaPercentage },
-                {  "BagCount", ()=> bagReader.BagItems.Count },
-                {  "MobCount", ()=> playerReader.CombatCreatureCount },
-                {  "MinRange", ()=> playerReader.MinRange },
-                {  "MaxRange", ()=> playerReader.MaxRange },
-                {  "LastAutoShotMs", () => playerReader.AutoShot.ElapsedMs },
-                {  "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }
-            };
-
             if (!valueDictionary.Keys.Contains(parts[0]))
             {
-                logger.LogInformation($"[{name}] UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
+                logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
                 {
                     HasRequirement = () => false,
@@ -601,6 +567,46 @@ namespace Core
 
             var valueCheck = valueDictionary[parts[0]];
             if (symbol == ">")
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => valueCheck() > value,
+                    LogMessage = () => $"{parts[0]} {valueCheck()} > {value}"
+                };
+            }
+            else
+            {
+                return new Requirement
+                {
+                    HasRequirement = () => valueCheck() < value,
+                    LogMessage = () => $"{parts[0]} {valueCheck()} < {value}"
+                };
+            }
+        }
+
+        private Requirement GetInclusiveValueBasedRequirement(string requirement)
+        {
+            var symbol = "<=";
+            if (requirement.Contains(">="))
+            {
+                symbol = ">=";
+            }
+
+            var parts = requirement.Split(symbol);
+            var value = int.Parse(parts[1]);
+
+            if (!valueDictionary.Keys.Contains(parts[0]))
+            {
+                logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
+                return new Requirement
+                {
+                    HasRequirement = () => false,
+                    LogMessage = () => $"UNKNOWN REQUIREMENT! {requirement}"
+                };
+            }
+
+            var valueCheck = valueDictionary[parts[0]];
+            if (symbol == ">=")
             {
                 return new Requirement
                 {
@@ -616,6 +622,30 @@ namespace Core
                     LogMessage = () => $"{parts[0]} {valueCheck()} <= {value}"
                 };
             }
+        }
+
+        private Requirement GetEqualsValueBasedRequirement(string requirement)
+        {
+            var symbol = "==";
+            var parts = requirement.Split(symbol);
+            var value = int.Parse(parts[1]);
+
+            if (!valueDictionary.Keys.Contains(parts[0]))
+            {
+                logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
+                return new Requirement
+                {
+                    HasRequirement = () => false,
+                    LogMessage = () => $"UNKNOWN REQUIREMENT! {requirement}"
+                };
+            }
+
+            var valueCheck = valueDictionary[parts[0]];
+            return new Requirement
+            {
+                HasRequirement = () => valueCheck() == value,
+                LogMessage = () => $"{parts[0]} {valueCheck()} == {value}"
+            };
         }
 
     }

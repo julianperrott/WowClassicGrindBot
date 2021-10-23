@@ -25,6 +25,15 @@ namespace Core
                 string.Join(" and ", f1.LogMessage(), f2.LogMessage())
             };
         }
+
+        public static Requirement Negate(this Requirement f, string keyword)
+        {
+            return new Requirement
+            {
+                HasRequirement = () => !f.HasRequirement(),
+                LogMessage = () => $"{keyword}{f.LogMessage()}"
+            };
+        }
     }
 
     public class Requirement
