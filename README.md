@@ -2,71 +2,72 @@
   <img src="https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/starme.png" alt="Star this Repo"/>
 </p>
 
-# MasterOfPuppets - World of Warcraft Classic Grind Bot - Now Includes Pathing
+# Master Of Puppets
 
-- Uses a modified version of the addon: https://github.com/FreeHongKongMMO/Happy-Pixels to read the game state. 
+- The project current goal is to support `Burning Crusade Classic`
 
-- Uses Blazor Server to show the bot state in a browser, and so can be monitored from your phone or a tablet while you do something else.
-https://docs.microsoft.com/en-us/aspnet/core/blazor
+- Addon: https://github.com/FreeHongKongMMO/Happy-Pixels to read the game state. Over the time its been heavily rewritten and optimized.
 
-- No DLL injection or memory watching, just screen capture, mouse and keyboard clicking.
+- Frontend: uses [Blazor](https://docs.microsoft.com/en-us/aspnet/core/blazor) to show the state in a browser.
 
-- The bot was written from scratch in C#. The Pathing calculation is mostly from an old library called [PPather](https://github.com/namreeb/PPather).
+- Backend: written in C#. Screen capture, mouse and keyboard clicking. No memory tampering and DLL injection.
 
-- Most of the classes should work.
+- Further detail about the architecture can be found in [Blog post](http://www.codesin.net/post/wowbot/).
 
-- Pathing to grind route, vendor and repair. Indoors pathfinding only works properly if `PathFilename` is exists.
+- Pathing: Indoors pathfinding only works properly if `PathFilename` is exists. For outdoor there are multiple solutions:
+    * V1 Local - In processs [PPather](https://github.com/namreeb/PPather).
+    * V1 Remote - Out of process [PPather](https://github.com/Xian55/WowClassicGrindBot/tree/main/PathingAPI).
+    * V3 Remote - Out of process [AmeisenNavigation](https://github.com/Xian55/AmeisenNavigation/tree/feature/guess-z-coord-after-rewrite)
 
-- Further detail about the bot can be found in my [Blog post](http://www.codesin.net/post/wowbot/).
+# Features
+
+- Game fullscreen or windowed mode
+- Addon supports all available client languages
+- Most of the classes should work. Some classes have more support than others.
+- Highly configurable Combat rotation described in `ClassConfiguration`
+- Utilizing the Actionbar related APIs to retrive ActionbarSlot(usable, cost)
+- Based on the `ClassConfiguration` file populate Actionbar
+- Pathfinding in the current zone to the grind location
+- Grind mobs in the described `PathFilename`
+- Blacklist certain NPCs
+- Loot and Skinning
+- Vendor goods
+- Repair equipments
+
+# Media
 
 ![Screenshot](https://raw.githubusercontent.com/Xian55/WowClassicGrindBot/main/images/Screenshot.png)
 
-# Video
+[![YouTube Video](https://img.youtube.com/vi/CIMgbh5LuCc/0.jpg)](https://www.youtube.com/watch?v=CIMgbh5LuCc)
 
-https://www.youtube.com/watch?v=CIMgbh5LuCc
+# Issues and Ideas
 
-[![Grind Bot Fun YouTube](https://img.youtube.com/vi/CIMgbh5LuCc/0.jpg)](https://www.youtube.com/watch?v=CIMgbh5LuCc)
+Create an issue with the given template.
 
 # Contributing
 
 You are welcome to create pull requests. Some ideas of things that could be improved:
 
 * This readme
-* The stuck detector
 * The route recording and editing
-* More routes
+* More route and class profiles
 
 # Contribution
 
 * Runtime Class Profile picker
 * Runtime Path Profile autocomplete search
 * Frontend Dark mode
-* Improved Loot Goals
+* Improved Loot Goal
+* Added Skinning Goal
 * Introduced a concept of Produce/Consume corpses. In short killing multiple enemies in a single combat, can loot and skin them all.
-* Actionbar populator based on class config
-* DataConfig: change where the external data(DBC, MPQ, profiles) can be found
-* Added Skinning ability
+* `ActionbarPopulator` based on class config
+* `DataConfig`: change where the external data(DBC, MPQ, profiles) can be found
 * Edit the loaded profile from frontend
-* Navigation Path simplification
-* NPCNameFinder: extended to friendly/neutral units
-* Support game windowed mode
-* Remap essential keybindings and support more action bar slots up to 36
-* Updated low level Warlock/Mage profiles
-* Added Warlock shard farming profile
+* `NPCNameFinder`: extended to friendly/neutral units
+* Remap essential keybindings and support more Actionbar slots up to `34`
 * Added a new input system to handle modifier keys
 * Support more 4:3 aspect ratio based resolution
-* Added lot path profiles including TBC
-* System wide DPI should work from win 7
-* Added basic support for Hunter, Shaman classes
-* More Pet support
-* Exclude ammo pouch and quiver from containers
-* ActionBarSlot usable
-* Retrive ActionBarSlot power cost to get more precise resource usage
-* Addon supports all available languages
-
-# Issues and Ideas
-
-Create an issue rather than emailing me so that others can comment.
+* Addon is rewritten/reorganized with performance in mind(caching and reduce cell paint) to achive game refresh rate speed
 
 # Getting it working
 
@@ -74,41 +75,51 @@ Create an issue rather than emailing me so that others can comment.
 
 Put the contents of the repo into a folder. e.g "C:\WowClassicGrindBot". I am going to refer to this folder from now on, so just substitute your own folder path.
 
-## 2. Download the MPQ route files
+## 2.1 Using V1 Local/Remote Pathhing: Download the MPQ route files
 
-You only need the common-2.MPQ (1.7Gb) file which you can get here: https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing
+This files are required for to find paths from where you are to the grind area, vendor and repair.
 
-This file is required to find paths from where you are to the grind area, vendor and repair.
+* Classic: [**common-2.MPQ**](https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing) (1.7Gb)
+* TBC: [**expansion.MPQ**](https://mega.nz/file/Of4i2YQS#egDGj-SXi9RigG-_8kPITihFsLom2L1IFF-ltnB3wmU) (1.8Gb)
 
-Copy it into the \Json\MPQ folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
+Copy the previusly mentioned files to **\Json\MPQ** folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
 
-For TBC you have to download expansion.MPQ (1.8Gb) can get here: https://mega.nz/file/Of4i2YQS#egDGj-SXi9RigG-_8kPITihFsLom2L1IFF-ltnB3wmU
-and copy next to the common-2.MPQ file. 
+## 3.1 System Requirements
 
-## 3. System Requirements
-
-1. Nvidia Control panel settings
+* Windows 7 and above
+* [.netCore 3.1 **x86** SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1 )
+* Nvidia Control panel settings
     * Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings or Program Settings(for WoW) is set to `Sharpening Off, Scaling disabled`!
+* Resultions which based on 4:3 aspect ratio 1024x768, 1920x1080, 4k
+* In Game settings 
+* Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
+  * System > Advanced > Constrast: 50
+  * System > Advanced > Brightness: 50
+  * System > Advanced > Gamma from: 1.0
+  * System > Render Scale: 100%
+  * Disable Glow effect - type in the chat `/console ffxGlow 0`
+  * To keep/save this settings make sure to properly shutdown the game.
 
 ## 3.2 Optional - Replace default game Font
 
 I would highly suggest to replace the default World of Warcraft font with a much **Bolder** one.
 
-Follow this guide (https://classic.wowhead.com/guides/changing-wow-text-font)
+Follow this guide (https://tbc.wowhead.com/guides/changing-wow-text-font)
 
 Should be only concerned about `Friz Quadrata: the "Everything Else" Font` which is the `FRIZQT__.ttf` named file.
 
 By replacing the default with for example - `Robot-Medium` https://fonts.google.com/specimen/Roboto?thickness=5) - you can highly increase the success rate of the `NpcNameFinder` compontent which is responsible to find - friendly, enemy, corpse - names above NPCs head.
 
-## 4. Build the bot
+## 4. Build the application
 
-You will probably already have Visual Studio or Visual Studio Code installed. You need to build the bot using either one of them, or use powershell.
+One of the following IDE or command line
+* Visual Studio
+* Visual Studio Code
+* Powershell
 
-You will need .net core 3.1 x86 SDK installed. https://dotnet.microsoft.com/download/dotnet-core/3.1 
+You will need .net core 3.1 **x86** SDK installed. **Note: you need the x86 version, not the x64 one.**
 
-Note: you need the x86 version, not the x64 one.
-
-e.g. Build from powershell
+e.g. Build from Powershell
 
     cd C:\WowClassicGrindBot
     dotnet build
@@ -128,29 +139,21 @@ The bot reads the game state using small blocks of colour shown at the top of th
         dotnet run
         pause
 
-2. Execute the `run.bat`. This will start the bot and Chrome, Wow must be already running. If you get "Unable to find the Wow process is it running ?" in the console window then it can't find wow.exe.
+2. Execute the `run.bat`. This will start the bot and Chrome, Wow must be already running. If you get `"Unable to find the Wow process is it running ?"` in the console window then it can't find wow.exe.
 
-3. Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
+3. When running the BlazorServer for the first time you will have to follow a setup process:
+    * Just start the game and wait in the character selection screen.
+    * Click `2. Addon Configuration`
+    * Click `Find InstallPath` -> `InstallPath` should be filled otherwise, fill out manually
+    * Fill the `Author`
+    * Fill the `Title`
+    * Then press `Install & Save` button -> Log should see `AddonConfigurator.Install successful`
+    * Required to restart the Game 
+    * Enter world with your desired character
+    * Click `5. Frame Configuration`
+    * Click `Auto Configure and Restart`
 
-  * System>Advanced>Constrast: 50
-  * System>Advanced>Brightness: 50
-  * System>Advanced>Gamma from: 1.0
-  * System>Render Scale: 100%
-  * Disable Glow effect - type in the chat `/console ffxGlow 0` - to keep/save this settings make sure to properly shutdown the game.
-
-4. When running the BlazorServer for the first time you will have to follow a setup process:
-    1. Just start the game and wait in the character selection screen.
-    2. Click `2. Addon Configuration`
-    3. Click `Find InstallPath` -> `InstallPath` should be filled otherwise, fill out manually
-    4. Fill the `Author`
-    5. Fill the `Title`
-    6. Then press `Install & Save` button -> Log should see `AddonConfigurator.Install successful`
-    7. Required to restart the Game 
-    8. Enter world with your desired character
-    9. Click `5. Frame Configuration`
-    10. Click `Auto Configure and Restart`
-
-5. Under the `Addon Configuration` you can check if theres a newer version available for the addon. In that case just press the `install` button then have to restart the game client and the bot it self in order to use it properly. 
+4. Under the `Addon Configuration` you can check if theres a newer version available for the addon. In that case just press the `install` button then have to restart the game client and the bot it self in order to use it properly. 
 
 ## 5. The bot should restart and show the dashboard page.
 
@@ -162,16 +165,18 @@ We need to make sure that certain interface options are set. The most important 
 
 From the main menu (ESC) set the following under Interface Options:
 
-* Controls - Auto Loot - Ticked.
-* Controls - Interact on Left click - Not ticked.
-* Combat - Do Not Flash Screen at Low Health - Ticked.
-* Combat - Auto Self Cast - Ticked.
-* Names - NPC Names - Ticked.
-* Names - Enemy Units (V) - Not ticked.
-* Camera - Auto-Follow Speed - Fast
-* Camera - Camera Following Style - Always
-* Mouse - Click-to-Move - Ticked
-* Mouse - Click-to-Move Camera Style - Always
+| Interface Option | Value |
+| ---- | ---- |
+| Controls - Auto Loot | **Ticked** |
+| Controls - Interact on Left click | **Not ticked** |
+| Combat - Do Not Flash Screen at Low Health | **Ticked** |
+| Combat - Auto Self Cast | **Ticked** |
+| Names - NPC Names | **Ticked** |
+| Names - Enemy Units (V) | **Not ticked** |
+| Camera - Auto-Follow Speed | **Fast** |
+| Camera - Camera Following Style | **Always** |
+| Mouse - Click-to-Move | **Ticked** |
+| Mouse - Click-to-Move Camera Style | **Always** |
 
 ## 7. Configure the Wow Client - Key Bindings:
 
@@ -469,8 +474,8 @@ For the `MinRange` and `MaxRange` gives an approximation to the target distance 
 If a particular npc is required then this requirement can be used.
 
 e.g.
-* "not npcID:6195", - don't cast on npcId 6195 https://classic.wowhead.com/npc=6195
-* "npcID:6195", - only cast on npcId 6195 https://classic.wowhead.com/npc=6195
+* "not npcID:6195", - don't cast on npcId 6195 https://tbc.wowhead.com/npc=6195
+* "npcID:6195", - only cast on npcId 6195 https://tbc.wowhead.com/npc=6195
 
 #### Mob count requirements
 
@@ -485,8 +490,8 @@ If an item must be in your bag then you can use this requirement. Useful to dete
 It has the format BagItem:[itemid]:[count]
 
 e.g. 
-* "BagItem:6265:1 - Must have a soulshard in the bag https://classic.wowhead.com/item=6265
-* "not BagItem:19007:1" - Must have a lesser Healthstone in the bag https://classic.wowhead.com/item=19007
+* "BagItem:6265:1 - Must have a soulshard in the bag https://tbc.wowhead.com/item=6265
+* "not BagItem:19007:1" - Must have a lesser Healthstone in the bag https://tbc.wowhead.com/item=19007
 * "not BagItem:6265:3"- Must not have 3 soulshards in the bag.
 
 #### Form requirements
@@ -558,9 +563,9 @@ It has the formats
 * Spell:[id]
 
 e.g. 
-* "Spell:687 - Must have know the given `id` https://classic.wowhead.com/item=687
+* "Spell:687 - Must have know the given `id` https://tbc.wowhead.com/item=687
 * "Spell:Demon Skin" - Must have known the given `name`
-* "not Spell:702" - Must have not know the given `id` https://classic.wowhead.com/item=702
+* "not Spell:702" - Must have not know the given `id` https://tbc.wowhead.com/item=702
 * "not Spell:Curse of Weakness"- Must have not know the given `name` 
 
 #### Talent requirements
