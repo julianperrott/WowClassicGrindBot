@@ -91,8 +91,7 @@ Copy the previusly mentioned files to **\Json\MPQ** folder (e.g. C:\WowClassicGr
 * Nvidia Control panel settings
     * Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings or Program Settings(for WoW) is set to `Sharpening Off, Scaling disabled`!
 * Resultions which based on 4:3 aspect ratio 1024x768, 1920x1080, 4k
-* In Game settings 
-* Check these settings in the wow game client. Other values will stop the bot from being able to read the addon data.
+* Check these settings in the game client. Other values will stop the bot from being able to read the addon data.
   * System > Advanced > Constrast: 50
   * System > Advanced > Brightness: 50
   * System > Advanced > Gamma from: 1.0
@@ -104,11 +103,11 @@ Copy the previusly mentioned files to **\Json\MPQ** folder (e.g. C:\WowClassicGr
 
 I would highly suggest to replace the default World of Warcraft font with a much **Bolder** one.
 
-Follow this guide (https://tbc.wowhead.com/guides/changing-wow-text-font)
+Follow [this guide](https://tbc.wowhead.com/guides/changing-wow-text-font)
 
 Should be only concerned about `Friz Quadrata: the "Everything Else" Font` which is the `FRIZQT__.ttf` named file.
 
-By replacing the default with for example - `Robot-Medium` https://fonts.google.com/specimen/Roboto?thickness=5) - you can highly increase the success rate of the `NpcNameFinder` compontent which is responsible to find - friendly, enemy, corpse - names above NPCs head.
+By replacing the default with for example - [Robot-Medium](https://fonts.google.com/specimen/Roboto?thickness=5) - you can highly increase the success rate of the `NpcNameFinder` compontent which is responsible to find - friendly, enemy, corpse - names above NPCs head.
 
 ## 4. Build the application
 
@@ -206,9 +205,7 @@ From the main menu (ESC) set the following:
 
 The default class profiles assumes the following `Keybinds` setup and using English Keyboard layout.
 In total, `34` key supported.
-Highly recommended to use the default setup, in order to get properly working the `ActionBarSlotCost` and `ActionBarSlotUsable` features! 
-https://wowwiki-archive.fandom.com/wiki/ActionSlot
-
+Highly recommended to use the default setup, in order to get properly working the `ActionBarSlotCost` and `ActionBarSlotUsable` [features](https://wowwiki-archive.fandom.com/wiki/ActionSlot)! 
 
 | ActionSlot | Key | Description |
 | --- | --- | --- |
@@ -434,18 +431,19 @@ e.g.
 Value base requirements are made up on a [ `Health%` or `TargetHealth%` or `PetHealth%` or `Mana%` or `BagCount` or `MobCount` or `MinRange` or `MaxRange` or `LastAutoShotMs` or `LastMainHandMs`] [< or >] [Numeric Value].
 
 e.g.
-* "Health%>70",
-* "TargetHealth%<10",
-* "PetHealth%<10",
-* "Mana%<40",
-* "BagCount>80",
-* "MobCount>1",
-* "MinRange<5",
-* "MinRange>15",
-* "MaxRange>20",
-* "MaxRange>35",
-* "LastAutoShotMs<500",
-* "LastMainHandMs<500",
+
+    "Health%>70"
+    "TargetHealth%<10"
+    "PetHealth%<10"
+    "Mana%<40"
+    "BagCount>80"
+    "MobCount>1"
+    "MinRange<5"
+    "MinRange>15"
+    "MaxRange>20"
+    "MaxRange>35"
+    "LastAutoShotMs<500"
+    "LastMainHandMs<500"
 
 For the `MinRange` and `MaxRange` gives an approximation to the target distance to the player
 
@@ -474,8 +472,8 @@ For the `MinRange` and `MaxRange` gives an approximation to the target distance 
 If a particular npc is required then this requirement can be used.
 
 e.g.
-* "not npcID:6195", - don't cast on npcId 6195 https://tbc.wowhead.com/npc=6195
-* "npcID:6195", - only cast on npcId 6195 https://tbc.wowhead.com/npc=6195
+* "not npcID:6195", - don't cast on npcId [6195](https://tbc.wowhead.com/npc=6195)
+* "npcID:6195", - only cast on npcId [6195](https://tbc.wowhead.com/npc=6195)
 
 #### Mob count requirements
 
@@ -490,8 +488,8 @@ If an item must be in your bag then you can use this requirement. Useful to dete
 It has the format BagItem:[itemid]:[count]
 
 e.g. 
-* "BagItem:6265:1 - Must have a soulshard in the bag https://tbc.wowhead.com/item=6265
-* "not BagItem:19007:1" - Must have a lesser Healthstone in the bag https://tbc.wowhead.com/item=19007
+* "BagItem:6265:1 - Must have a [soulshard](https://tbc.wowhead.com/item=6265) in the bag
+* "not BagItem:19007:1" - Must have a [lesser Healthstone](https://tbc.wowhead.com/item=19007) in the bag
 * "not BagItem:6265:3"- Must not have 3 soulshards in the bag.
 
 #### Form requirements
@@ -563,9 +561,9 @@ It has the formats
 * Spell:[id]
 
 e.g. 
-* "Spell:687 - Must have know the given `id` https://tbc.wowhead.com/item=687
+* "Spell:687 - Must have know the given [`id=687`](https://tbc.wowhead.com/item=687)
 * "Spell:Demon Skin" - Must have known the given `name`
-* "not Spell:702" - Must have not know the given `id` https://tbc.wowhead.com/item=702
+* "not Spell:702" - Must have not know the given [`id=702`](https://tbc.wowhead.com/item=702)
 * "not Spell:Curse of Weakness"- Must have not know the given `name` 
 
 #### Talent requirements
@@ -689,8 +687,10 @@ e.g.
 Allow requirements about spell range to be used, the spell in question depends upon the class being played.
 "SpellInRange:0" or "not SpellInRange:0" for a Warrior is Charge and for a Mage is Fireball. This might be useful if you were close enough for a Fireball, but not for a Frostbolt.
 
-e.g. "Requirement": "SpellInRange:4"
-e.g. "Requirements": ["Health%<80", "SpellInRange:4"]
+e.g.
+
+    "Requirement": "SpellInRange:4"
+    "Requirements": ["Health%<80", "SpellInRange:4"]
 
 
 | Class | Spell | id |
@@ -745,13 +745,13 @@ It also supports negated variant, if you put '!' or "not" in front of the requir
 
 e.g. Rogue_20.json
 
-        {
-          ...
+    {
+        ...
 
-          "Name": "Kick",
-          "UseWhenTargetIsCasting": true,  // <---------
-          "Requirement": "TargetCastingSpell:9053|11443"  // <---------
-        }
+        "Name": "Kick",
+        "UseWhenTargetIsCasting": true,  // <---------
+        "Requirement": "TargetCastingSpell:9053|11443"  // <---------
+    }
 
 ----
 # Modes
