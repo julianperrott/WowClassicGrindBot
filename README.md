@@ -257,7 +257,7 @@ The path that the class follows is a json file in C:\WowClassicGrindBot\Json\pat
         "PathThereAndBack": true, // if true walks the path and the walks it backwards.
         "PathReduceSteps": true,  // uses every other coordinate.
 
-### Commands(KeyAction)
+### KeyAction - Commands
 
 The rest of the file contains a set of commands 
 
@@ -426,79 +426,118 @@ e.g.
         "MinMana": 20
       },
 
-#### Value base requirements
+### **Negate Requirement**
 
-Value base requirements are made up on a [ `Health%` or `TargetHealth%` or `PetHealth%` or `Mana%` or `BagCount` or `MobCount` or `MinRange` or `MaxRange` or `LastAutoShotMs` or `LastMainHandMs`] [< or >] [Numeric Value].
+Every requirement can be negated by adding one of the `Negate keyword` in front of the requirement.
+
+Formula: `[Negate keyword][requirement]`
+
+| Negate keyword |
+| --- |
+| "not " |
+| "!" |
+
+e.g.
+
+    "Requirement": "not Curse of Weakness"
+    "Requirement": "!BagItem:6265:3"
+
+---
+### **Value base requirements**
+
+Value base requirement is the most basic way to create a condition. 
+
+Formula: `[Keyword][Operator][Numeric integer value]`
+
+Note: `[Numeric integer value]` always the right-hand side expression value
+
+| Keyword | Description |
+| --- | --- |
+| `Health%` | Player health in percentage |
+| `TargetHealth%` | Target health in percentage |
+| `PetHealth%` | Pet health in percentage |
+| `Mana%` | Player mana in percentage |
+| `BagCount` | How many items in the player inventory |
+| `MobCount` | How many detected, alive, and currently fighting mob around the player |
+| `MinRange` | Minimum distance(yard) between the player and the target  |
+| `MaxRange` | Maximum distance(yard) between the player and the target |
+| `LastAutoShotMs` | Time since last detected AutoShot happened in milliseconds |
+| `LastMainHandMs` | Time since last detected Main Hand Melee swing happened in milliseconds |
+
+| Operator | Description | 
+| --- | --- |
+| `==` | Equals |
+| `<=` | Less then or Equals |
+| `>=` | Greater then or Equals |
+| `<` | Less then |
+| `>` | Greater then |
+
+For the `MinRange` and `MaxRange` gives an approximation range distance between the player and target.
+
+Note: _Every class has it own unique way to find these values by using different in game items/spells/interact ways._
+
+| MinRange | MaxRange | alias Description |
+| --- | --- | --- |
+| 0 | 5 | "InMeleeRange" |
+| 5 | 15 | "IsInDeadZoneRange" |
+| 15 | 20 | |
+| 20 | 30 | |
+| 30 | 35 | |
+| 35 | 40 | |
+| 35 | 99 | |
+| 40 | 45 | |
+| 45 | 99 | |
 
 e.g.
 
     "Health%>70"
-    "TargetHealth%<10"
+    "TargetHealth%<=10"
     "PetHealth%<10"
-    "Mana%<40"
+    "Mana%<=40"
     "BagCount>80"
     "MobCount>1"
     "MinRange<5"
     "MinRange>15"
     "MaxRange>20"
     "MaxRange>35"
-    "LastAutoShotMs<500"
-    "LastMainHandMs<500"
+    "LastAutoShotMs<=500"
+    "LastMainHandMs<=500"
 
-For the `MinRange` and `MaxRange` gives an approximation to the target distance to the player
-
-
-| MinRange | MaxRange | alias Description |
-| --- | --- | --- |
-| 0 | 5 | "InMeleeRange" |
-| 5 | 15 | "IsInDeadZoneRange" |
-| 15 | 20 | "InCombatRange" |
-| 20 | 30 | "InCombatRange" |
-| 30 | 35 | "InCombatRange" |
-| 35 | 40 | "OutOfCombatRange" |
-| 35 | 99 | "OutOfCombatRange" |
-| 40 | 45 | "OutOfCombatRange" |
-| 45 | 99 | "OutOfCombatRange" |
-
-
-`LastAutoShotMs` and `LastMainHandMs` - Upon evaluating the previously mentioned fields, it will compares the current time, many `Milliseconds` have passed 
-
-* `LastAutoShotMs` - since the last Auto Shot spell casted
-* `LastMainHandMs` - since the last Main Hand weapon swing has happened
-
-
-#### npcID requirements
+---
+### **npcID requirements**
 
 If a particular npc is required then this requirement can be used.
 
+Formula: `npcID:[Numeric integer value]`
+
 e.g.
-* "not npcID:6195", - don't cast on npcId [6195](https://tbc.wowhead.com/npc=6195)
-* "npcID:6195", - only cast on npcId [6195](https://tbc.wowhead.com/npc=6195)
 
-#### Mob count requirements
+* "not npcID:6195" - target is not [6195](https://tbc.wowhead.com/npc=6195)
+* "npcID:6195" - target is [6195](https://tbc.wowhead.com/npc=6195)
 
-If you only want to cast a spell if there is more than one mob fighting you e.g. Frost nova, or Cleave etc.
+---
+### **Bag requirements**
 
-e.g. "Requirement": "MobCount>1",
+If an `itemid` must be in your bag with given `count` quantity then you can use this requirement. Useful to determine when to create warlock Healthstone or soul shards.
 
-#### Bag requirements
+Formula: `BagItem:[itemid]:[count]`
 
-If an item must be in your bag then you can use this requirement. Useful to determine when to create warlock Healthstone or soul shards.
+e.g.
 
-It has the format BagItem:[itemid]:[count]
+* "BagItem:5175 - Must have a [Earth Totem](https://tbc.wowhead.com/item=5175) in bag
+* "BagItem:6265:3 - Must have atleast [3x Soulshard](https://tbc.wowhead.com/item=6265) in bag
+* "not BagItem:19007:1" - Must not have a [Lesser Healthstone](https://tbc.wowhead.com/item=19007) in bag
+* "not BagItem:6265:3"- Must not have [3x Soulshard](https://tbc.wowhead.com/item=6265) in bag
 
-e.g. 
-* "BagItem:6265:1 - Must have a [soulshard](https://tbc.wowhead.com/item=6265) in the bag
-* "not BagItem:19007:1" - Must have a [lesser Healthstone](https://tbc.wowhead.com/item=19007) in the bag
-* "not BagItem:6265:3"- Must not have 3 soulshards in the bag.
+---
+### **Form requirements**
 
-#### Form requirements
+If the player must be in the specified `form` use this requirement. Useful to determine when to switch Form for the given situation.
 
-If the character must be - in or not - the specified `Form` use this requirement. Useful to determine when to switch Form for the given situation.
+Formula: `Form:[form]`
 
-It has the format `Form:Form`
+e.g.
 
-e.g. 
 * "Form:Druid_Bear" - Must be in `Druid_Bear` form
 * "not Form:Druid_Cat" - Shoudn't be in `Druid_Cat` form
 
@@ -527,11 +566,12 @@ e.g.
 | Paladin_Fire_Resistance_Aura |
 | Paladin_Crusader_Aura |
 
-#### Race requirements
+---
+### **Race requirements**
 
-If the character must be - or not - the specified `Race` use this requirement. Useful to determine Racial abilities.
+If the character must be the specified `race` use this requirement. Useful to determine Racial abilities.
 
-It has the format `Race:Race`
+Formula: `Race:[race]`
 
 e.g. 
 * "Race:Orc" - Must be `Orc` race
@@ -552,49 +592,48 @@ e.g.
 | BloodElf |
 | Draenei |
 
-#### Spell requirements
+---
+### **Spell requirements**
 
-If a given `Spell id` or `Spell name` must be known by the player then you can use this requirement. Useful to determine when the given `Spell` is exists in the spellbook.
+If a given Spell `name` or `id` must be known by the player then you can use this requirement. Useful to determine when the given `Spell` is exists in the spellbook.
 
-It has the formats 
-* Spell:[name]. The `name` only works with the English client name.
-* Spell:[id]
+It has the formats
 
-e.g. 
-* "Spell:687 - Must have know the given [`id=687`](https://tbc.wowhead.com/item=687)
+* `Spell:[name]`. The `name` only works with the English client name.
+* `Spell:[id]`
+
+e.g.
+
+* "Spell:687 - Must have know [`id=687`](https://tbc.wowhead.com/item=687)
 * "Spell:Demon Skin" - Must have known the given `name`
-* "not Spell:702" - Must have not know the given [`id=702`](https://tbc.wowhead.com/item=702)
-* "not Spell:Curse of Weakness"- Must have not know the given `name` 
+* "not Spell:702" - Must not have known the given [`id=702`](https://tbc.wowhead.com/item=702)
+* "not Spell:Curse of Weakness"- Must not have known the given `name`
 
-#### Talent requirements
+---
+### **Talent requirements**
 
-If a given `Talent` must be known by the player then you can use this requirement. Useful to determine when the given `Talent` is learned. Also can specify how many points have to be spent minimium with `rank`.
+If a given Talent `name` must be known by the player then you can use this requirement. Useful to determine when the given Talent is learned. Also can specify how many points have to be spent minimium with `rank`.
 
-It has the format Talent:[name]:[rank]. The `name` only works with the English client name.
+It has the format `Talent:[name]:[rank]`. The `name` only works with the English client name.
 
-e.g. 
-* "Talent:Improved Corruption" - Must know the given `name`
+e.g.
+
+* "Talent:Improved Corruption" - Must known the given `name`
 * "Talent:Improved Corruption:5" - Must know the given `name` and atleast with `rank`
 * "not Talent:Suppression"- Must have not know the given `name` 
 
-#### Buff / Debuff
+---
+### **Buff / Debuff / General boolean Condition requirements**
 
-Allow requirements about what buffs you have or the target has to be evaluated.
-
-e.g.
-* "not Well Fed" - I am not well fed.
-* "not Thorns" - I don't have the thorns buff.
-* "AutoAttacking" - Attack spell enabled.
-* "Shooting" - I am out of shooting.
-* "Items Broken" - Some of my armor is red.
-* "BagFull" - player inventory is full.
-* "HasRangedWeapon" - player has an item equipped at the ranged slot.
-* "InMeleeRange" - determines if the target is in melee range (0-5 yard)
+Allow requirements about what buffs/debuffs you have or the target has to be evaluated or in general some boolean based requirements.
 
 | Condition | Desciption |
 | --- | --- |
 | "TargetYieldXP" | The target yields experience upon death. (Grey Level) |
 | "TargetCastingSpell" | Target casts any spell |
+| --- | --- |
+| "Swimming" | The player is currently swimming. |
+| "Falling" | The player is currently falling down, not touching the ground. |
 | --- | --- |
 | "Has Pet" | The player's pet is alive |
 | "Pet Happy" | Only true when the pet happienss is green |
@@ -682,15 +721,27 @@ e.g.
 | Warrior | "Rend" |
 | Hunter | "Serpent Sting" |
 
-#### Range
-
-Allow requirements about spell range to be used, the spell in question depends upon the class being played.
-"SpellInRange:0" or "not SpellInRange:0" for a Warrior is Charge and for a Mage is Fireball. This might be useful if you were close enough for a Fireball, but not for a Frostbolt.
-
 e.g.
 
-    "Requirement": "SpellInRange:4"
-    "Requirements": ["Health%<80", "SpellInRange:4"]
+* "not Well Fed" - I am not well fed.
+* "not Thorns" - I don't have the thorns buff.
+* "AutoAttacking" - Attack spell enabled.
+* "Shooting" - I am out of shooting.
+* "Items Broken" - Some of my armor is red.
+* "BagFull" - player inventory is full.
+* "HasRangedWeapon" - player has an item equipped at the ranged slot.
+* "InMeleeRange" - determines if the target is in melee range (0-5 yard)
+
+---
+### **SpellInRange requirements**
+
+Allow requirements about spell range to be used, the spell in question depends upon the class being played.
+
+`"SpellInRange:0"` or `"not SpellInRange:0"` for a Warrior is Charge and for a Mage is Fireball. 
+
+This might be useful if you were close enough for a Fireball, but not for a Frostbolt.
+
+Formula: `SpellInRange:[Numeric integer value]`
 
 
 | Class | Spell | id |
@@ -732,10 +783,15 @@ e.g.
 | SHAMAN | Lightning Bolt | 0 |
 | SHAMAN | Earth Shock | 1 |
 
+e.g.
 
-#### Target Casting Spell requirement
+    "Requirement": "SpellInRange:4"
+    "Requirements": ["Health%<80", "SpellInRange:2"]
 
-Combined with the 'UseWhenTargetIsCasting' command parameter, this requirement can limit on which enemy target spell your character will react or ignore.
+---
+### **Target Casting Spell requirement**
+
+Combined with the 'UseWhenTargetIsCasting' `KeyAction` property, this requirement can limit on which enemy target spell your character will react or ignore.
 
 Firstly "TargetCastingSpell" as it is without mentioning any spellID. Simply tells if the target is doing any cast at all.
 
@@ -753,7 +809,6 @@ e.g. Rogue_20.json
         "Requirement": "TargetCastingSpell:9053|11443"  // <---------
     }
 
-----
 # Modes
 
 The default mode for the bot is to grind, but there are other modes. The mode is set in the root of the class file.
