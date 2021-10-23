@@ -550,12 +550,7 @@ If the player must be in the specified `form` use this requirement. Useful to de
 
 Formula: `Form:[form]`
 
-e.g.
-
-* "Form:Druid_Bear" - Must be in `Druid_Bear` form
-* "not Form:Druid_Cat" - Shoudn't be in `Druid_Cat` form
-
-| Form |
+| form |
 | --- |
 | None
 | Druid_Bear |
@@ -580,6 +575,11 @@ e.g.
 | Paladin_Fire_Resistance_Aura |
 | Paladin_Crusader_Aura |
 
+e.g.
+
+* "Form:Druid_Bear" - Must be in `Druid_Bear` form
+* "not Form:Druid_Cat" - Shoudn't be in `Druid_Cat` form
+
 ---
 ### **Race requirements**
 
@@ -587,11 +587,7 @@ If the character must be the specified `race` use this requirement. Useful to de
 
 Formula: `Race:[race]`
 
-e.g. 
-* "Race:Orc" - Must be `Orc` race
-* "not Race:Human" - Shoudn't be `Human` race
-
-| Race | 
+| race | 
 | --- |
 | None |
 | Human |
@@ -605,6 +601,10 @@ e.g.
 | Goblin |
 | BloodElf |
 | Draenei |
+
+e.g. 
+* "Race:Orc" - Must be `Orc` race
+* "not Race:Human" - Shoudn't be `Human` race
 
 ---
 ### **Spell requirements**
@@ -756,7 +756,6 @@ Allow requirements about spell range to be used, the spell in question depends u
 This might be useful if you were close enough for a Fireball, but not for a Frostbolt.
 
 Formula: `SpellInRange:[Numeric integer value]`
-
 
 | Class | Spell | id |
 | --- | --- | --- |
