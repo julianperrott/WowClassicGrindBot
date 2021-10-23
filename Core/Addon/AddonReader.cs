@@ -31,8 +31,8 @@ namespace Core
 
         private readonly AreaDB areaDb;
         public WorldMapAreaDB WorldMapAreaDb { get; set; }
-        private readonly ItemDB itemDb;
-        private readonly CreatureDB creatureDb;
+        public ItemDB ItemDb { get; private set; }
+        public CreatureDB CreatureDb { get; private set; }
         private readonly SpellDB spellDb;
         private readonly TalentDB talentDB;
 
@@ -48,13 +48,13 @@ namespace Core
 
             this.squareReader = new SquareReader(this);
 
-            this.itemDb = new ItemDB(logger, dataConfig);
-            this.creatureDb = new CreatureDB(logger, dataConfig);
+            this.ItemDb = new ItemDB(logger, dataConfig);
+            this.CreatureDb = new CreatureDB(logger, dataConfig);
             this.spellDb = new SpellDB(logger, dataConfig);
             this.talentDB = new TalentDB(logger, dataConfig, spellDb);
 
             this.equipmentReader = new EquipmentReader(squareReader, 24, 25);
-            this.BagReader = new BagReader(squareReader, itemDb, equipmentReader, 20, 21, 22, 23);
+            this.BagReader = new BagReader(squareReader, ItemDb, equipmentReader, 20, 21, 22, 23);
 
             this.ActionBarCostReader = new ActionBarCostReader(squareReader, 36);
 
@@ -62,7 +62,7 @@ namespace Core
 
             this.SpellBookReader = new SpellBookReader(squareReader, 71, spellDb);
 
-            this.PlayerReader = new PlayerReader(squareReader, creatureDb);
+            this.PlayerReader = new PlayerReader(squareReader, CreatureDb);
             this.LevelTracker = new LevelTracker(PlayerReader);
 
             this.TalentReader = new TalentReader(squareReader, 72, PlayerReader, talentDB);

@@ -134,19 +134,6 @@ namespace Core
             }
         }
 
-        public void CreateCooldownRequirement()
-        {
-            if (this.Cooldown > 0)
-            {
-                this.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => GetCooldownRemaining() == 0,
-                    LogMessage = () => $"Cooldown {GetCooldownRemaining() / 1000:F1}",
-                    VisibleIfHasRequirement = false
-                });
-            }
-        }
-
         public float GetCooldownRemaining()
         {
             try
@@ -202,19 +189,6 @@ namespace Core
         internal void ResetCooldown()
         {
             LastClicked.TryRemove(ConsoleKeyFormHash, out _);
-        }
-
-        public void CreateChargeRequirement()
-        {
-            if (this.Charge > 1)
-            {
-                this.RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => GetChargeRemaining() != 0,
-                    LogMessage = () => $"Charge {GetChargeRemaining()}",
-                    VisibleIfHasRequirement = true
-                });
-            }
         }
 
         public int GetChargeRemaining()
