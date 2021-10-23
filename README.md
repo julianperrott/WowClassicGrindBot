@@ -443,6 +443,27 @@ e.g.
     "Requirement": "!BagItem:6265:3"
 
 ---
+
+### **And / Or multiple Requirements**
+
+Two or more Requirement can be merged into a single Requirement object. 
+
+By default every Requirement object is concataneted with `[and]` operator which means in order to execute the KeyAction, every member in the `RequirementsObject` must be evaluated to `true`. However this consctruct allows to concatanete with `[or]`.
+
+Formula: `[Requirement1][Operator][[RequirementN]`
+
+| Operator | Description |
+| --- | --- |
+| "&&" | And |
+| "\|\|" | Or |
+
+Note: _Currently only one type of the [Operator] is handled in a single Requirement. So mixing [&&] and [||] is not supported._
+
+e.g.
+* "Requirements": ["Has Pet", "TargetHealth%<70||TargetCastingSpell"]
+* "Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>2"]
+
+---
 ### **Value base requirements**
 
 Value base requirement is the most basic way to create a condition. 
@@ -791,7 +812,7 @@ e.g.
 ---
 ### **Target Casting Spell requirement**
 
-Combined with the 'UseWhenTargetIsCasting' `KeyAction` property, this requirement can limit on which enemy target spell your character will react or ignore.
+Combined with the `KeyAction.UseWhenTargetIsCasting` property, this requirement can limit on which enemy target spell your character will react or ignore.
 
 Firstly "TargetCastingSpell" as it is without mentioning any spellID. Simply tells if the target is doing any cast at all.
 
