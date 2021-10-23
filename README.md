@@ -501,13 +501,6 @@ Note: _Every class has it own unique way to find these values by using different
 | --- | --- | --- |
 | 0 | 5 | "InMeleeRange" |
 | 5 | 15 | "IsInDeadZoneRange" |
-| 15 | 20 | |
-| 20 | 30 | |
-| 30 | 35 | |
-| 35 | 40 | |
-| 35 | 99 | |
-| 40 | 45 | |
-| 45 | 99 | |
 
 e.g.
 
