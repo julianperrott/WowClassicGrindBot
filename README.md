@@ -117,7 +117,7 @@ One of the following IDE or command line
 * Visual Studio Code
 * Powershell
 
-You will need .net core 3.1 **x86** SDK installed. **Note: you need the x86 version, not the x64 one.**
+You will need .net core 3.1 **x86** SDK installed. **Note:** you need the **x86** version, not the **x64** one.
 
 e.g. Build from Powershell
 
@@ -133,11 +133,11 @@ The bot reads the game state using small blocks of colour shown at the top of th
 
 1. Edit the batch script in c:\WowClassicGrindBot\BlazorServer called run.bat, change it to point at where you have put the repo BlazorServer folder e.g.
 
-        start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://localhost:5000"
-        c:
-        cd C:\WowClassicGrindBot\BlazorServer
-        dotnet run
-        pause
+    start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://localhost:5000"
+    c:
+    cd C:\WowClassicGrindBot\BlazorServer
+    dotnet run
+    pause
 
 2. Execute the `run.bat`. This will start the bot and Chrome, Wow must be already running. If you get `"Unable to find the Wow process is it running ?"` in the console window then it can't find wow.exe.
 
@@ -225,7 +225,7 @@ For each of the following click + to add a new key binding.
 
 |  Key |  Command |
 | ---- | ---- |
-| Delete | /stopattack /stopcasting /petfollow |
+| Delete | /stopattack<br>/stopcasting<br>/petfollow |
 | Insert | /cleartarget |
 
     Rogue weapon buff (use 17 for second weapon):
@@ -244,36 +244,25 @@ For each of the following click + to add a new key binding.
 
 ## 9. Setting up the class file (Final step)
 
-Each class has a configuration file in /Json/class e.g. the config for a Rogue it is in file C:\WowClassicGrindBot\Json\class\Rogue.json.
+Each class has a configuration file in `/Json/class` e.g. the config for a Rogue it is in file C:\WowClassicGrindBot\Json\class\Rogue.json.
 
 The configuration file determines what spells you cast when pulling and in combat, where to vend and repair and what buffs you give yourself.
 
-Take a look at the class files in /Json/class for examples of what you can do (BTW hunter is not supported.). Your class file probably exists and just needs to be edited to set the pathing file name, but note they may be set up for level 60.
+Take a look at the class files in `/Json/class` for examples of what you can do. Your class file probably exists and just needs to be edited to set the pathing file name, but note they may be set up for level 60.
 
 ### Path
 
-The path that the class follows is a json file in C:\WowClassicGrindBot\Json\path\ which contains a list of x & y coordinates the bot will traverse while looking for mobs.
+The path that the class follows is a `json` file in `/Json/path/` which contains a list of `x` & `y` coordinates the bot will traverse while looking for mobs.
+```json
+"PathFilename": "58_Winterspring.2.json",   // the path to walk when alive
+"PathThereAndBack": true,                   // if true walks the path and the walks it backwards.
+"PathReduceSteps": true,                    // uses every other coordinate.
+```
+### **KeyAction** - Commands
 
-        "PathFilename": "58_Winterspring.2.json", // the path to walk when alive
-        "PathThereAndBack": true, // if true walks the path and the walks it backwards.
-        "PathReduceSteps": true,  // uses every other coordinate.
+Each `KeyAction` has its own properties to describe what the action is all about. 
 
-### KeyAction - Commands
-
-The rest of the file contains a set of commands 
-
-e.g.
-
-    {
-        "Name": "Slice And Dice",
-        "Key": "3",
-        "MinEnergy": 25,
-        "MinComboPoints": 2,
-        "Cooldown": 3000,
-        "Requirement": "Slice And Dice"
-      }, 
-
-**KeyAction** - Commands have the following parameters, only a subset will be used by each command.
+Can specify conditions with `Requirement(s)` in order to create a matching action for the situation.
 
 | Property Name | Description | Default value |
 | --- | --- | --- |
@@ -286,15 +275,15 @@ e.g.
 | CastIfAddsVisible | If the bot can "See" any adds | `false` |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | `1` |
 | Cooldown | The cooldown in milliseconds until the command can be done again | `0` |
-| School | Indicate what type of element. (`"Physical","Holy","Fire","Nature","Frost","Shadow","Arcane"`) | `SchoolMask.None` |
-| MinMana | (Optional) The minimum Mana required to cast the spell | `0` |
-| MinRage | (Optional) The minimum Rage required to cast the spell | `0` |
-| MinEnergy | (Optional) The minimum Energy required to cast the spell | `0` |
+| School | Indicate what type of element. `SchoolMask.`<br>(`"Physical", "Holy", "Fire", "Nature", "Frost", "Shadow", "Arcane"`) | `SchoolMask.None` |
+| MinMana | The minimum `Mana` required to cast the spell | `0` |
+| MinRage | The minimum `Rage` required to cast the spell | `0` |
+| MinEnergy | The minimum `Energy` required to cast the spell | `0` |
 | MinComboPoints | The minimum combo points required to cast the spell | `0` |
 | WhenUsable | When not in in-game cooldown(`GCD` included) and have the min resource(mana,rage,energy) to use it. | `false` |
 | Requirement | A single "Requirement" (See below) which must be true | |
 | Requirements | A list of "Requirements" which must be true | |
-| WaitForWithinMeleeRange | Used only in `PullGoal` - After casting wait for the mob to be in melee range. The same Action will be repeated until the conditions are true | `false` |
+| WaitForWithinMeleeRange | `PullGoal` only - After casting wait for the mob to be in melee range. Will be repeated until the conditions are met | `false` |
 | WaitForGCD | Indicates should wait for the GCD | `true` |
 | ResetOnNewTarget | Reset the cooldown if the target changes | `false` |
 | Log | Write to the log when this key is evaluated | `true` |
@@ -308,88 +297,233 @@ e.g.
 | PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | |
 | UseWhenTargetIsCasting | Checks for the target casting/channeling any spell (possible values: `null` -> ignore / `false` -> when enemy not casting / `true` -> when enemy casting) | `null` |
 
+Some of these properties are optional and not required to be specified. However can create pretty complex conditions and branches to suit the situation.
+
+e.g. - bare minimum for a spell which has castbar. **Note:** _there are some spells which dosen't have visible castbar. like `"Throw"`, `"Shoot"`, `"Auto Shot"`_
+```json
+{
+    "Name": "Frostbolt",
+    "Key": "1",
+    "HasCastBar": true,   //<-- Must be indicated the spell has a castbar
+}
+```
+
+e.g. - bare minimum for a spell which is instant (no castbar)
+```json
+{
+    "Name": "Earth Shock",
+    "Key": "6"
+}
+```
+
+Theres are only two specially named KeyAction `Food` and `Water` which is reserved for eating and drinking.
+
+They already have some prebaked `Requirement` conditions in order to avoid mistype the definition. 
+
+The bare minimum for `Food` and `Water` is looks something like this.
+```json
+{
+    "Name": "Food",
+    "Key": "-",
+    "Requirement": "Health%<50"
+},
+{
+    "Name": "Water",
+    "Key": "=",
+    "Requirement": "Mana%<50"
+}
+```
+
+e.g. for Rogue ability
+```json
+{
+    "Name": "Slice And Dice",
+    "Key": "3",
+    "MinEnergy": 25,
+    "MinComboPoints": 2,
+    "Cooldown": 3000,
+    "Requirement": "not Slice And Dice"
+}
+```
+
+---
 ### Pull Goal
 
-This is the sequence of commands that are used when pulling a mob.
+This is the `Sequence` of `KeyAction(s)` that are used when pulling a mob.
+
+e.g.
+```json
+"Pull": {
+    "Sequence": [
+        {
+            "Name": "Concussive Shot",
+            "Key": "9",
+            "StopBeforeCast": true,
+            "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+        }
+    ]
+}
+```
 
 ### Combat Goal
 
-The sequence of commands that are used when in combat and trying to kill a mob. The combat goal does the first available command on the list. The goal then runs again re-evaluating the list before choosing the first available command again, and so on until the mob is dead.
+The `Sequence` of `KeyAction(s)` that are used when in combat and trying to kill a mob. 
+
+The combat goal does the first available command on the list. 
+
+The goal then runs again re-evaluating the list before choosing the first available command again, and so on until the mob is dead.
+
+e.g.
+```json
+"Combat": {
+    "Sequence": [
+        {
+            "Name": "Fireball",
+            "Key": "2",
+            "HasCastBar": true,
+            "MinMana": 30,
+            "Requirement": "TargetHealth%>20"
+        },
+        {
+            "Name": "AutoAttack",
+            "Requirement": "not AutoAttacking"
+        },
+        {
+            "Name": "Approach",
+            "Log": false
+        }
+    ]
+}
+```
 
 ### Adhoc Goals
 
-These commands are done when not in combat and are not on cooldown.
+These `Sequence` of `KeyAction(s)` are done when not in combat and are not on cooldown. Suitable for personal buffs.
 
+e.g.
+```json
+"Adhoc": {
+    "Sequence": [
+        {
+            "Name": "Frost Armor",
+            "Key": "3",
+            "MinMana": 60,
+            "Requirement": "not Frost Armor"
+        },
+        {
+            "Name": "Food",
+            "Key": "=",
+            "Requirement": "Health%<30"
+        },
+        {
+            "Name": "Water",
+            "Key": "-",
+            "Requirement": "Mana%<30"
+        }
+    ]
+}
+```
+
+### Parallel Goals
+
+These `Sequence` of `KeyAction(s)` are done when not in combat and are not on cooldown. 
+
+The keypresses happens simultaneously on all `KeyAction(s)` which mets the `Requirement`.
+
+Suitable for `Food` and `Water`.
+
+e.g.
+```json
+"Parallel": {
+    "Sequence": [
+        {
+            "Name": "Food",
+            "Key": "=",
+            "Requirement": "Health%<50"
+        },
+        {
+            "Name": "Water",
+            "Key": "-",
+            "Requirement": "Mana%<50"
+        }
+    ]
+}
+```
 ### NPC Goals
 
 These command are for vendoring and repair.
 
 e.g.
-
-    "NPC": {
-          "Sequence": [
-            {
-              "Name": "Repair",
-              "Key": "C",
-              "Requirement": "Items Broken",
-              "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
-              "Cost": 6
-            },
-            {
-              "Name": "Sell",
-              "Key": "C",
-              "Requirement": "BagFull",
-              "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
-              "Cost": 6
-            }
-          ]
-      }
+```json
+"NPC": {
+    "Sequence": [
+    {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+        "Cost": 6
+    },
+    {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+        "Cost": 6
+    }
+    ]
+}
+```
 
 The "Key" is a key that is bound to a macro. The macro needs to target the NPC, and if necessary open up the repair or vendor page. The bot will click the key and the npc will be targetted. Then it will click the interact button which will cause the bot to move to the NPC and open the NPC options, this may be enough to get the auto repair and auto sell greys to happen. But the bot will click the button again in case there are further steps (e.g. SelectGossipOption), or you have many greys or items to sell.
 
 Sell macro example bound to the "C" key using BindPad or Key bindings.
-
-    /tar Jannos Ironwill
-    /run DataToColor[1]:sell({"Light Leather","Cheese","Light Feather"});
-
+```cs
+/tar Jannos Ironwill
+/run DataToColor[1]:sell({"Light Leather","Cheese","Light Feather"});
+```
 Repair macro example:
-
-    /tar Vargus
-    /script SelectGossipOption(1)
+```cs
+/tar Vargus
+/script SelectGossipOption(1)
+```
 
 Warlock `heal` macro used in warlock profiles.
-
-    #showtooltip
-    /cast [nocombat] Create Healthstone
-    /use Minor Healthstone
-    /use Lesser Healthstone
-    /use Healthstone
-    /use Greater Healthstone
-    /use Major Healthstone
-    /use Master Healthstone
+```css
+#showtooltip
+/cast [nocombat] Create Healthstone
+/use Minor Healthstone
+/use Lesser Healthstone
+/use Healthstone
+/use Greater Healthstone
+/use Major Healthstone
+/use Master Healthstone
+```
 
 
 Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
-
-    #showtooltip
-    /cast Feed Pet
-    /use Roasted Quail
-
+```css
+#showtooltip
+/cast Feed Pet
+/use Roasted Quail
+```
 Hunter `sumpet` macro
-
-    #showtooltip
-    /cast [target=pet,dead] Revive Pet
-    /cast [target=pet,noexists] Call Pet
+```css
+#showtooltip
+/cast [target=pet,dead] Revive Pet
+/cast [target=pet,noexists] Call Pet
+```
 
 Because some NPCs are hard to reach, there is the option to add a short path to them e.g. "Tanaris_GadgetzanKrinkleGoodsteel.json". The idea is that the start of the path is easy to get to and is a short distance from the NPC, you record a path from the easy to reach spot to the NPC with a distance between spots of 1. When the bot needs to vend or repair it will path to the first spot in the list, then walk closely through the rest of the spots, once they are walked it will press the defined Key, then walk back through the path.
 
 e.g. Tanaris_GadgetzanKrinkleGoodsteel.json in the Json\path folder looks like this:
-
-    [{"X":51.477,"Y":29.347},{"X":51.486,"Y":29.308},{"X":51.495,"Y":29.266},{"X":51.503,"Y":29.23},{"X":51.513,"Y":29.186},{"X":51.522,"Y":29.147},{"X":51.531,"Y":29.104},{"X":51.54,"Y":29.063},{"X":51.551,"Y":29.017},{"X":51.559,"Y":28.974},{"X":51.568,"Y":28.93},{"X":51.578,"Y":28.889},{"X":51.587,"Y":28.853},{"X":51.597,"Y":28.808}]
-
+```json
+[{"X":51.477,"Y":29.347},{"X":51.486,"Y":29.308},{"X":51.495,"Y":29.266},{"X":51.503,"Y":29.23},{"X":51.513,"Y":29.186},{"X":51.522,"Y":29.147},{"X":51.531,"Y":29.104},{"X":51.54,"Y":29.063},{"X":51.551,"Y":29.017},{"X":51.559,"Y":28.974},{"X":51.568,"Y":28.93},{"X":51.578,"Y":28.889},{"X":51.587,"Y":28.853},{"X":51.597,"Y":28.808}]
+```
 If you have an NPC that is easy to get to such as the repair NPC in Arathi Highlands then the path only needs to have one spot in it. e.g.
-
-    [{"X":45.8,"Y":46.6}]
+```json
+[{"X":45.8,"Y":46.6}]
+```
 
 Short Path Example:
 
@@ -398,36 +532,39 @@ Short Path Example:
 ### Repeatable Quests Handin
 
 In theory if there is a repeatable quest to collect items, you could set up a NPC task as follows. See 'Bag requirements' for Requirements format.
+```json
+{
+    "Name": "Handin",
+    "Key": "K",
+    "Requirements": ["BagItem:12622:5","BagItem:12623:5"],
+    "PathFilename": "Path_to_NPC.json",
+    "Cost": 6
+}
+```
 
-    {
-        "Name": "Handin",
-        "Key": "K",
-        "Requirements": ["BagItem:12622:5","BagItem:12623:5"],
-        "PathFilename": "Path_to_NPC.json",
-        "Cost": 6
-    }
 
-## Requirement
+# Requirement
 
 A requirement is something that must be true for the command to run. Not all commands need a requirement, some just rely on a cooldown or a mana amount. A requirement can be put into a list if there is more than one.
 
 e.g.
-
-      {
-        "Name": "Soul Shard",
-        "Key": "9",
-        "HasCastBar": true,
-        "Requirements": ["TargetHealth%<36", "not BagItem:6265:3"], <--- Requirement List
-        "MinMana": 55
-      },
-      {
-        "Name": "Curse of Weakness",
-        "Key": "6",
-        "WhenUsable": true,
-        "ResetOnNewTarget": true,
-        "Requirement": "not Curse of Weakness", <--- Single Requirement
-        "MinMana": 20
-      },
+```json
+{
+    "Name": "Soul Shard",
+    "Key": "9",
+    "HasCastBar": true,
+    "Requirements": ["TargetHealth%<36", "not BagItem:6265:3"], //<--- Requirement List
+    "MinMana": 55
+},
+{
+    "Name": "Curse of Weakness",
+    "Key": "6",
+    "WhenUsable": true,
+    "ResetOnNewTarget": true,
+    "Requirement": "not Curse of Weakness", //<--- Single Requirement
+    "MinMana": 20
+}
+```
 
 ### **Negate Requirement**
 
@@ -441,10 +578,10 @@ Formula: `[Negate keyword][requirement]`
 | "!" |
 
 e.g.
-
-    "Requirement": "not Curse of Weakness"
-    "Requirement": "!BagItem:6265:3"
-
+```json
+"Requirement": "not Curse of Weakness"
+"Requirement": "!BagItem:6265:3"
+```
 ---
 
 ### **And / Or multiple Requirements**
@@ -460,12 +597,13 @@ Formula: `[Requirement1][Operator][[RequirementN]`
 | "&&" | And |
 | "\|\|" | Or |
 
-Note: _Currently only one type of the [Operator] is handled in a single Requirement. So mixing [&&] and [||] is not supported._
+**Note:** _Currently only one type of the [Operator] is handled in a single Requirement. So mixing [&&] and [||] is not supported._
 
 e.g.
-* "Requirements": ["Has Pet", "TargetHealth%<70||TargetCastingSpell"]
-* "Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>2"]
-
+```json
+"Requirements": ["Has Pet", "TargetHealth%<70||TargetCastingSpell"]
+"Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>2"]
+```
 ---
 ### **Value base requirements**
 
@@ -473,7 +611,7 @@ Value base requirement is the most basic way to create a condition.
 
 Formula: `[Keyword][Operator][Numeric integer value]`
 
-Note: `[Numeric integer value]` always the right-hand side expression value
+**Note:** `[Numeric integer value]` always the _right-hand_ side expression value
 
 | Keyword | Description |
 | --- | --- |
@@ -498,7 +636,7 @@ Note: `[Numeric integer value]` always the right-hand side expression value
 
 For the `MinRange` and `MaxRange` gives an approximation range distance between the player and target.
 
-Note: _Every class has it own unique way to find these values by using different in game items/spells/interact ways._
+**Note:** _Every class has it own unique way to find these values by using different in game items/spells/interact ways._
 
 | MinRange | MaxRange | alias Description |
 | --- | --- | --- |
@@ -506,19 +644,20 @@ Note: _Every class has it own unique way to find these values by using different
 | 5 | 15 | "IsInDeadZoneRange" |
 
 e.g.
-
-    "Health%>70"
-    "TargetHealth%<=10"
-    "PetHealth%<10"
-    "Mana%<=40"
-    "BagCount>80"
-    "MobCount>1"
-    "MinRange<5"
-    "MinRange>15"
-    "MaxRange>20"
-    "MaxRange>35"
-    "LastAutoShotMs<=500"
-    "LastMainHandMs<=500"
+```json
+"Requirement": "Health%>70"
+"Requirement": "TargetHealth%<=10"
+"Requirement": "PetHealth%<10"
+"Requirement": "Mana%<=40"
+"Requirement": "BagCount>80"
+"Requirement": "MobCount>1"
+"Requirement": "MinRange<5"
+"Requirement": "MinRange>15"
+"Requirement": "MaxRange>20"
+"Requirement": "MaxRange>35"
+"Requirement": "LastAutoShotMs<=500"
+"Requirement": "LastMainHandMs<=500"
+```
 
 ---
 ### **npcID requirements**
@@ -529,8 +668,8 @@ Formula: `npcID:[Numeric integer value]`
 
 e.g.
 
-* "not npcID:6195" - target is not [6195](https://tbc.wowhead.com/npc=6195)
-* "npcID:6195" - target is [6195](https://tbc.wowhead.com/npc=6195)
+* `"Requirement": "not npcID:6195"` - target is not [6195](https://tbc.wowhead.com/npc=6195)
+* `"Requirement": "npcID:6195"` - target is [6195](https://tbc.wowhead.com/npc=6195)
 
 ---
 ### **Bag requirements**
@@ -541,10 +680,10 @@ Formula: `BagItem:[itemid]:[count]`
 
 e.g.
 
-* "BagItem:5175 - Must have a [Earth Totem](https://tbc.wowhead.com/item=5175) in bag
-* "BagItem:6265:3 - Must have atleast [3x Soulshard](https://tbc.wowhead.com/item=6265) in bag
-* "not BagItem:19007:1" - Must not have a [Lesser Healthstone](https://tbc.wowhead.com/item=19007) in bag
-* "not BagItem:6265:3"- Must not have [3x Soulshard](https://tbc.wowhead.com/item=6265) in bag
+* `"Requirement": "BagItem:5175"` - Must have a [Earth Totem](https://tbc.wowhead.com/item=5175) in bag
+* `"Requirement": "BagItem:6265:3"` - Must have atleast [3x Soulshard](https://tbc.wowhead.com/item=6265) in bag
+* `"Requirement": "not BagItem:19007:1"` - Must not have a [Lesser Healthstone](https://tbc.wowhead.com/item=19007) in bag
+* `"Requirement": "not BagItem:6265:3"` - Must not have [3x Soulshard](https://tbc.wowhead.com/item=6265) in bag
 
 ---
 ### **Form requirements**
@@ -579,9 +718,10 @@ Formula: `Form:[form]`
 | Paladin_Crusader_Aura |
 
 e.g.
-
-* "Form:Druid_Bear" - Must be in `Druid_Bear` form
-* "not Form:Druid_Cat" - Shoudn't be in `Druid_Cat` form
+```json
+"Requirement": "Form:Druid_Bear"       // Must be in `Druid_Bear` form
+"Requirement": "not Form:Druid_Cat"    // Shoudn't be in `Druid_Cat` form
+```
 
 ---
 ### **Race requirements**
@@ -606,8 +746,10 @@ Formula: `Race:[race]`
 | Draenei |
 
 e.g. 
-* "Race:Orc" - Must be `Orc` race
-* "not Race:Human" - Shoudn't be `Human` race
+```json
+"Requirement": "Race:Orc"          // Must be `Orc` race
+"Requirement": "not Race:Human"    // Shoudn't be `Human` race
+```
 
 ---
 ### **Spell requirements**
@@ -621,10 +763,10 @@ It has the formats
 
 e.g.
 
-* "Spell:687 - Must have know [`id=687`](https://tbc.wowhead.com/item=687)
-* "Spell:Demon Skin" - Must have known the given `name`
-* "not Spell:702" - Must not have known the given [`id=702`](https://tbc.wowhead.com/item=702)
-* "not Spell:Curse of Weakness"- Must not have known the given `name`
+* `"Requirement": "Spell:687"` - Must have know [`id=687`](https://tbc.wowhead.com/item=687)
+* `"Requirement": "Spell:Demon Skin"` - Must have known the given `name`
+* `"Requirement": "not Spell:702"` - Must not have known the given [`id=702`](https://tbc.wowhead.com/item=702)
+* `"Requirement": "not Spell:Curse of Weakness"` - Must not have known the given `name`
 
 ---
 ### **Talent requirements**
@@ -635,10 +777,11 @@ It has the format `Talent:[name]:[rank]`. The `name` only works with the English
 
 e.g.
 
-* "Talent:Improved Corruption" - Must known the given `name`
-* "Talent:Improved Corruption:5" - Must know the given `name` and atleast with `rank`
-* "not Talent:Suppression"- Must have not know the given `name` 
-
+```json
+"Requirement": "Talent:Improved Corruption"    // Must known the given `name`
+"Requirement": "Talent:Improved Corruption:5"  // Must know the given `name` and atleast with `rank`
+"Requirement": "not Talent:Suppression"        // Must have not know the given `name` 
+```
 ---
 ### **Buff / Debuff / General boolean Condition requirements**
 
@@ -671,6 +814,7 @@ Allow requirements about what buffs/debuffs you have or the target has to be eva
 | --- | --- |
 | "HasMainHandEnchant" | Indicates that main hand weapon has active poison/sharpening stone/shaman buff effect |
 | "HasOffHandEnchant" | Indicates that off hand weapon has active poison/sharpening stone/shaman buff effect |
+
 
 | Class | Buff Condition |
 | --- | --- |
@@ -734,6 +878,7 @@ Allow requirements about what buffs/debuffs you have or the target has to be eva
 | Hunter | "Rapid Fire" |
 | Hunter | "Quick Shots" |
 
+
 | Class | Debuff Condition |
 | --- | --- |
 | Druid | "Demoralizing Roar" |
@@ -762,16 +907,19 @@ Allow requirements about what buffs/debuffs you have or the target has to be eva
 | --- | --- |
 | Hunter | "Serpent Sting" |
 
+
 e.g.
 
-* "not Well Fed" - I am not well fed.
-* "not Thorns" - I don't have the thorns buff.
-* "AutoAttacking" - Attack spell enabled.
-* "Shooting" - I am out of shooting.
-* "Items Broken" - Some of my armor is red.
-* "BagFull" - player inventory is full.
-* "HasRangedWeapon" - player has an item equipped at the ranged slot.
-* "InMeleeRange" - determines if the target is in melee range (0-5 yard)
+```json
+"Requirement": "not Well Fed"      // I am not well fed.
+"Requirement": "not Thorns"        // I don't have the thorns buff.
+"Requirement": "AutoAttacking"     // "Auto Attack" spell is active.
+"Requirement": "Shooting"          // "Shoot" spell is active.
+"Requirement": "Items Broken"      // Some of my armor is broken (red).
+"Requirement": "BagFull"           // Inventory is full.
+"Requirement": "HasRangedWeapon"   // Has an item equipped at the ranged slot.
+"Requirement": "InMeleeRange"      // Determines if the target is in melee range (0-5 yard)
+```
 
 ---
 ### **SpellInRange requirements**
@@ -824,9 +972,10 @@ Formula: `SpellInRange:[Numeric integer value]`
 | SHAMAN | Earth Shock | 1 |
 
 e.g.
-
-    "Requirement": "SpellInRange:4"
-    "Requirements": ["Health%<80", "SpellInRange:2"]
+```json
+"Requirement": "SpellInRange:4"
+"Requirements": ["Health%<80", "SpellInRange:2"]
+```
 
 ---
 ### **Target Casting Spell requirement**
@@ -840,37 +989,35 @@ Secondly can specify the following Format "TargetCastingSpell:spellID1|spellID2|
 It also supports negated variant, if you put '!' or "not" in front of the requirement, basically you can define ignored spells and react on everything else like "not TargetCastingSpell:spellID1|spellID2|...".
 
 e.g. Rogue_20.json
-
-    {
-        ...
-
-        "Name": "Kick",
-        "UseWhenTargetIsCasting": true,  // <---------
-        "Requirement": "TargetCastingSpell:9053|11443"  // <---------
-    }
+```json
+{
+    "Name": "Kick",
+    "UseWhenTargetIsCasting": true,
+    "Requirement": "TargetCastingSpell:9053|11443"
+}
+```
 
 # Modes
 
 The default mode for the bot is to grind, but there are other modes. The mode is set in the root of the class file.
 
 e.g. Rogue.json
-
-    {
-      ...
-
-      "PathFilename": "Herb_EPL.json",
-      "Mode": "AttendedGather", // <---------
-      "GatherFindKeys":  [1,2],
-    }
+```json
+{
+    "PathFilename": "Herb_EPL.json",
+    "Mode": "AttendedGather",
+    "GatherFindKeys":  [1,2]
+}
+```
 
 The available modes are:
 
 | Mode | Description |
 | --- | --- |
-| "Grind" | This is the default mode where the bot will pull mobs and follow a route |
-| "CorpseRun" | This mode only has 2 goals. The "Wait" goal waits while you are alive. The "CorpseRun" will run back to your corpse when you die. This can be useful if you are farming an instance and die, the bot will run you back some or all of the way to the instance entrance. |
-| "AttendedGather" | When this mode is active and the Gather tab in the UI is selected, it will run the path and scan the minimap for the yellow nodes which indicate a herb or mining node. When it finds a node it will stop and alert you by playing a youtube video, you will then have to manually pick the herb/mine and then start the bot again. |
-| "AttendedGrind" | This is useful if you want to control the path the bot takes, but want it to pull and kill any targets you select. |
+| `"Grind"` | This is the default mode where the bot will pull mobs and follow a route |
+| `"CorpseRun"` | This mode only has 2 goals. The "Wait" goal waits while you are alive. The "CorpseRun" will run back to your corpse when you die. This can be useful if you are farming an instance and die, the bot will run you back some or all of the way to the instance entrance. |
+| `"AttendedGather"` | When this mode is active and the Gather tab in the UI is selected, it will run the path and scan the minimap for the yellow nodes which indicate a herb or mining node. When it finds a node it will stop and alert you by playing a youtube video, you will then have to manually pick the herb/mine and then start the bot again. |
+| `"AttendedGrind"` | This is useful if you want to control the path the bot takes, but want it to pull and kill any targets you select. |
 
 # User Interface
 
@@ -938,20 +1085,22 @@ The visualisation of the pre-conditions and spell requirements makes it easier t
 Various path are needed by the bot:
 
 The path to run when grinding (PathFilename in root of class files).
-
-    "PathFilename": "16_LochModan.json",
-    "PathThereAndBack": true,
-    "PathReduceSteps": false,
+```json
+"PathFilename": "16_LochModan.json",
+"PathThereAndBack": true,
+"PathReduceSteps": false,
+```
 
 The short path to get to the vendor/repairer when there are obstacles close to them (PathFilename withing NPC task):
-
-    {
-        "Name": "Sell",
-        "Key": "C",
-        "Requirement": "BagFull",
-        "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
-        "Cost": 6
-    }
+```json
+{
+    "Name": "Sell",
+    "Key": "C",
+    "Requirement": "BagFull",
+    "PathFilename": "Tanaris_GadgetzanKrinkleGoodsteel.json",
+    "Cost": 6
+}
+```
 
 ## Recording a new path
 
