@@ -33,6 +33,7 @@
 - Loot and Skinning
 - Vendor goods
 - Repair equipments
+- Corpse run
 
 # Media
 
@@ -675,11 +676,15 @@ Allow requirements about what buffs/debuffs you have or the target has to be eva
 | All | "Eating" |
 | All | "Drinking" |
 | All | "Mana Regeneration" |
+| All | "Clearcasting" |
 | --- | --- |
 | Druid | "Mark of the Wild" |
 | Druid | "Thorns" |
 | Druid | "TigersFury" |
 | Druid | "Prowl" |
+| Druid | "Rejuvenation" |
+| Druid | "Regrowth" |
+| --- | --- |
 | Mage | "Frost Armor" |
 | Mage | "Ice Armor" |
 | Mage | "Arcane Intellect" |
@@ -687,27 +692,37 @@ Allow requirements about what buffs/debuffs you have or the target has to be eva
 | Mage | "Ward" |
 | Mage | "Fire Power" |
 | Mage | "Mana Shield" |
+| Mage | "Presence of Mind" |
+| Mage | "Arcane Power" |
+| --- | --- |
 | Paladin | "Seal" |
 | Paladin | "Aura" |
 | Paladin | "Blessing" |
 | Paladin | "Blessing of Might" |
+| --- | --- |
 | Priest | "Fortitude" |
 | Priest | "InnerFire" |
 | Priest | "Divine Spirit" |
 | Priest | "Renew" |
 | Priest | "Shield" |
+| --- | --- |
 | Rogue | "Slice And Dice" |
 | Rogue | "Stealth" |
+| --- | --- |
 | Warlock | "Demon Armor" |
 | Warlock | "Demon Skin" |
 | Warlock | "Shadow Trance" |
 | Warlock | "Soulstone Resurraction" |
 | Warlock | "Soul Link" |
+| --- | --- |
 | Warrior | "Battle Shout" |
+| --- | --- |
 | Shaman | "Lightning Shield" |
 | Shaman | "Water Shield" |
 | Shaman | "Shamanistic Focus" |
+| Shaman | "Focused" |
 | Shaman | "Stoneskin" |
+| --- | --- |
 | Hunter | "Aspect of the Cheetah" |
 | Hunter | "Aspect of the Pack" |
 | Hunter | "Aspect of the Beast" |
@@ -721,8 +736,16 @@ Allow requirements about what buffs/debuffs you have or the target has to be eva
 | --- | --- |
 | Druid | "Demoralizing Roar" |
 | Druid | "Faerie Fire" |
+| Druid | "Rip" |
+| Druid | "Moonfire" |
+| Druid | "Entangling Roots" |
+| Druid | "Rake" |
+| --- | --- |
 | Mage | "Frostbite" |
+| Mage | "Slow" |
+| --- | --- |
 | Priest | "Shadow Word: Pain" |
+| --- | --- |
 | Warlock | "Curse of" |
 | Warlock | "Curse of Weakness" |
 | Warlock | "Curse of Elements" |
@@ -732,7 +755,9 @@ Allow requirements about what buffs/debuffs you have or the target has to be eva
 | Warlock | "Siphon Life" |
 | Warlock | "Corruption" |
 | Warlock | "Immolate" |
+| --- | --- |
 | Warrior | "Rend" |
+| --- | --- |
 | Hunter | "Serpent Sting" |
 
 e.g.
