@@ -275,7 +275,7 @@ Can specify conditions with `Requirement(s)` in order to create a matching actio
 | CastIfAddsVisible | If the bot can "See" any adds | `false` |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | `1` |
 | Cooldown | The cooldown in milliseconds until the command can be done again | `0` |
-| School | Indicate what type of element. `SchoolMask.`<br>(`"Physical", "Holy", "Fire", "Nature", "Frost", "Shadow", "Arcane"`) | `SchoolMask.None` |
+| School | Indicate what type of element. `SchoolMask.`<br>(`Physical, Holy, Fire, Nature, Frost, Shadow, Arcane`) | `SchoolMask.None` |
 | MinMana | The minimum `Mana` required to cast the spell | `0` |
 | MinRage | The minimum `Rage` required to cast the spell | `0` |
 | MinEnergy | The minimum `Energy` required to cast the spell | `0` |
@@ -601,8 +601,8 @@ Formula: `[Requirement1][Operator][[RequirementN]`
 
 e.g.
 ```json
-"Requirements": ["Has Pet", "TargetHealth%<70||TargetCastingSpell"]
-"Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>2"]
+"Requirements": ["Has Pet", "TargetHealth%<70||TargetCastingSpell"]     // || in action
+"Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>2"]       // || in action
 ```
 ---
 ### **Value base requirements**
