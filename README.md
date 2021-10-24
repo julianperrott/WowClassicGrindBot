@@ -273,38 +273,40 @@ e.g.
         "Requirement": "Slice And Dice"
       }, 
 
-Commands have the following parameters, only a subset will be used by each command.
+**KeyAction** - Commands have the following parameters, only a subset will be used by each command.
 
 | Property Name | Description | Default value |
 | --- | --- | --- |
-| Name | Name of the command. For the ActionBar populator, if you use full lowercase names thats means its a macro. | |
-| HasCastBar | Does the spell have a cast bar | false |
-| StopBeforeCast | Should the char stop moving before casting the spell | false |
-| Key | The key to click (ConsoleKey) | |
-| PressDuration | How many milliseconds to press the key for |  50 |
-| ShapeShiftForm | For druids the shapeshift form to be in to cast this spell | None |
-| CastIfAddsVisible | If the bot can "See" any adds | false |
-| Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | 1 |
-| Cooldown | The cooldown in milliseconds until the command can be done again | 0 |
-| MinMana | (Optional) The minimum Mana required to cast the spell | 0 |
-| MinRage | (Optional) The minimum Rage required to cast the spell | 0 |
-| MinEnergy | (Optional) The minimum Energy required to cast the spell | 0 |
-| MinComboPoints | The minimum combo points required to cast the spell | 0 |
-| WhenUsable | When not in cooldown(GCD included) and have the min resource(mana,rage,energy) to use it. | false |
+| Name | Name of the command. For the `ActionBarPopulator`, lowercase means macro. | `""` |
+| HasCastBar | Does the spell have a cast bar | `false` |
+| StopBeforeCast | Should the char stop moving before casting the spell | `false` |
+| Key | The key to click (`ConsoleKey`) | `""` |
+| PressDuration | How many milliseconds to press the key for | `50` |
+| Form | Shapeshift/Stance form to be in to cast this spell | `Form.None` |
+| CastIfAddsVisible | If the bot can "See" any adds | `false` |
+| Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | `1` |
+| Cooldown | The cooldown in milliseconds until the command can be done again | `0` |
+| School | Indicate what type of element. (`"Physical","Holy","Fire","Nature","Frost","Shadow","Arcane"`) | `SchoolMask.None` |
+| MinMana | (Optional) The minimum Mana required to cast the spell | `0` |
+| MinRage | (Optional) The minimum Rage required to cast the spell | `0` |
+| MinEnergy | (Optional) The minimum Energy required to cast the spell | `0` |
+| MinComboPoints | The minimum combo points required to cast the spell | `0` |
+| WhenUsable | When not in in-game cooldown(`GCD` included) and have the min resource(mana,rage,energy) to use it. | `false` |
 | Requirement | A single "Requirement" (See below) which must be true | |
-| Requirements | A list of "Requirements" which must be true |  |
-| WaitForWithinMelleRange| Wait after casting for the mob to be in melee range | false |
-| ResetOnNewTarget | Reset the cooldown if the target changes | false |
-| Log | Write to the log when this key is evaluated | true |
-| DelayBeforeCast | A delay in milliseconds before this spell is cast | 0 |
-| DelayAfterCast | The delay in milliseconds after the spell is cast | 1450 |
-| AfterCastWaitBuff | After the cast happened, should wait until player buffs changed | false |
-| AfterCastWaitNextSwing | After the cast wait for the next melee swing to land | false | 
-| Cost | For Adhoc goals the priority | 18 |
-| InCombat | Can it be cast in combat | false |
-| StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like Mage Frost Nova | 0 |
-| PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | "Tanaris_GadgetzanKrinkleGoodsteel.json" |
-| UseWhenTargetIsCasting | Checks for the target casting/channeling any spell (possible values: null -> ignore / false -> when enemy not casting / true -> when enemy casting) | null |
+| Requirements | A list of "Requirements" which must be true | |
+| WaitForWithinMeleeRange | Used only in `PullGoal` - After casting wait for the mob to be in melee range. The same Action will be repeated until the conditions are true | `false` |
+| WaitForGCD | Indicates should wait for the GCD | `true` |
+| ResetOnNewTarget | Reset the cooldown if the target changes | `false` |
+| Log | Write to the log when this key is evaluated | `true` |
+| DelayBeforeCast | A delay in milliseconds before this spell is cast | `0` |
+| DelayAfterCast | The delay in milliseconds after the spell is cast | `1450` |
+| AfterCastWaitBuff | After the cast happened, should wait until __(player debuff/buff or target debuff/buff)__ changed | `false` |
+| AfterCastWaitNextSwing | After the cast wait for the next melee swing to land | `false` | 
+| Cost | For Adhoc goals the priority | `18` |
+| InCombat | Can it be cast in combat | `false` |
+| StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like `Frost Nova` | `0` |
+| PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | |
+| UseWhenTargetIsCasting | Checks for the target casting/channeling any spell (possible values: `null` -> ignore / `false` -> when enemy not casting / `true` -> when enemy casting) | `null` |
 
 ### Pull Goal
 
