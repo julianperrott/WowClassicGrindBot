@@ -792,7 +792,7 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 
 <table>
 <tr><th>Buffs</th><th>Debuffs</th></tr>
-<tr style="vertical-align: top"><td>
+<tr valign="top"><td>
 
 | Class | Buff Condition |
 | --- | --- |
@@ -848,7 +848,7 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | Hunter | `"Quick Shots"` |
 
 </td>
-<td>
+<td valign="top">
 
 | Class | Debuff Condition |
 | --- | --- |
