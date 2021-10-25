@@ -4,9 +4,9 @@
     public struct TalentTab
 #pragma warning restore CA1815 // Override equals and operator equals on value types
     {
-        public int Id { get; }
-        public string Name { get; }
-        public string BackgroundFile { get; }
+        public int Id { set; get; }
+        public string Name { set; get; }
+        public string BackgroundFile { set; get; }
         public int OrderIndex { get; }
     }
 }

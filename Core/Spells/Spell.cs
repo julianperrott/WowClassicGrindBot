@@ -4,8 +4,8 @@
     public struct Spell
 #pragma warning restore CA1815 // Override equals and operator equals on value types
     {
-        public int Id { get; }
-        public string Name { get; }
-        public int Level { get; }
+        public int Id { set; get; }
+        public string Name { set; get; }
+        public int Level { set; get; }
     }
 }
