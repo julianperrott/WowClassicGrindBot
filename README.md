@@ -121,9 +121,10 @@ You will need .net core 3.1 **x86** SDK installed. **Note:** you need the **x86*
 
 e.g. Build from Powershell
 
-    cd C:\WowClassicGrindBot
-    dotnet build
-
+```ps
+cd C:\WowClassicGrindBot
+dotnet build
+```
 
 ![Build](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/build.png)
 
@@ -131,13 +132,16 @@ e.g. Build from Powershell
 
 The bot reads the game state using small blocks of colour shown at the top of the screen by an Addon. This needs to be configured.
 
-1. Edit the batch script in c:\WowClassicGrindBot\BlazorServer called run.bat, change it to point at where you have put the repo BlazorServer folder e.g.
+1. Edit the batch script in `C:\WowClassicGrindBot\BlazorServer` called run.bat, change it to point at where you have put the repo BlazorServer folder
 
+    e.g.
+    ```ps
     start "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" "http://localhost:5000"
     c:
     cd C:\WowClassicGrindBot\BlazorServer
     dotnet run
     pause
+    ```
 
 2. Execute the `run.bat`. This will start the bot and Chrome, Wow must be already running. If you get `"Unable to find the Wow process is it running ?"` in the console window then it can't find wow.exe.
 
@@ -178,7 +182,7 @@ From the main menu (ESC) set the following under Interface Options:
 | Mouse - Click-to-Move | **Ticked** |
 | Mouse - Click-to-Move Camera Style | **Always** |
 
-## 7. Configure the Wow Client - Key Bindings:
+## 7. Configure the Wow Client - Key Bindings
 
 The "Interact with Target" keybind is super important as it allows the bot to turn towards and approach the target.
 The "Target Last Target " keybind helps with looting.
@@ -206,7 +210,8 @@ From the main menu (ESC) set the following:
 
 The default class profiles assumes the following `Keybinds` setup and using English Keyboard layout.
 In total, `34` key supported.
-Highly recommended to use the default setup, in order to get properly working the `ActionBarSlotCost` and `ActionBarSlotUsable` [features](https://wowwiki-archive.fandom.com/wiki/ActionSlot)! 
+
+Highly recommended to use the default setup, in order to get properly working the `ActionBarSlotCost` and `ActionBarSlotUsable`!
 
 | ActionSlot | Key | Description |
 | --- | --- | --- |
@@ -216,10 +221,9 @@ Highly recommended to use the default setup, in order to get properly working th
 | Bottom Left ActionBar | - | - |
 | 61-72 | F1,F2,F3 .. F11,F12 | F means Functions |
 
-
 ## 8. Configure the Wow Client - Bindpad addon
 
-Bindpad allows keys to be easily bound to commands and macros. Type /bindpad to show it.
+Bindpad allows keys to be easily bound to commands and macros. Type `/bindpad` to show it.
 
 For each of the following click + to add a new key binding.
 
@@ -228,23 +232,9 @@ For each of the following click + to add a new key binding.
 | Delete | /stopattack<br>/stopcasting<br>/petfollow |
 | Insert | /cleartarget |
 
-    Rogue weapon buff (use 17 for second weapon):
-        /use Instant Poison V 
-        /use 16
-        /click StaticPopup1Button1 
-
-    Melee weapon buff:
-        /use Dense Sharpening Stone
-        /use 16
-        /click StaticPopup1Button1         
-
-    Delete various
-        /run for b=0,4 do for s=1,GetContainerNumSlots(b) do local n=GetContainerItemLink(b,s) if n and (strfind(n,"Slimy") or strfind(n,"Red Wolf") or strfind(n,"Mystery") or strfind(n,"Spider L")) then PickupContainerItem(b,s) DeleteCursorItem() end end end
-
-
 ## 9. Setting up the class file (Final step)
 
-Each class has a configuration file in `/Json/class` e.g. the config for a Rogue it is in file C:\WowClassicGrindBot\Json\class\Rogue.json.
+Each class has a configuration file in `/Json/class` e.g. the config for a Rogue it is in file `C:\WowClassicGrindBot\Json\class\Rogue.json`.
 
 The configuration file determines what spells you cast when pulling and in combat, where to vend and repair and what buffs you give yourself.
 
@@ -294,7 +284,7 @@ Can specify conditions with `Requirement(s)` in order to create a matching actio
 | Cost | For Adhoc goals the priority | `18` |
 | InCombat | Can it be cast in combat | `false` |
 | StepBackAfterCast | Hero will go back for X milliseconds after casting this spell , usable for spells like `Frost Nova` | `0` |
-| PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | |
+| PathFilename | For NPC goals, this is a short path to get close to the NPC to avoid walls etc. | `""` |
 | UseWhenTargetIsCasting | Checks for the target casting/channeling any spell (possible values: `null` -> ignore / `false` -> when enemy not casting / `true` -> when enemy casting) | `null` |
 
 Some of these properties are optional and not required to be specified. However can create pretty complex conditions and branches to suit the situation.
@@ -359,7 +349,7 @@ e.g.
             "Name": "Concussive Shot",
             "Key": "9",
             "StopBeforeCast": true,
-            "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+            "Requirements": ["HasRangedWeapon", "!InMeleeRange", "HasAmmo"]
         }
     ]
 }
@@ -477,46 +467,26 @@ e.g.
 
 The "Key" is a key that is bound to a macro. The macro needs to target the NPC, and if necessary open up the repair or vendor page. The bot will click the key and the npc will be targetted. Then it will click the interact button which will cause the bot to move to the NPC and open the NPC options, this may be enough to get the auto repair and auto sell greys to happen. But the bot will click the button again in case there are further steps (e.g. SelectGossipOption), or you have many greys or items to sell.
 
-Sell macro example bound to the "C" key using BindPad or Key bindings.
+e.g. Sell macro - bound to the `"C"` key using BindPad or Key bindings
 ```cs
 /tar Jannos Ironwill
 /run DataToColor[1]:sell({"Light Leather","Cheese","Light Feather"});
 ```
-Repair macro example:
+
+e.g. Repair macro
 ```cs
 /tar Vargus
 /script SelectGossipOption(1)
 ```
 
-Warlock `heal` macro used in warlock profiles.
-```css
-#showtooltip
-/cast [nocombat] Create Healthstone
-/use Minor Healthstone
-/use Lesser Healthstone
-/use Healthstone
-/use Greater Healthstone
-/use Major Healthstone
-/use Master Healthstone
+e.g. Delete various items
+```cs
+/run for b=0,4 do for s=1,GetContainerNumSlots(b) do local n=GetContainerItemLink(b,s) if n and (strfind(n,"Slimy") or strfind(n,"Red Wolf") or strfind(n,"Mystery") or strfind(n,"Spider L")) then PickupContainerItem(b,s) DeleteCursorItem() end end end
 ```
 
+Because some NPCs are hard to reach, there is the option to add a short path to them e.g. `"Tanaris_GadgetzanKrinkleGoodsteel.json"`. The idea is that the start of the path is easy to get to and is a short distance from the NPC, you record a path from the easy to reach spot to the NPC with a distance between spots of 1. When the bot needs to vend or repair it will path to the first spot in the list, then walk closely through the rest of the spots, once they are walked it will press the defined Key, then walk back through the path.
 
-Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
-```css
-#showtooltip
-/cast Feed Pet
-/use Roasted Quail
-```
-Hunter `sumpet` macro
-```css
-#showtooltip
-/cast [target=pet,dead] Revive Pet
-/cast [target=pet,noexists] Call Pet
-```
-
-Because some NPCs are hard to reach, there is the option to add a short path to them e.g. "Tanaris_GadgetzanKrinkleGoodsteel.json". The idea is that the start of the path is easy to get to and is a short distance from the NPC, you record a path from the easy to reach spot to the NPC with a distance between spots of 1. When the bot needs to vend or repair it will path to the first spot in the list, then walk closely through the rest of the spots, once they are walked it will press the defined Key, then walk back through the path.
-
-e.g. Tanaris_GadgetzanKrinkleGoodsteel.json in the Json\path folder looks like this:
+e.g. `Tanaris_GadgetzanKrinkleGoodsteel.json` in the `Json/path` folder looks like this:
 ```json
 [{"X":51.477,"Y":29.347},{"X":51.486,"Y":29.308},{"X":51.495,"Y":29.266},{"X":51.503,"Y":29.23},{"X":51.513,"Y":29.186},{"X":51.522,"Y":29.147},{"X":51.531,"Y":29.104},{"X":51.54,"Y":29.063},{"X":51.551,"Y":29.017},{"X":51.559,"Y":28.974},{"X":51.568,"Y":28.93},{"X":51.578,"Y":28.889},{"X":51.587,"Y":28.853},{"X":51.597,"Y":28.808}]
 ```
@@ -542,10 +512,13 @@ In theory if there is a repeatable quest to collect items, you could set up a NP
 }
 ```
 
-
 # Requirement
 
-A requirement is something that must be true for the command to run. Not all commands need a requirement, some just rely on a cooldown or a mana amount. A requirement can be put into a list if there is more than one.
+A requirement is something that must be evaluated to be `true` for the `KeyAction` to run. 
+
+Not all `KeyAction` needs a requirement, some just rely on a `Cooldown` or `MinMana`/`MinRage`/`MinEnergy`. 
+
+A requirement can be put into a list if there is more than one.
 
 e.g.
 ```json
@@ -553,7 +526,7 @@ e.g.
     "Name": "Soul Shard",
     "Key": "9",
     "HasCastBar": true,
-    "Requirements": ["TargetHealth%<36", "not BagItem:6265:3"], //<--- Requirement List
+    "Requirements": ["TargetHealth%<36", "not BagItem:6265:3"],     //<--- Requirement List
     "MinMana": 55
 },
 {
@@ -561,12 +534,12 @@ e.g.
     "Key": "6",
     "WhenUsable": true,
     "ResetOnNewTarget": true,
-    "Requirement": "not Curse of Weakness", //<--- Single Requirement
+    "Requirement": "!Curse of Weakness",                           //<--- Single Requirement
     "MinMana": 20
 }
 ```
 
-### **Negate Requirement**
+### **Negate a requirement**
 
 Every requirement can be negated by adding one of the `Negate keyword` in front of the requirement.
 
@@ -574,8 +547,8 @@ Formula: `[Negate keyword][requirement]`
 
 | Negate keyword |
 | --- |
-| "not " |
-| "!" |
+| `"not "` |
+| `"!"` |
 
 e.g.
 ```json
@@ -588,7 +561,7 @@ e.g.
 
 Two or more Requirement can be merged into a single Requirement object. 
 
-By default every Requirement object is concataneted with `[and]` operator which means in order to execute the KeyAction, every member in the `RequirementsObject` must be evaluated to `true`. However this consctruct allows to concatanete with `[or]`.
+By default every Requirement is concataneted with `[and]` operator which means in order to execute the `KeyAction`, every member in the `RequirementsObject` must be evaluated to `true`. However this consctruct allows to concatanete with `[or]`.
 
 Formula: `[Requirement1][Operator][[RequirementN]`
 
@@ -613,6 +586,14 @@ Formula: `[Keyword][Operator][Numeric integer value]`
 
 **Note:** `[Numeric integer value]` always the _right-hand_ side expression value
 
+| Operator | Description | 
+| --- | --- |
+| `==` | Equals |
+| `<=` | Less then or Equals |
+| `>=` | Greater then or Equals |
+| `<` | Less then |
+| `>` | Greater then |
+
 | Keyword | Description |
 | --- | --- |
 | `Health%` | Player health in percentage |
@@ -625,14 +606,6 @@ Formula: `[Keyword][Operator][Numeric integer value]`
 | `MaxRange` | Maximum distance(yard) between the player and the target |
 | `LastAutoShotMs` | Time since last detected AutoShot happened in milliseconds |
 | `LastMainHandMs` | Time since last detected Main Hand Melee swing happened in milliseconds |
-
-| Operator | Description | 
-| --- | --- |
-| `==` | Equals |
-| `<=` | Less then or Equals |
-| `>=` | Greater then or Equals |
-| `<` | Less then |
-| `>` | Greater then |
 
 For the `MinRange` and `MaxRange` gives an approximation range distance between the player and target.
 
@@ -674,7 +647,9 @@ e.g.
 ---
 ### **Bag requirements**
 
-If an `itemid` must be in your bag with given `count` quantity then you can use this requirement. Useful to determine when to create warlock Healthstone or soul shards.
+If an `itemid` must be in your bag with given `count` quantity then can use this requirement. 
+
+Useful to determine when to create warlock Healthstone or soul shards.
 
 Formula: `BagItem:[itemid]:[count]`
 
@@ -688,7 +663,9 @@ e.g.
 ---
 ### **Form requirements**
 
-If the player must be in the specified `form` use this requirement. Useful to determine when to switch Form for the given situation.
+If the player must be in the specified `form` use this requirement. 
+
+Useful to determine when to switch Form for the given situation.
 
 Formula: `Form:[form]`
 
@@ -726,7 +703,9 @@ e.g.
 ---
 ### **Race requirements**
 
-If the character must be the specified `race` use this requirement. Useful to determine Racial abilities.
+If the character must be the specified `race` use this requirement. 
+
+Useful to determine Racial abilities.
 
 Formula: `Race:[race]`
 
@@ -754,9 +733,11 @@ e.g.
 ---
 ### **Spell requirements**
 
-If a given Spell `name` or `id` must be known by the player then you can use this requirement. Useful to determine when the given `Spell` is exists in the spellbook.
+If a given Spell `name` or `id` must be known by the player then you can use this requirement. 
 
-It has the formats
+Useful to determine when the given `Spell` is exists in the spellbook.
+
+It has the following formulas:
 
 * `Spell:[name]`. The `name` only works with the English client name.
 * `Spell:[id]`
@@ -771,9 +752,11 @@ e.g.
 ---
 ### **Talent requirements**
 
-If a given Talent `name` must be known by the player then you can use this requirement. Useful to determine when the given Talent is learned. Also can specify how many points have to be spent minimium with `rank`.
+If a given Talent `name` must be known by the player then you can use this requirement. 
 
-It has the format `Talent:[name]:[rank]`. The `name` only works with the English client name.
+Useful to determine when the given Talent is learned. Also can specify how many points have to be spent minimium with `rank`.
+
+Formula: `Talent:[name]:[rank]`. The `name` only works with the English client name.
 
 e.g.
 
@@ -783,133 +766,118 @@ e.g.
 "Requirement": "not Talent:Suppression"        // Must have not know the given `name` 
 ```
 ---
-### **Buff / Debuff / General boolean Condition requirements**
+### **Buff / Debuff / General boolean condition requirements**
 
-Allow requirements about what buffs/debuffs you have or the target has to be evaluated or in general some boolean based requirements.
+Allow requirements about what buffs/debuffs you have or the target has or in general some boolean based requirements.
 
-| Condition | Desciption |
+| General boolean condition | Desciption |
 | --- | --- |
-| "TargetYieldXP" | The target yields experience upon death. (Grey Level) |
-| "TargetCastingSpell" | Target casts any spell |
-| --- | --- |
-| "Swimming" | The player is currently swimming. |
-| "Falling" | The player is currently falling down, not touching the ground. |
-| --- | --- |
-| "Has Pet" | The player's pet is alive |
-| "Pet Happy" | Only true when the pet happienss is green |
-| --- | --- |
-| "BagFull" | Inventory is full |
-| "Items Broken" | Has any broken(red) worn item |
-| "HasRangedWeapon" | Has equipped ranged weapon (wand/crossbow/bow/gun) |
-| "HasAmmo" | AmmoSlot has equipped ammo and count is greater than zero |
-| --- | --- |
-| "InMeleeRange" | Target is approximately 0-5 yard range |
-| "InDeadZoneRange" | Target is approximately 5-11 yard range |
-| "InCombatRange" | Class based - Have any ability which allows you to attack target from current place |
-| "OutOfCombatRange" | Negated value of "InCombatRange" |
-| --- | --- |
-| "AutoAttacking" | Auto spell `Auto Attack` is active |
-| "Shooting" | (wand) Auto spell `Shoot` is active |
-| "AutoShot" | (hunter) Auto spell `Auto Shot` is active |
-| --- | --- |
-| "HasMainHandEnchant" | Indicates that main hand weapon has active poison/sharpening stone/shaman buff effect |
-| "HasOffHandEnchant" | Indicates that off hand weapon has active poison/sharpening stone/shaman buff effect |
+| `"TargetYieldXP"` | The target yields experience upon death. (Grey Level) |
+| `"TargetCastingSpell"` | Target casts any spell |
+| `"Swimming"` | The player is currently swimming. |
+| `"Falling"` | The player is currently falling down, not touching the ground. |
+| `"Has Pet"` | The player's pet is alive |
+| `"Pet Happy"` | Pet happienss is green |
+| `"BagFull"` | Inventory is full |
+| `"Items Broken"` | Has any broken(red) worn item |
+| `"HasRangedWeapon"` | Has equipped ranged weapon (wand/crossbow/bow/gun) |
+| `"HasAmmo"` | AmmoSlot has equipped ammo and count is greater than zero |
+| `"InMeleeRange"` | Target is approximately 0-5 yard range |
+| `"InDeadZoneRange"` | Target is approximately 5-11 yard range |
+| `"InCombatRange"` | Class based - Have any ability which allows you to attack target from current place |
+| `"OutOfCombatRange"` | Negated value of "InCombatRange" |
+| `"AutoAttacking"` | Auto spell `Auto Attack` is active |
+| `"Shooting"` | (wand) Auto spell `Shoot` is active |
+| `"AutoShot"` | (hunter) Auto spell `Auto Shot` is active |
+| `"HasMainHandEnchant"` | Indicates that main hand weapon has active poison/sharpening stone/shaman buff effect |
+| `"HasOffHandEnchant"` | Indicates that off hand weapon has active poison/sharpening stone/shaman buff effect |
 
+<table>
+<tr><th>Buffs</th><th>Debuffs</th></tr>
+<tr style="vertical-align: top"><td>
 
 | Class | Buff Condition |
 | --- | --- |
-| All | "Well Fed" |
-| All | "Eating" |
-| All | "Drinking" |
-| All | "Mana Regeneration" |
-| All | "Clearcasting" |
-| --- | --- |
-| Druid | "Mark of the Wild" |
-| Druid | "Thorns" |
-| Druid | "TigersFury" |
-| Druid | "Prowl" |
-| Druid | "Rejuvenation" |
-| Druid | "Regrowth" |
-| --- | --- |
-| Mage | "Frost Armor" |
-| Mage | "Ice Armor" |
-| Mage | "Arcane Intellect" |
-| Mage | "Ice Barrier" |
-| Mage | "Ward" |
-| Mage | "Fire Power" |
-| Mage | "Mana Shield" |
-| Mage | "Presence of Mind" |
-| Mage | "Arcane Power" |
-| --- | --- |
-| Paladin | "Seal" |
-| Paladin | "Aura" |
-| Paladin | "Blessing" |
-| Paladin | "Blessing of Might" |
-| --- | --- |
-| Priest | "Fortitude" |
-| Priest | "InnerFire" |
-| Priest | "Divine Spirit" |
-| Priest | "Renew" |
-| Priest | "Shield" |
-| --- | --- |
-| Rogue | "Slice And Dice" |
-| Rogue | "Stealth" |
-| --- | --- |
-| Warlock | "Demon Armor" |
-| Warlock | "Demon Skin" |
-| Warlock | "Shadow Trance" |
-| Warlock | "Soulstone Resurraction" |
-| Warlock | "Soul Link" |
-| --- | --- |
-| Warrior | "Battle Shout" |
-| --- | --- |
-| Shaman | "Lightning Shield" |
-| Shaman | "Water Shield" |
-| Shaman | "Shamanistic Focus" |
-| Shaman | "Focused" |
-| Shaman | "Stoneskin" |
-| --- | --- |
-| Hunter | "Aspect of the Cheetah" |
-| Hunter | "Aspect of the Pack" |
-| Hunter | "Aspect of the Beast" |
-| Hunter | "Aspect of the Hawk" |
-| Hunter | "Aspect of the Wild" |
-| Hunter | "Aspect of the Monkey" |
-| Hunter | "Rapid Fire" |
-| Hunter | "Quick Shots" |
+| All | `"Well Fed"` |
+| All | `"Eating"` |
+| All | `"Drinking"` |
+| All | `"Mana Regeneration"` |
+| All | `"Clearcasting"` |
+| Druid | `"Mark of the Wild"` |
+| Druid | `"Thorns"` |
+| Druid | `"TigersFury"` |
+| Druid | `"Prowl"` |
+| Druid | `"Rejuvenation"` |
+| Druid | `"Regrowth"` |
+| Mage | `"Frost Armor"` |
+| Mage | `"Ice Armor"` |
+| Mage | `"Arcane Intellect"` |
+| Mage | `"Ice Barrier"` |
+| Mage | `"Ward"` |
+| Mage | `"Fire Power"` |
+| Mage | `"Mana Shield"` |
+| Mage | `"Presence of Mind"` |
+| Mage | `"Arcane Power"` |
+| Paladin | `"Seal"` |
+| Paladin | `"Aura"` |
+| Paladin | `"Blessing"` |
+| Paladin | `"Blessing of Might"` |
+| Priest | `"Fortitude"` |
+| Priest | `"InnerFire"` |
+| Priest | `"Divine Spirit"` |
+| Priest | `"Renew"` |
+| Priest | `"Shield"` |
+| Rogue | `"Slice And Dice"` |
+| Rogue | `"Stealth"` |
+| Warlock | `"Demon Armor"` |
+| Warlock | `"Demon Skin"` |
+| Warlock | `"Shadow Trance"` |
+| Warlock | `"Soulstone Resurraction"` |
+| Warlock | `"Soul Link"` |
+| Warrior | `"Battle Shout"` |
+| Shaman | `"Lightning Shield"` |
+| Shaman | `"Water Shield"` |
+| Shaman | `"Shamanistic Focus"` |
+| Shaman | `"Focused"` |
+| Shaman | `"Stoneskin"` |
+| Hunter | `"Aspect of the Cheetah"` |
+| Hunter | `"Aspect of the Pack"` |
+| Hunter | `"Aspect of the Beast"` |
+| Hunter | `"Aspect of the Hawk"` |
+| Hunter | `"Aspect of the Wild"` |
+| Hunter | `"Aspect of the Monkey"` |
+| Hunter | `"Rapid Fire"` |
+| Hunter | `"Quick Shots"` |
 
+</td>
+<td>
 
 | Class | Debuff Condition |
 | --- | --- |
-| Druid | "Demoralizing Roar" |
-| Druid | "Faerie Fire" |
-| Druid | "Rip" |
-| Druid | "Moonfire" |
-| Druid | "Entangling Roots" |
-| Druid | "Rake" |
-| --- | --- |
-| Mage | "Frostbite" |
-| Mage | "Slow" |
-| --- | --- |
-| Priest | "Shadow Word: Pain" |
-| --- | --- |
-| Warlock | "Curse of" |
-| Warlock | "Curse of Weakness" |
-| Warlock | "Curse of Elements" |
-| Warlock | "Curse of Recklessness" |
-| Warlock | "Curse of Shadow" |
-| Warlock | "Curse of Agony" |
-| Warlock | "Siphon Life" |
-| Warlock | "Corruption" |
-| Warlock | "Immolate" |
-| --- | --- |
-| Warrior | "Rend" |
-| --- | --- |
-| Hunter | "Serpent Sting" |
+| Druid | `"Demoralizing Roar"` |
+| Druid | `"Faerie Fire"` |
+| Druid | `"Rip"` |
+| Druid | `"Moonfire"` |
+| Druid | `"Entangling Roots"` |
+| Druid | `"Rake"` |
+| Mage | `"Frostbite"` |
+| Mage | `"Slow"` |
+| Priest | `"Shadow Word: Pain"` |
+| Warlock | `"Curse of"` |
+| Warlock | `"Curse of Weakness"` |
+| Warlock | `"Curse of Elements"` |
+| Warlock | `"Curse of Recklessness"` |
+| Warlock | `"Curse of Shadow"` |
+| Warlock | `"Curse of Agony"` |
+| Warlock | `"Siphon Life"` |
+| Warlock | `"Corruption"` |
+| Warlock | `"Immolate"` |
+| Warrior | `"Rend"` |
+| Hunter | `"Serpent Sting"` |
 
+</td></tr> </table>
 
 e.g.
-
 ```json
 "Requirement": "not Well Fed"      // I am not well fed.
 "Requirement": "not Thorns"        // I don't have the thorns buff.
@@ -937,37 +905,29 @@ Formula: `SpellInRange:[Numeric integer value]`
 | ROGUE | Sinister Strike | 0 |
 | ROGUE | Throw | 1 |
 | ROGUE | Shoot Gun | 2 |
-| --- | --- | --- |
 | DRUID | Wrath | 0 |
 | DRUID | Bash | 1 |
 | DRUID | Rip | 2 |
 | DRUID | Maul | 3 |
-| --- | --- | --- |
 | WARRIOR | Charge | 0 |
 | WARRIOR | Rend | 1 |
 | WARRIOR | Shoot Gun | 2 |
-| --- | --- | --- |
 | PRIEST | Shadow Word: Pain | 0 |
 | PRIEST | Shoot | 1 |
 | PRIEST | Mind Flay | 2 |
 | PRIEST | Mind Blast | 3 |
 | PRIEST | Smite | 4 |
-| --- | --- | --- |
 | PALADIN | Judgement | 0 |
-| --- | --- | --- |
 | MAGE | Fireball | 0 |
 | MAGE | Shoot| 1 |
 | MAGE | Pyroblast | 2 |
 | MAGE | Frostbolt | 3 |
 | MAGE | Fire Blast | 4 |
-| --- | --- | --- |
 | HUNTER | Raptor Strike | 0 |
 | HUNTER | Auto Shot | 1 |
 | HUNTER | Serpent Sting | 2 |
-| --- | --- | --- |
 | WARLOCK | Shadow Bolt | 0 |
 | WARLOCK | Shoot | 1 |
-| --- | --- | --- |
 | SHAMAN | Lightning Bolt | 0 |
 | SHAMAN | Earth Shock | 1 |
 
@@ -982,18 +942,28 @@ e.g.
 
 Combined with the `KeyAction.UseWhenTargetIsCasting` property, this requirement can limit on which enemy target spell your character will react or ignore.
 
-Firstly "TargetCastingSpell" as it is without mentioning any spellID. Simply tells if the target is doing any cast at all.
+Firstly `"TargetCastingSpell"` as it is without mentioning any spellID. Simply tells if the target is doing any cast at all.
 
-Secondly can specify the following Format "TargetCastingSpell:spellID1|spellID2|..." which translates to "if Target is casting spellID1 OR spellID2 OR ...".
-
-It also supports negated variant, if you put '!' or "not" in front of the requirement, basically you can define ignored spells and react on everything else like "not TargetCastingSpell:spellID1|spellID2|...".
+Secondly can specify the following Format `"TargetCastingSpell:spellID1|spellID2|..."` which translates to "if Target is casting spellID1 OR spellID2 OR ...".
 
 e.g. Rogue_20.json
 ```json
 {
     "Name": "Kick",
+    "UseWhenTargetIsCasting": true
+},
+{
+    "Name": "Kick",
+    "Requirement": "not TargetCastingSpell"
+},
+{
+    "Name": "Kick",
     "UseWhenTargetIsCasting": true,
     "Requirement": "TargetCastingSpell:9053|11443"
+},
+{
+    "Name": "Kick",
+    "Requirement": "not TargetCastingSpell:11443"
 }
 ```
 
@@ -1023,9 +993,9 @@ The available modes are:
 
 ## Other devices
 
-The user interface is shown in a browser on port 5000 http://localhost:5000. This allows you to view it from another device on your lan.
+The user interface is shown in a browser on port **5000** [http://localhost:5000](http://localhost:5000). This allows you to view it from another device on your lan.
 
-To access you PC port 5000 from another device, you will need to open up port 5000 in your firewall.
+To access you PC port **5000** from another device, you will need to open up port **5000** in your firewall.
 
 Control Panel\System and Security\Windows Defender Firewall - Advanced Settings
 
@@ -1033,7 +1003,7 @@ Control Panel\System and Security\Windows Defender Firewall - Advanced Settings
 * New Rule
 * Port
 * TCP
-* Specific local ports: 5000
+* Specific local ports: **5000**
 * Allow the Connection
 * Private, Public, Domain (You may get away with just Private)
 * Name "Wow bot"
@@ -1114,7 +1084,7 @@ If you make a mistake you can remove spots by clicking on them on the list on th
 
 For tricky parts you may want to record spots close together by using the 'Distance between spots' slider (Smaller number equals closer together).
 
-Once the path is complete click 'Save'. This path will be saved with a generic filename e.g.  Path_20201108112650.json, you will need to go into your \Json\path and rename it to something sensible.
+Once the path is complete click 'Save'. This path will be saved with a generic filename e.g. `Path_20201108112650.json`, you will need to go into your `/Json/path` and rename it to something sensible.
 
 ![Recording Path](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/Path_Recording.png)
 
@@ -1122,7 +1092,9 @@ Once the path is complete click 'Save'. This path will be saved with a generic f
 
 ### There and back 
 
-"PathThereAndBack": true,
+```json
+"PathThereAndBack": true
+```
 
 These paths are run from one end to the other and then walked backwards back to the start. So the end does not need to be near the start.
 
@@ -1130,7 +1102,9 @@ These paths are run from one end to the other and then walked backwards back to 
 
 ### Joined up
 
-"PathThereAndBack": false,
+```json
+"PathThereAndBack": false
+```
 
 These paths are run from one end to the other and then repeated. So the path needs to join up with itself i.e. the end needs to be near the start.
 
@@ -1165,16 +1139,16 @@ The bot will try to calculate a path in the following situations:
 
 ## Video:
 
-https://www.youtube.com/watch?v=Oz_jFZfxSdc&t=254s&ab
-
 [![Pathing Video Youtube](images/PathingApi.png)](https://www.youtube.com/watch?v=Oz_jFZfxSdc&t=254s&ab_channel=JulianPerrott)
 
 ## Running on its own server.
 
 In visual studio just set PathingAPI as the startup project or from the command line:
 
-CD C:\WowClassicGrindBot\PathingAPI
+```ps
+cd C:\WowClassicGrindBot\PathingAPI
 dotnet run
+```
 
 Then in a browser go to http://localhost:5001
 
@@ -1186,7 +1160,9 @@ There are 3 pages:
 
 Requests to the API can be done in a new browser tab like this or via the Swagger tab. You can then view the result in the Watch API calls viewer.
 
-    e.g. http://localhost:5001/api/PPather/MapRoute?map1=1446&x1=51.0&y1=29.3&map2=1446&x2=38.7&y2=20.1
+```
+http://localhost:5001/api/PPather/MapRoute?map1=1446&x1=51.0&y1=29.3&map2=1446&x2=38.7&y2=20.1
+```
 
 Search gives some predefined locations to search from and to.
 
@@ -1196,14 +1172,61 @@ In visual studio right click the solution and set Multiple startup projects to B
 
 Or from 2 command lines dotnet run each.
 
-    CD C:\WowClassicGrindBot\PathingAPI
-    dotnet run
+```ps
+cd c:\WowClassicGrindBot\PathingAPI
+dotnet run
+```
 
-    CD C:\WowClassicGrindBot\BlazorServer
-    dotnet run
+```ps
+cd c:\WowClassicGrindBot\BlazorServer
+dotnet run
+```
 
 ## As a library used within the bot
 
 The bot will use the PathingAPI to work out routes, these are shown on the route map as green points.
 
 ![Pathed Route](https://raw.githubusercontent.com/julianperrott/WowClassicGrindBot/master/images/PathedRoute.png)
+
+
+# Macros
+
+Warlock `heal` macro used in warlock profiles.
+```css
+#showtooltip
+/cast [nocombat] Create Healthstone
+/use Minor Healthstone
+/use Lesser Healthstone
+/use Healthstone
+/use Greater Healthstone
+/use Major Healthstone
+/use Master Healthstone
+```
+
+Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
+```css
+#showtooltip
+/cast Feed Pet
+/use Roasted Quail
+```
+
+Hunter `sumpet` macro
+```css
+#showtooltip
+/cast [target=pet,dead] Revive Pet
+/cast [target=pet,noexists] Call Pet
+```
+
+Rogue weapon enchant (use 17 for second weapon):
+```css
+/use Instant Poison V 
+/use 16
+/click StaticPopup1Button1 
+```
+
+Melee weapon enchant:
+```css
+/use Dense Sharpening Stone
+/use 16
+/click StaticPopup1Button1
+```
