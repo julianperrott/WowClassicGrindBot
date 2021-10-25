@@ -115,7 +115,7 @@ namespace SharedLib
 
         public static List<DataFrame> CreateFrames(DataFrameMeta meta, Bitmap bmp)
         {
-            var dataFrames = new List<DataFrame>() { new DataFrame(new Point(0, 0), 0)};
+            var dataFrames = new List<DataFrame>() { new DataFrame(new Point(0, 0), 0) };
             for (int dataframe = 1; dataframe < meta.frames; dataframe++)
             {
                 var point = GetFramePoint(meta, bmp, dataframe, dataFrames.Last().point.X);
@@ -133,11 +133,14 @@ namespace SharedLib
         {
             for (int x = startX; x < bmp.Width; x++)
             {
-                for (int y = 0; y < meta.rows; y++)
+                for (int y = 0; y < bmp.Height; y++)
                 {
                     if (bmp.GetPixel(x, y).B == dataframe)
                     {
-                        return new Point(x, y);
+                        if (meta.size > 1 && x + 1 < bmp.Width && y + 1 < bmp.Height && bmp.GetPixel(x + 1, y + 1).B == dataframe)
+                            return new Point(x + 1, y + 1);
+                        else
+                            return new Point(x, y);
                     }
                 }
             }

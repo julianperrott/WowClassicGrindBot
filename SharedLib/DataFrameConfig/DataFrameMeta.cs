@@ -27,8 +27,19 @@ namespace SharedLib
 
         public Size EstimatedSize(Rectangle screenRect)
         {
-            SizeF size = new SizeF(screenRect.Width, rows * (this.size + spacing) * 2);
-            return size.ToSize();
+            SizeF estimatedSize = new SizeF(frames / rows * (size + spacing) * 2, rows * (size + spacing) * 2);
+
+            if (estimatedSize.Width > screenRect.Width)
+            {
+                estimatedSize.Width = screenRect.Width;
+            }
+
+            if (estimatedSize.Height > screenRect.Height)
+            {
+                estimatedSize.Height = screenRect.Height;
+            }
+
+            return estimatedSize.ToSize();
         }
 
         private static readonly DataFrameMeta empty = new DataFrameMeta(-1, 0, 0, 0, 0);
