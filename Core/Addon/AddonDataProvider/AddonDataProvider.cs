@@ -18,6 +18,7 @@ namespace Core
         private readonly int height;
         private readonly DirectBitmapCapturer capturer;
         private Rectangle rectangle;
+        private Point p;
 
         private readonly Color firstColor = Color.FromArgb(255, 0, 0, 0);
         private readonly Color lastColor = Color.FromArgb(255, 30, 132, 129);
@@ -32,16 +33,17 @@ namespace Core
             this.width = frames.Last().point.X + 1;
             this.height = frames.Max(f => f.point.Y) + 1;
 
+            wowScreen.GetPosition(out var p);
             wowScreen.GetRectangle(out rectangle);
             rectangle.Width = width;
             rectangle.Height = height;
-            rectangle = new Rectangle(0, 0, width, height);
+            rectangle = new Rectangle(p.X, p.Y, width, height);
             capturer = new DirectBitmapCapturer(rectangle);
         }
 
         public void Update()
         {
-            wowScreen.GetPosition(out var p);
+            wowScreen.GetPosition(out p);
             rectangle.X = p.X;
             rectangle.Y = p.Y;
             capturer.Capture(rectangle);
@@ -63,6 +65,11 @@ namespace Core
         public Color GetColor(int index)
         {
             return FrameColor[index];
+        }
+
+        public int GetInt(int index)
+        {
+            return (FrameColor[index].R * 65536) + (FrameColor[index].G * 256) + FrameColor[index].B;
         }
 
         public void Dispose()

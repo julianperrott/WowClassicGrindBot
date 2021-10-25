@@ -131,6 +131,11 @@ namespace Core
             return addonDataProvider.GetColor(index);
         }
 
+        public int GetIntAt(int index)
+        {
+            return addonDataProvider.GetInt(index);
+        }
+
         public void Dispose()
         {
             addonDataProvider?.Dispose();

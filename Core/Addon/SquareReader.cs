@@ -10,23 +10,20 @@
         }
 
         // Converts a cell's hexideciml color code to decimal data
-        public long GetLongAtCell(int index)
+        public int GetIntAtCell(int index)
         {
-            // Finding the hexidecimal color
-            var color = addonReader.GetColorAt(index);
-            // Converting from base 16 (hexidecimal) to base 10 (decimal)
-            return color.R * 65536 + color.G * 256 + color.B;
+            return addonReader.GetIntAt(index);
         }
 
         // Converts a cell's hexidecimal color to a 6 point decimal
         public double GetFixedPointAtCell(int indexl)
         {
-            return (double)this.GetLongAtCell(indexl) / 100000;
+            return GetIntAtCell(indexl) / 100000f;
         }
 
         public string GetStringAtCell(int index)
         {
-            var color = this.GetLongAtCell(index);
+            var color = this.GetIntAtCell(index);
             if (color != 0)
             {
                 var colorString = color.ToString();
@@ -50,7 +47,7 @@
         {
             try
             {
-                var text = GetLongAtCell(index).ToString();
+                var text = GetIntAtCell(index).ToString();
                 if (text == "0")
                 {
                     return 0;

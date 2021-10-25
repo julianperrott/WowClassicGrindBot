@@ -7,5 +7,6 @@ namespace Core
     {
         void Update();
         Color GetColor(int index);
+        int GetInt(int index);
     }
 }

@@ -6,7 +6,7 @@
 
         double GetFixedPointAtCell(int indexl);
 
-        long GetLongAtCell(int index);
+        int GetIntAtCell(int index);
 
         string GetStringAtCell(int index);
     }

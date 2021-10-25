@@ -9,6 +9,7 @@ namespace Core
         void Reset();
 
         Color GetColorAt(int index);
+        int GetIntAt(int index);
 
         bool Active { get; set; }
 
