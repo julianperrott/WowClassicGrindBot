@@ -1,10 +1,14 @@
-﻿namespace Core.Talents
+﻿using System.Collections.Generic;
+
+namespace Core.Talents
 {
-    public class TalentTreeElement
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+    public struct TalentTreeElement
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
-        public int TierID { get; set; }
-        public int ColumnIndex { get; set; }
-        public int TabID { get; set; }
-        public int[] SpellIds { get; set; } = new int[5];
+        public int TierID { get; }
+        public int ColumnIndex { get; }
+        public int TabID { get; }
+        public List<int> SpellIds { get; }
     }
 }

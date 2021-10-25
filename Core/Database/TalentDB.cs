@@ -12,8 +12,8 @@ namespace Core.Database
     {
         private readonly SpellDB spellDB;
 
-        private List<TalentTab> talentTabs = new List<TalentTab>();
-        private List<TalentTreeElement> talentTreeElements = new List<TalentTreeElement>();
+        private readonly List<TalentTab> talentTabs;
+        private readonly List<TalentTreeElement> talentTreeElements;
 
         public TalentDB(ILogger logger, DataConfig dataConfig, SpellDB spellDB)
         {

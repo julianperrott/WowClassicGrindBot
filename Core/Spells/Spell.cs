@@ -1,9 +1,11 @@
 ﻿namespace Core
 {
-    public class Spell
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+    public struct Spell
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public int Level { get; set; }
+        public int Id { get; }
+        public string Name { get; }
+        public int Level { get; }
     }
 }
