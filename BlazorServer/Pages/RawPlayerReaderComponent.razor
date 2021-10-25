@@ -89,7 +89,7 @@
                 {
                     propList.Add(new ObjectField() { Name = objName + pinfo.Name, Value = value.ToString() ?? "" });
                 }
-                else
+                else if(pinfo.PropertyType.IsGenericType)
                 {
                     var lst = GetPropertyValues(value);
                     if (lst != null && lst.Count > 0)
