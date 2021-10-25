@@ -38,7 +38,7 @@ namespace Core
         {
             // formula
             // MAX_POWER_TYPE * type + MAX_ACTION_IDX * slot + cost
-            int data = (int)reader.GetLongAtCell(cActionbarNum);
+            int data = reader.GetIntAtCell(cActionbarNum);
 
             int type = (int)(data / MAX_POWER_TYPE);
             data -= (int)MAX_POWER_TYPE * type;

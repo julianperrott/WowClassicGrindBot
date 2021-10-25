@@ -46,10 +46,10 @@ namespace Core
 
         public void Read()
         {
-            data = (int)reader.GetLongAtCell(cGossip);
+            data = reader.GetIntAtCell(cGossip);
 
             // used for merchant window open state
-            if (data == 9999999 || data == 9999998)
+            if (MerchantWindowOpened || MerchantWindowClosed)
                 return;
 
             if (data == 0)

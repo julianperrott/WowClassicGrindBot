@@ -14,7 +14,7 @@ namespace Core
         private readonly int below;
         private readonly bool checkTargetGivesExp;
 
-        private long LastWarningTargetGuid = 0;
+        private int LastWarningTargetGuid = 0;
 
         public Blacklist(PlayerReader playerReader, int above, int below, bool checkTargetGivesExp, List<string> blacklisted, ILogger logger)
         {

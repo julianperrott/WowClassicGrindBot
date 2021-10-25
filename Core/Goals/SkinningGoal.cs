@@ -23,7 +23,7 @@ namespace Core.Goals
         private readonly NpcNameTargeting npcNameTargeting;
         private readonly CombatUtil combatUtil;
 
-        private long lastLoot;
+        private int lastLoot;
 
         public SkinningGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
         {

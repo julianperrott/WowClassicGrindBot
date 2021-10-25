@@ -25,7 +25,7 @@ namespace Core
 
         public void Read()
         {
-            int data = (int)reader.GetLongAtCell(cTalent);
+            int data = reader.GetIntAtCell(cTalent);
             if (data == 0 || Talents.ContainsKey(data)) return;
 
             int hash = data;
@@ -48,9 +48,10 @@ namespace Core
                 CurrentRank = data
             };
 
-            talentDB.Update(talent, playerReader.PlayerClass);
-
-            Talents.Add(hash, talent);
+            if (talentDB.Update(talent, playerReader.PlayerClass))
+            {
+                Talents.Add(hash, talent);
+            }
         }
 
         public void Reset()

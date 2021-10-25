@@ -4,9 +4,9 @@ namespace Core
 {
     public class SpellInRange
     {
-        private readonly long value;
+        private readonly int value;
 
-        public SpellInRange(long value)
+        public SpellInRange(int value)
         {
             this.value = value;
         }

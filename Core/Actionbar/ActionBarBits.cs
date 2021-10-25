@@ -12,7 +12,7 @@
             bits = new ActionBarBitStatus[cells.Length];
             for (int i = 0; i < bits.Length; i++)
             {
-                bits[i] = new ActionBarBitStatus((int)reader.GetLongAtCell(cells[i]));
+                bits[i] = new ActionBarBitStatus(reader.GetIntAtCell(cells[i]));
             }
         }
 
@@ -23,7 +23,7 @@
             {
                 slot += Stance.RuntimeSlotToActionBar(item, playerReader, slot);
 
-                int array = (int)(slot / 24);
+                int array = slot / 24;
                 return bits[array].IsBitSet((slot - 1) % 24);
             }
 

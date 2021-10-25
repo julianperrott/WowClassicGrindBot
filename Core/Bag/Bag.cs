@@ -20,36 +20,13 @@ namespace Core
         VanityPets = 4096
     }
 
-    public struct Bag : IEquatable<Bag>
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+    public struct Bag
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
         public int ItemId { get; set; }
         public BagType BagType { get; set; }
-        public long SlotCount { get; set; }
+        public int SlotCount { get; set; }
         public int FreeSlot { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return 0;
-        }
-
-        public static bool operator ==(Bag left, Bag right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(Bag left, Bag right)
-        {
-            return !(left == right);
-        }
-
-        public bool Equals(Bag other)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -38,7 +38,7 @@ namespace Core
         private readonly int cItemId;
         private readonly int cSlotNum;
 
-        private readonly long[] equipment = new long[MAX_EQUIPMENT_COUNT];
+        private readonly int[] equipment = new int[MAX_EQUIPMENT_COUNT];
 
         public EquipmentReader(ISquareReader reader, int cSlotNum, int cItemId)
         {
@@ -50,10 +50,10 @@ namespace Core
 
         public void Read()
         {
-            int index = (int)reader.GetLongAtCell(cSlotNum);
+            int index = reader.GetIntAtCell(cSlotNum);
             if (index < MAX_EQUIPMENT_COUNT && index >= 0)
             {
-                equipment[index] = reader.GetLongAtCell(cItemId);
+                equipment[index] = reader.GetIntAtCell(cItemId);
             }
         }
 

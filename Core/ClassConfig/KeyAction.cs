@@ -60,7 +60,7 @@ namespace Core
 
         public List<Requirement> RequirementObjects { get; } = new List<Requirement>();
 
-        public int ConsoleKeyFormHash;
+        public int ConsoleKeyFormHash { private set; get; }
 
         protected static ConcurrentDictionary<int, DateTime> LastClicked { get; } = new ConcurrentDictionary<int, DateTime>();
 

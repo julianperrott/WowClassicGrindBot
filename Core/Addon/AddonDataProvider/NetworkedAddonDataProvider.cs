@@ -54,6 +54,11 @@ namespace Core
             return FrameColors[index];
         }
 
+        public int GetInt(int index)
+        {
+            return (FrameColors[index].R * 65536) + (FrameColors[index].G * 256) + FrameColors[index].B;
+        }
+
         public void Update()
         {
             try

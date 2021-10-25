@@ -90,11 +90,7 @@ namespace SharedLib
 
         public Color GetPixel(int x, int y)
         {
-            int index = x + (y * Rect.Width);
-            int col = bits[index];
-            Color result = Color.FromArgb(col);
-
-            return result;
+            return Color.FromArgb(bits[x + (y * Rect.Width)]);
         }
 
         public void Dispose()

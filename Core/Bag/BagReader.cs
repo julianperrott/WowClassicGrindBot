@@ -39,11 +39,9 @@ namespace Core
 
         public void Read()
         {
-            bool hasChanged;
-
             ReadBagMeta();
 
-            ReadInventory(out hasChanged);
+            ReadInventory(out bool hasChanged);
 
             if (hasChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
             {
@@ -55,7 +53,7 @@ namespace Core
         private void ReadBagMeta()
         {
             //bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)
-            int data = (int)reader.GetLongAtCell(cBagMeta);
+            int data = reader.GetIntAtCell(cBagMeta);
 
             int bagType = (int)(data / 1000000f);
             data -= 1000000 * bagType;
@@ -85,7 +83,7 @@ namespace Core
             hasChanged = false;
 
             // 20 -- 0-4 bagNum + 1-21 itenNum + 1-1000 quantity
-            int itemCount = (int)reader.GetLongAtCell(cItemNumCount);
+            int itemCount = reader.GetIntAtCell(cItemNumCount);
 
             int bag = (int)(itemCount / 1000000f);
             itemCount -= 1000000 * bag;
@@ -94,10 +92,10 @@ namespace Core
             itemCount -= 10000 * slot;
 
             // 21 -- 1-999999 itemId
-            int itemId = (int)reader.GetLongAtCell(cItemId);
+            int itemId = reader.GetIntAtCell(cItemId);
 
             // 22 -- 0-24 item bits
-            int itemBits = (int)reader.GetLongAtCell(cItemBits);
+            int itemBits = reader.GetIntAtCell(cItemBits);
 
             bool isSoulbound = itemBits == 1;
 
@@ -158,7 +156,7 @@ namespace Core
                 .ToList();
         }
 
-        public long SlotCount => bags.Sum((x) => x.SlotCount);
+        public int SlotCount => bags.Sum((x) => x.SlotCount);
 
         public bool BagsFull => bags.Sum((x) => x.BagType == BagType.Unspecified ? x.FreeSlot : 0) == 0;
 

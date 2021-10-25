@@ -34,7 +34,7 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
-            long lastHealth = playerReader.HealthCurrent;
+            int lastHealth = playerReader.HealthCurrent;
             WowPoint lastPosition = playerReader.PlayerLocation;
 
             playerReader.NeedSkin = !playerReader.Unskinnable;

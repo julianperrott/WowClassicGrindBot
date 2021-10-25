@@ -34,6 +34,7 @@
 
     public enum StanceActionBar
     {
+        None = 0,
         WarriorBattleStance = 73 - 1,
         WarriorDefensiveStance = 85 - 1,
         WarriorBerserkerStance = 97 - 1,
@@ -52,9 +53,9 @@
     {
         private readonly int value;
 
-        public Stance(long value)
+        public Stance(int value)
         {
-            this.value = (int)value;
+            this.value = value;
         }
 
         public Form Get(PlayerReader playerReader, PlayerClassEnum playerClass) => value == 0 ? Form.None : playerClass switch
@@ -72,13 +73,13 @@
         {
             if (slot <= 12)
             {
-                return FormToActionBar(playerReader.PlayerClass, item.HasFormRequirement() ? item.FormEnum : playerReader.Form);
+                return (int)FormToActionBar(playerReader.PlayerClass, item.HasFormRequirement() ? item.FormEnum : playerReader.Form);
             }
 
             return 0;
         }
 
-        private static int FormToActionBar(PlayerClassEnum playerClass, Form form)
+        private static StanceActionBar FormToActionBar(PlayerClassEnum playerClass, Form form)
         {
             switch (playerClass)
             {
@@ -86,36 +87,37 @@
                     switch (form)
                     {
                         case Form.Druid_Cat:
-                            return (int)StanceActionBar.DruidCat;
+                            return StanceActionBar.DruidCat;
                         case Form.Druid_Cat_Prowl:
-                            return (int)StanceActionBar.DruidCatProwl;
+                            return StanceActionBar.DruidCatProwl;
                         case Form.Druid_Bear:
-                            return (int)StanceActionBar.DruidBear;
+                            return StanceActionBar.DruidBear;
                         case Form.Druid_Moonkin:
-                            return (int)StanceActionBar.DruidMoonkin;
+                            return StanceActionBar.DruidMoonkin;
                     }
                     break;
                 case PlayerClassEnum.Warrior:
                     switch (form)
                     {
                         case Form.Warrior_BattleStance:
-                            return (int)StanceActionBar.WarriorBattleStance;
+                            return StanceActionBar.WarriorBattleStance;
                         case Form.Warrior_DefensiveStance:
-                            return (int)StanceActionBar.WarriorDefensiveStance;
+                            return StanceActionBar.WarriorDefensiveStance;
                         case Form.Warrior_BerserkerStance:
-                            return (int)StanceActionBar.WarriorBerserkerStance;
+                            return StanceActionBar.WarriorBerserkerStance;
                     }
                     break;
                 case PlayerClassEnum.Rogue:
                     if (form == Form.Rogue_Stealth)
-                        return (int)StanceActionBar.RogueStealth;
+                        return StanceActionBar.RogueStealth;
                     break;
                 case PlayerClassEnum.Priest:
                     if (form == Form.Priest_Shadowform)
-                        return (int)StanceActionBar.PriestShadowform;
+                        return StanceActionBar.PriestShadowform;
                     break;
             }
-            return 0;
+
+            return StanceActionBar.None;
         }
     }
 }
