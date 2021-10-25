@@ -41,7 +41,7 @@ namespace Core
 
         public RecordInt UIMapId = new RecordInt(4);
 
-        public long PlayerLevel => reader.GetLongAtCell(5);
+        public int PlayerLevel => reader.GetIntAtCell(5);
 
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
 
@@ -50,22 +50,21 @@ namespace Core
 
         public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
 
-        public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetLongAtCell(8), reader.GetLongAtCell(9));
+        public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetIntAtCell(8), reader.GetIntAtCell(9));
 
-        // Player health and mana
-        public long HealthMax => reader.GetLongAtCell(10); // Maximum amount of health of player
+        public int HealthMax => reader.GetIntAtCell(10);
 
-        public long HealthCurrent => reader.GetLongAtCell(11); // Current amount of health of player
-        public long HealthPercent => HealthMax == 0 || HealthCurrent == 1 ? 0 : (HealthCurrent * 100) / HealthMax; // Health in terms of a percentage
+        public int HealthCurrent => reader.GetIntAtCell(11);
+        public int HealthPercent => HealthMax == 0 || HealthCurrent == 1 ? 0 : (HealthCurrent * 100) / HealthMax;
 
-        public long PTMax => reader.GetLongAtCell(12); // Maximum amount of Power Type (dynamic)
-        public long PTCurrent => reader.GetLongAtCell(13); // Current amount of Power Type (dynamic)
-        public long PTPercentage => PTMax == 0 ? 0 : (PTCurrent * 100) / PTMax; // Power Type (dynamic) in terms of a percentage
+        public int PTMax => reader.GetIntAtCell(12); // Maximum amount of Power Type (dynamic)
+        public int PTCurrent => reader.GetIntAtCell(13); // Current amount of Power Type (dynamic)
+        public int PTPercentage => PTMax == 0 ? 0 : (PTCurrent * 100) / PTMax; // Power Type (dynamic) in terms of a percentage
 
 
-        public long ManaMax => reader.GetLongAtCell(14); // Maximum amount of mana
-        public long ManaCurrent => reader.GetLongAtCell(15); // Current amount of mana
-        public long ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax; // Mana in terms of a percentage
+        public int ManaMax => reader.GetIntAtCell(14);
+        public int ManaCurrent => reader.GetIntAtCell(15);
+        public int ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax;
 
         public string Target
         {
@@ -79,12 +78,11 @@ namespace Core
             }
         }
 
-        public long TargetMaxHealth => reader.GetLongAtCell(18);
+        public int TargetMaxHealth => reader.GetIntAtCell(18);
 
-        // Targets current percentage of health
-        public long TargetHealthPercentage => TargetMaxHealth == 0 || TargetHealth == 1 ? 0 : (TargetHealth * 100) / TargetMaxHealth;
+        public int TargetHealthPercentage => TargetMaxHealth == 0 || TargetHealth == 1 ? 0 : (TargetHealth * 100) / TargetMaxHealth;
 
-        public long TargetHealth => reader.GetLongAtCell(19);
+        public int TargetHealth => reader.GetIntAtCell(19);
 
         public bool HasTarget => PlayerBitValues.HasTarget || TargetHealth > 0;
 
@@ -95,44 +93,44 @@ namespace Core
 
         // 37 unused
 
-        public long PetMaxHealth => reader.GetLongAtCell(38);
-        public long PetHealth => reader.GetLongAtCell(39);
+        public int PetMaxHealth => reader.GetIntAtCell(38);
+        public int PetHealth => reader.GetIntAtCell(39);
 
-        public long PetHealthPercentage => PetMaxHealth == 0 || PetHealth == 1 ? 0 : (PetHealth * 100) / PetMaxHealth;
+        public int PetHealthPercentage => PetMaxHealth == 0 || PetHealth == 1 ? 0 : (PetHealth * 100) / PetMaxHealth;
 
-        public SpellInRange SpellInRange => new SpellInRange(reader.GetLongAtCell(40));
+        public SpellInRange SpellInRange => new SpellInRange(reader.GetIntAtCell(40));
 
         public bool WithInPullRange => SpellInRange.WithinPullRange(this, PlayerClass);
         public bool WithInCombatRange => SpellInRange.WithinCombatRange(this, PlayerClass);
 
 
-        public BuffStatus Buffs => new BuffStatus(reader.GetLongAtCell(41));
-        public DebuffStatus Debuffs => new DebuffStatus(reader.GetLongAtCell(42));
+        public BuffStatus Buffs => new BuffStatus(reader.GetIntAtCell(41));
+        public DebuffStatus Debuffs => new DebuffStatus(reader.GetIntAtCell(42));
 
-        public long TargetLevel => reader.GetLongAtCell(43);
+        public int TargetLevel => reader.GetIntAtCell(43);
 
-        public long Gold => reader.GetLongAtCell(44) + (reader.GetLongAtCell(45) * 1000000);
+        public int Gold => reader.GetIntAtCell(44) + (reader.GetIntAtCell(45) * 1000000);
 
-        public RaceEnum PlayerRace => (RaceEnum)(int)(reader.GetLongAtCell(46) / 100f);
+        public RaceEnum PlayerRace => (RaceEnum)(reader.GetIntAtCell(46) / 100f);
 
-        public PlayerClassEnum PlayerClass => (PlayerClassEnum)(int)(reader.GetLongAtCell(46) - ((int)PlayerRace * 100f));
+        public PlayerClassEnum PlayerClass => (PlayerClassEnum)(reader.GetIntAtCell(46) - ((int)PlayerRace * 100f));
 
-        public bool Unskinnable => reader.GetLongAtCell(47) != 0; // Returns 1 if creature is unskinnable
+        public bool Unskinnable => reader.GetIntAtCell(47) != 0; // Returns 1 if creature is unskinnable
 
-        public Stance Stance => new Stance(reader.GetLongAtCell(48));
+        public Stance Stance => new Stance(reader.GetIntAtCell(48));
         public Form Form => Stance.Get(this, PlayerClass);
 
-        public long MinRange => (long)(reader.GetLongAtCell(49) / 100000f);
-        public long MaxRange => (long)((reader.GetLongAtCell(49) - (MinRange * 100000f)) / 100f);
+        public int MinRange => (int)(reader.GetIntAtCell(49) / 100000f);
+        public int MaxRange => (int)((reader.GetIntAtCell(49) - (MinRange * 100000f)) / 100f);
 
         public bool IsInMeleeRange => MinRange == 0 && (PlayerClass == PlayerClassEnum.Druid && PlayerLevel >= 10 ? MaxRange == 2 : MaxRange == 5);
         public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
 
-        public long PlayerXp => reader.GetLongAtCell(50);
-        public long PlayerMaxXp => reader.GetLongAtCell(51);
-        public long PlayerXpPercentage => (PlayerXp * 100) / (PlayerMaxXp == 0 ? 1 : PlayerMaxXp);
+        public int PlayerXp => reader.GetIntAtCell(50);
+        public int PlayerMaxXp => reader.GetIntAtCell(51);
+        public int PlayerXpPercentage => (PlayerXp * 100) / (PlayerMaxXp == 0 ? 1 : PlayerMaxXp);
 
-        private long UIErrorMessage => reader.GetLongAtCell(52);
+        private int UIErrorMessage => reader.GetIntAtCell(52);
         public UI_ERROR LastUIErrorMessage { get; set; }
 
 
@@ -141,8 +139,8 @@ namespace Core
 
         public bool IsAutoShoting => PlayerBitValues.IsAutoRepeatSpellOn_AutoShot;
 
-        public long SpellBeingCast => reader.GetLongAtCell(53);
-        public long ComboPoints => reader.GetLongAtCell(54);
+        public int SpellBeingCast => reader.GetIntAtCell(53);
+        public int ComboPoints => reader.GetIntAtCell(54);
 
         public AuraCount AuraCount => new AuraCount(reader, 55);
 
@@ -153,43 +151,43 @@ namespace Core
         public int TargetDebuffCount => AuraCount.TargetDebuff;
 
 
-        public int TargetId => (int)reader.GetLongAtCell(56);
-        public long TargetGuid => reader.GetLongAtCell(57);
+        public int TargetId => reader.GetIntAtCell(56);
+        public int TargetGuid => reader.GetIntAtCell(57);
 
         public bool IsCasting => SpellBeingCast != 0;
 
-        public long SpellBeingCastByTarget => reader.GetLongAtCell(58);
+        public int SpellBeingCastByTarget => reader.GetIntAtCell(58);
         public bool IsTargetCasting => SpellBeingCastByTarget != 0;
 
-        public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetLongAtCell(59);
+        public TargetTargetEnum TargetTarget => (TargetTargetEnum)reader.GetIntAtCell(59);
 
-        public RecordInt AutoShot = new RecordInt(60);
-        public RecordInt MainHandSwing = new RecordInt(61);
-        public RecordInt CastEvent = new RecordInt(62);
-        public RecordInt CastSpellId = new RecordInt(63);
+        public RecordInt AutoShot { private set; get; } = new RecordInt(60);
+        public RecordInt MainHandSwing { private set; get; } = new RecordInt(61);
+        public RecordInt CastEvent { private set; get; } = new RecordInt(62);
+        public RecordInt CastSpellId { private set; get; } = new RecordInt(63);
 
-        public RecordInt CombatCreatureGuid = new RecordInt(64);
-        public RecordInt CombatDamageDoneGuid = new RecordInt(65);
-        public RecordInt CombatDamageTakenGuid = new RecordInt(66);
-        public RecordInt CombatDeadGuid = new RecordInt(67);
+        public RecordInt CombatCreatureGuid { private set; get; } = new RecordInt(64);
+        public RecordInt CombatDamageDoneGuid { private set; get; } = new RecordInt(65);
+        public RecordInt CombatDamageTakenGuid { private set; get; } = new RecordInt(66);
+        public RecordInt CombatDeadGuid { private set; get; } = new RecordInt(67);
 
-        public int PetGuid => (int)reader.GetLongAtCell(68);
-        public int PetTargetGuid => (int)reader.GetLongAtCell(69);
+        public int PetGuid => reader.GetIntAtCell(68);
+        public int PetTargetGuid => reader.GetIntAtCell(69);
         public bool PetHasTarget => PetTargetGuid != 0;
 
-        public int CastCount => (int)reader.GetLongAtCell(70);
+        public int CastCount => reader.GetIntAtCell(70);
 
-        public long LastLootTime => reader.GetLongAtCell(97);
+        public int LastLootTime => reader.GetIntAtCell(97);
 
-        public RecordInt GlobalTime = new RecordInt(98);
+        public RecordInt GlobalTime { private set; get; } = new RecordInt(98);
 
         // https://wowpedia.fandom.com/wiki/Mob_experience
         public bool TargetYieldXP => PlayerLevel switch
         {
-            long n when n < 5 => true,
-            long n when n >= 6 && n <= 39 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 10f) - 5),
-            long n when n >= 40 && n <= 59 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 5f) - 5),
-            long n when n >= 60 && n <= 70 => TargetLevel > PlayerLevel - 9,
+            int n when n < 5 => true,
+            int n when n >= 6 && n <= 39 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 10f) - 5),
+            int n when n >= 40 && n <= 59 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 5f) - 5),
+            int n when n >= 60 && n <= 70 => TargetLevel > PlayerLevel - 9,
             _ => false
         };
 
@@ -214,7 +212,7 @@ namespace Core
                 CreatureHistory.Update(CombatDamageDoneGuid.Value, 100f, DamageDone);
             }
 
-            CreatureHistory.Update((int)TargetGuid, (int)TargetHealthPercentage, Targets);
+            CreatureHistory.Update(TargetGuid, TargetHealthPercentage, Targets);
 
             // set dead mob health everywhere
 
@@ -248,7 +246,7 @@ namespace Core
         public void DecrementKillCount()
         {
             lastCombatKillCount--;
-            if(lastCombatKillCount < 0)
+            if (lastCombatKillCount < 0)
             {
                 ResetKillCount();
             }

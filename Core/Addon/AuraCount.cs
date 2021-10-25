@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Core
 {
-    public class AuraCount
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+    public struct AuraCount
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
         public int Hash { private set; get; }
         public int PlayerDebuff { private set; get; }
@@ -14,7 +16,7 @@ namespace Core
 
         public AuraCount(ISquareReader squareReader, int cell)
         {
-            Hash = TargetBuff = (int)squareReader.GetLongAtCell(cell);
+            Hash = TargetBuff = squareReader.GetIntAtCell(cell);
 
             // formula
             // playerDebuffCount * 1000000 + playerBuffCount * 10000 + targetDebuffCount * 100 + targetBuffCount

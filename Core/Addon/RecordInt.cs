@@ -10,7 +10,7 @@ namespace Core
         public int Value { private set; get; }
         public DateTime LastChanged { private set; get; }
 
-        public long ElapsedMs => (long)(DateTime.Now - LastChanged).TotalMilliseconds;
+        public int ElapsedMs => (int)(DateTime.Now - LastChanged).TotalMilliseconds;
 
         public event EventHandler? Changed;
 
@@ -21,7 +21,7 @@ namespace Core
 
         public bool Updated(ISquareReader reader)
         {
-            temp = (int)reader.GetLongAtCell(cell);
+            temp = reader.GetIntAtCell(cell);
             if (temp != Value)
             {
                 Value = temp;
@@ -35,7 +35,7 @@ namespace Core
 
         public void Update(ISquareReader reader)
         {
-            temp = (int)reader.GetLongAtCell(cell);
+            temp = reader.GetIntAtCell(cell);
             if (temp != Value)
             {
                 Value = temp;

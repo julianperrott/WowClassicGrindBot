@@ -2,9 +2,9 @@
 {
     public class BuffStatus
     {
-        public long Value { get; private set; }
+        public int Value { get; private set; }
 
-        public BuffStatus(long value)
+        public BuffStatus(int value)
         {
             this.Value = value;
         }

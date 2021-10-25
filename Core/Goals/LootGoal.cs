@@ -25,7 +25,7 @@ namespace Core.Goals
         private readonly CombatUtil combatUtil;
 
         private bool debug = true;
-        private long lastLoot;
+        private int lastLoot;
 
         public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil, AreaDB areaDb)
         {

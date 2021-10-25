@@ -2,15 +2,9 @@
 {
     public class DebuffStatus
     {
-        private long value;
+        private readonly int value;
 
-        public DebuffStatus(string name)
-        {
-            this.name = name;
-            this.value = 0;
-        }
-
-        public DebuffStatus(long value)
+        public DebuffStatus(int value)
         {
             this.value = value;
         }
@@ -19,8 +13,6 @@
         {
             return (value & (1 << pos)) != 0;
         }
-
-        public string name { get; set; } = string.Empty;
 
         // Priest
         public bool ShadowWordPain => IsBitSet(0);

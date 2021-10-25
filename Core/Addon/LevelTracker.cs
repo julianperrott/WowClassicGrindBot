@@ -6,17 +6,17 @@ namespace Core
     {
         private readonly object dummyLock = new object();
         private readonly PlayerReader playerReader;
-        private WowPoint corpseLocation = new WowPoint(-1,-1);
+        private WowPoint corpseLocation = new WowPoint(-1, -1);
 
-        private long level = 0;
-        private long lastXp = 0;
+        private int level = 0;
+        private int lastXp = 0;
 
         private DateTime levelStartTime = DateTime.Now;
-        private long levelStartXP = 0;
+        private int levelStartXP = 0;
 
         public DateTime PredictedLevelTime { get; private set; } = DateTime.Now;
-        public long MobsKilled { get; private set; }
-        public long Death { get; set; }
+        public int MobsKilled { get; private set; }
+        public int Death { get; set; }
         public string TimeToLevel { get; private set; } = string.Empty;
 
         public LevelTracker(PlayerReader playerReader)

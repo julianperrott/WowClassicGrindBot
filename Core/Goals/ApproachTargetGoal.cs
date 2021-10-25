@@ -27,7 +27,7 @@ namespace Core.Goals
         private double lastPlayerDistance;
         private WowPoint lastPlayerLocation;
 
-        private long initialTargetGuid;
+        private int initialTargetGuid;
         private double initialMinRange;
 
         private int SecondsSinceApproachStarted => (int)(DateTime.Now - approachStart).TotalSeconds;

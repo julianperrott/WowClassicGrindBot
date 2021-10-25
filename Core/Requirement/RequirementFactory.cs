@@ -16,7 +16,7 @@ namespace Core
         private readonly CreatureDB creatureDb;
         private readonly ItemDB itemDb;
 
-        private readonly Dictionary<string, Func<long>> valueDictionary = new Dictionary<string, Func<long>>();
+        private readonly Dictionary<string, Func<int>> valueDictionary = new Dictionary<string, Func<int>>();
 
         private readonly Dictionary<string, Func<bool>> booleanDictionary = new Dictionary<string, Func<bool>>();
 
@@ -195,7 +195,7 @@ namespace Core
                 { "Serpent Sting", ()=> playerReader.Debuffs.SerpentSting },
             };
 
-            valueDictionary = new Dictionary<string, Func<long>>
+            valueDictionary = new Dictionary<string, Func<int>>
             {
                 { "Health%", () => playerReader.HealthPercent },
                 { "TargetHealth%", () => playerReader.TargetHealthPercentage },
@@ -416,7 +416,7 @@ namespace Core
             {
                 var parts = requirement.Split(":");
                 var spellsPart = parts[1].Split("|");
-                var spellIds = spellsPart.Select(x => long.Parse(x.Trim())).ToArray();
+                var spellIds = spellsPart.Select(x => int.Parse(x.Trim())).ToArray();
 
                 var spellIdsStringFormatted = string.Join(", ", spellIds);
 

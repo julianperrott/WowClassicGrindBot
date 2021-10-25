@@ -470,7 +470,7 @@ namespace Core.Goals
                 case UI_ERROR.CAST_SUCCESS:
                     break;
                 case UI_ERROR.ERR_SPELL_FAILED_STUNNED:
-                    long debuffCount = playerReader.PlayerDebuffCount;
+                    int debuffCount = playerReader.PlayerDebuffCount;
                     if (debuffCount != 0)
                     {
                         logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_FAILED_STUNNED} -- Wait till losing debuff!");
@@ -584,7 +584,7 @@ namespace Core.Goals
 
                     break;
                 case UI_ERROR.ERR_SPELL_FAILED_STUNNED:
-                    long debuffCount = playerReader.PlayerDebuffCount;
+                    int debuffCount = playerReader.PlayerDebuffCount;
                     if (debuffCount != 0)
                     {
                         logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_FAILED_STUNNED} -- Wait till losing debuff!");

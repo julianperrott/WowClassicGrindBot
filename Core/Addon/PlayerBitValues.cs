@@ -2,10 +2,10 @@
 {
     public class PlayerBitValues
     {
-        private readonly long value1;
-        private readonly long value2;
+        private readonly int value1;
+        private readonly int value2;
 
-        public PlayerBitValues(long value1, long value2)
+        public PlayerBitValues(int value1, int value2)
         {
             this.value1 = value1;
             this.value2 = value2;
