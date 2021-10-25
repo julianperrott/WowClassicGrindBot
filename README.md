@@ -76,7 +76,7 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 
 Put the contents of the repo into a folder. e.g "C:\WowClassicGrindBot". I am going to refer to this folder from now on, so just substitute your own folder path.
 
-## 2.1 Using V1 Local/Remote Pathhing: Download the MPQ route files
+## 2 Using V1 Local/Remote Pathhing: Download the MPQ route files
 
 This files are required for to find paths from where you are to the grind area, vendor and repair.
 
@@ -102,13 +102,11 @@ Copy the previusly mentioned files to **\Json\MPQ** folder (e.g. C:\WowClassicGr
 
 ## 3.2 Optional - Replace default game Font
 
-I would highly suggest to replace the default World of Warcraft font with a much **Bolder** one.
-
-Follow [this guide](https://tbc.wowhead.com/guides/changing-wow-text-font)
+I would highly suggest to replace the default World of Warcraft font with a much **Bolder** one with [this guide](https://tbc.wowhead.com/guides/changing-wow-text-font)
 
 Should be only concerned about `Friz Quadrata: the "Everything Else" Font` which is the `FRIZQT__.ttf` named file.
 
-By replacing the default with for example - [Robot-Medium](https://fonts.google.com/specimen/Roboto?thickness=5) - you can highly increase the success rate of the `NpcNameFinder` compontent which is responsible to find - friendly, enemy, corpse - names above NPCs head.
+Example - [Robot-Medium](https://fonts.google.com/specimen/Roboto?thickness=5) - Shows big improvement to the `NpcNameFinder` compontent which is responsible to find - friendly, enemy, corpse - names above NPCs head.
 
 ## 4. Build the application
 
@@ -143,21 +141,21 @@ The bot reads the game state using small blocks of colour shown at the top of th
     pause
     ```
 
-2. Execute the `run.bat`. This will start the bot and Chrome, Wow must be already running. If you get `"Unable to find the Wow process is it running ?"` in the console window then it can't find wow.exe.
+2. Execute the `run.bat`. This will start the bot and Chrome, Wow must be already running. If you get `"Unable to find the Wow process is it running ?"` in the console window then it can't find exe.
 
 3. When running the BlazorServer for the first time you will have to follow a setup process:
     * Just start the game and wait in the character selection screen.
     * Click `2. Addon Configuration`
     * Click `Find InstallPath` -> `InstallPath` should be filled otherwise, fill out manually
-    * Fill the `Author`
-    * Fill the `Title`
+    * Fill the `Author` freely
+    * Fill the `Title` freely
     * Then press `Install & Save` button -> Log should see `AddonConfigurator.Install successful`
     * Required to restart the Game 
     * Enter world with your desired character
     * Click `5. Frame Configuration`
     * Click `Auto Configure and Restart`
 
-4. Under the `Addon Configuration` you can check if theres a newer version available for the addon. In that case just press the `install` button then have to restart the game client and the bot it self in order to use it properly. 
+4. Under the `Addon Configuration` you can check if theres a **newer version available** for the addon. In that case just press the `install` button then have to restart the game client and the bot it self in order to use it properly. 
 
 ## 5. The bot should restart and show the dashboard page.
 
