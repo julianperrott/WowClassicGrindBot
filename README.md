@@ -900,34 +900,34 @@ Formula: `SpellInRange:[Numeric integer value]`
 
 | Class | Spell | id |
 | --- | --- | --- |
-| ROGUE | Sinister Strike | 0 |
-| ROGUE | Throw | 1 |
-| ROGUE | Shoot Gun | 2 |
-| DRUID | Wrath | 0 |
-| DRUID | Bash | 1 |
-| DRUID | Rip | 2 |
-| DRUID | Maul | 3 |
-| WARRIOR | Charge | 0 |
-| WARRIOR | Rend | 1 |
-| WARRIOR | Shoot Gun | 2 |
-| PRIEST | Shadow Word: Pain | 0 |
-| PRIEST | Shoot | 1 |
-| PRIEST | Mind Flay | 2 |
-| PRIEST | Mind Blast | 3 |
-| PRIEST | Smite | 4 |
-| PALADIN | Judgement | 0 |
-| MAGE | Fireball | 0 |
-| MAGE | Shoot| 1 |
-| MAGE | Pyroblast | 2 |
-| MAGE | Frostbolt | 3 |
-| MAGE | Fire Blast | 4 |
-| HUNTER | Raptor Strike | 0 |
-| HUNTER | Auto Shot | 1 |
-| HUNTER | Serpent Sting | 2 |
-| WARLOCK | Shadow Bolt | 0 |
-| WARLOCK | Shoot | 1 |
-| SHAMAN | Lightning Bolt | 0 |
-| SHAMAN | Earth Shock | 1 |
+| Rogue | Sinister Strike | 0 |
+| Rogue | Throw | 1 |
+| Rogue | Shoot Gun | 2 |
+| Druid | Wrath | 0 |
+| Druid | Bash | 1 |
+| Druid | Rip | 2 |
+| Druid | Maul | 3 |
+| Warrior | Charge | 0 |
+| Warrior | Rend | 1 |
+| Warrior | Shoot Gun | 2 |
+| Priest | Shadow Word: Pain | 0 |
+| Priest | Shoot | 1 |
+| Priest | Mind Flay | 2 |
+| Priest | Mind Blast | 3 |
+| Priest | Smite | 4 |
+| Paladin | Judgement | 0 |
+| Mage | Fireball | 0 |
+| Mage | Shoot| 1 |
+| Mage | Pyroblast | 2 |
+| Mage | Frostbolt | 3 |
+| Mage | Fire Blast | 4 |
+| Hunter | Raptor Strike | 0 |
+| Hunter | Auto Shot | 1 |
+| Hunter | Serpent Sting | 2 |
+| Warlock | Shadow Bolt | 0 |
+| Warlock | Shoot | 1 |
+| Shaman | Lightning Bolt | 0 |
+| Shaman | Earth Shock | 1 |
 
 e.g.
 ```json
