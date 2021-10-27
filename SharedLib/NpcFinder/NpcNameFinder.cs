@@ -166,17 +166,6 @@ namespace SharedLib.NpcFinder
             }
         }
 
-#nullable enable
-        public NpcPosition? GetClosestNpc()
-        {
-            var info = string.Join(", ", Npcs.Select(n => n.Height.ToString() + $"({n.Min.X},{n.Min.Y})"));
-            if (!string.IsNullOrEmpty(info))
-                logger.LogInformation($"> NPCs found: {info}");
-
-            return Npcs.Count == 0 ? null : Npcs.First();
-        }
-#nullable disable
-
         private void DetermineNpcs()
         {
             npcs = new List<List<LineOfNpcName>>();

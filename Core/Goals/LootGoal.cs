@@ -71,7 +71,7 @@ namespace Core.Goals
             combatUtil.Update();
 
             await npcNameTargeting.WaitForNUpdate(2);
-            bool foundCursor = await npcNameTargeting.FindByCursorType(Cursor.CursorClassification.Loot);
+            bool foundCursor = await npcNameTargeting.FindBy(CursorType.Loot);
             if (foundCursor)
             {
                 Log("Found corpse - clicked");

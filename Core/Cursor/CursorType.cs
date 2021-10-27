@@ -1,6 +1,6 @@
-﻿namespace Core.Cursor
+﻿namespace Core
 {
-    public enum CursorClassification
+    public enum CursorType
     {
         Kill = 10,
         Loot = 20,
@@ -9,7 +9,6 @@
         Mine = 50,
         Herb = 60,
         Vendor = 70,
-        Repair = 80,
-        Unknown = 999
+        Repair = 80
     }
 }
