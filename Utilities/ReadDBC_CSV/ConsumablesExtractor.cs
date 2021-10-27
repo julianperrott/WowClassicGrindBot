@@ -44,7 +44,7 @@ namespace ReadDBC_CSV
 
             var waterIds = ExtractItem(itemEffect, waterSpells);
             waterIds.Sort((a, b) => a.Id.CompareTo(b.Id));
-            Console.WriteLine($"Waters: {foodIds.Count}");
+            Console.WriteLine($"Waters: {waterIds.Count}");
             File.WriteAllText(Path.Join(path, "waters.json"), JsonConvert.SerializeObject(waterIds));
         }
 
