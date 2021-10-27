@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Database;
+using SharedLib;
 
 namespace Core
 {
@@ -501,7 +502,7 @@ namespace Core
             var npcId = int.Parse(parts[1]);
 
             string npcName = string.Empty;
-            if (creatureDb.Entries.TryGetValue(npcId, out Addon.Creature creature))
+            if (creatureDb.Entries.TryGetValue(npcId, out Creature creature))
             {
                 npcName = creature.Name;
             }

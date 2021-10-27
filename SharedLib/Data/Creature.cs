@@ -1,4 +1,4 @@
-﻿namespace Core.Addon
+﻿namespace SharedLib
 {
     public class Creature
     {
