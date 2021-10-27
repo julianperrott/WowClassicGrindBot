@@ -51,7 +51,6 @@ namespace ConsoleApp10
         {
             public int Entry { get; set; }
             public string Name { get; set; }
-            public string SubName { get; set; }
 
             public static List<string> columnIndexs = new List<string> { "Entry", "Name", "SubName", "MinLevel", "MaxLevel", "ModelId1", "ModelId2", "ModelId3", "ModelId4", "Faction", "Scale", "Family", "CreatureType", "InhabitType", "RegenerateStats", "RacialLeader", "NpcFlags", "UnitFlags", "DynamicFlags", "ExtraFlags", "CreatureTypeFlags", "SpeedWalk", "SpeedRun", "Detection", "CallForHelp", "Pursuit", "Leash", "Timeout", "UnitClass", "Rank", "HealthMultiplier", "PowerMultiplier", "DamageMultiplier", "DamageVariance", "ArmorMultiplier", "ExperienceMultiplier", "MinLevelHealth", "MaxLevelHealth", "MinLevelMana", "MaxLevelMana", "MinMeleeDmg", "MaxMeleeDmg", "MinRangedDmg", "MaxRangedDmg", "Armor", "MeleeAttackPower", "RangedAttackPower", "MeleeBaseAttackTime", "RangedBaseAttackTime", "DamageSchool", "MinLootGold", "MaxLootGold", "LootId", "PickpocketLootId", "SkinningLootId", "KillCredit1", "KillCredit2", "MechanicImmuneMask", "SchoolImmuneMask", "ResistanceHoly", "ResistanceFire", "ResistanceNature", "ResistanceFrost", "ResistanceShadow", "ResistanceArcane", "PetSpellDataId", "MovementType", "TrainerType", "TrainerSpell", "TrainerClass", "TrainerRace", "TrainerTemplateId", "VendorTemplateId", "GossipMenuId", "visibilityDistanceType", "EquipmentTemplateId", "Civilian", "AIName", "ScriptName" };
 
@@ -59,7 +58,6 @@ namespace ConsoleApp10
             {
                 var entryIndex = FindIndex(columnIndexs, "Entry");
                 var nameIndex = FindIndex(columnIndexs, "Name");
-                var subNameIndex = FindIndex(columnIndexs, "SubName");
 
                 var items = new List<Creature>();
                 Action<string> extractLine = line =>
@@ -70,8 +68,7 @@ namespace ConsoleApp10
                     items.Add(new Creature
                     {
                         Name = values[nameIndex],
-                        Entry = int.Parse(values[entryIndex].Replace("(", "")),
-                        SubName = values[subNameIndex]
+                        Entry = int.Parse(values[entryIndex].Replace("(", ""))
                     });
                 };
 
