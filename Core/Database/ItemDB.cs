@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Core.Addon;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SharedLib;
@@ -38,10 +37,10 @@ namespace Core.Database
                 Items[entry.Key].AHPrice = entry.Value;
             }
 
-            var foods = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "foods.json")));
+            var foods = JsonConvert.DeserializeObject<List<EntityId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "foods.json")));
             foods.ForEach(x => FoodIds.Add(x.Id));
 
-            var waters = JsonConvert.DeserializeObject<List<ItemId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "waters.json")));
+            var waters = JsonConvert.DeserializeObject<List<EntityId>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "waters.json")));
             waters.ForEach(x => WaterIds.Add(x.Id));
         }
 
