@@ -133,14 +133,11 @@ namespace SharedLib
         {
             for (int x = startX; x < bmp.Width; x++)
             {
-                for (int y = 0; y < bmp.Height; y++)
+                for (int y = 0; y < meta.rows; y++)
                 {
                     if (bmp.GetPixel(x, y).B == dataframe)
                     {
-                        if (meta.size > 1 && x + 1 < bmp.Width && y + 1 < bmp.Height && bmp.GetPixel(x + 1, y + 1).B == dataframe)
-                            return new Point(x + 1, y + 1);
-                        else
-                            return new Point(x, y);
+                        return new Point(x, y);
                     }
                 }
             }
