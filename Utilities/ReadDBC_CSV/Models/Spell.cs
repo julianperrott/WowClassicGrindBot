@@ -1,15 +1,14 @@
-﻿namespace ReadDBC_CSV_Spell
+﻿namespace ReadDBC_CSV
 {
-    public class Spell
+    public struct Spell
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
         public int Level { get; set; }
 
-        public override string ToString()
+        public void SetLevel(int level)
         {
-            return $"{Id} - {Name} - {Level}";
+            Level = level;
         }
     }
 }

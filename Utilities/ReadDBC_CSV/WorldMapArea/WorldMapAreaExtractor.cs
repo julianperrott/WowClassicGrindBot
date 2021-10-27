@@ -4,17 +4,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace ReadDBC_CSV_WorldMapArea
+namespace ReadDBC_CSV
 {
-    public class Transform
+    public class WorldMapAreaExtractor : IExtractor
     {
-        public const string path = "../../../data/";
+        private readonly string path;
+        private readonly string wma_build;
 
-        List<string> acceptedOverride = new List<string> { "Hellfire", "Kalimdor" };
+        public List<string> FileRequirement { get; } = new List<string>()
+        {
+            "worldmaparea.csv",
+            "uimap.csv"
+        };
+
+        private List<string> acceptedOverride = new List<string> { "Hellfire", "Kalimdor" };
 
         private const string expansion01Continent = "Expansion01";
 
-        readonly Dictionary<int, string> tbc_expansionContinent = new Dictionary<int, string>
+        private readonly Dictionary<int, string> tbc_expansionContinent = new Dictionary<int, string>
         {
             { 464, expansion01Continent }, // AzuremystIsle
             { 476, expansion01Continent }, // BloodmystIsle
@@ -27,10 +34,50 @@ namespace ReadDBC_CSV_WorldMapArea
             { 499, expansion01Continent }, // Sunwell
         };
 
-        public WorldMapArea CreateV2(string[] values)
+
+
+        public WorldMapAreaExtractor(string path, string wma_build)
         {
-            //https://wow.tools/dbc/?dbc=worldmaparea&build=2.0.0.5610#page=1
-            //https://wow.tools/dbc/?dbc=worldmaparea&build=2.4.3.8606#page=1
+            this.path = path;
+            this.wma_build = wma_build;
+        }
+
+        public void Run()
+        {
+            Func<string[], WorldMapArea> wmaParser = CreateV2;
+
+            if (Version.TryParse(wma_build, out Version version) && version.Major == 1)
+                wmaParser = CreateV1;
+
+            var list = File.ReadAllLines(Path.Join(path, FileRequirement[0])).ToList().
+                Skip(1).Select(l => l.Split(",")).Select(l => wmaParser(l)).ToList();
+
+            CorrectTypos(ref list);
+
+            var uimapLines = File.ReadAllLines(Path.Join(path, FileRequirement[1])).ToList().
+                Select(l => l.Split(","));
+            list.ForEach(wmp => PopulateUIMap(wmp, uimapLines));
+
+            list.ForEach(l =>
+            {
+                if (tbc_expansionContinent.ContainsKey(l.ID))
+                {
+                    l.Continent = tbc_expansionContinent[l.ID];
+                    Console.WriteLine($" - {l.AreaName} expansion continent set to {l.Continent}");
+                }
+            });
+
+            Console.WriteLine("Unsupported mini maps areas: " + string.Join(", ", list.Where(l => l.UIMapId == 0).Select(s => s.AreaName).OrderBy(s => s)));
+
+            var duplicates = list.GroupBy(s => s.MapID).Where(g => g.Count() > 1).Select(g => g.Key);
+            Console.WriteLine("Duplicated 'MapID' (continents accepted): " + string.Join(", ", duplicates.ToArray()));
+
+            File.WriteAllText(Path.Join(path, "WorldMapArea.json"), JsonConvert.SerializeObject(list, Formatting.Indented));
+        }
+
+        // https://wow.tools/dbc/?dbc=worldmaparea&build=2.4.3.8606
+        private WorldMapArea CreateV2(string[] values)
+        {
             return new WorldMapArea
             {
                 ID = int.Parse(values[0]),
@@ -43,9 +90,10 @@ namespace ReadDBC_CSV_WorldMapArea
                 LocBottom = float.Parse(values[7]),
             };
         }
-        public WorldMapArea CreateV1(string[] values)
+
+        // https://wow.tools/dbc/?dbc=worldmaparea&build=1.13.0.28377
+        private WorldMapArea CreateV1(string[] values)
         {
-            //https://wow.tools/dbc/?dbc=worldmaparea&build=1.13.0.28377
             return new WorldMapArea
             {
                 AreaName = values[0],
@@ -58,49 +106,10 @@ namespace ReadDBC_CSV_WorldMapArea
                 AreaID = int.Parse(values[7]),
 
                 ID = int.Parse(values[15]),
-
             };
         }
 
-        public List<WorldMapArea> Validate()
-        {
-            Console.WriteLine("\nResult:");
-
-            var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(Path.Join(path, "WorldMapArea.json")));
-            Console.WriteLine("Unsupported mini maps areas: " + string.Join(", ", list.Where(l => l.UIMapId == 0).Select(s => s.AreaName).OrderBy(s => s)));
-
-            var duplicates = list.GroupBy(s => s.MapID).Where(g => g.Count() > 1).Select(g => g.Key);
-            Console.WriteLine("Duplicated 'MapID' (continents accepted): " + string.Join(", ", duplicates.ToArray()));
-
-            return list;
-        }
-
-        public List<WorldMapArea> CreateWorldMapAreaJson()
-        {
-            var list = File.ReadAllLines(Path.Join(path, "WorldMapArea.csv")).ToList().Skip(1).Select(l => l.Split(","))
-                .Select(l => CreateV2(l))
-                .ToList();
-
-            CorrectTypos(ref list);
-
-            var uimapLines = File.ReadAllLines(Path.Join(path, "uimap.csv")).ToList().Select(l => l.Split(","));
-            list.ForEach(wmp => PopulateUIMap(wmp, uimapLines));
-
-            list.ForEach(l => { 
-                if(tbc_expansionContinent.ContainsKey(l.ID))
-                {
-                    l.Continent = tbc_expansionContinent[l.ID];
-                    Console.WriteLine($" - {l.AreaName} expansion continent set to {l.Continent}");
-                }
-            });
-
-
-            File.WriteAllText(Path.Join(path, "WorldMapArea.json"), JsonConvert.SerializeObject(list, Formatting.Indented));
-
-            return list;
-        }
-
-        public void PopulateUIMap(WorldMapArea area, IEnumerable<string[]> uimapLines)
+        private void PopulateUIMap(WorldMapArea area, IEnumerable<string[]> uimapLines)
         {
             var kalimdor = uimapLines.Where(s => s[0] == "Kalimdor").Select(s => s[1]).FirstOrDefault();
 
@@ -186,7 +195,7 @@ namespace ReadDBC_CSV_WorldMapArea
             }
         }
 
-        public WorldMapArea? GetWorldMapArea(List<WorldMapArea> worldMapAreas, float x, float y, string continent, int mapHint)
+        private WorldMapArea? GetWorldMapArea(List<WorldMapArea> worldMapAreas, float x, float y, string continent, int mapHint)
         {
             var maps = worldMapAreas.Where(i => x <= i.LocTop)
                 .Where(i => x >= i.LocBottom)
