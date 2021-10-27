@@ -1,22 +1,19 @@
 ﻿@inject Core.IAddonReader addonReader
 @inject Core.IBotController botController
 @inject IJSRuntime JSRuntime
-@using Core.Addon
+@using SharedLib
 @using Core
 @using Microsoft.AspNetCore.Html
 
 <div class="card">
     <div class="card-header">
         Bag Changes
-        <div class="float-right">
-            <Money Value="ahmoney" />
-        </div>
     </div>
     <div class="card-body">
         @foreach (var bagItem in NewItems)
         {
             <div class="animate__animated animate__backInUp">
-                <BagItemComponent Item="bagItem" ShowChangesPrice="true" />
+                <BagItemComponent BagItem="bagItem" ShowChangesPrice="true" />
                 <hr style="margin:2px" />
             </div>
         }
@@ -26,9 +23,6 @@
 
     List<Core.BagItem> NewItems = new List<Core.BagItem>();
 
-    int[] money = new int[0];
-    int[] ahmoney = new int[0];
-
     MarkupString resultString = (MarkupString)"";
 
     protected override void OnInitialized()
@@ -36,31 +30,8 @@
         addonReader.BagReader.DataChanged += (o, e) =>
         {
             this.NewItems = addonReader.BagReader.BagItems.Where(i => i.WasRecentlyUpdated).ToList();
-            money = Item.ToSellPrice(this.NewItems.Sum(ItemValue));
-            ahmoney = Item.ToSellPrice(this.NewItems.Sum(ItemAHValue));
 
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };
-    }
-
-    protected int ItemValue(BagItem item)
-    {
-        if (item.LastChange == 0)
-        {
-            return item.Item.SellPrice;
-        }
-        return item.LastChange * item.Item.SellPrice;
-    }
-
-    protected int ItemAHValue(BagItem item)
-    {
-        var price = item.Item.AHPrice;
-        if (item.IsSoulbound) { price = item.Item.SellPrice; }
-
-        if (item.LastChange == 0)
-        {
-            return price;
-        }
-        return item.LastChange * price;
     }
 }

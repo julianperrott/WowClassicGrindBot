@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Core.Talents;
+using SharedLib;
 
 namespace Core.Database
 {

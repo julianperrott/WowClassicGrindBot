@@ -9,4 +9,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="SharedLib">
+      <HintPath>..\..\SharedLib\bin\Debug\netstandard2.1\SharedLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

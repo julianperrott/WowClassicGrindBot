@@ -1,4 +1,4 @@
-Name_lang,ID,ParentUiMapID,Flags,System,Type,Field_2_5_1_38043_006,Field_2_5_1_38043_007,Field_2_5_1_38043_008,HelpTextPosition,Field_2_5_1_38043_010,Field_2_5_1_38043_011,Field_2_5_1_38043_012
+Name_lang,ID,ParentUiMapID,Flags,System,Type,BountySetID,BountyDisplayLocation,VisibilityPlayerConditionID,HelpTextPosition,BkgAtlasID,LevelRangeMin,LevelRangeMax
 The Shattered Halls,246,1944,0,0,4,0,0,0,0,0,0,0
 Auchenai Crypts,256,1952,0,0,4,0,0,0,0,0,0,0
 Auchenai Crypts,257,1952,0,0,4,0,0,0,0,0,0,0

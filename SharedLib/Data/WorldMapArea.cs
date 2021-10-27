@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-
-namespace SharedLib
+﻿namespace SharedLib
 {
     public class WorldMapArea
     {

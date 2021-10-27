@@ -1,23 +1,21 @@
-﻿@if (Item != null)
+﻿@using SharedLib
+@using Core 
+@if (BagItem != null)
 {
-    <a href="https://tbc.wowhead.com/item=@Item.ItemId" target="_blank" data-wowhead="item=@Item.ItemId" class="small" style="text-decoration:none">
+    <a href="https://tbc.wowhead.com/item=@BagItem.ItemId" target="_blank" data-wowhead="item=@BagItem.ItemId" class="small" style="text-decoration:none">
         <b>
-            <span style="color:@BagItemColour(Item.Item)">
-                @if (Item.Count > 1)
-                {@Item.Count<span>&nbsp;</span>}
-                @Item.Item.Name
-                @if (Item.IsSoulbound)
+            <span style="color:@BagItemColour(BagItem.Item)">
+                @if (BagItem.Count > 1)
+                {@BagItem.Count<span>&nbsp;</span>}
+                @BagItem.Item.Name
+                @if (BagItem.IsSoulbound)
                 {
                     <span>(S)</span>
                 }
-                @if (Item.Item.SellPrice > 0)
-                {
-                    <Money Value="GetItemPrice(Item)" />
-                }
             </span>
-            @if (Item.WasRecentlyUpdated)
+            @if (BagItem.WasRecentlyUpdated)
             {
-                <span class="badge badge-info"> @Item.LastChangeDescription </span>
+                <span class="badge badge-info"> @BagItem.LastChangeDescription </span>
             }
         </b>
     </a>
@@ -25,14 +23,14 @@
 @code {
 
     [Parameter]
-    public Core.BagItem? Item { get; set; }
+    public Core.BagItem? BagItem { get; set; }
 
     [Parameter]
     public bool ShowChangesPrice { get; set; } = false;
 
     List<string> itemColour = new List<string> { "grey", "black", "green", "blue", "purple", "yellow", "yellow", "yellow" };
 
-    protected string BagItemColour(Core.Addon.Item item)
+    protected string BagItemColour(Item item)
     {
         if (item.Quality < 0 || item.Quality > 7) { return "black"; }
         return itemColour[item.Quality];
@@ -40,22 +38,9 @@
 
     List<string> itemBadge = new List<string> { "badge-secondary", "badge-dark", "badge-success", "badge-primary", "badge-warning", "badge-warning", "badge-warning", "badge-warning" };
 
-    protected string BagItemBadge(Core.Addon.Item item)
+    protected string BagItemBadge(Item item)
     {
         if (item.Quality < 0 || item.Quality > 7) { return "badge-dark"; }
         return itemBadge[item.Quality];
-    }
-    protected int[] GetItemPrice(Core.BagItem item)
-    {
-        var price = item.Item.AHPrice;
-        if (item.IsSoulbound) { price = item.Item.SellPrice; }
-
-        var value = item.Count * price;
-        if (ShowChangesPrice)
-        {
-            value = (item.LastChange == 0 ? item.Count : item.LastChange) * price;
-        }
-
-        return Core.Addon.Item.ToSellPrice(value);
     }
 }

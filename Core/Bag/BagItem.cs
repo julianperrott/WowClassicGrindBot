@@ -1,5 +1,6 @@
 ﻿using Core.Addon;
 using System;
+using SharedLib;
 
 namespace Core
 {

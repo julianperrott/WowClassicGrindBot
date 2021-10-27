@@ -3,18 +3,13 @@
 @inject Core.IAddonReader addonReader
 @inject Core.IBotController botController
 @inject IJSRuntime JSRuntime;
-@using Core.Addon
-@using Microsoft.AspNetCore.Html
+@using SharedLib 
 
 <BotHeader />
 
 <div class="card">
     <div class="card-header">
         Bag Contents
-        <div class="float-right">
-            <Money Value="ahMoney" />
-            (<Money Value="vendMoney" />)
-        </div>
     </div>
     <div class="card-body" style="padding-bottom: 0">
 
@@ -37,7 +32,7 @@
                             @{ var bagItem = addonReader.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
                             @if (bagItem != null)
                             {
-                                <BagItemComponent Item="bagItem" />
+                                <BagItemComponent BagItem="bagItem" />
                             }
                         </td>
                     }
@@ -50,19 +45,10 @@
 <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
 
 @code {
-
-    int[] vendMoney = new int[0];
-    int[] ahMoney = new int[0];
-
     protected override void OnInitialized()
     {
         addonReader.BagReader.DataChanged += (o, e) =>
         {
-            vendMoney = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => s.Item.SellPrice * s.Count));
-
-        // ignore if sellprice is 0... bit of a hack, need to check if soulbound
-        ahMoney = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => (s.IsSoulbound ? s.Item.SellPrice : s.Item.AHPrice) * s.Count));
-
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };
     }

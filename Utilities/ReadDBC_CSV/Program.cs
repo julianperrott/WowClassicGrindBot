@@ -1,149 +1,118 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
+using System.Net;
 
 namespace ReadDBC_CSV
 {
     class Program
     {
-        public class Spell
-        {
-            public int Id { get; set; }
+        static string userAgent = " Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0";
 
-            public override string ToString()
-            {
-                return Id.ToString();
-            }
+        static string path = "../../../data/";
 
-            public static List<string> columnIndexs = new List<string> { 
-                "ID", "NameSubtext_lang", "Description_lang", "AuraDescription_lang"
-            };
-
-            public static List<Spell> Extract(string srcFile, string descLang)
-            {
-                var entryIndex = FindIndex(columnIndexs, "ID");
-                var descIndex = FindIndex(columnIndexs, "Description_lang");
-
-                var items = new List<Spell>();
-                Action<string> extractLine = line =>
-                {
-                    var values = line.Split(",");
-                    if(values.Length > entryIndex && values.Length > descIndex &&
-                        values[descIndex].Contains(descLang))
-                    {
-                        Console.WriteLine($"{values[entryIndex]}");
-
-                        items.Add(new Spell
-                        {
-                            Id = int.Parse(values[entryIndex])
-                        });
-                    }
-                };
-
-                ExtractItemTemplate(srcFile, extractLine);
-
-                Console.WriteLine($"Spells\n{string.Join("\n", items)}\n");
-
-                return items;
-            }
-        }
-
-        public class Consumable
-        {
-            public int Id { get; set; }
-
-            public override string ToString()
-            {
-                return Id.ToString();
-            }
-
-            public static List<string> columnIndexs = new List<string> {
-                "ID", "LegacySlotIndex", "TriggerType", "Charges", 
-                "CoolDownMSec", "CategoryCoolDownMSec",
-                "SpellCategoryID", "SpellID", 
-                "ChrSpecializationID", "ParentItemID" 
-            };
-
-            public static void Extract(string srcFile, List<Spell> spells, string destFile)
-            {
-                var entryIndex = FindIndex(columnIndexs, "ID");
-                var spellIdIndex = FindIndex(columnIndexs, "SpellID");
-                var ParentItemIDIndex = FindIndex(columnIndexs, "ParentItemID");
-
-                var items = new List<Consumable>();
-                Action<string> extractLine = line =>
-                {
-                    var values = line.Split(",");
-                    if (values.Length > entryIndex && 
-                        values.Length > spellIdIndex &&
-                        values.Length > ParentItemIDIndex)
-                    {
-                        int spellId = int.Parse(values[spellIdIndex]);
-                        if(spells.Any(s => s.Id == spellId))
-                        {
-                            int ItemId = int.Parse(values[ParentItemIDIndex]);
-                            items.Add(new Consumable
-                            {
-                                Id = ItemId
-                            });
-                        }
-                    }
-                };
-
-                ExtractItemTemplate(srcFile, extractLine);
-
-                items.Sort((a, b) => a.Id.CompareTo(b.Id));
-                Console.WriteLine($"Consumables\n{string.Join("\n", items)}\n");
-
-                File.WriteAllText(destFile, JsonConvert.SerializeObject(items));
-            }
-        }
+        static string game_build = "2.5.2.40617";
+        static string wma_build = "2.4.3.8606";
 
         static void Main(string[] args)
         {
-            GenerateConsumables();
+            GenerateItems(path);
+            GenerateConsumables(path);
+            GenerateSpells(path);
+            GenerateTalents(path);
+            GenerateWorldMapArea(path);
         }
 
-        private static void GenerateConsumables()
+        private static void GenerateItems(string path)
         {
-            var path = "../../../data/";
-
-            var spell = Path.Join(path, "spell.csv");
-            var foods = Spell.Extract(spell, "Restores $o1 health over $d");
-            var waters = Spell.Extract(spell, "mana over $d"); //Restores $o1 mana over $d
-
-            var itemEffect = Path.Join(path, "itemeffect.csv");
-            Consumable.Extract(itemEffect, foods, Path.Join(path, "foods.json"));
-            Consumable.Extract(itemEffect, waters, Path.Join(path, "waters.json"));
+            var extractor = new ItemExtractor(path);
+            DownloadRequirements(path, extractor, game_build);
+            extractor.Run();
         }
 
-        private static int FindIndex(List<string> columnIndexs, string v)
+        private static void GenerateConsumables(string path)
         {
-            for (int i = 0; i < columnIndexs.Count; i++)
+            string foodDesc = "Restores $o1 health over $d";
+            string waterDesc = "mana over $d";
+
+            if (Version.TryParse(game_build, out Version version) && version.Major == 1)
             {
-                if (columnIndexs[i] == v)
+                waterDesc = "Restores $o1 mana over $d";
+            }
+
+            var extractor = new ConsumablesExtractor(path, foodDesc, waterDesc);
+            DownloadRequirements(path, extractor, game_build);
+            extractor.Run();
+        }
+
+        private static void GenerateSpells(string path)
+        {
+            var extractor = new SpellExtractor(path);
+            DownloadRequirements(path, extractor, game_build);
+            extractor.Run();
+        }
+
+        private static void GenerateTalents(string path)
+        {
+            var extractor = new TalentExtractor(path);
+            DownloadRequirements(path, extractor, game_build);
+            extractor.Run();
+        }
+
+        private static void GenerateWorldMapArea(string path)
+        {
+            var extractor = new WorldMapAreaExtractor(path, wma_build);
+            DownloadRequirements(path, extractor, wma_build, game_build);
+            extractor.Run();
+        }
+
+
+        #region Download files
+
+        private static void DownloadRequirements(string path, IExtractor extractor, params string[] builds)
+        {
+            foreach(var file in extractor.FileRequirement)
+            {
+                if (File.Exists(Path.Join(path, file)))
                 {
-                    return i;
+                    Console.WriteLine($"{file} already exists. Skip downloading.");
+                    continue;
+                }
+
+                foreach (var build in builds)
+                {
+                    using (var client = new WebClient())
+                    {
+                        client.Headers.Add("user-agent", userAgent);
+
+                        try
+                        {
+                            string url = DownloadURL(build, file);
+                            client.DownloadFile(url, Path.Join(path, file));
+
+                            Console.WriteLine($"{file} - {build} - Downloaded");
+
+                            break;
+                        }
+                        catch (Exception e)
+                        {
+                            if (File.Exists(Path.Join(path, file)))
+                            {
+                                File.Delete(Path.Join(path, file));
+                            }
+
+                            Console.WriteLine($"{file} - {build} - {e.Message}");
+                        }
+                    }
                 }
             }
-            throw new ArgumentOutOfRangeException(v);
         }
 
-        private static void ExtractItemTemplate(string file, Action<string> extractLine)
+        private static string DownloadURL(string build, string file)
         {
-            var stream = File.OpenText(file);
-
-            // header
-            var line = stream.ReadLine();
-            line = stream.ReadLine();
-
-            while (line != null)
-            {
-                extractLine(line);
-                line = stream.ReadLine();
-            }
+            string resource = file.Split(".")[0];
+            return $"https://wow.tools/dbc/api/export/?name={resource}&build={build}";
         }
+
+        #endregion
     }
 }

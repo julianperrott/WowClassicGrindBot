@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Core.Addon;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SharedLib;
 
 namespace Core.Database
 {

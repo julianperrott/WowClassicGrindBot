@@ -1,4 +1,4 @@
-﻿namespace Core
+﻿namespace SharedLib
 {
 #pragma warning disable CA1815 // Override equals and operator equals on value types
     public struct Spell
