@@ -521,7 +521,7 @@ namespace Core
             var count = parts.Length < 3 ? 1 : int.Parse(parts[2]);
 
             var itemName = string.Empty;
-            if (itemDb.Items.TryGetValue(itemId, out Addon.Item item))
+            if (itemDb.Items.TryGetValue(itemId, out Item item))
             {
                 itemName = item.Name;
             }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core.Addon
+namespace SharedLib
 {
     public class Item
     {
