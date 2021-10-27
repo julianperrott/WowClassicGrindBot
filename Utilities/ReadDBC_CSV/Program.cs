@@ -16,7 +16,6 @@ namespace ReadDBC_CSV
         static void Main(string[] args)
         {
             GenerateItems(path);
-
             GenerateConsumables(path);
             GenerateSpells(path);
             GenerateTalents(path);
@@ -33,7 +32,12 @@ namespace ReadDBC_CSV
         private static void GenerateConsumables(string path)
         {
             string foodDesc = "Restores $o1 health over $d";
-            string waterDesc = "mana over $d"; // classic: Restores $o1 mana over $d
+            string waterDesc = "mana over $d";
+
+            if (Version.TryParse(game_build, out Version version) && version.Major == 1)
+            {
+                waterDesc = "Restores $o1 mana over $d";
+            }
 
             var extractor = new ConsumablesExtractor(path, foodDesc, waterDesc);
             DownloadRequirements(path, extractor, game_build);
