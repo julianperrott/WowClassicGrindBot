@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SharedLib;
 
 namespace ReadDBC_CSV
 {
@@ -194,43 +195,5 @@ namespace ReadDBC_CSV
                 //    list[i].AreaName = "Isle of Quel'Danas";
             }
         }
-
-        private WorldMapArea? GetWorldMapArea(List<WorldMapArea> worldMapAreas, float x, float y, string continent, int mapHint)
-        {
-            var maps = worldMapAreas.Where(i => x <= i.LocTop)
-                .Where(i => x >= i.LocBottom)
-                .Where(i => y <= i.LocLeft)
-                .Where(i => y >= i.LocRight)
-                .Where(i => i.AreaName != "Azeroth")
-                .Where(i => i.AreaName != "Kalimdor")
-                .Where(i => i.Continent == continent)
-                .ToList();
-
-            if (!maps.Any())
-            {
-                throw new ArgumentOutOfRangeException(nameof(worldMapAreas), $"Failed to find map area for spot {x}, {y}");
-            }
-
-            if (maps.Count > 1)
-            {
-                // sometimes we end up with 2 map areas which a coord could be in which is rather unhelpful. e.g. Silithus and Feralas overlap.
-                // If we are in a zone and not moving between then the mapHint should take care of the issue
-                // otherwise we are not going to be able to work out which zone we are actually in...
-
-                if (mapHint > 0)
-                {
-                    var map = maps.Where(m => m.UIMapId == mapHint).FirstOrDefault();
-                    if (map != null)
-                    {
-                        return map;
-                    }
-                }
-
-                throw new ArgumentOutOfRangeException(nameof(worldMapAreas), "Found many map areas for spot {x}, {y}: {string.Join(", ", maps.Select(s => s.AreaName))}");
-            }
-
-            return maps.First();
-        }
-
     }
 }

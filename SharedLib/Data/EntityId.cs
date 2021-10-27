@@ -1,6 +1,6 @@
 ﻿namespace SharedLib
 {
-    public class EntityId
+    public struct EntityId
     {
         public int Id { get; set; }
     }

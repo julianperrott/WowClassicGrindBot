@@ -7,6 +7,6 @@
         public int Id { set; get; }
         public string Name { set; get; }
         public string BackgroundFile { set; get; }
-        public int OrderIndex { get; }
+        public int OrderIndex { set; get; }
     }
 }

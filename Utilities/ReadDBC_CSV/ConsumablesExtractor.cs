@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SharedLib;
 
 namespace ReadDBC_CSV
 {
@@ -47,7 +48,7 @@ namespace ReadDBC_CSV
             File.WriteAllText(Path.Join(path, "waters.json"), JsonConvert.SerializeObject(waterIds));
         }
 
-        private List<EntryId> ExtractSpells(string path, string descLang)
+        private List<EntityId> ExtractSpells(string path, string descLang)
         {
             int entryIndex = -1;
             int descIndex = -1;
@@ -59,7 +60,7 @@ namespace ReadDBC_CSV
                 descIndex = extractor.FindIndex("Description_lang");
             };
 
-            var items = new List<EntryId>();
+            var items = new List<EntityId>();
             Action<string> extractLine = line =>
             {
                 var values = line.Split(",");
@@ -67,7 +68,7 @@ namespace ReadDBC_CSV
                     values.Length > descIndex &&
                     values[descIndex].Contains(descLang))
                 {
-                    items.Add(new EntryId
+                    items.Add(new EntityId
                     {
                         Id = int.Parse(values[entryIndex])
                     });
@@ -78,7 +79,7 @@ namespace ReadDBC_CSV
             return items;
         }
 
-        private List<EntryId> ExtractItem(string path, List<EntryId> spells)
+        private List<EntityId> ExtractItem(string path, List<EntityId> spells)
         {
             int entryIndex = -1;
             int spellIdIndex = -1;
@@ -92,7 +93,7 @@ namespace ReadDBC_CSV
                 ParentItemIDIndex = extractor.FindIndex("ParentItemID");
             };
 
-            var items = new List<EntryId>();
+            var items = new List<EntityId>();
             Action<string> extractLine = line =>
             {
                 var values = line.Split(",");
@@ -104,7 +105,7 @@ namespace ReadDBC_CSV
                     if (spells.Any(s => s.Id == spellId))
                     {
                         int ItemId = int.Parse(values[ParentItemIDIndex]);
-                        items.Add(new EntryId
+                        items.Add(new EntityId
                         {
                             Id = ItemId
                         });
