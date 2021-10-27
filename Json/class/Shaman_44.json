@@ -42,7 +42,7 @@
       {
         "Name": "Stoneclaw Totem",
         "Key": "F9",
-        "Requirement": "MobCount>2",
+        "Requirement": "MobCount>1",
         "Cooldown": 30000,
         "Log": false,
         "MinMana": 30
@@ -50,7 +50,7 @@
       {
         "Name": "Searing Totem",
         "Key": "F7",
-        "Requirement": "MobCount>2",
+        "Requirement": "MobCount>1",
         "Cooldown": 15000,
         "Log": false,
         "MinMana": 95
@@ -61,7 +61,7 @@
         "Requirements": [
           "Race:Tauren",
           "Health%<49",
-          "MobCount>2"
+          "MobCount>1"
         ],
         "WhenUsable": true,
         "MinMana": 10

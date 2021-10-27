@@ -91,14 +91,14 @@
         "Key": "6",
         "MinRage": 20,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "MobCount>2", "Form:Druid_Bear"],
+        "Requirements": ["InMeleeRange", "MobCount>1", "Form:Druid_Bear"],
         "Form": "Druid_Bear"
       },
       {
         "Name": "Maul",
         "Key": "2",
         "MinRage": 15,
-        "Requirements": ["InMeleeRange", "MobCount<1", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
+        "Requirements": ["InMeleeRange", "MobCount<2", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
         "AfterCastWaitNextSwing": true,
         "Form": "Druid_Bear"
       },

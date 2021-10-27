@@ -74,7 +74,7 @@
         "MinEnergy": 30,
         "MinComboPoints": 1,
         "WhenUsable": true,
-        "Requirements": ["SpellInRange:2", "not Rip", "MobCount<1", "Form:Druid_Cat"],
+        "Requirements": ["SpellInRange:2", "not Rip", "MobCount<2", "Form:Druid_Cat"],
         "Form": "Druid_Cat"
       },
       {
@@ -82,13 +82,13 @@
         "Key": "2",
         "MinEnergy": 40,
         "WhenUsable": true,
-        "Requirements": ["SpellInRange:2", "MobCount<1", "Form:Druid_Cat"],
+        "Requirements": ["SpellInRange:2", "MobCount<2", "Form:Druid_Cat"],
         "Form": "Druid_Cat"
       },
       {
         "Name": "Bear Form",
         "Key": "F2",
-        "Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>2"]
+        "Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>1"]
       },
       {
         "Name": "Bash",
@@ -110,7 +110,7 @@
         "Key": "3",
         "MinRage": 10,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "not Demoralizing Roar", "MobCount>2", "Form:Druid_Bear"],
+        "Requirements": ["InMeleeRange", "not Demoralizing Roar", "MobCount>1", "Form:Druid_Bear"],
         "Form": "Druid_Bear"
       },
       {
@@ -118,21 +118,21 @@
         "Key": "6",
         "MinRage": 20,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "MobCount>2", "Form:Druid_Bear"],
+        "Requirements": ["InMeleeRange", "MobCount>1", "Form:Druid_Bear"],
         "Form": "Druid_Bear"
       },
       {
         "Name": "Maul",
         "Key": "2",
         "MinRage": 15,
-        "Requirements": ["InMeleeRange", "MobCount<1", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
+        "Requirements": ["InMeleeRange", "MobCount<2", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
         "AfterCastWaitNextSwing": true,
         "Form": "Druid_Bear"
       },
       {
         "Name": "Cat Form",
         "Key": "F3",
-        "Requirements": ["not Form:Druid_Cat", "Health%>60", "MobCount<1"]
+        "Requirements": ["not Form:Druid_Cat", "Health%>60", "MobCount<2"]
       },
       {
         "Name": "AutoAttack",

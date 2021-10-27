@@ -47,7 +47,7 @@
         "Requirements": [
           "Race:Tauren",
           "Health%<49",
-          "MobCount>2"
+          "MobCount>1"
         ],
         "WhenUsable": true,
         "MinMana": 10
@@ -66,7 +66,7 @@
       {
         "Name": "Stoneskin Totem",
         "Key": "7",
-        "Requirement": "MobCount>2",
+        "Requirement": "MobCount>1",
         "Cooldown": 30000,
         "Log": false,
         "MinMana": 30

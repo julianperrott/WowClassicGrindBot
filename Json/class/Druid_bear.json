@@ -122,7 +122,7 @@
         "Key": "N1",
         "MinRage": 20,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "MobCount>2"],
+        "Requirements": ["InMeleeRange", "MobCount>1"],
         "Form": "Druid_Bear"
       },
       {
@@ -130,7 +130,7 @@
         "Key": "2",
         "MinRage": 10,
         "AfterCastWaitNextSwing": true,
-        "Requirements": ["InMeleeRange", "MobCount<1", "LastMainHandMs>2100"], // bear swing speed fixed at 2.5
+        "Requirements": ["InMeleeRange", "MobCount<2", "LastMainHandMs>2100"], // bear swing speed fixed at 2.5
         "Form": "Druid_Bear"
       },
       {

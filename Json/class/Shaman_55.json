@@ -29,12 +29,12 @@
         "Name": "Shaman Ferry",
         "Key": "F3",
         "Requirement": "Mana%<50",
-        "Cooldown": 120000,
+        "Cooldown": 120000
       },
       {
         "Name": "Stoneclaw Totem",
         "Key": "F9",
-        "Requirement": "MobCount>2",
+        "Requirement": "MobCount>1",
         "Cooldown": 30000,
         "Log": false,
         "MinMana": 30
@@ -42,7 +42,7 @@
       {
         "Name": "Searing Totem",
         "Key": "F7",
-        "Requirement": "MobCount>2",
+        "Requirement": "MobCount>1",
         "Cooldown": 20000,
         "Log": false,
         "MinMana": 95
