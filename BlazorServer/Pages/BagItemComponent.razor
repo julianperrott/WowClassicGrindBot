@@ -12,10 +12,6 @@
                 {
                     <span>(S)</span>
                 }
-                @if (BagItem.Item.SellPrice > 0)
-                {
-                    <Money Value="GetItemPrice(BagItem)" />
-                }
             </span>
             @if (BagItem.WasRecentlyUpdated)
             {
@@ -46,18 +42,5 @@
     {
         if (item.Quality < 0 || item.Quality > 7) { return "badge-dark"; }
         return itemBadge[item.Quality];
-    }
-    protected int[] GetItemPrice(Core.BagItem item)
-    {
-        var price = item.Item.AHPrice;
-        if (item.IsSoulbound) { price = item.Item.SellPrice; }
-
-        var value = item.Count * price;
-        if (ShowChangesPrice)
-        {
-            value = (item.LastChange == 0 ? item.Count : item.LastChange) * price;
-        }
-
-        return Item.ToSellPrice(value);
     }
 }
