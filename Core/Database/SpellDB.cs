@@ -2,6 +2,7 @@
 using System.IO;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SharedLib;
 
 namespace Core.Database
 {
