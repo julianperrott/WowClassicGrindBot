@@ -69,27 +69,32 @@ namespace ReadDBC_CSV
         {
             int entryIndex = -1;
             int spellIdIndex = -1;
-            int BaseLevelIndex = -1;
+            int baseLevelIndex = -1;
 
             var extractor = new CSVExtractor();
             extractor.HeaderAction = () =>
             {
                 entryIndex = extractor.FindIndex("ID");
                 spellIdIndex = extractor.FindIndex("SpellID");
-                BaseLevelIndex = extractor.FindIndex("BaseLevel");
+                baseLevelIndex = extractor.FindIndex("BaseLevel");
             };
 
             Action<string> extractLine = line =>
             {
                 var values = line.Split(",");
-                if (values.Length > entryIndex && values.Length > spellIdIndex)
+                if (values.Length > entryIndex &&
+                    values.Length > spellIdIndex &&
+                    values.Length > baseLevelIndex)
                 {
-                    if (int.TryParse(values[spellIdIndex], out int spellId))
+                    int level = int.Parse(values[baseLevelIndex]);
+                    if (level > 0 && int.TryParse(values[spellIdIndex], out int spellId))
                     {
                         int index = spells.FindIndex(0, x => x.Id == spellId);
-                        if (index > 0)
+                        if (index > -1)
                         {
-                            spells[index].SetLevel(int.Parse(values[BaseLevelIndex]));
+                            Spell spell = spells[index];
+                            spell.Level = level;
+                            spells[index] = spell;
                         }
                     }
                 }
