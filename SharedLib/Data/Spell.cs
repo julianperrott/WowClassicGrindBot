@@ -7,10 +7,5 @@
         public int Id { set; get; }
         public string Name { set; get; }
         public int Level { set; get; }
-
-        public void SetLevel(int level)
-        {
-            Level = level;
-        }
     }
 }
