@@ -38,7 +38,7 @@
                             @{ var bagItem = addonReader.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
                             @if (bagItem != null)
                             {
-                                <BagItemComponent Item="bagItem" />
+                                <BagItemComponent BagItem="bagItem" />
                             }
                         </td>
                     }
