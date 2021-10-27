@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Cursor;
 using Core.Extensions;
 using SharedLib.NpcFinder;
 using Game;
@@ -57,46 +56,36 @@ namespace Core.Goals
         }
 
 
-        public async Task TargetingAndClickNpc(int threshold, bool leftClick, CancellationToken cancellationToken)
+        public async Task TargetingAndClickNpc(bool leftClick, CancellationToken cancellationToken)
         {
-            var npc = npcNameFinder.GetClosestNpc();
-            if (npc != null)
-            {
-                if (npc.Height >= threshold)
-                {
-                    foreach (var location in locTargetingAndClickNpc)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                            return;
+            if (npcNameFinder.NpcCount == 0)
+                return;
 
-                        var clickPostion = npcNameFinder.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
-                        input.SetCursorPosition(clickPostion);
-                        await Task.Delay(MOUSE_DELAY);
-                        CursorClassifier.Classify(out var cls).Dispose();
-                        if (cls == CursorClassification.Kill)
-                        {
-                            await AquireTargetAtCursor(clickPostion, npc, leftClick);
-                            return;
-                        }
-                        else if (cls == CursorClassification.Vendor)
-                        {
-                            await AquireTargetAtCursor(clickPostion, npc, leftClick);
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    logger.LogInformation($"{this.GetType().Name}: NPC found but below threshold {threshold}! Height={npc.Height}, width={npc.Width}");
-                }
-            }
-            else
+            var npc = npcNameFinder.Npcs.First();
+            logger.LogInformation($"> NPCs found: ({npc.Min.X},{npc.Min.Y})[{npc.Width},{npc.Height}]");
+
+            foreach (var location in locTargetingAndClickNpc)
             {
-                //logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: No NPC found!");
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+
+                var clickPostion = npcNameFinder.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
+                input.SetCursorPosition(clickPostion);
+                await Task.Delay(MOUSE_DELAY);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+
+                CursorClassifier.Classify(out var cls);
+                if (cls == CursorType.Kill || cls == CursorType.Vendor)
+                {
+                    await AquireTargetAtCursor(clickPostion, npc, leftClick);
+                    return;
+                }
             }
         }
 
-        public async Task<bool> FindByCursorType(params CursorClassification[] cursor)
+        public async Task<bool> FindBy(params CursorType[] cursor)
         {
             List<Point> attemptPoints = new List<Point>();
 
@@ -111,7 +100,7 @@ namespace Core.Goals
                     var clickPostion = npcNameFinder.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                     input.SetCursorPosition(clickPostion);
                     await Task.Delay(MOUSE_DELAY);
-                    CursorClassifier.Classify(out var cls).Dispose();
+                    CursorClassifier.Classify(out var cls);
                     if (cursor.Contains(cls))
                     {
                         await AquireTargetAtCursor(clickPostion, npc);

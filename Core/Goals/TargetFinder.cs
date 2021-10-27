@@ -78,7 +78,7 @@ namespace Core.Goals
                     npcNameTargeting.ChangeNpcType(NpcNameToFind);
                     if (npcNameTargeting.NpcCount > 0 && !cancellationToken.IsCancellationRequested)
                     {
-                        await npcNameTargeting.TargetingAndClickNpc(0, true, cancellationToken);
+                        await npcNameTargeting.TargetingAndClickNpc(true, cancellationToken);
 
                         if(!cancellationToken.IsCancellationRequested)
                             await wait.Update(1);

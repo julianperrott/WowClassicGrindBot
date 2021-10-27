@@ -1,10 +1,8 @@
-﻿using Core.Cursor;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
 using System.Threading.Tasks;
 using Core.Extensions;
-using SharedLib;
 using Game;
 
 namespace Core.Looting
@@ -23,7 +21,7 @@ namespace Core.Looting
         private readonly bool debug = true;
         
 
-        public CursorClassification Classification { get; set; }
+        public CursorType Classification { get; set; }
 
         private Point lastLootFoundAt;
 
@@ -122,30 +120,30 @@ namespace Core.Looting
         {
             var inCombat = this.playerReader.PlayerBitValues.PlayerInCombat;
 
-            Classification = CursorClassification.None;
+            Classification = CursorType.None;
             await Task.Delay(30);
 
-            CursorClassifier.Classify(out var cls).Dispose();
+            CursorClassifier.Classify(out var cls);
 
             if (searchForMobs)
             {
-                if (cls == CursorClassification.Kill)
+                if (cls == CursorType.Kill)
                 {
                     await Task.Delay(100);
-                    CursorClassifier.Classify(out cls).Dispose();
+                    CursorClassifier.Classify(out cls);
                 }
             }
             else
             {
                 // found something, lets give the cursor a chance to update.
-                if (cls == CursorClassification.Loot || cls == CursorClassification.Kill || cls == CursorClassification.Skin)
+                if (cls == CursorType.Loot || cls == CursorType.Kill || cls == CursorType.Skin)
                 {
                     await Task.Delay(200);
-                    CursorClassifier.Classify(out cls).Dispose();
+                    CursorClassifier.Classify(out cls);
                 }
             }
 
-            if (cls == CursorClassification.Loot && !searchForMobs)
+            if (cls == CursorType.Loot && !searchForMobs)
             {
                 Log("Found: " + cls.ToString());
                 await input.RightClickMouse(mousePosition);
@@ -154,7 +152,7 @@ namespace Core.Looting
                 await Wait(2000, inCombat);
             }
 
-            if (cls == CursorClassification.Skin && !searchForMobs)
+            if (cls == CursorType.Skin && !searchForMobs)
             {
                 Log("Found: " + cls.ToString());
                 await input.RightClickMouse(mousePosition);
@@ -163,14 +161,14 @@ namespace Core.Looting
                 await Wait(6000, inCombat);
             }
 
-            if (cls == CursorClassification.Kill && !ignoreMobs)
+            if (cls == CursorType.Kill && !ignoreMobs)
             {
                 Log("Found: " + cls.ToString());
                 await input.RightClickMouse(mousePosition);
                 Classification = cls;
             }
 
-            if (cls == CursorClassification.Loot || cls == CursorClassification.Skin)
+            if (cls == CursorType.Loot || cls == CursorType.Skin)
             {
                 lastLootFoundAt = mousePosition;
                 logger.LogInformation($"Loot found at {this.lastLootFoundAt.X},{this.lastLootFoundAt.Y}");
@@ -178,10 +176,10 @@ namespace Core.Looting
 
             if (searchForMobs)
             {
-                return cls == CursorClassification.Kill;
+                return cls == CursorType.Kill;
             }
 
-            return cls == CursorClassification.Loot || cls == CursorClassification.Skin || cls == CursorClassification.Kill;
+            return cls == CursorType.Loot || cls == CursorType.Skin || cls == CursorType.Kill;
         }
 
         private async Task Wait(int delay, bool isInCombat)
@@ -195,7 +193,7 @@ namespace Core.Looting
                 }
                 if (!this.playerReader.IsCasting)
                 {
-                    CursorClassifier.Classify(out var cls2).Dispose();
+                    CursorClassifier.Classify(out var cls2);
                     if (cls2 != this.Classification)
                     {
                         return;

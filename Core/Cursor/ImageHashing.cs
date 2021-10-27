@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-namespace Core.Cursor
+namespace Core
 {
     /// <summary>
     /// Contains a variety of methods useful in generating image hashes for image comparison

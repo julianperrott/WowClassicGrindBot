@@ -95,7 +95,7 @@ namespace Core.Goals
                     }
                 }
 
-                bool foundCursor = await npcNameTargeting.FindByCursorType(Cursor.CursorClassification.Skin);
+                bool foundCursor = await npcNameTargeting.FindBy(CursorType.Skin);
                 if (foundCursor)
                 {
                     Log("Found corpse - interacted with right click");
