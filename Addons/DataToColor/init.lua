@@ -13,7 +13,7 @@ E.S = {} -- Storage
 E.R = {} -- Runtime
 
 Engine[1] = E
-_G[AddOnName] = Engine
+_G[AddOnName] = E
 
 do
 	E.Libs = {}

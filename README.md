@@ -468,7 +468,7 @@ The "Key" is a key that is bound to a macro. The macro needs to target the NPC, 
 e.g. Sell macro - bound to the `"C"` key using BindPad or Key bindings
 ```cs
 /tar Jannos Ironwill
-/run DataToColor[1]:sell({"Light Leather","Cheese","Light Feather"});
+/run DataToColor:sell({"Light Leather","Cheese","Light Feather"});
 ```
 
 e.g. Repair macro
@@ -762,6 +762,46 @@ e.g.
 "Requirement": "Talent:Improved Corruption"    // Must known the given `name`
 "Requirement": "Talent:Improved Corruption:5"  // Must know the given `name` and atleast with `rank`
 "Requirement": "not Talent:Suppression"        // Must have not know the given `name` 
+```
+---
+### **Trigger requirements**
+
+If you feel the current Requirement toolset is not enough for you, you can use other addons such as **WeakAura's** Trigger to control a given bit.
+
+The regarding Addon API is looks like this
+```lua
+YOUR_CHOOSEN_ADDON_NAME_FROM_ADDON_CONFIG:Set(bit, value)
+-- bit: 0-23
+-- value: 0 or 1 or true or false
+
+--e.g. by using default addon name
+DataToColor:Set(0,1)
+DataToColor:Set(0,0)
+DataToColor:Set(23,true)
+DataToColor:Set(23,false)
+```
+
+Formula: `Trigger:[bit]:[name]`
+
+Where the `bit` is 0-23 and the `name` is a free text which shows up in the frontend.
+
+e.g.
+
+```json
+"Requirement": "Trigger:0:Pet in range"           // Trigger 0 must be true
+"Requirement": "Trigger:23:My Awesome trigger"    // Trigger 23 must be true
+"Requirement": "not Trigger:6:Suppression"        // Trigger 6 must be false
+```
+
+e.g. you can make your awesome WeakAura. Then you can put the following Addon API in the 
+WeakAura -> Actions -> On Show -> Custom
+```lua
+DataToColor:Set(0,1) -- enable Trigger 0
+```
+
+WeakAura -> Actions -> On Hide -> Custom
+```lua
+DataToColor:Set(0,0)  -- disable Trigger 0
 ```
 ---
 ### **Buff / Debuff / General boolean condition requirements**

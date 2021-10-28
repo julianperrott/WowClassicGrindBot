@@ -53,7 +53,8 @@ namespace Core
                 { "Form", CreateFormRequirement },
                 { "Race", CreateRaceRequirement },
                 { "Spell", CreateSpellRequirement },
-                { "Talent", CreateTalentRequirement }
+                { "Talent", CreateTalentRequirement },
+                { "Trigger:", CreateTriggerRequirement }
             };
 
             booleanDictionary = new Dictionary<string, Func<bool>>
@@ -493,6 +494,19 @@ namespace Core
             {
                 HasRequirement = () => talentReader.HasTalent(talentName, rank),
                 LogMessage = () => rank == 1 ? $"Talent {talentName}" : $"Talent {talentName} (Rank {rank})"
+            };
+        }
+
+        private Requirement CreateTriggerRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            int bit = int.Parse(parts[1]);
+            string text = parts.Length > 2 ? parts[2] : string.Empty;
+
+            return new Requirement
+            {
+                HasRequirement = () => playerReader.CustomTrigger1.IsBitSet(bit),
+                LogMessage = () => $"Trigger({bit}) {text}"
             };
         }
 
