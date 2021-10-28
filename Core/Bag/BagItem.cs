@@ -29,8 +29,10 @@ namespace Core
             this.Count = count;
         }
 
-        private DateTime LastUpdated = DateTime.Now;
-        public bool WasRecentlyUpdated => (DateTime.Now - LastUpdated).TotalSeconds < 30;
+        public static readonly int MaxLifeTime = 30;
+
+        public DateTime LastUpdated { get; set; } = DateTime.Now;
+        public bool WasRecentlyUpdated => (DateTime.Now - LastUpdated).TotalSeconds < MaxLifeTime;
 
         public BagItem(int bag, int bagIndex, int itemId, int count, Item item, bool IsSoulbound)
         {
