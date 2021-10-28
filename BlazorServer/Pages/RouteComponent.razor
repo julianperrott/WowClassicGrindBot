@@ -2,7 +2,6 @@
 @inject Core.IBotController botController
 @inject IJSRuntime JSRuntime;
 @using System.Linq
-@using Core
 @using SharedLib; 
 
 <div class="card">
@@ -12,7 +11,7 @@
                 <td>Route</td>
                 <td>
                     <div class="float-right">
-                       [@addonReader.PlayerReader.XCoord.ToString("00.0000"),@addonReader.PlayerReader.YCoord.ToString("00.0000")] @(wma?.AreaName) (@addonReader.PlayerReader.UIMapId.Value)
+                       [@addonReader.PlayerReader.XCoord.ToString("00.0000"),@addonReader.PlayerReader.YCoord.ToString("00.0000")] @(AreaName) (@addonReader.PlayerReader.UIMapId.Value)
                     </div>
                 </td>
             </tr>
@@ -112,7 +111,7 @@
 
     private List<WowPoint> Deaths = new List<WowPoint>();
 
-    private WorldMapArea? wma { get; set; }
+    private string AreaName { get; set; } = string.Empty;
 
     protected override void OnInitialized()
     {
@@ -138,12 +137,14 @@
             {
                 try
                 {
-                    UpdateZone();
+                    UpdateZoneName();
                     StateHasChanged();
                 }
                 catch { }
             });
         };
+
+        UpdateZoneName();
     }
 
     private void InitialiseRoute()
@@ -215,8 +216,11 @@
         CanvasInitialised = false;
     }
 
-    private void UpdateZone()
+    private void UpdateZoneName()
     {
-        wma = addonReader.WorldMapAreaDb.Get(addonReader.PlayerReader.UIMapId.Value);
+        if(addonReader.WorldMapAreaDb.TryGet(addonReader.PlayerReader.UIMapId.Value, out WorldMapArea wma))
+        {
+            AreaName = wma.AreaName;
+        }
     }
 }

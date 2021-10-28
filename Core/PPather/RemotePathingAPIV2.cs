@@ -6,6 +6,7 @@ using Core.PPather;
 using Core.Database;
 using System.Threading;
 using System.Diagnostics;
+using SharedLib;
 
 namespace Core
 {
@@ -62,8 +63,7 @@ namespace Core
                 logger.LogInformation($"Finding route from {fromPoint} map {uiMapId} to {toPoint} map {targetMapId}...");
                 //logger.LogInformation($"Finding route from {start} to {end}...");
 
-                var area = worldMapAreaDB.Get(uiMapId);
-                if (area == null)
+                if (!worldMapAreaDB.TryGet(uiMapId, out WorldMapArea area))
                     return new List<WowPoint>();
 
                 var request = new PathRequestWithLocationRequest(area.MapID, start, end, PathRequestFlags.ChaikinCurve);

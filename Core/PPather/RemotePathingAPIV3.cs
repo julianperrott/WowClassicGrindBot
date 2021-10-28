@@ -7,6 +7,7 @@ using Core.Database;
 using System.Threading;
 using System.Diagnostics;
 using AnTCP.Client;
+using SharedLib;
 
 namespace Core
 {
@@ -99,9 +100,8 @@ namespace Core
 
                 var result = new List<WowPoint>();
 
-                var area = worldMapAreaDB.Get(uiMapId);
-                if (area == null)
-                    return result;
+                if (!worldMapAreaDB.TryGet(uiMapId, out WorldMapArea area))
+                    return new List<WowPoint>();
 
                 // incase haven't asked a pathfinder for a route this value will be 0
                 // that case use the highest location

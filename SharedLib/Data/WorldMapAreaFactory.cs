@@ -5,23 +5,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-#nullable enable
-
 namespace SharedLib.Data
 {
     public static class WorldMapAreaFactory
     {
         public static List<WorldMapArea> Read(ILogger logger, DataConfig dataConfig)
         {
-            //CreateWorldMapAreaJson();
-
-            var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(Path.Join(dataConfig.WorldToMap, "WorldMapArea.json")));
-            logger.LogInformation("Unsupported mini maps areas: " + string.Join(", ", list.Where(l => l.UIMapId == 0).Select(s => s.AreaName).OrderBy(s => s)));
-
-            return list;
+            return JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(Path.Join(dataConfig.WorldToMap, "WorldMapArea.json")));
         }
 
-        public static WorldMapArea? GetWorldMapArea(List<WorldMapArea> worldMapAreas, float x, float y, string continent, int uiMapIdHint)
+        public static WorldMapArea GetWorldMapArea(List<WorldMapArea> worldMapAreas, float x, float y, string continent, int uiMapIdHint)
         {
             var maps = worldMapAreas
                 .Where(i => x <= i.LocTop)
@@ -44,11 +37,7 @@ namespace SharedLib.Data
 
                 if (uiMapIdHint > 0)
                 {
-                    var map = maps.Where(m => m.UIMapId == uiMapIdHint).FirstOrDefault();
-                    if (map != null)
-                    {
-                        return map;
-                    }
+                    return maps.First(m => m.UIMapId == uiMapIdHint);
                 }
 
                 throw new ArgumentOutOfRangeException(nameof(worldMapAreas), $"Found many map areas for spot {x}, {y}, {continent}, {uiMapIdHint} : {string.Join(", ", maps.Select(s => s.AreaName))}");

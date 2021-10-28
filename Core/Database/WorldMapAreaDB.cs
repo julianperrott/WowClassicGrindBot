@@ -20,8 +20,7 @@ namespace Core.Database
             var list = JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(Path.Join(dataConfig.WorldToMap, "WorldMapArea.json")));
             list.ForEach(x =>
             {
-                if (!areas.ContainsKey(x.UIMapId))
-                    areas.Add(x.UIMapId, x);
+                areas.Add(x.UIMapId, x);
             });
         }
 
@@ -38,12 +37,6 @@ namespace Core.Database
         public Vector3 GetWorldLocation(int uiMapId, WowPoint p, bool flipXY)
         {
             var worldMapArea = areas[uiMapId];
-            if (worldMapArea == null)
-            {
-                logger.LogError($"Unsupported mini map area, UIMapId {uiMapId} not found in WorldMapArea.json");
-                return Vector3.Zero;
-            }
-
             if(flipXY)
             {
                 return new Vector3(worldMapArea.ToWorldX((float)p.Y), worldMapArea.ToWorldY((float)p.X), (float)p.Z);
@@ -59,11 +52,6 @@ namespace Core.Database
         public WorldMapAreaSpot ToMapAreaSpot(float x, float y, float z, string continent, int mapHint)
         {
             var area = WorldMapAreaFactory.GetWorldMapArea(areas.Values.ToList(), x, y, continent, mapHint);
-            if(area == null)
-            {
-                return new WorldMapAreaSpot();
-            }
-
             return new WorldMapAreaSpot
             {
                 Y = area.ToMapX(x),
@@ -73,14 +61,16 @@ namespace Core.Database
             };
         }
         
-        public WorldMapArea? Get(int uiMapId)
+        public bool TryGet(int uiMapId, out WorldMapArea area)
         {
             if (areas.TryGetValue(uiMapId, out var map))
             {
-                return map;
+                area = map;
+                return true;
             }
 
-            return null;
+            area = default;
+            return false;
         }
     }
 }

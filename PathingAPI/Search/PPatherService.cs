@@ -79,13 +79,7 @@ namespace PathingAPI
         }
         public Location GetWorldLocation(int uiMapId, float v1, float v2)
         {
-            var worldMapArea = worldMapAreas.Where(i => i.UIMapId == uiMapId).FirstOrDefault();
-            if (worldMapArea == null)
-            {
-                logger.WriteLine($"Unsupported mini map area, UIMapId {uiMapId} not found in WorldMapArea.json");
-                return new Location(0, 0, 0);
-            }
-
+            var worldMapArea = worldMapAreas.First(i => i.UIMapId == uiMapId);
             var worldX = worldMapArea.ToWorldX(v2);
             var worldY = worldMapArea.ToWorldY(v1);
 
