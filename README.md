@@ -768,47 +768,49 @@ e.g.
 
 If you feel the current Requirement toolset is not enough for you, you can use other addons such as **WeakAura's** Trigger to control a given bit.
 
-The regarding Addon API is looks like this
-```lua
-YOUR_CHOOSEN_ADDON_NAME_FROM_ADDON_CONFIG:Set(bit, value)
--- bit: 0-23
--- value: 0 or 1 or true or false
+1. **The regarding in-game Addon API is looks like this**
 
---e.g. by using default addon name
-DataToColor:Set(0,1)
-DataToColor:Set(0,0)
-DataToColor:Set(23,true)
-DataToColor:Set(23,false)
-```
+    ```lua
+    YOUR_CHOOSEN_ADDON_NAME_FROM_ADDON_CONFIG:Set(bit, value)
+    -- bit: 0-23
+    -- value: 0 or 1 or true or false
 
-Formula: `Trigger:[bit]:[name]`
+    --e.g. by using default addon name
+    DataToColor:Set(0,1)
+    DataToColor:Set(0,0)
+    DataToColor:Set(23,true)
+    DataToColor:Set(23,false)
+    ```
 
-Where the `bit` is 0-23 and the `name` is a free text which shows up in the frontend.
+    e.g. you can make your awesome WeakAura. Then you can put the following Addon API in the
 
-e.g.
+    WeakAura -> Actions -> On Show -> Custom
+    ```lua
+    DataToColor:Set(0,1) -- enable Trigger 0
+    ```
 
-```json
-"Requirement": "Trigger:0:Pet in range"           // Trigger 0 must be true
-"Requirement": "Trigger:23:My Awesome trigger"    // Trigger 23 must be true
-"Requirement": "not Trigger:6:Suppression"        // Trigger 6 must be false
-```
+    WeakAura -> Actions -> On Hide -> Custom
+    ```lua
+    DataToColor:Set(0,0)  -- disable Trigger 0
+    ```
 
-e.g. you can make your awesome WeakAura. Then you can put the following Addon API in the
+    Example Weakaura for hunter pet in 10y range for feed pet
+    ```lua
+    !WA:2!1rvWUTTrq0O6dPGOiXXT1afTaLWT1ibTiW2fnfOO9GOmvScKTuiPJtApqUK7qXnMC3f7Uu2khf6HCwFc6CpXpH8fqi0Va)j4VGUlPQHBrIoioZUZS78EZ82o93Qyl8w43(DcwPkNqbXOtdgo4exXLJstLGQtfMi55OzbWLQpALmdHzx8Q29(Q7uHOjzmXygHQI75EsGRh3(wjeMYefivipurkG1ED4BMukvScteNYXif4btbQ6kuPEvKIKCgbRYC6QDfOefHrLpXtQqc1UlWSW2SJIB)Y)SdrkuaRhlNj(fFq9W9(H9FKdHsuBxF)S4uTLmB367hvV57l29E0CLGmzciK3BxXAZ3(1ZjkO4eub05kzzCt9nwaPKl98h7oC41LsiSaKs0eiyghIENzH)nNi(dmUtanHss8ZyxmIgT6)4ELS5tpglxZO05M4l11CKJ5)d4GYtGOtGD2FVQMJMovxHqwtGzikoAHKd55nLOJsxc12x1KriJdcKM625x)TLyiUmn1uHIJChoU)Pdx0Gftc8pF8WUVY1l0Z9PUNeE4a)UodDpCL5gsB59bhgDd891he5YQWED9dc9d66f0e5nhxuScLRTTCm9zRARkpt5y3ldsoVHEIHm0uctKTsaOC)Bk)MZ5g0enVXCawATWSrdOIQUfHN5r1XTEBLEe58OQB1l4B27OUbHh7)0WZoAGUD5TOKUUXAXFGbztHGw)Jzy4VUd)lFVdTTgEMzx816rCqqr5Vq3g0mZFSqc5PTt(oJccgDSg2ufFZ(cYBSFEjcR7bi7GGLA(ZdMygITCYzi8lAk7KCKugvV32EfL5kILJg0jBxpWYRzNDJLe6KCi(OtnQk96osYBataZn3JV25lwlhFzRCCJLIMRXqboknqwMWOysJ8XI)nFyzjxajedM2yLwbQ1ZJ4TjjMT(raXR1sns6m94r)GLkwY0ws4JhV9oem)BZknKJTEO1MqT3FVz2nnnB99yNca2SZbLeCL354H)0lF4Zrf)EvQq3e9vgAAJRBFiPVzjt9h73ZZ19eVeJq9zBO)fRbtkzI18lyc8zceF(zRn4F)hgA4z6jfssOktaAbxoEwvlN18cWZ60PZgl1d1aU5fN)8tQi02dqdoRfikP18j13RF9UougfEhGKMQgOtuz3DfUu0erOrbO1Ngkxo3eJbg1eNceHQZTMu)67wFEDEDH28t))RSL07hF8p)4d2A6F)Y)5
+    ```
 
-WeakAura -> Actions -> On Show -> Custom
-```lua
-DataToColor:Set(0,1) -- enable Trigger 0
-```
+1. **Then outside of the game, you can specify the following in the ClassConfiguration file ex. `class/Hunter_62.json`**
 
-WeakAura -> Actions -> On Hide -> Custom
-```lua
-DataToColor:Set(0,0)  -- disable Trigger 0
-```
+    Formula: `Trigger:[bit]:[name]`
 
-Example Weakaura for hunter pet in 10y range for feed pet
-```lua
-!WA:2!1rvWUTTrq0O6dPGOiXXT1afTaLWT1ibTiW2fnfOO9GOmvScKTuiPJtApqUK7qXnMC3f7Uu2khf6HCwFc6CpXpH8fqi0Va)j4VGUlPQHBrIoioZUZS78EZ82o93Qyl8w43(DcwPkNqbXOtdgo4exXLJstLGQtfMi55OzbWLQpALmdHzx8Q29(Q7uHOjzmXygHQI75EsGRh3(wjeMYefivipurkG1ED4BMukvScteNYXif4btbQ6kuPEvKIKCgbRYC6QDfOefHrLpXtQqc1UlWSW2SJIB)Y)SdrkuaRhlNj(fFq9W9(H9FKdHsuBxF)S4uTLmB367hvV57l29E0CLGmzciK3BxXAZ3(1ZjkO4eub05kzzCt9nwaPKl98h7oC41LsiSaKs0eiyghIENzH)nNi(dmUtanHss8ZyxmIgT6)4ELS5tpglxZO05M4l11CKJ5)d4GYtGOtGD2FVQMJMovxHqwtGzikoAHKd55nLOJsxc12x1KriJdcKM625x)TLyiUmn1uHIJChoU)Pdx0Gftc8pF8WUVY1l0Z9PUNeE4a)UodDpCL5gsB59bhgDd891he5YQWED9dc9d66f0e5nhxuScLRTTCm9zRARkpt5y3ldsoVHEIHm0uctKTsaOC)Bk)MZ5g0enVXCawATWSrdOIQUfHN5r1XTEBLEe58OQB1l4B27OUbHh7)0WZoAGUD5TOKUUXAXFGbztHGw)Jzy4VUd)lFVdTTgEMzx816rCqqr5Vq3g0mZFSqc5PTt(oJccgDSg2ufFZ(cYBSFEjcR7bi7GGLA(ZdMygITCYzi8lAk7KCKugvV32EfL5kILJg0jBxpWYRzNDJLe6KCi(OtnQk96osYBataZn3JV25lwlhFzRCCJLIMRXqboknqwMWOysJ8XI)nFyzjxajedM2yLwbQ1ZJ4TjjMT(raXR1sns6m94r)GLkwY0ws4JhV9oem)BZknKJTEO1MqT3FVz2nnnB99yNca2SZbLeCL354H)0lF4Zrf)EvQq3e9vgAAJRBFiPVzjt9h73ZZ19eVeJq9zBO)fRbtkzI18lyc8zceF(zRn4F)hgA4z6jfssOktaAbxoEwvlN18cWZ60PZgl1d1aU5fN)8tQi02dqdoRfikP18j13RF9UougfEhGKMQgOtuz3DfUu0erOrbO1Ngkxo3eJbg1eNceHQZTMu)67wFEDEDH28t))RSL07hF8p)4d2A6F)Y)5
-```
+    Where the `bit` is 0-23 and the `name` is a free text which shows up in the frontend.
+
+    e.g.
+    ```json
+    "Requirement": "Trigger:0:Pet in range"           // Trigger 0 must be true
+    "Requirement": "Trigger:23:My Awesome trigger"    // Trigger 23 must be true
+    "Requirement": "not Trigger:6:Suppression"        // Trigger 6 must be false
+    ```
 ---
 ### **Buff / Debuff / General boolean condition requirements**
 
