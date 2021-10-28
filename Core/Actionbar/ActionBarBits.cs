@@ -2,17 +2,17 @@
 {
     public class ActionBarBits
     {
-        private readonly ActionBarBitStatus[] bits;
+        private readonly BitStatus[] bits;
         private readonly PlayerReader playerReader;
 
         public ActionBarBits(PlayerReader playerReader, ISquareReader reader, params int[] cells)
         {
             this.playerReader = playerReader;
 
-            bits = new ActionBarBitStatus[cells.Length];
+            bits = new BitStatus[cells.Length];
             for (int i = 0; i < bits.Length; i++)
             {
-                bits[i] = new ActionBarBitStatus(reader.GetIntAtCell(cells[i]));
+                bits[i] = new BitStatus(reader.GetIntAtCell(cells[i]));
             }
         }
 
