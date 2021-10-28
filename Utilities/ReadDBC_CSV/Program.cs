@@ -4,14 +4,29 @@ using System.Net;
 
 namespace ReadDBC_CSV
 {
+    public enum Locale
+    {
+        enUS,
+        koKR,
+        frFR,
+        deDE,
+        zhCN,
+        esES,
+        zhTW,
+        enGB,
+        esMX,
+        ruRU,
+        ptBR,
+        itIT
+    }
+
     class Program
     {
         static string userAgent = " Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0";
 
+        static Locale locale = Locale.enUS;
         static string path = "../../../data/";
-
-        static string game_build = "2.5.2.40617";
-        static string wma_build = "2.4.3.8606";
+        static string build = "2.5.2.40617";
 
         static void Main(string[] args)
         {
@@ -25,7 +40,7 @@ namespace ReadDBC_CSV
         private static void GenerateItems(string path)
         {
             var extractor = new ItemExtractor(path);
-            DownloadRequirements(path, extractor, game_build);
+            DownloadRequirements(path, extractor, build);
             extractor.Run();
         }
 
@@ -34,34 +49,34 @@ namespace ReadDBC_CSV
             string foodDesc = "Restores $o1 health over $d";
             string waterDesc = "mana over $d";
 
-            if (Version.TryParse(game_build, out Version version) && version.Major == 1)
+            if (Version.TryParse(build, out Version version) && version.Major == 1)
             {
                 waterDesc = "Restores $o1 mana over $d";
             }
 
             var extractor = new ConsumablesExtractor(path, foodDesc, waterDesc);
-            DownloadRequirements(path, extractor, game_build);
+            DownloadRequirements(path, extractor, build);
             extractor.Run();
         }
 
         private static void GenerateSpells(string path)
         {
             var extractor = new SpellExtractor(path);
-            DownloadRequirements(path, extractor, game_build);
+            DownloadRequirements(path, extractor, build);
             extractor.Run();
         }
 
         private static void GenerateTalents(string path)
         {
             var extractor = new TalentExtractor(path);
-            DownloadRequirements(path, extractor, game_build);
+            DownloadRequirements(path, extractor, build);
             extractor.Run();
         }
 
         private static void GenerateWorldMapArea(string path)
         {
-            var extractor = new WorldMapAreaExtractor(path, wma_build);
-            DownloadRequirements(path, extractor, wma_build, game_build);
+            var extractor = new WorldMapAreaExtractor(path);
+            DownloadRequirements(path, extractor, build);
             extractor.Run();
         }
 
@@ -89,7 +104,7 @@ namespace ReadDBC_CSV
                             string url = DownloadURL(build, file);
                             client.DownloadFile(url, Path.Join(path, file));
 
-                            Console.WriteLine($"{file} - {build} - Downloaded");
+                            Console.WriteLine($"{file} - {build} - Downloaded - {url}");
 
                             break;
                         }
@@ -110,7 +125,7 @@ namespace ReadDBC_CSV
         private static string DownloadURL(string build, string file)
         {
             string resource = file.Split(".")[0];
-            return $"https://wow.tools/dbc/api/export/?name={resource}&build={build}";
+            return $"https://wow.tools/dbc/api/export/?name={resource}&build={build}&locale={locale}";
         }
 
         #endregion
