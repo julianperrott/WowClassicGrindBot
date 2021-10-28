@@ -177,6 +177,8 @@ namespace Core
 
         public int CastCount => reader.GetIntAtCell(70);
 
+        public BitStatus CustomTrigger1 => new BitStatus(reader.GetIntAtCell(73));
+
         public int LastLootTime => reader.GetIntAtCell(97);
 
         public RecordInt GlobalTime { private set; get; } = new RecordInt(98);
