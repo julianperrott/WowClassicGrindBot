@@ -2,7 +2,6 @@
 {
     public class WorldMapArea
     {
-        public int ID { get; set; }
         public int MapID { get; set; }
         public int AreaID { get; set; }
         public string AreaName { get; set; } = string.Empty;
