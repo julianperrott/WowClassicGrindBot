@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using SharedLib;
 
 namespace ReadDBC_CSV
@@ -10,189 +9,181 @@ namespace ReadDBC_CSV
     public class WorldMapAreaExtractor : IExtractor
     {
         private readonly string path;
-        private readonly string wma_build;
 
         public List<string> FileRequirement { get; } = new List<string>()
         {
-            "worldmaparea.csv",
-            "uimap.csv"
+            "uimap.csv",
+            "uimapassignment.csv",
+            "map.csv"
         };
 
-        private List<string> acceptedOverride = new List<string> { "Hellfire", "Kalimdor" };
-
-        private const string expansion01Continent = "Expansion01";
-
-        private readonly Dictionary<int, string> tbc_expansionContinent = new Dictionary<int, string>
-        {
-            { 464, expansion01Continent }, // AzuremystIsle
-            { 476, expansion01Continent }, // BloodmystIsle
-            { 471, expansion01Continent }, // TheExodar
-                   
-            { 462, expansion01Continent }, // EversongWoods
-            { 463, expansion01Continent }, // Ghostlands
-            { 480, expansion01Continent }, // SilvermoonCity
-                   
-            { 499, expansion01Continent }, // Sunwell
-        };
-
-
-
-        public WorldMapAreaExtractor(string path, string wma_build)
+        public WorldMapAreaExtractor(string path)
         {
             this.path = path;
-            this.wma_build = wma_build;
         }
 
         public void Run()
         {
-            Func<string[], WorldMapArea> wmaParser = CreateV2;
+            // UIMapId - AreaName
+            var uimap = Path.Join(path, FileRequirement[0]);
+            var wmas = ExtractUIMap(uimap);
 
-            if (Version.TryParse(wma_build, out Version version) && version.Major == 1)
-                wmaParser = CreateV1;
+            // MapID - AreaID - LocBottom - LocRight - LocTop - LocLeft
+            var uimapassignment = Path.Join(path, FileRequirement[1]);
+            ExtractBoundaries(uimapassignment, wmas);
 
-            var list = File.ReadAllLines(Path.Join(path, FileRequirement[0])).ToList().
-                Skip(1).Select(l => l.Split(",")).Select(l => wmaParser(l)).ToList();
+            // Continent / Directory
+            var map = Path.Join(path, FileRequirement[2]);
+            ExtractContinent(map, wmas);
 
-            CorrectTypos(ref list);
+            ClearEmptyBound(wmas);
 
-            var uimapLines = File.ReadAllLines(Path.Join(path, FileRequirement[1])).ToList().
-                Select(l => l.Split(","));
-            list.ForEach(wmp => PopulateUIMap(wmp, uimapLines));
-
-            list.ForEach(l =>
-            {
-                if (tbc_expansionContinent.ContainsKey(l.ID))
-                {
-                    l.Continent = tbc_expansionContinent[l.ID];
-                    Console.WriteLine($" - {l.AreaName} expansion continent set to {l.Continent}");
-                }
-            });
-
-            Console.WriteLine("Unsupported mini maps areas: " + string.Join(", ", list.Where(l => l.UIMapId == 0).Select(s => s.AreaName).OrderBy(s => s)));
-
-            var duplicates = list.GroupBy(s => s.MapID).Where(g => g.Count() > 1).Select(g => g.Key);
-            Console.WriteLine("Duplicated 'MapID' (continents accepted): " + string.Join(", ", duplicates.ToArray()));
-
-            File.WriteAllText(Path.Join(path, "WorldMapArea.json"), JsonConvert.SerializeObject(list, Formatting.Indented));
+            Console.WriteLine($"WMAs: {wmas.Count}");
+            File.WriteAllText(Path.Join(path, "WorldMapArea.json"), JsonConvert.SerializeObject(wmas, Formatting.Indented));
         }
 
-        // https://wow.tools/dbc/?dbc=worldmaparea&build=2.4.3.8606
-        private WorldMapArea CreateV2(string[] values)
+        private List<WorldMapArea> ExtractUIMap(string path)
         {
-            return new WorldMapArea
+            int idIndex = -1;
+            int nameIndex = -1;
+
+            var extractor = new CSVExtractor();
+            extractor.HeaderAction = () =>
             {
-                ID = int.Parse(values[0]),
-                MapID = int.Parse(values[1]),
-                AreaID = int.Parse(values[2]),
-                AreaName = values[3],
-                LocLeft = float.Parse(values[4]),
-                LocRight = float.Parse(values[5]),
-                LocTop = float.Parse(values[6]),
-                LocBottom = float.Parse(values[7]),
+                idIndex = extractor.FindIndex("ID");
+                nameIndex = extractor.FindIndex("Name_lang");
             };
-        }
 
-        // https://wow.tools/dbc/?dbc=worldmaparea&build=1.13.0.28377
-        private WorldMapArea CreateV1(string[] values)
-        {
-            return new WorldMapArea
+            var items = new List<WorldMapArea>();
+            Action<string> extractLine = line =>
             {
-                AreaName = values[0],
-                LocLeft = float.Parse(values[1]),
-                LocRight = float.Parse(values[2]),
-                LocTop = float.Parse(values[3]),
-                LocBottom = float.Parse(values[4]),
-
-                MapID = int.Parse(values[6]),
-                AreaID = int.Parse(values[7]),
-
-                ID = int.Parse(values[15]),
-            };
-        }
-
-        private void PopulateUIMap(WorldMapArea area, IEnumerable<string[]> uimapLines)
-        {
-            var kalimdor = uimapLines.Where(s => s[0] == "Kalimdor").Select(s => s[1]).FirstOrDefault();
-
-            // two outland occurrences need the last one
-            var outland = uimapLines.Where(s => s[0] == "Outland").Select(s => s[1]).LastOrDefault();
-
-            var matches = uimapLines.Where(s => Matches(area, s))
-                .ToList();
-
-            if (matches.Count > 1)
-            {
-                Console.WriteLine($"\n- WARN [{area.AreaName}] has more than one matches:\n {string.Join(",\n ", matches.Select(t => new { AreaName = t[0], UIMapId = t[1] }))}");
-            }
-
-            if (matches.Count == 0)
-            {
-                Console.WriteLine($"\n- WARN [{area.AreaName}] has no matches!");
-            }
-
-            matches.ForEach(a =>
-            {
-                if (area.UIMapId == 0 || acceptedOverride.Contains(area.AreaName))
+                var values = line.Split(",");
+                if (values.Length > idIndex &&
+                    values.Length > nameIndex)
                 {
-                    if(area.UIMapId != 0 && acceptedOverride.Contains(area.AreaName))
+                    int uiMapId = int.Parse(values[idIndex]);
+                    items.Add(new WorldMapArea
                     {
-                        Console.WriteLine($" - Accepted override [{area.AreaName}] from [{area.UIMapId}] to [{int.Parse(a[1])}]");
-                    }
-
-                    area.UIMapId = int.Parse(a[1]);
+                        UIMapId = uiMapId,
+                        AreaName = values[nameIndex]
+                    });
                 }
-                else
-                {
-                    Console.WriteLine($" - Prevented override [{area.AreaName}] from [{area.UIMapId}] to [{int.Parse(a[1])}]");
-                }
+            };
 
-                area.Continent = a[2] == outland ? expansion01Continent : (a[2] == kalimdor ? "Kalimdor" : "Azeroth");
-            });
+            extractor.ExtractTemplate(path, extractLine);
+            return items;
         }
 
-        /// <summary>
-        /// Fix occurance where Stormwind and Stormwind city didn't match
-        /// </summary>
-        /// <param name="area"></param>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        private bool Matches(WorldMapArea area, string[] s)
+        private void ExtractBoundaries(string path, List<WorldMapArea> wmas)
         {
-            var areaname = s[0].Replace(" ", "").Replace("'", "");
-            var areaname1 = area.AreaName.Replace(" ", "").Replace("'", "");
-            return areaname.StartsWith(areaname1, StringComparison.InvariantCultureIgnoreCase)
-                 || areaname1.StartsWith(areaname, StringComparison.InvariantCultureIgnoreCase);
-        }
+            int uiMapIdIndex = -1;
+            int mapIdIndex = -1;
+            int areaIdIndex = -1;
 
-        private void CorrectTypos(ref List<WorldMapArea> list)
-        {
-            // Unsupported mini maps areas: Aszhara, Barrens, Darnassis, Expansion01, Hilsbrad, Hinterlands, Ogrimmar, Sunwell
-            // Unsupported mini maps areas: Expansion01, Sunwell
-            for (int i =0; i<list.Count; i++)
+            int orderIndexIndex = -1;
+
+            int region0Index = -1;
+            int region1Index = -1;
+            int region3Index = -1;
+            int region4Index = -1;
+
+            var extractor = new CSVExtractor();
+            extractor.HeaderAction = () =>
             {
-                // typo :dense:
-                if (list[i].AreaName == "Aszhara")
-                    list[i].AreaName = "Azshara";
+                uiMapIdIndex = extractor.FindIndex("UiMapID");
+                mapIdIndex = extractor.FindIndex("MapID");
+                areaIdIndex = extractor.FindIndex("AreaID");
 
-                if (list[i].AreaName == "Darnassis")
-                    list[i].AreaName = "Darnassus";
+                orderIndexIndex = extractor.FindIndex("OrderIndex");
 
-                if (list[i].AreaName == "Hilsbrad")
-                    list[i].AreaName = "Hillsbrad";
+                region0Index = extractor.FindIndex("Region[0]");
+                region1Index = extractor.FindIndex("Region[1]");
 
-                if (list[i].AreaName == "Ogrimmar")
-                    list[i].AreaName = "Orgrimmar";
+                region3Index = extractor.FindIndex("Region[3]");
+                region4Index = extractor.FindIndex("Region[4]");
+            };
 
-                // The
-                if (list[i].AreaName == "Barrens")
-                    list[i].AreaName = "TheBarrens";
+            Action<string> extractLine = line =>
+            {
+                var values = line.Split(",");
+                if (values.Length > uiMapIdIndex &&
+                    values.Length > mapIdIndex &&
+                    values.Length > areaIdIndex &&
 
-                if (list[i].AreaName == "Hinterlands")
-                    list[i].AreaName = "TheHinterlands";
+                    values.Length > region0Index &&
+                    values.Length > region1Index &&
+                    values.Length > region3Index &&
+                    values.Length > region4Index
+                    )
+                {
+                    int uiMapId = int.Parse(values[uiMapIdIndex]);
+                    int orderIndex = int.Parse(values[orderIndexIndex]);
 
-                // have to test this later
-                //if (list[i].AreaName == "Sunwell")
-                //    list[i].AreaName = "Isle of Quel'Danas";
+                    int index = wmas.FindIndex(x => x.UIMapId == uiMapId && orderIndex == 0);
+                    if (index > -1)
+                    {
+                        wmas[index].MapID = int.Parse(values[mapIdIndex]);
+                        wmas[index].AreaID = int.Parse(values[areaIdIndex]);
+
+                        wmas[index].LocBottom = float.Parse(values[region0Index]);
+                        wmas[index].LocRight = float.Parse(values[region1Index]);
+
+                        wmas[index].LocTop = float.Parse(values[region3Index]);
+                        wmas[index].LocLeft = float.Parse(values[region4Index]);
+                    }
+                }
+            };
+
+            extractor.ExtractTemplate(path, extractLine);
+        }
+
+        private void ExtractContinent(string path, List<WorldMapArea> wmas)
+        {
+            int mapIdIndex = -1;
+            int directoryIndex = -1;
+
+            var extractor = new CSVExtractor();
+            extractor.HeaderAction = () =>
+            {
+                mapIdIndex = extractor.FindIndex("ID");
+                directoryIndex = extractor.FindIndex("Directory");
+            };
+
+            Action<string> extractLine = line =>
+            {
+                string[] values;
+                if (line.Contains("\""))
+                    values = extractor.SplitQuotes(line);
+                else
+                    values = line.Split(",");
+
+                if (values.Length > directoryIndex &&
+                    values.Length > mapIdIndex)
+                {
+                    int mapId = int.Parse(values[mapIdIndex]);
+
+                    var list = wmas.FindAll(x => x.MapID == mapId);
+                    foreach(var item in list)
+                    {
+                        item.Continent = values[directoryIndex];
+                    }
+                }
+            };
+
+            extractor.ExtractTemplate(path, extractLine);
+        }
+
+        private void ClearEmptyBound(List<WorldMapArea> wmas)
+        {
+            for (int i = wmas.Count - 1; i >= 0; i--)
+            {
+                if (wmas[i].LocBottom == 0 &&
+                    wmas[i].LocLeft == 0 &&
+                    wmas[i].LocRight == 0 &&
+                    wmas[i].LocTop == 0)
+                {
+                    wmas.RemoveAt(i);
+                }
             }
         }
     }
