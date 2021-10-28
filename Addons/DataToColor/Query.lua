@@ -12,9 +12,9 @@ function DataToColor:GetCurrentPlayerPosition()
     local map = C_Map.GetBestMapForUnit(DataToColor.C.unitPlayer)
     if map ~= nil then
         local position = C_Map.GetPlayerMapPosition(map, DataToColor.C.unitPlayer)
-        return position:GetXY()
-    else
-        return
+        if position ~= nil then
+            return position:GetXY()
+        end
     end
 end
 
