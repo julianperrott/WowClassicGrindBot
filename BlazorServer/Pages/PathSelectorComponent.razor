@@ -17,8 +17,7 @@
         </button>
 
         <MatAutocompleteList Class="dark-ples" Items="@files" TItem="string" Label="Path" ValueChanged="OnSelectedPathChanged"
-                             ShowClearButton="true" FullWidth="true" NumberOfElementsInPopup="@num" OnTextChanged="OnTextChanged"
-                             CustomStringSelector="@(i => { if (!string.IsNullOrEmpty(i)) return i.Replace("_", " "); else return i; })">
+                             ShowClearButton="true" FullWidth="true" NumberOfElementsInPopup="@num" OnTextChanged="OnTextChanged">
         </MatAutocompleteList>
     </div>
 </div>
