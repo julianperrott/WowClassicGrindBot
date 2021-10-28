@@ -793,7 +793,8 @@ e.g.
 "Requirement": "not Trigger:6:Suppression"        // Trigger 6 must be false
 ```
 
-e.g. you can make your awesome WeakAura. Then you can put the following Addon API in the 
+e.g. you can make your awesome WeakAura. Then you can put the following Addon API in the
+
 WeakAura -> Actions -> On Show -> Custom
 ```lua
 DataToColor:Set(0,1) -- enable Trigger 0
