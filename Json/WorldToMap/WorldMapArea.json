@@ -1,6 +1,291 @@
 [
   {
-    "ID": 4,
+    "MapID": 540,
+    "AreaID": 0,
+    "AreaName": "The Shattered Halls",
+    "LocLeft": 631.1082,
+    "LocRight": -432.63925,
+    "LocTop": 617.417,
+    "LocBottom": -91.748,
+    "UIMapId": 246,
+    "Continent": "HellfireMilitary"
+  },
+  {
+    "MapID": 558,
+    "AreaID": 0,
+    "AreaName": "Auchenai Crypts",
+    "LocLeft": 327.55722,
+    "LocRight": -414.98322,
+    "LocTop": 354.951,
+    "LocBottom": -140.076,
+    "UIMapId": 256,
+    "Continent": "AuchindounDraenei"
+  },
+  {
+    "MapID": 558,
+    "AreaID": 0,
+    "AreaName": "Auchenai Crypts",
+    "LocLeft": 215.05725,
+    "LocRight": -602.4832,
+    "LocTop": 334.951,
+    "LocBottom": -210.076,
+    "UIMapId": 257,
+    "Continent": "AuchindounDraenei"
+  },
+  {
+    "MapID": 556,
+    "AreaID": 0,
+    "AreaName": "Sethekk Halls",
+    "LocLeft": 515.79724,
+    "LocRight": -187.69824,
+    "LocTop": 173.654,
+    "LocBottom": -295.343,
+    "UIMapId": 258,
+    "Continent": "AuchindounDemon"
+  },
+  {
+    "MapID": 556,
+    "AreaID": 0,
+    "AreaName": "Sethekk Halls",
+    "LocLeft": 515.79724,
+    "LocRight": -187.69824,
+    "LocTop": 173.654,
+    "LocBottom": -295.343,
+    "UIMapId": 259,
+    "Continent": "AuchindounDemon"
+  },
+  {
+    "MapID": 555,
+    "AreaID": 0,
+    "AreaName": "Shadow Labyrinth",
+    "LocLeft": 185.07918,
+    "LocRight": -656.4432,
+    "LocTop": 62.7969,
+    "LocBottom": -498.218,
+    "UIMapId": 260,
+    "Continent": "AuchindounShadow"
+  },
+  {
+    "MapID": 542,
+    "AreaID": 0,
+    "AreaName": "The Blood Furnace",
+    "LocLeft": 498.989,
+    "LocRight": -504.53,
+    "LocTop": 603.136,
+    "LocBottom": -65.8767,
+    "UIMapId": 261,
+    "Continent": "HellfireDemon"
+  },
+  {
+    "MapID": 546,
+    "AreaID": 0,
+    "AreaName": "The Underbog",
+    "LocLeft": 240.977,
+    "LocRight": -653.943,
+    "LocTop": 423.73517,
+    "LocBottom": -172.87819,
+    "UIMapId": 262,
+    "Continent": "CoilfangMarsh"
+  },
+  {
+    "MapID": 545,
+    "AreaID": 0,
+    "AreaName": "The Steamvault",
+    "LocLeft": 160.022,
+    "LocRight": -716.742,
+    "LocTop": 158.56721,
+    "LocBottom": -425.9422,
+    "UIMapId": 263,
+    "Continent": "CoilfangPumping"
+  },
+  {
+    "MapID": 545,
+    "AreaID": 0,
+    "AreaName": "The Steamvault",
+    "LocLeft": 160.022,
+    "LocRight": -716.742,
+    "LocTop": 158.56721,
+    "LocBottom": -425.9422,
+    "UIMapId": 264,
+    "Continent": "CoilfangPumping"
+  },
+  {
+    "MapID": 547,
+    "AreaID": 0,
+    "AreaName": "The Slave Pens",
+    "LocLeft": 53.9341,
+    "LocRight": -836.124,
+    "LocTop": 201.72003,
+    "LocBottom": -391.65204,
+    "UIMapId": 265,
+    "Continent": "CoilfangDraenei"
+  },
+  {
+    "MapID": 553,
+    "AreaID": 0,
+    "AreaName": "The Botanica",
+    "LocLeft": 649.75323,
+    "LocRight": -107.64925,
+    "LocTop": 248.025,
+    "LocBottom": -256.91,
+    "UIMapId": 266,
+    "Continent": "TempestKeepAtrium"
+  },
+  {
+    "MapID": 554,
+    "AreaID": 0,
+    "AreaName": "The Mechanar",
+    "LocLeft": 334.458,
+    "LocRight": -341.78,
+    "LocTop": 349.9862,
+    "LocBottom": -100.8392,
+    "UIMapId": 267,
+    "Continent": "TempestKeepFactory"
+  },
+  {
+    "MapID": 554,
+    "AreaID": 0,
+    "AreaName": "The Mechanar",
+    "LocLeft": 334.458,
+    "LocRight": -341.78,
+    "LocTop": 412.98602,
+    "LocBottom": -37.839344,
+    "UIMapId": 268,
+    "Continent": "TempestKeepFactory"
+  },
+  {
+    "MapID": 552,
+    "AreaID": 0,
+    "AreaName": "The Arcatraz",
+    "LocLeft": 284.579,
+    "LocRight": -405.105,
+    "LocTop": 384.36502,
+    "LocBottom": -75.42433,
+    "UIMapId": 269,
+    "Continent": "TempestKeepArcane"
+  },
+  {
+    "MapID": 552,
+    "AreaID": 0,
+    "AreaName": "The Arcatraz",
+    "LocLeft": 300.76102,
+    "LocRight": -245.28703,
+    "LocTop": 408.032,
+    "LocBottom": 44.0,
+    "UIMapId": 270,
+    "Continent": "TempestKeepArcane"
+  },
+  {
+    "MapID": 552,
+    "AreaID": 0,
+    "AreaName": "The Arcatraz",
+    "LocLeft": 214.079,
+    "LocRight": -422.605,
+    "LocTop": 575.289,
+    "LocBottom": 150.83298,
+    "UIMapId": 271,
+    "Continent": "TempestKeepArcane"
+  },
+  {
+    "MapID": 557,
+    "AreaID": 0,
+    "AreaName": "Mana-Tombs",
+    "LocLeft": 276.93408,
+    "LocRight": -546.3511,
+    "LocTop": 90.0708,
+    "LocBottom": -458.786,
+    "UIMapId": 272,
+    "Continent": "AuchindounEthereal"
+  },
+  {
+    "MapID": 565,
+    "AreaID": 0,
+    "AreaName": "Gruul's Lair",
+    "LocLeft": 475.0,
+    "LocRight": -50.0,
+    "LocTop": 337.5,
+    "LocBottom": -12.5,
+    "UIMapId": 330,
+    "Continent": "GruulsLair"
+  },
+  {
+    "MapID": 544,
+    "AreaID": 0,
+    "AreaName": "Magtheridon's Lair",
+    "LocLeft": 385.5,
+    "LocRight": -170.5,
+    "LocTop": 255.33334,
+    "LocBottom": -115.33335,
+    "UIMapId": 331,
+    "Continent": "HellfireRaid"
+  },
+  {
+    "MapID": 548,
+    "AreaID": 0,
+    "AreaName": "Serpentshrine Cavern",
+    "LocLeft": 212.50249,
+    "LocRight": -1362.5005,
+    "LocTop": 650.002,
+    "LocBottom": -400.0,
+    "UIMapId": 332,
+    "Continent": "CoilfangRaid"
+  },
+  {
+    "MapID": 550,
+    "AreaID": 0,
+    "AreaName": "Tempest Keep",
+    "LocLeft": 787.5,
+    "LocRight": -787.5,
+    "LocTop": 950.0,
+    "LocBottom": -100.0,
+    "UIMapId": 334,
+    "Continent": "TempestKeepRaid"
+  },
+  {
+    "MapID": 564,
+    "AreaID": 3959,
+    "AreaName": "Black Temple",
+    "LocLeft": 1150.0,
+    "LocRight": 366.66666,
+    "LocTop": 949.99994,
+    "LocBottom": 427.0833,
+    "UIMapId": 339,
+    "Continent": "BlackTemple"
+  },
+  {
+    "MapID": 543,
+    "AreaID": 0,
+    "AreaName": "Hellfire Ramparts",
+    "LocLeft": 1989.28,
+    "LocRight": 1294.72,
+    "LocTop": -1029.44,
+    "LocBottom": -1492.48,
+    "UIMapId": 347,
+    "Continent": "HellfireRampart"
+  },
+  {
+    "MapID": 1,
+    "AreaID": 0,
+    "AreaName": "Azeroth",
+    "LocLeft": 6933.3,
+    "LocRight": -9600.0,
+    "LocTop": 12266.7,
+    "LocBottom": -12800.0,
+    "UIMapId": 947,
+    "Continent": "Kalimdor"
+  },
+  {
+    "MapID": 530,
+    "AreaID": 0,
+    "AreaName": "Outland",
+    "LocLeft": 10670.0,
+    "LocRight": -1600.0,
+    "LocTop": 6400.0,
+    "LocBottom": -5867.0,
+    "UIMapId": 987,
+    "Continent": "Expansion01"
+  },
+  {
     "MapID": 1,
     "AreaID": 14,
     "AreaName": "Durotar",
@@ -12,7 +297,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 9,
     "MapID": 1,
     "AreaID": 215,
     "AreaName": "Mulgore",
@@ -24,10 +308,9 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 11,
     "MapID": 1,
     "AreaID": 17,
-    "AreaName": "TheBarrens",
+    "AreaName": "The Barrens",
     "LocLeft": 2622.9165,
     "LocRight": -7510.4165,
     "LocTop": 1612.4999,
@@ -36,7 +319,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 13,
     "MapID": 1,
     "AreaID": 0,
     "AreaName": "Kalimdor",
@@ -44,26 +326,24 @@
     "LocRight": -19733.21,
     "LocTop": 12799.9,
     "LocBottom": -11733.3,
-    "UIMapId": 1464,
-    "Continent": "Azeroth"
+    "UIMapId": 1414,
+    "Continent": "Kalimdor"
   },
   {
-    "ID": 14,
     "MapID": 0,
     "AreaID": 0,
-    "AreaName": "Azeroth",
+    "AreaName": "Eastern Kingdoms",
     "LocLeft": 18171.97,
     "LocRight": -22569.21,
     "LocTop": 11176.344,
     "LocBottom": -15973.344,
-    "UIMapId": 947,
+    "UIMapId": 1415,
     "Continent": "Azeroth"
   },
   {
-    "ID": 15,
     "MapID": 0,
     "AreaID": 36,
-    "AreaName": "Alterac",
+    "AreaName": "Alterac Mountains",
     "LocLeft": 783.3333,
     "LocRight": -2016.6666,
     "LocTop": 1500.0,
@@ -72,10 +352,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 16,
     "MapID": 0,
     "AreaID": 45,
-    "AreaName": "Arathi",
+    "AreaName": "Arathi Highlands",
     "LocLeft": -866.6666,
     "LocRight": -4466.6665,
     "LocTop": -133.33333,
@@ -84,7 +363,6 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 17,
     "MapID": 0,
     "AreaID": 3,
     "AreaName": "Badlands",
@@ -96,10 +374,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 19,
     "MapID": 0,
     "AreaID": 4,
-    "AreaName": "BlastedLands",
+    "AreaName": "Blasted Lands",
     "LocLeft": -1241.6666,
     "LocRight": -4591.6665,
     "LocTop": -10566.666,
@@ -108,10 +385,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 20,
     "MapID": 0,
     "AreaID": 85,
-    "AreaName": "Tirisfal",
+    "AreaName": "Tirisfal Glades",
     "LocLeft": 3033.3333,
     "LocRight": -1485.4166,
     "LocTop": 3837.4998,
@@ -120,10 +396,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 21,
     "MapID": 0,
     "AreaID": 130,
-    "AreaName": "Silverpine",
+    "AreaName": "Silverpine Forest",
     "LocLeft": 3449.9998,
     "LocRight": -750.0,
     "LocTop": 1666.6666,
@@ -132,10 +407,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 22,
     "MapID": 0,
     "AreaID": 28,
-    "AreaName": "WesternPlaguelands",
+    "AreaName": "Western Plaguelands",
     "LocLeft": 416.66666,
     "LocRight": -3883.3333,
     "LocTop": 3366.6665,
@@ -144,10 +418,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 23,
     "MapID": 0,
     "AreaID": 139,
-    "AreaName": "EasternPlaguelands",
+    "AreaName": "Eastern Plaguelands",
     "LocLeft": -2185.4165,
     "LocRight": -6056.25,
     "LocTop": 3799.9998,
@@ -156,10 +429,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 24,
     "MapID": 0,
     "AreaID": 267,
-    "AreaName": "Hillsbrad",
+    "AreaName": "Hillsbrad Foothills",
     "LocLeft": 1066.6666,
     "LocRight": -2133.3333,
     "LocTop": 400.0,
@@ -168,10 +440,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 26,
     "MapID": 0,
     "AreaID": 47,
-    "AreaName": "TheHinterlands",
+    "AreaName": "The Hinterlands",
     "LocLeft": -1575.0,
     "LocRight": -5425.0,
     "LocTop": 1466.6666,
@@ -180,10 +451,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 27,
     "MapID": 0,
     "AreaID": 1,
-    "AreaName": "DunMorogh",
+    "AreaName": "Dun Morogh",
     "LocLeft": 1802.0833,
     "LocRight": -3122.9165,
     "LocTop": -3877.0833,
@@ -192,10 +462,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 28,
     "MapID": 0,
     "AreaID": 51,
-    "AreaName": "SearingGorge",
+    "AreaName": "Searing Gorge",
     "LocLeft": -322.91666,
     "LocRight": -2554.1665,
     "LocTop": -6100.0,
@@ -204,10 +473,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 29,
     "MapID": 0,
     "AreaID": 46,
-    "AreaName": "BurningSteppes",
+    "AreaName": "Burning Steppes",
     "LocLeft": -266.66666,
     "LocRight": -3195.8333,
     "LocTop": -7031.2495,
@@ -216,10 +484,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 30,
     "MapID": 0,
     "AreaID": 12,
-    "AreaName": "Elwynn",
+    "AreaName": "Elwynn Forest",
     "LocLeft": 1535.4166,
     "LocRight": -1935.4166,
     "LocTop": -7939.583,
@@ -228,10 +495,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 32,
     "MapID": 0,
     "AreaID": 41,
-    "AreaName": "DeadwindPass",
+    "AreaName": "Deadwind Pass",
     "LocLeft": -833.3333,
     "LocRight": -3333.3333,
     "LocTop": -9866.666,
@@ -240,7 +506,6 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 34,
     "MapID": 0,
     "AreaID": 10,
     "AreaName": "Duskwood",
@@ -252,10 +517,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 35,
     "MapID": 0,
     "AreaID": 38,
-    "AreaName": "LochModan",
+    "AreaName": "Loch Modan",
     "LocLeft": -1993.7499,
     "LocRight": -4752.083,
     "LocTop": -4487.5,
@@ -264,10 +528,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 36,
     "MapID": 0,
     "AreaID": 44,
-    "AreaName": "Redridge",
+    "AreaName": "Redridge Mountains",
     "LocLeft": -1570.8333,
     "LocRight": -3741.6665,
     "LocTop": -8575.0,
@@ -276,10 +539,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 37,
     "MapID": 0,
     "AreaID": 33,
-    "AreaName": "Stranglethorn",
+    "AreaName": "Stranglethorn Vale",
     "LocLeft": 2220.8333,
     "LocRight": -4160.4165,
     "LocTop": -11168.75,
@@ -288,10 +550,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 38,
     "MapID": 0,
     "AreaID": 8,
-    "AreaName": "SwampOfSorrows",
+    "AreaName": "Swamp of Sorrows",
     "LocLeft": -2222.9165,
     "LocRight": -4516.6665,
     "LocTop": -9620.833,
@@ -300,7 +561,6 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 39,
     "MapID": 0,
     "AreaID": 40,
     "AreaName": "Westfall",
@@ -312,7 +572,6 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 40,
     "MapID": 0,
     "AreaID": 11,
     "AreaName": "Wetlands",
@@ -324,7 +583,6 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 41,
     "MapID": 1,
     "AreaID": 141,
     "AreaName": "Teldrassil",
@@ -336,7 +594,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 42,
     "MapID": 1,
     "AreaID": 148,
     "AreaName": "Darkshore",
@@ -348,7 +605,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 43,
     "MapID": 1,
     "AreaID": 331,
     "AreaName": "Ashenvale",
@@ -360,10 +616,9 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 61,
     "MapID": 1,
     "AreaID": 400,
-    "AreaName": "ThousandNeedles",
+    "AreaName": "Thousand Needles",
     "LocLeft": -433.3333,
     "LocRight": -4833.333,
     "LocTop": -3966.6665,
@@ -372,10 +627,9 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 81,
     "MapID": 1,
     "AreaID": 406,
-    "AreaName": "StonetalonMountains",
+    "AreaName": "Stonetalon Mountains",
     "LocLeft": 3245.8333,
     "LocRight": -1637.4999,
     "LocTop": 2916.6665,
@@ -384,7 +638,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 101,
     "MapID": 1,
     "AreaID": 405,
     "AreaName": "Desolace",
@@ -396,7 +649,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 121,
     "MapID": 1,
     "AreaID": 357,
     "AreaName": "Feralas",
@@ -408,10 +660,9 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 141,
     "MapID": 1,
     "AreaID": 15,
-    "AreaName": "Dustwallow",
+    "AreaName": "Dustwallow Marsh",
     "LocLeft": -974.99994,
     "LocRight": -6225.0,
     "LocTop": -2033.3333,
@@ -420,7 +671,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 161,
     "MapID": 1,
     "AreaID": 440,
     "AreaName": "Tanaris",
@@ -432,7 +682,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 181,
     "MapID": 1,
     "AreaID": 16,
     "AreaName": "Azshara",
@@ -444,7 +693,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 182,
     "MapID": 1,
     "AreaID": 361,
     "AreaName": "Felwood",
@@ -456,10 +704,9 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 201,
     "MapID": 1,
     "AreaID": 490,
-    "AreaName": "UngoroCrater",
+    "AreaName": "Un'Goro Crater",
     "LocLeft": 533.3333,
     "LocRight": -3166.6665,
     "LocTop": -5966.6665,
@@ -468,7 +715,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 241,
     "MapID": 1,
     "AreaID": 493,
     "AreaName": "Moonglade",
@@ -480,7 +726,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 261,
     "MapID": 1,
     "AreaID": 1377,
     "AreaName": "Silithus",
@@ -492,7 +737,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 281,
     "MapID": 1,
     "AreaID": 618,
     "AreaName": "Winterspring",
@@ -504,10 +748,9 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 301,
     "MapID": 0,
     "AreaID": 1519,
-    "AreaName": "Stormwind",
+    "AreaName": "Stormwind City",
     "LocLeft": 1380.9714,
     "LocRight": 36.70063,
     "LocTop": -8278.851,
@@ -516,7 +759,6 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 321,
     "MapID": 1,
     "AreaID": 1637,
     "AreaName": "Orgrimmar",
@@ -528,7 +770,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 341,
     "MapID": 0,
     "AreaID": 1537,
     "AreaName": "Ironforge",
@@ -540,10 +781,9 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 362,
     "MapID": 1,
     "AreaID": 1638,
-    "AreaName": "ThunderBluff",
+    "AreaName": "Thunder Bluff",
     "LocLeft": 516.6666,
     "LocRight": -527.0833,
     "LocTop": -849.99994,
@@ -552,7 +792,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 381,
     "MapID": 1,
     "AreaID": 1657,
     "AreaName": "Darnassus",
@@ -564,7 +803,6 @@
     "Continent": "Kalimdor"
   },
   {
-    "ID": 382,
     "MapID": 0,
     "AreaID": 1497,
     "AreaName": "Undercity",
@@ -576,46 +814,64 @@
     "Continent": "Azeroth"
   },
   {
-    "ID": 401,
     "MapID": 30,
     "AreaID": 2597,
-    "AreaName": "AlteracValley",
+    "AreaName": "Alterac Valley",
     "LocLeft": 1781.2499,
     "LocRight": -2456.25,
     "LocTop": 1085.4166,
     "LocBottom": -1739.5833,
     "UIMapId": 1459,
-    "Continent": "Azeroth"
+    "Continent": "PVPZone01"
   },
   {
-    "ID": 443,
     "MapID": 489,
     "AreaID": 3277,
-    "AreaName": "WarsongGulch",
+    "AreaName": "Warsong Gulch",
     "LocLeft": 2041.6666,
     "LocRight": 895.8333,
     "LocTop": 1627.0833,
     "LocBottom": 862.49994,
     "UIMapId": 1460,
-    "Continent": "Azeroth"
+    "Continent": "PVPZone03"
   },
   {
-    "ID": 461,
     "MapID": 529,
     "AreaID": 3358,
-    "AreaName": "ArathiBasin",
+    "AreaName": "Arathi Basin",
     "LocLeft": 1858.3333,
     "LocRight": 102.08333,
     "LocTop": 1508.3333,
     "LocBottom": 337.5,
     "UIMapId": 1461,
+    "Continent": "PVPZone04"
+  },
+  {
+    "MapID": 0,
+    "AreaID": 0,
+    "AreaName": "Eastern Kingdoms",
+    "LocLeft": 12270.0,
+    "LocRight": -16530.0,
+    "LocTop": 12270.0,
+    "LocBottom": -16530.0,
+    "UIMapId": 1463,
     "Continent": "Azeroth"
   },
   {
-    "ID": 462,
+    "MapID": 1,
+    "AreaID": 0,
+    "AreaName": "Kalimdor",
+    "LocLeft": 10970.0,
+    "LocRight": -13370.0,
+    "LocTop": 12470.0,
+    "LocBottom": -11870.0,
+    "UIMapId": 1464,
+    "Continent": "Kalimdor"
+  },
+  {
     "MapID": 530,
     "AreaID": 3430,
-    "AreaName": "EversongWoods",
+    "AreaName": "Eversong Woods",
     "LocLeft": -4487.5,
     "LocRight": -9412.5,
     "LocTop": 11041.666,
@@ -624,7 +880,6 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 463,
     "MapID": 530,
     "AreaID": 3433,
     "AreaName": "Ghostlands",
@@ -636,10 +891,9 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 464,
     "MapID": 530,
     "AreaID": 3524,
-    "AreaName": "AzuremystIsle",
+    "AreaName": "Azuremyst Isle",
     "LocLeft": -10500.0,
     "LocRight": -14570.833,
     "LocTop": -2793.75,
@@ -648,10 +902,9 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 465,
     "MapID": 530,
     "AreaID": 3483,
-    "AreaName": "Hellfire",
+    "AreaName": "Hellfire Peninsula",
     "LocLeft": 5539.583,
     "LocRight": 375.0,
     "LocTop": 1481.25,
@@ -660,19 +913,17 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 466,
     "MapID": 530,
     "AreaID": 0,
-    "AreaName": "Expansion01",
+    "AreaName": "Outland",
     "LocLeft": 12996.039,
     "LocRight": -4468.039,
     "LocTop": 5821.3594,
     "LocBottom": -5821.3594,
-    "UIMapId": 0,
-    "Continent": ""
+    "UIMapId": 1945,
+    "Continent": "Expansion01"
   },
   {
-    "ID": 467,
     "MapID": 530,
     "AreaID": 3521,
     "AreaName": "Zangarmarsh",
@@ -684,10 +935,9 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 471,
     "MapID": 530,
     "AreaID": 3557,
-    "AreaName": "TheExodar",
+    "AreaName": "The Exodar",
     "LocLeft": -11066.367,
     "LocRight": -12123.138,
     "LocTop": -3609.6833,
@@ -696,10 +946,9 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 473,
     "MapID": 530,
     "AreaID": 3520,
-    "AreaName": "ShadowmoonValley",
+    "AreaName": "Shadowmoon Valley",
     "LocLeft": 4225.0,
     "LocRight": -1275.0,
     "LocTop": -1947.9166,
@@ -708,10 +957,9 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 475,
     "MapID": 530,
     "AreaID": 3522,
-    "AreaName": "BladesEdgeMountains",
+    "AreaName": "Blade's Edge Mountains",
     "LocLeft": 8845.833,
     "LocRight": 3420.8333,
     "LocTop": 4408.333,
@@ -720,10 +968,9 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 476,
     "MapID": 530,
     "AreaID": 3525,
-    "AreaName": "BloodmystIsle",
+    "AreaName": "Bloodmyst Isle",
     "LocLeft": -10075.0,
     "LocRight": -13337.499,
     "LocTop": -758.3333,
@@ -732,7 +979,6 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 477,
     "MapID": 530,
     "AreaID": 3518,
     "AreaName": "Nagrand",
@@ -744,10 +990,9 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 478,
     "MapID": 530,
     "AreaID": 3519,
-    "AreaName": "TerokkarForest",
+    "AreaName": "Terokkar Forest",
     "LocLeft": 7083.333,
     "LocRight": 1683.3333,
     "LocTop": -999.99994,
@@ -756,7 +1001,6 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 479,
     "MapID": 530,
     "AreaID": 3523,
     "AreaName": "Netherstorm",
@@ -768,10 +1012,9 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 480,
     "MapID": 530,
     "AreaID": 3487,
-    "AreaName": "SilvermoonCity",
+    "AreaName": "Silvermoon City",
     "LocLeft": -6400.75,
     "LocRight": -7612.2085,
     "LocTop": 10153.709,
@@ -780,10 +1023,9 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 481,
     "MapID": 530,
     "AreaID": 3703,
-    "AreaName": "ShattrathCity",
+    "AreaName": "Shattrath City",
     "LocLeft": 6135.259,
     "LocRight": 4829.009,
     "LocTop": -1473.9545,
@@ -792,27 +1034,25 @@
     "Continent": "Expansion01"
   },
   {
-    "ID": 482,
     "MapID": 566,
     "AreaID": 3820,
-    "AreaName": "NetherstormArena",
+    "AreaName": "Eye of the Storm",
     "LocLeft": 2660.4165,
     "LocRight": 389.5833,
     "LocTop": 2918.75,
     "LocBottom": 1404.1666,
-    "UIMapId": 1953,
-    "Continent": "Expansion01"
+    "UIMapId": 1956,
+    "Continent": "NetherstormBG"
   },
   {
-    "ID": 499,
     "MapID": 530,
     "AreaID": 4080,
-    "AreaName": "Sunwell",
+    "AreaName": "Isle of Quel'Danas",
     "LocLeft": -5302.083,
     "LocRight": -8629.166,
     "LocTop": 13568.749,
     "LocBottom": 11350.0,
-    "UIMapId": 0,
+    "UIMapId": 1957,
     "Continent": "Expansion01"
   }
 ]
