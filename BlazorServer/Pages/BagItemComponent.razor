@@ -5,18 +5,24 @@
     <a href="https://tbc.wowhead.com/item=@BagItem.ItemId" target="_blank" data-wowhead="item=@BagItem.ItemId" class="small" style="text-decoration:none">
         <b>
             <span style="color:@BagItemColour(BagItem.Item)">
-                @if (BagItem.Count > 1)
-                {@BagItem.Count<span>&nbsp;</span>}
-                @BagItem.Item.Name
-                @if (BagItem.IsSoulbound)
-                {
-                    <span>(S)</span>
-                }
-            </span>
             @if (BagItem.WasRecentlyUpdated)
             {
-                <span class="badge badge-info"> @BagItem.LastChangeDescription </span>
+                <span class="badge badge-info">@BagItem.LastChangeDescription</span>
             }
+            @if (BagItem.Count > 1)
+            {
+                @BagItem.Count<span>&nbsp;</span>
+            }
+            @BagItem.Item.Name
+            @if (BagItem.IsSoulbound)
+            {
+                <span>(S)</span>
+            }
+            @if (BagItem.Item.SellPrice > 0)
+            {
+                <Money Value="GetItemPrice(BagItem)" />
+            }
+            </span>
         </b>
     </a>
 }
@@ -42,5 +48,16 @@
     {
         if (item.Quality < 0 || item.Quality > 7) { return "badge-dark"; }
         return itemBadge[item.Quality];
+    }
+
+    protected int[] GetItemPrice(Core.BagItem item)
+    {
+        var value = item.Count * item.Item.SellPrice;
+        if (ShowChangesPrice)
+        {
+            value = (item.LastChange == 0 ? item.Count : item.LastChange) * item.Item.SellPrice;
+        }
+
+        return Item.ToSellPrice(value);
     }
 }

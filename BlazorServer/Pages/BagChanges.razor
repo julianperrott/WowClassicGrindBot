@@ -8,6 +8,9 @@
 <div class="card">
     <div class="card-header">
         Bag Changes
+        <div class="float-right">
+            <Money Value="money" />
+        </div>
     </div>
     <div class="card-body">
         @foreach (var bagItem in NewItems)
@@ -23,7 +26,9 @@
 
     List<Core.BagItem> NewItems = new List<Core.BagItem>();
 
-    MarkupString resultString = (MarkupString)"";
+    int maxItemToShow = 14;
+
+    int[] money = new int[0];
 
     protected override void OnInitialized()
     {
@@ -31,7 +36,28 @@
         {
             this.NewItems = addonReader.BagReader.BagItems.Where(i => i.WasRecentlyUpdated).ToList();
 
+            if(this.NewItems.Count > maxItemToShow)
+            {
+                this.NewItems = this.NewItems.Take(maxItemToShow).ToList();
+                
+                for(int i=0; i<NewItems.Count; i++)
+                {
+                    NewItems[i].LastUpdated -= TimeSpan.FromSeconds((i/4));
+                }
+            }
+
+            money = Item.ToSellPrice(this.NewItems.Sum(ItemValue));
+
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };
+    }
+
+    protected int ItemValue(BagItem item)
+    {
+        if (item.LastChange == 0)
+        {
+            return item.Item.SellPrice;
+        }
+        return item.LastChange * item.Item.SellPrice;
     }
 }

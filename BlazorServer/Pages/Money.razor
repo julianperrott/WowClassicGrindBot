@@ -1,10 +1,12 @@
 ﻿@if (Value != null && Value.Length == 3)
 {
-    <span style="font-size:small">
+    <span class="float-right" style="font-size:small">
         @for (int i = 0; i < 2; i++)
         {
             @if (Value[i] > 0)
-            {@Value[i]<img height="12px" src="@images[i]" />}
+            {
+                @Value[i] <img height="12px" src="@images[i]" />
+            }
         }
     </span>
 }
