@@ -13,7 +13,7 @@ namespace ReadDBC_CSV
 
         public List<string> FileRequirement { get; } = new List<string>()
         {
-            "itemsearchname.csv"
+            "itemsparse.csv"
         };
 
         public ItemExtractor(string path)
@@ -36,6 +36,7 @@ namespace ReadDBC_CSV
             int idIndex = -1;
             int nameIndex = -1;
             int qualityIndex = -1;
+            int sellPriceIndex = -1;
 
             var extractor = new CSVExtractor();
             extractor.HeaderAction = () =>
@@ -43,6 +44,7 @@ namespace ReadDBC_CSV
                 idIndex = extractor.FindIndex("ID");
                 nameIndex = extractor.FindIndex("Display_lang");
                 qualityIndex = extractor.FindIndex("OverallQualityID");
+                sellPriceIndex = extractor.FindIndex("SellPrice");
             };
 
             var items = new List<Item>();
@@ -62,13 +64,15 @@ namespace ReadDBC_CSV
 
                 if (values.Length > idIndex &&
                     values.Length > nameIndex &&
-                    values.Length > qualityIndex)
+                    values.Length > qualityIndex &&
+                    values.Length > sellPriceIndex)
                 {
                     items.Add(new Item
                     {
                         Entry = int.Parse(values[idIndex]),
                         Quality = int.Parse(values[qualityIndex]),
                         Name = values[nameIndex],
+                        SellPrice = int.Parse(values[sellPriceIndex])
                     });
                 }
             };
