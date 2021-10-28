@@ -52,13 +52,7 @@ namespace ReadDBC_CSV
             {
                 string[] values = line.Split(",");
                 if (line.Contains("\""))
-                {
-                    values = Regex.Split(line, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                    if (values[nameIndex].Contains("\""))
-                    {
-                        values[nameIndex] = values[nameIndex].Replace("\"", "");
-                    }
-                }
+                    values = extractor.SplitQuotes(line);
                 else
                     values = line.Split(",");
 
