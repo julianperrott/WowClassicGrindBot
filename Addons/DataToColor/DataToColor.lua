@@ -113,6 +113,8 @@ local talentNum = nil
 
 local x, y = 0, 0
 
+DataToColor.customTrigger1 = {}
+
 -- Note: Coordinates where player is standing (max: 10, min: -10)
 -- Note: Player direction is in radians (360 degrees = 2π radians)
 -- Note: Player health/mana is taken out of 100% (0 - 1)
@@ -162,6 +164,7 @@ function DataToColor:OnInitialize()
     DataToColor:Print("Welcome. Using "..version)
 
     DataToColor:InitUpdateQueues()
+    DataToColor:InitTrigger(DataToColor.customTrigger1)
 end
 
 function DataToColor:SetupRequirements()
@@ -315,6 +318,12 @@ function DataToColor:InitTalentQueue()
     end
 end
 
+
+function DataToColor:InitTrigger(t)
+    for i=0, 23 do
+        t[i] = 0
+    end
+end
 
 local valueCache = {}
 -- Function to mass generate all of the initial frames for the pixel reader
@@ -557,6 +566,8 @@ function DataToColor:CreateFrames(n)
                     MakePixelSquareArrI(talentNum, 72)
                 end
             end
+
+            MakePixelSquareArrI(DataToColor:Base2CustomTrigger(DataToColor.customTrigger1), 73)
 
             -- Timers
             MakePixelSquareArrI(DataToColor.lastLoot, 97)

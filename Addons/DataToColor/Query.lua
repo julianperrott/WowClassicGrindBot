@@ -53,6 +53,23 @@ function DataToColor:Base2Converter2()
     DataToColor:MakeIndexBase2(DataToColor:IsPlayerDrowning(), 0)
 end
 
+function DataToColor:Base2CustomTrigger(t)
+    local v = 0
+    for i=0, 23 do
+        v = v + DataToColor:MakeIndexBase2(t[i], i)
+    end
+    return v
+end
+
+function DataToColor:Set(trigger, input)
+    if input == true then input = 1 end
+    local v = tonumber(input) or 0
+    if v > 0 then v = 1 end
+    if trigger >= 0 and trigger <= 23 then
+        DataToColor.customTrigger1[trigger] = v
+    end
+end
+
 function DataToColor:getAuraMaskForClass(func, unitId, table)
     local num = 0
     for k, v in pairs(table) do
