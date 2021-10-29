@@ -56,7 +56,7 @@ namespace Core.Goals
 
         protected async Task Fight()
         {
-            if (playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
+            if (playerReader.HasTarget && playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
             {
                 await input.TapPetAttack("");
             }
