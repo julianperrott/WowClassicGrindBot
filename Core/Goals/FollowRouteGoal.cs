@@ -87,7 +87,7 @@ namespace Core.Goals
             this.mountHandler = mountHandler;
             this.targetFinder = targetFinder;
 
-            MinDistance = !(pather is RemotePathingAPIV2) || !(pather is RemotePathingAPIV3) ? 15 : 8;
+            MinDistance = !(pather is RemotePathingAPIV3) ? 15 : 8;
 
             if (classConfiguration.Mode != Mode.AttendedGather)
             {
