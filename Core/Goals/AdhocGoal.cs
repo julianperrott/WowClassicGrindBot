@@ -61,7 +61,6 @@ namespace Core.Goals
             }
 
             await castingHandler.CastIfReady(key, key.DelayBeforeCast);
-            key.ResetCooldown();
 
             bool wasDrinkingOrEating = playerReader.Buffs.Drinking || playerReader.Buffs.Eating;
 
@@ -96,8 +95,6 @@ namespace Core.Goals
             {
                 await input.TapStopKey(); // stand up
             }
-
-            key.SetClicked();
 
             await wait.Update(1);
         }
