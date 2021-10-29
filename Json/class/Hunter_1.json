@@ -16,7 +16,7 @@
         "AfterCastWaitNextSwing": true,
         "StepBackAfterCast": 1000,
         "MinMana": 15,
-        "Requirement": "InMeleeRange"
+        "Requirements": ["InMeleeRange", "not AutoShot"]
       }
     ]
   },
@@ -34,7 +34,7 @@
         "WhenUsable": true,
         "AfterCastWaitNextSwing": true,
         "MinMana": 15,
-        "Requirement": "InMeleeRange"
+        "Requirements": ["InMeleeRange", "not AutoShot"]
       },
       {
         "Name": "AutoAttack",

@@ -21,7 +21,7 @@
         "AfterCastWaitNextSwing": true,
         "WhenUsable": true,
         "MinMana": 15,
-        "Requirement": "InMeleeRange"
+        "Requirements": ["InMeleeRange", "not AutoShot"]
       }
     ]
   },
@@ -63,13 +63,6 @@
         "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "TargetHealth%>75"]
       },
       {
-        "Name": "Auto Shot",
-        "HasCastBar": true,
-        "WhenUsable": true,
-        "Key": "3",
-        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "not AutoShot", "HasAmmo"]
-      },
-      {
         "Name": "Steady Shot",
         "Key": "6",
         "WhenUsable": true,
@@ -79,12 +72,19 @@
         "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "LastAutoShotMs<500"]
       },
       {
+        "Name": "Auto Shot",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Key": "3",
+        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "not AutoShot", "HasAmmo"]
+      },
+      {
         "Name": "Disengage",
         "Key": "N8",
         "WhenUsable": true,
         "Cooldown": 5000,
         "MinMana": 15,
-        "Requirement": "InMeleeRange"
+        "Requirements": ["InMeleeRange", "AutoAttacking"]
       },
       {
         "Name": "Raptor Strike",
@@ -93,11 +93,11 @@
         "AfterCastWaitNextSwing": true,
         "MinMana": 15,
         "StepBackAfterCast": 1000,
-        "Requirement": "InMeleeRange"
+        "Requirements": ["InMeleeRange", "not AutoShot"]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["InMeleeRange", "not AutoAttacking"]
+        "Requirements": ["InMeleeRange", "not AutoShot", "not AutoAttacking"]
       }
     ]
   },
