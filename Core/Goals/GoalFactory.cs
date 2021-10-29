@@ -116,6 +116,14 @@ namespace Core
                 {
                     var genericCombat = new CombatGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, classConfig, castingHandler);
                     availableActions.Add(genericCombat);
+
+                    if (addonReader.PlayerReader.PlayerClass == PlayerClassEnum.Hunter ||
+                       addonReader.PlayerReader.PlayerClass == PlayerClassEnum.Warlock ||
+                       addonReader.PlayerReader.PlayerClass == PlayerClassEnum.Mage)
+                    {
+                        availableActions.Add(new TargetPetTarget(input, addonReader.PlayerReader));
+                    }
+
                     availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, castingHandler, stuckDetector, classConfig));
 
                     availableActions.Add(new CreatureKilledGoal(logger, addonReader.PlayerReader, classConfig));

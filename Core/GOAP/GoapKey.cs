@@ -5,6 +5,7 @@
         hastarget = 10,
         targetisalive = 20,
         incombat = 30,
+        pethastarget = 31,
         withinpullrange = 40,
         incombatrange = 50,
         pulled = 60,
@@ -41,6 +42,9 @@
 
                  (GoapKey.incombat, true) => "In combat",
                  (GoapKey.incombat, false) => "Out of combat",
+
+                 (GoapKey.pethastarget, true) => "Pet has target",
+                 (GoapKey.pethastarget, false) => "Pet has no target",
 
                  (GoapKey.withinpullrange, true) => "In pull range",
                  (GoapKey.withinpullrange, false) => "Out of pull range",

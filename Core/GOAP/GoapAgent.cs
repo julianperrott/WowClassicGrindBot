@@ -89,7 +89,8 @@ namespace Core.GOAP
         {
             var state = new HashSet<KeyValuePair<GoapKey, object>>
             {
-                new KeyValuePair<GoapKey, object>(GoapKey.hastarget,!blacklist.IsTargetBlacklisted() && (!string.IsNullOrEmpty(playerReader.Target)|| playerReader.TargetHealth>0)),
+                new KeyValuePair<GoapKey, object>(GoapKey.hastarget, !blacklist.IsTargetBlacklisted() && playerReader.HasTarget),
+                new KeyValuePair<GoapKey, object>(GoapKey.pethastarget, playerReader.PetHasTarget),
                 new KeyValuePair<GoapKey, object>(GoapKey.targetisalive,!string.IsNullOrEmpty(this.PlayerReader.Target) &&  (!playerReader.PlayerBitValues.TargetIsDead || playerReader.TargetHealth>0)),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.PlayerBitValues.PlayerInCombat ),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
