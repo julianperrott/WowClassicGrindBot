@@ -23,7 +23,7 @@ namespace Core.Goals
         private readonly KeyAction defaultKeyAction = new KeyAction();
 
         private const int GCD = 1500;
-        private const int SpellQueueTimeMs = 325;
+        private const int SpellQueueTimeMs = 400;
 
         private const int MaxWaitCastTimeMs = GCD;
         private const int MaxWaitBuffTimeMs = GCD;
@@ -161,20 +161,11 @@ namespace Core.Goals
 
             item.LogInformation($" ... usable: {beforeUsable}->{playerReader.UsableAction.Is(item)} -- ({(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value})");
 
-            if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value) || !(beforeUsable && !playerReader.UsableAction.Is(item)))
+            if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value))
             {
                 await ReactToLastCastingEvent(item, $"{item.Name}-{GetType().Name}: CastInstant");
                 return false;
             }
-
-            if (item.RequirementObjects.Any())
-            {
-                (bool firstReq, double firstReqElapsedMs) = await wait.InterruptTask(SpellQueueTimeMs,
-                    () => !item.CanRun()
-                );
-                item.LogInformation($" ... instant interrupt: {!firstReq} | CanRun:{item.CanRun()} | Delay: {firstReqElapsedMs}ms");
-            }
-
             return true;
         }
 
@@ -359,7 +350,7 @@ namespace Core.Goals
                         }
                     }
                 }
-                else if(item.DelayAfterCast > 0)
+                else if (item.DelayAfterCast > 0)
                 {
                     item.LogInformation($" ... delay after cast {item.DelayAfterCast}ms");
                     var result = await wait.InterruptTask(item.DelayAfterCast, () => beforeHasTarget != playerReader.HasTarget);
@@ -371,6 +362,16 @@ namespace Core.Goals
                     {
                         item.LogInformation($" .... delay after cast not interrupted {result.Item2}ms");
                     }
+                }
+            }
+            else
+            {
+                if (item.RequirementObjects.Any())
+                {
+                    (bool firstReq, double firstReqElapsedMs) = await wait.InterruptTask(SpellQueueTimeMs,
+                        () => !item.CanRun()
+                    );
+                    item.LogInformation($" ... instant interrupt: {!firstReq} | CanRun:{item.CanRun()} | Delay: {firstReqElapsedMs}ms");
                 }
             }
 
