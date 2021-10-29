@@ -230,13 +230,48 @@ For each of the following click + to add a new key binding.
 | Delete | /stopattack<br>/stopcasting<br>/petfollow |
 | Insert | /cleartarget |
 
-## 9. Setting up the class file (Final step)
+## 9. Class Configuration
 
-Each class has a configuration file in `/Json/class` e.g. the config for a Rogue it is in file `C:\WowClassicGrindBot\Json\class\Rogue.json`.
+Each class has a configuration file in `\Json\class` e.g. the config for a Rogue it is in file `C:\WowClassicGrindBot\Json\class\Rogue.json`.
 
-The configuration file determines what spells you cast when pulling and in combat, where to vend and repair and what buffs you give yourself.
+The configuration file determines what spells you cast when pulling and in combat, where to vendor and repair and what buffs you give yourself.
 
 Take a look at the class files in `/Json/class` for examples of what you can do. Your class file probably exists and just needs to be edited to set the pathing file name, but note they may be set up for level 60.
+
+| Property Name | Description | Optional | Default value |
+| --- | --- | --- | --- |
+| `"Loot"` | Should loot the mob | true | `true` |
+| `"Skin"` | Should skin the mob | true | `false` |
+| `"UseMount"` | Should use mount when its possible | true | `false` |
+| `"PathFilename"` | [Path](#Path) to use while alive | **false** | `""` |
+| `"SpiritPathFilename"` | Path to use while dead | true | `""` |
+| `"PathThereAndBack"` | While using the path, [should go start to and reverse](#There-and-back) | true | `true` |
+| `"PathReduceSteps"` | Reduce the number of path points | true | `false` |
+| `"Mode"` | What kind of [behaviour](#Modes) should the bot operate | true | `Mode.Grind` |
+| `"NPCMaxLevels_Above"` | Maximum allowed level above difference to the player | true | `1` |
+| `"NPCMaxLevels_Below"` | Maximum allowed level below difference to the player | true | `7` |
+| `"CheckTargetGivesExp"` | Only engage the target if it yields experience | true | `false` |
+| `"Blacklist"` | List of Npc names which should be avoided | true | `[""]` |
+| `"ImmunityBlacklist"` | List of Npc ids which have some sort of `School` immunities | true | `""` |
+| --- | --- | --- | --- |
+| `"Pull"` | Sequence of `KeyAction(s)` to execute upon [Pull Goal](#Pull-Goal) | true | `[]` |
+| `"Combat"` | Sequence of `KeyAction(s)` to execute upon [Combat Goal](#Combat-Goal) | **false** | `[]` |
+| `"Adhoc"` | Sequence of `KeyAction(s)` to execute upon [Adhoc Goals](#Adhoc-Goals) | true | `[]` |
+| `"Parallel"` | Sequence of `KeyAction(s)` to execute upon [Parallel Goal](#Parallel-Goals) | true | `[]` |
+| `"NPC"` | Sequence of `KeyAction(s)` to execute upon [NPC Goal](#NPC-Goals) | true | `[]` |
+| --- | --- | --- | --- |
+| `"GatherFindKeys"` | List of strings for switching between gathering profiles | true | `[]` |
+| `"JumpKey"` | `Consolekey` to be pressed on Jump | true | `"Spacebar"` |
+| `"InteractKey"` | `Consolekey` to be pressed on Interact | true | `"I"` |
+| `"TargetLastTargetKey"` | `Consolekey` to be pressed to Target last target | true | `"G"` |
+| `"StandUpKey"` | `Consolekey` to be pressed to stand up | true | `"X"` |
+| `"ClearTargetKey"` | `Consolekey` to be pressed to clear current target | true | `"Insert"` |
+| `"StopAttackKey"` | `Consolekey` to be pressed to stop attack | true | `"Delete"` |
+| `"TargetNearestTargetKey"` | `Consolekey` to be pressed to target nearest target | true | `"Tab"` |
+| `"TargetTargetOfTargetKey"` | `Consolekey` to be pressed to target - target of target | true | `"F"` |
+| `"TargetPetKey"` | `Consolekey` to be pressed to target pet | true | `"Multiply"` |
+| `"PetAttackKey"` | `Consolekey` to be pressed to send attack pet | true | `"Subtract"` |
+| `"MountKey"` | `Consolekey` to be pressed to use mount | true | `"O"` |
 
 ### Path
 
