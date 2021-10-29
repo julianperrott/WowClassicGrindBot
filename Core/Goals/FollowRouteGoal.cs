@@ -92,6 +92,7 @@ namespace Core.Goals
             if (classConfiguration.Mode != Mode.AttendedGather)
             {
                 AddPrecondition(GoapKey.incombat, false);
+                AddPrecondition(GoapKey.producedcorpse, false);
                 AddPrecondition(GoapKey.consumecorpse, false);
             }
         }
