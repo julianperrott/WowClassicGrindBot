@@ -42,6 +42,7 @@ namespace Core.Goals
             {
                 new Point(0, 0),
                 new Point(0, 25).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight),
+                new Point(0, 75).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight),
             };
         }
 
@@ -92,10 +93,13 @@ namespace Core.Goals
             foreach (var npc in npcNameFinder.Npcs)
             {
                 attemptPoints.AddRange(locFindByCursorType);
-                attemptPoints.Add(new Point(npc.ClickPoint.X + (npc.Width / 2), npc.ClickPoint.Y));
-                attemptPoints.Add(new Point(npc.ClickPoint.X - (npc.Width / 2), npc.ClickPoint.Y));
+                foreach(var point in locFindByCursorType)
+                {
+                    attemptPoints.Add(new Point(npc.Width / 2, point.Y).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight));
+                    attemptPoints.Add(new Point(-npc.Width / 2, point.Y).Scale(npcNameFinder.scaleToRefWidth, npcNameFinder.scaleToRefHeight));
+                }
 
-                foreach (var location in locFindByCursorType)
+                foreach (var location in attemptPoints)
                 {
                     var clickPostion = npcNameFinder.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                     input.SetCursorPosition(clickPostion);
