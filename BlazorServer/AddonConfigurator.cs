@@ -1,15 +1,10 @@
 using System.IO;
 using Microsoft.Extensions.Logging;
-using Serilog.Extensions.Logging;
-using Core;
-using System.Diagnostics;
-using System.Management;
 using System.Linq;
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using SharedLib;
 using Game;
+using WinAPI;
 
 namespace BlazorServer
 {
@@ -42,28 +37,28 @@ namespace BlazorServer
 
         public bool Validate()
         {
-            if(!Directory.Exists(addonConfig.InstallPath))
+            if (!Directory.Exists(addonConfig.InstallPath))
             {
-                logger.LogError($"AddonConfigurator.InstallPath - error - does not exists: '{addonConfig.InstallPath}'");
+                logger.LogError($"{GetType().Name}.InstallPath - error - does not exists: '{addonConfig.InstallPath}'");
                 return false;
             }
             else
             {
-                logger.LogInformation($"AddonConfigurator.InstallPath - correct: '{addonConfig.InstallPath}'");
-                if(!Directory.Exists(Path.Join(addonConfig.InstallPath, "Interface", "AddOns")))
+                logger.LogInformation($"{GetType().Name}.InstallPath - correct: '{addonConfig.InstallPath}'");
+                if (!Directory.Exists(AddonBasePath))
                 {
-                    logger.LogError($"AddonConfigurator.InstallPath - error - unable to locate Interface\\Addons folder: '{addonConfig.InstallPath}'");
+                    logger.LogError($"{GetType().Name}.InstallPath - error - unable to locate Interface\\Addons folder: '{addonConfig.InstallPath}'");
                     return false;
                 }
                 else
                 {
-                    logger.LogInformation($"AddonConfigurator.InstallPath - correct - Interface\\Addons : '{addonConfig.InstallPath}'");
+                    logger.LogInformation($"{GetType().Name}.InstallPath - correct - Interface\\Addons : '{addonConfig.InstallPath}'");
                 }
             }
 
             if (string.IsNullOrEmpty(addonConfig.Author))
             {
-                logger.LogError($"AddonConfigurator.Author - error - cannot be empty: '{addonConfig.Author}'");
+                logger.LogError($"{GetType().Name}.Author - error - cannot be empty: '{addonConfig.Author}'");
                 return false;
             }
 
@@ -79,13 +74,13 @@ namespace BlazorServer
 
                 if (addonConfig.Title.Length == 0)
                 {
-                    logger.LogError($"AddonConfigurator.Title - error - use letters only: '{addonConfig.Title}'");
+                    logger.LogError($"{GetType().Name}.Title - error - use letters only: '{addonConfig.Title}'");
                     return false;
                 }
             }
             else
             {
-                logger.LogError($"AddonConfigurator.Title - error - cannot be empty: '{addonConfig.Title}'");
+                logger.LogError($"{GetType().Name}.Title - error - cannot be empty: '{addonConfig.Title}'");
                 return false;
             }
 
@@ -101,11 +96,11 @@ namespace BlazorServer
                 RenameAddon();
                 MakeUnique();
 
-                logger.LogInformation($"AddonConfigurator.Install - Success");
+                logger.LogInformation($"{GetType().Name}.Install - Success");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                logger.LogInformation($"AddonConfigurator.Install - Failed\n" + e.Message);
+                logger.LogInformation($"{GetType().Name}.Install - Failed\n" + e.Message);
             }
         }
 
@@ -113,13 +108,13 @@ namespace BlazorServer
         {
             if (Directory.Exists(DefaultAddonPath))
             {
-                logger.LogInformation("AddonConfigurator.DeleteAddon -> Default Addon Exists");
+                logger.LogInformation($"{GetType().Name}.DeleteAddon -> Default Addon Exists");
                 Directory.Delete(DefaultAddonPath, true);
             }
 
             if (!string.IsNullOrEmpty(addonConfig.Title) && Directory.Exists(FinalAddonPath))
             {
-                logger.LogInformation("AddonConfigurator.DeleteAddon -> Unique Addon Exists");
+                logger.LogInformation($"{GetType().Name}.DeleteAddon -> Unique Addon Exists");
                 Directory.Delete(FinalAddonPath, true);
             }
         }
@@ -129,7 +124,7 @@ namespace BlazorServer
             try
             {
                 CopyFolder("");
-                logger.LogInformation("AddonConfigurator.CopyFiles - Success");
+                logger.LogInformation($"{GetType().Name}.CopyFiles - Success");
             }
             catch (Exception e)
             {
@@ -137,7 +132,7 @@ namespace BlazorServer
 
                 // This only should be happen when running from IDE
                 CopyFolder(".");
-                logger.LogInformation("AddonConfigurator.CopyFiles - Success");
+                logger.LogInformation($"{GetType().Name}.CopyFiles - Success");
             }
         }
 
@@ -249,43 +244,15 @@ namespace BlazorServer
         {
             if (wowProcess.WarcraftProcess != null)
             {
-                addonConfig.InstallPath = GetRunningProcessFullPath();
+                addonConfig.InstallPath = ExecutablePath.Get(wowProcess.WarcraftProcess);
                 if (!string.IsNullOrEmpty(addonConfig.InstallPath))
                 {
-                    logger.LogInformation($"AddonConfigurator.InstallPath - found running instance: '{addonConfig.InstallPath}'");
+                    logger.LogInformation($"{GetType().Name}.InstallPath - found running instance: '{addonConfig.InstallPath}'");
                     return;
                 }
             }
 
-            logger.LogError($"AddonConfigurator.InstallPath - game not running");
-        }
-
-        private string GetRunningProcessFullPath()
-        {
-            var wmiQueryString = "SELECT ProcessId, ExecutablePath, CommandLine FROM Win32_Process";
-            using (var searcher = new ManagementObjectSearcher(wmiQueryString))
-            using (var results = searcher.Get())
-            {
-                var query = from p in Process.GetProcesses()
-                            join mo in results.Cast<ManagementObject>()
-                            on p.Id equals (int)(uint)mo["ProcessId"]
-                            select new
-                            {
-                                Process = p,
-                                Path = (string)mo["ExecutablePath"],
-                                CommandLine = (string)mo["CommandLine"],
-                            };
-                foreach (var item in query)
-                {
-                    if(item.Process.Id == wowProcess.WarcraftProcess.Id)
-                    {
-                        var path = Path.GetDirectoryName(item.Path);
-                        return string.IsNullOrEmpty(path) ? string.Empty : path;
-                    }
-                }
-            }
-
-            return string.Empty;
+            logger.LogError($"{GetType().Name}.InstallPath - game not running");
         }
 
         #endregion
