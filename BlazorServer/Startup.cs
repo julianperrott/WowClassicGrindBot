@@ -119,23 +119,7 @@ namespace BlazorServer
                 api.RequestDisconnect();
                 failed = true;
             }
-            
-            if (scp.Type == StartupConfigPathing.Types.RemoteV2 || failed)
-            {
-                var worldmapAreaDb = new WorldMapAreaDB(logger, dataConfig);
-                var api = new RemotePathingAPIV2(logger, scp.hostv2, scp.portv2, worldmapAreaDb);
-                if (api.PingServer().Result)
-                {
-                    Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                    Log.Debug($"Using {StartupConfigPathing.Types.RemoteV2}({api.GetType().Name}) {scp.hostv2}:{scp.portv2}");
-                    Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                    return api;
-                }
 
-                api.RequestDisconnect();
-                failed = true;
-            }
-            
             if (scp.Type == StartupConfigPathing.Types.RemoteV1 || failed)
             {
                 var api = new RemotePathingAPI(logger, scp.hostv1, scp.portv1);
@@ -143,9 +127,9 @@ namespace BlazorServer
                 {
                     Log.Information("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-                    if (scp.Type == StartupConfigPathing.Types.RemoteV2)
+                    if (scp.Type == StartupConfigPathing.Types.RemoteV3)
                     {
-                        Log.Debug($"Unavailable {StartupConfigPathing.Types.RemoteV2} {scp.hostv2}:{scp.portv2} - Fallback to {StartupConfigPathing.Types.RemoteV1}");
+                        Log.Debug($"Unavailable {StartupConfigPathing.Types.RemoteV3} {scp.hostv3}:{scp.portv3} - Fallback to {StartupConfigPathing.Types.RemoteV1}");
                     }
 
                     Log.Debug($"Using {StartupConfigPathing.Types.RemoteV1}({api.GetType().Name}) {scp.hostv1}:{scp.portv1}");
