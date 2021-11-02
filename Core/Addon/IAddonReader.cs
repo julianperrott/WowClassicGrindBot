@@ -5,12 +5,6 @@ namespace Core
 {
     public interface IAddonReader
     {
-        void Refresh();
-        void Reset();
-
-        Color GetColorAt(int index);
-        int GetIntAt(int index);
-
         bool Active { get; set; }
 
         PlayerReader PlayerReader { get; set; }
@@ -23,5 +17,12 @@ namespace Core
         LevelTracker LevelTracker { get; set; }
 
         WorldMapAreaDB WorldMapAreaDb { get; set; }
+
+
+        void Refresh();
+        void Reset();
+
+        Color GetColorAt(int index);
+        int GetIntAt(int index);
     }
 }
