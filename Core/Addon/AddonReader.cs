@@ -12,6 +12,9 @@ namespace Core
         private readonly ILogger logger;
         private readonly ISquareReader squareReader;
         private readonly IAddonDataProvider addonDataProvider;
+
+        public int Sequence { get; private set; } = 0;
+
         public bool Active { get; set; } = true;
         public PlayerReader PlayerReader { get; set; }
         public BagReader BagReader { get; set; }
@@ -36,6 +39,7 @@ namespace Core
         private readonly SpellDB spellDb;
         private readonly TalentDB talentDB;
 
+        public double AvgUpdateLatency { private set; get; } = 5;
         private readonly CircularBuffer<double> UpdateLatencys;
 
         private DateTime lastFrontendUpdate = DateTime.Now;
@@ -77,12 +81,12 @@ namespace Core
             PlayerReader.GlobalTime.Changed += (object obj, EventArgs e) =>
             {
                 UpdateLatencys.Put((DateTime.Now - PlayerReader.GlobalTime.LastChanged).TotalMilliseconds);
-                PlayerReader.AvgUpdateLatency = 0;
+                AvgUpdateLatency = 0;
                 for (int i = 0; i < UpdateLatencys.Size; i++)
                 {
-                    PlayerReader.AvgUpdateLatency += UpdateLatencys.PeekAt(i);
+                    AvgUpdateLatency += UpdateLatencys.PeekAt(i);
                 }
-                PlayerReader.AvgUpdateLatency /= UpdateLatencys.Size;
+                AvgUpdateLatency /= UpdateLatencys.Size;
             };
         }
 
@@ -114,6 +118,8 @@ namespace Core
         public void Refresh()
         {
             addonDataProvider.Update();
+
+            Sequence++;
             PlayerReader.Updated();
         }
 

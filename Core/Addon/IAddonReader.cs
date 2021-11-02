@@ -18,7 +18,6 @@ namespace Core
 
         WorldMapAreaDB WorldMapAreaDb { get; set; }
 
-
         void Refresh();
         void Reset();
 

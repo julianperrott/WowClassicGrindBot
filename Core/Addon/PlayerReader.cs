@@ -19,9 +19,6 @@ namespace Core
             this.creatureDb = creatureDb;
         }
 
-        public double AvgUpdateLatency = 5;
-
-        public int Sequence { get; private set; } = 0;
 
         public List<CreatureHistory> Creatures { get; } = new List<CreatureHistory>();
         public List<CreatureHistory> Targets { get; } = new List<CreatureHistory>();
@@ -285,8 +282,6 @@ namespace Core
 
         internal void Updated()
         {
-            Sequence++;
-
             if (GlobalTime.Updated(reader) && (GlobalTime.Value <= 3 || !Initialized))
             {
                 Reset();
