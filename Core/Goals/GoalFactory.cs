@@ -114,7 +114,7 @@ namespace Core
 
                 try
                 {
-                    var genericCombat = new CombatGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, classConfig, castingHandler);
+                    var genericCombat = new CombatGoal(logger, input, wait, addonReader, stopMoving, classConfig, castingHandler);
                     availableActions.Add(genericCombat);
 
                     if (addonReader.PlayerReader.PlayerClass == PlayerClassEnum.Hunter ||

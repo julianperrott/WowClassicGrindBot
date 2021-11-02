@@ -29,10 +29,10 @@ namespace Core
            "!"
         };
 
-        public RequirementFactory(ILogger logger, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, SpellBookReader spellBookReader, TalentReader talentReader, CreatureDB creatureDb, ItemDB itemDb)
+        public RequirementFactory(ILogger logger, AddonReader addonReader, BagReader bagReader, EquipmentReader equipmentReader, SpellBookReader spellBookReader, TalentReader talentReader, CreatureDB creatureDb, ItemDB itemDb)
         {
             this.logger = logger;
-            this.playerReader = playerReader;
+            this.playerReader = addonReader.PlayerReader;
             this.bagReader = bagReader;
             this.spellBookReader = spellBookReader;
             this.talentReader = talentReader;
@@ -204,7 +204,7 @@ namespace Core
                 { "PetHealth%", () => playerReader.PetHealthPercentage },
                 { "Mana%", () => playerReader.ManaPercentage },
                 { "BagCount", () => bagReader.BagItems.Count },
-                { "MobCount", () => playerReader.CombatCreatureCount },
+                { "MobCount", () => addonReader.CombatCreatureCount },
                 { "MinRange", () => playerReader.MinRange },
                 { "MaxRange", () => playerReader.MaxRange },
                 { "LastAutoShotMs", () => playerReader.AutoShot.ElapsedMs },

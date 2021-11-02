@@ -117,7 +117,7 @@ namespace Core
             // wait for addon to read the wow state
             var sw = new Stopwatch();
             sw.Start();
-            while (AddonReader.PlayerReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.PlayerClass))
+            while (AddonReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.PlayerClass))
             {
                 if (sw.ElapsedMilliseconds > 5000)
                 {
@@ -259,7 +259,7 @@ namespace Core
 
             ActionBarPopulator = new ActionBarPopulator(logger, config, AddonReader, ExecGameCommand);
 
-            var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist, logger);
+            var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(logger, AddonReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist);
 
             var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, areaDb, ExecGameCommand);
             var availableActions = actionFactory.CreateGoals(config, blacklist);
@@ -292,7 +292,7 @@ namespace Core
                 throw new Exception("Not allowed to load other class profile!");
             }
 
-            var requirementFactory = new RequirementFactory(logger, AddonReader.PlayerReader, AddonReader.BagReader, AddonReader.equipmentReader, AddonReader.SpellBookReader, AddonReader.TalentReader, AddonReader.CreatureDb, AddonReader.ItemDb);
+            var requirementFactory = new RequirementFactory(logger, AddonReader, AddonReader.BagReader, AddonReader.equipmentReader, AddonReader.SpellBookReader, AddonReader.TalentReader, AddonReader.CreatureDb, AddonReader.ItemDb);
 
             ClassConfiguration classConfig;
             var classFilePath = Path.Join(DataConfig.Class, classFilename);

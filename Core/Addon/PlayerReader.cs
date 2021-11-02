@@ -20,11 +20,6 @@ namespace Core
         }
 
 
-        public List<CreatureHistory> Creatures { get; } = new List<CreatureHistory>();
-        public List<CreatureHistory> Targets { get; } = new List<CreatureHistory>();
-        public List<CreatureHistory> DamageDone { get; } = new List<CreatureHistory>();
-        public List<CreatureHistory> DamageTaken { get; } = new List<CreatureHistory>();
-        public List<CreatureHistory> Deads { get; } = new List<CreatureHistory>();
 
         public Dictionary<Form, int> FormCost { get; set; } = new Dictionary<Form, int>();
 
@@ -163,11 +158,6 @@ namespace Core
         public RecordInt CastEvent { private set; get; } = new RecordInt(62);
         public RecordInt CastSpellId { private set; get; } = new RecordInt(63);
 
-        public RecordInt CombatCreatureGuid { private set; get; } = new RecordInt(64);
-        public RecordInt CombatDamageDoneGuid { private set; get; } = new RecordInt(65);
-        public RecordInt CombatDamageTakenGuid { private set; get; } = new RecordInt(66);
-        public RecordInt CombatDeadGuid { private set; get; } = new RecordInt(67);
-
         public int PetGuid => reader.GetIntAtCell(68);
         public int PetTargetGuid => reader.GetIntAtCell(69);
         public bool PetHasTarget => PetTargetGuid != 0;
@@ -191,46 +181,6 @@ namespace Core
         };
 
 
-        #region Combat Creatures
-        public int CombatCreatureCount => DamageTaken.Count(c => c.LastKnownHealthPercent > 0);  //Creatures.Count;
-
-        public void UpdateCreatureLists()
-        {
-            if (CombatCreatureGuid.Updated(reader))
-            {
-                CreatureHistory.Update(CombatCreatureGuid.Value, 100f, Creatures);
-            }
-
-            if (CombatDamageTakenGuid.Updated(reader))
-            {
-                CreatureHistory.Update(CombatDamageTakenGuid.Value, 100f, DamageTaken);
-            }
-
-            if (CombatDamageDoneGuid.Updated(reader))
-            {
-                CreatureHistory.Update(CombatDamageDoneGuid.Value, 100f, DamageDone);
-            }
-
-            CreatureHistory.Update(TargetGuid, TargetHealthPercentage, Targets);
-
-            // set dead mob health everywhere
-
-            if (CombatDeadGuid.Updated(reader))
-            {
-                CreatureHistory.Update(CombatDeadGuid.Value, 0, Deads);
-                CreatureHistory.Update(CombatDeadGuid.Value, 0, Creatures);
-                CreatureHistory.Update(CombatDeadGuid.Value, 0, DamageTaken);
-                CreatureHistory.Update(CombatDeadGuid.Value, 0, DamageDone);
-
-                // Update last target health from LastDeadGuid
-                if (Targets.FindIndex(x => x.CreatureId == CombatDeadGuid.Value) != -1)
-                {
-                    CreatureHistory.Update(CombatDeadGuid.Value, 0, Targets);
-                }
-            }
-        }
-
-        #endregion
 
         #region Last Combat Kill Count
 
@@ -298,20 +248,11 @@ namespace Core
             MainHandSwing.Update(reader);
             CastEvent.Update(reader);
             CastSpellId.Update(reader);
-
-            UpdateCreatureLists();
         }
 
         internal void Reset()
         {
             FormCost.Clear();
-
-            // Reset all CreatureHistory
-            Creatures.Clear();
-            DamageTaken.Clear();
-            DamageDone.Clear();
-            Targets.Clear();
-            Deads.Clear();
 
             // Reset all RecordInt
             UIMapId.Reset();
@@ -320,11 +261,6 @@ namespace Core
             MainHandSwing.Reset();
             CastEvent.Reset();
             CastSpellId.Reset();
-
-            CombatCreatureGuid.Reset();
-            CombatDamageDoneGuid.Reset();
-            CombatDamageTakenGuid.Reset();
-            CombatDeadGuid.Reset();
 
             Initialized = true;
         }

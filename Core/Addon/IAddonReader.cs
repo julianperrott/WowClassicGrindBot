@@ -18,6 +18,15 @@ namespace Core
 
         WorldMapAreaDB WorldMapAreaDb { get; set; }
 
+        // player Reader props
+        double AvgUpdateLatency { get; }
+
+        int CombatCreatureCount { get; }
+
+
+
+        // functions
+
         void Refresh();
         void Reset();
 

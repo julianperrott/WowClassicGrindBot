@@ -15,6 +15,10 @@ namespace Core.Addon
 
         public WorldMapAreaDB WorldMapAreaDb { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        public double AvgUpdateLatency => throw new NotImplementedException();
+
+        public int CombatCreatureCount => throw new NotImplementedException();
+
         private void ConfigAddonReader_AddonDataChanged(object sender, EventArgs e)
         {
             throw new NotImplementedException();

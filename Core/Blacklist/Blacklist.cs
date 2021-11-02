@@ -8,6 +8,7 @@ namespace Core
     {
         private List<string> blacklist = new List<string>();
 
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly ILogger logger;
         private readonly int above;
@@ -16,9 +17,10 @@ namespace Core
 
         private int LastWarningTargetGuid = 0;
 
-        public Blacklist(PlayerReader playerReader, int above, int below, bool checkTargetGivesExp, List<string> blacklisted, ILogger logger)
+        public Blacklist(ILogger logger, AddonReader addonReader, int above, int below, bool checkTargetGivesExp, List<string> blacklisted)
         {
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.logger = logger;
             this.above = above;
             this.below = below;
@@ -43,7 +45,7 @@ namespace Core
                 LastWarningTargetGuid = 0;
                 return false;
             }
-            else if (playerReader.DamageTaken.Exists(x => x.LastKnownHealthPercent > 0 && x.CreatureId == playerReader.TargetGuid))
+            else if (addonReader.CreatureHistory.DamageTaken.Exists(x => x.HealthPercent > 0 && x.Guid == playerReader.TargetGuid))
             {
                 return false;
             }

@@ -15,6 +15,7 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
 
         private readonly Wait wait;
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private readonly CastingHandler castingHandler;
@@ -28,19 +29,20 @@ namespace Core.Goals
         private double lastKnownMinDistance;
         private double lastKnownMaxDistance;
 
-        public CombatGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving, ClassConfiguration classConfiguration, CastingHandler castingHandler)
+        public CombatGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, CastingHandler castingHandler)
         {
             this.logger = logger;
             this.input = input;
 
             this.wait = wait;
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.stopMoving = stopMoving;
             
             this.classConfiguration = classConfiguration;
             this.castingHandler = castingHandler;
 
-            lastKilledGuid = playerReader.CombatDeadGuid.Value;
+            lastKilledGuid = addonReader.CreatureHistory.CombatDeadGuid.Value;
 
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
@@ -126,7 +128,7 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            lastKilledGuid = playerReader.CombatDeadGuid.Value;
+            lastKilledGuid = addonReader.CreatureHistory.CombatDeadGuid.Value;
 
             if (playerReader.PlayerBitValues.IsMounted)
             {
@@ -180,9 +182,9 @@ namespace Core.Goals
 
         private bool DidIKilledAnyone()
         {
-            if (lastKilledGuid != playerReader.CombatDeadGuid.Value
-                && playerReader.Targets.Any(x => x.CreatureId == playerReader.CombatDeadGuid.Value)
-                && playerReader.DamageDone.Any(x => x.CreatureId == playerReader.CombatDeadGuid.Value))
+            if (lastKilledGuid != addonReader.CreatureHistory.CombatDeadGuid.Value
+                && addonReader.CreatureHistory.Targets.Any(x => x.Guid == addonReader.CreatureHistory.CombatDeadGuid.Value)
+                && addonReader.CreatureHistory.DamageDone.Any(x => x.Guid == addonReader.CreatureHistory.CombatDeadGuid.Value))
             {
                 // have to check range
                 // ex. target died far away have to consider the range and approximate
@@ -190,7 +192,7 @@ namespace Core.Goals
                 double distance = (lastKnownMaxDistance + lastKnownMinDistance) / 2;
                 SendActionEvent(new ActionEventArgs(GoapKey.corpselocation, new CorpseLocation(GetCorpseLocation(distance), distance)));
 
-                lastKilledGuid = playerReader.CombatDeadGuid.Value;
+                lastKilledGuid = addonReader.CreatureHistory.CombatDeadGuid.Value;
                 playerReader.IncrementKillCount();
 
                 logger.LogInformation($"----- Target is dead! Known kills: {playerReader.LastCombatKillCount}");
@@ -204,7 +206,7 @@ namespace Core.Goals
         private async Task<bool> CreatureTargetMeOrMyPet()
         {
             await wait.Update(1);
-            if (playerReader.PetHasTarget && playerReader.CombatDeadGuid.Value != playerReader.PetTargetGuid)
+            if (playerReader.PetHasTarget && addonReader.CreatureHistory.CombatDeadGuid.Value != playerReader.PetTargetGuid)
             {
                 logger.LogWarning("---- My pet has a target!");
                 ResetCooldowns();
@@ -215,7 +217,7 @@ namespace Core.Goals
                 return playerReader.HasTarget;
             }
 
-            if (playerReader.CombatCreatureCount > 1)
+            if (addonReader.CombatCreatureCount > 1)
             {
                 await input.TapNearestTarget($"{GetType().Name}: Checking target in front of me");
                 await wait.Update(1);
@@ -238,7 +240,7 @@ namespace Core.Goals
                 else
                 {
                     // threat must be behind me
-                    var anyDamageTakens = playerReader.DamageTaken.Where(x => (DateTime.Now - x.LastEvent).TotalSeconds < 10 && x.LastKnownHealthPercent > 0);
+                    var anyDamageTakens = addonReader.CreatureHistory.DamageTaken.Where(x => (DateTime.Now - x.LastEvent).TotalSeconds < 10 && x.HealthPercent > 0);
                     if (anyDamageTakens.Any())
                     {
                         logger.LogWarning($"---- Possible threats found behind {anyDamageTakens.Count()}. Waiting for my target to change!");

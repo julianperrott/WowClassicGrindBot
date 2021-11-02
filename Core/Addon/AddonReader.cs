@@ -4,6 +4,7 @@ using System;
 using System.Drawing;
 using Cyotek.Collections;
 using Cyotek.Collections.Generic;
+using System.Linq;
 
 namespace Core
 {
@@ -17,6 +18,9 @@ namespace Core
 
         public bool Active { get; set; } = true;
         public PlayerReader PlayerReader { get; set; }
+
+        public CreatureHistory CreatureHistory { get; set; }
+
         public BagReader BagReader { get; set; }
         public EquipmentReader equipmentReader { get; set; }
 
@@ -39,6 +43,13 @@ namespace Core
         private readonly SpellDB spellDb;
         private readonly TalentDB talentDB;
 
+
+        // player reader
+
+        public int CombatCreatureCount => CreatureHistory.DamageTaken.Count(c => c.HealthPercent > 0);
+
+        // Front end
+
         public double AvgUpdateLatency { private set; get; } = 5;
         private readonly CircularBuffer<double> UpdateLatencys;
 
@@ -51,6 +62,8 @@ namespace Core
             this.addonDataProvider = addonDataProvider;
 
             this.squareReader = new SquareReader(this);
+
+            this.CreatureHistory = new CreatureHistory(squareReader, 64, 65, 66, 67);
 
             this.ItemDb = new ItemDB(logger, dataConfig);
             this.CreatureDb = new CreatureDB(logger, dataConfig);
@@ -94,6 +107,8 @@ namespace Core
         {
             Refresh();
 
+            CreatureHistory.Update(PlayerReader.TargetGuid, PlayerReader.TargetHealthPercentage);
+
             BagReader.Read();
             equipmentReader.Read();
 
@@ -118,7 +133,6 @@ namespace Core
         public void Refresh()
         {
             addonDataProvider.Update();
-
             Sequence++;
             PlayerReader.Updated();
         }
@@ -130,6 +144,7 @@ namespace Core
             SpellBookReader.Reset();
             TalentReader.Reset();
             PlayerReader.Reset();
+            CreatureHistory.Reset();
         }
 
         public Color GetColorAt(int index)
