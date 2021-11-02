@@ -19,21 +19,18 @@ namespace Core
             this.creatureDb = creatureDb;
         }
 
-
-
         public Dictionary<Form, int> FormCost { get; set; } = new Dictionary<Form, int>();
 
         public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord, ZCoord);
 
         public double XCoord => reader.GetFixedPointAtCell(1) * 10;
         public double YCoord => reader.GetFixedPointAtCell(2) * 10;
-        public double Direction => reader.GetFixedPointAtCell(3);
-
         public double ZCoord { get; set; }
+        public double Direction => reader.GetFixedPointAtCell(3);
 
         public RecordInt UIMapId = new RecordInt(4);
 
-        public int PlayerLevel => reader.GetIntAtCell(5);
+        public int Level => reader.GetIntAtCell(5);
 
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
 
@@ -115,7 +112,7 @@ namespace Core
         public int MinRange => (int)(reader.GetIntAtCell(49) / 100000f);
         public int MaxRange => (int)((reader.GetIntAtCell(49) - (MinRange * 100000f)) / 100f);
 
-        public bool IsInMeleeRange => MinRange == 0 && (PlayerClass == PlayerClassEnum.Druid && PlayerLevel >= 10 ? MaxRange == 2 : MaxRange == 5);
+        public bool IsInMeleeRange => MinRange == 0 && (PlayerClass == PlayerClassEnum.Druid && Level >= 10 ? MaxRange == 2 : MaxRange == 5);
         public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
 
         public int PlayerXp => reader.GetIntAtCell(50);
@@ -171,12 +168,12 @@ namespace Core
         public RecordInt GlobalTime { private set; get; } = new RecordInt(98);
 
         // https://wowpedia.fandom.com/wiki/Mob_experience
-        public bool TargetYieldXP => PlayerLevel switch
+        public bool TargetYieldXP => Level switch
         {
             int n when n < 5 => true,
-            int n when n >= 6 && n <= 39 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 10f) - 5),
-            int n when n >= 40 && n <= 59 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 5f) - 5),
-            int n when n >= 60 && n <= 70 => TargetLevel > PlayerLevel - 9,
+            int n when n >= 6 && n <= 39 => TargetLevel > (Level - Math.Floor(Level / 10f) - 5),
+            int n when n >= 40 && n <= 59 => TargetLevel > (Level - Math.Floor(Level / 5f) - 5),
+            int n when n >= 60 && n <= 70 => TargetLevel > Level - 9,
             _ => false
         };
 

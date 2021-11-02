@@ -45,9 +45,9 @@ namespace Core
                     corpseLocation = playerReader.CorpseLocation;
                     Death++;
                 }
-                if (level != playerReader.PlayerLevel)
+                if (level != playerReader.Level)
                 {
-                    level = playerReader.PlayerLevel;
+                    level = playerReader.Level;
                     lastXp = playerReader.PlayerXp;
                     levelStartTime = DateTime.Now;
                     levelStartXP = playerReader.PlayerXp;
