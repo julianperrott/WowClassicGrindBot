@@ -8,7 +8,7 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction { get => 4.1f; }
 
-        public override bool Repeatable { get; } = false;
+        public override bool Repeatable => false;
 
         private readonly ILogger logger;
         private readonly ClassConfiguration classConfig;

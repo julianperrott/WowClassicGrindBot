@@ -70,6 +70,7 @@ namespace Core.GOAP
             {
                 if (CurrentGoal == plan.Peek() && !CurrentGoal.Repeatable)
                 {
+                    logger.LogInformation($"Plan= {CurrentGoal.GetType().Name} is not Repeatable!");
                     CurrentGoal = null;
                 }
                 else
