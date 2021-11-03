@@ -127,8 +127,8 @@ namespace Core
 
                     availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader, stopMoving, castingHandler, stuckDetector, classConfig));
 
-                    availableActions.Add(new CreatureKilledGoal(logger, goapAgentState, classConfig));
-                    availableActions.Add(new ConsumeCorpse(logger, goapAgentState));
+                    availableActions.Add(new ConsumeCorpse(logger, classConfig));
+                    availableActions.Add(new CorpseConsumed(logger, goapAgentState));
 
                     foreach (var item in classConfig.Adhoc.Sequence)
                     {

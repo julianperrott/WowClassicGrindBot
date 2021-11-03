@@ -17,12 +17,14 @@ namespace Core.GOAP
         private readonly IBlacklist blacklist;
         private readonly GoapPlanner planner;
 
+        public bool Active { get; set; }
+
         public GoapAgentState GoapAgentState { private set; get; }
 
         public IEnumerable<GoapGoal> AvailableGoals { get; set; }
         public GoapGoal? CurrentGoal { get; set; }
 
-        private Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
+        private readonly Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
         public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
 
         public GoapAgent(ILogger logger, GoapAgentState goapAgentState, ConfigurableInput input, AddonReader addonReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist)
@@ -144,18 +146,25 @@ namespace Core.GOAP
 
         private void OnKillCredit(object obj, EventArgs e)
         {
-            GoapAgentState.IncKillCount();
-
-            if (CurrentGoal == null)
+            if (Active)
             {
-                AvailableGoals.ToList().ForEach(x => x.OnActionEvent(this, new ActionEventArgs(GoapKey.producedcorpse, true)));
+                GoapAgentState.IncKillCount();
+
+                if (CurrentGoal == null)
+                {
+                    AvailableGoals.ToList().ForEach(x => x.OnActionEvent(this, new ActionEventArgs(GoapKey.producedcorpse, true)));
+                }
+                else
+                {
+                    CurrentGoal.OnActionEvent(this, new ActionEventArgs(GoapKey.producedcorpse, true));
+                }
+
+                logger.LogInformation($"{GetType().Name} --- Kill credit detected! Known kills: {GoapAgentState.LastCombatKillCount} | Combat mobs remaing: {addonReader.CombatCreatureCount}");
             }
             else
             {
-                CurrentGoal.OnActionEvent(this, new ActionEventArgs(GoapKey.producedcorpse, true));
+                logger.LogInformation($"{GetType().Name} --- Not active, but kill credit detected!");
             }
-
-            logger.LogInformation($"{GetType().Name} --- Kill credit detected! Known kills: {GoapAgentState.LastCombatKillCount} | Combat mobs remaing: {addonReader.CombatCreatureCount}");
         }
     }
 }

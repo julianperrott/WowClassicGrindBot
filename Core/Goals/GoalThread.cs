@@ -23,9 +23,11 @@ namespace Core.Goals
             set
             {
                 active = value;
-
-                if(!active)
+                if (!active)
                     goapAgent?.AvailableGoals.ToList().ForEach(goal => goal.OnActionEvent(this, new ActionEventArgs(GoapKey.abort, true)));
+
+                if (goapAgent != null)
+                    goapAgent.Active = active;
             }
         }
 
