@@ -14,6 +14,7 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
 
         private readonly Wait wait;
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
@@ -27,13 +28,14 @@ namespace Core.Goals
 
         private int SecondsSincePullStarted => (int)(DateTime.Now - pullStart).TotalSeconds;
 
-        public PullTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public PullTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.logger = logger;
             this.input = input;
 
             this.wait = wait;
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.stopMoving = stopMoving;
             
             this.castingHandler = castingHandler;
@@ -165,7 +167,7 @@ namespace Core.Goals
                     break;
                 }
 
-                if (lastCastSuccess && playerReader.UsableAction.Is(item))
+                if (lastCastSuccess && addonReader.UsableAction.Is(item))
                 {
                     Log($"While waiting, repeat current action: {item.Name}");
                     lastCastSuccess = await castingHandler.CastIfReady(item, item.DelayBeforeCast);

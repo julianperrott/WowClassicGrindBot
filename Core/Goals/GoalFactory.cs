@@ -53,7 +53,7 @@ namespace Core
             var playerDirection = new PlayerDirection(logger, input, addonReader.PlayerReader);
             var stopMoving = new StopMoving(input, addonReader.PlayerReader);
 
-            var castingHandler = new CastingHandler(logger, input, wait, addonReader.PlayerReader, classConfig, playerDirection, npcNameFinder, stopMoving);
+            var castingHandler = new CastingHandler(logger, input, wait, addonReader, classConfig, playerDirection, npcNameFinder, stopMoving);
 
             var stuckDetector = new StuckDetector(logger, input, addonReader.PlayerReader, playerDirection, stopMoving);
             var combatUtil = new CombatUtil(logger, input, wait, addonReader.PlayerReader);
@@ -124,7 +124,7 @@ namespace Core
                         availableActions.Add(new TargetPetTarget(input, addonReader.PlayerReader));
                     }
 
-                    availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, castingHandler, stuckDetector, classConfig));
+                    availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader, stopMoving, castingHandler, stuckDetector, classConfig));
 
                     availableActions.Add(new CreatureKilledGoal(logger, addonReader.PlayerReader, classConfig));
                     availableActions.Add(new ConsumeCorpse(logger, addonReader.PlayerReader));

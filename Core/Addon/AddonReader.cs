@@ -26,6 +26,10 @@ namespace Core
 
         public ActionBarCostReader ActionBarCostReader { get; set; }
 
+        public ActionBarBits CurrentAction => new ActionBarBits(PlayerReader, squareReader, 26, 27, 28, 29, 30);
+        public ActionBarBits UsableAction => new ActionBarBits(PlayerReader, squareReader, 31, 32, 33, 34, 35);
+
+
         public GossipReader GossipReader { get; set; }
 
         public SpellBookReader SpellBookReader { get; set; }

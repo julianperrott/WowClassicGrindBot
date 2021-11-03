@@ -10,6 +10,7 @@ namespace Core
     public class RequirementFactory
     {
         private readonly ILogger logger;
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly BagReader bagReader;
         private readonly SpellBookReader spellBookReader;
@@ -32,6 +33,7 @@ namespace Core
         public RequirementFactory(ILogger logger, AddonReader addonReader, BagReader bagReader, EquipmentReader equipmentReader, SpellBookReader spellBookReader, TalentReader talentReader, CreatureDB creatureDb, ItemDB itemDb)
         {
             this.logger = logger;
+            this.addonReader = addonReader;
             this.playerReader = addonReader.PlayerReader;
             this.bagReader = bagReader;
             this.spellBookReader = spellBookReader;
@@ -320,14 +322,14 @@ namespace Core
                 RequirementObjects.Add(new Requirement
                 {
                     HasRequirement = () => 
-                        !item.HasFormRequirement() ? playerReader.UsableAction.Is(item) :
-                        (playerReader.Form == item.FormEnum && playerReader.UsableAction.Is(item)) ||
+                        !item.HasFormRequirement() ? addonReader.UsableAction.Is(item) :
+                        (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ||
                         (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()),
 
                     LogMessage = () => 
                         !item.HasFormRequirement() ? $"Usable" : // {playerReader.UsableAction.Num(item)}
                         (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
-                        (playerReader.Form == item.FormEnum && playerReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
+                        (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
                 });
             }
         }

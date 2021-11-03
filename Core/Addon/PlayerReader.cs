@@ -49,11 +49,12 @@ namespace Core
         public int ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax;
 
 
+        public bool HasTarget => Bits.HasTarget || TargetHealth > 0;
         public string Target
         {
             get
             {
-                if (creatureDb.Entries.TryGetValue(TargetId, out var creature))
+                if (Bits.HasTarget && creatureDb.Entries.TryGetValue(TargetId, out var creature))
                 {
                     return creature.Name;
                 }
@@ -65,14 +66,6 @@ namespace Core
         public int TargetHealth => reader.GetIntAtCell(19);
         public int TargetHealthPercentage => TargetMaxHealth == 0 || TargetHealth == 1 ? 0 : (TargetHealth * 100) / TargetMaxHealth;
 
-        public bool HasTarget => Bits.HasTarget || TargetHealth > 0;
-
-        public ActionBarBits CurrentAction => new ActionBarBits(this, reader, 26, 27, 28, 29, 30);
-        public ActionBarBits UsableAction => new ActionBarBits(this, reader, 31, 32, 33, 34, 35);
-
-        // 36 Actionbar cost
-
-        // 37 unused
 
         public int PetMaxHealth => reader.GetIntAtCell(38);
         public int PetHealth => reader.GetIntAtCell(39);

@@ -13,6 +13,7 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
 
         private readonly Wait wait;
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         
         private readonly ClassConfiguration classConfig;
@@ -31,13 +32,14 @@ namespace Core.Goals
         private const int MaxSwingTimeMs = 4000;
         private const int MaxAirTimeMs = 10000;
 
-        public CastingHandler(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder, StopMoving stopMoving)
+        public CastingHandler(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder, StopMoving stopMoving)
         {
             this.logger = logger;
             this.input = input;
 
             this.wait = wait;
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             
             this.classConfig = classConfig;
             this.direction = direction;
@@ -121,7 +123,7 @@ namespace Core.Goals
             playerReader.CastEvent.ForceUpdate(0);
             int beforeCastEventValue = playerReader.CastEvent.Value;
             int beforeSpellId = playerReader.CastSpellId.Value;
-            bool beforeUsable = playerReader.UsableAction.Is(item);
+            bool beforeUsable = addonReader.UsableAction.Is(item);
 
             await PressKeyAction(item);
 
@@ -131,7 +133,7 @@ namespace Core.Goals
             if (item.AfterCastWaitNextSwing)
             {
                 (inputNotHappened, inputElapsedMs) = await wait.InterruptTask(MaxSwingTimeMs,
-                    interrupt: () => !playerReader.CurrentAction.Is(item),
+                    interrupt: () => !addonReader.CurrentAction.Is(item),
                     repeat: async () =>
                     {
                         if (classConfig.Approach.GetCooldownRemaining() == 0)
@@ -145,7 +147,7 @@ namespace Core.Goals
                 (inputNotHappened, inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
                     interrupt: () =>
                     (beforeSpellId != playerReader.CastSpellId.Value && beforeCastEventValue != playerReader.CastEvent.Value) ||
-                    beforeUsable != playerReader.UsableAction.Is(item)
+                    beforeUsable != addonReader.UsableAction.Is(item)
                 );
             }
 
@@ -159,7 +161,7 @@ namespace Core.Goals
                 return false;
             }
 
-            item.LogInformation($" ... usable: {beforeUsable}->{playerReader.UsableAction.Is(item)} -- ({(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value})");
+            item.LogInformation($" ... usable: {beforeUsable}->{addonReader.UsableAction.Is(item)} -- ({(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value})");
 
             if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value))
             {
@@ -185,7 +187,7 @@ namespace Core.Goals
 
             bool beforeHasTarget = playerReader.HasTarget;
 
-            bool beforeUsable = playerReader.UsableAction.Is(item);
+            bool beforeUsable = addonReader.UsableAction.Is(item);
             int beforeCastEventValue = playerReader.CastEvent.Value;
             int beforeSpellId = playerReader.CastSpellId.Value;
             int beforeCastCount = playerReader.CastCount;
@@ -209,7 +211,7 @@ namespace Core.Goals
                 return false;
             }
 
-            item.LogInformation($" ... casting: {playerReader.IsCasting} -- count:{playerReader.CastCount} -- usable: {beforeUsable}->{playerReader.UsableAction.Is(item)} -- {(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value}");
+            item.LogInformation($" ... casting: {playerReader.IsCasting} -- count:{playerReader.CastCount} -- usable: {beforeUsable}->{addonReader.UsableAction.Is(item)} -- {(UI_ERROR)beforeCastEventValue}->{(UI_ERROR)playerReader.CastEvent.Value}");
 
             if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value))
             {
@@ -252,7 +254,7 @@ namespace Core.Goals
                 return true;
             }
 
-            bool beforeUsable = playerReader.UsableAction.Is(item);
+            bool beforeUsable = addonReader.UsableAction.Is(item);
             var beforeForm = playerReader.Form;
 
             if (!await SwitchToCorrectStanceForm(beforeForm, item))
@@ -260,7 +262,7 @@ namespace Core.Goals
                 return false;
             }
 
-            if (beforeForm != playerReader.Form && !beforeUsable && !playerReader.UsableAction.Is(item))
+            if (beforeForm != playerReader.Form && !beforeUsable && !addonReader.UsableAction.Is(item))
             {
                 item.LogInformation(" ... after Form switch still not usable!");
                 return false;
@@ -273,7 +275,7 @@ namespace Core.Goals
                 await wait.Update(1);
 
                 (bool interrupted, double elapsedMs) = await wait.InterruptTask(GCD, 
-                    () => playerReader.UsableAction.Is(item));
+                    () => addonReader.UsableAction.Is(item));
 
                 if (!interrupted)
                 {
@@ -401,7 +403,7 @@ namespace Core.Goals
             if (item.WaitForGCD)
             {
                 (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
-                    () => playerReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
+                    () => addonReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
                 if (!gcd)
                 {
                     item.LogInformation($" ... gcd interrupted {gcdElapsedMs}ms");
@@ -580,8 +582,8 @@ namespace Core.Goals
                     break;
                 case UI_ERROR.ERR_SPELL_COOLDOWN:
                     logger.LogInformation($"{source} React to {UI_ERROR.ERR_SPELL_COOLDOWN} -- wait until its ready");
-                    bool before = playerReader.UsableAction.Is(item);
-                    await wait.While(() => before != playerReader.UsableAction.Is(item));
+                    bool before = addonReader.UsableAction.Is(item);
+                    await wait.While(() => before != addonReader.UsableAction.Is(item));
 
                     break;
                 case UI_ERROR.ERR_SPELL_FAILED_STUNNED:
