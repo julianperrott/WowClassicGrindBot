@@ -109,7 +109,7 @@ namespace Core
 
                     if (classConfig.Skin)
                     {
-                        availableActions.Add(new SkinningGoal(logger, input, addonReader.PlayerReader, wait, addonReader.BagReader, addonReader.equipmentReader, stopMoving, npcNameTargeting, combatUtil));
+                        availableActions.Add(new SkinningGoal(logger, input, addonReader.PlayerReader, wait, addonReader.BagReader, addonReader.EquipmentReader, stopMoving, npcNameTargeting, combatUtil));
                     }
                 }
 

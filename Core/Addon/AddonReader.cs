@@ -12,34 +12,34 @@ namespace Core
         private readonly ISquareReader squareReader;
         private readonly IAddonDataProvider addonDataProvider;
 
-        public bool Initialized { get; set; } = false;
+        public bool Initialized { get; private set; } = false;
 
         public int Sequence { get; private set; } = 0;
 
         public bool Active { get; set; } = true;
-        public PlayerReader PlayerReader { get; set; }
+        public PlayerReader PlayerReader { get; private set; }
 
-        public CreatureHistory CreatureHistory { get; set; }
+        public CreatureHistory CreatureHistory { get; private set; }
 
-        public BagReader BagReader { get; set; }
-        public EquipmentReader equipmentReader { get; set; }
+        public BagReader BagReader { get; private set; }
+        public EquipmentReader EquipmentReader { get; private set; }
 
-        public ActionBarCostReader ActionBarCostReader { get; set; }
+        public ActionBarCostReader ActionBarCostReader { get; private set; }
 
         public ActionBarBits CurrentAction => new ActionBarBits(PlayerReader, squareReader, 26, 27, 28, 29, 30);
         public ActionBarBits UsableAction => new ActionBarBits(PlayerReader, squareReader, 31, 32, 33, 34, 35);
 
-        public GossipReader GossipReader { get; set; }
+        public GossipReader GossipReader { get; private set; }
 
-        public SpellBookReader SpellBookReader { get; set; }
-        public TalentReader TalentReader { get; set; }
+        public SpellBookReader SpellBookReader { get; private set; }
+        public TalentReader TalentReader { get; private set; }
 
-        public LevelTracker LevelTracker { get; set; }
+        public LevelTracker LevelTracker { get; private set; }
 
         public event EventHandler? AddonDataChanged;
         public event EventHandler? ZoneChanged;
 
-        public WorldMapAreaDB WorldMapAreaDb { get; set; }
+        public WorldMapAreaDB WorldMapAreaDb { get; private set; }
         public ItemDB ItemDb { get; private set; }
         public CreatureDB CreatureDb { get; private set; }
 
@@ -83,8 +83,8 @@ namespace Core
             this.spellDb = new SpellDB(logger, dataConfig);
             this.talentDB = new TalentDB(logger, dataConfig, spellDb);
 
-            this.equipmentReader = new EquipmentReader(squareReader, 24, 25);
-            this.BagReader = new BagReader(squareReader, ItemDb, equipmentReader, 20, 21, 22, 23);
+            this.EquipmentReader = new EquipmentReader(squareReader, 24, 25);
+            this.BagReader = new BagReader(squareReader, ItemDb, EquipmentReader, 20, 21, 22, 23);
 
             this.ActionBarCostReader = new ActionBarCostReader(squareReader, 36);
 
@@ -127,7 +127,7 @@ namespace Core
             CreatureHistory.Update(PlayerReader.TargetGuid, PlayerReader.TargetHealthPercentage);
 
             BagReader.Read();
-            equipmentReader.Read();
+            EquipmentReader.Read();
 
             ActionBarCostReader.Read();
 

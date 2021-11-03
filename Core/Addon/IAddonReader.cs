@@ -6,16 +6,17 @@ namespace Core
     {
         bool Active { get; set; }
 
-        PlayerReader PlayerReader { get; set; }
+        PlayerReader PlayerReader { get; }
 
-        BagReader BagReader { get; set; }
-        EquipmentReader equipmentReader { get; set; }
+        BagReader BagReader { get; }
 
-        ActionBarCostReader ActionBarCostReader { get; set; }
+        EquipmentReader EquipmentReader { get; }
 
-        LevelTracker LevelTracker { get; set; }
+        ActionBarCostReader ActionBarCostReader { get; }
 
-        WorldMapAreaDB WorldMapAreaDb { get; set; }
+        LevelTracker LevelTracker { get; }
+
+        WorldMapAreaDB WorldMapAreaDb { get; }
 
         double AvgUpdateLatency { get; }
 

@@ -8,7 +8,7 @@ namespace Core.Addon
     {
         public PlayerReader PlayerReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public BagReader BagReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public EquipmentReader equipmentReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public EquipmentReader EquipmentReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool Active { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public LevelTracker LevelTracker { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ActionBarCostReader ActionBarCostReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

@@ -13,6 +13,7 @@ namespace Core
         private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly BagReader bagReader;
+        private readonly EquipmentReader equipmentReader;
         private readonly SpellBookReader spellBookReader;
         private readonly TalentReader talentReader;
         private readonly CreatureDB creatureDb;
@@ -30,16 +31,17 @@ namespace Core
            "!"
         };
 
-        public RequirementFactory(ILogger logger, AddonReader addonReader, BagReader bagReader, EquipmentReader equipmentReader, SpellBookReader spellBookReader, TalentReader talentReader, CreatureDB creatureDb, ItemDB itemDb)
+        public RequirementFactory(ILogger logger, AddonReader addonReader)
         {
             this.logger = logger;
             this.addonReader = addonReader;
             this.playerReader = addonReader.PlayerReader;
-            this.bagReader = bagReader;
-            this.spellBookReader = spellBookReader;
-            this.talentReader = talentReader;
-            this.creatureDb = creatureDb;
-            this.itemDb = itemDb;
+            this.bagReader = addonReader.BagReader;
+            this.equipmentReader = addonReader.EquipmentReader;
+            this.spellBookReader = addonReader.SpellBookReader;
+            this.talentReader = addonReader.TalentReader;
+            this.creatureDb = addonReader.CreatureDb;
+            this.itemDb = addonReader.ItemDb;
 
             keywordDictionary = new Dictionary<string, Func<string, Requirement>>()
             {
