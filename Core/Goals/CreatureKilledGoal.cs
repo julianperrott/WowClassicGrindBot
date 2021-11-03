@@ -24,6 +24,7 @@ namespace Core.Goals
             this.classConfig = classConfig;
 
             AddPrecondition(GoapKey.producedcorpse, true);
+            AddPrecondition(GoapKey.dangercombat, false);
             AddPrecondition(GoapKey.consumecorpse, false);
 
             AddEffect(GoapKey.producedcorpse, false);

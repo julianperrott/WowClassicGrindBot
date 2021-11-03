@@ -4,51 +4,56 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SharedLib;
-using Game;
 
 namespace Core.GOAP
 {
     public sealed class GoapAgent
     {
-        private ILogger logger;
-        private ConfigurableInput input;
-        private StopMoving stopMoving;
+        private readonly ILogger logger;
+        private readonly ConfigurableInput input;
+        private readonly AddonReader addonReader;
+        private readonly PlayerReader playerReader;
+        private readonly StopMoving stopMoving;
+        private readonly IBlacklist blacklist;
+        private readonly ClassConfiguration classConfiguration;
+
+        public IEnumerable<GoapGoal> AvailableGoals { get; set; }
 
         private GoapPlanner planner;
-        public IEnumerable<GoapGoal> AvailableGoals { get; set; }
-        
-        public PlayerReader PlayerReader { get; private set; }
-        private ClassConfiguration classConfiguration;
 
         public GoapGoal? CurrentGoal { get; set; }
-        public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
-        private IBlacklist blacklist;
 
-        public GoapAgent(ILogger logger, ConfigurableInput input, PlayerReader playerReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist, ClassConfiguration classConfiguration)
+        private Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
+        public HashSet<KeyValuePair<GoapKey, object>> WorldState { get; private set; } = new HashSet<KeyValuePair<GoapKey, object>>();
+
+        public GoapAgent(ILogger logger, ConfigurableInput input, AddonReader addonReader, HashSet<GoapGoal> availableGoals, IBlacklist blacklist, ClassConfiguration classConfiguration)
         {
             this.logger = logger;
             this.input = input;
 
-            this.PlayerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
+
+            this.addonReader.CreatureHistory.KillCredit -= OnKillCredit;
+            this.addonReader.CreatureHistory.KillCredit += OnKillCredit;
 
             this.stopMoving = new StopMoving(input, playerReader);
 
             this.AvailableGoals = availableGoals.OrderBy(a => a.CostOfPerformingAction);
             this.blacklist = blacklist;
+            this.classConfiguration = classConfiguration;
 
             this.planner = new GoapPlanner(logger);
-            this.classConfiguration = classConfiguration;
         }
 
         public void UpdateWorldState()
         {
-            WorldState = GetWorldState(PlayerReader);
+            WorldState = GetWorldState();
         }
 
         public async Task<GoapGoal?> GetAction()
         {
-            if (PlayerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
+            if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
                 logger.LogWarning($"{GetType().Name}: Target is blacklisted - StopAttack & ClearTarget");
                 await input.TapStopAttack("");
@@ -85,13 +90,14 @@ namespace Core.GOAP
             return CurrentGoal;
         }
 
-        private HashSet<KeyValuePair<GoapKey, object>> GetWorldState(PlayerReader playerReader)
+        private HashSet<KeyValuePair<GoapKey, object>> GetWorldState()
         {
             var state = new HashSet<KeyValuePair<GoapKey, object>>
             {
                 new KeyValuePair<GoapKey, object>(GoapKey.hastarget, !blacklist.IsTargetBlacklisted() && playerReader.HasTarget),
+                new KeyValuePair<GoapKey, object>(GoapKey.dangercombat, addonReader.CombatCreatureCount > 0),
                 new KeyValuePair<GoapKey, object>(GoapKey.pethastarget, playerReader.PetHasTarget),
-                new KeyValuePair<GoapKey, object>(GoapKey.targetisalive,!string.IsNullOrEmpty(this.PlayerReader.Target) &&  (!playerReader.Bits.TargetIsDead || playerReader.TargetHealth>0)),
+                new KeyValuePair<GoapKey, object>(GoapKey.targetisalive,!string.IsNullOrEmpty(this.playerReader.Target) &&  (!playerReader.Bits.TargetIsDead || playerReader.TargetHealth>0)),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.Bits.PlayerInCombat ),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, playerReader.WithInCombatRange),
@@ -100,6 +106,7 @@ namespace Core.GOAP
                 new KeyValuePair<GoapKey, object>(GoapKey.isswimming, playerReader.Bits.IsSwimming),
                 new KeyValuePair<GoapKey, object>(GoapKey.itemsbroken,playerReader.Bits.ItemsAreBroken),
                 new KeyValuePair<GoapKey, object>(GoapKey.producedcorpse, playerReader.LastCombatKillCount>0),
+
                 new KeyValuePair<GoapKey, object>(GoapKey.consumecorpse, playerReader.ShouldConsumeCorpse),
                 new KeyValuePair<GoapKey, object>(GoapKey.shouldloot, playerReader.NeedLoot),
                 new KeyValuePair<GoapKey, object>(GoapKey.shouldskin, playerReader.NeedSkin)
@@ -109,8 +116,6 @@ namespace Core.GOAP
 
             return state;
         }
-
-        private Dictionary<GoapKey, object> actionState = new Dictionary<GoapKey, object>();
 
         public void OnActionEvent(object sender, ActionEventArgs e)
         {
@@ -122,6 +127,22 @@ namespace Core.GOAP
             {
                 actionState[e.Key] = e.Value;
             }
+        }
+
+        private void OnKillCredit(object obj, EventArgs e)
+        {
+            playerReader.IncrementKillCount();
+
+            if (CurrentGoal == null)
+            {
+                AvailableGoals.ToList().ForEach(x => x.OnActionEvent(this, new ActionEventArgs(GoapKey.producedcorpse, true)));
+            }
+            else
+            {
+                CurrentGoal.OnActionEvent(this, new ActionEventArgs(GoapKey.producedcorpse, true));
+            }
+
+            logger.LogInformation($"{GetType().Name} --- Kill credit detected! Known kills: {playerReader.LastCombatKillCount} | Combat mobs remaing: {addonReader.CombatCreatureCount}");
         }
     }
 }

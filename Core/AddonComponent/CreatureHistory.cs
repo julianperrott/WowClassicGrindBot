@@ -10,6 +10,8 @@ namespace Core
 
         private const int LifeTimeInSeconds = 60;
 
+        public event EventHandler? KillCredit;
+
         public List<CreatureRecord> Creatures { private set; get; } = new List<CreatureRecord>();
         public List<CreatureRecord> Targets { private set; get; } = new List<CreatureRecord>();
         public List<CreatureRecord> DamageDone { private set; get; } = new List<CreatureRecord>();
@@ -66,15 +68,28 @@ namespace Core
 
             if (CombatDeadGuid.Updated(reader))
             {
-                Update(CombatDeadGuid.Value, 0, Deads);
                 Update(CombatDeadGuid.Value, 0, Creatures);
-                Update(CombatDeadGuid.Value, 0, DamageTaken);
-                Update(CombatDeadGuid.Value, 0, DamageDone);
+                Update(CombatDeadGuid.Value, 0, Deads);
 
-                // Update last target health from LastDeadGuid
-                if (Targets.FindIndex(x => x.Guid == CombatDeadGuid.Value) != -1)
+                if (DamageTaken.Exists(x => x.Guid == CombatDeadGuid.Value))
+                {
+                    Update(CombatDeadGuid.Value, 0, DamageTaken);
+                }
+
+                if (DamageDone.Exists(x => x.Guid == CombatDeadGuid.Value))
+                {
+                    Update(CombatDeadGuid.Value, 0, DamageDone);
+                }
+
+                if (Targets.Exists(x => x.Guid == CombatDeadGuid.Value))
                 {
                     Update(CombatDeadGuid.Value, 0, Targets);
+                }
+
+                if (Targets.Exists(x => x.Guid == CombatDeadGuid.Value) &&
+                    (DamageDone.Exists(x => x.Guid == CombatDeadGuid.Value) || DamageTaken.Exists(x => x.Guid == CombatDeadGuid.Value)))
+                {
+                    KillCredit?.Invoke(this, EventArgs.Empty);
                 }
             }
         }

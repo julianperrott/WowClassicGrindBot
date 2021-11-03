@@ -267,9 +267,9 @@ namespace Core
 
             Wait wait = new Wait(AddonReader.PlayerReader);
 
-            this.GoapAgent = new GoapAgent(logger, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config);
+            this.GoapAgent = new GoapAgent(logger, ConfigurableInput, AddonReader, availableActions, blacklist, config);
 
-            this.actionThread = new GoalThread(logger, GoapAgent, RouteInfo);
+            this.actionThread = new GoalThread(logger, GoapAgent, AddonReader, RouteInfo);
 
             // hookup events between actions
             availableActions.ToList().ForEach(a =>

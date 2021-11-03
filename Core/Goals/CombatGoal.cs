@@ -22,7 +22,6 @@ namespace Core.Goals
         
         private readonly ClassConfiguration classConfiguration;
 
-        private int lastKilledGuid;
         private double lastDirectionForTurnAround;
 
         private double lastKnwonPlayerDirection;
@@ -42,8 +41,6 @@ namespace Core.Goals
             this.classConfiguration = classConfiguration;
             this.castingHandler = castingHandler;
 
-            lastKilledGuid = addonReader.CreatureHistory.CombatDeadGuid.Value;
-
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, true);
@@ -58,7 +55,7 @@ namespace Core.Goals
 
         protected async Task Fight()
         {
-            if (playerReader.HasTarget && playerReader.Bits.HasPet && !playerReader.PetHasTarget)
+            if (playerReader.Bits.HasPet && !playerReader.PetHasTarget)
             {
                 await input.TapPetAttack("");
             }
@@ -95,9 +92,18 @@ namespace Core.Goals
         {
             if (e.Key == GoapKey.newtarget)
             {
-                logger.LogInformation("?Reset cooldowns");
+                logger.LogInformation($"{GetType().Name}: Reset cooldowns");
 
                 ResetCooldowns();
+            }
+
+            if (e.Key == GoapKey.producedcorpse && (bool)e.Value)
+            {
+                // have to check range
+                // ex. target died far away have to consider the range and approximate
+                logger.LogInformation($"{GetType().Name}: --- Target is killed! Record death location.");
+                double distance = (lastKnownMaxDistance + lastKnownMinDistance) / 2;
+                SendActionEvent(new ActionEventArgs(GoapKey.corpselocation, new CorpseLocation(GetCorpseLocation(distance), distance)));
             }
         }
 
@@ -128,30 +134,14 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            lastKilledGuid = addonReader.CreatureHistory.CombatDeadGuid.Value;
-
             if (playerReader.Bits.IsMounted)
             {
                 await input.TapDismount();
             }
 
-
             lastDirectionForTurnAround = playerReader.Direction;
 
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
-        }
-
-        public override async Task OnExit()
-        {
-            await base.OnExit();
-
-            bool killCredit = DidIKilledAnyone();
-            logger.LogInformation($"{GetType().Name}: OnExit -> Killed anyone? {killCredit}");
-
-            if (killCredit)
-            {
-                await CreatureTargetMeOrMyPet();
-            }
         }
 
         public override async Task PerformAction()
@@ -170,40 +160,20 @@ namespace Core.Goals
                 return;
             }
 
-            await Fight();
-
-            if (DidIKilledAnyone() && !await CreatureTargetMeOrMyPet())
+            if (playerReader.HasTarget)
             {
-                logger.LogInformation("Exit CombatGoal!!!");
+                await Fight();
+            }
+
+            if (!playerReader.HasTarget && addonReader.CombatCreatureCount > 0)
+            {
+                await CreatureTargetMeOrMyPet();
             }
 
             await wait.Update(1);
         }
 
-        private bool DidIKilledAnyone()
-        {
-            if (lastKilledGuid != addonReader.CreatureHistory.CombatDeadGuid.Value
-                && addonReader.CreatureHistory.Targets.Any(x => x.Guid == addonReader.CreatureHistory.CombatDeadGuid.Value)
-                && addonReader.CreatureHistory.DamageDone.Any(x => x.Guid == addonReader.CreatureHistory.CombatDeadGuid.Value))
-            {
-                // have to check range
-                // ex. target died far away have to consider the range and approximate
-                logger.LogInformation($"----- Target is dead! Record death location.");
-                double distance = (lastKnownMaxDistance + lastKnownMinDistance) / 2;
-                SendActionEvent(new ActionEventArgs(GoapKey.corpselocation, new CorpseLocation(GetCorpseLocation(distance), distance)));
-
-                lastKilledGuid = addonReader.CreatureHistory.CombatDeadGuid.Value;
-                playerReader.IncrementKillCount();
-
-                logger.LogInformation($"----- Target is dead! Known kills: {playerReader.LastCombatKillCount}");
-                SendActionEvent(new ActionEventArgs(GoapKey.producedcorpse, true));
-                return true;
-            }
-
-            return false;
-        }
-
-        private async Task<bool> CreatureTargetMeOrMyPet()
+        private async Task CreatureTargetMeOrMyPet()
         {
             await wait.Update(1);
             if (playerReader.PetHasTarget && addonReader.CreatureHistory.CombatDeadGuid.Value != playerReader.PetTargetGuid)
@@ -214,7 +184,7 @@ namespace Core.Goals
                 await input.TapTargetPet();
                 await input.TapTargetOfTarget();
                 await wait.Update(1);
-                return playerReader.HasTarget;
+                return;
             }
 
             if (addonReader.CombatCreatureCount > 1)
@@ -231,7 +201,7 @@ namespace Core.Goals
                         await input.TapInteractKey("Found new target to attack");
                         await stopMoving.Stop();
                         await wait.Update(1);
-                        return true;
+                        return;
                     }
 
                     await input.TapClearTarget();
@@ -248,10 +218,6 @@ namespace Core.Goals
                     }
                 }
             }
-
-            logger.LogWarning("---- No Threat has been found!");
-
-            return false;
         }
 
         private async Task StopDrowning()

@@ -11,6 +11,7 @@ namespace Core.Goals
     {
         private readonly ILogger logger;
         private readonly GoapAgent goapAgent;
+        private readonly AddonReader addonReader;
 
         private GoapGoal? currentGoal;
         private RouteInfo? routeInfo;
@@ -28,10 +29,11 @@ namespace Core.Goals
             }
         }
 
-        public GoalThread(ILogger logger, GoapAgent goapAgent, RouteInfo? routeInfo)
+        public GoalThread(ILogger logger, GoapAgent goapAgent, AddonReader addonReader, RouteInfo? routeInfo)
         {
             this.logger = logger;
             this.goapAgent = goapAgent;
+            this.addonReader = addonReader;
             this.routeInfo = routeInfo;
         }
 
@@ -40,14 +42,14 @@ namespace Core.Goals
             if (e.Key == GoapKey.corpselocation && e.Value is CorpseLocation corpseLocation)
             {
                 routeInfo?.PoiList.Add(new RouteInfoPoi(corpseLocation.WowPoint, "Corpse", "black", corpseLocation.Radius));
-                logger.LogInformation($"{GetType().Name} Corpse added to list");
+                logger.LogInformation($"{GetType().Name} Kill location added to list");
             }
             else if (e.Key == GoapKey.consumecorpse && (bool)e.Value == false)
             {
                 if (routeInfo != null && routeInfo.PoiList.Any())
                 {
                     var closest = routeInfo.PoiList.Where(p => p.Name == "Corpse").
-                        Select(i => new { i, d = WowPoint.DistanceTo(goapAgent.PlayerReader.PlayerLocation, i.Location) }).
+                        Select(i => new { i, d = WowPoint.DistanceTo(addonReader.PlayerReader.PlayerLocation, i.Location) }).
                         Aggregate((a, b) => a.d <= b.d ? a : b);
 
                     if (closest.i != null)

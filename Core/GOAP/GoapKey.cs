@@ -3,6 +3,7 @@
     public enum GoapKey
     {
         hastarget = 10,
+        dangercombat = 11,
         targetisalive = 20,
         incombat = 30,
         pethastarget = 31,
@@ -36,6 +37,9 @@
              {
                  (GoapKey.hastarget, true) => "Has a target",
                  (GoapKey.hastarget, false) => "Has no target",
+
+                 (GoapKey.dangercombat, true) => "Danger from combat",
+                 (GoapKey.dangercombat, false) => "No danger",
 
                  (GoapKey.targetisalive, true) => "Target alive",
                  (GoapKey.targetisalive, false) => "Target dead",

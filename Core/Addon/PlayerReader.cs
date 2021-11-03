@@ -49,7 +49,7 @@ namespace Core
         public int ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax;
 
 
-        public bool HasTarget => Bits.HasTarget || TargetHealth > 0;
+        public bool HasTarget => Bits.HasTarget;// || TargetHealth > 0;
         public string Target
         {
             get
