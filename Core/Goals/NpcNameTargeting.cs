@@ -51,7 +51,7 @@ namespace Core.Goals
             npcNameFinder.ChangeNpcType(npcNames);
         }
 
-        public async Task WaitForNUpdate(int n)
+        public async ValueTask WaitForNUpdate(int n)
         {
             await npcNameFinder.WaitForNUpdate(n);
         }

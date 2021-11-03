@@ -5,24 +5,24 @@ namespace Core
 {
     public class Wait
     {
-        private readonly PlayerReader playerReader;
+        private readonly AddonReader addonReader;
 
-        public Wait(PlayerReader playerReader)
+        public Wait(AddonReader addonReader)
         {
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
         }
 
-        public async Task Update(int n)
+        public async ValueTask Update(int n)
         {
-            var s = playerReader.GlobalTime.Value;
-            while (Math.Abs(s - playerReader.GlobalTime.Value) <= n)
+            int s = addonReader.GlobalTime.Value;
+            while (Math.Abs(s - addonReader.GlobalTime.Value) <= n)
             {
                 await Task.Delay(4);
             }
         }
 
 
-        public async Task<bool> Interrupt(int durationMs, Func<bool> interrupt)
+        public async ValueTask<bool> Interrupt(int durationMs, Func<bool> interrupt)
         {
             DateTime start = DateTime.Now;
             while ((DateTime.Now - start).TotalMilliseconds < durationMs)
@@ -35,7 +35,7 @@ namespace Core
             return true;
         }
 
-        public async Task<Tuple<bool, double>> InterruptTask(int durationMs, Func<bool> interrupt)
+        public async ValueTask<Tuple<bool, double>> InterruptTask(int durationMs, Func<bool> interrupt)
         {
             DateTime start = DateTime.Now;
             double elapsedMs;
@@ -49,7 +49,7 @@ namespace Core
             return Tuple.Create(true, elapsedMs);
         }
 
-        public async Task<Tuple<bool, double>> InterruptTask(int durationMs, Func<bool> interrupt, Action repeat)
+        public async ValueTask<Tuple<bool, double>> InterruptTask(int durationMs, Func<bool> interrupt, Action repeat)
         {
             DateTime start = DateTime.Now;
             double elapsedMs;
@@ -64,7 +64,7 @@ namespace Core
             return Tuple.Create(true, elapsedMs);
         }
 
-        public async Task<bool> Interrupt(int durationMs, Task<bool> exit)
+        public async ValueTask<bool> Interrupt(int durationMs, Task<bool> exit)
         {
             DateTime start = DateTime.Now;
             while ((DateTime.Now - start).TotalMilliseconds < durationMs)
@@ -77,7 +77,7 @@ namespace Core
             return true;
         }
 
-        public async Task While(Func<bool> condition)
+        public async ValueTask While(Func<bool> condition)
         {
             while (condition())
             {
