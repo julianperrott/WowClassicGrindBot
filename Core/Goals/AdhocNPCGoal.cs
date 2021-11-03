@@ -101,7 +101,7 @@ namespace Core.Goals
 
             await Task.Delay(200);
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
+            if (this.playerReader.Bits.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
 
             if ((DateTime.Now - LastActive).TotalSeconds > 10 || routeToWaypoint.Count == 0)
             {
@@ -212,7 +212,7 @@ namespace Core.Goals
             rpath.Reverse();
             rpath.ForEach(p => this.routeToWaypoint.Push(p));
 
-            if (this.playerReader.PlayerBitValues.IsMounted)
+            if (this.playerReader.Bits.IsMounted)
             {
                 await input.TapDismount();
             }
@@ -246,7 +246,7 @@ namespace Core.Goals
 
         private async Task MountIfRequired()
         {
-            if (shouldMount && !playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (shouldMount && !playerReader.Bits.IsMounted && !playerReader.Bits.PlayerInCombat)
             {
                 shouldMount = false;
 
@@ -343,7 +343,7 @@ namespace Core.Goals
                 return 50;
             }
 
-            return (this.playerReader.PlayerBitValues.IsMounted ? 50 : 20);
+            return (this.playerReader.Bits.IsMounted ? 50 : 20);
         }
 
         private bool HasBeenActiveRecently()

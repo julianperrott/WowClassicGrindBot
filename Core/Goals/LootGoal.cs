@@ -102,7 +102,7 @@ namespace Core.Goals
                 await wait.Update(1);
                 if (playerReader.HasTarget)
                 {
-                    if(playerReader.PlayerBitValues.TargetIsDead)
+                    if(playerReader.Bits.TargetIsDead)
                     {
                         CheckForSkinning();
 
@@ -174,7 +174,7 @@ namespace Core.Goals
             playerReader.NeedLoot = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
 
-            if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
+            if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
                 await input.TapClearTarget($"{GetType().Name}: Exit Goal");
                 await wait.Update(1);

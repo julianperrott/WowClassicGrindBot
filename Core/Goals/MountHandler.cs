@@ -41,9 +41,9 @@ namespace Core
                 }
                 else
                 {
-                    if (playerReader.PlayerBitValues.IsFalling)
+                    if (playerReader.Bits.IsFalling)
                     {
-                        (bool notfalling, double fallingElapsedMs) = await wait.InterruptTask(10000, () => !playerReader.PlayerBitValues.IsFalling);
+                        (bool notfalling, double fallingElapsedMs) = await wait.InterruptTask(10000, () => !playerReader.Bits.IsFalling);
                         logger.LogInformation($"{GetType().Name}: waited for landing interrupted: {!notfalling} - {fallingElapsedMs}ms");
                     }
 
@@ -52,13 +52,13 @@ namespace Core
 
                     await input.TapMount();
 
-                    (bool notStartedCasted, double castStartElapsedMs) = await wait.InterruptTask(400, () => playerReader.PlayerBitValues.IsMounted || playerReader.IsCasting);
-                    logger.LogInformation($"{GetType().Name}: casting: {!notStartedCasted} | Mounted: {playerReader.PlayerBitValues.IsMounted} | Delay: {castStartElapsedMs}ms");
+                    (bool notStartedCasted, double castStartElapsedMs) = await wait.InterruptTask(400, () => playerReader.Bits.IsMounted || playerReader.IsCasting);
+                    logger.LogInformation($"{GetType().Name}: casting: {!notStartedCasted} | Mounted: {playerReader.Bits.IsMounted} | Delay: {castStartElapsedMs}ms");
 
-                    if (!playerReader.PlayerBitValues.IsMounted)
+                    if (!playerReader.Bits.IsMounted)
                     {
-                        (bool notmounted, double elapsedMs) = await wait.InterruptTask(mountCastTimeMs, () => playerReader.PlayerBitValues.IsMounted || !playerReader.IsCasting);
-                        logger.LogInformation($"{GetType().Name}: interrupted: {!notmounted} | Mounted: {playerReader.PlayerBitValues.IsMounted} | Delay: {elapsedMs}ms");
+                        (bool notmounted, double elapsedMs) = await wait.InterruptTask(mountCastTimeMs, () => playerReader.Bits.IsMounted || !playerReader.IsCasting);
+                        logger.LogInformation($"{GetType().Name}: interrupted: {!notmounted} | Mounted: {playerReader.Bits.IsMounted} | Delay: {elapsedMs}ms");
                     }
                 }
             }

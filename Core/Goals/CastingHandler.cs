@@ -171,9 +171,9 @@ namespace Core.Goals
 
         private async Task<bool> CastCastbar(KeyAction item)
         {
-            if (playerReader.PlayerBitValues.IsFalling)
+            if (playerReader.Bits.IsFalling)
             {
-                (bool notfalling, double fallingElapsedMs) = await wait.InterruptTask(MaxAirTimeMs, () => !playerReader.PlayerBitValues.IsFalling);
+                (bool notfalling, double fallingElapsedMs) = await wait.InterruptTask(MaxAirTimeMs, () => !playerReader.Bits.IsFalling);
                 if (!notfalling)
                 {
                     item.LogInformation($" ... castbar waited for landing {fallingElapsedMs}ms");
@@ -344,7 +344,7 @@ namespace Core.Goals
                     while (sw.ElapsedMilliseconds < item.DelayAfterCast)
                     {
                         await wait.Update(1);
-                        if (playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                        if (playerReader.Bits.TargetOfTargetIsPlayer)
                         {
                             break;
                         }
@@ -605,7 +605,7 @@ namespace Core.Goals
                     }
 
                     float minRange = playerReader.MinRange;
-                    if (playerReader.PlayerBitValues.PlayerInCombat && playerReader.HasTarget && !playerReader.IsTargetCasting)
+                    if (playerReader.Bits.PlayerInCombat && playerReader.HasTarget && !playerReader.IsTargetCasting)
                     {
                         await wait.Update(2);
                         if (playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe)

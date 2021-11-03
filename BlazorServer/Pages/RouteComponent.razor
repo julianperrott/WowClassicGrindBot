@@ -26,7 +26,7 @@
                 </g>
                 <g class="group2">
                     @{
-                        var colour = addonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? "red" : "orange";
+                        var colour = addonReader.PlayerReader.Bits.PlayerInCombat ? "red" : "orange";
 
                         if (botController.GoapAgent != null && botController.GoapAgent.CurrentGoal?.GetType() == typeof(Core.Goals.FollowRouteGoal))
                         {

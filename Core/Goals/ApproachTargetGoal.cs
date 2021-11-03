@@ -36,7 +36,7 @@ namespace Core.Goals
         {
             get
             {
-                return playerReader.PlayerBitValues.PlayerInCombat && !playerReader.PlayerBitValues.TargetOfTargetIsPlayer;
+                return playerReader.Bits.PlayerInCombat && !playerReader.Bits.TargetOfTargetIsPlayer;
             }
         }
 
@@ -66,12 +66,12 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            if (playerReader.PlayerBitValues.IsMounted)
+            if (playerReader.Bits.IsMounted)
             {
                 await input.TapDismount();
             }
 
-            playerWasInCombat = playerReader.PlayerBitValues.PlayerInCombat;
+            playerWasInCombat = playerReader.Bits.PlayerInCombat;
 
             initialTargetGuid = playerReader.TargetGuid;
             initialMinRange = playerReader.MinRange;
@@ -84,7 +84,7 @@ namespace Core.Goals
             lastPlayerLocation = playerReader.PlayerLocation;
             await wait.Update(1);
 
-            if (!playerReader.PlayerBitValues.PlayerInCombat)
+            if (!playerReader.Bits.PlayerInCombat)
             {
                 playerWasInCombat = false;
             }
@@ -94,7 +94,7 @@ namespace Core.Goals
                 if (!playerWasInCombat && HasPickedUpAnAdd)
                 {
                     logger.LogInformation("WARN Bodypull -- Looks like we have an add on approach");
-                    logger.LogInformation($"Combat={playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
+                    logger.LogInformation($"Combat={playerReader.Bits.PlayerInCombat}, Is Target targetting me={playerReader.Bits.TargetOfTargetIsPlayer}");
 
                     await stopMoving.Stop();
                     await input.TapClearTarget();
@@ -126,7 +126,7 @@ namespace Core.Goals
                 await wait.Update(1);
             }
 
-            if (SecondsSinceApproachStarted > 1 && lastPlayerDistance < 0.05 && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (SecondsSinceApproachStarted > 1 && lastPlayerDistance < 0.05 && !playerReader.Bits.PlayerInCombat)
             {
                 await input.TapClearTarget("");
                 await wait.Update(1);
@@ -135,7 +135,7 @@ namespace Core.Goals
                 approachStart = DateTime.Now;
             }
 
-            if (SecondsSinceApproachStarted > 15 && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (SecondsSinceApproachStarted > 15 && !playerReader.Bits.PlayerInCombat)
             {
                 await input.TapClearTarget("");
                 await wait.Update(1);
@@ -147,7 +147,7 @@ namespace Core.Goals
             if (playerReader.TargetGuid == initialTargetGuid)
             {
                 var initialTargetMinRange = playerReader.MinRange;
-                if (!playerReader.PlayerBitValues.PlayerInCombat)
+                if (!playerReader.Bits.PlayerInCombat)
                 {
                     await input.TapNearestTarget("Try to find closer target...");
                     await wait.Update(1);
@@ -176,7 +176,7 @@ namespace Core.Goals
                 }
             }
 
-            if (initialMinRange < playerReader.MinRange && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (initialMinRange < playerReader.MinRange && !playerReader.Bits.PlayerInCombat)
             {
                 Log($"We are going away from the target! {initialMinRange} < {playerReader.MinRange}");
                 await input.TapClearTarget();

@@ -98,7 +98,7 @@ namespace Core.Goals
             {
                 await this.stopMoving.Stop();
 
-                while (this.playerReader.PlayerBitValues.DeadStatus)
+                while (this.playerReader.Bits.DeadStatus)
                 {
                     this.corpseLocation = new WowPoint(playerReader.CorpseX, playerReader.CorpseY, playerReader.ZCoord);
                     if (this.corpseLocation.X >= 1 || this.corpseLocation.Y > 0) { break; }
@@ -122,7 +122,7 @@ namespace Core.Goals
 
             await Task.Delay(200);
 
-            if (!this.playerReader.PlayerBitValues.DeadStatus) { return; }
+            if (!this.playerReader.Bits.DeadStatus) { return; }
 
             var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
             double distance = 0;

@@ -38,7 +38,7 @@ namespace Core
         {
             lock (dummyLock)
             {
-                if (playerReader.PlayerBitValues.DeadStatus &&
+                if (playerReader.Bits.DeadStatus &&
                     !corpseLocation.Equals(playerReader.CorpseLocation) &&
                     !playerReader.CorpseLocation.Equals(new WowPoint(0,0)))
                 {

@@ -57,18 +57,18 @@ namespace Core
             }
 
             // it is trying to kill me
-            if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+            if (this.playerReader.Bits.TargetOfTargetIsPlayer)
             {
                 return false;
             }
 
-            if (!this.playerReader.PlayerBitValues.TargetIsNormal)
+            if (!this.playerReader.Bits.TargetIsNormal)
             {
                 Warn($"Target is not a normal mob {playerReader.TargetGuid} - {playerReader.TargetId}");
                 return true; // ignore elites
             }
 
-            if (this.playerReader.PlayerBitValues.IsTagged)
+            if (this.playerReader.Bits.IsTagged)
             {
                 Warn($"Target is tagged - {playerReader.TargetGuid} - {playerReader.TargetId}");
                 return true; // ignore tagged mobs

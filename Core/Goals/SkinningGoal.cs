@@ -162,7 +162,7 @@ namespace Core.Goals
             playerReader.NeedSkin = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
 
-            if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
+            if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
                 await input.TapClearTarget();
                 await wait.Update(1);

@@ -45,7 +45,7 @@ namespace Core.Goals
             await Task.Delay(200);
             input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 5");
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat) { return; }
+            if (this.playerReader.Bits.PlayerInCombat) { return; }
 
             if ((DateTime.Now - LastActive).TotalSeconds > 10)
             {

@@ -27,7 +27,7 @@ namespace Core.Goals
         {
             await input.TapTargetPet();
             await input.TapTargetOfTarget();
-            if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
+            if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
                 await input.TapClearTarget();
             }

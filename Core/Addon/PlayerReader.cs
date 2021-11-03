@@ -34,7 +34,7 @@ namespace Core
         public double CorpseX => reader.GetFixedPointAtCell(6) * 10;
         public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
 
-        public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetIntAtCell(8), reader.GetIntAtCell(9));
+        public PlayerBitValues Bits => new PlayerBitValues(reader.GetIntAtCell(8), reader.GetIntAtCell(9));
 
         public int HealthMax => reader.GetIntAtCell(10);
         public int HealthCurrent => reader.GetIntAtCell(11);
@@ -65,7 +65,7 @@ namespace Core
         public int TargetHealth => reader.GetIntAtCell(19);
         public int TargetHealthPercentage => TargetMaxHealth == 0 || TargetHealth == 1 ? 0 : (TargetHealth * 100) / TargetMaxHealth;
 
-        public bool HasTarget => PlayerBitValues.HasTarget || TargetHealth > 0;
+        public bool HasTarget => Bits.HasTarget || TargetHealth > 0;
 
         public ActionBarBits CurrentAction => new ActionBarBits(this, reader, 26, 27, 28, 29, 30);
         public ActionBarBits UsableAction => new ActionBarBits(this, reader, 31, 32, 33, 34, 35);
@@ -103,7 +103,7 @@ namespace Core
         public int MaxRange => (int)((reader.GetIntAtCell(49) - (MinRange * 100000f)) / 100f);
 
         public bool IsInMeleeRange => MinRange == 0 && MaxRange != 0 && MaxRange <= 5;
-        public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange; // between 5-8 yard - hunter and warrior
+        public bool IsInDeadZone => MinRange >= 5 && Bits.IsInDeadZoneRange; // between 5-8 yard - hunter and warrior
 
         public int PlayerXp => reader.GetIntAtCell(50);
         public int PlayerMaxXp => reader.GetIntAtCell(51);
@@ -113,10 +113,10 @@ namespace Core
         public UI_ERROR LastUIErrorMessage { get; set; }
 
 
-        public bool IsAutoAttacking => PlayerBitValues.IsAutoRepeatSpellOn_AutoAttack;
-        public bool IsShooting => PlayerBitValues.IsAutoRepeatSpellOn_Shoot;
+        public bool IsAutoAttacking => Bits.IsAutoRepeatSpellOn_AutoAttack;
+        public bool IsShooting => Bits.IsAutoRepeatSpellOn_Shoot;
 
-        public bool IsAutoShoting => PlayerBitValues.IsAutoRepeatSpellOn_AutoShot;
+        public bool IsAutoShoting => Bits.IsAutoRepeatSpellOn_AutoShot;
 
         public int SpellBeingCast => reader.GetIntAtCell(53);
         public int ComboPoints => reader.GetIntAtCell(54);

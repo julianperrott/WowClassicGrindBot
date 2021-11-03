@@ -18,7 +18,7 @@ namespace Core.Goals
 
         public override bool CheckIfActionCanRun()
         {
-            return playerReader.PlayerBitValues.ItemsAreBroken;
+            return playerReader.Bits.ItemsAreBroken;
         }
 
         public override Task PerformAction()

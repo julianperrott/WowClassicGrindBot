@@ -55,7 +55,7 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            if (playerReader.PlayerBitValues.IsMounted)
+            if (playerReader.Bits.IsMounted)
             {
                 await input.TapDismount();
             }
@@ -92,7 +92,7 @@ namespace Core.Goals
             {
                 if (HasPickedUpAnAdd)
                 {
-                    Log($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
+                    Log($"Combat={this.playerReader.Bits.PlayerInCombat}, Is Target targetting me={this.playerReader.Bits.TargetOfTargetIsPlayer}");
                     Log($"Add on approach");
 
                     await stopMoving.Stop();
@@ -100,7 +100,7 @@ namespace Core.Goals
                     await input.TapNearestTarget();
                     await wait.Update(1);
 
-                    if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
+                    if (this.playerReader.HasTarget && playerReader.Bits.TargetInCombat)
                     {
                         if (this.playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe)
                         {
@@ -136,7 +136,7 @@ namespace Core.Goals
         {
             get
             {
-                return this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer && this.playerReader.HealthPercent > 98;
+                return this.playerReader.Bits.PlayerInCombat && !this.playerReader.Bits.TargetOfTargetIsPlayer && this.playerReader.HealthPercent > 98;
             }
         }
 
@@ -184,7 +184,7 @@ namespace Core.Goals
                 await wait.Update(1);
             }
 
-            if (playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
+            if (playerReader.Bits.HasPet && !playerReader.PetHasTarget)
             {
                 await input.TapPetAttack();
             }
@@ -220,7 +220,7 @@ namespace Core.Goals
                 }
             }
 
-            return playerReader.PlayerBitValues.PlayerInCombat;
+            return playerReader.Bits.PlayerInCombat;
         }
 
         private void Log(string s)

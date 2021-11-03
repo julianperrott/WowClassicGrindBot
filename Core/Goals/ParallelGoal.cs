@@ -49,7 +49,7 @@ namespace Core.Goals
                 await stopMoving.Stop();
                 await wait.Update(1);
 
-                if (playerReader.PlayerBitValues.IsMounted)
+                if (playerReader.Bits.IsMounted)
                 {
                     await input.TapDismount();
                     await wait.Update(1);
@@ -69,7 +69,7 @@ namespace Core.Goals
             logger.LogInformation($"Waiting for {Name}");
 
             DateTime startTime = DateTime.Now;
-            while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.PlayerBitValues.PlayerInCombat)
+            while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.Bits.PlayerInCombat)
             {
                 await wait.Update(1);
 

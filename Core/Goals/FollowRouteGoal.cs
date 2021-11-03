@@ -146,7 +146,7 @@ namespace Core.Goals
         {
             if (playerReader.HasTarget)
             {
-                if (playerReader.PlayerBitValues.TargetIsDead)
+                if (playerReader.Bits.TargetIsDead)
                 {
                     await input.TapClearTarget("Target is dead.");
                     await wait.Update(1);
@@ -157,14 +157,14 @@ namespace Core.Goals
                 return;
             }
 
-            if (playerReader.PlayerBitValues.IsDrowning)
+            if (playerReader.Bits.IsDrowning)
             {
                 await StopDrowning();
             }
 
             await SwitchGatherType();
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat && classConfiguration.Mode != Mode.AttendedGather) { return; }
+            if (this.playerReader.Bits.PlayerInCombat && classConfiguration.Mode != Mode.AttendedGather) { return; }
 
             var timeSinceResetSeconds = (DateTime.Now - LastReset).TotalSeconds;
             if ((DateTime.Now - LastActive).TotalSeconds > 10 || routeToWaypoint.Count == 0 || timeSinceResetSeconds > 80)
@@ -336,7 +336,7 @@ namespace Core.Goals
 
         private async Task MountIfRequired()
         {
-            if (shouldMount && !playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (shouldMount && !playerReader.Bits.IsMounted && !playerReader.Bits.PlayerInCombat)
             {
                 if (classConfiguration.Mode != Mode.AttendedGather)
                 {
@@ -452,7 +452,7 @@ namespace Core.Goals
                 return 50;
             }
 
-            return (this.playerReader.PlayerBitValues.IsMounted ? 50 : distance);
+            return (this.playerReader.Bits.IsMounted ? 50 : distance);
         }
 
         private bool HasBeenActiveRecently()

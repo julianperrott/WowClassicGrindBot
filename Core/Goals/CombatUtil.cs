@@ -23,28 +23,28 @@ namespace Core
             this.wait = wait;
             this.playerReader = playerReader;
 
-            outOfCombat = !playerReader.PlayerBitValues.PlayerInCombat;
+            outOfCombat = !playerReader.Bits.PlayerInCombat;
             lastPosition = playerReader.PlayerLocation;
         }
 
         public void Update()
         {
             // TODO: have to find a better way to reset outOfCombat
-            outOfCombat = !playerReader.PlayerBitValues.PlayerInCombat;
+            outOfCombat = !playerReader.Bits.PlayerInCombat;
             lastPosition = playerReader.PlayerLocation;
         }
 
         public async Task<bool> EnteredCombat()
         {
             await wait.Update(1);
-            if (!outOfCombat && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (!outOfCombat && !playerReader.Bits.PlayerInCombat)
             {
                 Log("Combat Leave");
                 outOfCombat = true;
                 return false;
             }
 
-            if (outOfCombat && playerReader.PlayerBitValues.PlayerInCombat)
+            if (outOfCombat && playerReader.Bits.PlayerInCombat)
             {
                 Log("Combat Enter");
                 outOfCombat = false;
@@ -56,7 +56,7 @@ namespace Core
 
         public async Task<bool> AquiredTarget()
         {
-            if (this.playerReader.PlayerBitValues.PlayerInCombat)
+            if (this.playerReader.Bits.PlayerInCombat)
             {
                 if (this.playerReader.PetHasTarget)
                 {
@@ -71,8 +71,8 @@ namespace Core
 
                 await input.TapNearestTarget();
                 await wait.Update(1);
-                if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat &&
-                    playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                if (this.playerReader.HasTarget && playerReader.Bits.TargetInCombat &&
+                    playerReader.Bits.TargetOfTargetIsPlayer)
                 {
                     Log("Found from nearest target");
                     return true;

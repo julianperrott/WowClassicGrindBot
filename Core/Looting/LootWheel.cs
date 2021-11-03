@@ -118,7 +118,7 @@ namespace Core.Looting
 
         private async Task<bool> CheckForLoot(Point mousePosition, bool searchForMobs, bool ignoreMobs)
         {
-            var inCombat = this.playerReader.PlayerBitValues.PlayerInCombat;
+            var inCombat = this.playerReader.Bits.PlayerInCombat;
 
             Classification = CursorType.None;
             await Task.Delay(30);
@@ -186,7 +186,7 @@ namespace Core.Looting
         {
             for (int i = 0; i < delay; i += 100)
             {
-                if (!isInCombat && this.playerReader.PlayerBitValues.PlayerInCombat)
+                if (!isInCombat && this.playerReader.Bits.PlayerInCombat)
                 {
                     logger.LogInformation("We have enterred combat, aborting loot");
                     return;

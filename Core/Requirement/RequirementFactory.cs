@@ -70,8 +70,8 @@ namespace Core
                 { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
                 
                 // Pet
-                { "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
-                { "Pet Happy", ()=> playerReader.PlayerBitValues.PetHappy },
+                { "Has Pet", ()=> playerReader.Bits.HasPet },
+                { "Pet Happy", ()=> playerReader.Bits.PetHappy },
                 
                 // Auto Spell
                 { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
@@ -79,14 +79,14 @@ namespace Core
                 { "AutoShot", ()=> playerReader.IsAutoShoting },
                 
                 // Temporary Enchants
-                { "HasMainHandEnchant", ()=> playerReader.PlayerBitValues.MainHandEnchant_Active },
-                { "HasOffHandEnchant", ()=> playerReader.PlayerBitValues.OffHandEnchant_Active },
+                { "HasMainHandEnchant", ()=> playerReader.Bits.MainHandEnchant_Active },
+                { "HasOffHandEnchant", ()=> playerReader.Bits.OffHandEnchant_Active },
                 
                 // Equipment - Bag
-                { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
+                { "Items Broken", ()=> playerReader.Bits.ItemsAreBroken },
                 { "BagFull", ()=> bagReader.BagsFull },
                 { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
-                { "HasAmmo", ()=> playerReader.PlayerBitValues.HasAmmo },
+                { "HasAmmo", ()=> playerReader.Bits.HasAmmo },
                 
                 // General Buff Condition
                 { "Eating", ()=> playerReader.Buffs.Eating },
@@ -96,8 +96,8 @@ namespace Core
                 { "Clearcasting", ()=> playerReader.Buffs.Clearcasting },
 
                 // Player Affected
-                { "Swimming", ()=> playerReader.PlayerBitValues.IsSwimming },
-                { "Falling", ()=> playerReader.PlayerBitValues.IsFalling },
+                { "Swimming", ()=> playerReader.Bits.IsSwimming },
+                { "Falling", ()=> playerReader.Bits.IsFalling },
 
                 //Priest
                 { "Fortitude", ()=> playerReader.Buffs.Fortitude },

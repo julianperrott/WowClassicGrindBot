@@ -58,7 +58,7 @@ namespace Core.Goals
 
         protected async Task Fight()
         {
-            if (playerReader.HasTarget && playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
+            if (playerReader.HasTarget && playerReader.Bits.HasPet && !playerReader.PetHasTarget)
             {
                 await input.TapPetAttack("");
             }
@@ -118,8 +118,8 @@ namespace Core.Goals
         {
             get
             {
-                return this.playerReader.PlayerBitValues.PlayerInCombat &&
-                    !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer
+                return this.playerReader.Bits.PlayerInCombat &&
+                    !this.playerReader.Bits.TargetOfTargetIsPlayer
                     && this.playerReader.TargetHealthPercentage == 100;
             }
         }
@@ -130,7 +130,7 @@ namespace Core.Goals
 
             lastKilledGuid = addonReader.CreatureHistory.CombatDeadGuid.Value;
 
-            if (playerReader.PlayerBitValues.IsMounted)
+            if (playerReader.Bits.IsMounted)
             {
                 await input.TapDismount();
             }
@@ -164,7 +164,7 @@ namespace Core.Goals
                 lastDirectionForTurnAround = playerReader.Direction;
             }
 
-            if (playerReader.PlayerBitValues.IsDrowning)
+            if (playerReader.Bits.IsDrowning)
             {
                 await StopDrowning();
                 return;
@@ -223,7 +223,7 @@ namespace Core.Goals
                 await wait.Update(1);
                 if (playerReader.HasTarget)
                 {
-                    if (playerReader.PlayerBitValues.TargetInCombat && playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+                    if (playerReader.Bits.TargetInCombat && playerReader.Bits.TargetOfTargetIsPlayer)
                     {
                         ResetCooldowns();
 

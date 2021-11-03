@@ -34,7 +34,7 @@
                                 (@playerReader.TargetLevel) @((int)playerReader.TargetHealthPercentage) %<br/>
                                 GUID: @playerReader.TargetGuid
 
-                                @if (!playerReader.PlayerBitValues.TargetIsNormal)
+                                @if (!playerReader.Bits.TargetIsNormal)
                                 {
                                     <div>NOT NORMAL</div>
                                 }
@@ -82,7 +82,7 @@
     PlayerReader playerReader => addonReader.PlayerReader;
     LevelTracker levelTracker => addonReader.LevelTracker;
 
-    public bool PlayerInCombat => this.playerReader.PlayerBitValues.PlayerInCombat;
+    public bool PlayerInCombat => this.playerReader.Bits.PlayerInCombat;
 
     public string CombatBadge()
     {
