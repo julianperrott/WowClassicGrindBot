@@ -102,8 +102,8 @@ namespace Core
         public int MinRange => (int)(reader.GetIntAtCell(49) / 100000f);
         public int MaxRange => (int)((reader.GetIntAtCell(49) - (MinRange * 100000f)) / 100f);
 
-        public bool IsInMeleeRange => MinRange == 0 && (Class == PlayerClassEnum.Druid && Level >= 10 ? MaxRange == 2 : MaxRange == 5);
-        public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
+        public bool IsInMeleeRange => MinRange == 0 && MaxRange != 0 && MaxRange <= 5;
+        public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange; // between 5-8 yard - hunter and warrior
 
         public int PlayerXp => reader.GetIntAtCell(50);
         public int PlayerMaxXp => reader.GetIntAtCell(51);
