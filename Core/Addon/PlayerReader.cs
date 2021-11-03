@@ -1,8 +1,6 @@
 ﻿using System;
 using Core.Database;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Core
 {
