@@ -49,7 +49,7 @@ namespace Core
             List<WowPoint> pathPoints, spiritPath;
             GetPaths(out pathPoints, out spiritPath, classConfig);
 
-            var wait = new Wait(addonReader.PlayerReader);
+            var wait = new Wait(addonReader);
 
             var playerDirection = new PlayerDirection(logger, input, addonReader.PlayerReader);
             var stopMoving = new StopMoving(input, addonReader.PlayerReader);

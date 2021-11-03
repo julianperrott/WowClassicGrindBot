@@ -7,9 +7,6 @@ namespace Core
     public partial class PlayerReader
     {
         private readonly ISquareReader reader;
-
-        public bool Initialized { get; set; } = false;
-
         public PlayerReader(ISquareReader reader)
         {
             this.reader = reader;
@@ -120,8 +117,6 @@ namespace Core
 
         public int LastLootTime => reader.GetIntAtCell(97);
 
-        public RecordInt GlobalTime { private set; get; } = new RecordInt(98);
-
         // https://wowpedia.fandom.com/wiki/Mob_experience
         public bool TargetYieldXP => Level switch
         {
@@ -134,11 +129,6 @@ namespace Core
 
         internal void Updated()
         {
-            if (GlobalTime.Updated(reader) && (GlobalTime.Value <= 3 || !Initialized))
-            {
-                Reset();
-            }
-
             if (UIErrorMessage > 0)
             {
                 LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
@@ -150,7 +140,7 @@ namespace Core
             CastSpellId.Update(reader);
         }
 
-        internal void Reset()
+        public void Reset()
         {
             FormCost.Clear();
 
@@ -159,8 +149,6 @@ namespace Core
             MainHandSwing.Reset();
             CastEvent.Reset();
             CastSpellId.Reset();
-
-            Initialized = true;
         }
     }
 }

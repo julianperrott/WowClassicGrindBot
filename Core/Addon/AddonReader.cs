@@ -13,6 +13,8 @@ namespace Core
         private readonly ISquareReader squareReader;
         private readonly IAddonDataProvider addonDataProvider;
 
+        public bool Initialized { get; set; } = false;
+
         public int Sequence { get; private set; } = 0;
 
         public bool Active { get; set; } = true;
@@ -50,6 +52,8 @@ namespace Core
         // player reader
 
         public RecordInt UIMapId { private set; get; } = new RecordInt(4);
+
+        public RecordInt GlobalTime { private set; get; } = new RecordInt(98);
 
 
         public int CombatCreatureCount => CreatureHistory.DamageTaken.Count(c => c.HealthPercent > 0);
@@ -111,9 +115,9 @@ namespace Core
                 ZoneChanged?.Invoke(this, EventArgs.Empty);
             };
 
-            PlayerReader.GlobalTime.Changed += (object obj, EventArgs e) =>
+            GlobalTime.Changed += (object obj, EventArgs e) =>
             {
-                UpdateLatencys.Put((DateTime.Now - PlayerReader.GlobalTime.LastChanged).TotalMilliseconds);
+                UpdateLatencys.Put((DateTime.Now - GlobalTime.LastChanged).TotalMilliseconds);
                 AvgUpdateLatency = 0;
                 for (int i = 0; i < UpdateLatencys.Size; i++)
                 {
@@ -154,6 +158,12 @@ namespace Core
         {
             addonDataProvider.Update();
             Sequence++;
+
+            if (GlobalTime.Updated(squareReader) && (GlobalTime.Value <= 3 || !Initialized))
+            {
+                Reset();
+            }
+
             PlayerReader.Updated();
 
             UIMapId.Update(squareReader);
@@ -161,15 +171,18 @@ namespace Core
 
         public void Reset()
         {
-            PlayerReader.Initialized = false;
+            Initialized = false;
+
+            PlayerReader.Reset();
 
             UIMapId.Reset();
 
             ActionBarCostReader.Reset();
             SpellBookReader.Reset();
             TalentReader.Reset();
-            PlayerReader.Reset();
             CreatureHistory.Reset();
+
+            Initialized = true;
         }
 
         public Color GetColorAt(int index)
