@@ -471,11 +471,11 @@ namespace Core.Goals
                 case UI_ERROR.CAST_SUCCESS:
                     break;
                 case UI_ERROR.ERR_SPELL_FAILED_STUNNED:
-                    int debuffCount = playerReader.PlayerDebuffCount;
+                    int debuffCount = playerReader.AuraCount.PlayerDebuff;
                     if (debuffCount != 0)
                     {
                         logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_FAILED_STUNNED} -- Wait till losing debuff!");
-                        await wait.While(() => debuffCount == playerReader.PlayerDebuffCount);
+                        await wait.While(() => debuffCount == playerReader.AuraCount.PlayerDebuff);
 
                         await wait.Update(1);
                         playerReader.LastUIErrorMessage = UI_ERROR.NONE;
@@ -585,11 +585,11 @@ namespace Core.Goals
 
                     break;
                 case UI_ERROR.ERR_SPELL_FAILED_STUNNED:
-                    int debuffCount = playerReader.PlayerDebuffCount;
+                    int debuffCount = playerReader.AuraCount.PlayerDebuff;
                     if (debuffCount != 0)
                     {
                         logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_FAILED_STUNNED} -- Wait till losing debuff!");
-                        await wait.While(() => debuffCount == playerReader.PlayerDebuffCount);
+                        await wait.While(() => debuffCount == playerReader.AuraCount.PlayerDebuff);
                     }
                     else
                     {

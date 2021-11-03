@@ -84,7 +84,7 @@ namespace Core
         public bool WithInCombatRange => SpellInRange.WithinCombatRange(this, Class);
 
         public BuffStatus Buffs => new BuffStatus(reader.GetIntAtCell(41));
-        public DebuffStatus Debuffs => new DebuffStatus(reader.GetIntAtCell(42));
+        public TargetDebuffStatus TargetDebuffs => new TargetDebuffStatus(reader.GetIntAtCell(42));
 
         public int TargetLevel => reader.GetIntAtCell(43);
 
@@ -113,21 +113,14 @@ namespace Core
         public UI_ERROR LastUIErrorMessage { get; set; }
 
         public int SpellBeingCast => reader.GetIntAtCell(53);
+        public bool IsCasting => SpellBeingCast != 0;
+
         public int ComboPoints => reader.GetIntAtCell(54);
 
         public AuraCount AuraCount => new AuraCount(reader, 55);
 
-        public int PlayerDebuffCount => AuraCount.PlayerDebuff;
-        public int PlayerBuffCount => AuraCount.PlayerBuff;
-
-        public int TargetBuffCount => AuraCount.TargetBuff;
-        public int TargetDebuffCount => AuraCount.TargetDebuff;
-
-
         public int TargetId => reader.GetIntAtCell(56);
         public int TargetGuid => reader.GetIntAtCell(57);
-
-        public bool IsCasting => SpellBeingCast != 0;
 
         public int SpellBeingCastByTarget => reader.GetIntAtCell(58);
         public bool IsTargetCasting => SpellBeingCastByTarget != 0;

@@ -67,7 +67,6 @@ namespace Core
                 { "InDeadZoneRange", ()=> playerReader.IsInDeadZone },
                 { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
                 { "InCombatRange", ()=> playerReader.WithInCombatRange },
-                { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
                 
                 // Pet
                 { "Has Pet", ()=> playerReader.Bits.HasPet },
@@ -165,36 +164,36 @@ namespace Core
 
                 // Debuff Section
                 // Druid Debuff
-                { "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
-                { "Faerie Fire", ()=> playerReader.Debuffs.FaerieFire },
-                { "Rip", ()=> playerReader.Debuffs.Rip },
-                { "Moonfire", ()=> playerReader.Debuffs.Moonfire },
-                { "Entangling Roots", ()=> playerReader.Debuffs.EntanglingRoots },
-                { "Rake", ()=> playerReader.Debuffs.Rake },
+                { "Demoralizing Roar", ()=> playerReader.TargetDebuffs.Roar },
+                { "Faerie Fire", ()=> playerReader.TargetDebuffs.FaerieFire },
+                { "Rip", ()=> playerReader.TargetDebuffs.Rip },
+                { "Moonfire", ()=> playerReader.TargetDebuffs.Moonfire },
+                { "Entangling Roots", ()=> playerReader.TargetDebuffs.EntanglingRoots },
+                { "Rake", ()=> playerReader.TargetDebuffs.Rake },
                 
                 // Warrior Debuff
-                { "Rend", ()=> playerReader.Debuffs.Rend },
+                { "Rend", ()=> playerReader.TargetDebuffs.Rend },
                 
                 // Priest Debuff
-                { "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },
+                { "Shadow Word: Pain", ()=> playerReader.TargetDebuffs.ShadowWordPain },
                 
                 // Mage Debuff
-                { "Frostbite", ()=> playerReader.Debuffs.Frostbite },
-                { "Slow", ()=> playerReader.Debuffs.Slow },
+                { "Frostbite", ()=> playerReader.TargetDebuffs.Frostbite },
+                { "Slow", ()=> playerReader.TargetDebuffs.Slow },
                 
                 // Warlock Debuff
-                { "Curse of Weakness", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of Elements", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of Recklessness", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of Shadow", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of Agony", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of", ()=> playerReader.Debuffs.Curseof },
-                { "Corruption", ()=> playerReader.Debuffs.Corruption },
-                { "Immolate", ()=> playerReader.Debuffs.Immolate },
-                { "Siphon Life", ()=> playerReader.Debuffs.SiphonLife },
+                { "Curse of Weakness", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of Elements", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of Recklessness", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of Shadow", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of Agony", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Corruption", ()=> playerReader.TargetDebuffs.Corruption },
+                { "Immolate", ()=> playerReader.TargetDebuffs.Immolate },
+                { "Siphon Life", ()=> playerReader.TargetDebuffs.SiphonLife },
                 
                 // Hunter Debuff
-                { "Serpent Sting", ()=> playerReader.Debuffs.SerpentSting },
+                { "Serpent Sting", ()=> playerReader.TargetDebuffs.SerpentSting },
             };
 
             valueDictionary = new Dictionary<string, Func<int>>
