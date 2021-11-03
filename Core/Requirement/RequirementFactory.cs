@@ -458,8 +458,8 @@ namespace Core
 
             return new Requirement
             {
-                HasRequirement = () => playerReader.PlayerRace == race,
-                LogMessage = () => $"{playerReader.PlayerRace}"
+                HasRequirement = () => playerReader.Race == race,
+                LogMessage = () => $"{playerReader.Race}"
             };
         }
 

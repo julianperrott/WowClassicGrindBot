@@ -73,7 +73,7 @@
         {
             if (slot <= 12)
             {
-                return (int)FormToActionBar(playerReader.PlayerClass, item.HasFormRequirement() ? item.FormEnum : playerReader.Form);
+                return (int)FormToActionBar(playerReader.Class, item.HasFormRequirement() ? item.FormEnum : playerReader.Form);
             }
 
             return 0;

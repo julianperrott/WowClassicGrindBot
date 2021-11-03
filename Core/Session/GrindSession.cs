@@ -78,7 +78,7 @@ namespace Core.Session
             Active = true;
             SessionId = Guid.NewGuid();
             PathName = _botController.SelectedPathFilename ?? _botController.ClassConfig?.PathFilename ?? "No Path Selected";
-            PlayerClass = _botController.AddonReader.PlayerReader.PlayerClass;
+            PlayerClass = _botController.AddonReader.PlayerReader.Class;
             SessionStart = DateTime.UtcNow;
             LevelFrom = _botController.AddonReader.PlayerReader.Level;
             XpFrom = _botController.AddonReader.PlayerReader.PlayerXp;

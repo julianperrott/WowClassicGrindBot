@@ -32,7 +32,7 @@ namespace Core
         {
             if (playerReader.Level >= minLevelToMount)
             {
-                if (playerReader.PlayerClass == PlayerClassEnum.Druid)
+                if (playerReader.Class == PlayerClassEnum.Druid)
                 {
                     classConfig.Form
                       .Where(s => s.FormEnum == Form.Druid_Travel)

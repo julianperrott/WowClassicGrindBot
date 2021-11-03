@@ -486,7 +486,7 @@ namespace Core.Goals
                     }
                     break;
                 case UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
-                    if (playerReader.PlayerClass == PlayerClassEnum.Hunter && playerReader.IsInMeleeRange)
+                    if (playerReader.Class == PlayerClassEnum.Hunter && playerReader.IsInMeleeRange)
                     {
                         logger.LogInformation($"{source} -- As a Hunter didn't know how to react {UI_ERROR.ERR_SPELL_OUT_OF_RANGE}");
                         return;
@@ -598,7 +598,7 @@ namespace Core.Goals
 
                     break;
                 case UI_ERROR.ERR_SPELL_OUT_OF_RANGE:
-                    if (playerReader.PlayerClass == PlayerClassEnum.Hunter && playerReader.IsInMeleeRange)
+                    if (playerReader.Class == PlayerClassEnum.Hunter && playerReader.IsInMeleeRange)
                     {
                         logger.LogInformation($"{source} -- As a Hunter didn't know how to react {UI_ERROR.ERR_SPELL_OUT_OF_RANGE}");
                         return;

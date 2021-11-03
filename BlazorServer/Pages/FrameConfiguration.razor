@@ -409,9 +409,9 @@ else
     private bool ResolveClass(AddonReader addonReader)
     {
         addonReader.Refresh();
-        if (Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(addonReader.PlayerReader.PlayerClass))
+        if (Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(addonReader.PlayerReader.Class))
         {
-            playerClass = "The class of the character is: " + addonReader.PlayerReader.PlayerClass.ToString();
+            playerClass = "The class of the character is: " + addonReader.PlayerReader.Class.ToString();
             return true;
         }
         else

@@ -19,7 +19,7 @@ namespace Core
             this.creatureDb = creatureDb;
         }
 
-        public Dictionary<Form, int> FormCost { get; set; } = new Dictionary<Form, int>();
+        public Dictionary<Form, int> FormCost { private set; get; } = new Dictionary<Form, int>();
 
         public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord, ZCoord);
 
@@ -33,16 +33,12 @@ namespace Core
         public int Level => reader.GetIntAtCell(5);
 
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
-
-        // gets the position of your corpse where you died
         public double CorpseX => reader.GetFixedPointAtCell(6) * 10;
-
         public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
 
         public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetIntAtCell(8), reader.GetIntAtCell(9));
 
         public int HealthMax => reader.GetIntAtCell(10);
-
         public int HealthCurrent => reader.GetIntAtCell(11);
         public int HealthPercent => HealthMax == 0 || HealthCurrent == 1 ? 0 : (HealthCurrent * 100) / HealthMax;
 
@@ -50,28 +46,26 @@ namespace Core
         public int PTCurrent => reader.GetIntAtCell(13); // Current amount of Power Type (dynamic)
         public int PTPercentage => PTMax == 0 ? 0 : (PTCurrent * 100) / PTMax; // Power Type (dynamic) in terms of a percentage
 
-
         public int ManaMax => reader.GetIntAtCell(14);
         public int ManaCurrent => reader.GetIntAtCell(15);
         public int ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax;
+
 
         public string Target
         {
             get
             {
-                if (TargetId > 0 && creatureDb.Entries.ContainsKey(this.TargetId))
+                if (creatureDb.Entries.TryGetValue(TargetId, out var creature))
                 {
-                    return creatureDb.Entries[this.TargetId].Name;
+                    return creature.Name;
                 }
-                return reader.GetStringAtCell(16) + (reader.GetStringAtCell(17));
+                return reader.GetStringAtCell(16) + reader.GetStringAtCell(17);
             }
         }
 
         public int TargetMaxHealth => reader.GetIntAtCell(18);
-
-        public int TargetHealthPercentage => TargetMaxHealth == 0 || TargetHealth == 1 ? 0 : (TargetHealth * 100) / TargetMaxHealth;
-
         public int TargetHealth => reader.GetIntAtCell(19);
+        public int TargetHealthPercentage => TargetMaxHealth == 0 || TargetHealth == 1 ? 0 : (TargetHealth * 100) / TargetMaxHealth;
 
         public bool HasTarget => PlayerBitValues.HasTarget || TargetHealth > 0;
 
@@ -84,14 +78,12 @@ namespace Core
 
         public int PetMaxHealth => reader.GetIntAtCell(38);
         public int PetHealth => reader.GetIntAtCell(39);
-
         public int PetHealthPercentage => PetMaxHealth == 0 || PetHealth == 1 ? 0 : (PetHealth * 100) / PetMaxHealth;
 
+
         public SpellInRange SpellInRange => new SpellInRange(reader.GetIntAtCell(40));
-
-        public bool WithInPullRange => SpellInRange.WithinPullRange(this, PlayerClass);
-        public bool WithInCombatRange => SpellInRange.WithinCombatRange(this, PlayerClass);
-
+        public bool WithInPullRange => SpellInRange.WithinPullRange(this, Class);
+        public bool WithInCombatRange => SpellInRange.WithinCombatRange(this, Class);
 
         public BuffStatus Buffs => new BuffStatus(reader.GetIntAtCell(41));
         public DebuffStatus Debuffs => new DebuffStatus(reader.GetIntAtCell(42));
@@ -100,19 +92,19 @@ namespace Core
 
         public int Gold => reader.GetIntAtCell(44) + (reader.GetIntAtCell(45) * 1000000);
 
-        public RaceEnum PlayerRace => (RaceEnum)(reader.GetIntAtCell(46) / 100f);
+        public RaceEnum Race => (RaceEnum)(reader.GetIntAtCell(46) / 100f);
 
-        public PlayerClassEnum PlayerClass => (PlayerClassEnum)(reader.GetIntAtCell(46) - ((int)PlayerRace * 100f));
+        public PlayerClassEnum Class => (PlayerClassEnum)(reader.GetIntAtCell(46) - ((int)Race * 100f));
 
         public bool Unskinnable => reader.GetIntAtCell(47) != 0; // Returns 1 if creature is unskinnable
 
         public Stance Stance => new Stance(reader.GetIntAtCell(48));
-        public Form Form => Stance.Get(this, PlayerClass);
+        public Form Form => Stance.Get(this, Class);
 
         public int MinRange => (int)(reader.GetIntAtCell(49) / 100000f);
         public int MaxRange => (int)((reader.GetIntAtCell(49) - (MinRange * 100000f)) / 100f);
 
-        public bool IsInMeleeRange => MinRange == 0 && (PlayerClass == PlayerClassEnum.Druid && Level >= 10 ? MaxRange == 2 : MaxRange == 5);
+        public bool IsInMeleeRange => MinRange == 0 && (Class == PlayerClassEnum.Druid && Level >= 10 ? MaxRange == 2 : MaxRange == 5);
         public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
 
         public int PlayerXp => reader.GetIntAtCell(50);

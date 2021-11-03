@@ -338,7 +338,7 @@ namespace Core.Goals
 
         private int PointReachedDistance()
         {
-            if (this.playerReader.PlayerClass == PlayerClassEnum.Druid && this.playerReader.Form == Form.Druid_Travel)
+            if (this.playerReader.Class == PlayerClassEnum.Druid && this.playerReader.Form == Form.Druid_Travel)
             {
                 return 50;
             }

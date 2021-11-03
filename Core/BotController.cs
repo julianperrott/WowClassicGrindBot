@@ -117,7 +117,7 @@ namespace Core
             // wait for addon to read the wow state
             var sw = new Stopwatch();
             sw.Start();
-            while (AddonReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.PlayerClass))
+            while (AddonReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.Class))
             {
                 if (sw.ElapsedMilliseconds > 5000)
                 {
@@ -127,7 +127,7 @@ namespace Core
                 Thread.Sleep(100);
             }
 
-            logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerRace} {AddonReader.PlayerReader.PlayerClass}.");
+            logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.Race} {AddonReader.PlayerReader.Class}.");
 
             npcNameFinder = new NpcNameFinder(logger, WowScreen);
             npcNameTargeting = new NpcNameTargeting(logger, npcNameFinder, WowProcessInput);
@@ -287,7 +287,7 @@ namespace Core
 
         private ClassConfiguration ReadClassConfiguration(string classFilename, string? pathFilename)
         {
-            if(!classFilename.ToLower().Contains(AddonReader.PlayerReader.PlayerClass.ToString().ToLower()))
+            if(!classFilename.ToLower().Contains(AddonReader.PlayerReader.Class.ToString().ToLower()))
             {
                 throw new Exception("Not allowed to load other class profile!");
             }
