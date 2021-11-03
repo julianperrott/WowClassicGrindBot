@@ -121,6 +121,9 @@ namespace Core.GOAP
         {
             switch (e.Key)
             {
+                case GoapKey.consumecorpse:
+                    GoapAgentState.ShouldConsumeCorpse = (bool)e.Value;
+                    break;
                 case GoapKey.shouldloot:
                     GoapAgentState.NeedLoot = (bool)e.Value;
                     break;
@@ -141,7 +144,7 @@ namespace Core.GOAP
 
         private void OnKillCredit(object obj, EventArgs e)
         {
-            GoapAgentState.IncrementKillCount();
+            GoapAgentState.IncKillCount();
 
             if (CurrentGoal == null)
             {

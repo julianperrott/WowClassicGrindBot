@@ -23,8 +23,9 @@ namespace Core.Goals
             this.goapAgentState = goapAgentState;
             this.classConfig = classConfig;
 
-            AddPrecondition(GoapKey.producedcorpse, true);
             AddPrecondition(GoapKey.dangercombat, false);
+
+            AddPrecondition(GoapKey.producedcorpse, true);
             AddPrecondition(GoapKey.consumecorpse, false);
 
             AddEffect(GoapKey.producedcorpse, false);
@@ -44,9 +45,6 @@ namespace Core.Goals
         public override async Task PerformAction()
         {
             logger.LogWarning("------    Safe to consume the kill");
-            goapAgentState.ProduceCorpse();
-
-            SendActionEvent(new ActionEventArgs(GoapKey.producedcorpse, false));
             SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, true));
 
             if (classConfig.Loot)
@@ -54,7 +52,7 @@ namespace Core.Goals
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
             }
 
-            await Task.Delay(10);
+            await Task.Delay(5);
         }
     }
 }

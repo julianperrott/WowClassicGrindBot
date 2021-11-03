@@ -25,13 +25,11 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
-            goapAgentState.DecrementKillCount();
-            logger.LogInformation("----- Consumed a corpse. Remaining:" + goapAgentState.LastCombatKillCount);
+            goapAgentState.DecKillCount();
+            logger.LogInformation($"----- Consumed a corpse. Remaining: {goapAgentState.LastCombatKillCount}");
 
-            goapAgentState.ConsumeCorpse();
             SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, false));
-
-            await Task.Delay(10);
+            await Task.Delay(5);
         }
     }
 }
