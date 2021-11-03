@@ -266,7 +266,7 @@ namespace Core.Goals
                 return false;
             }
 
-            if (playerReader.IsShooting)
+            if (playerReader.Bits.IsAutoRepeatSpellOn_Shoot)
             {
                 await input.TapStopAttack("Stop AutoRepeat Shoot");
                 await input.TapStopAttack("Stop AutoRepeat Shoot");
@@ -539,7 +539,7 @@ namespace Core.Goals
                     playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                     break;
                 case UI_ERROR.ERR_BADATTACKPOS:
-                    if (playerReader.IsAutoAttacking)
+                    if (playerReader.Bits.IsAutoRepeatSpellOn_AutoAttack)
                     {
                         logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_BADATTACKPOS} -- Interact!");
                         await input.TapInteractKey("");
@@ -674,7 +674,7 @@ namespace Core.Goals
 
                     break;
                 case UI_ERROR.ERR_BADATTACKPOS:
-                    if (playerReader.IsAutoAttacking)
+                    if (playerReader.Bits.IsAutoRepeatSpellOn_AutoAttack)
                     {
                         logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_BADATTACKPOS} -- Interact!");
                         await input.TapInteractKey("");

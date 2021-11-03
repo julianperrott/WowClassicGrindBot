@@ -74,9 +74,9 @@ namespace Core
                 { "Pet Happy", ()=> playerReader.Bits.PetHappy },
                 
                 // Auto Spell
-                { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
-                { "Shooting", ()=> playerReader.IsShooting },
-                { "AutoShot", ()=> playerReader.IsAutoShoting },
+                { "AutoAttacking", ()=> playerReader.Bits.IsAutoRepeatSpellOn_AutoAttack },
+                { "Shooting", ()=> playerReader.Bits.IsAutoRepeatSpellOn_Shoot },
+                { "AutoShot", ()=> playerReader.Bits.IsAutoRepeatSpellOn_AutoShot },
                 
                 // Temporary Enchants
                 { "HasMainHandEnchant", ()=> playerReader.Bits.MainHandEnchant_Active },

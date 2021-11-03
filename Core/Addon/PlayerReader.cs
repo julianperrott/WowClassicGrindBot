@@ -112,12 +112,6 @@ namespace Core
         private int UIErrorMessage => reader.GetIntAtCell(52);
         public UI_ERROR LastUIErrorMessage { get; set; }
 
-
-        public bool IsAutoAttacking => Bits.IsAutoRepeatSpellOn_AutoAttack;
-        public bool IsShooting => Bits.IsAutoRepeatSpellOn_Shoot;
-
-        public bool IsAutoShoting => Bits.IsAutoRepeatSpellOn_AutoShot;
-
         public int SpellBeingCast => reader.GetIntAtCell(53);
         public int ComboPoints => reader.GetIntAtCell(54);
 
