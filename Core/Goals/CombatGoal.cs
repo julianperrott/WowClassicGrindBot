@@ -144,6 +144,14 @@ namespace Core.Goals
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
         }
 
+        public override async Task OnExit()
+        {
+            if (addonReader.CombatCreatureCount > 0)
+            {
+                await stopMoving.Stop();
+            }
+        }
+
         public override async Task PerformAction()
         {
             if (Math.Abs(lastDirectionForTurnAround - playerReader.Direction) > Math.PI / 2)
