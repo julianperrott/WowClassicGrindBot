@@ -14,7 +14,6 @@ namespace Core.Goals
 
         private ILogger logger;
         private readonly ConfigurableInput input;
-
         private readonly PlayerReader playerReader;
         private readonly Wait wait;
         private readonly StopMoving stopMoving;
@@ -25,16 +24,16 @@ namespace Core.Goals
 
         private int lastLoot;
 
-        public SkinningGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, Wait wait, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
+        public SkinningGoal(ILogger logger, ConfigurableInput input, AddonReader addonReader, Wait wait, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
         {
             this.logger = logger;
-
             this.input = input;
-            this.playerReader = playerReader;
+
+            this.playerReader = addonReader.PlayerReader;
             this.wait = wait;
             this.stopMoving = stopMoving;
-            this.bagReader = bagReader;
-            this.equipmentReader = equipmentReader;
+            this.bagReader = addonReader.BagReader;
+            this.equipmentReader = addonReader.EquipmentReader;
 
             this.npcNameTargeting = npcNameTargeting;
             this.combatUtil = combatUtil;

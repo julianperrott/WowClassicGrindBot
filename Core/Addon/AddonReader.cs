@@ -42,8 +42,8 @@ namespace Core
         public WorldMapAreaDB WorldMapAreaDb { get; private set; }
         public ItemDB ItemDb { get; private set; }
         public CreatureDB CreatureDb { get; private set; }
+        public AreaDB AreaDb { get; private set; }
 
-        private readonly AreaDB areaDb;
         private readonly SpellDB spellDb;
         private readonly TalentDB talentDB;
 
@@ -97,14 +97,14 @@ namespace Core
 
             this.TalentReader = new TalentReader(squareReader, 72, PlayerReader, talentDB);
 
-            this.areaDb = areaDb;
+            this.AreaDb = areaDb;
             this.WorldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
 
             UpdateLatencys = new CircularBuffer<double>(10);
 
             UIMapId.Changed += (object obj, EventArgs e) =>
             {
-                this.areaDb.Update(WorldMapAreaDb.GetAreaId(UIMapId.Value));
+                this.AreaDb.Update(WorldMapAreaDb.GetAreaId(UIMapId.Value));
                 ZoneChanged?.Invoke(this, EventArgs.Empty);
             };
 

@@ -23,13 +23,11 @@ namespace Core
         private readonly NpcNameTargeting npcNameTargeting;
         private readonly IPPather pather;
 
-        private readonly AreaDB areaDb;
-
         private readonly ExecGameCommand exec;
 
         public RouteInfo? RouteInfo { get; private set; }
 
-        public GoalFactory(ILogger logger, AddonReader addonReader, ConfigurableInput input, DataConfig dataConfig, NpcNameFinder npcNameFinder, NpcNameTargeting npcNameTargeting, IPPather pather, AreaDB areaDb, ExecGameCommand execGameCommand)
+        public GoalFactory(ILogger logger, AddonReader addonReader, ConfigurableInput input, DataConfig dataConfig, NpcNameFinder npcNameFinder, NpcNameTargeting npcNameTargeting, IPPather pather, ExecGameCommand execGameCommand)
         {
             this.logger = logger;
             this.addonReader = addonReader;
@@ -38,7 +36,6 @@ namespace Core
             this.npcNameFinder = npcNameFinder;
             this.npcNameTargeting = npcNameTargeting;
             this.pather = pather;
-            this.areaDb = areaDb;
             this.exec = execGameCommand;
         }
 
@@ -103,13 +100,13 @@ namespace Core
 
                 if (classConfig.Loot)
                 {
-                    var lootAction = new LootGoal(logger, input, wait, addonReader.PlayerReader, addonReader.BagReader, stopMoving, classConfig, npcNameTargeting, combatUtil, areaDb);
+                    var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
                     lootAction.AddPreconditions();
                     availableActions.Add(lootAction);
 
                     if (classConfig.Skin)
                     {
-                        availableActions.Add(new SkinningGoal(logger, input, addonReader.PlayerReader, wait, addonReader.BagReader, addonReader.EquipmentReader, stopMoving, npcNameTargeting, combatUtil));
+                        availableActions.Add(new SkinningGoal(logger, input, addonReader, wait, stopMoving, npcNameTargeting, combatUtil));
                     }
                 }
 

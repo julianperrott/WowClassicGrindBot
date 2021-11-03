@@ -27,16 +27,16 @@ namespace Core.Goals
         private bool debug = true;
         private int lastLoot;
 
-        public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil, AreaDB areaDb)
+        public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
         {
             this.logger = logger;
             this.input = input;
 
             this.wait = wait;
-            this.playerReader = playerReader;
-            this.areaDb = areaDb;
+            this.playerReader = addonReader.PlayerReader;
+            this.areaDb = addonReader.AreaDb;
             this.stopMoving = stopMoving;
-            this.bagReader = bagReader;
+            this.bagReader = addonReader.BagReader;
             
             this.classConfiguration = classConfiguration;
             this.npcNameTargeting = npcNameTargeting;

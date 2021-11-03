@@ -1,7 +1,6 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using Core.Database;
 
 namespace Core.Goals
 {
@@ -9,8 +8,8 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction { get => 4.5f; }
 
-        public PostKillLootGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil, AreaDB areaDb)
-            : base(logger, input, wait, playerReader, bagReader, stopMoving, classConfiguration, npcNameTargeting, combatUtil, areaDb)
+        public PostKillLootGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
+            : base(logger, input, wait, addonReader, stopMoving, classConfiguration, npcNameTargeting, combatUtil)
         {
         }
 

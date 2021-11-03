@@ -263,7 +263,7 @@ namespace Core
 
             var goapAgentState = new GoapAgentState();
 
-            var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, areaDb, ExecGameCommand);
+            var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, ExecGameCommand);
             var availableActions = actionFactory.CreateGoals(config, blacklist, goapAgentState);
             RouteInfo = actionFactory.RouteInfo;
 
