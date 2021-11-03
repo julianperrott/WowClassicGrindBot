@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Core.GOAP;
 
 namespace Core
 {
@@ -41,7 +42,7 @@ namespace Core
             this.exec = execGameCommand;
         }
 
-        public HashSet<GoapGoal> CreateGoals(ClassConfiguration classConfig, IBlacklist blacklist)
+        public HashSet<GoapGoal> CreateGoals(ClassConfiguration classConfig, IBlacklist blacklist, GoapAgentState goapAgentState)
         {
             var availableActions = new HashSet<GoapGoal>();
 
@@ -108,7 +109,7 @@ namespace Core
 
                     if (classConfig.Skin)
                     {
-                        availableActions.Add(new SkinningGoal(logger, input, wait, addonReader.PlayerReader, addonReader.BagReader, addonReader.equipmentReader, stopMoving, npcNameTargeting, combatUtil));
+                        availableActions.Add(new SkinningGoal(logger, input, addonReader.PlayerReader, wait, addonReader.BagReader, addonReader.equipmentReader, stopMoving, npcNameTargeting, combatUtil));
                     }
                 }
 
@@ -126,8 +127,8 @@ namespace Core
 
                     availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader, stopMoving, castingHandler, stuckDetector, classConfig));
 
-                    availableActions.Add(new CreatureKilledGoal(logger, addonReader.PlayerReader, classConfig));
-                    availableActions.Add(new ConsumeCorpse(logger, addonReader.PlayerReader));
+                    availableActions.Add(new CreatureKilledGoal(logger, goapAgentState, classConfig));
+                    availableActions.Add(new ConsumeCorpse(logger, goapAgentState));
 
                     foreach (var item in classConfig.Adhoc.Sequence)
                     {

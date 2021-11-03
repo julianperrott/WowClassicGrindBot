@@ -15,8 +15,8 @@ namespace Core.Goals
         private ILogger logger;
         private readonly ConfigurableInput input;
 
-        private readonly Wait wait;
         private readonly PlayerReader playerReader;
+        private readonly Wait wait;
         private readonly StopMoving stopMoving;
         private readonly BagReader bagReader;
         private readonly EquipmentReader equipmentReader;
@@ -25,13 +25,13 @@ namespace Core.Goals
 
         private int lastLoot;
 
-        public SkinningGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
+        public SkinningGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, Wait wait, BagReader bagReader, EquipmentReader equipmentReader, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
         {
             this.logger = logger;
-            this.input = input;
 
-            this.wait = wait;
+            this.input = input;
             this.playerReader = playerReader;
+            this.wait = wait;
             this.stopMoving = stopMoving;
             this.bagReader = bagReader;
             this.equipmentReader = equipmentReader;
@@ -48,15 +48,13 @@ namespace Core.Goals
         public override bool CheckIfActionCanRun()
         {
             return
-            (
             bagReader.HasItem(7005) ||
             bagReader.HasItem(12709) ||
             bagReader.HasItem(19901) ||
 
             equipmentReader.HasItem(7005) ||
             equipmentReader.HasItem(12709) ||
-            equipmentReader.HasItem(19901)
-            );
+            equipmentReader.HasItem(19901);
         }
 
         public override async Task OnEnter()
@@ -66,7 +64,6 @@ namespace Core.Goals
             if (bagReader.BagsFull)
             {
                 logger.LogWarning("Inventory is full");
-                playerReader.NeedSkin = false;
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
             }
 
@@ -159,7 +156,6 @@ namespace Core.Goals
 
             lastLoot = playerReader.LastLootTime;
 
-            playerReader.NeedSkin = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
 
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)

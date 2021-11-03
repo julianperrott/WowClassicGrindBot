@@ -147,56 +147,6 @@ namespace Core
             _ => false
         };
 
-
-
-        #region Last Combat Kill Count
-
-        private int lastCombatKillCount;
-        public int LastCombatKillCount => lastCombatKillCount;
-
-        public void IncrementKillCount()
-        {
-            lastCombatKillCount++;
-        }
-
-        public void DecrementKillCount()
-        {
-            lastCombatKillCount--;
-            if (lastCombatKillCount < 0)
-            {
-                ResetKillCount();
-            }
-        }
-
-        public void ResetKillCount()
-        {
-            lastCombatKillCount = 0;
-        }
-
-        #endregion
-
-
-        #region Corpse Consumption
-
-        public bool NeedLoot { get; set; } = false;
-        public bool NeedSkin { get; set; } = false;
-
-        private bool shouldConsumeCorpse;
-        public bool ShouldConsumeCorpse => shouldConsumeCorpse;
-
-        public void ProduceCorpse()
-        {
-            shouldConsumeCorpse = true;
-        }
-
-        public void ConsumeCorpse()
-        {
-            shouldConsumeCorpse = false;
-        }
-
-        #endregion
-
-
         internal void Updated()
         {
             if (GlobalTime.Updated(reader) && (GlobalTime.Value <= 3 || !Initialized))

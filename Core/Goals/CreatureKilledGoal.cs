@@ -14,13 +14,13 @@ namespace Core.Goals
         public override bool Repeatable { get; } = false;
 
         private readonly ILogger logger;
-        private readonly PlayerReader playerReader;
+        private readonly GoapAgentState goapAgentState;
         private readonly ClassConfiguration classConfig;
 
-        public CreatureKilledGoal(ILogger logger, PlayerReader playerReader, ClassConfiguration classConfig)
+        public CreatureKilledGoal(ILogger logger, GoapAgentState goapAgentState, ClassConfiguration classConfig)
         {
             this.logger = logger;
-            this.playerReader = playerReader;
+            this.goapAgentState = goapAgentState;
             this.classConfig = classConfig;
 
             AddPrecondition(GoapKey.producedcorpse, true);
@@ -34,7 +34,7 @@ namespace Core.Goals
             {
                 AddEffect(GoapKey.shouldloot, true);
 
-                if(classConfig.Skin)
+                if (classConfig.Skin)
                 {
                     AddEffect(GoapKey.shouldskin, true);
                 }
@@ -44,14 +44,13 @@ namespace Core.Goals
         public override async Task PerformAction()
         {
             logger.LogWarning("------    Safe to consume the kill");
-            playerReader.ProduceCorpse();
+            goapAgentState.ProduceCorpse();
 
             SendActionEvent(new ActionEventArgs(GoapKey.producedcorpse, false));
             SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, true));
 
             if (classConfig.Loot)
             {
-                playerReader.NeedLoot = true;
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
             }
 

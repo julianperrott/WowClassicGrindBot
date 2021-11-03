@@ -261,13 +261,13 @@ namespace Core
 
             var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(logger, AddonReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist);
 
+            var goapAgentState = new GoapAgentState();
+
             var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, areaDb, ExecGameCommand);
-            var availableActions = actionFactory.CreateGoals(config, blacklist);
+            var availableActions = actionFactory.CreateGoals(config, blacklist, goapAgentState);
             RouteInfo = actionFactory.RouteInfo;
 
-            Wait wait = new Wait(AddonReader.PlayerReader);
-
-            this.GoapAgent = new GoapAgent(logger, ConfigurableInput, AddonReader, availableActions, blacklist, config);
+            this.GoapAgent = new GoapAgent(logger, goapAgentState, ConfigurableInput, AddonReader, availableActions, blacklist);
 
             this.actionThread = new GoalThread(logger, GoapAgent, AddonReader, RouteInfo);
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Core.GOAP;
 using Microsoft.Extensions.Logging;
 
@@ -13,12 +10,12 @@ namespace Core.Goals
         public override bool Repeatable => false;
 
         private readonly ILogger logger;
-        private readonly PlayerReader playerReader;
+        private readonly GoapAgentState goapAgentState;
 
-        public ConsumeCorpse(ILogger logger, PlayerReader playerReader)
+        public ConsumeCorpse(ILogger logger, GoapAgentState goapAgentSate)
         {
             this.logger = logger;
-            this.playerReader = playerReader;
+            this.goapAgentState = goapAgentSate;
 
             AddPrecondition(GoapKey.incombat, false);
             AddPrecondition(GoapKey.consumecorpse, true);
@@ -26,17 +23,12 @@ namespace Core.Goals
             AddEffect(GoapKey.consumecorpse, false);
         }
 
-        public override bool CheckIfActionCanRun()
-        {
-            return playerReader.ShouldConsumeCorpse;
-        }
-
         public override async Task PerformAction()
         {
-            playerReader.DecrementKillCount();
-            logger.LogInformation("----- Consumed a corpse. Remaining:" + playerReader.LastCombatKillCount);
+            goapAgentState.DecrementKillCount();
+            logger.LogInformation("----- Consumed a corpse. Remaining:" + goapAgentState.LastCombatKillCount);
 
-            playerReader.ConsumeCorpse();
+            goapAgentState.ConsumeCorpse();
             SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, false));
 
             await Task.Delay(10);

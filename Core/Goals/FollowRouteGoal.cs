@@ -97,11 +97,6 @@ namespace Core.Goals
             }
         }
 
-        public override bool CheckIfActionCanRun()
-        {
-            return !playerReader.ShouldConsumeCorpse && playerReader.LastCombatKillCount == 0;
-        }
-
         public override void OnActionEvent(object sender, ActionEventArgs e)
         {
             if (sender != this && e.Key != GoapKey.abort)
