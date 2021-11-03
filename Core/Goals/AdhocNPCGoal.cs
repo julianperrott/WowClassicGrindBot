@@ -390,10 +390,10 @@ namespace Core.Goals
                 await this.input.KeyPress(key.ConsoleKey, 100);
 
                 // Interact with NPC
-                if (!string.IsNullOrEmpty(this.playerReader.Target))
+                if (!string.IsNullOrEmpty(this.playerReader.TargetName))
                 {
                     // black list it so we don't get stuck trying to kill it
-                    this.blacklist.Add(this.playerReader.Target);
+                    this.blacklist.Add(this.playerReader.TargetName);
 
                     await input.TapInteractKey($"InteractWithTarget {i}");
                 }

@@ -50,7 +50,7 @@ namespace Core
 
 
         public bool HasTarget => Bits.HasTarget;// || TargetHealth > 0;
-        public string Target
+        public string TargetName
         {
             get
             {

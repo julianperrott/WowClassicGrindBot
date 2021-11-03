@@ -94,10 +94,10 @@ namespace Core
                 }
             }
 
-            var blacklistMatch = blacklist.Where(s => this.playerReader.Target.ToUpper().StartsWith(s)).FirstOrDefault();
+            var blacklistMatch = blacklist.Where(s => this.playerReader.TargetName.ToUpper().StartsWith(s)).FirstOrDefault();
             if (!string.IsNullOrEmpty(blacklistMatch))
             {
-                Warn($"Target is in the blacklist {this.playerReader.Target} starts with {blacklistMatch}");
+                Warn($"Target is in the blacklist {this.playerReader.TargetName} starts with {blacklistMatch}");
                 return true;
             }
 
