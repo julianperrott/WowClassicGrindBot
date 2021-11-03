@@ -11,7 +11,7 @@
                 <td>Route</td>
                 <td>
                     <div class="float-right">
-                       [@addonReader.PlayerReader.XCoord.ToString("00.0000"),@addonReader.PlayerReader.YCoord.ToString("00.0000")] @(AreaName) (@addonReader.PlayerReader.UIMapId.Value)
+                       [@addonReader.PlayerReader.XCoord.ToString("00.0000"),@addonReader.PlayerReader.YCoord.ToString("00.0000")] @(AreaName) (@addonReader.UIMapId.Value)
                     </div>
                 </td>
             </tr>
@@ -218,7 +218,7 @@
 
     private void UpdateZoneName()
     {
-        if(addonReader.WorldMapAreaDb.TryGet(addonReader.PlayerReader.UIMapId.Value, out WorldMapArea wma))
+        if(addonReader.WorldMapAreaDb.TryGet(addonReader.UIMapId.Value, out WorldMapArea wma))
         {
             AreaName = wma.AreaName;
         }

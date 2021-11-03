@@ -15,6 +15,7 @@ namespace Core.Goals
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
 
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
@@ -50,12 +51,13 @@ namespace Core.Goals
             return points.Count == 0 ? null : points.Peek();
         }
 
-        public WalkToCorpseGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather)
+        public WalkToCorpseGoal(ILogger logger, ConfigurableInput input, AddonReader addonReader, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather)
         {
             this.logger = logger;
             this.input = input;
 
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.routePoints = routePoints.ToList();
@@ -256,7 +258,7 @@ namespace Core.Goals
 
             logger.LogInformation($"player location {playerReader.XCoord},{playerReader.YCoord}. Corpse {corpseLocation.X},{corpseLocation.Y}.");
 
-            var path = await pather.FindRouteTo(this.playerReader, corpseLocation);
+            var path = await pather.FindRouteTo(addonReader, corpseLocation);
 
             if (path.Any())
             {

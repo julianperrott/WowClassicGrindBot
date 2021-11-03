@@ -285,7 +285,7 @@ namespace Core.Goals
 
             // create route to vendo
             await this.stopMoving.Stop();
-            var path = await this.pather.FindRouteTo(this.playerReader, target);
+            var path = await this.pather.FindRouteTo(addonReader, target);
             path.Reverse();
             path.ForEach(p => this.routeToWaypoint.Push(p));
 

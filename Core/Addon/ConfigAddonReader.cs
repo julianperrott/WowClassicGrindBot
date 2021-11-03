@@ -21,6 +21,8 @@ namespace Core.Addon
 
         public string TargetName => throw new NotImplementedException();
 
+        public RecordInt UIMapId => throw new NotImplementedException();
+
         private void ConfigAddonReader_AddonDataChanged(object sender, EventArgs e)
         {
             throw new NotImplementedException();

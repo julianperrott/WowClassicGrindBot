@@ -7,7 +7,7 @@ namespace Core
     public interface IPPather
     {
         Task<List<WowPoint>> FindRoute(int map, WowPoint fromPoint, WowPoint toPoint);
-        Task<List<WowPoint>> FindRouteTo(PlayerReader playerReader,WowPoint wowPoint);
+        Task<List<WowPoint>> FindRouteTo(AddonReader addonReader, WowPoint wowPoint);
         Task DrawLines(List<LineArgs> lineArgs);
         Task DrawLines();
         Task DrawSphere(SphereArgs args);

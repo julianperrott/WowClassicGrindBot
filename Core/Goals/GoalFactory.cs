@@ -62,8 +62,8 @@ namespace Core
 
             var targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
 
-            var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader.PlayerReader, playerDirection, pathPoints, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, mountHandler, targetFinder);
-            var walkToCorpseAction = new WalkToCorpseGoal(logger, input, addonReader.PlayerReader, playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
+            var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader, playerDirection, pathPoints, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, mountHandler, targetFinder);
+            var walkToCorpseAction = new WalkToCorpseGoal(logger, input, addonReader, playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
 
             availableActions.Clear();
 
@@ -93,7 +93,7 @@ namespace Core
 
                 if (classConfig.WrongZone.ZoneId > 0)
                 {
-                    availableActions.Add(new WrongZoneGoal(addonReader.PlayerReader, input, playerDirection, logger, stuckDetector, classConfig));
+                    availableActions.Add(new WrongZoneGoal(addonReader, input, playerDirection, logger, stuckDetector, classConfig));
                 }
 
                 if (classConfig.Parallel.Sequence.Count > 0)
@@ -155,8 +155,8 @@ namespace Core
 
                 this.pather.DrawLines(new List<LineArgs>()
                 {
-                      new LineArgs  { Spots = pathPoints, Name = "grindpath", Colour = 2, MapId = addonReader.PlayerReader.UIMapId.Value },
-                      new LineArgs { Spots = spiritPath, Name = "spirithealer", Colour = 3, MapId = addonReader.PlayerReader.UIMapId.Value }
+                      new LineArgs  { Spots = pathPoints, Name = "grindpath", Colour = 2, MapId = addonReader.UIMapId.Value },
+                      new LineArgs { Spots = spiritPath, Name = "spirithealer", Colour = 3, MapId = addonReader.UIMapId.Value }
                 });
             }
 

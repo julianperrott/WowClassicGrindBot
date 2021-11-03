@@ -20,6 +20,7 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
 
         private readonly Wait wait;
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
@@ -67,13 +68,14 @@ namespace Core.Goals
         #endregion
 
 
-        public FollowRouteGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler, TargetFinder targetFinder)
+        public FollowRouteGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler, TargetFinder targetFinder)
         {
             this.logger = logger;
             this.input = input;
 
             this.wait = wait;
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
 
@@ -397,7 +399,7 @@ namespace Core.Goals
             if (forceUsePathing || distance > 200)
             {
                 await this.stopMoving.Stop();
-                var path = await this.pather.FindRouteTo(this.playerReader, wayPoints.Peek());
+                var path = await this.pather.FindRouteTo(addonReader, wayPoints.Peek());
                 path.Reverse();
                 path.ForEach(p => this.routeToWaypoint.Push(p));
             }

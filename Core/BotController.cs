@@ -178,7 +178,7 @@ namespace Core
                     {
                         Colour = AddonReader.PlayerReader.Bits.PlayerInCombat ? 1 : AddonReader.PlayerReader.HasTarget ? 6 : 2,
                         Name = "Player",
-                        MapId = this.AddonReader.PlayerReader.UIMapId.Value,
+                        MapId = this.AddonReader.UIMapId.Value,
                         Spot = this.AddonReader.PlayerReader.PlayerLocation
                     });
                     updatePlayerPostion.Reset();

@@ -25,6 +25,7 @@ namespace Core
 
         string TargetName { get; }
 
+        RecordInt UIMapId { get; }
 
         // functions
 

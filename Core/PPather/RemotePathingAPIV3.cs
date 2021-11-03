@@ -75,10 +75,10 @@ namespace Core
             //return new List<WowPoint>();
         }
 
-        public async Task<List<WowPoint>> FindRouteTo(PlayerReader playerReader, WowPoint destination)
+        public async Task<List<WowPoint>> FindRouteTo(AddonReader addonReader, WowPoint destination)
         {
-            int uiMapId = playerReader.UIMapId.Value;
-            WowPoint fromPoint = playerReader.PlayerLocation;
+            int uiMapId = addonReader.UIMapId.Value;
+            WowPoint fromPoint = addonReader.PlayerReader.PlayerLocation;
             WowPoint toPoint = destination;
 
             if (!Client.IsConnected)
@@ -127,8 +127,8 @@ namespace Core
 
                 if (result.Count > 0)
                 {
-                    playerReader.ZCoord = result[0].Z;
-                    logger.LogInformation($"PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                    addonReader.PlayerReader.ZCoord = result[0].Z;
+                    logger.LogInformation($"PlayerLocation.Z = {addonReader.PlayerReader.PlayerLocation.Z}");
                 }
 
                 return result;

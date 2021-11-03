@@ -49,6 +49,9 @@ namespace Core
 
         // player reader
 
+        public RecordInt UIMapId { private set; get; } = new RecordInt(4);
+
+
         public int CombatCreatureCount => CreatureHistory.DamageTaken.Count(c => c.HealthPercent > 0);
 
         public string TargetName
@@ -102,7 +105,11 @@ namespace Core
 
             UpdateLatencys = new CircularBuffer<double>(10);
 
-            PlayerReader.UIMapId.Changed += (object obj, EventArgs e) => ZoneChanged?.Invoke(this, EventArgs.Empty);
+            UIMapId.Changed += (object obj, EventArgs e) =>
+            {
+                areaDb.Update(WorldMapAreaDb.GetAreaId(UIMapId.Value));
+                ZoneChanged?.Invoke(this, EventArgs.Empty);
+            };
 
             PlayerReader.GlobalTime.Changed += (object obj, EventArgs e) =>
             {
@@ -134,7 +141,7 @@ namespace Core
 
             LevelTracker.Update();
 
-            areaDb.Update(WorldMapAreaDb.GetAreaId(PlayerReader.UIMapId.Value));
+            //areaDb.Update(WorldMapAreaDb.GetAreaId(UIMapId.Value));
 
             if ((DateTime.Now - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
             {
@@ -148,11 +155,16 @@ namespace Core
             addonDataProvider.Update();
             Sequence++;
             PlayerReader.Updated();
+
+            UIMapId.Update(squareReader);
         }
 
         public void Reset()
         {
             PlayerReader.Initialized = false;
+
+            UIMapId.Reset();
+
             ActionBarCostReader.Reset();
             SpellBookReader.Reset();
             TalentReader.Reset();

@@ -24,8 +24,6 @@ namespace Core
         public double ZCoord { get; set; }
         public double Direction => reader.GetFixedPointAtCell(3);
 
-        public RecordInt UIMapId = new RecordInt(4);
-
         public int Level => reader.GetIntAtCell(5);
 
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
@@ -146,8 +144,6 @@ namespace Core
                 LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
             }
 
-            UIMapId.Update(reader);
-
             AutoShot.Update(reader);
             MainHandSwing.Update(reader);
             CastEvent.Update(reader);
@@ -159,8 +155,6 @@ namespace Core
             FormCost.Clear();
 
             // Reset all RecordInt
-            UIMapId.Reset();
-
             AutoShot.Reset();
             MainHandSwing.Reset();
             CastEvent.Reset();
