@@ -112,8 +112,8 @@ namespace Core.Goals
                 }
                 else
                 {
-                    logger.LogInformation($"New Plan= NULL");
-                    Thread.Sleep(50);
+                    //logger.LogInformation($"Current Plan= {currentGoal?.Name} -- New Plan= NULL");
+                    Thread.Sleep(10);
                 }
             }
         }
