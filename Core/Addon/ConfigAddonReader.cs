@@ -28,11 +28,6 @@ namespace Core.Addon
             throw new NotImplementedException();
         }
 
-        public Color GetColorAt(int index)
-        {
-            throw new NotImplementedException();
-        }
-
         public int GetIntAt(int index)
         {
             throw new NotImplementedException();

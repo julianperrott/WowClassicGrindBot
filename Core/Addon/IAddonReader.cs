@@ -1,5 +1,4 @@
 ﻿using Core.Database;
-using System.Drawing;
 
 namespace Core
 {
@@ -18,7 +17,6 @@ namespace Core
 
         WorldMapAreaDB WorldMapAreaDb { get; set; }
 
-        // player Reader props
         double AvgUpdateLatency { get; }
 
         int CombatCreatureCount { get; }
@@ -27,12 +25,9 @@ namespace Core
 
         RecordInt UIMapId { get; }
 
-        // functions
-
         void Refresh();
         void Reset();
 
-        Color GetColorAt(int index);
         int GetIntAt(int index);
     }
 }

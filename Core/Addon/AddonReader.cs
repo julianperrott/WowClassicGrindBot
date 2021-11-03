@@ -1,7 +1,6 @@
 ﻿using Core.Database;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Drawing;
 using Cyotek.Collections.Generic;
 using System.Linq;
 
@@ -30,7 +29,6 @@ namespace Core
         public ActionBarBits CurrentAction => new ActionBarBits(PlayerReader, squareReader, 26, 27, 28, 29, 30);
         public ActionBarBits UsableAction => new ActionBarBits(PlayerReader, squareReader, 31, 32, 33, 34, 35);
 
-
         public GossipReader GossipReader { get; set; }
 
         public SpellBookReader SpellBookReader { get; set; }
@@ -41,20 +39,17 @@ namespace Core
         public event EventHandler? AddonDataChanged;
         public event EventHandler? ZoneChanged;
 
-        private readonly AreaDB areaDb;
         public WorldMapAreaDB WorldMapAreaDb { get; set; }
         public ItemDB ItemDb { get; private set; }
         public CreatureDB CreatureDb { get; private set; }
+
+        private readonly AreaDB areaDb;
         private readonly SpellDB spellDb;
         private readonly TalentDB talentDB;
-
-
-        // player reader
 
         public RecordInt UIMapId { private set; get; } = new RecordInt(4);
 
         public RecordInt GlobalTime { private set; get; } = new RecordInt(98);
-
 
         public int CombatCreatureCount => CreatureHistory.DamageTaken.Count(c => c.HealthPercent > 0);
 
@@ -67,8 +62,6 @@ namespace Core
                     : squareReader.GetStringAtCell(16) + squareReader.GetStringAtCell(17);
             }
         }
-
-        // Front end
 
         public double AvgUpdateLatency { private set; get; } = 5;
         private readonly CircularBuffer<double> UpdateLatencys;
@@ -111,7 +104,7 @@ namespace Core
 
             UIMapId.Changed += (object obj, EventArgs e) =>
             {
-                areaDb.Update(WorldMapAreaDb.GetAreaId(UIMapId.Value));
+                this.areaDb.Update(WorldMapAreaDb.GetAreaId(UIMapId.Value));
                 ZoneChanged?.Invoke(this, EventArgs.Empty);
             };
 
@@ -144,8 +137,6 @@ namespace Core
             TalentReader.Read();
 
             LevelTracker.Update();
-
-            //areaDb.Update(WorldMapAreaDb.GetAreaId(UIMapId.Value));
 
             if ((DateTime.Now - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
             {
@@ -183,11 +174,6 @@ namespace Core
             CreatureHistory.Reset();
 
             Initialized = true;
-        }
-
-        public Color GetColorAt(int index)
-        {
-            return addonDataProvider.GetColor(index);
         }
 
         public int GetIntAt(int index)
