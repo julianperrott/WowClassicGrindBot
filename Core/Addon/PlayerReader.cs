@@ -1,59 +1,34 @@
 ﻿using System;
-using Core.Database;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Core
 {
     public partial class PlayerReader
     {
         private readonly ISquareReader reader;
-        private readonly CreatureDB creatureDb;
-
-        public bool Initialized = false;
-
-        public PlayerReader(ISquareReader reader, CreatureDB creatureDb)
+        public PlayerReader(ISquareReader reader)
         {
             this.reader = reader;
-            this.creatureDb = creatureDb;
         }
 
-        public double AvgUpdateLatency = 5;
-
-        public int Sequence { get; private set; } = 0;
-
-        public List<CreatureHistory> Creatures { get; } = new List<CreatureHistory>();
-        public List<CreatureHistory> Targets { get; } = new List<CreatureHistory>();
-        public List<CreatureHistory> DamageDone { get; } = new List<CreatureHistory>();
-        public List<CreatureHistory> DamageTaken { get; } = new List<CreatureHistory>();
-        public List<CreatureHistory> Deads { get; } = new List<CreatureHistory>();
-
-        public Dictionary<Form, int> FormCost { get; set; } = new Dictionary<Form, int>();
+        public Dictionary<Form, int> FormCost { private set; get; } = new Dictionary<Form, int>();
 
         public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord, ZCoord);
 
         public double XCoord => reader.GetFixedPointAtCell(1) * 10;
         public double YCoord => reader.GetFixedPointAtCell(2) * 10;
+        public double ZCoord { get; set; }
         public double Direction => reader.GetFixedPointAtCell(3);
 
-        public double ZCoord { get; set; }
-
-        public RecordInt UIMapId = new RecordInt(4);
-
-        public int PlayerLevel => reader.GetIntAtCell(5);
+        public int Level => reader.GetIntAtCell(5);
 
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
-
-        // gets the position of your corpse where you died
         public double CorpseX => reader.GetFixedPointAtCell(6) * 10;
-
         public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
 
-        public PlayerBitValues PlayerBitValues => new PlayerBitValues(reader.GetIntAtCell(8), reader.GetIntAtCell(9));
+        public PlayerBitValues Bits => new PlayerBitValues(reader.GetIntAtCell(8), reader.GetIntAtCell(9));
 
         public int HealthMax => reader.GetIntAtCell(10);
-
         public int HealthCurrent => reader.GetIntAtCell(11);
         public int HealthPercent => HealthMax == 0 || HealthCurrent == 1 ? 0 : (HealthCurrent * 100) / HealthMax;
 
@@ -61,70 +36,48 @@ namespace Core
         public int PTCurrent => reader.GetIntAtCell(13); // Current amount of Power Type (dynamic)
         public int PTPercentage => PTMax == 0 ? 0 : (PTCurrent * 100) / PTMax; // Power Type (dynamic) in terms of a percentage
 
-
         public int ManaMax => reader.GetIntAtCell(14);
         public int ManaCurrent => reader.GetIntAtCell(15);
         public int ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax;
 
-        public string Target
-        {
-            get
-            {
-                if (TargetId > 0 && creatureDb.Entries.ContainsKey(this.TargetId))
-                {
-                    return creatureDb.Entries[this.TargetId].Name;
-                }
-                return reader.GetStringAtCell(16) + (reader.GetStringAtCell(17));
-            }
-        }
+        // TODO: check this
+        public bool HasTarget => Bits.HasTarget;// || TargetHealth > 0;
 
         public int TargetMaxHealth => reader.GetIntAtCell(18);
-
+        public int TargetHealth => reader.GetIntAtCell(19);
         public int TargetHealthPercentage => TargetMaxHealth == 0 || TargetHealth == 1 ? 0 : (TargetHealth * 100) / TargetMaxHealth;
 
-        public int TargetHealth => reader.GetIntAtCell(19);
-
-        public bool HasTarget => PlayerBitValues.HasTarget || TargetHealth > 0;
-
-        public ActionBarBits CurrentAction => new ActionBarBits(this, reader, 26, 27, 28, 29, 30);
-        public ActionBarBits UsableAction => new ActionBarBits(this, reader, 31, 32, 33, 34, 35);
-
-        // 36 Actionbar cost
-
-        // 37 unused
 
         public int PetMaxHealth => reader.GetIntAtCell(38);
         public int PetHealth => reader.GetIntAtCell(39);
-
         public int PetHealthPercentage => PetMaxHealth == 0 || PetHealth == 1 ? 0 : (PetHealth * 100) / PetMaxHealth;
 
+
         public SpellInRange SpellInRange => new SpellInRange(reader.GetIntAtCell(40));
-
-        public bool WithInPullRange => SpellInRange.WithinPullRange(this, PlayerClass);
-        public bool WithInCombatRange => SpellInRange.WithinCombatRange(this, PlayerClass);
-
+        public bool WithInPullRange => SpellInRange.WithinPullRange(this, Class);
+        public bool WithInCombatRange => SpellInRange.WithinCombatRange(this, Class);
 
         public BuffStatus Buffs => new BuffStatus(reader.GetIntAtCell(41));
-        public DebuffStatus Debuffs => new DebuffStatus(reader.GetIntAtCell(42));
+        public TargetDebuffStatus TargetDebuffs => new TargetDebuffStatus(reader.GetIntAtCell(42));
 
         public int TargetLevel => reader.GetIntAtCell(43);
 
         public int Gold => reader.GetIntAtCell(44) + (reader.GetIntAtCell(45) * 1000000);
 
-        public RaceEnum PlayerRace => (RaceEnum)(reader.GetIntAtCell(46) / 100f);
+        public RaceEnum Race => (RaceEnum)(reader.GetIntAtCell(46) / 100f);
 
-        public PlayerClassEnum PlayerClass => (PlayerClassEnum)(reader.GetIntAtCell(46) - ((int)PlayerRace * 100f));
+        public PlayerClassEnum Class => (PlayerClassEnum)(reader.GetIntAtCell(46) - ((int)Race * 100f));
 
         public bool Unskinnable => reader.GetIntAtCell(47) != 0; // Returns 1 if creature is unskinnable
 
         public Stance Stance => new Stance(reader.GetIntAtCell(48));
-        public Form Form => Stance.Get(this, PlayerClass);
+        public Form Form => Stance.Get(this, Class);
 
         public int MinRange => (int)(reader.GetIntAtCell(49) / 100000f);
         public int MaxRange => (int)((reader.GetIntAtCell(49) - (MinRange * 100000f)) / 100f);
 
-        public bool IsInMeleeRange => MinRange == 0 && (PlayerClass == PlayerClassEnum.Druid && PlayerLevel >= 10 ? MaxRange == 2 : MaxRange == 5);
-        public bool IsInDeadZone => MinRange >= 5 && PlayerBitValues.IsInDeadZoneRange;
+        public bool IsInMeleeRange => MinRange == 0 && MaxRange != 0 && MaxRange <= 5;
+        public bool IsInDeadZone => MinRange >= 5 && Bits.IsInDeadZoneRange; // between 5-8 yard - hunter and warrior
 
         public int PlayerXp => reader.GetIntAtCell(50);
         public int PlayerMaxXp => reader.GetIntAtCell(51);
@@ -133,28 +86,15 @@ namespace Core
         private int UIErrorMessage => reader.GetIntAtCell(52);
         public UI_ERROR LastUIErrorMessage { get; set; }
 
-
-        public bool IsAutoAttacking => PlayerBitValues.IsAutoRepeatSpellOn_AutoAttack;
-        public bool IsShooting => PlayerBitValues.IsAutoRepeatSpellOn_Shoot;
-
-        public bool IsAutoShoting => PlayerBitValues.IsAutoRepeatSpellOn_AutoShot;
-
         public int SpellBeingCast => reader.GetIntAtCell(53);
+        public bool IsCasting => SpellBeingCast != 0;
+
         public int ComboPoints => reader.GetIntAtCell(54);
 
         public AuraCount AuraCount => new AuraCount(reader, 55);
 
-        public int PlayerDebuffCount => AuraCount.PlayerDebuff;
-        public int PlayerBuffCount => AuraCount.PlayerBuff;
-
-        public int TargetBuffCount => AuraCount.TargetBuff;
-        public int TargetDebuffCount => AuraCount.TargetDebuff;
-
-
         public int TargetId => reader.GetIntAtCell(56);
         public int TargetGuid => reader.GetIntAtCell(57);
-
-        public bool IsCasting => SpellBeingCast != 0;
 
         public int SpellBeingCastByTarget => reader.GetIntAtCell(58);
         public bool IsTargetCasting => SpellBeingCastByTarget != 0;
@@ -166,11 +106,6 @@ namespace Core
         public RecordInt CastEvent { private set; get; } = new RecordInt(62);
         public RecordInt CastSpellId { private set; get; } = new RecordInt(63);
 
-        public RecordInt CombatCreatureGuid { private set; get; } = new RecordInt(64);
-        public RecordInt CombatDamageDoneGuid { private set; get; } = new RecordInt(65);
-        public RecordInt CombatDamageTakenGuid { private set; get; } = new RecordInt(66);
-        public RecordInt CombatDeadGuid { private set; get; } = new RecordInt(67);
-
         public int PetGuid => reader.GetIntAtCell(68);
         public int PetTargetGuid => reader.GetIntAtCell(69);
         public bool PetHasTarget => PetTargetGuid != 0;
@@ -181,157 +116,38 @@ namespace Core
 
         public int LastLootTime => reader.GetIntAtCell(97);
 
-        public RecordInt GlobalTime { private set; get; } = new RecordInt(98);
-
         // https://wowpedia.fandom.com/wiki/Mob_experience
-        public bool TargetYieldXP => PlayerLevel switch
+        public bool TargetYieldXP => Level switch
         {
             int n when n < 5 => true,
-            int n when n >= 6 && n <= 39 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 10f) - 5),
-            int n when n >= 40 && n <= 59 => TargetLevel > (PlayerLevel - Math.Floor(PlayerLevel / 5f) - 5),
-            int n when n >= 60 && n <= 70 => TargetLevel > PlayerLevel - 9,
+            int n when n >= 6 && n <= 39 => TargetLevel > (Level - Math.Floor(Level / 10f) - 5),
+            int n when n >= 40 && n <= 59 => TargetLevel > (Level - Math.Floor(Level / 5f) - 5),
+            int n when n >= 60 && n <= 70 => TargetLevel > Level - 9,
             _ => false
         };
 
-
-        #region Combat Creatures
-        public int CombatCreatureCount => DamageTaken.Count(c => c.LastKnownHealthPercent > 0);  //Creatures.Count;
-
-        public void UpdateCreatureLists()
-        {
-            if (CombatCreatureGuid.Updated(reader))
-            {
-                CreatureHistory.Update(CombatCreatureGuid.Value, 100f, Creatures);
-            }
-
-            if (CombatDamageTakenGuid.Updated(reader))
-            {
-                CreatureHistory.Update(CombatDamageTakenGuid.Value, 100f, DamageTaken);
-            }
-
-            if (CombatDamageDoneGuid.Updated(reader))
-            {
-                CreatureHistory.Update(CombatDamageDoneGuid.Value, 100f, DamageDone);
-            }
-
-            CreatureHistory.Update(TargetGuid, TargetHealthPercentage, Targets);
-
-            // set dead mob health everywhere
-
-            if (CombatDeadGuid.Updated(reader))
-            {
-                CreatureHistory.Update(CombatDeadGuid.Value, 0, Deads);
-                CreatureHistory.Update(CombatDeadGuid.Value, 0, Creatures);
-                CreatureHistory.Update(CombatDeadGuid.Value, 0, DamageTaken);
-                CreatureHistory.Update(CombatDeadGuid.Value, 0, DamageDone);
-
-                // Update last target health from LastDeadGuid
-                if (Targets.FindIndex(x => x.CreatureId == CombatDeadGuid.Value) != -1)
-                {
-                    CreatureHistory.Update(CombatDeadGuid.Value, 0, Targets);
-                }
-            }
-        }
-
-        #endregion
-
-        #region Last Combat Kill Count
-
-        private int lastCombatKillCount;
-        public int LastCombatKillCount => lastCombatKillCount;
-
-        public void IncrementKillCount()
-        {
-            lastCombatKillCount++;
-        }
-
-        public void DecrementKillCount()
-        {
-            lastCombatKillCount--;
-            if (lastCombatKillCount < 0)
-            {
-                ResetKillCount();
-            }
-        }
-
-        public void ResetKillCount()
-        {
-            lastCombatKillCount = 0;
-        }
-
-        #endregion
-
-
-        #region Corpse Consumption
-
-        public bool NeedLoot { get; set; } = false;
-        public bool NeedSkin { get; set; } = false;
-
-        private bool shouldConsumeCorpse;
-        public bool ShouldConsumeCorpse => shouldConsumeCorpse;
-
-        public void ProduceCorpse()
-        {
-            shouldConsumeCorpse = true;
-        }
-
-        public void ConsumeCorpse()
-        {
-            shouldConsumeCorpse = false;
-        }
-
-        #endregion
-
-
         internal void Updated()
         {
-            Sequence++;
-
-            if (GlobalTime.Updated(reader) && (GlobalTime.Value <= 3 || !Initialized))
-            {
-                Reset();
-            }
-
             if (UIErrorMessage > 0)
             {
                 LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
             }
 
-            UIMapId.Update(reader);
-
             AutoShot.Update(reader);
             MainHandSwing.Update(reader);
             CastEvent.Update(reader);
             CastSpellId.Update(reader);
-
-            UpdateCreatureLists();
         }
 
-        internal void Reset()
+        public void Reset()
         {
             FormCost.Clear();
 
-            // Reset all CreatureHistory
-            Creatures.Clear();
-            DamageTaken.Clear();
-            DamageDone.Clear();
-            Targets.Clear();
-            Deads.Clear();
-
             // Reset all RecordInt
-            UIMapId.Reset();
-
             AutoShot.Reset();
             MainHandSwing.Reset();
             CastEvent.Reset();
             CastSpellId.Reset();
-
-            CombatCreatureGuid.Reset();
-            CombatDamageDoneGuid.Reset();
-            CombatDamageTakenGuid.Reset();
-            CombatDeadGuid.Reset();
-
-            Initialized = true;
         }
     }
 }

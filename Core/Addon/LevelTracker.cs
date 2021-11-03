@@ -38,16 +38,16 @@ namespace Core
         {
             lock (dummyLock)
             {
-                if (playerReader.PlayerBitValues.DeadStatus &&
+                if (playerReader.Bits.DeadStatus &&
                     !corpseLocation.Equals(playerReader.CorpseLocation) &&
                     !playerReader.CorpseLocation.Equals(new WowPoint(0,0)))
                 {
                     corpseLocation = playerReader.CorpseLocation;
                     Death++;
                 }
-                if (level != playerReader.PlayerLevel)
+                if (level != playerReader.Level)
                 {
-                    level = playerReader.PlayerLevel;
+                    level = playerReader.Level;
                     lastXp = playerReader.PlayerXp;
                     levelStartTime = DateTime.Now;
                     levelStartXP = playerReader.PlayerXp;

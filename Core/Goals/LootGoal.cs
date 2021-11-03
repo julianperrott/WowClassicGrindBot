@@ -15,8 +15,8 @@ namespace Core.Goals
         private ILogger logger;
         private readonly ConfigurableInput input;
 
-        private readonly Wait wait;
         private readonly PlayerReader playerReader;
+        private readonly Wait wait;
         private readonly AreaDB areaDb;
         private readonly StopMoving stopMoving;
         private readonly BagReader bagReader;
@@ -27,15 +27,16 @@ namespace Core.Goals
         private bool debug = true;
         private int lastLoot;
 
-        public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, BagReader bagReader, StopMoving stopMoving,  ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil, AreaDB areaDb)
+        public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
         {
             this.logger = logger;
             this.input = input;
+
             this.wait = wait;
-            this.playerReader = playerReader;
-            this.areaDb = areaDb;
+            this.playerReader = addonReader.PlayerReader;
+            this.areaDb = addonReader.AreaDb;
             this.stopMoving = stopMoving;
-            this.bagReader = bagReader;
+            this.bagReader = addonReader.BagReader;
             
             this.classConfiguration = classConfiguration;
             this.npcNameTargeting = npcNameTargeting;
@@ -55,7 +56,6 @@ namespace Core.Goals
             if (bagReader.BagsFull)
             {
                 logger.LogWarning("Inventory is full");
-                playerReader.NeedLoot = false;
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
             }
 
@@ -102,7 +102,7 @@ namespace Core.Goals
                 await wait.Update(1);
                 if (playerReader.HasTarget)
                 {
-                    if(playerReader.PlayerBitValues.TargetIsDead)
+                    if(playerReader.Bits.TargetIsDead)
                     {
                         CheckForSkinning();
 
@@ -150,7 +150,6 @@ namespace Core.Goals
                 Log($"Should skin ? {targetSkinnable}");
                 AddEffect(GoapKey.shouldskin, targetSkinnable);
 
-                playerReader.NeedSkin = targetSkinnable;
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, targetSkinnable));
             }
         }
@@ -165,16 +164,14 @@ namespace Core.Goals
             {
                 Log($"Loot Failed");
 
-                playerReader.NeedSkin = false;
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
             }
 
             lastLoot = playerReader.LastLootTime;
 
-            playerReader.NeedLoot = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
 
-            if (playerReader.HasTarget && playerReader.PlayerBitValues.TargetIsDead)
+            if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
                 await input.TapClearTarget($"{GetType().Name}: Exit Goal");
                 await wait.Update(1);

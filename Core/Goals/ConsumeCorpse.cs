@@ -1,45 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Core.GOAP;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Core.GOAP;
 
 namespace Core.Goals
 {
-    class ConsumeCorpse : GoapGoal
+    public class ConsumeCorpse : GoapGoal
     {
-        public override float CostOfPerformingAction { get => 4.7f; }
+        public override float CostOfPerformingAction { get => 4.1f; }
+
         public override bool Repeatable => false;
 
         private readonly ILogger logger;
-        private readonly PlayerReader playerReader;
+        private readonly ClassConfiguration classConfig;
 
-        public ConsumeCorpse(ILogger logger, PlayerReader playerReader)
+        public ConsumeCorpse(ILogger logger, ClassConfiguration classConfig)
         {
             this.logger = logger;
-            this.playerReader = playerReader;
+            this.classConfig = classConfig;
 
-            AddPrecondition(GoapKey.incombat, false);
-            AddPrecondition(GoapKey.consumecorpse, true);
+            AddPrecondition(GoapKey.dangercombat, false);
 
-            AddEffect(GoapKey.consumecorpse, false);
-        }
+            AddPrecondition(GoapKey.producedcorpse, true);
+            AddPrecondition(GoapKey.consumecorpse, false);
 
-        public override bool CheckIfActionCanRun()
-        {
-            return playerReader.ShouldConsumeCorpse;
+            AddEffect(GoapKey.producedcorpse, false);
+            AddEffect(GoapKey.consumecorpse, true);
+
+            if (classConfig.Loot)
+            {
+                AddEffect(GoapKey.shouldloot, true);
+
+                if (classConfig.Skin)
+                {
+                    AddEffect(GoapKey.shouldskin, true);
+                }
+            }
         }
 
         public override async Task PerformAction()
         {
-            playerReader.DecrementKillCount();
-            logger.LogInformation("----- Consumed a corpse. Remaining:" + playerReader.LastCombatKillCount);
+            logger.LogWarning("----- Safe to consume a corpse.");
+            SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, true));
 
-            playerReader.ConsumeCorpse();
-            SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, false));
+            if (classConfig.Loot)
+            {
+                SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
+            }
 
-            await Task.Delay(10);
+            await Task.Delay(5);
         }
     }
 }

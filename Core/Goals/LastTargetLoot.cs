@@ -1,33 +1,25 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
 
 namespace Core.Goals
 {
     public class LastTargetLoot : GoapGoal
     {
-        private ILogger logger;
+        private readonly ILogger logger;
         private readonly ConfigurableInput input;
-
-        private readonly ClassConfiguration classConfiguration;
         private readonly Wait wait;
         private readonly PlayerReader playerReader;
-        
+
         public override float CostOfPerformingAction { get => 4.3f; }
 
-        public LastTargetLoot(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader,  ClassConfiguration classConfiguration)
+        public LastTargetLoot(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader)
         {
             this.logger = logger;
             this.input = input;
             this.wait = wait;
             this.playerReader = playerReader;
-            
-            this.classConfiguration = classConfiguration;
-        }
 
-        public virtual void AddPreconditions()
-        {
             AddPrecondition(GoapKey.hastarget, true);
             AddPrecondition(GoapKey.targetisalive, false);
         }
@@ -37,7 +29,6 @@ namespace Core.Goals
             int lastHealth = playerReader.HealthCurrent;
             WowPoint lastPosition = playerReader.PlayerLocation;
 
-            playerReader.NeedSkin = !playerReader.Unskinnable;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, !playerReader.Unskinnable));
 
             await input.TapInteractKey("interact target");
@@ -55,7 +46,6 @@ namespace Core.Goals
             if (!await wait.Interrupt(200, () => playerReader.HealthCurrent < lastHealth)) { return; }
 
             logger.LogDebug("Loot was Successfull");
-            playerReader.NeedLoot = false;
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
 
             //clear target

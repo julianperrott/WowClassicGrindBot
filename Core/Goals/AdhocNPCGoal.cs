@@ -15,6 +15,7 @@ namespace Core.Goals
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
 
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
@@ -47,11 +48,12 @@ namespace Core.Goals
         
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler, Wait wait, ExecGameCommand exec, GossipReader gossipReader)
+        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, AddonReader addonReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler, Wait wait, ExecGameCommand exec)
         {
             this.logger = logger;
             this.input = input;
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.npcNameTargeting = npcNameTargeting;
@@ -65,7 +67,7 @@ namespace Core.Goals
 
             this.wait = wait;
             this.execGameCommand = exec;
-            this.gossipReader = gossipReader;
+            this.gossipReader = addonReader.GossipReader;
 
             if (key.InCombat == "false")
             {
@@ -101,7 +103,7 @@ namespace Core.Goals
 
             await Task.Delay(200);
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
+            if (this.playerReader.Bits.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
 
             if ((DateTime.Now - LastActive).TotalSeconds > 10 || routeToWaypoint.Count == 0)
             {
@@ -212,7 +214,7 @@ namespace Core.Goals
             rpath.Reverse();
             rpath.ForEach(p => this.routeToWaypoint.Push(p));
 
-            if (this.playerReader.PlayerBitValues.IsMounted)
+            if (this.playerReader.Bits.IsMounted)
             {
                 await input.TapDismount();
             }
@@ -246,7 +248,7 @@ namespace Core.Goals
 
         private async Task MountIfRequired()
         {
-            if (shouldMount && !playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (shouldMount && !playerReader.Bits.IsMounted && !playerReader.Bits.PlayerInCombat)
             {
                 shouldMount = false;
 
@@ -283,7 +285,7 @@ namespace Core.Goals
 
             // create route to vendo
             await this.stopMoving.Stop();
-            var path = await this.pather.FindRouteTo(this.playerReader, target);
+            var path = await this.pather.FindRouteTo(addonReader, target);
             path.Reverse();
             path.ForEach(p => this.routeToWaypoint.Push(p));
 
@@ -338,12 +340,12 @@ namespace Core.Goals
 
         private int PointReachedDistance()
         {
-            if (this.playerReader.PlayerClass == PlayerClassEnum.Druid && this.playerReader.Form == Form.Druid_Travel)
+            if (this.playerReader.Class == PlayerClassEnum.Druid && this.playerReader.Form == Form.Druid_Travel)
             {
                 return 50;
             }
 
-            return (this.playerReader.PlayerBitValues.IsMounted ? 50 : 20);
+            return (this.playerReader.Bits.IsMounted ? 50 : 20);
         }
 
         private bool HasBeenActiveRecently()
@@ -390,10 +392,10 @@ namespace Core.Goals
                 await this.input.KeyPress(key.ConsoleKey, 100);
 
                 // Interact with NPC
-                if (!string.IsNullOrEmpty(this.playerReader.Target))
+                if (!string.IsNullOrEmpty(addonReader.TargetName))
                 {
                     // black list it so we don't get stuck trying to kill it
-                    this.blacklist.Add(this.playerReader.Target);
+                    this.blacklist.Add(addonReader.TargetName);
 
                     await input.TapInteractKey($"InteractWithTarget {i}");
                 }

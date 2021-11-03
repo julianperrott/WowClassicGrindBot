@@ -20,6 +20,7 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
 
         private readonly Wait wait;
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
@@ -67,13 +68,14 @@ namespace Core.Goals
         #endregion
 
 
-        public FollowRouteGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler, TargetFinder targetFinder)
+        public FollowRouteGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler, TargetFinder targetFinder)
         {
             this.logger = logger;
             this.input = input;
 
             this.wait = wait;
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
 
@@ -95,11 +97,6 @@ namespace Core.Goals
                 AddPrecondition(GoapKey.producedcorpse, false);
                 AddPrecondition(GoapKey.consumecorpse, false);
             }
-        }
-
-        public override bool CheckIfActionCanRun()
-        {
-            return !playerReader.ShouldConsumeCorpse && playerReader.LastCombatKillCount == 0;
         }
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
@@ -146,7 +143,7 @@ namespace Core.Goals
         {
             if (playerReader.HasTarget)
             {
-                if (playerReader.PlayerBitValues.TargetIsDead)
+                if (playerReader.Bits.TargetIsDead)
                 {
                     await input.TapClearTarget("Target is dead.");
                     await wait.Update(1);
@@ -157,14 +154,14 @@ namespace Core.Goals
                 return;
             }
 
-            if (playerReader.PlayerBitValues.IsDrowning)
+            if (playerReader.Bits.IsDrowning)
             {
                 await StopDrowning();
             }
 
             await SwitchGatherType();
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat && classConfiguration.Mode != Mode.AttendedGather) { return; }
+            if (this.playerReader.Bits.PlayerInCombat && classConfiguration.Mode != Mode.AttendedGather) { return; }
 
             var timeSinceResetSeconds = (DateTime.Now - LastReset).TotalSeconds;
             if ((DateTime.Now - LastActive).TotalSeconds > 10 || routeToWaypoint.Count == 0 || timeSinceResetSeconds > 80)
@@ -336,7 +333,7 @@ namespace Core.Goals
 
         private async Task MountIfRequired()
         {
-            if (shouldMount && !playerReader.PlayerBitValues.IsMounted && !playerReader.PlayerBitValues.PlayerInCombat)
+            if (shouldMount && !playerReader.Bits.IsMounted && !playerReader.Bits.PlayerInCombat)
             {
                 if (classConfiguration.Mode != Mode.AttendedGather)
                 {
@@ -402,7 +399,7 @@ namespace Core.Goals
             if (forceUsePathing || distance > 200)
             {
                 await this.stopMoving.Stop();
-                var path = await this.pather.FindRouteTo(this.playerReader, wayPoints.Peek());
+                var path = await this.pather.FindRouteTo(addonReader, wayPoints.Peek());
                 path.Reverse();
                 path.ForEach(p => this.routeToWaypoint.Push(p));
             }
@@ -447,12 +444,12 @@ namespace Core.Goals
 
         private int PointReachedDistance(int distance)
         {
-            if (this.playerReader.PlayerClass == PlayerClassEnum.Druid && this.playerReader.Form == Form.Druid_Travel)
+            if (this.playerReader.Class == PlayerClassEnum.Druid && this.playerReader.Form == Form.Druid_Travel)
             {
                 return 50;
             }
 
-            return (this.playerReader.PlayerBitValues.IsMounted ? 50 : distance);
+            return (this.playerReader.Bits.IsMounted ? 50 : distance);
         }
 
         private bool HasBeenActiveRecently()

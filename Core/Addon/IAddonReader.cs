@@ -1,27 +1,34 @@
 ﻿using Core.Database;
-using System.Drawing;
 
 namespace Core
 {
     public interface IAddonReader
     {
+        bool Active { get; set; }
+
+        PlayerReader PlayerReader { get; }
+
+        BagReader BagReader { get; }
+
+        EquipmentReader EquipmentReader { get; }
+
+        ActionBarCostReader ActionBarCostReader { get; }
+
+        LevelTracker LevelTracker { get; }
+
+        WorldMapAreaDB WorldMapAreaDb { get; }
+
+        double AvgUpdateLatency { get; }
+
+        int CombatCreatureCount { get; }
+
+        string TargetName { get; }
+
+        RecordInt UIMapId { get; }
+
         void Refresh();
         void Reset();
 
-        Color GetColorAt(int index);
         int GetIntAt(int index);
-
-        bool Active { get; set; }
-
-        PlayerReader PlayerReader { get; set; }
-
-        BagReader BagReader { get; set; }
-        EquipmentReader equipmentReader { get; set; }
-
-        ActionBarCostReader ActionBarCostReader { get; set; }
-
-        LevelTracker LevelTracker { get; set; }
-
-        WorldMapAreaDB WorldMapAreaDb { get; set; }
     }
 }

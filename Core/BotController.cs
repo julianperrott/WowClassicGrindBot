@@ -117,7 +117,7 @@ namespace Core
             // wait for addon to read the wow state
             var sw = new Stopwatch();
             sw.Start();
-            while (AddonReader.PlayerReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.PlayerClass))
+            while (AddonReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.Class))
             {
                 if (sw.ElapsedMilliseconds > 5000)
                 {
@@ -127,7 +127,7 @@ namespace Core
                 Thread.Sleep(100);
             }
 
-            logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.PlayerRace} {AddonReader.PlayerReader.PlayerClass}.");
+            logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.Race} {AddonReader.PlayerReader.Class}.");
 
             npcNameFinder = new NpcNameFinder(logger, WowScreen);
             npcNameTargeting = new NpcNameTargeting(logger, npcNameFinder, WowProcessInput);
@@ -176,9 +176,9 @@ namespace Core
                 {
                     this.pather.DrawSphere(new Core.PPather.SphereArgs
                     {
-                        Colour = AddonReader.PlayerReader.PlayerBitValues.PlayerInCombat ? 1 : !string.IsNullOrEmpty(AddonReader.PlayerReader.Target)? 6: 2,
+                        Colour = AddonReader.PlayerReader.Bits.PlayerInCombat ? 1 : AddonReader.PlayerReader.HasTarget ? 6 : 2,
                         Name = "Player",
-                        MapId = this.AddonReader.PlayerReader.UIMapId.Value,
+                        MapId = this.AddonReader.UIMapId.Value,
                         Spot = this.AddonReader.PlayerReader.PlayerLocation
                     });
                     updatePlayerPostion.Reset();
@@ -259,17 +259,17 @@ namespace Core
 
             ActionBarPopulator = new ActionBarPopulator(logger, config, AddonReader, ExecGameCommand);
 
-            var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(AddonReader.PlayerReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist, logger);
+            var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(logger, AddonReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist);
 
-            var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, areaDb, ExecGameCommand);
-            var availableActions = actionFactory.CreateGoals(config, blacklist);
+            var goapAgentState = new GoapAgentState();
+
+            var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, ExecGameCommand);
+            var availableActions = actionFactory.CreateGoals(config, blacklist, goapAgentState);
             RouteInfo = actionFactory.RouteInfo;
 
-            Wait wait = new Wait(AddonReader.PlayerReader);
+            this.GoapAgent = new GoapAgent(logger, goapAgentState, ConfigurableInput, AddonReader, availableActions, blacklist);
 
-            this.GoapAgent = new GoapAgent(logger, ConfigurableInput, AddonReader.PlayerReader, availableActions, blacklist, config);
-
-            this.actionThread = new GoalThread(logger, GoapAgent, RouteInfo);
+            this.actionThread = new GoalThread(logger, GoapAgent, AddonReader, RouteInfo);
 
             // hookup events between actions
             availableActions.ToList().ForEach(a =>
@@ -287,12 +287,12 @@ namespace Core
 
         private ClassConfiguration ReadClassConfiguration(string classFilename, string? pathFilename)
         {
-            if(!classFilename.ToLower().Contains(AddonReader.PlayerReader.PlayerClass.ToString().ToLower()))
+            if(!classFilename.ToLower().Contains(AddonReader.PlayerReader.Class.ToString().ToLower()))
             {
                 throw new Exception("Not allowed to load other class profile!");
             }
 
-            var requirementFactory = new RequirementFactory(logger, AddonReader.PlayerReader, AddonReader.BagReader, AddonReader.equipmentReader, AddonReader.SpellBookReader, AddonReader.TalentReader, AddonReader.CreatureDb, AddonReader.ItemDb);
+            var requirementFactory = new RequirementFactory(logger, AddonReader);
 
             ClassConfiguration classConfig;
             var classFilePath = Path.Join(DataConfig.Class, classFilename);

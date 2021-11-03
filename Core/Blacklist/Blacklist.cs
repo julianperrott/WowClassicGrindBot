@@ -4,10 +4,11 @@ using System.Linq;
 
 namespace Core
 {
-    public class Blacklist: IBlacklist
+    public class Blacklist : IBlacklist
     {
-        private List<string> blacklist = new List<string>();
+        private readonly List<string> blacklist = new List<string>();
 
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly ILogger logger;
         private readonly int above;
@@ -16,9 +17,10 @@ namespace Core
 
         private int LastWarningTargetGuid = 0;
 
-        public Blacklist(PlayerReader playerReader, int above, int below, bool checkTargetGivesExp, List<string> blacklisted, ILogger logger)
+        public Blacklist(ILogger logger, AddonReader addonReader, int above, int below, bool checkTargetGivesExp, List<string> blacklisted)
         {
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            playerReader = addonReader.PlayerReader;
             this.logger = logger;
             this.above = above;
             this.below = below;
@@ -38,35 +40,34 @@ namespace Core
 
         public bool IsTargetBlacklisted()
         {
-            if (!this.playerReader.HasTarget)
+            if (!playerReader.HasTarget)
             {
                 LastWarningTargetGuid = 0;
                 return false;
             }
-            else if (playerReader.DamageTaken.Exists(x => x.LastKnownHealthPercent > 0 && x.CreatureId == playerReader.TargetGuid))
+            else if (addonReader.CreatureHistory.DamageTaken.Exists(x => x.HealthPercent > 0 && x.Guid == playerReader.TargetGuid))
             {
                 return false;
             }
 
-            if(this.playerReader.PetHasTarget &&
-                this.playerReader.TargetGuid == playerReader.PetGuid)
+            if (playerReader.PetHasTarget && playerReader.TargetGuid == playerReader.PetGuid)
             {
                 return true;
             }
 
             // it is trying to kill me
-            if (this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer)
+            if (playerReader.Bits.TargetOfTargetIsPlayer)
             {
                 return false;
             }
 
-            if (!this.playerReader.PlayerBitValues.TargetIsNormal)
+            if (!playerReader.Bits.TargetIsNormal)
             {
                 Warn($"Target is not a normal mob {playerReader.TargetGuid} - {playerReader.TargetId}");
                 return true; // ignore elites
             }
 
-            if (this.playerReader.PlayerBitValues.IsTagged)
+            if (playerReader.Bits.IsTagged)
             {
                 Warn($"Target is tagged - {playerReader.TargetGuid} - {playerReader.TargetId}");
                 return true; // ignore tagged mobs
@@ -75,27 +76,27 @@ namespace Core
 
             if (checkTargetGivesExp)
             {
-                return !this.playerReader.TargetYieldXP;
+                return !playerReader.TargetYieldXP;
             }
             else
             {
-                if (this.playerReader.TargetLevel > this.playerReader.PlayerLevel + above)
+                if (playerReader.TargetLevel > playerReader.Level + above)
                 {
                     Warn($"Target is too high a level {playerReader.TargetGuid} - {playerReader.TargetId}");
                     return true; // ignore if current level + 2
                 }
 
-                if (this.playerReader.TargetLevel < this.playerReader.PlayerLevel - below)
+                if (playerReader.TargetLevel < playerReader.Level - below)
                 {
                     Warn($"Target is too low a level {playerReader.TargetGuid} - {playerReader.TargetId}");
                     return true; // ignore if current level - 7
                 }
             }
 
-            var blacklistMatch = blacklist.Where(s => this.playerReader.Target.ToUpper().StartsWith(s)).FirstOrDefault();
+            string blacklistMatch = blacklist.FirstOrDefault(s => addonReader.TargetName.ToUpper().StartsWith(s));
             if (!string.IsNullOrEmpty(blacklistMatch))
             {
-                Warn($"Target is in the blacklist {this.playerReader.Target} starts with {blacklistMatch}");
+                Warn($"Target is in the blacklist {addonReader.TargetName} starts with {blacklistMatch}");
                 return true;
             }
 
@@ -104,11 +105,11 @@ namespace Core
 
         private void Warn(string message)
         {
-            if (this.playerReader.TargetGuid != this.LastWarningTargetGuid)
+            if (playerReader.TargetGuid != LastWarningTargetGuid)
             {
                 logger.LogWarning($"Blacklisted: {message}");
             }
-            this.LastWarningTargetGuid = this.playerReader.TargetGuid;
+            LastWarningTargetGuid = playerReader.TargetGuid;
         }
     }
 }

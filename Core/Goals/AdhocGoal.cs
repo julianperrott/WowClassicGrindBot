@@ -53,7 +53,7 @@ namespace Core.Goals
                 await stopMoving.Stop();
                 await wait.Update(1);
 
-                if (playerReader.PlayerBitValues.IsMounted)
+                if (playerReader.Bits.IsMounted)
                 {
                     await input.TapDismount();
                     //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
@@ -67,7 +67,7 @@ namespace Core.Goals
             logger.LogInformation($"Waiting for {key.Name}");
 
             DateTime startTime = DateTime.Now;
-            while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.PlayerBitValues.PlayerInCombat)
+            while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.Bits.PlayerInCombat)
             {
                 await wait.Update(1);
 

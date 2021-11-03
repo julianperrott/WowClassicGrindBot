@@ -35,12 +35,12 @@ namespace Core.Goals
 
         public async Task<bool> Search(string source, CancellationToken cancellationToken)
         {
-            if (!cancellationToken.IsCancellationRequested && !playerReader.PlayerBitValues.PlayerInCombat
+            if (!cancellationToken.IsCancellationRequested && !playerReader.Bits.PlayerInCombat
                 && classConfig.TargetNearestTarget.MillisecondsSinceLastClick > random.Next(1000, 1500))
             {
                 if (await LookForTarget(source, cancellationToken))
                 {
-                    if (playerReader.HasTarget && !playerReader.PlayerBitValues.TargetIsDead)
+                    if (playerReader.HasTarget && !playerReader.Bits.TargetIsDead)
                     {
                         logger.LogInformation($"{source}: Has target!");
                         return true;
@@ -61,7 +61,7 @@ namespace Core.Goals
 
         private async Task<bool> LookForTarget(string source, CancellationToken cancellationToken)
         {
-            if (playerReader.HasTarget && !playerReader.PlayerBitValues.TargetIsDead && !blacklist.IsTargetBlacklisted())
+            if (playerReader.HasTarget && !playerReader.Bits.TargetIsDead && !blacklist.IsTargetBlacklisted())
             {
                 return true;
             }

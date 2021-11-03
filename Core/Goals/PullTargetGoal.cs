@@ -14,6 +14,7 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
 
         private readonly Wait wait;
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
@@ -27,13 +28,14 @@ namespace Core.Goals
 
         private int SecondsSincePullStarted => (int)(DateTime.Now - pullStart).TotalSeconds;
 
-        public PullTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public PullTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.logger = logger;
             this.input = input;
 
             this.wait = wait;
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.stopMoving = stopMoving;
             
             this.castingHandler = castingHandler;
@@ -55,7 +57,7 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            if (playerReader.PlayerBitValues.IsMounted)
+            if (playerReader.Bits.IsMounted)
             {
                 await input.TapDismount();
             }
@@ -92,7 +94,7 @@ namespace Core.Goals
             {
                 if (HasPickedUpAnAdd)
                 {
-                    Log($"Combat={this.playerReader.PlayerBitValues.PlayerInCombat}, Is Target targetting me={this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer}");
+                    Log($"Combat={this.playerReader.Bits.PlayerInCombat}, Is Target targetting me={this.playerReader.Bits.TargetOfTargetIsPlayer}");
                     Log($"Add on approach");
 
                     await stopMoving.Stop();
@@ -100,7 +102,7 @@ namespace Core.Goals
                     await input.TapNearestTarget();
                     await wait.Update(1);
 
-                    if (this.playerReader.HasTarget && playerReader.PlayerBitValues.TargetInCombat)
+                    if (this.playerReader.HasTarget && playerReader.Bits.TargetInCombat)
                     {
                         if (this.playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe)
                         {
@@ -136,7 +138,7 @@ namespace Core.Goals
         {
             get
             {
-                return this.playerReader.PlayerBitValues.PlayerInCombat && !this.playerReader.PlayerBitValues.TargetOfTargetIsPlayer && this.playerReader.HealthPercent > 98;
+                return this.playerReader.Bits.PlayerInCombat && !this.playerReader.Bits.TargetOfTargetIsPlayer && this.playerReader.HealthPercent > 98;
             }
         }
 
@@ -165,7 +167,7 @@ namespace Core.Goals
                     break;
                 }
 
-                if (lastCastSuccess && playerReader.UsableAction.Is(item))
+                if (lastCastSuccess && addonReader.UsableAction.Is(item))
                 {
                     Log($"While waiting, repeat current action: {item.Name}");
                     lastCastSuccess = await castingHandler.CastIfReady(item, item.DelayBeforeCast);
@@ -184,7 +186,7 @@ namespace Core.Goals
                 await wait.Update(1);
             }
 
-            if (playerReader.PlayerBitValues.HasPet && !playerReader.PetHasTarget)
+            if (playerReader.Bits.HasPet && !playerReader.PetHasTarget)
             {
                 await input.TapPetAttack();
             }
@@ -220,7 +222,7 @@ namespace Core.Goals
                 }
             }
 
-            return playerReader.PlayerBitValues.PlayerInCombat;
+            return playerReader.Bits.PlayerInCombat;
         }
 
         private void Log(string s)

@@ -142,7 +142,7 @@ namespace Core.Goals
                 hadNoHealth = false;
             }
 
-            return hadNoHealth && this.playerReader.PlayerBitValues.DeadStatus;
+            return hadNoHealth && this.playerReader.Bits.DeadStatus;
         }
 
         private bool HasBeenActiveRecently()

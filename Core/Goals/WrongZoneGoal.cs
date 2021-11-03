@@ -10,6 +10,7 @@ namespace Core.Goals
         private double RADIAN = Math.PI * 2;
         private ConfigurableInput input;
 
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StuckDetector stuckDetector;
@@ -18,9 +19,10 @@ namespace Core.Goals
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private ILogger logger;
 
-        public WrongZoneGoal(PlayerReader playerReader, ConfigurableInput input, IPlayerDirection playerDirection, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public WrongZoneGoal(AddonReader addonReader, ConfigurableInput input, IPlayerDirection playerDirection, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.input = input;
             this.playerDirection = playerDirection;
             this.logger = logger;
@@ -31,7 +33,7 @@ namespace Core.Goals
 
         public override bool CheckIfActionCanRun()
         {
-            return this.playerReader.UIMapId.Value == this.classConfiguration.WrongZone.ZoneId;
+            return addonReader.UIMapId.Value == this.classConfiguration.WrongZone.ZoneId;
         }
 
         public override float CostOfPerformingAction { get => 19f; }
@@ -45,7 +47,7 @@ namespace Core.Goals
             await Task.Delay(200);
             input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 5");
 
-            if (this.playerReader.PlayerBitValues.PlayerInCombat) { return; }
+            if (this.playerReader.Bits.PlayerInCombat) { return; }
 
             if ((DateTime.Now - LastActive).TotalSeconds > 10)
             {

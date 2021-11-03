@@ -22,10 +22,10 @@ namespace Core.Database
 
         public void Update(int areaId)
         {
-            if(areaId > 0 && this.areaId != areaId)
+            if (areaId > 0 && this.areaId != areaId)
             {
                 try
-                { 
+                {
                     CurrentArea = JsonConvert.DeserializeObject<Area>(File.ReadAllText(Path.Join(dataConfig.Area, $"{areaId}.json")));
                 }
                 catch(Exception e)

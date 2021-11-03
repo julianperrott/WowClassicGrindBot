@@ -10,7 +10,7 @@
     <div class="card-body" style="padding-bottom: 0">
         <table class="table table-bordered">
             <tr>
-                <th>Level @playerReader.PlayerLevel (XP: @((int)playerReader.PlayerXpPercentage)%)</th>
+                <th>Level @playerReader.Level (XP: @((int)playerReader.PlayerXpPercentage)%)</th>
                 <th>Bag Items:</th>
                 <th>Health:</th>
                 <th>Mana / Rage / Energy:</th>
@@ -26,15 +26,15 @@
                 <td>@playerReader.HealthPercent %</td>
                 <td>@playerReader.PTCurrent (@playerReader.PTPercentage %) </td>
                 <td>
-                    @if (!string.IsNullOrEmpty(playerReader.Target))
+                    @if (!string.IsNullOrEmpty(addonReader.TargetName))
                     {
                         <a href="https://tbc.wowhead.com/npc=@playerReader.TargetId" target="_blank">
                             <div>
-                                @playerReader.Target<br/>
+                                @addonReader.TargetName<br/>
                                 (@playerReader.TargetLevel) @((int)playerReader.TargetHealthPercentage) %<br/>
                                 GUID: @playerReader.TargetGuid
 
-                                @if (!playerReader.PlayerBitValues.TargetIsNormal)
+                                @if (!playerReader.Bits.TargetIsNormal)
                                 {
                                     <div>NOT NORMAL</div>
                                 }
@@ -42,9 +42,9 @@
                                 {
                                     <div>Combo Points: @playerReader.ComboPoints</div>
                                 }
-                                @if (playerReader.CombatCreatureCount > 1)
+                                @if (addonReader.CombatCreatureCount > 1)
                                 {
-                                    <div>Fighting @playerReader.CombatCreatureCount Mobs</div>
+                                    <div>Fighting @addonReader.CombatCreatureCount Mobs</div>
                                 }
 
                             </div>
@@ -82,7 +82,7 @@
     PlayerReader playerReader => addonReader.PlayerReader;
     LevelTracker levelTracker => addonReader.LevelTracker;
 
-    public bool PlayerInCombat => this.playerReader.PlayerBitValues.PlayerInCombat;
+    public bool PlayerInCombat => this.playerReader.Bits.PlayerInCombat;
 
     public string CombatBadge()
     {

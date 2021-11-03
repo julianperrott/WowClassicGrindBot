@@ -10,8 +10,10 @@ namespace Core
     public class RequirementFactory
     {
         private readonly ILogger logger;
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly BagReader bagReader;
+        private readonly EquipmentReader equipmentReader;
         private readonly SpellBookReader spellBookReader;
         private readonly TalentReader talentReader;
         private readonly CreatureDB creatureDb;
@@ -29,15 +31,17 @@ namespace Core
            "!"
         };
 
-        public RequirementFactory(ILogger logger, PlayerReader playerReader, BagReader bagReader, EquipmentReader equipmentReader, SpellBookReader spellBookReader, TalentReader talentReader, CreatureDB creatureDb, ItemDB itemDb)
+        public RequirementFactory(ILogger logger, AddonReader addonReader)
         {
             this.logger = logger;
-            this.playerReader = playerReader;
-            this.bagReader = bagReader;
-            this.spellBookReader = spellBookReader;
-            this.talentReader = talentReader;
-            this.creatureDb = creatureDb;
-            this.itemDb = itemDb;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
+            this.bagReader = addonReader.BagReader;
+            this.equipmentReader = addonReader.EquipmentReader;
+            this.spellBookReader = addonReader.SpellBookReader;
+            this.talentReader = addonReader.TalentReader;
+            this.creatureDb = addonReader.CreatureDb;
+            this.itemDb = addonReader.ItemDb;
 
             keywordDictionary = new Dictionary<string, Func<string, Requirement>>()
             {
@@ -67,26 +71,25 @@ namespace Core
                 { "InDeadZoneRange", ()=> playerReader.IsInDeadZone },
                 { "OutOfCombatRange", ()=> !playerReader.WithInCombatRange },
                 { "InCombatRange", ()=> playerReader.WithInCombatRange },
-                { "InFireblastRange", ()=> playerReader.SpellInRange.Mage_Fireblast },
                 
                 // Pet
-                { "Has Pet", ()=> playerReader.PlayerBitValues.HasPet },
-                { "Pet Happy", ()=> playerReader.PlayerBitValues.PetHappy },
+                { "Has Pet", ()=> playerReader.Bits.HasPet },
+                { "Pet Happy", ()=> playerReader.Bits.PetHappy },
                 
                 // Auto Spell
-                { "AutoAttacking", ()=> playerReader.IsAutoAttacking },
-                { "Shooting", ()=> playerReader.IsShooting },
-                { "AutoShot", ()=> playerReader.IsAutoShoting },
+                { "AutoAttacking", ()=> playerReader.Bits.IsAutoRepeatSpellOn_AutoAttack },
+                { "Shooting", ()=> playerReader.Bits.IsAutoRepeatSpellOn_Shoot },
+                { "AutoShot", ()=> playerReader.Bits.IsAutoRepeatSpellOn_AutoShot },
                 
                 // Temporary Enchants
-                { "HasMainHandEnchant", ()=> playerReader.PlayerBitValues.MainHandEnchant_Active },
-                { "HasOffHandEnchant", ()=> playerReader.PlayerBitValues.OffHandEnchant_Active },
+                { "HasMainHandEnchant", ()=> playerReader.Bits.MainHandEnchant_Active },
+                { "HasOffHandEnchant", ()=> playerReader.Bits.OffHandEnchant_Active },
                 
                 // Equipment - Bag
-                { "Items Broken", ()=> playerReader.PlayerBitValues.ItemsAreBroken },
+                { "Items Broken", ()=> playerReader.Bits.ItemsAreBroken },
                 { "BagFull", ()=> bagReader.BagsFull },
                 { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
-                { "HasAmmo", ()=> playerReader.PlayerBitValues.HasAmmo },
+                { "HasAmmo", ()=> playerReader.Bits.HasAmmo },
                 
                 // General Buff Condition
                 { "Eating", ()=> playerReader.Buffs.Eating },
@@ -96,8 +99,8 @@ namespace Core
                 { "Clearcasting", ()=> playerReader.Buffs.Clearcasting },
 
                 // Player Affected
-                { "Swimming", ()=> playerReader.PlayerBitValues.IsSwimming },
-                { "Falling", ()=> playerReader.PlayerBitValues.IsFalling },
+                { "Swimming", ()=> playerReader.Bits.IsSwimming },
+                { "Falling", ()=> playerReader.Bits.IsFalling },
 
                 //Priest
                 { "Fortitude", ()=> playerReader.Buffs.Fortitude },
@@ -165,36 +168,36 @@ namespace Core
 
                 // Debuff Section
                 // Druid Debuff
-                { "Demoralizing Roar", ()=> playerReader.Debuffs.Roar },
-                { "Faerie Fire", ()=> playerReader.Debuffs.FaerieFire },
-                { "Rip", ()=> playerReader.Debuffs.Rip },
-                { "Moonfire", ()=> playerReader.Debuffs.Moonfire },
-                { "Entangling Roots", ()=> playerReader.Debuffs.EntanglingRoots },
-                { "Rake", ()=> playerReader.Debuffs.Rake },
+                { "Demoralizing Roar", ()=> playerReader.TargetDebuffs.Roar },
+                { "Faerie Fire", ()=> playerReader.TargetDebuffs.FaerieFire },
+                { "Rip", ()=> playerReader.TargetDebuffs.Rip },
+                { "Moonfire", ()=> playerReader.TargetDebuffs.Moonfire },
+                { "Entangling Roots", ()=> playerReader.TargetDebuffs.EntanglingRoots },
+                { "Rake", ()=> playerReader.TargetDebuffs.Rake },
                 
                 // Warrior Debuff
-                { "Rend", ()=> playerReader.Debuffs.Rend },
+                { "Rend", ()=> playerReader.TargetDebuffs.Rend },
                 
                 // Priest Debuff
-                { "Shadow Word: Pain", ()=> playerReader.Debuffs.ShadowWordPain },
+                { "Shadow Word: Pain", ()=> playerReader.TargetDebuffs.ShadowWordPain },
                 
                 // Mage Debuff
-                { "Frostbite", ()=> playerReader.Debuffs.Frostbite },
-                { "Slow", ()=> playerReader.Debuffs.Slow },
+                { "Frostbite", ()=> playerReader.TargetDebuffs.Frostbite },
+                { "Slow", ()=> playerReader.TargetDebuffs.Slow },
                 
                 // Warlock Debuff
-                { "Curse of Weakness", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of Elements", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of Recklessness", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of Shadow", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of Agony", ()=> playerReader.Debuffs.Curseof },
-                { "Curse of", ()=> playerReader.Debuffs.Curseof },
-                { "Corruption", ()=> playerReader.Debuffs.Corruption },
-                { "Immolate", ()=> playerReader.Debuffs.Immolate },
-                { "Siphon Life", ()=> playerReader.Debuffs.SiphonLife },
+                { "Curse of Weakness", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of Elements", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of Recklessness", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of Shadow", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of Agony", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Curse of", ()=> playerReader.TargetDebuffs.Curseof },
+                { "Corruption", ()=> playerReader.TargetDebuffs.Corruption },
+                { "Immolate", ()=> playerReader.TargetDebuffs.Immolate },
+                { "Siphon Life", ()=> playerReader.TargetDebuffs.SiphonLife },
                 
                 // Hunter Debuff
-                { "Serpent Sting", ()=> playerReader.Debuffs.SerpentSting },
+                { "Serpent Sting", ()=> playerReader.TargetDebuffs.SerpentSting },
             };
 
             valueDictionary = new Dictionary<string, Func<int>>
@@ -204,7 +207,7 @@ namespace Core
                 { "PetHealth%", () => playerReader.PetHealthPercentage },
                 { "Mana%", () => playerReader.ManaPercentage },
                 { "BagCount", () => bagReader.BagItems.Count },
-                { "MobCount", () => playerReader.CombatCreatureCount },
+                { "MobCount", () => addonReader.CombatCreatureCount },
                 { "MinRange", () => playerReader.MinRange },
                 { "MaxRange", () => playerReader.MaxRange },
                 { "LastAutoShotMs", () => playerReader.AutoShot.ElapsedMs },
@@ -321,14 +324,14 @@ namespace Core
                 RequirementObjects.Add(new Requirement
                 {
                     HasRequirement = () => 
-                        !item.HasFormRequirement() ? playerReader.UsableAction.Is(item) :
-                        (playerReader.Form == item.FormEnum && playerReader.UsableAction.Is(item)) ||
+                        !item.HasFormRequirement() ? addonReader.UsableAction.Is(item) :
+                        (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ||
                         (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()),
 
                     LogMessage = () => 
                         !item.HasFormRequirement() ? $"Usable" : // {playerReader.UsableAction.Num(item)}
                         (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
-                        (playerReader.Form == item.FormEnum && playerReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
+                        (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
                 });
             }
         }
@@ -458,8 +461,8 @@ namespace Core
 
             return new Requirement
             {
-                HasRequirement = () => playerReader.PlayerRace == race,
-                LogMessage = () => $"{playerReader.PlayerRace}"
+                HasRequirement = () => playerReader.Race == race,
+                LogMessage = () => $"{playerReader.Race}"
             };
         }
 

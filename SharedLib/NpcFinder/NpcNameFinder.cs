@@ -241,7 +241,7 @@ namespace SharedLib.NpcFinder
             }
         }
 
-        public async Task WaitForNUpdate(int n)
+        public async ValueTask WaitForNUpdate(int n)
         {
             var s = this.Sequence;
             while (this.Sequence <= s + n)

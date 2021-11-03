@@ -48,6 +48,7 @@ namespace Core
         {
             Value = 0;
             temp = 0;
+            LastChanged = default;
         }
 
         public void ForceUpdate(int value)

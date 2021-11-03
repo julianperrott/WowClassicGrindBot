@@ -1,10 +1,10 @@
 ﻿namespace Core
 {
-    public class DebuffStatus
+    public class TargetDebuffStatus
     {
         private readonly int value;
 
-        public DebuffStatus(int value)
+        public TargetDebuffStatus(int value)
         {
             this.value = value;
         }
