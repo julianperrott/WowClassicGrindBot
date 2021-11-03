@@ -26,11 +26,11 @@
                 <td>@playerReader.HealthPercent %</td>
                 <td>@playerReader.PTCurrent (@playerReader.PTPercentage %) </td>
                 <td>
-                    @if (!string.IsNullOrEmpty(playerReader.Target))
+                    @if (!string.IsNullOrEmpty(addonReader.TargetName))
                     {
                         <a href="https://tbc.wowhead.com/npc=@playerReader.TargetId" target="_blank">
                             <div>
-                                @playerReader.Target<br/>
+                                @addonReader.TargetName<br/>
                                 (@playerReader.TargetLevel) @((int)playerReader.TargetHealthPercentage) %<br/>
                                 GUID: @playerReader.TargetGuid
 

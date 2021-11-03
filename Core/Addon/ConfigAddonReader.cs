@@ -19,6 +19,8 @@ namespace Core.Addon
 
         public int CombatCreatureCount => throw new NotImplementedException();
 
+        public string TargetName => throw new NotImplementedException();
+
         private void ConfigAddonReader_AddonDataChanged(object sender, EventArgs e)
         {
             throw new NotImplementedException();

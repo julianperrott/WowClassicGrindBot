@@ -23,6 +23,7 @@ namespace Core
 
         int CombatCreatureCount { get; }
 
+        string TargetName { get; }
 
 
         // functions

@@ -143,7 +143,7 @@ namespace Core
 
                 foreach (var item in classConfig.NPC.Sequence)
                 {
-                    availableActions.Add(new AdhocNPCGoal(logger, input, addonReader.PlayerReader, playerDirection, stopMoving, npcNameTargeting, stuckDetector, classConfig, pather, item, blacklist, mountHandler, wait, exec, addonReader.GossipReader));
+                    availableActions.Add(new AdhocNPCGoal(logger, input, addonReader, playerDirection, stopMoving, npcNameTargeting, stuckDetector, classConfig, pather, item, blacklist, mountHandler, wait, exec));
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
-using Cyotek.Collections;
 using Cyotek.Collections.Generic;
 using System.Linq;
 
@@ -52,6 +51,16 @@ namespace Core
 
         public int CombatCreatureCount => CreatureHistory.DamageTaken.Count(c => c.HealthPercent > 0);
 
+        public string TargetName
+        {
+            get
+            {
+                return CreatureDb.Entries.TryGetValue(PlayerReader.TargetId, out SharedLib.Creature creature)
+                    ? creature.Name
+                    : squareReader.GetStringAtCell(16) + squareReader.GetStringAtCell(17);
+            }
+        }
+
         // Front end
 
         public double AvgUpdateLatency { private set; get; } = 5;
@@ -83,7 +92,7 @@ namespace Core
 
             this.SpellBookReader = new SpellBookReader(squareReader, 71, spellDb);
 
-            this.PlayerReader = new PlayerReader(squareReader, CreatureDb);
+            this.PlayerReader = new PlayerReader(squareReader);
             this.LevelTracker = new LevelTracker(PlayerReader);
 
             this.TalentReader = new TalentReader(squareReader, 72, PlayerReader, talentDB);

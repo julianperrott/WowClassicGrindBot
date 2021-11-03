@@ -99,7 +99,7 @@ namespace Core.GOAP
                 new KeyValuePair<GoapKey, object>(GoapKey.hastarget, !blacklist.IsTargetBlacklisted() && playerReader.HasTarget),
                 new KeyValuePair<GoapKey, object>(GoapKey.dangercombat, addonReader.CombatCreatureCount > 0),
                 new KeyValuePair<GoapKey, object>(GoapKey.pethastarget, playerReader.PetHasTarget),
-                new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, !string.IsNullOrEmpty(this.playerReader.TargetName) && (!playerReader.Bits.TargetIsDead || playerReader.TargetHealth>0)),
+                new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, playerReader.HasTarget && !playerReader.Bits.TargetIsDead),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.Bits.PlayerInCombat),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, playerReader.WithInCombatRange),

@@ -176,7 +176,7 @@ namespace Core
                 {
                     this.pather.DrawSphere(new Core.PPather.SphereArgs
                     {
-                        Colour = AddonReader.PlayerReader.Bits.PlayerInCombat ? 1 : !string.IsNullOrEmpty(AddonReader.PlayerReader.TargetName)? 6: 2,
+                        Colour = AddonReader.PlayerReader.Bits.PlayerInCombat ? 1 : AddonReader.PlayerReader.HasTarget ? 6 : 2,
                         Name = "Player",
                         MapId = this.AddonReader.PlayerReader.UIMapId.Value,
                         Spot = this.AddonReader.PlayerReader.PlayerLocation

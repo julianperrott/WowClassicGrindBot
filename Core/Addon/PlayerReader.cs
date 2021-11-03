@@ -7,14 +7,12 @@ namespace Core
     public partial class PlayerReader
     {
         private readonly ISquareReader reader;
-        private readonly CreatureDB creatureDb;
 
-        public bool Initialized = false;
+        public bool Initialized { get; set; } = false;
 
-        public PlayerReader(ISquareReader reader, CreatureDB creatureDb)
+        public PlayerReader(ISquareReader reader)
         {
             this.reader = reader;
-            this.creatureDb = creatureDb;
         }
 
         public Dictionary<Form, int> FormCost { private set; get; } = new Dictionary<Form, int>();
@@ -48,19 +46,8 @@ namespace Core
         public int ManaCurrent => reader.GetIntAtCell(15);
         public int ManaPercentage => ManaMax == 0 ? 0 : (ManaCurrent * 100) / ManaMax;
 
-
+        // TODO: check this
         public bool HasTarget => Bits.HasTarget;// || TargetHealth > 0;
-        public string TargetName
-        {
-            get
-            {
-                if (Bits.HasTarget && creatureDb.Entries.TryGetValue(TargetId, out var creature))
-                {
-                    return creature.Name;
-                }
-                return reader.GetStringAtCell(16) + reader.GetStringAtCell(17);
-            }
-        }
 
         public int TargetMaxHealth => reader.GetIntAtCell(18);
         public int TargetHealth => reader.GetIntAtCell(19);

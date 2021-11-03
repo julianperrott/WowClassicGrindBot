@@ -15,6 +15,7 @@ namespace Core.Goals
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
 
+        private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
@@ -47,11 +48,12 @@ namespace Core.Goals
         
         private readonly KeyAction key;
 
-        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler, Wait wait, ExecGameCommand exec, GossipReader gossipReader)
+        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, AddonReader addonReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler, Wait wait, ExecGameCommand exec)
         {
             this.logger = logger;
             this.input = input;
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+            this.playerReader = addonReader.PlayerReader;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.npcNameTargeting = npcNameTargeting;
@@ -65,7 +67,7 @@ namespace Core.Goals
 
             this.wait = wait;
             this.execGameCommand = exec;
-            this.gossipReader = gossipReader;
+            this.gossipReader = addonReader.GossipReader;
 
             if (key.InCombat == "false")
             {
@@ -390,10 +392,10 @@ namespace Core.Goals
                 await this.input.KeyPress(key.ConsoleKey, 100);
 
                 // Interact with NPC
-                if (!string.IsNullOrEmpty(this.playerReader.TargetName))
+                if (!string.IsNullOrEmpty(addonReader.TargetName))
                 {
                     // black list it so we don't get stuck trying to kill it
-                    this.blacklist.Add(this.playerReader.TargetName);
+                    this.blacklist.Add(addonReader.TargetName);
 
                     await input.TapInteractKey($"InteractWithTarget {i}");
                 }
