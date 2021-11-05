@@ -80,13 +80,13 @@ namespace Core
             }
             else
             {
-                if (playerReader.TargetLevel > playerReader.Level + above)
+                if (playerReader.TargetLevel > playerReader.Level.Value + above)
                 {
                     Warn($"Target is too high a level {playerReader.TargetGuid} - {playerReader.TargetId}");
                     return true; // ignore if current level + 2
                 }
 
-                if (playerReader.TargetLevel < playerReader.Level - below)
+                if (playerReader.TargetLevel < playerReader.Level.Value - below)
                 {
                     Warn($"Target is too low a level {playerReader.TargetGuid} - {playerReader.TargetId}");
                     return true; // ignore if current level - 7

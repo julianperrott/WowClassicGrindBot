@@ -80,8 +80,8 @@ namespace Core.Session
             PathName = _botController.SelectedPathFilename ?? _botController.ClassConfig?.PathFilename ?? "No Path Selected";
             PlayerClass = _botController.AddonReader.PlayerReader.Class;
             SessionStart = DateTime.UtcNow;
-            LevelFrom = _botController.AddonReader.PlayerReader.Level;
-            XpFrom = _botController.AddonReader.PlayerReader.PlayerXp;
+            LevelFrom = _botController.AddonReader.PlayerReader.Level.Value;
+            XpFrom = _botController.AddonReader.PlayerReader.PlayerXp.Value;
             MobsKilled = _botController.AddonReader.LevelTracker.MobsKilled;
             _autoUpdateThread = new Thread(() => Task.Factory.StartNew(AutoUpdate));
             _autoUpdateThread.Start();
@@ -103,8 +103,8 @@ namespace Core.Session
         {
             Active = active;
             SessionEnd = DateTime.UtcNow;
-            LevelTo = _botController.AddonReader.PlayerReader.Level;
-            XpTo = _botController.AddonReader.PlayerReader.PlayerXp;
+            LevelTo = _botController.AddonReader.PlayerReader.Level.Value;
+            XpTo = _botController.AddonReader.PlayerReader.PlayerXp.Value;
             Reason = reason;
             Death = _botController.AddonReader.LevelTracker.Death;
             MobsKilled = _botController.AddonReader.LevelTracker.MobsKilled;
