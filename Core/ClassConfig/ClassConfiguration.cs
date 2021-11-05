@@ -198,9 +198,8 @@ namespace Core
             }
             if (Background)
             {
-                logger.LogWarning("Background mode is enabled. The bot will work in grind mode. Skin will be disabled and the npc target function will be limited.");
+                logger.LogWarning("Background mode is enabled. Skin will be disabled and the npc target function will be limited.");
                 Skin = false;
-                Mode = Mode.Grind;
             }
         }
 
