@@ -1,4 +1,4 @@
-﻿using Core.Database;
+using Core.Database;
 using Microsoft.Extensions.Logging;
 using System;
 using Cyotek.Collections.Generic;
@@ -38,6 +38,7 @@ namespace Core
 
         public event EventHandler? AddonDataChanged;
         public event EventHandler? ZoneChanged;
+        public event EventHandler? PlayerDeath;
 
         public WorldMapAreaDB WorldMapAreaDb { get; private set; }
         public ItemDB ItemDb { get; private set; }
@@ -184,6 +185,11 @@ namespace Core
         public void Dispose()
         {
             addonDataProvider?.Dispose();
+        }
+
+        public void PlayerDied()
+        {
+            PlayerDeath?.Invoke(this, EventArgs.Empty);
         }
     }
 }

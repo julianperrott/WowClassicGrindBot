@@ -82,6 +82,8 @@ namespace Core.Goals
             await base.OnEnter();
             playerReader.ZCoord = 0;
             logger.LogInformation($"{GetType().Name} Player got teleported to the graveyard!");
+
+            addonReader.PlayerDied();
         }
 
         public override async Task PerformAction()
