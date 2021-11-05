@@ -27,6 +27,7 @@ namespace Core
         public bool Loot { get; set; } = true;
         public bool Skin { get; set; } = false;
         public bool UseMount { get; set; } = true;
+        public bool Background { get; set; } = false;
 
         public string PathFilename { get; set; } = string.Empty;
         public string SpiritPathFilename { get; set; } = string.Empty;
@@ -184,6 +185,22 @@ namespace Core
                     throw new Exception($"The `{OverridePathFilename}` path file does not exists!");
                 else
                     throw new Exception($"The loaded class config contains not existing `{PathFilename}` path file!");
+            }
+
+            CheckConfigConsistency(logger);
+        }
+
+        private void CheckConfigConsistency(ILogger logger)
+        {
+            if (CheckTargetGivesExp)
+            {
+                logger.LogWarning("CheckTargetGivesExp is enabled. NPCMaxLevels_Above and NPCMaxLevels_Below will be ignored.");
+            }
+            if (Background)
+            {
+                logger.LogWarning("Background mode is enabled. The bot will work in grind mode. Skin will be disabled and the npc target function will be limited.");
+                Skin = false;
+                Mode = Mode.Grind;
             }
         }
 

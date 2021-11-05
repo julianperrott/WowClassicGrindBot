@@ -283,6 +283,12 @@ namespace Core
                     if (b != a) { a.ActionEvent += b.OnActionEvent; }
                 });
             });
+
+            if(config.Background) {
+                npcNameFinder.Disable();
+            } else {
+                npcNameFinder.Enable();
+            }
         }
 
         private ClassConfiguration ReadClassConfiguration(string classFilename, string? pathFilename)

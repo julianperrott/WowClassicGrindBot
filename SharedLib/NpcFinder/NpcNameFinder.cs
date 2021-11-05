@@ -42,6 +42,9 @@ namespace SharedLib.NpcFinder
         public int TargetCount { private set; get; }
         public bool MobsVisible => npcs.Count > 0;
         public bool PotentialAddsExist { get; private set; }
+
+        private bool Enabled = true;
+
         public DateTime LastPotentialAddsSeen { get; private set; } = default;
 
         public int Sequence { get; private set; } = 0;
@@ -106,6 +109,16 @@ namespace SharedLib.NpcFinder
             }
         }
 
+        public void Disable()
+        {
+            Enabled = false;
+        }
+
+        public void Enable()
+        {
+            Enabled = true;
+        }
+
         private bool ColorMatch(Color p)
         {
             return nameType switch
@@ -123,25 +136,34 @@ namespace SharedLib.NpcFinder
 
         public void Update()
         {
-            scaleToRefWidth = ScaleWidth(1);
-            scaleToRefHeight = ScaleHeight(1);
+            if (Enabled)
+            {
 
-            Area = new Rectangle(new Point(0, (int)ScaleHeight(topOffset)),
-                new Size(bitmapProvider.DirectBitmap.Width, (int)(bitmapProvider.DirectBitmap.Height * 0.6f)));
+                scaleToRefWidth = ScaleWidth(1);
+                scaleToRefHeight = ScaleHeight(1);
 
-            PopulateLinesOfNpcNames();
+                Area = new Rectangle(new Point(0, (int)ScaleHeight(topOffset)),
+                    new Size(bitmapProvider.DirectBitmap.Width, (int)(bitmapProvider.DirectBitmap.Height * 0.6f)));
 
-            DetermineNpcs();
+                PopulateLinesOfNpcNames();
 
-            Npcs = npcs.
-                Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)),
-                    new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), bitmapProvider.DirectBitmap.Width, ScaleHeight(npcPosYOffset), ScaleHeight(npcPosYHeightMul)))
-                .Where(s => s.Width < ScaleWidth(npcNameMaxWidth))
-                .Distinct(new OverlappingNames())
-                .OrderBy(npc => RectangleExt.SqrDistance(Area.BottomCentre(), npc.ClickPoint))
-                .ToList();
+                DetermineNpcs();
 
-            UpdatePotentialAddsExist();
+                Npcs = npcs.
+                    Select(s => new NpcPosition(new Point(s.Min(x => x.XStart), s.Min(x => x.Y)),
+                        new Point(s.Max(x => x.XEnd), s.Max(x => x.Y)), bitmapProvider.DirectBitmap.Width, ScaleHeight(npcPosYOffset), ScaleHeight(npcPosYHeightMul)))
+                    .Where(s => s.Width < ScaleWidth(npcNameMaxWidth))
+                    .Distinct(new OverlappingNames())
+                    .OrderBy(npc => RectangleExt.SqrDistance(Area.BottomCentre(), npc.ClickPoint))
+                    .ToList();
+
+                UpdatePotentialAddsExist();
+            }
+            else
+            {
+                npcs.Clear();
+                Npcs.Clear();
+            }
 
             Sequence++;
         }
