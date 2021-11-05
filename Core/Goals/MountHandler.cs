@@ -30,7 +30,7 @@ namespace Core
 
         public async Task MountUp()
         {
-            if (playerReader.Level >= minLevelToMount)
+            if (playerReader.Level.Value >= minLevelToMount)
             {
                 if (playerReader.Class == PlayerClassEnum.Druid)
                 {

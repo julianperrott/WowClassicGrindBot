@@ -20,7 +20,7 @@ namespace Core
         public double ZCoord { get; set; }
         public double Direction => reader.GetFixedPointAtCell(3);
 
-        public int Level => reader.GetIntAtCell(5);
+        public RecordInt Level { private set; get; } = new RecordInt(5);
 
         public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
         public double CorpseX => reader.GetFixedPointAtCell(6) * 10;
@@ -79,9 +79,10 @@ namespace Core
         public bool IsInMeleeRange => MinRange == 0 && MaxRange != 0 && MaxRange <= 5;
         public bool IsInDeadZone => MinRange >= 5 && Bits.IsInDeadZoneRange; // between 5-8 yard - hunter and warrior
 
-        public int PlayerXp => reader.GetIntAtCell(50);
+        public RecordInt PlayerXp { private set; get; } = new RecordInt(50);
+
         public int PlayerMaxXp => reader.GetIntAtCell(51);
-        public int PlayerXpPercentage => (PlayerXp * 100) / (PlayerMaxXp == 0 ? 1 : PlayerMaxXp);
+        public int PlayerXpPercentage => (PlayerXp.Value * 100) / (PlayerMaxXp == 0 ? 1 : PlayerMaxXp);
 
         private int UIErrorMessage => reader.GetIntAtCell(52);
         public UI_ERROR LastUIErrorMessage { get; set; }
@@ -117,12 +118,12 @@ namespace Core
         public int LastLootTime => reader.GetIntAtCell(97);
 
         // https://wowpedia.fandom.com/wiki/Mob_experience
-        public bool TargetYieldXP => Level switch
+        public bool TargetYieldXP => Level.Value switch
         {
             int n when n < 5 => true,
-            int n when n >= 6 && n <= 39 => TargetLevel > (Level - Math.Floor(Level / 10f) - 5),
-            int n when n >= 40 && n <= 59 => TargetLevel > (Level - Math.Floor(Level / 5f) - 5),
-            int n when n >= 60 && n <= 70 => TargetLevel > Level - 9,
+            int n when n >= 6 && n <= 39 => TargetLevel > (Level.Value - Math.Floor(Level.Value / 10f) - 5),
+            int n when n >= 40 && n <= 59 => TargetLevel > (Level.Value - Math.Floor(Level.Value / 5f) - 5),
+            int n when n >= 60 && n <= 70 => TargetLevel > Level.Value - 9,
             _ => false
         };
 
@@ -132,6 +133,9 @@ namespace Core
             {
                 LastUIErrorMessage = (UI_ERROR)UIErrorMessage;
             }
+
+            PlayerXp.Update(reader);
+            Level.Update(reader);
 
             AutoShot.Update(reader);
             MainHandSwing.Update(reader);
@@ -148,6 +152,9 @@ namespace Core
             MainHandSwing.Reset();
             CastEvent.Reset();
             CastSpellId.Reset();
+
+            PlayerXp.Reset();
+            Level.Reset();
         }
     }
 }

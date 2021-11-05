@@ -10,7 +10,7 @@
     <div class="card-body" style="padding-bottom: 0">
         <table class="table table-bordered">
             <tr>
-                <th>Level @playerReader.Level (XP: @((int)playerReader.PlayerXpPercentage)%)</th>
+                <th>Level @playerReader.Level.Value (XP: @((int)playerReader.PlayerXpPercentage)%)</th>
                 <th>Bag Items:</th>
                 <th>Health:</th>
                 <th>Mana / Rage / Energy:</th>
@@ -20,7 +20,7 @@
             <tr>
                 <td>
                     Time to level: @levelTracker.TimeToLevel<br />
-                    at @levelTracker.PredictedLevelTime.ToString("HH:mm:ss")
+                    at @levelTracker.PredictedLevelUpTime.ToString("HH:mm:ss")
                 </td>
                 <td>@addonReader.BagReader.BagItems.Count / @addonReader.BagReader.SlotCount</td>
                 <td>@playerReader.HealthPercent %</td>

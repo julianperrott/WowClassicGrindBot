@@ -1,4 +1,4 @@
-﻿using Core.Database;
+using Core.Database;
 using Microsoft.Extensions.Logging;
 using System;
 using Cyotek.Collections.Generic;
@@ -38,6 +38,7 @@ namespace Core
 
         public event EventHandler? AddonDataChanged;
         public event EventHandler? ZoneChanged;
+        public event EventHandler? PlayerDeath;
 
         public WorldMapAreaDB WorldMapAreaDb { get; private set; }
         public ItemDB ItemDb { get; private set; }
@@ -93,7 +94,7 @@ namespace Core
             this.SpellBookReader = new SpellBookReader(squareReader, 71, spellDb);
 
             this.PlayerReader = new PlayerReader(squareReader);
-            this.LevelTracker = new LevelTracker(PlayerReader);
+            this.LevelTracker = new LevelTracker(PlayerReader, PlayerDeath, CreatureHistory);
 
             this.TalentReader = new TalentReader(squareReader, 72, PlayerReader, talentDB);
 
@@ -135,8 +136,6 @@ namespace Core
 
             SpellBookReader.Read();
             TalentReader.Read();
-
-            LevelTracker.Update();
 
             if ((DateTime.Now - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
             {
@@ -184,6 +183,11 @@ namespace Core
         public void Dispose()
         {
             addonDataProvider?.Dispose();
+        }
+
+        public void PlayerDied()
+        {
+            PlayerDeath?.Invoke(this, EventArgs.Empty);
         }
     }
 }
