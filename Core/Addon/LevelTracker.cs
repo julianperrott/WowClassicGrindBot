@@ -4,73 +4,81 @@ namespace Core
 {
     public class LevelTracker
     {
-        private readonly object dummyLock = new object();
         private readonly PlayerReader playerReader;
-        private WowPoint corpseLocation = new WowPoint(-1, -1);
-
-        private int level = 0;
-        private int lastXp = 0;
 
         private DateTime levelStartTime = DateTime.Now;
         private int levelStartXP = 0;
 
-        public DateTime PredictedLevelTime { get; private set; } = DateTime.Now;
-        public int MobsKilled { get; private set; }
-        public int Death { get; set; }
-        public string TimeToLevel { get; private set; } = string.Empty;
+        public string TimeToLevel { get; private set; } = "∞";
+        public DateTime PredictedLevelUpTime { get; private set; } = DateTime.MaxValue;
 
-        public LevelTracker(PlayerReader playerReader)
+        public int MobsKilled { get; private set; }
+        public int Death { get; private set; }
+
+        public LevelTracker(PlayerReader playerReader, EventHandler? playerDeath, CreatureHistory creatureHistory)
         {
             this.playerReader = playerReader;
+
+            playerReader.Level.Changed -= PlayerLevel_Changed;
+            playerReader.Level.Changed += PlayerLevel_Changed;
+
+            playerReader.PlayerXp.Changed -= PlayerExp_Changed;
+            playerReader.PlayerXp.Changed += PlayerExp_Changed;
+
+            playerDeath -= OnPlayerDeath;
+            playerDeath += OnPlayerDeath;
+
+            creatureHistory.KillCredit -= OnKillCredit;
+            creatureHistory.KillCredit += OnKillCredit;
         }
 
-        public void ResetMobsKilled()
+        public void Reset()
         {
             MobsKilled = 0;
-        }
-
-        public void ResetDeath()
-        {
             Death = 0;
+
+            UpdateExpPerHour();
         }
 
-        public void Update()
+        private void PlayerExp_Changed(object sender, EventArgs e)
         {
-            lock (dummyLock)
+            UpdateExpPerHour();
+        }
+
+        private void PlayerLevel_Changed(object sender, EventArgs e)
+        {
+            levelStartTime = DateTime.Now;
+            levelStartXP = playerReader.PlayerXp.Value;
+        }
+
+        private void OnPlayerDeath(object sender, EventArgs e)
+        {
+            Death++;
+        }
+
+        private void OnKillCredit(object sender, EventArgs e)
+        {
+            MobsKilled++;
+        }
+
+        public void UpdateExpPerHour()
+        {
+            var runningSeconds = (DateTime.Now - levelStartTime).TotalSeconds;
+            var xpPerSecond = (playerReader.PlayerXp.Value - levelStartXP) / runningSeconds;
+            var secondsLeft = (playerReader.PlayerMaxXp - playerReader.PlayerXp.Value) / xpPerSecond;
+
+            if (xpPerSecond > 0)
             {
-                if (playerReader.Bits.DeadStatus &&
-                    !corpseLocation.Equals(playerReader.CorpseLocation) &&
-                    !playerReader.CorpseLocation.Equals(new WowPoint(0,0)))
-                {
-                    corpseLocation = playerReader.CorpseLocation;
-                    Death++;
-                }
-                if (level != playerReader.Level)
-                {
-                    level = playerReader.Level;
-                    lastXp = playerReader.PlayerXp;
-                    levelStartTime = DateTime.Now;
-                    levelStartXP = playerReader.PlayerXp;
-                }
-                else
-                {
-                    if (lastXp != playerReader.PlayerXp)
-                    {
-                        lastXp = playerReader.PlayerXp;
-                        MobsKilled++;
+                TimeToLevel = new TimeSpan(0, 0, (int)secondsLeft).ToString();
+            }
+            else
+            {
+                TimeToLevel = "∞";
+            }
 
-                        var runningSeconds = (DateTime.Now - levelStartTime).TotalSeconds;
-                        var xpPerSecond = (playerReader.PlayerXp - levelStartXP) / runningSeconds;
-                        var secondsLeft = (playerReader.PlayerMaxXp - playerReader.PlayerXp) / xpPerSecond;
-
-                        TimeToLevel = new TimeSpan(0, 0, (int)secondsLeft).ToString();
-
-                        if (secondsLeft > 0 && secondsLeft < 60 * 60 * 10)
-                        {
-                            PredictedLevelTime = DateTime.Now.AddSeconds(secondsLeft);
-                        }
-                    }
-                }
+            if (secondsLeft > 0 && secondsLeft < 60 * 60 * 10)
+            {
+                PredictedLevelUpTime = DateTime.Now.AddSeconds(secondsLeft);
             }
         }
     }

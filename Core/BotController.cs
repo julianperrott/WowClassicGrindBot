@@ -212,8 +212,7 @@ namespace Core
                 {
                     actionThread.Active = false;
                     GrindSession.StopBotSession("Stopped By Player", false);
-                    AddonReader.LevelTracker.ResetMobsKilled();
-                    AddonReader.LevelTracker.ResetDeath();
+                    AddonReader.LevelTracker.Reset();
                 }
 
                 StatusChanged?.Invoke(this, actionThread.Active);

@@ -94,7 +94,7 @@ namespace Core
             this.SpellBookReader = new SpellBookReader(squareReader, 71, spellDb);
 
             this.PlayerReader = new PlayerReader(squareReader);
-            this.LevelTracker = new LevelTracker(PlayerReader);
+            this.LevelTracker = new LevelTracker(PlayerReader, PlayerDeath, CreatureHistory);
 
             this.TalentReader = new TalentReader(squareReader, 72, PlayerReader, talentDB);
 
@@ -136,8 +136,6 @@ namespace Core
 
             SpellBookReader.Read();
             TalentReader.Read();
-
-            LevelTracker.Update();
 
             if ((DateTime.Now - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
             {
