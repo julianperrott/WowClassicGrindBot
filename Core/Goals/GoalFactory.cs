@@ -60,9 +60,9 @@ namespace Core
             ITargetFinder targetFinder;
             if (classConfig.KeyboardOnly)
             {
-                targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
-            } else {
                 targetFinder = new KeyboardOnlyTargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
+            } else {
+                targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
             }
 
             var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader, playerDirection, pathPoints, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, mountHandler, targetFinder);
@@ -108,13 +108,13 @@ namespace Core
                 {
                     if (classConfig.KeyboardOnly)
                     {
-                        var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
+                        var lootAction = new KeyboardOnlyLootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
                         lootAction.AddPreconditions();
                         availableActions.Add(lootAction);
                     }
                     else
                     {
-                        var lootAction = new KeyboardOnlyLootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
+                        var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
                         lootAction.AddPreconditions();
                         availableActions.Add(lootAction);
                     }
