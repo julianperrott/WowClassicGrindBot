@@ -57,7 +57,13 @@ namespace Core
             var combatUtil = new CombatUtil(logger, input, wait, addonReader.PlayerReader);
             var mountHandler = new MountHandler(logger, input, classConfig, wait, addonReader.PlayerReader, stopMoving);
 
-            var targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
+            ITargetFinder targetFinder;
+            if (classConfig.KeyboardOnly)
+            {
+                targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
+            } else {
+                targetFinder = new KeyboardOnlyTargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
+            }
 
             var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader, playerDirection, pathPoints, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, mountHandler, targetFinder);
             var walkToCorpseAction = new WalkToCorpseGoal(logger, input, addonReader, playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
@@ -100,9 +106,18 @@ namespace Core
 
                 if (classConfig.Loot)
                 {
-                    var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
-                    lootAction.AddPreconditions();
-                    availableActions.Add(lootAction);
+                    if (classConfig.KeyboardOnly)
+                    {
+                        var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
+                        lootAction.AddPreconditions();
+                        availableActions.Add(lootAction);
+                    }
+                    else
+                    {
+                        var lootAction = new KeyboardOnlyLootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
+                        lootAction.AddPreconditions();
+                        availableActions.Add(lootAction);
+                    }
 
                     if (classConfig.Skin)
                     {

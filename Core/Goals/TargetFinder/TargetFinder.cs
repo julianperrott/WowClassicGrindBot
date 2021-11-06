@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Goals
 {
-    public class TargetFinder
+    public class TargetFinder: ITargetFinder
     {
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
@@ -72,7 +72,7 @@ namespace Core.Goals
                     npcNameTargeting.ChangeNpcType(NpcNameToFind);
                     await input.TapNearestTarget(source);
                 }
-
+                
                 if (!playerReader.HasTarget && !cancellationToken.IsCancellationRequested)
                 {
                     npcNameTargeting.ChangeNpcType(NpcNameToFind);

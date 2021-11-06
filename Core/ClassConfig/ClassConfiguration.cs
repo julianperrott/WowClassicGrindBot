@@ -27,7 +27,7 @@ namespace Core
         public bool Loot { get; set; } = true;
         public bool Skin { get; set; } = false;
         public bool UseMount { get; set; } = true;
-        public bool Background { get; set; } = false;
+        public bool KeyboardOnly { get; set; } = false;
 
         public string PathFilename { get; set; } = string.Empty;
         public string SpiritPathFilename { get; set; } = string.Empty;
@@ -196,9 +196,9 @@ namespace Core
             {
                 logger.LogWarning("CheckTargetGivesExp is enabled. NPCMaxLevels_Above and NPCMaxLevels_Below will be ignored.");
             }
-            if (Background)
+            if (KeyboardOnly)
             {
-                logger.LogWarning("Background mode is enabled. Skin will be disabled and the npc target function will be limited.");
+                logger.LogWarning("KeyboardOnly mode is enabled. The bot will not try to utilize your mouse. Skin will be disabled and the npc target function will be limited.");
                 Skin = false;
             }
         }
