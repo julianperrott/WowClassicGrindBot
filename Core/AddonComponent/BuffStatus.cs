@@ -1,17 +1,9 @@
 ﻿namespace Core
 {
-    public class BuffStatus
+    public class BuffStatus : BitStatus
     {
-        public int Value { get; private set; }
-
-        public BuffStatus(int value)
+        public BuffStatus(int value) : base(value)
         {
-            this.Value = value;
-        }
-
-        public bool IsBitSet(int pos)
-        {
-            return (Value & (1 << pos)) != 0;
         }
 
         // All

@@ -8,12 +8,12 @@
         Hunter,
         Rogue,
         Priest,
-        Death_Knight,
+        DeathKnight,
         Shaman,
         Mage,
         Warlock,
         Monk,
         Druid,
-        Demon_Hunter
+        DemonHunter
     }
 }

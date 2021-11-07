@@ -1,17 +1,9 @@
 ﻿namespace Core
 {
-    public class TargetDebuffStatus
+    public class TargetDebuffStatus : BitStatus
     {
-        private readonly int value;
-
-        public TargetDebuffStatus(int value)
+        public TargetDebuffStatus(int value) : base(value)
         {
-            this.value = value;
-        }
-
-        public bool IsBitSet(int pos)
-        {
-            return (value & (1 << pos)) != 0;
         }
 
         // Priest
