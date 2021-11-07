@@ -45,6 +45,7 @@ namespace Core.Goals
 
         public virtual void AddPreconditions()
         {
+            AddPrecondition(GoapKey.dangercombat, false);
             AddPrecondition(GoapKey.shouldloot, true);
             AddEffect(GoapKey.shouldloot, false);
         }
@@ -59,7 +60,7 @@ namespace Core.Goals
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
             }
 
-            Log($"Search for {NpcNames.Corpse}");
+            Log($"OnEnter: Search for {NpcNames.Corpse}");
             npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
         }
 

@@ -38,7 +38,7 @@ namespace Core.Goals
             this.npcNameTargeting = npcNameTargeting;
             this.combatUtil = combatUtil;
 
-            AddPrecondition(GoapKey.incombat, false);
+            AddPrecondition(GoapKey.dangercombat, false);
             AddPrecondition(GoapKey.shouldskin, true);
 
             AddEffect(GoapKey.shouldskin, false);
@@ -66,6 +66,7 @@ namespace Core.Goals
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, false));
             }
 
+            Log($"OnEnter: Search for {NpcNames.Corpse}");
             npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
         }
 

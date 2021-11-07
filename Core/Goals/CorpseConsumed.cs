@@ -17,7 +17,7 @@ namespace Core.Goals
             this.logger = logger;
             this.goapAgentState = goapAgentSate;
 
-            AddPrecondition(GoapKey.incombat, false);
+            AddPrecondition(GoapKey.dangercombat, false);
             AddPrecondition(GoapKey.consumecorpse, true);
 
             AddEffect(GoapKey.consumecorpse, false);
