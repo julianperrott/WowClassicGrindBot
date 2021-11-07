@@ -98,9 +98,14 @@ namespace Core.Goals
                             }
                             catch (Exception ex)
                             {
-                                logger.LogError(ex, $"OnEnter on {newGoal.GetType().Name}");
+                                logger.LogError(ex, $"OnEnter on {currentGoal.GetType().Name}");
                             }
                         }
+                    }
+                    else if (!currentGoal.Repeatable)
+                    {
+                        //logger.LogInformation($"Current Plan= {currentGoal.Name} -- not Repeatable");
+                        return;
                     }
 
                     try
