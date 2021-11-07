@@ -1,12 +1,14 @@
 ﻿namespace Core.Talents
 {
-    public class Talent
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+    public struct Talent
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
         public int Hash { get; set; }
         public int TabNum { get; set; }
         public int TierNum { get; set; }
         public int ColumnNum { get; set; }
         public int CurrentRank { get; set; }
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
     }
 }

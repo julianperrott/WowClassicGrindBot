@@ -1,19 +1,9 @@
-﻿using System;
-
-namespace Core
+﻿namespace Core
 {
-    public class SpellInRange
+    public class SpellInRange : BitStatus
     {
-        private readonly int value;
-
-        public SpellInRange(int value)
+        public SpellInRange(int value) : base(value)
         {
-            this.value = value;
-        }
-
-        public bool IsBitSet(int pos)
-        {
-            return (value & (1 << pos)) != 0;
         }
 
         // Warrior

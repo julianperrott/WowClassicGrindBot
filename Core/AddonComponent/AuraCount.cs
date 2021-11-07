@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Core
+﻿namespace Core
 {
 #pragma warning disable CA1815 // Override equals and operator equals on value types
     public struct AuraCount

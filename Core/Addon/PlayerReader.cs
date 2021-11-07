@@ -26,7 +26,7 @@ namespace Core
         public double CorpseX => reader.GetFixedPointAtCell(6) * 10;
         public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
 
-        public PlayerBitValues Bits => new PlayerBitValues(reader.GetIntAtCell(8), reader.GetIntAtCell(9));
+        public AddonBits Bits => new AddonBits(reader.GetIntAtCell(8), reader.GetIntAtCell(9));
 
         public int HealthMax => reader.GetIntAtCell(10);
         public int HealthCurrent => reader.GetIntAtCell(11);
