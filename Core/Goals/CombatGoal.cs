@@ -131,7 +131,7 @@ namespace Core.Goals
             }
         }
 
-        public override async Task OnEnter()
+        public override async ValueTask OnEnter()
         {
             await base.OnEnter();
 
@@ -145,7 +145,7 @@ namespace Core.Goals
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
         }
 
-        public override async Task OnExit()
+        public override async ValueTask OnExit()
         {
             if (addonReader.CombatCreatureCount > 0)
             {
@@ -153,7 +153,7 @@ namespace Core.Goals
             }
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             if (MathF.Abs(lastDirectionForTurnAround - playerReader.Direction) > MathF.PI / 2)
             {

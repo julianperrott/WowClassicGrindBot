@@ -42,7 +42,7 @@ namespace Core.Goals
             return Keys.Any(key => key.CanRun());
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             if (Keys.Any(k => k.StopBeforeCast))
             {

@@ -57,7 +57,7 @@ namespace Core.Goals
         }
 
 
-        public async Task TargetingAndClickNpc(bool leftClick, CancellationToken cancellationToken)
+        public async ValueTask TargetingAndClickNpc(bool leftClick, CancellationToken cancellationToken)
         {
             if (npcNameFinder.NpcCount == 0)
                 return;
@@ -86,7 +86,7 @@ namespace Core.Goals
             }
         }
 
-        public async Task<bool> FindBy(params CursorType[] cursor)
+        public async ValueTask<bool> FindBy(params CursorType[] cursor)
         {
             List<Point> attemptPoints = new List<Point>();
 
@@ -116,7 +116,7 @@ namespace Core.Goals
             return false;
         }
 
-        private async Task AquireTargetAtCursor(Point clickPostion, NpcPosition npc, bool leftClick = false)
+        private async ValueTask AquireTargetAtCursor(Point clickPostion, NpcPosition npc, bool leftClick = false)
         {
             if (leftClick)
                 await input.LeftClickMouse(clickPostion);

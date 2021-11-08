@@ -28,7 +28,7 @@ namespace Core
             this.stopMoving = stopMoving;
         }
 
-        public async Task MountUp()
+        public async ValueTask MountUp()
         {
             if (playerReader.Level.Value >= minLevelToMount)
             {

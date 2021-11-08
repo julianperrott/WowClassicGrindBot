@@ -6,9 +6,9 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction => 0;
 
-        public override Task PerformAction()
+        public override async ValueTask PerformAction()
         {
-            return Task.Delay(0);
+            await Task.Delay(0);
         }
     }
 }

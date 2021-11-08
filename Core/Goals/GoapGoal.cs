@@ -87,17 +87,17 @@ namespace Core.Goals
             return true;
         }
 
-        public virtual async Task OnEnter()
+        public virtual async ValueTask OnEnter()
         {
             await Task.Delay(0);
         }
 
-        public virtual async Task OnExit()
+        public virtual async ValueTask OnExit()
         {
             await Task.Delay(0);
         }
 
-        public abstract Task PerformAction();
+        public abstract ValueTask PerformAction();
 
         public void AddPrecondition(GoapKey key, object value)
         {

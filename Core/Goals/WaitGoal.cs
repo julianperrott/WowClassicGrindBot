@@ -15,11 +15,11 @@ namespace Core.Goals
             this.logger = logger;
         }
 
-        public override Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             SendActionEvent(new ActionEventArgs(GoapKey.isalive, true));
             logger.LogInformation("Waiting");
-            return Task.Delay(1000);
+            await Task.Delay(1000);
         }
     }
 }

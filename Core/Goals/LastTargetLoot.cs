@@ -26,7 +26,7 @@ namespace Core.Goals
             AddPrecondition(GoapKey.targetisalive, false);
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             int lastHealth = playerReader.HealthCurrent;
             var lastPosition = playerReader.PlayerLocation;

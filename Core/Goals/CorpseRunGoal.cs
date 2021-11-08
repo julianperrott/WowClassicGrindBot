@@ -48,7 +48,7 @@ namespace Core.Goals
 
         private bool NeedsToReset = true;
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             if (!await IsDead()) { return; }
 

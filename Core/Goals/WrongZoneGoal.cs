@@ -39,7 +39,7 @@ namespace Core.Goals
 
         public override float CostOfPerformingAction { get => 19f; }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             var targetLocation = this.classConfiguration.WrongZone.ExitZoneLocation;
 

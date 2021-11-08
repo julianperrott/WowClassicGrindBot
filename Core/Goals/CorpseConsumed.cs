@@ -23,7 +23,7 @@ namespace Core.Goals
             AddEffect(GoapKey.consumecorpse, false);
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             goapAgentState.DecKillCount();
             logger.LogInformation($"----- Corpse consumed. Remaining: {goapAgentState.LastCombatKillCount}");

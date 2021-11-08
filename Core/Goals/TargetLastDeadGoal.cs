@@ -22,7 +22,7 @@ namespace Core.Goals
             AddPrecondition(GoapKey.producedcorpse, true);
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             await input.TapLastTargetKey(this.ToString());
         }

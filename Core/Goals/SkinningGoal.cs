@@ -56,7 +56,7 @@ namespace Core.Goals
             equipmentReader.HasItem(19901);
         }
 
-        public override async Task OnEnter()
+        public override async ValueTask OnEnter()
         {
             await base.OnEnter();
 
@@ -70,7 +70,7 @@ namespace Core.Goals
             npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             lastLoot = playerReader.LastLootTime;
 

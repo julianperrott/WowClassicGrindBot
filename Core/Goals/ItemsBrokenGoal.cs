@@ -21,11 +21,11 @@ namespace Core.Goals
             return playerReader.Bits.ItemsAreBroken;
         }
 
-        public override Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             logger.LogInformation("Items are broken");
             SendActionEvent(new ActionEventArgs(GOAP.GoapKey.abort, true));
-            return Task.Delay(10000);
+            await Task.Delay(10000);
         }
     }
 }

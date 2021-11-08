@@ -104,7 +104,7 @@ namespace Core.Goals
             }
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 

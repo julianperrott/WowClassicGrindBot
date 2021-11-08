@@ -36,7 +36,7 @@ namespace Core
             lastPosition = playerReader.PlayerLocation;
         }
 
-        public async Task<bool> EnteredCombat()
+        public async ValueTask<bool> EnteredCombat()
         {
             await wait.Update(1);
             if (!outOfCombat && !playerReader.Bits.PlayerInCombat)
@@ -56,7 +56,7 @@ namespace Core
             return false;
         }
 
-        public async Task<bool> AquiredTarget()
+        public async ValueTask<bool> AquiredTarget()
         {
             if (this.playerReader.Bits.PlayerInCombat)
             {
@@ -97,7 +97,7 @@ namespace Core
             return distance > 0.01f;
         }
 
-        public async Task<Tuple<bool, bool>> FoundTargetWhileMoved()
+        public async ValueTask<Tuple<bool, bool>> FoundTargetWhileMoved()
         {
             bool hadToMove = false;
             var startedMoving = await wait.InterruptTask(200, () => lastPosition != playerReader.PlayerLocation);
@@ -137,7 +137,7 @@ namespace Core
             return true;
         }
 
-        public static async Task<bool> Wait(int durationMs, Task<bool> exit)
+        public static async Task<bool> Wait(int durationMs, ValueTask<bool> exit)
         {
             int elapsedMs = 0;
             while (elapsedMs <= durationMs)

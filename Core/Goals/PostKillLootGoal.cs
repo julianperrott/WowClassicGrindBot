@@ -20,7 +20,7 @@ namespace Core.Goals
             AddPrecondition(GoapKey.shouldloot, true);
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
             await base.PerformAction();
