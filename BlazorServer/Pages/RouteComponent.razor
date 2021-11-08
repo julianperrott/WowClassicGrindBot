@@ -106,7 +106,7 @@
     private MarkupString SpiritPathPoints = new MarkupString();
     private System.Timers.Timer refreshTimer = new System.Timers.Timer();
 
-    private double PlayerDirectionInDegree => -addonReader.PlayerReader.Direction * (180f / MathF.PI);
+    private float PlayerDirectionInDegree => -addonReader.PlayerReader.Direction * (180f / MathF.PI);
 
     private bool CanvasInitialised = false;
 

@@ -49,11 +49,11 @@ namespace SharedLib
             if (Bitmap.Width > Bitmap.Height)
             {
                 width = size;
-                height = Convert.ToInt32(Bitmap.Height * size / (double)Bitmap.Width);
+                height = Convert.ToInt32(Bitmap.Height * size / (float)Bitmap.Width);
             }
             else
             {
-                width = Convert.ToInt32(Bitmap.Width * size / (double)Bitmap.Height);
+                width = Convert.ToInt32(Bitmap.Width * size / (float)Bitmap.Height);
                 height = size;
             }
             var resized = new Bitmap(width, height);

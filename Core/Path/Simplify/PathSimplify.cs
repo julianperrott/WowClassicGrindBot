@@ -5,16 +5,16 @@ namespace Core
 {
     public static class PathSimplify
     {
-        private static double GetSquareDistance(Vector3 p1, Vector3 p2)
+        private static float GetSquareDistance(Vector3 p1, Vector3 p2)
         {
-            double dx = p1.X - p2.X,
+            float dx = p1.X - p2.X,
                 dy = p1.Y - p2.Y;
 
             return (dx * dx) + (dy * dy);
         }
 
         // square distance from a WowPoint to a segment
-        private static double GetSquareSegmentDistance(Vector3 p, Vector3 p1, Vector3 p2)
+        private static float GetSquareSegmentDistance(Vector3 p, Vector3 p1, Vector3 p2)
         {
             var x = p1.X;
             var y = p1.Y;
@@ -44,7 +44,7 @@ namespace Core
         }
 
         // basic distance-based simplification
-        private static List<Vector3> SimplifyRadialDistance(Vector3[] WowPoints, double sqTolerance)
+        private static List<Vector3> SimplifyRadialDistance(Vector3[] WowPoints, float sqTolerance)
         {
             var prevWowPoint = WowPoints[0];
             var newWowPoints = new List<Vector3> { prevWowPoint };
@@ -68,7 +68,7 @@ namespace Core
         }
 
         // simplification using optimized Douglas-Peucker algorithm with recursion elimination
-        private static List<Vector3> SimplifyDouglasPeucker(Vector3[] WowPoints, double sqTolerance)
+        private static List<Vector3> SimplifyDouglasPeucker(Vector3[] WowPoints, float sqTolerance)
         {
             var len = WowPoints.Length;
             var markers = new int?[len];
@@ -135,7 +135,7 @@ namespace Core
         /// <param name="tolerance">Tolerance tolerance in the same measurement as the WowPoint coordinates</param>
         /// <param name="highestQuality">Enable highest quality for using Douglas-Peucker, set false for Radial-Distance algorithm</param>
         /// <returns>Simplified list of WowPoints</returns>
-        public static List<Vector3> Simplify(Vector3[] WowPoints, double tolerance = 0.3, bool highestQuality = false)
+        public static List<Vector3> Simplify(Vector3[] WowPoints, float tolerance = 0.3f, bool highestQuality = false)
         {
             if (WowPoints == null || WowPoints.Length == 0)
                 return new List<Vector3>();
@@ -156,7 +156,7 @@ namespace Core
         /// <param name="tolerance">Tolerance tolerance in the same measurement as the WowPoint coordinates</param>
         /// <param name="highestQuality">Enable highest quality for using Douglas-Peucker, set false for Radial-Distance algorithm</param>
         /// <returns>Simplified list of WowPoints</returns>
-        public static List<Vector3> SimplifyArray(Vector3[] WowPoints, double tolerance = 0.3, bool highestQuality = false)
+        public static List<Vector3> SimplifyArray(Vector3[] WowPoints, float tolerance = 0.3f, bool highestQuality = false)
         {
             return Simplify(WowPoints, tolerance, highestQuality);
         }

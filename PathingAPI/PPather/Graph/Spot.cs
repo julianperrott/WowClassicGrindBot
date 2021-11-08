@@ -111,7 +111,7 @@ namespace PatherPath.Graph
 
         public float GetDistanceTo2D(Spot s)
         {
-            return (float)Math.Sqrt((Math.Pow((double)(this.X - s.X), 2.0) + Math.Pow((double)(this.Y - s.Y), 2.0)));
+            return MathF.Sqrt(MathF.Pow(X - s.X, 2.0f) + MathF.Pow(Y - s.Y, 2.0f));
         }
 
         public bool IsCloseZ(float z)

@@ -49,7 +49,7 @@ namespace Core.Goals
             return routeToWaypoint.Peek();
         }
 
-        private double lastDistance = 999;
+        private float lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private bool shouldMount = true;
         

@@ -20,7 +20,7 @@ namespace Core.Goals
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
-        private double lastDistance = 999;
+        private float lastDistance = 999;
         private readonly List<Vector3> spiritWalkerPath;
         private readonly List<Vector3> routePoints;
         private readonly StuckDetector stuckDetector;
@@ -258,7 +258,7 @@ namespace Core.Goals
 
             logger.LogInformation("Sleeping 5 seconds");
             await Task.Delay(5000);
-            while (new List<double> { playerReader.XCoord, playerReader.YCoord, corpseLocation.X, corpseLocation.Y }.Max() > 100)
+            while (new List<float> { playerReader.XCoord, playerReader.YCoord, corpseLocation.X, corpseLocation.Y }.Max() > 100)
             {
                 logger.LogInformation($"Waiting... odd coords read. Player {playerReader.XCoord},{playerReader.YCoord} corpse { corpseLocation.X}{corpseLocation.Y}");
                 await Task.Delay(5000);

@@ -26,11 +26,11 @@ namespace Core.Goals
         private DateTime approachStart;
 
         private bool playerWasInCombat;
-        private double lastPlayerDistance;
+        private float lastPlayerDistance;
         private Vector3 lastPlayerLocation;
 
         private int initialTargetGuid;
-        private double initialMinRange;
+        private float initialMinRange;
 
         private int SecondsSinceApproachStarted => (int)(DateTime.Now - approachStart).TotalSeconds;
 

@@ -62,7 +62,7 @@ namespace Core
             input.KeyPressSleep(key, TurnDuration(desiredDirection), debug ? "TurnUsingTimedPress" : string.Empty);
         }
 
-        public double TurnAmount(float desiredDirection)
+        public float TurnAmount(float desiredDirection)
         {
             var result = (RADIAN + desiredDirection - playerReader.Direction) % RADIAN;
             if (result > MathF.PI) { result = RADIAN - result; }
@@ -112,19 +112,18 @@ namespace Core
 
         private string lastText = string.Empty;
 
-        private ConsoleKey GetDirectionKeyToPress(double desiredDirection)
+        private ConsoleKey GetDirectionKeyToPress(float desiredDirection)
         {
             var result = (RADIAN + desiredDirection - playerReader.Direction) % RADIAN < MathF.PI
                 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow;
 
-            var text = $"GetDirectionKeyToPress: Desired direction: {desiredDirection}, actual: {playerReader.Direction}, key: {result}";
-
-            if (text != lastText)
-            {
+            //var text = $"GetDirectionKeyToPress: Desired direction: {desiredDirection}, actual: {playerReader.Direction}, key: {result}";
+            //if (text != lastText)
+            //{
                 //Log(text);
-            }
+            //}
 
-            lastText = text;
+            //lastText = text;
             return result;
         }
 

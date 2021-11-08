@@ -44,7 +44,7 @@ namespace Core.Database
                 return null;
 
             NPC nearest = CurrentArea.vendor[0];
-            double dist = playerLocation.DistanceTo(nearest.points[0]);
+            float dist = playerLocation.DistanceTo(nearest.points[0]);
 
             CurrentArea.vendor.ForEach(npc =>
             {
