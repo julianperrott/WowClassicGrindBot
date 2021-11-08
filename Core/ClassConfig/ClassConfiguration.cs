@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 
 namespace Core
 {
     public class BadZone
     {
         public int ZoneId { get; set; } = -1;
-        public WowPoint ExitZoneLocation { get; set; } = new WowPoint(0, 0);
+        public Vector3 ExitZoneLocation { get; set; }
     }
 
     public enum Mode

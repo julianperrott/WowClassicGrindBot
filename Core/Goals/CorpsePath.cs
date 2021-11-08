@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System.Numerics;
+using System.Collections.Generic;
 
 namespace Core.Goals
 {
     public class CorpsePath
     {
-        public WowPoint MyLocation { get; set; } = new WowPoint(0, 0);
-        public WowPoint CorpseLocation { get; set; } = new WowPoint(0, 0);
+        public Vector3 MyLocation { get; set; }
+        public Vector3 CorpseLocation { get; set; }
 
-        public List<WowPoint> RouteToCorpse { get; } = new List<WowPoint>();
-        public List<WowPoint> TruncatedRoute { get; } = new List<WowPoint>();
+        public List<Vector3> RouteToCorpse { get; } = new List<Vector3>();
+        public List<Vector3> TruncatedRoute { get; } = new List<Vector3>();
     }
 }

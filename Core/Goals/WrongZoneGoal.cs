@@ -1,5 +1,6 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
+using SharedLib.Extensions;
 using System;
 using System.Threading.Tasks;
 
@@ -54,8 +55,8 @@ namespace Core.Goals
                 this.stuckDetector.SetTargetLocation(targetLocation);
             }
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = WowPoint.DistanceTo(location, targetLocation);
+            var location = playerReader.PlayerLocation;
+            var distance = location.DistanceTo(targetLocation);
             var heading = DirectionCalculator.CalculateHeading(location, targetLocation);
 
             if (lastDistance < distance)

@@ -1,29 +1,31 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SharedLib.Extensions;
 
 namespace Core.Goals
 {
     public partial class CorpseRunGoal : GoapGoal
     {
-        private double RADIAN = Math.PI * 2;
+        private float RADIAN = MathF.PI * 2;
         private ConfigurableInput input;
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
-        private double lastDistance = 999;
-        private readonly List<WowPoint> spiritWalkerPath;
+        private float lastDistance = 999;
+        private readonly List<Vector3> spiritWalkerPath;
         private readonly StuckDetector stuckDetector;
-        private Stack<WowPoint> points = new Stack<WowPoint>();
-        public List<WowPoint> Deaths { get; } = new List<WowPoint>();
+        private Stack<Vector3> points = new Stack<Vector3>();
+        public List<Vector3> Deaths { get; } = new List<Vector3>();
 
         private ILogger logger;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
-        public CorpseRunGoal(PlayerReader playerReader, ConfigurableInput input, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
+        public CorpseRunGoal(PlayerReader playerReader, ConfigurableInput input, IPlayerDirection playerDirection, List<Vector3> spiritWalker, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
         {
             this.playerReader = playerReader;
             this.input = input;
@@ -58,9 +60,9 @@ namespace Core.Goals
 
             await Task.Delay(200);
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            double distance = 0;
-            double heading = 0;
+            var location = playerReader.PlayerLocation;
+            float distance = 0;
+            float heading = 0;
 
             if (points.Count == 0)
             {
@@ -69,7 +71,7 @@ namespace Core.Goals
             }
             else
             {
-                distance = DistanceTo(location, points.Peek());
+                distance = location.DistanceTo(points.Peek());
                 heading = DirectionCalculator.CalculateHeading(location, points.Peek());
             }
 
@@ -116,12 +118,12 @@ namespace Core.Goals
             LastActive = DateTime.Now;
         }
 
-        private async Task AdjustHeading(double heading)
+        private async Task AdjustHeading(float heading)
         {
-            var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
-            var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
+            var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
+            var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
-            if (Math.Min(diff1, diff2) > 0.3)
+            if (MathF.Min(diff1, diff2) > 0.3)
             {
                 await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
             }
@@ -164,18 +166,6 @@ namespace Core.Goals
         public static bool IsDone()
         {
             return false;
-        }
-
-        private static double DistanceTo(WowPoint l1, WowPoint l2)
-        {
-            var x = l1.X - l2.X;
-            var y = l1.Y - l2.Y;
-            x = x * 100;
-            y = y * 100;
-            var distance = Math.Sqrt((x * x) + (y * y));
-
-            //logger.LogInformation($"distance:{x} {y} {distance.ToString()}");
-            return distance;
         }
     }
 }

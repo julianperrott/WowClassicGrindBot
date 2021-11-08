@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SharedLib;
@@ -34,18 +35,18 @@ namespace Core.Database
             return -1;
         }
 
-        public Vector3 GetWorldLocation(int uiMapId, WowPoint p, bool flipXY)
+        public Vector3 GetWorldLocation(int uiMapId, Vector3 p, bool flipXY)
         {
             var worldMapArea = areas[uiMapId];
-            if(flipXY)
+            if (flipXY)
             {
-                return new Vector3(worldMapArea.ToWorldX((float)p.Y), worldMapArea.ToWorldY((float)p.X), (float)p.Z);
+                return new Vector3(worldMapArea.ToWorldX(p.Y), worldMapArea.ToWorldY(p.X), p.Z);
             }
             else
             {
-                var worldX = worldMapArea.ToWorldX((float)p.X);
-                var worldY = worldMapArea.ToWorldY((float)p.Y);
-                return new Vector3(worldX, worldY, (float)p.Z);
+                var worldX = worldMapArea.ToWorldX(p.X);
+                var worldY = worldMapArea.ToWorldY(p.Y);
+                return new Vector3(worldX, worldY, p.Z);
             }
         }
 

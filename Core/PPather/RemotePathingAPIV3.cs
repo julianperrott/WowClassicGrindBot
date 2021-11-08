@@ -8,6 +8,7 @@ using System.Threading;
 using System.Diagnostics;
 using AnTCP.Client;
 using SharedLib;
+using System.Numerics;
 
 namespace Core
 {
@@ -68,22 +69,22 @@ namespace Core
 
 
 
-        public async Task<List<WowPoint>> FindRoute(int uiMapId, WowPoint fromPoint, WowPoint toPoint)
+        public async Task<List<Vector3>> FindRoute(int uiMapId, Vector3 fromPoint, Vector3 toPoint)
         {
             await Task.Delay(0);
             throw new NotImplementedException();
             //return new List<WowPoint>();
         }
 
-        public async Task<List<WowPoint>> FindRouteTo(AddonReader addonReader, WowPoint destination)
+        public async Task<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
         {
             int uiMapId = addonReader.UIMapId.Value;
-            WowPoint fromPoint = addonReader.PlayerReader.PlayerLocation;
-            WowPoint toPoint = destination;
+            Vector3 fromPoint = addonReader.PlayerReader.PlayerLocation;
+            Vector3 toPoint = destination;
 
             if (!Client.IsConnected)
             {
-                return new List<WowPoint>();
+                return new List<Vector3>();
             }
 
             if (targetMapId == 0)
@@ -98,10 +99,10 @@ namespace Core
                 Vector3 start = worldMapAreaDB.GetWorldLocation(uiMapId, fromPoint, true);
                 Vector3 end = worldMapAreaDB.GetWorldLocation(uiMapId, toPoint, true);
 
-                var result = new List<WowPoint>();
+                var result = new List<Vector3>();
 
                 if (!worldMapAreaDB.TryGet(uiMapId, out WorldMapArea area))
-                    return new List<WowPoint>();
+                    return new List<Vector3>();
 
                 // incase haven't asked a pathfinder for a route this value will be 0
                 // that case use the highest location
@@ -121,7 +122,7 @@ namespace Core
                 {
                     // Z X Y -> X Y Z
                     var p = worldMapAreaDB.ToMapAreaSpot(path[i].Z, path[i].X, path[i].Y, area.Continent, uiMapId);
-                    result.Add(new WowPoint(p.X, p.Y, p.Z));
+                    result.Add(new Vector3(p.X, p.Y, p.Z));
                     logger.LogInformation($"new float[] {{ {path[i].Z}f, {path[i].X}f, {path[i].Y}f }},");
                 }
 
@@ -137,7 +138,7 @@ namespace Core
             {
                 logger.LogError(ex, $"Finding route from {fromPoint} to {toPoint}");
                 Console.WriteLine(ex);
-                return new List<WowPoint>();
+                return new List<Vector3>();
             }
 
         }

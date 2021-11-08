@@ -2,7 +2,7 @@
 {
     public interface ISquareReader
     {
-        double GetFixedPointAtCell(int indexl);
+        float GetFixedPointAtCell(int indexl);
 
         int GetIntAtCell(int index);
 

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Core.GOAP;
+using System.Numerics;
 
 namespace Core
 {
@@ -43,7 +44,7 @@ namespace Core
         {
             var availableActions = new HashSet<GoapGoal>();
 
-            List<WowPoint> pathPoints, spiritPath;
+            List<Vector3> pathPoints, spiritPath;
             GetPaths(out pathPoints, out spiritPath, classConfig);
 
             var wait = new Wait(addonReader);
@@ -169,7 +170,7 @@ namespace Core
             return path;
         }
 
-        private void GetPaths(out List<WowPoint> pathPoints, out List<WowPoint> spiritPath, ClassConfiguration classConfig)
+        private void GetPaths(out List<Vector3> pathPoints, out List<Vector3> spiritPath, ClassConfiguration classConfig)
         {
             classConfig.PathFilename = FixPathFilename(classConfig.PathFilename);
             classConfig.SpiritPathFilename = FixPathFilename(classConfig.SpiritPathFilename);
@@ -178,17 +179,17 @@ namespace Core
             spiritPath = CreateSpiritPathPoints(pathPoints, classConfig);
         }
 
-        private IEnumerable<WowPoint> ReadPath(string name, string pathFilename)
+        private IEnumerable<Vector3> ReadPath(string name, string pathFilename)
         {
             try
             {
                 if (string.IsNullOrEmpty(pathFilename))
                 {
-                    return new List<WowPoint>();
+                    return new List<Vector3>();
                 }
                 else
                 {
-                    return JsonConvert.DeserializeObject<List<WowPoint>>(File.ReadAllText(FixPathFilename(pathFilename)));
+                    return JsonConvert.DeserializeObject<List<Vector3>>(File.ReadAllText(FixPathFilename(pathFilename)));
                 }
             }
             catch (Exception ex)
@@ -198,33 +199,33 @@ namespace Core
             }
         }
 
-        private static List<WowPoint> CreateSpiritPathPoints(List<WowPoint> pathPoints, ClassConfiguration classConfig)
+        private static List<Vector3> CreateSpiritPathPoints(List<Vector3> pathPoints, ClassConfiguration classConfig)
         {
-            List<WowPoint> spiritPath;
+            List<Vector3> spiritPath;
             if (string.IsNullOrEmpty(classConfig.SpiritPathFilename))
             {
-                spiritPath = new List<WowPoint> { pathPoints.First() };
+                spiritPath = new List<Vector3> { pathPoints.First() };
             }
             else
             {
                 string spiritText = File.ReadAllText(classConfig.SpiritPathFilename);
-                spiritPath = JsonConvert.DeserializeObject<List<WowPoint>>(spiritText);
+                spiritPath = JsonConvert.DeserializeObject<List<Vector3>>(spiritText);
             }
 
             return spiritPath;
         }
 
-        private static List<WowPoint> CreatePathPoints(ClassConfiguration classConfig)
+        private static List<Vector3> CreatePathPoints(ClassConfiguration classConfig)
         {
-            List<WowPoint> pathPoints;
+            List<Vector3> pathPoints;
             string pathText = File.ReadAllText(classConfig.PathFilename);
             bool thereAndBack = classConfig.PathThereAndBack;
 
             int step = classConfig.PathReduceSteps ? 2 : 1;
 
-            var pathPoints2 = JsonConvert.DeserializeObject<List<WowPoint>>(pathText);
+            var pathPoints2 = JsonConvert.DeserializeObject<List<Vector3>>(pathText);
 
-            pathPoints = new List<WowPoint>();
+            pathPoints = new List<Vector3>();
             for (int i = 0; i < pathPoints2.Count; i += step)
             {
                 if (i < pathPoints2.Count)

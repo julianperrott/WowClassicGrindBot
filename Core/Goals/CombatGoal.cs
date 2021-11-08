@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Core.Goals
@@ -22,11 +23,11 @@ namespace Core.Goals
         
         private readonly ClassConfiguration classConfiguration;
 
-        private double lastDirectionForTurnAround;
+        private float lastDirectionForTurnAround;
 
-        private double lastKnwonPlayerDirection;
-        private double lastKnownMinDistance;
-        private double lastKnownMaxDistance;
+        private float lastKnwonPlayerDirection;
+        private float lastKnownMinDistance;
+        private float lastKnownMaxDistance;
 
         public CombatGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, CastingHandler castingHandler)
         {
@@ -102,7 +103,7 @@ namespace Core.Goals
                 // have to check range
                 // ex. target died far away have to consider the range and approximate
                 logger.LogInformation($"{GetType().Name}: --- Target is killed! Record death location.");
-                double distance = (lastKnownMaxDistance + lastKnownMinDistance) / 2;
+                float distance = (lastKnownMaxDistance + lastKnownMinDistance) / 2f;
                 SendActionEvent(new ActionEventArgs(GoapKey.corpselocation, new CorpseLocation(GetCorpseLocation(distance), distance)));
             }
         }
@@ -234,7 +235,7 @@ namespace Core.Goals
             await wait.Update(1);
         }
 
-        private WowPoint GetCorpseLocation(double distance)
+        private Vector3 GetCorpseLocation(float distance)
         {
             return PointEsimator.GetPoint(playerReader.PlayerLocation, playerReader.Direction, distance);
         }

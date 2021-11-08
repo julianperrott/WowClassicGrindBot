@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using SharedLib.Extensions;
 using System;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Core
@@ -14,7 +16,7 @@ namespace Core
         private readonly bool debug = true;
 
         private bool outOfCombat;
-        private WowPoint lastPosition;
+        private Vector3 lastPosition;
 
         public CombatUtil(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader)
         {
@@ -89,9 +91,9 @@ namespace Core
             return false;
         }
 
-        public bool IsPlayerMoving(WowPoint lastPos)
+        public bool IsPlayerMoving(Vector3 lastPos)
         {
-            var distance = WowPoint.DistanceTo(lastPos, playerReader.PlayerLocation);
+            var distance = playerReader.PlayerLocation.DistanceTo(lastPos);
             return distance > 0.01f;
         }
 

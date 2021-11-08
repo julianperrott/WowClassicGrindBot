@@ -2,6 +2,8 @@
 using System;
 using System.Threading.Tasks;
 using Game;
+using System.Numerics;
+using SharedLib.Extensions;
 
 namespace Core
 {
@@ -12,7 +14,7 @@ namespace Core
         private readonly PlayerReader playerReader;
 
         public DateTime LastSetDirection { get; private set; } = DateTime.Now.AddDays(-1);
-        private double RADIAN = Math.PI * 2;
+        private float RADIAN = MathF.PI * 2;
 
         private const int DefaultIgnoreDistance = 15;
 
@@ -26,18 +28,18 @@ namespace Core
             this.playerReader = playerReader;
         }
 
-        public async Task SetDirection(double desiredDirection, WowPoint point, string source)
+        public async Task SetDirection(float desiredDirection, Vector3 point, string source)
         {
             await SetDirection(desiredDirection, point, source, DefaultIgnoreDistance);
         }
 
-        public async Task SetDirection(double desiredDirection, WowPoint point, string source, int ignoreDistance)
+        public async Task SetDirection(float desiredDirection, Vector3 point, string source, int ignoreDistance)
         {
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord);
-            var distance = WowPoint.DistanceTo(location, point);
+            var location = playerReader.PlayerLocation;
+            var distance = location.DistanceTo(point);
 
             if(!string.IsNullOrEmpty(source))
-                Log($"SetDirection:- {source} Desired: {desiredDirection.ToString("0.000")}, Current: {playerReader.Direction.ToString("0.000")}, distance: {distance.ToString("0.000")}");
+                Log($"SetDirection:- {source} Desired: {desiredDirection:0.000}, Current: {playerReader.Direction:0.000}, distance: {distance:0.000}");
 
             if (distance < ignoreDistance)
             {
@@ -55,25 +57,24 @@ namespace Core
             LastSetDirection = DateTime.Now;
         }
 
-        private void TurnUsingTimedPress(double desiredDirection, ConsoleKey key)
+        private void TurnUsingTimedPress(float desiredDirection, ConsoleKey key)
         {
             input.KeyPressSleep(key, TurnDuration(desiredDirection), debug ? "TurnUsingTimedPress" : string.Empty);
         }
 
-        public double TurnAmount(double desiredDirection)
+        public double TurnAmount(float desiredDirection)
         {
-            double RADIAN = Math.PI * 2;
             var result = (RADIAN + desiredDirection - playerReader.Direction) % RADIAN;
-            if (result > Math.PI) { result = RADIAN - result; }
+            if (result > MathF.PI) { result = RADIAN - result; }
             return result;
         }
 
-        public int TurnDuration(double desiredDirection)
+        public int TurnDuration(float desiredDirection)
         {
-            return (int)((TurnAmount(desiredDirection) * 1000) / Math.PI);
+            return (int)((TurnAmount(desiredDirection) * 1000) / MathF.PI);
         }
 
-        private async Task TurnAndReadActualDirection(double desiredDirection, ConsoleKey key)
+        private async Task TurnAndReadActualDirection(float desiredDirection, ConsoleKey key)
         {
             // Press Right
             input.SetKeyState(key, true, true, "PlayerDirection");
@@ -90,7 +91,7 @@ namespace Core
                 System.Threading.Thread.Sleep(1);
                 var actualDirection = playerReader.Direction;
 
-                bool closeEnoughToDesiredDirection = Math.Abs(actualDirection - desiredDirection) < 0.01;
+                bool closeEnoughToDesiredDirection = MathF.Abs(actualDirection - desiredDirection) < 0.01;
 
                 if (closeEnoughToDesiredDirection)
                 {
@@ -113,7 +114,7 @@ namespace Core
 
         private ConsoleKey GetDirectionKeyToPress(double desiredDirection)
         {
-            var result = (RADIAN + desiredDirection - playerReader.Direction) % RADIAN < Math.PI
+            var result = (RADIAN + desiredDirection - playerReader.Direction) % RADIAN < MathF.PI
                 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow;
 
             var text = $"GetDirectionKeyToPress: Desired direction: {desiredDirection}, actual: {playerReader.Direction}, key: {result}";

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using Core.PPather;
 using System.Text;
+using System.Numerics;
 
 namespace Core
 {
@@ -68,7 +69,7 @@ namespace Core
             }
         }
 
-        public async Task<List<WowPoint>> FindRoute(int map, WowPoint fromPoint, WowPoint toPoint)
+        public async Task<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
         {
             if (targetMapId == 0)
             {
@@ -89,7 +90,7 @@ namespace Core
                         var responseString = await client.GetStringAsync(url);
                         logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} took {sw.ElapsedMilliseconds} ms.");
                         var path = JsonConvert.DeserializeObject<IEnumerable<WorldMapAreaSpot>>(responseString);
-                        var result = path.Select(l => new WowPoint(l.X, l.Y)).ToList();
+                        var result = path.Select(l => new Vector3(l.X, l.Y, 0)).ToList();
                         return result;
                     }
                 }
@@ -98,11 +99,11 @@ namespace Core
             {
                 logger.LogError(ex, $"Finding route from {fromPoint} to {toPoint}");
                 Console.WriteLine(ex);
-                return new List<WowPoint>();
+                return new List<Vector3>();
             }
         }
 
-        public Task<List<WowPoint>> FindRouteTo(AddonReader addonReader, WowPoint destination)
+        public Task<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
         {
             return FindRoute(addonReader.UIMapId.Value, addonReader.PlayerReader.PlayerLocation, destination);
         }
