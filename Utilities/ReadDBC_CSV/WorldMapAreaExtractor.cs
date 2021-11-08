@@ -122,14 +122,18 @@ namespace ReadDBC_CSV
                     int index = wmas.FindIndex(x => x.UIMapId == uiMapId && orderIndex == 0);
                     if (index > -1)
                     {
-                        wmas[index].MapID = int.Parse(values[mapIdIndex]);
-                        wmas[index].AreaID = int.Parse(values[areaIdIndex]);
+                        var wma = wmas[index];
 
-                        wmas[index].LocBottom = float.Parse(values[region0Index]);
-                        wmas[index].LocRight = float.Parse(values[region1Index]);
+                        wma.MapID = int.Parse(values[mapIdIndex]);
+                        wma.AreaID = int.Parse(values[areaIdIndex]);
 
-                        wmas[index].LocTop = float.Parse(values[region3Index]);
-                        wmas[index].LocLeft = float.Parse(values[region4Index]);
+                        wma.LocBottom = float.Parse(values[region0Index]);
+                        wma.LocRight = float.Parse(values[region1Index]);
+
+                        wma.LocTop = float.Parse(values[region3Index]);
+                        wma.LocLeft = float.Parse(values[region4Index]);
+
+                        wmas[index] = wma;
                     }
                 }
             };
@@ -163,9 +167,11 @@ namespace ReadDBC_CSV
                     int mapId = int.Parse(values[mapIdIndex]);
 
                     var list = wmas.FindAll(x => x.MapID == mapId);
-                    foreach(var item in list)
+                    for(int i = 0; i < list.Count; i++)
                     {
-                        item.Continent = values[directoryIndex];
+                        var wma = list[i];
+                        wma.Continent = values[directoryIndex];
+                        list[i] = wma;
                     }
                 }
             };
