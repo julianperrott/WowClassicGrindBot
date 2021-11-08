@@ -28,12 +28,12 @@ namespace Core
             this.playerReader = playerReader;
         }
 
-        public async Task SetDirection(float desiredDirection, Vector3 point, string source)
+        public async ValueTask SetDirection(float desiredDirection, Vector3 point, string source)
         {
             await SetDirection(desiredDirection, point, source, DefaultIgnoreDistance);
         }
 
-        public async Task SetDirection(float desiredDirection, Vector3 point, string source, int ignoreDistance)
+        public async ValueTask SetDirection(float desiredDirection, Vector3 point, string source, int ignoreDistance)
         {
             var location = playerReader.PlayerLocation;
             var distance = location.DistanceXYTo(point);
@@ -74,7 +74,7 @@ namespace Core
             return (int)((TurnAmount(desiredDirection) * 1000) / MathF.PI);
         }
 
-        private async Task TurnAndReadActualDirection(float desiredDirection, ConsoleKey key)
+        private async ValueTask TurnAndReadActualDirection(float desiredDirection, ConsoleKey key)
         {
             // Press Right
             input.SetKeyState(key, true, true, "PlayerDirection");
