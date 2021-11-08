@@ -168,7 +168,7 @@
 
         if (botController.RouteInfo != null)
         {
-            if (botController.RouteInfo.PathPoints.Count == 0 || location.DistanceTo(botController.RouteInfo.PathPoints.Last()) > Distance & location.X != 0)
+            if (botController.RouteInfo.PathPoints.Count == 0 || location.DistanceXYTo(botController.RouteInfo.PathPoints.Last()) > Distance && location.X != 0)
             {
                 botController.RouteInfo.PathPoints.Add(location);
                 UpdateRoute();

@@ -16,28 +16,7 @@ namespace SharedLib.Extensions
 
         public static float DistanceXYTo(this Vector3 l1, Vector3 l2)
         {
-            float distance = Vector2.Distance(l1.AsVector2() * 100, l2.AsVector2() * 100);
-            //float distance = Vector3.DistanceSquared(l1, l2);
-
-            //float x = l1.X - l2.X;
-            //float y = l1.Y - l2.Y;
-            //x = x * 100;
-            //y = y * 100;
-            //float distance = MathF.Sqrt((x * x) + (y * y));
-
-            //Debug.WriteLine($"distance:{l1} {l2} <=> {distance}");
-
-            /*
-            //return Vector3.DistanceSquared(l1, l2);
-            float x = l1.X - l2.X;
-            float y = l1.Y - l2.Y;
-            //x = x * 100;
-            //y = y * 100;
-            //float distance = MathF.Sqrt((x * x) + (y * y));
-            return MathF.Sqrt((x * x) + (y * y));
-            */
-
-            return distance;
+            return Vector2.Distance(l1.AsVector2() * 100, l2.AsVector2() * 100); // would be nice to remove that 100 multiplier :sweat:
         }
 
         public static List<Vector3> ShortenRouteFromLocation(Vector3 location, List<Vector3> pointsList)
