@@ -137,7 +137,7 @@ namespace Core
 
         internal bool IsGettingCloser()
         {
-            float currentDistanceToTarget = playerReader.PlayerLocation.DistanceTo(targetLocation);
+            float currentDistanceToTarget = playerReader.PlayerLocation.DistanceXYTo(targetLocation);
 
             if (currentDistanceToTarget < previousDistanceToTarget - 5)
             {
@@ -162,7 +162,7 @@ namespace Core
 
         internal bool IsMoving()
         {
-            float currentDistanceToTarget = playerReader.PlayerLocation.DistanceTo(targetLocation);
+            float currentDistanceToTarget = playerReader.PlayerLocation.DistanceXYTo(targetLocation);
 
             if (MathF.Abs(currentDistanceToTarget - previousDistanceToTarget) > 1)
             {

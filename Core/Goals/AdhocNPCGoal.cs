@@ -122,7 +122,7 @@ namespace Core.Goals
             }
 
             var location = playerReader.PlayerLocation;
-            var distance = location.DistanceTo(routeToWaypoint.Peek());
+            var distance = location.DistanceXYTo(routeToWaypoint.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
 
             await AdjustHeading(heading);
@@ -164,7 +164,7 @@ namespace Core.Goals
                 if (routeToWaypoint.Count == 0)
                 {
                     await this.stopMoving.Stop();
-                    distance = location.DistanceTo(StartOfPathToNPC());
+                    distance = location.DistanceXYTo(StartOfPathToNPC());
                     if (distance > 50)
                     {
                         await FillRouteToDestination();
@@ -236,7 +236,7 @@ namespace Core.Goals
         {
             logger.LogInformation($"Moving to spot = {target}");
 
-            var distance = playerReader.PlayerLocation.DistanceTo(target);
+            var distance = playerReader.PlayerLocation.DistanceXYTo(target);
             var lastDistance = distance;
             while (distance <= lastDistance && distance > 5)
             {
@@ -249,7 +249,7 @@ namespace Core.Goals
 
                 await this.input.KeyPress(ConsoleKey.UpArrow, pressDuration);
                 await this.stopMoving.Stop();
-                distance = playerReader.PlayerLocation.DistanceTo(target);
+                distance = playerReader.PlayerLocation.DistanceXYTo(target);
             }
         }
 
@@ -270,13 +270,13 @@ namespace Core.Goals
             if (routeToWaypoint.Any())
             {
                 var location = playerReader.PlayerLocation;
-                var distance = location.DistanceTo(routeToWaypoint.Peek());
+                var distance = location.DistanceXYTo(routeToWaypoint.Peek());
                 while (distance < PointReachedDistance() && routeToWaypoint.Any())
                 {
                     routeToWaypoint.Pop();
                     if (routeToWaypoint.Any())
                     {
-                        distance = location.DistanceTo(routeToWaypoint.Peek());
+                        distance = location.DistanceXYTo(routeToWaypoint.Peek());
                     }
                 }
             }

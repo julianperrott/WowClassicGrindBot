@@ -52,7 +52,7 @@ namespace Core.Goals
                 if (routeInfo != null && routeInfo.PoiList.Any())
                 {
                     var closest = routeInfo.PoiList.Where(p => p.Name == "Corpse").
-                        Select(i => new { i, d = addonReader.PlayerReader.PlayerLocation.DistanceTo(i.Location) }).
+                        Select(i => new { i, d = addonReader.PlayerReader.PlayerLocation.DistanceXYTo(i.Location) }).
                         Aggregate((a, b) => a.d <= b.d ? a : b);
 
                     if (closest.i != null)

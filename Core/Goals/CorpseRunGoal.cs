@@ -71,7 +71,7 @@ namespace Core.Goals
             }
             else
             {
-                distance = location.DistanceTo(points.Peek());
+                distance = location.DistanceXYTo(points.Peek());
                 heading = DirectionCalculator.CalculateHeading(location, points.Peek());
             }
 

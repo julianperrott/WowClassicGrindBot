@@ -14,7 +14,7 @@ namespace SharedLib.Extensions
             return output;
         }
 
-        public static float DistanceTo(this Vector3 l1, Vector3 l2)
+        public static float DistanceXYTo(this Vector3 l1, Vector3 l2)
         {
             float distance = Vector2.Distance(l1.AsVector2() * 100, l2.AsVector2() * 100);
             //float distance = Vector3.DistanceSquared(l1, l2);
@@ -44,7 +44,7 @@ namespace SharedLib.Extensions
         {
             var result = new List<Vector3>();
 
-            var closestDistance = pointsList.Select(p => (point: p, distance: DistanceTo(location, p)))
+            var closestDistance = pointsList.Select(p => (point: p, distance: DistanceXYTo(location, p)))
                 .OrderBy(s => s.distance);
 
             var closestPoint = closestDistance.First();

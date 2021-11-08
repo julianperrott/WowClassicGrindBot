@@ -187,7 +187,7 @@ namespace Core.Goals
                 var playerLocation = playerReader.PlayerLocation;
                 if(routeToWaypoint.Count > 0)
                 {
-                    var distanceToRoute = playerLocation.DistanceTo(routeToWaypoint.Peek());
+                    var distanceToRoute = playerLocation.DistanceXYTo(routeToWaypoint.Peek());
                     if (routeToWaypoint.Count < 1 && distanceToRoute > 200)
                     {
                         logger.LogError($"No route To Waypoint or too far {distanceToRoute}>200");
@@ -202,7 +202,7 @@ namespace Core.Goals
             await RandomJump();
 
             var location = playerReader.PlayerLocation;
-            var distance = location.DistanceTo(routeToWaypoint.Peek());
+            var distance = location.DistanceXYTo(routeToWaypoint.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
 
             await AdjustHeading(heading);
@@ -221,7 +221,7 @@ namespace Core.Goals
                 if (HasBeenActiveRecently())
                 {
                     await this.stuckDetector.Unstick();
-                    distance = location.DistanceTo(routeToWaypoint.Peek());
+                    distance = location.DistanceXYTo(routeToWaypoint.Peek());
                 }
                 else
                 {
@@ -300,7 +300,7 @@ namespace Core.Goals
             {
                 // start path at closest point
                 firstLoad = false;
-                var closestPoint = pointsList.OrderBy(p => playerReader.PlayerLocation.DistanceTo(p)).FirstOrDefault();
+                var closestPoint = pointsList.OrderBy(p => playerReader.PlayerLocation.DistanceXYTo(p)).FirstOrDefault();
 
                 for (int i = 0; i < pointsList.Count; i++)
                 {
@@ -366,13 +366,13 @@ namespace Core.Goals
             if (routeToWaypoint.Any())
             {
                 var location = playerReader.PlayerLocation;
-                var distance = location.DistanceTo(routeToWaypoint.Peek());
+                var distance = location.DistanceXYTo(routeToWaypoint.Peek());
                 while (distance < PointReachedDistance(minDistance - 1) && routeToWaypoint.Any())
                 {
                     routeToWaypoint.Pop();
                     if (routeToWaypoint.Any())
                     {
-                        distance = location.DistanceTo(routeToWaypoint.Peek());
+                        distance = location.DistanceXYTo(routeToWaypoint.Peek());
                     }
                 }
             }
@@ -401,7 +401,7 @@ namespace Core.Goals
             await playerDirection.SetDirection(heading, wayPoints.Peek(), "Reached waypoint").ConfigureAwait(false);
 
             //Create path back to route
-            var distance = location.DistanceTo(wayPoints.Peek());
+            var distance = location.DistanceXYTo(wayPoints.Peek());
             if (forceUsePathing || distance > 200)
             {
                 await this.stopMoving.Stop();
@@ -471,7 +471,7 @@ namespace Core.Goals
             var B = wayPoints.Peek();
             var result = VectorExt.GetClosestPointOnLineSegment(A.AsVector2(), B.AsVector2(), playerReader.PlayerLocation.AsVector2());
             var newPoint = new Vector3(result.X, result.Y, 0);
-            if (newPoint.DistanceTo(wayPoints.Peek()) >= 4)
+            if (newPoint.DistanceXYTo(wayPoints.Peek()) >= 4)
             {
                 wayPoints.Push(newPoint);
                 logger.LogInformation($"Adjusted resume point");

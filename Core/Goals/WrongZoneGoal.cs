@@ -56,7 +56,7 @@ namespace Core.Goals
             }
 
             var location = playerReader.PlayerLocation;
-            var distance = location.DistanceTo(targetLocation);
+            var distance = location.DistanceXYTo(targetLocation);
             var heading = DirectionCalculator.CalculateHeading(location, targetLocation);
 
             if (lastDistance < distance)

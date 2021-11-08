@@ -93,7 +93,7 @@ namespace Core
 
         public bool IsPlayerMoving(Vector3 lastPos)
         {
-            var distance = playerReader.PlayerLocation.DistanceTo(lastPos);
+            var distance = playerReader.PlayerLocation.DistanceXYTo(lastPos);
             return distance > 0.01f;
         }
 

@@ -36,7 +36,7 @@ namespace Core
         public async Task SetDirection(float desiredDirection, Vector3 point, string source, int ignoreDistance)
         {
             var location = playerReader.PlayerLocation;
-            var distance = location.DistanceTo(point);
+            var distance = location.DistanceXYTo(point);
 
             if(!string.IsNullOrEmpty(source))
                 Log($"SetDirection:- {source} Desired: {desiredDirection:0.000}, Current: {playerReader.Direction:0.000}, distance: {distance:0.000}");

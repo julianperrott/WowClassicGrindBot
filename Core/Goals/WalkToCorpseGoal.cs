@@ -144,7 +144,7 @@ namespace Core.Goals
                 if (!points.Any())
                 {
                     points.Push(this.playerReader.CorpseLocation);
-                    distance = location.DistanceTo(corpseLocation);
+                    distance = location.DistanceXYTo(corpseLocation);
                     heading = DirectionCalculator.CalculateHeading(location, corpseLocation);
                     this.logger.LogInformation("no more points, heading to corpse");
                     await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
@@ -154,7 +154,7 @@ namespace Core.Goals
             }
             else
             {
-                distance = location.DistanceTo(points.Peek());
+                distance = location.DistanceXYTo(points.Peek());
                 heading = DirectionCalculator.CalculateHeading(location, points.Peek());
             }
 
@@ -181,7 +181,7 @@ namespace Core.Goals
                         return;
                     }
 
-                    distance = location.DistanceTo(points.Peek());
+                    distance = location.DistanceXYTo(points.Peek());
                 }
                 else
                 {
@@ -215,7 +215,7 @@ namespace Core.Goals
                     points.Pop();
                     if (points.Any())
                     {
-                        distance = location.DistanceTo(points.Peek());
+                        distance = location.DistanceXYTo(points.Peek());
                     }
                 }
 
@@ -281,7 +281,7 @@ namespace Core.Goals
             }
             else
             {
-                var closestRouteAndSpiritPathPoints = routePoints.SelectMany(s => spiritWalkerPath.Select(swp => (pathPoint: s, spiritPathPoint: swp, distance: s.DistanceTo(swp))))
+                var closestRouteAndSpiritPathPoints = routePoints.SelectMany(s => spiritWalkerPath.Select(swp => (pathPoint: s, spiritPathPoint: swp, distance: s.DistanceXYTo(swp))))
                     .OrderBy(s => s.distance)
                     .First();
 
@@ -296,7 +296,7 @@ namespace Core.Goals
                     }
                 }
 
-                var closestRoutePointToCorpse = routePoints.Select(s => (pathPoint: s, distance: corpseLocation.DistanceTo(s)))
+                var closestRoutePointToCorpse = routePoints.Select(s => (pathPoint: s, distance: corpseLocation.DistanceXYTo(s)))
                     .OrderBy(s => s.distance)
                     .First()
                     .pathPoint;

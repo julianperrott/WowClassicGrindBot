@@ -118,7 +118,7 @@ namespace Core.Goals
                 await input.TapApproachKey("");
             }
 
-            lastPlayerDistance = playerReader.PlayerLocation.DistanceTo(lastPlayerLocation);
+            lastPlayerDistance = playerReader.PlayerLocation.DistanceXYTo(lastPlayerLocation);
 
             if (lastPlayerDistance < 0.05 && playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {
