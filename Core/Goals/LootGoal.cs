@@ -123,7 +123,7 @@ namespace Core.Goals
                     }
                     else
                     {
-                        await input.TapClearTarget($"{GetType().Name}: Dont attak the target!");
+                        await input.TapClearTarget($"{GetType().Name}: Don't attack the target!");
                     }
                 }
             }

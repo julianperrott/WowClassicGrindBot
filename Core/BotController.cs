@@ -283,7 +283,6 @@ namespace Core
                     if (b != a) { a.ActionEvent += b.OnActionEvent; }
                 });
             });
-
         }
 
         private ClassConfiguration ReadClassConfiguration(string classFilename, string? pathFilename)

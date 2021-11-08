@@ -29,7 +29,7 @@ namespace Core.Goals
         private readonly ClassConfiguration classConfiguration;
         private readonly IPPather pather;
         private readonly MountHandler mountHandler;
-        private readonly ITargetFinder targetFinder;
+        private readonly TargetFinder targetFinder;
         private CancellationTokenSource? targetFinderCts;
 
         private readonly bool debug = false;
@@ -68,7 +68,7 @@ namespace Core.Goals
         #endregion
 
 
-        public FollowRouteGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler, ITargetFinder targetFinder)
+        public FollowRouteGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler, TargetFinder targetFinder)
         {
             this.logger = logger;
             this.input = input;

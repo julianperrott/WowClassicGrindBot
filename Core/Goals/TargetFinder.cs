@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Goals
 {
-    public class TargetFinder: ITargetFinder
+    public class TargetFinder
     {
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
@@ -72,16 +72,18 @@ namespace Core.Goals
                     npcNameTargeting.ChangeNpcType(NpcNameToFind);
                     await input.TapNearestTarget(source);
                 }
-                
-                if (!playerReader.HasTarget && !cancellationToken.IsCancellationRequested)
+                if (!classConfig.KeyboardOnly)
                 {
-                    npcNameTargeting.ChangeNpcType(NpcNameToFind);
-                    if (npcNameTargeting.NpcCount > 0 && !cancellationToken.IsCancellationRequested)
+                    if (!playerReader.HasTarget && !cancellationToken.IsCancellationRequested)
                     {
-                        await npcNameTargeting.TargetingAndClickNpc(true, cancellationToken);
+                        npcNameTargeting.ChangeNpcType(NpcNameToFind);
+                        if (npcNameTargeting.NpcCount > 0 && !cancellationToken.IsCancellationRequested)
+                        {
+                            await npcNameTargeting.TargetingAndClickNpc(true, cancellationToken);
 
-                        if(!cancellationToken.IsCancellationRequested)
-                            await wait.Update(1);
+                            if (!cancellationToken.IsCancellationRequested)
+                                await wait.Update(1);
+                        }
                     }
                 }
             }
