@@ -33,7 +33,7 @@ namespace Core.Goals
             this.npcNameTargeting = npcNameTargeting;
         }
 
-        public async Task<bool> Search(string source, CancellationToken cancellationToken)
+        public async ValueTask<bool> Search(string source, CancellationToken cancellationToken)
         {
             if (!cancellationToken.IsCancellationRequested && !playerReader.Bits.PlayerInCombat
                 && classConfig.TargetNearestTarget.MillisecondsSinceLastClick > random.Next(1000, 1500))
@@ -59,7 +59,7 @@ namespace Core.Goals
             return false;
         }
 
-        private async Task<bool> LookForTarget(string source, CancellationToken cancellationToken)
+        private async ValueTask<bool> LookForTarget(string source, CancellationToken cancellationToken)
         {
             if (playerReader.HasTarget && !playerReader.Bits.TargetIsDead && !blacklist.IsTargetBlacklisted())
             {

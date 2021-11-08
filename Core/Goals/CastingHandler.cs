@@ -78,7 +78,7 @@ namespace Core.Goals
             return item.CanRun();
         }
 
-        protected async Task PressCastKeyAndWaitForCastToEnd(ConsoleKey key, int maxWaitMs)
+        protected async ValueTask PressCastKeyAndWaitForCastToEnd(ConsoleKey key, int maxWaitMs)
         {
             await PressKey(key);
             if (!this.playerReader.IsCasting)
@@ -97,7 +97,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task PressKeyAction(KeyAction item)
+        private async ValueTask PressKeyAction(KeyAction item)
         {
             playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
@@ -113,7 +113,7 @@ namespace Core.Goals
                 uiEvent == UI_ERROR.NONE;
         }
 
-        private async Task<bool> CastInstant(KeyAction item)
+        private async ValueTask<bool> CastInstant(KeyAction item)
         {
             if (item.StopBeforeCast)
             {
@@ -172,7 +172,7 @@ namespace Core.Goals
             return true;
         }
 
-        private async Task<bool> CastCastbar(KeyAction item)
+        private async ValueTask<bool> CastCastbar(KeyAction item)
         {
             if (playerReader.Bits.IsFalling)
             {
@@ -235,7 +235,7 @@ namespace Core.Goals
             return true;
         }
 
-        public async Task<bool> CastIfReady(KeyAction item, int sleepBeforeCast = 0)
+        public async ValueTask<bool> CastIfReady(KeyAction item, int sleepBeforeCast = 0)
         {
             if (!CanRun(item))
             {
@@ -399,7 +399,7 @@ namespace Core.Goals
             return true;
         }
 
-        private async Task<bool> WaitForGCD(KeyAction item, bool beforeHasTarget)
+        private async ValueTask<bool> WaitForGCD(KeyAction item, bool beforeHasTarget)
         {
             if (item.WaitForGCD)
             {
@@ -424,7 +424,7 @@ namespace Core.Goals
             return true;
         }
 
-        protected async Task<bool> SwitchToCorrectStanceForm(Form beforeForm, KeyAction item)
+        protected async ValueTask<bool> SwitchToCorrectStanceForm(Form beforeForm, KeyAction item)
         {
             if (string.IsNullOrEmpty(item.Form))
                 return true;
@@ -457,12 +457,12 @@ namespace Core.Goals
             return playerReader.Form == item.FormEnum;
         }
 
-        public async Task PressKey(ConsoleKey key, string description = "", int duration = 50)
+        public async ValueTask PressKey(ConsoleKey key, string description = "", int duration = 50)
         {
             await input.KeyPress(key, duration, description);
         }
 
-        public async Task ReactToLastUIErrorMessage(string source)
+        public async ValueTask ReactToLastUIErrorMessage(string source)
         {
             //var lastError = playerReader.LastUIErrorMessage;
             switch (playerReader.LastUIErrorMessage)
@@ -568,7 +568,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task ReactToLastCastingEvent(KeyAction item, string source)
+        private async ValueTask ReactToLastCastingEvent(KeyAction item, string source)
         {
             switch ((UI_ERROR)playerReader.CastEvent.Value)
             {

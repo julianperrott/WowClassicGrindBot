@@ -337,7 +337,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task MountIfRequired()
+        private async ValueTask MountIfRequired()
         {
             if (shouldMount && !playerReader.Bits.IsMounted && !playerReader.Bits.PlayerInCombat)
             {
