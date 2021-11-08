@@ -110,7 +110,7 @@ namespace Core
             }
         }
 
-        private string lastText = string.Empty;
+        //private string lastText = string.Empty;
 
         private ConsoleKey GetDirectionKeyToPress(float desiredDirection)
         {
