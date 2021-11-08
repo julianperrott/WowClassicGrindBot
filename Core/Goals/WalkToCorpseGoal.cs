@@ -1,5 +1,6 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
+using SharedLib.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,21 +20,21 @@ namespace Core.Goals
         private readonly PlayerReader playerReader;
         private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
-        private double lastDistance = 999;
-        private readonly List<WowPoint> spiritWalkerPath;
-        private readonly List<WowPoint> routePoints;
+        private float lastDistance = 999;
+        private readonly List<Vector3> spiritWalkerPath;
+        private readonly List<Vector3> routePoints;
         private readonly StuckDetector stuckDetector;
         private readonly IPPather pather;
 
-        private Stack<WowPoint> points = new Stack<WowPoint>();
-        private double RADIAN = Math.PI * 2;
+        private Stack<Vector3> points = new Stack<Vector3>();
+        private float RADIAN = MathF.PI * 2;
 
-        public List<WowPoint> PathingRoute()
+        public List<Vector3> PathingRoute()
         {
             return points.ToList();
         }
 
-        public List<WowPoint> Deaths { get; } = new List<WowPoint>();
+        public List<Vector3> Deaths { get; } = new List<Vector3>();
 
         private Random random = new Random();
 
@@ -42,16 +43,21 @@ namespace Core.Goals
 
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
-        private WowPoint corpseLocation = new WowPoint(0, 0);
+        private Vector3 corpseLocation;
 
         private bool NeedsToReset = true;
 
-        public WowPoint? NextPoint()
+        public bool HasNext()
         {
-            return points.Count == 0 ? null : points.Peek();
+            return points.Count != 0;
         }
 
-        public WalkToCorpseGoal(ILogger logger, ConfigurableInput input, AddonReader addonReader, IPlayerDirection playerDirection, List<WowPoint> spiritWalker, List<WowPoint> routePoints, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather)
+        public Vector3 NextPoint()
+        {
+            return points.Peek();
+        }
+
+        public WalkToCorpseGoal(ILogger logger, ConfigurableInput input, AddonReader addonReader, IPlayerDirection playerDirection, List<Vector3> spiritWalker, List<Vector3> routePoints, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather)
         {
             this.logger = logger;
             this.input = input;
@@ -73,7 +79,7 @@ namespace Core.Goals
         {
             NeedsToReset = true;
             points.Clear();
-            this.corpseLocation = new WowPoint(0, 0);
+            this.corpseLocation = Vector3.Zero;
             LastEventReceived = DateTime.Now;
         }
 
@@ -104,7 +110,7 @@ namespace Core.Goals
 
                 while (this.playerReader.Bits.DeadStatus)
                 {
-                    this.corpseLocation = new WowPoint(playerReader.CorpseX, playerReader.CorpseY, playerReader.ZCoord);
+                    this.corpseLocation = playerReader.CorpseLocation;
                     if (this.corpseLocation.X >= 1 || this.corpseLocation.Y > 0) { break; }
                     logger.LogInformation($"Waiting for corpse location to update {playerReader.CorpseX},{playerReader.CorpseY}");
                     await Task.Delay(1000);
@@ -128,9 +134,9 @@ namespace Core.Goals
 
             if (!this.playerReader.Bits.DeadStatus) { return; }
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
-            double distance = 0;
-            double heading = 0;
+            var location = playerReader.PlayerLocation;
+            float distance = 0;
+            float heading = 0;
 
             if (points.Count == 0)
             {
@@ -138,7 +144,7 @@ namespace Core.Goals
                 if (!points.Any())
                 {
                     points.Push(this.playerReader.CorpseLocation);
-                    distance = DistanceTo(location, corpseLocation);
+                    distance = location.DistanceXYTo(corpseLocation);
                     heading = DirectionCalculator.CalculateHeading(location, corpseLocation);
                     this.logger.LogInformation("no more points, heading to corpse");
                     await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
@@ -148,7 +154,7 @@ namespace Core.Goals
             }
             else
             {
-                distance = DistanceTo(location, points.Peek());
+                distance = location.DistanceXYTo(points.Peek());
                 heading = DirectionCalculator.CalculateHeading(location, points.Peek());
             }
 
@@ -175,7 +181,7 @@ namespace Core.Goals
                         return;
                     }
 
-                    distance = DistanceTo(location, points.Peek());
+                    distance = location.DistanceXYTo(points.Peek());
                 }
                 else
                 {
@@ -185,10 +191,10 @@ namespace Core.Goals
             }
             else // distance closer
             {
-                var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
-                var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
+                var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
+                var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
-                if (Math.Min(diff1, diff2) > 0.3)
+                if (MathF.Min(diff1, diff2) > 0.3)
                 {
                     await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
                 }
@@ -209,7 +215,7 @@ namespace Core.Goals
                     points.Pop();
                     if (points.Any())
                     {
-                        distance = WowPoint.DistanceTo(location, points.Peek());
+                        distance = location.DistanceXYTo(points.Peek());
                     }
                 }
 
@@ -239,7 +245,7 @@ namespace Core.Goals
         {
             var simple = PathSimplify.Simplify(points.ToArray(), 0.1f);
             simple.Reverse();
-            points = new Stack<WowPoint>(simple);
+            points = new Stack<Vector3>(simple);
         }
 
         public async Task Reset()
@@ -252,7 +258,7 @@ namespace Core.Goals
 
             logger.LogInformation("Sleeping 5 seconds");
             await Task.Delay(5000);
-            while (new List<double> { playerReader.XCoord, playerReader.YCoord, corpseLocation.X, corpseLocation.Y }.Max() > 100)
+            while (new List<float> { playerReader.XCoord, playerReader.YCoord, corpseLocation.X, corpseLocation.Y }.Max() > 100)
             {
                 logger.LogInformation($"Waiting... odd coords read. Player {playerReader.XCoord},{playerReader.YCoord} corpse { corpseLocation.X}{corpseLocation.Y}");
                 await Task.Delay(5000);
@@ -275,12 +281,12 @@ namespace Core.Goals
             }
             else
             {
-                var closestRouteAndSpiritPathPoints = routePoints.SelectMany(s => spiritWalkerPath.Select(swp => (pathPoint: s, spiritPathPoint: swp, distance: DistanceTo(s, swp))))
+                var closestRouteAndSpiritPathPoints = routePoints.SelectMany(s => spiritWalkerPath.Select(swp => (pathPoint: s, spiritPathPoint: swp, distance: s.DistanceXYTo(swp))))
                     .OrderBy(s => s.distance)
                     .First();
 
                 // spirit walker path leg
-                var spiritWalkerLeg = new List<WowPoint>();
+                var spiritWalkerLeg = new List<Vector3>();
                 for (int i = 0; i < spiritWalkerPath.Count; i++)
                 {
                     spiritWalkerLeg.Add(spiritWalkerPath[i]);
@@ -290,7 +296,7 @@ namespace Core.Goals
                     }
                 }
 
-                var closestRoutePointToCorpse = routePoints.Select(s => (pathPoint: s, distance: DistanceTo(s, corpseLocation)))
+                var closestRoutePointToCorpse = routePoints.Select(s => (pathPoint: s, distance: corpseLocation.DistanceXYTo(s)))
                     .OrderBy(s => s.distance)
                     .First()
                     .pathPoint;
@@ -310,8 +316,8 @@ namespace Core.Goals
                 var routeToCorpse = spiritWalkerLeg.Select(s => s).ToList();
                 routeToCorpse.AddRange(legFromSpiritEndToCorpse);
 
-                var myLocation = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
-                var truncatedRoute = WowPoint.ShortenRouteFromLocation(myLocation, routeToCorpse);
+                var myLocation = playerReader.PlayerLocation;
+                var truncatedRoute = VectorExt.ShortenRouteFromLocation(myLocation, routeToCorpse);
 
                 for (int i = truncatedRoute.Count - 1; i > -1; i--)
                 {
@@ -341,9 +347,9 @@ namespace Core.Goals
             }
         }
 
-        private static List<WowPoint> FillPathToCorpse(WowPoint closestRoutePointToCorpse, WowPoint pathStartPoint, List<WowPoint> routePoints)
+        private static List<Vector3> FillPathToCorpse(Vector3 closestRoutePointToCorpse, Vector3 pathStartPoint, List<Vector3> routePoints)
         {
-            var pathToCorpse = new List<WowPoint>();
+            var pathToCorpse = new List<Vector3>();
             var startPathPointIndex = 0;
             var endPathPointIndex = 0;
             for (int i = 0; i < routePoints.Count; i++)
@@ -368,41 +374,6 @@ namespace Core.Goals
             }
 
             return pathToCorpse;
-        }
-
-        private static double DistanceTo(WowPoint l1, WowPoint l2)
-        {
-            var x = l1.X - l2.X;
-            var y = l1.Y - l2.Y;
-            x = x * 100;
-            y = y * 100;
-            var distance = Math.Sqrt((x * x) + (y * y));
-
-            //logger.LogInformation($"distance:{x} {y} {distance.ToString()}");
-            return distance;
-        }
-
-        public static Vector2 GetClosestPointOnLineSegment(Vector2 A, Vector2 B, Vector2 P)
-        {
-            Vector2 AP = P - A;       //Vector from A to P
-            Vector2 AB = B - A;       //Vector from A to B
-
-            float magnitudeAB = AB.LengthSquared();     //Magnitude of AB vector (it's length squared)
-            float ABAPproduct = Vector2.Dot(AP, AB);    //The DOT product of a_to_p and a_to_b
-            float distance = ABAPproduct / magnitudeAB; //The normalized "distance" from a to your closest point
-
-            if (distance < 0)     //Check if P projection is over vectorAB
-            {
-                return A;
-            }
-            else if (distance > 1)
-            {
-                return B;
-            }
-            else
-            {
-                return A + AB * distance;
-            }
         }
 
         private async Task RandomJump()

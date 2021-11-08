@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Core
 {
     public static class PointEsimator
     {
-        public const double YARD_TO_COORD = 0.035921;
+        public const float YARD_TO_COORD = 0.035921f;
 
-        public static WowPoint GetPoint(WowPoint origo, double wowRad, double rangeYard)
+        public static Vector3 GetPoint(Vector3 origo, float wowRad, float rangeYard)
         {
             //player direction
             //0.00061
@@ -25,10 +26,10 @@ namespace Core
             //~1yard Distance
             //0.1796 / 5 = 0.03592
 
-            double range = rangeYard * YARD_TO_COORD;
-            (double dirX, double dirY) = DirectionCalculator.ToNormalRadian(wowRad);
+            float range = rangeYard * YARD_TO_COORD;
+            (float dirX, float dirY) = DirectionCalculator.ToNormalRadian(wowRad);
 
-            return new WowPoint(origo.X + (range * dirX), origo.Y + (range * dirY), origo.Z);
+            return new Vector3(origo.X + (range * dirX), origo.Y + (range * dirY), origo.Z);
         }
     }
 }

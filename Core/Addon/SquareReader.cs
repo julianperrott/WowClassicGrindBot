@@ -16,7 +16,7 @@
         }
 
         // Converts a cell's hexidecimal color to a 6 point decimal
-        public double GetFixedPointAtCell(int index)
+        public float GetFixedPointAtCell(int index)
         {
             return GetIntAtCell(index) / 100000f;
         }

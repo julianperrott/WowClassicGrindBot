@@ -14,7 +14,7 @@ namespace Core.Looting
         private readonly WowScreen wowScreen;
         private readonly WowProcessInput input;
         private readonly PlayerReader playerReader;
-        private readonly float num_theta = 32;
+        private readonly float num_theta = 32f;
         private readonly float radiusLarge;
         private readonly float dtheta;
         private readonly Point centre;
@@ -36,7 +36,7 @@ namespace Core.Looting
 
             centre = new Point(rect.Centre().X, (int)((rect.Bottom / 5) * 3f));
             radiusLarge = rect.Bottom / 6;
-            dtheta = (float)(2 * Math.PI / num_theta);
+            dtheta = 2 * MathF.PI / num_theta;
         }
 
         private void Log(string text)
@@ -99,8 +99,8 @@ namespace Core.Looting
             float theta = 0;
             for (int i = 0; i < num_theta; i++)
             {
-                float x = (float)(circleCentre.X + rx * Math.Cos(theta));
-                float y = (float)(circleCentre.Y + (ry * Math.Sin(theta)));
+                float x = (float)(circleCentre.X + rx * MathF.Cos(theta));
+                float y = (float)(circleCentre.Y + (ry * MathF.Sin(theta)));
                 var mousePosition = new Point((int)x, (int)y);
 
                 input.SetCursorPosition(mousePosition);

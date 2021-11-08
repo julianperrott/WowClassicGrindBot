@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Core
 {
@@ -13,18 +14,18 @@ namespace Core
 
         public Dictionary<Form, int> FormCost { private set; get; } = new Dictionary<Form, int>();
 
-        public WowPoint PlayerLocation => new WowPoint(XCoord, YCoord, ZCoord);
+        public Vector3 PlayerLocation => new Vector3(XCoord, YCoord, ZCoord);
 
-        public double XCoord => reader.GetFixedPointAtCell(1) * 10;
-        public double YCoord => reader.GetFixedPointAtCell(2) * 10;
-        public double ZCoord { get; set; }
-        public double Direction => reader.GetFixedPointAtCell(3);
+        public float XCoord => reader.GetFixedPointAtCell(1) * 10;
+        public float YCoord => reader.GetFixedPointAtCell(2) * 10;
+        public float ZCoord { get; set; }
+        public float Direction => reader.GetFixedPointAtCell(3);
 
         public RecordInt Level { private set; get; } = new RecordInt(5);
 
-        public WowPoint CorpseLocation => new WowPoint(CorpseX, CorpseY);
-        public double CorpseX => reader.GetFixedPointAtCell(6) * 10;
-        public double CorpseY => reader.GetFixedPointAtCell(7) * 10;
+        public Vector3 CorpseLocation => new Vector3(CorpseX, CorpseY, 0);
+        public float CorpseX => reader.GetFixedPointAtCell(6) * 10;
+        public float CorpseY => reader.GetFixedPointAtCell(7) * 10;
 
         public AddonBits Bits => new AddonBits(reader.GetIntAtCell(8), reader.GetIntAtCell(9));
 
@@ -121,8 +122,8 @@ namespace Core
         public bool TargetYieldXP => Level.Value switch
         {
             int n when n < 5 => true,
-            int n when n >= 6 && n <= 39 => TargetLevel > (Level.Value - Math.Floor(Level.Value / 10f) - 5),
-            int n when n >= 40 && n <= 59 => TargetLevel > (Level.Value - Math.Floor(Level.Value / 5f) - 5),
+            int n when n >= 6 && n <= 39 => TargetLevel > (Level.Value - MathF.Floor(Level.Value / 10f) - 5),
+            int n when n >= 40 && n <= 59 => TargetLevel > (Level.Value - MathF.Floor(Level.Value / 5f) - 5),
             int n when n >= 60 && n <= 70 => TargetLevel > Level.Value - 9,
             _ => false
         };

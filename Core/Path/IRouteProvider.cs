@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Numerics;
 
 namespace Core
 {
     public interface IRouteProvider
     {
-        List<WowPoint> PathingRoute();
+        List<Vector3> PathingRoute();
 
         DateTime LastActive { get; set; }
 
-        WowPoint? NextPoint();
+        bool HasNext();
+
+        Vector3 NextPoint();
     }
 }

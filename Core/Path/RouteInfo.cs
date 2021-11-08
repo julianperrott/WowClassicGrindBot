@@ -3,6 +3,7 @@ using Core.Goals;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using WowheadDB;
 
@@ -10,7 +11,7 @@ namespace Core
 {
     public class RouteInfoPoi
     {
-        public WowPoint Location { get; }
+        public Vector3 Location { get; }
         public string Name { get; }
         public string Color { get; }
 
@@ -24,7 +25,7 @@ namespace Core
             Radius = 1;
         }
 
-        public RouteInfoPoi(WowPoint wowPoint, string name, string color, double radius)
+        public RouteInfoPoi(Vector3 wowPoint, string name, string color, double radius)
         {
             Location = wowPoint;
             Name = name;
@@ -35,10 +36,10 @@ namespace Core
 
     public class RouteInfo
     {
-        public List<WowPoint> PathPoints { get; private set; }
-        public List<WowPoint> SpiritPath { get; private set; }
+        public List<Vector3> PathPoints { get; private set; }
+        public List<Vector3> SpiritPath { get; private set; }
 
-        public List<WowPoint> RouteToWaypoint
+        public List<Vector3> RouteToWaypoint
         {
             get
             {
@@ -46,7 +47,7 @@ namespace Core
                     .Where(r => r.Any())
                     .FirstOrDefault();
 
-                return route ?? new List<WowPoint>();
+                return route ?? new List<Vector3>();
             }
         }
 
@@ -97,7 +98,7 @@ namespace Core
             CalculatePointToGrid();
 
             StringBuilder sb = new StringBuilder();
-            foreach (WowPoint point in PathPoints)
+            foreach (Vector3 point in PathPoints)
             {
                 sb.AppendLine(point.X + "," + point.Y + "," + ToCanvasPointX(point.X) + "," + ToCanvasPointY(point.Y));
             }
@@ -121,7 +122,7 @@ namespace Core
 
         private double pointToGrid;
 
-        public RouteInfo(List<WowPoint> pathPoints, List<WowPoint> spiritPath, List<IRouteProvider> pathedRoutes, PlayerReader playerReader)
+        public RouteInfo(List<Vector3> pathPoints, List<Vector3> spiritPath, List<IRouteProvider> pathedRoutes, PlayerReader playerReader)
         {
             this.PathPoints = pathPoints.ToList();
             this.SpiritPath = spiritPath.ToList();
@@ -167,7 +168,7 @@ namespace Core
             }
         }
 
-        public string RenderPathLines(List<WowPoint> path)
+        public string RenderPathLines(List<Vector3> path)
         {
             var sb = new StringBuilder();
             for (var i = 0; i < path.Count - 1; i++)
@@ -179,7 +180,7 @@ namespace Core
             return sb.ToString();
         }
 
-        public string RenderPathPoints(List<WowPoint> path)
+        public string RenderPathPoints(List<Vector3> path)
         {
             var sb = new StringBuilder();
 
@@ -195,12 +196,12 @@ namespace Core
         public string NextPoint()
         {
             var route = this.pathedRoutes.OrderByDescending(s => s.LastActive).FirstOrDefault();
-            if (route==null) { return string.Empty; }
+            if (route == null || !route.HasNext()) { return string.Empty; }
             var pt = route.NextPoint();
-            return pt == null ? string.Empty : $"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '3' />";
+            return $"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '3' />";
         }
 
-        public string DeathImage(WowPoint pt)
+        public string DeathImage(Vector3 pt)
         {
             var size = this.canvasSize / 25;
             return pt == null ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X) - size / 2}' y = '{ToCanvasPointY(pt.Y) - size / 2}' height='{size}' width='{size}' />";

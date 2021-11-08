@@ -14,9 +14,9 @@ namespace SharedLib.Extensions
             return new Point(r.Left + r.Width / 2, r.Bottom);
         }
 
-        public static double SqrDistance(Point p1, Point p2)
+        public static float SqrDistance(Point p1, Point p2)
         {
-            return (p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y);
+            return ((p1.X - p2.X) * (p1.X - p2.X)) + ((p1.Y - p2.Y) * (p1.Y - p2.Y));
         }
     }
 

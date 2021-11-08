@@ -3,6 +3,8 @@
 @using Core
 @using Newtonsoft.Json
 @using System.IO
+@using System.Numerics;
+@using SharedLib.Extensions; 
 
 @inject Core.IAddonReader addonReader
 @inject Core.IBotController botController
@@ -104,9 +106,9 @@
     string error = "";
     string Message = "";
 
-    WowPoint editPoint = new WowPoint(0, 0);
+    Vector3 editPoint;
 
-    public string DisplayBadge(WowPoint point)
+    public string DisplayBadge(Vector3 point)
     {
         if (this.editPoint == point)
         {
@@ -145,7 +147,7 @@
             {
                 this.PathLines = new MarkupString(botController.RouteInfo.RenderPathLines(botController.RouteInfo.PathPoints));
                 this.PathPoints = new MarkupString(botController.RouteInfo.RenderPathPoints(botController.RouteInfo.PathPoints.Where(p => p != this.editPoint).ToList()));
-                this.EditPoints = new MarkupString(botController.RouteInfo.RenderPathPoints(new List<WowPoint> { this.editPoint }));
+                this.EditPoints = new MarkupString(botController.RouteInfo.RenderPathPoints(new List<Vector3> { this.editPoint }));
             }
         }
     }
@@ -162,25 +164,16 @@
     {
         if (!recording) { return; }
 
-        var location = new WowPoint(addonReader.PlayerReader.XCoord, addonReader.PlayerReader.YCoord);
+        var location = addonReader.PlayerReader.PlayerLocation;
 
         if (botController.RouteInfo != null)
         {
-            if (botController.RouteInfo.PathPoints.Count == 0 || DistanceTo(location, botController.RouteInfo.PathPoints.Last()) > Distance & location.X != 0)
+            if (botController.RouteInfo.PathPoints.Count == 0 || location.DistanceXYTo(botController.RouteInfo.PathPoints.Last()) > Distance && location.X != 0)
             {
                 botController.RouteInfo.PathPoints.Add(location);
                 UpdateRoute();
             }
         }
-    }
-
-    private double DistanceTo(WowPoint l1, WowPoint l2)
-    {
-        var x = l1.X - l2.X;
-        var y = l1.Y - l2.Y;
-        x = x * 100;
-        y = y * 100;
-        return Math.Sqrt((x * x) + (y * y));
     }
 
     private bool recording = false;
@@ -226,7 +219,7 @@
         }
     }
 
-    private void EditPoint(WowPoint point)
+    private void EditPoint(Vector3 point)
     {
         this.editPoint = point;
         this.X = point.X.ToString("0.00");
@@ -246,8 +239,8 @@
     {
         try
         {
-            editPoint.X = double.Parse(this.X);
-            editPoint.Y = double.Parse(this.Y);
+            editPoint.X = float.Parse(this.X);
+            editPoint.Y = float.Parse(this.Y);
             UpdateRoute();
         }
         catch (Exception ex)
@@ -261,7 +254,7 @@
         if (botController.RouteInfo != null)
         {
             botController.RouteInfo.PathPoints.Remove(editPoint);
-            this.editPoint = new WowPoint(0, 0);
+            this.editPoint = Vector3.Zero;
             UpdateRoute();
         }
     }

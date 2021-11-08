@@ -1,7 +1,9 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
+using SharedLib.Extensions;
 using System;
 using System.Drawing;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Core.Goals
@@ -24,11 +26,11 @@ namespace Core.Goals
         private DateTime approachStart;
 
         private bool playerWasInCombat;
-        private double lastPlayerDistance;
-        private WowPoint lastPlayerLocation;
+        private float lastPlayerDistance;
+        private Vector3 lastPlayerLocation;
 
         private int initialTargetGuid;
-        private double initialMinRange;
+        private float initialMinRange;
 
         private int SecondsSinceApproachStarted => (int)(DateTime.Now - approachStart).TotalSeconds;
 
@@ -116,7 +118,7 @@ namespace Core.Goals
                 await input.TapApproachKey("");
             }
 
-            lastPlayerDistance = WowPoint.DistanceTo(lastPlayerLocation, playerReader.PlayerLocation);
+            lastPlayerDistance = playerReader.PlayerLocation.DistanceXYTo(lastPlayerLocation);
 
             if (lastPlayerDistance < 0.05 && playerReader.LastUIErrorMessage == UI_ERROR.ERR_AUTOFOLLOW_TOO_FAR)
             {

@@ -156,11 +156,11 @@ namespace Game
             if (bitmap.Width > bitmap.Height)
             {
                 width = size;
-                height = Convert.ToInt32(bitmap.Height * size / (double)bitmap.Width);
+                height = Convert.ToInt32(bitmap.Height * size / (float)bitmap.Width);
             }
             else
             {
-                width = Convert.ToInt32(bitmap.Width * size / (double)bitmap.Height);
+                width = Convert.ToInt32(bitmap.Width * size / (float)bitmap.Height);
                 height = size;
             }
             var resized = new Bitmap(width, height);

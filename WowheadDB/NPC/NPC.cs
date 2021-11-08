@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using System;
+using System.Numerics;
+using SharedLib.Extensions;
 
 namespace WowheadDB
 {
     public class NPC
     {
-        public List<List<double>> coords;
-
-        public List<WowPoint> points { get => WowPoint.FromList(coords); } 
+        public List<List<float>> coords;
 
         public int level;
         public string name;
@@ -16,5 +15,7 @@ namespace WowheadDB
         public int reacthorde;
         public int reactalliance;
         public string description;
+
+        public List<Vector3> points => VectorExt.FromList(coords);
     }
 }

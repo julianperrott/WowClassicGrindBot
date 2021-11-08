@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using WowTriangles;
 
@@ -42,12 +43,12 @@ namespace BlazorServer
             await Task.Delay(0);
         }
 
-        public async Task<List<WowPoint>> FindRoute(int map, WowPoint fromPoint, WowPoint toPoint)
+        public async Task<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
         {
             if (!Enabled)
             {
                 logger.LogWarning($"Pathing is disabled, please check the messages when the bot started.");
-                return new List<WowPoint>();
+                return new List<Vector3>();
             }
 
             if (targetMapId == 0)
@@ -66,7 +67,7 @@ namespace BlazorServer
             if (path == null)
             {
                 logger.LogWarning($"LocalPathingApi: Failed to find a path from {fromPoint} to {toPoint}");
-                return new List<WowPoint>();
+                return new List<Vector3>();
             }
             else
             {
@@ -76,11 +77,11 @@ namespace BlazorServer
 
             var worldLocations = path.locations.Select(s => service.ToMapAreaSpot(s.X, s.Y, s.Z, map));
 
-            var result = worldLocations.Select(l => new WowPoint(l.X, l.Y)).ToList();
+            var result = worldLocations.Select(l => new Vector3(l.X, l.Y, l.Z)).ToList();
             return result;
         }
 
-        public Task<List<WowPoint>> FindRouteTo(AddonReader addonReader, WowPoint destination)
+        public Task<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
         {
             return FindRoute(addonReader.UIMapId.Value, addonReader.PlayerReader.PlayerLocation, destination);
         }

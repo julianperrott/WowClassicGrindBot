@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Numerics;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SharedLib.Extensions;
 using WowheadDB;
 
 namespace Core.Database
@@ -36,17 +38,17 @@ namespace Core.Database
             }
         }
         
-        public WowPoint? GetNearestVendor(WowPoint playerLocation)
+        public Vector3? GetNearestVendor(Vector3 playerLocation)
         {
             if (CurrentArea == null || CurrentArea.vendor.Count == 0)
                 return null;
 
             NPC nearest = CurrentArea.vendor[0];
-            double dist = WowPoint.DistanceTo(nearest.points[0], playerLocation);
+            float dist = playerLocation.DistanceXYTo(nearest.points[0]);
 
             CurrentArea.vendor.ForEach(npc =>
             {
-                var d = WowPoint.DistanceTo(npc.points[0], playerLocation);
+                var d = playerLocation.DistanceXYTo(npc.points[0]);
                 if (d < dist)
                 {
                     dist = d;

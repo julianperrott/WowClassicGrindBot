@@ -11,9 +11,9 @@ namespace Core.Session
         DateTime SessionStart { get; set; }
         DateTime SessionEnd { get; set; }
         int LevelFrom { get; set; }
-        double XpFrom { get; set; }
+        float XpFrom { get; set; }
         int LevelTo { get; set; }
-        double XpTo { get; set; }
+        float XpTo { get; set; }
         int MobsKilled { get; set; }
         void StartBotSession();
         void StopBotSession(string reason, bool active);

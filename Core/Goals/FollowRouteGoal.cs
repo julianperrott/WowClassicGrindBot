@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using SharedLib.Extensions;
 
 namespace Core.Goals
 {
@@ -14,7 +15,7 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction { get => 20f; }
 
-        private double RADIAN = Math.PI * 2;
+        private float RADIAN = MathF.PI * 2;
 
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
@@ -37,11 +38,11 @@ namespace Core.Goals
         private bool shouldMount = true;
 
         private readonly int MinDistance;
-        private double lastDistance = 999;
+        private float lastDistance = 999;
 
-        private readonly List<WowPoint> pointsList;
-        private Stack<WowPoint> routeToWaypoint = new Stack<WowPoint>();
-        private readonly Stack<WowPoint> wayPoints = new Stack<WowPoint>();
+        private readonly List<Vector3> pointsList;
+        private Stack<Vector3> routeToWaypoint = new Stack<Vector3>();
+        private readonly Stack<Vector3> wayPoints = new Stack<Vector3>();
 
         private DateTime LastReset = DateTime.Now;
 
@@ -55,20 +56,25 @@ namespace Core.Goals
 
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
 
-        public List<WowPoint> PathingRoute()
+        public List<Vector3> PathingRoute()
         {
             return routeToWaypoint.ToList();
         }
 
-        public WowPoint? NextPoint()
+        public bool HasNext()
         {
-            return routeToWaypoint.Count == 0 ? null : routeToWaypoint.Peek();
+            return routeToWaypoint.Count != 0;
+        }
+
+        public Vector3 NextPoint()
+        {
+            return routeToWaypoint.Peek();
         }
 
         #endregion
 
 
-        public FollowRouteGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, IPlayerDirection playerDirection, List<WowPoint> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler, TargetFinder targetFinder)
+        public FollowRouteGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, IPlayerDirection playerDirection, List<Vector3> points, StopMoving stopMoving, NpcNameFinder npcNameFinder, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, MountHandler mountHandler, TargetFinder targetFinder)
         {
             this.logger = logger;
             this.input = input;
@@ -178,10 +184,10 @@ namespace Core.Goals
             }
             else
             {
-                var playerLocation = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
+                var playerLocation = playerReader.PlayerLocation;
                 if(routeToWaypoint.Count > 0)
                 {
-                    var distanceToRoute = WowPoint.DistanceTo(playerLocation, routeToWaypoint.Peek());
+                    var distanceToRoute = playerLocation.DistanceXYTo(routeToWaypoint.Peek());
                     if (routeToWaypoint.Count < 1 && distanceToRoute > 200)
                     {
                         logger.LogError($"No route To Waypoint or too far {distanceToRoute}>200");
@@ -195,8 +201,8 @@ namespace Core.Goals
 
             await RandomJump();
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
-            var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+            var location = playerReader.PlayerLocation;
+            var distance = location.DistanceXYTo(routeToWaypoint.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
 
             await AdjustHeading(heading);
@@ -215,7 +221,7 @@ namespace Core.Goals
                 if (HasBeenActiveRecently())
                 {
                     await this.stuckDetector.Unstick();
-                    distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+                    distance = location.DistanceXYTo(routeToWaypoint.Peek());
                 }
                 else
                 {
@@ -294,7 +300,7 @@ namespace Core.Goals
             {
                 // start path at closest point
                 firstLoad = false;
-                var closestPoint = pointsList.OrderBy(p => WowPoint.DistanceTo(playerReader.PlayerLocation, p)).FirstOrDefault();
+                var closestPoint = pointsList.OrderBy(p => playerReader.PlayerLocation.DistanceXYTo(p)).FirstOrDefault();
 
                 for (int i = 0; i < pointsList.Count; i++)
                 {
@@ -359,14 +365,14 @@ namespace Core.Goals
         {
             if (routeToWaypoint.Any())
             {
-                var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
-                var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+                var location = playerReader.PlayerLocation;
+                var distance = location.DistanceXYTo(routeToWaypoint.Peek());
                 while (distance < PointReachedDistance(minDistance - 1) && routeToWaypoint.Any())
                 {
                     routeToWaypoint.Pop();
                     if (routeToWaypoint.Any())
                     {
-                        distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+                        distance = location.DistanceXYTo(routeToWaypoint.Peek());
                     }
                 }
             }
@@ -376,7 +382,7 @@ namespace Core.Goals
         {
             var simple = PathSimplify.Simplify(routeToWaypoint.ToArray(), 0.05f);
             simple.Reverse();
-            routeToWaypoint = new Stack<WowPoint>(simple);
+            routeToWaypoint = new Stack<Vector3>(simple);
         }
 
         private async Task RefillRouteToNextWaypoint(bool forceUsePathing)
@@ -390,12 +396,12 @@ namespace Core.Goals
 
             this.routeToWaypoint.Clear();
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
+            var location = playerReader.PlayerLocation;
             var heading = DirectionCalculator.CalculateHeading(location, wayPoints.Peek());
             await playerDirection.SetDirection(heading, wayPoints.Peek(), "Reached waypoint").ConfigureAwait(false);
 
             //Create path back to route
-            var distance = WowPoint.DistanceTo(location, wayPoints.Peek());
+            var distance = location.DistanceXYTo(wayPoints.Peek());
             if (forceUsePathing || distance > 200)
             {
                 await this.stopMoving.Stop();
@@ -414,10 +420,10 @@ namespace Core.Goals
             this.stuckDetector.SetTargetLocation(this.routeToWaypoint.Peek());
         }
 
-        private async Task AdjustHeading(double heading)
+        private async Task AdjustHeading(float heading)
         {
-            var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
-            var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
+            var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
+            var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
             var wanderAngle = 0.3;
 
@@ -426,7 +432,7 @@ namespace Core.Goals
                 wanderAngle = 0.05;
             }
 
-            var diff = Math.Min(diff1, diff2);
+            var diff = MathF.Min(diff1, diff2);
             if (diff > wanderAngle)
             {
                 if(diff > wanderAngle * 3)
@@ -463,9 +469,9 @@ namespace Core.Goals
 
             var A = wayPoints.Pop();
             var B = wayPoints.Peek();
-            var result = GetClosestPointOnLineSegment(A.Vector2(), B.Vector2(), new Vector2((float)this.playerReader.XCoord, (float)this.playerReader.YCoord));
-            var newPoint = new WowPoint(result.X, result.Y);
-            if (WowPoint.DistanceTo(newPoint, wayPoints.Peek()) >= 4)
+            var result = VectorExt.GetClosestPointOnLineSegment(A.AsVector2(), B.AsVector2(), playerReader.PlayerLocation.AsVector2());
+            var newPoint = new Vector3(result.X, result.Y, 0);
+            if (newPoint.DistanceXYTo(wayPoints.Peek()) >= 4)
             {
                 wayPoints.Push(newPoint);
                 logger.LogInformation($"Adjusted resume point");
@@ -486,30 +492,6 @@ namespace Core.Goals
                 await input.TapJump($"{GetType().Name}: Random jump");
             }
         }
-
-        public static Vector2 GetClosestPointOnLineSegment(Vector2 A, Vector2 B, Vector2 P)
-        {
-            Vector2 AP = P - A;       //Vector from A to P
-            Vector2 AB = B - A;       //Vector from A to B
-
-            float magnitudeAB = AB.LengthSquared();     //Magnitude of AB vector (it's length squared)
-            float ABAPproduct = Vector2.Dot(AP, AB);    //The DOT product of a_to_p and a_to_b
-            float distance = ABAPproduct / magnitudeAB; //The normalized "distance" from a to your closest point
-
-            if (distance < 0)     //Check if P projection is over vectorAB
-            {
-                return A;
-            }
-            else if (distance > 1)
-            {
-                return B;
-            }
-            else
-            {
-                return A + AB * distance;
-            }
-        }
-
 
         private async Task StopDrowning()
         {

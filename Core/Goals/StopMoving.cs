@@ -12,9 +12,9 @@ namespace Core.Goals
 
         private const double MinDist = 0.01;
 
-        private double XCoord = 0;
-        private double YCoord = 0;
-        private double Direction = 0;
+        private float XCoord = 0;
+        private float YCoord = 0;
+        private float Direction = 0;
 
         public StopMoving(WowProcessInput input, PlayerReader playerReader)
         {
@@ -33,7 +33,7 @@ namespace Core.Goals
             if (XCoord != playerReader.XCoord || YCoord != playerReader.YCoord)
             {
                 if (!input.IsKeyDown(ConsoleKey.DownArrow) && !input.IsKeyDown(ConsoleKey.UpArrow) &&
-                    (Math.Abs(XCoord - playerReader.XCoord) > MinDist || Math.Abs(YCoord - playerReader.YCoord) > MinDist))
+                    (MathF.Abs(XCoord - playerReader.XCoord) > MinDist || MathF.Abs(YCoord - playerReader.YCoord) > MinDist))
                 {
                     input.SetKeyState(ConsoleKey.UpArrow, true, false, "StopForward - Cancel interact");
                     await Task.Delay(1);

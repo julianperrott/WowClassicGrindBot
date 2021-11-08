@@ -1,8 +1,10 @@
 ﻿using Core.Goals;
 using Core.GOAP;
 using Microsoft.Extensions.Logging;
+using SharedLib.Extensions;
 using System;
 using System.Diagnostics;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Core
@@ -19,11 +21,11 @@ namespace Core
         private readonly Random random = new Random();
         private readonly IPlayerDirection playerDirection;
 
-        private WowPoint targetLocation = new WowPoint(0, 0);
+        private Vector3 targetLocation;
 
         private Stopwatch LastReachedDestiationTimer = new Stopwatch();
         private Stopwatch LastUnstickAttemptTimer = new Stopwatch();
-        private double previousDistanceToTarget = 99999;
+        private float previousDistanceToTarget = 99999;
         private DateTime timeOfLastSignificantMovement = DateTime.Now;
 
         public StuckDetector(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving)
@@ -38,7 +40,7 @@ namespace Core
             ResetStuckParameters();
         }
 
-        public void SetTargetLocation(WowPoint targetLocation)
+        public void SetTargetLocation(Vector3 targetLocation)
         {
             this.targetLocation = targetLocation;
             ResetStuckParameters();
@@ -135,7 +137,7 @@ namespace Core
 
         internal bool IsGettingCloser()
         {
-            var currentDistanceToTarget = WowPoint.DistanceTo(this.playerReader.PlayerLocation, targetLocation);
+            float currentDistanceToTarget = playerReader.PlayerLocation.DistanceXYTo(targetLocation);
 
             if (currentDistanceToTarget < previousDistanceToTarget - 5)
             {
@@ -160,9 +162,9 @@ namespace Core
 
         internal bool IsMoving()
         {
-            var currentDistanceToTarget = WowPoint.DistanceTo(this.playerReader.PlayerLocation, targetLocation);
+            float currentDistanceToTarget = playerReader.PlayerLocation.DistanceXYTo(targetLocation);
 
-            if (Math.Abs(currentDistanceToTarget - previousDistanceToTarget) > 1)
+            if (MathF.Abs(currentDistanceToTarget - previousDistanceToTarget) > 1)
             {
                 ResetStuckParameters();
                 previousDistanceToTarget = currentDistanceToTarget;

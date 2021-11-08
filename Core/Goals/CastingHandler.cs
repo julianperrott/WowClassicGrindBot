@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Numerics;
 
 namespace Core.Goals
 {
@@ -512,9 +513,9 @@ namespace Core.Goals
                     {
                         logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_BADATTACKFACING} -- Turning 180!");
 
-                        double desiredDirection = playerReader.Direction + Math.PI;
-                        desiredDirection = desiredDirection > Math.PI * 2 ? desiredDirection - (Math.PI * 2) : desiredDirection;
-                        await direction.SetDirection(desiredDirection, new WowPoint(0, 0), "");
+                        float desiredDirection = playerReader.Direction + MathF.PI;
+                        desiredDirection = desiredDirection > MathF.PI * 2 ? desiredDirection - (MathF.PI * 2) : desiredDirection;
+                        await direction.SetDirection(desiredDirection, Vector3.Zero, "");
                     }
 
                     await wait.Update(1);
@@ -656,9 +657,9 @@ namespace Core.Goals
                     {
                         logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_BADATTACKFACING} -- Turning 180!");
 
-                        double desiredDirection = playerReader.Direction + Math.PI;
-                        desiredDirection = desiredDirection > Math.PI * 2 ? desiredDirection - (Math.PI * 2) : desiredDirection;
-                        await direction.SetDirection(desiredDirection, new WowPoint(0, 0), "");
+                        float desiredDirection = playerReader.Direction + MathF.PI;
+                        desiredDirection = desiredDirection > MathF.PI * 2 ? desiredDirection - (MathF.PI * 2) : desiredDirection;
+                        await direction.SetDirection(desiredDirection, Vector3.Zero, "");
 
                         await wait.Update(1);
                     }

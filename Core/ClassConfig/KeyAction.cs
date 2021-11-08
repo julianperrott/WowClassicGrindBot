@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Core
 {
@@ -52,11 +53,11 @@ namespace Core
         public bool? UseWhenTargetIsCasting { get; set; }
 
         public string PathFilename { get; set; } = string.Empty;
-        public List<WowPoint> Path { get; } = new List<WowPoint>();
+        public List<Vector3> Path { get; } = new List<Vector3>();
 
-        public int StepBackAfterCast {get; set; } = 0;
+        public int StepBackAfterCast { get; set; } = 0;
 
-        public WowPoint LastClickPostion { get; private set; } = new WowPoint(0, 0);
+        public Vector3 LastClickPostion { get; private set; }
 
         public List<Requirement> RequirementObjects { get; } = new List<Requirement>();
 

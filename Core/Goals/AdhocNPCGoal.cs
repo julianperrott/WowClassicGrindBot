@@ -5,12 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Numerics;
+using SharedLib.Extensions;
 
 namespace Core.Goals
 {
     public class AdhocNPCGoal : GoapGoal, IRouteProvider
     {
-        private double RADIAN = Math.PI * 2;
+        private float RADIAN = MathF.PI * 2;
 
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
@@ -30,19 +32,24 @@ namespace Core.Goals
         private readonly ExecGameCommand execGameCommand;
         private readonly GossipReader gossipReader;
 
-        private Stack<WowPoint> routeToWaypoint = new Stack<WowPoint>();
+        private Stack<Vector3> routeToWaypoint = new Stack<Vector3>();
 
-        public List<WowPoint> PathingRoute()
+        public List<Vector3> PathingRoute()
         {
             return routeToWaypoint.ToList();
         }
 
-        public WowPoint? NextPoint()
+        public bool HasNext()
         {
-            return routeToWaypoint.Count == 0 ? null : routeToWaypoint.Peek();
+            return routeToWaypoint.Count != 0;
         }
 
-        private double lastDistance = 999;
+        public Vector3 NextPoint()
+        {
+            return routeToWaypoint.Peek();
+        }
+
+        private float lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private bool shouldMount = true;
         
@@ -114,8 +121,8 @@ namespace Core.Goals
                 input.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 1");
             }
 
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
-            var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+            var location = playerReader.PlayerLocation;
+            var distance = location.DistanceXYTo(routeToWaypoint.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
 
             await AdjustHeading(heading);
@@ -157,7 +164,7 @@ namespace Core.Goals
                 if (routeToWaypoint.Count == 0)
                 {
                     await this.stopMoving.Stop();
-                    distance = WowPoint.DistanceTo(location, this.StartOfPathToNPC());
+                    distance = location.DistanceXYTo(StartOfPathToNPC());
                     if (distance > 50)
                     {
                         await FillRouteToDestination();
@@ -206,7 +213,7 @@ namespace Core.Goals
             LastActive = DateTime.Now;
         }
 
-        private async Task FollowPath(List<WowPoint> path)
+        private async Task FollowPath(List<Vector3> path)
         {
             // show route on map
             this.routeToWaypoint.Clear();
@@ -225,11 +232,11 @@ namespace Core.Goals
             }
         }
 
-        private async Task MoveCloserToPoint(int pressDuration, WowPoint target)
+        private async Task MoveCloserToPoint(int pressDuration, Vector3 target)
         {
             logger.LogInformation($"Moving to spot = {target}");
 
-            var distance = WowPoint.DistanceTo(playerReader.PlayerLocation, target);
+            var distance = playerReader.PlayerLocation.DistanceXYTo(target);
             var lastDistance = distance;
             while (distance <= lastDistance && distance > 5)
             {
@@ -242,7 +249,7 @@ namespace Core.Goals
 
                 await this.input.KeyPress(ConsoleKey.UpArrow, pressDuration);
                 await this.stopMoving.Stop();
-                distance = WowPoint.DistanceTo(playerReader.PlayerLocation, target);
+                distance = playerReader.PlayerLocation.DistanceXYTo(target);
             }
         }
 
@@ -262,14 +269,14 @@ namespace Core.Goals
         {
             if (routeToWaypoint.Any())
             {
-                var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
-                var distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+                var location = playerReader.PlayerLocation;
+                var distance = location.DistanceXYTo(routeToWaypoint.Peek());
                 while (distance < PointReachedDistance() && routeToWaypoint.Any())
                 {
                     routeToWaypoint.Pop();
                     if (routeToWaypoint.Any())
                     {
-                        distance = WowPoint.DistanceTo(location, routeToWaypoint.Peek());
+                        distance = location.DistanceXYTo(routeToWaypoint.Peek());
                     }
                 }
             }
@@ -278,8 +285,8 @@ namespace Core.Goals
         private async Task FillRouteToDestination()
         {
             this.routeToWaypoint.Clear();
-            WowPoint target = StartOfPathToNPC();
-            var location = new WowPoint(playerReader.XCoord, playerReader.YCoord, playerReader.ZCoord);
+            Vector3 target = StartOfPathToNPC();
+            var location = playerReader.PlayerLocation;
             var heading = DirectionCalculator.CalculateHeading(location, target);
             await playerDirection.SetDirection(heading, target, "Set Location target").ConfigureAwait(false);
 
@@ -304,7 +311,7 @@ namespace Core.Goals
             this.stuckDetector.SetTargetLocation(this.routeToWaypoint.Peek());
         }
 
-        private WowPoint StartOfPathToNPC()
+        private Vector3 StartOfPathToNPC()
         {
             if (!this.key.Path.Any())
             {
@@ -315,10 +322,10 @@ namespace Core.Goals
             return this.key.Path[0];
         }
 
-        private async Task AdjustHeading(double heading)
+        private async Task AdjustHeading(float heading)
         {
-            var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
-            var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
+            var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
+            var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
             var wanderAngle = 0.3;
 
@@ -327,7 +334,7 @@ namespace Core.Goals
                 wanderAngle = 0.05;
             }
 
-            if (Math.Min(diff1, diff2) > wanderAngle)
+            if (MathF.Min(diff1, diff2) > wanderAngle)
             {
                 logger.LogInformation("Correct direction");
                 await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");

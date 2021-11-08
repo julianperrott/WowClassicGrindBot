@@ -1,5 +1,7 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
+using SharedLib.Extensions;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Core.Goals
@@ -27,7 +29,7 @@ namespace Core.Goals
         public override async Task PerformAction()
         {
             int lastHealth = playerReader.HealthCurrent;
-            WowPoint lastPosition = playerReader.PlayerLocation;
+            var lastPosition = playerReader.PlayerLocation;
 
             SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, !playerReader.Unskinnable));
 
@@ -53,9 +55,9 @@ namespace Core.Goals
             await input.TapClearTarget();
         }
 
-        private bool IsPlayerMoving(WowPoint lastPos)
+        private bool IsPlayerMoving(Vector3 lastPos)
         {
-            var distance = WowPoint.DistanceTo(lastPos, playerReader.PlayerLocation);
+            var distance = playerReader.PlayerLocation.DistanceXYTo(lastPos);
             return distance > 0.5f;
         }
     }
