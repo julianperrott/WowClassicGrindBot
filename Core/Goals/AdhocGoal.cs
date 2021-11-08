@@ -46,7 +46,7 @@ namespace Core.Goals
 
         public override float CostOfPerformingAction { get => key.Cost; }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             if (key.StopBeforeCast)
             {

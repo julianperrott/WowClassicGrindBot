@@ -83,7 +83,7 @@ namespace Core.Goals
             LastEventReceived = DateTime.Now;
         }
 
-        public override async Task OnEnter()
+        public override async ValueTask OnEnter()
         {
             await base.OnEnter();
             playerReader.ZCoord = 0;
@@ -92,7 +92,7 @@ namespace Core.Goals
             addonReader.PlayerDied();
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             // is corpse visible
             if (this.playerReader.CorpseX < 1 && this.playerReader.CorpseX < 1)

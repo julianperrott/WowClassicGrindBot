@@ -127,7 +127,7 @@ namespace Core.Goals
             }
         }
 
-        public override async Task OnEnter()
+        public override async ValueTask OnEnter()
         {
             await base.OnEnter();
 
@@ -139,13 +139,13 @@ namespace Core.Goals
             }
         }
 
-        public override async Task OnExit()
+        public override async ValueTask OnExit()
         {
             await base.OnExit();
             targetFinderCts?.Cancel();
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             if (playerReader.HasTarget)
             {

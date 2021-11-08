@@ -64,7 +64,7 @@ namespace Core.Goals
             AddEffect(GoapKey.incombatrange, true);
         }
 
-        public override async Task OnEnter()
+        public override async ValueTask OnEnter()
         {
             await base.OnEnter();
 
@@ -81,7 +81,7 @@ namespace Core.Goals
             approachStart = DateTime.Now;
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             lastPlayerLocation = playerReader.PlayerLocation;
             await wait.Update(1);

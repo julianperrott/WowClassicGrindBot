@@ -23,7 +23,7 @@ namespace Core.Goals
             AddEffect(GoapKey.hastarget, true);
         }
 
-        public override async Task PerformAction()
+        public override async ValueTask PerformAction()
         {
             await input.TapTargetPet();
             await input.TapTargetOfTarget();
