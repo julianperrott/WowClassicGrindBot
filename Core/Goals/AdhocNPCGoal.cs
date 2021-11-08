@@ -334,7 +334,7 @@ namespace Core.Goals
                 wanderAngle = 0.05;
             }
 
-            if (Math.Min(diff1, diff2) > wanderAngle)
+            if (MathF.Min(diff1, diff2) > wanderAngle)
             {
                 logger.LogInformation("Correct direction");
                 await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");

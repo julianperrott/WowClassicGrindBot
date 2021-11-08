@@ -8,7 +8,7 @@ namespace Core.Goals
 {
     public class WrongZoneGoal : GoapGoal
     {
-        private double RADIAN = Math.PI * 2;
+        private float RADIAN = MathF.PI * 2;
         private ConfigurableInput input;
 
         private readonly AddonReader addonReader;
@@ -16,7 +16,7 @@ namespace Core.Goals
         private readonly IPlayerDirection playerDirection;
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
-        private double lastDistance = 999;
+        private float lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private ILogger logger;
 
@@ -80,10 +80,10 @@ namespace Core.Goals
             }
             else // distance closer
             {
-                var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
-                var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
+                var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
+                var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
-                if (Math.Min(diff1, diff2) > 0.3)
+                if (MathF.Min(diff1, diff2) > 0.3)
                 {
                     await playerDirection.SetDirection(heading, targetLocation, "Correcting direction");
                 }

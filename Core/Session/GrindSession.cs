@@ -27,21 +27,21 @@ namespace Core.Session
         [JsonIgnore]
         public int TotalTimeInMinutes => (int)(SessionEnd - SessionStart).TotalMinutes;
         public int LevelFrom { get; set; }
-        public double XpFrom { get; set; }
+        public float XpFrom { get; set; }
         public int LevelTo { get; set; }
-        public double XpTo { get; set; }
+        public float XpTo { get; set; }
         public int MobsKilled { get; set; }
-        public double MobsPerMinute => Math.Round(MobsKilled / (double)TotalTimeInMinutes, 2);
+        public float MobsPerMinute => MathF.Round(MobsKilled / (float)TotalTimeInMinutes, 2);
         public int Death { get; set; }
         public string? Reason { get; set; }
         [JsonIgnore]
-        public double ExperiencePerHour => TotalTimeInMinutes == 0 ? 0 : Math.Round((double)(ExpGetInBotSession / TotalTimeInMinutes * 60), 0);
+        public float ExperiencePerHour => TotalTimeInMinutes == 0 ? 0 : MathF.Round(ExpGetInBotSession / TotalTimeInMinutes * 60f, 0);
         [JsonIgnore]
-        public double ExpGetInBotSession
+        public float ExpGetInBotSession
         {
             get
             {
-                var expList = ExperienceProvider.GetExperienceList();
+                var expList = ExperienceProvider.GetExperienceList(); // eh should not load a file each time called this getter :(
                 var maxLevel = expList.Length + 1;
                 if (LevelFrom == maxLevel)
                     return 0;

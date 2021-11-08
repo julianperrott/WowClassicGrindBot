@@ -191,10 +191,10 @@ namespace Core.Goals
             }
             else // distance closer
             {
-                var diff1 = Math.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
-                var diff2 = Math.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
+                var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
+                var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
-                if (Math.Min(diff1, diff2) > 0.3)
+                if (MathF.Min(diff1, diff2) > 0.3)
                 {
                     await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
                 }

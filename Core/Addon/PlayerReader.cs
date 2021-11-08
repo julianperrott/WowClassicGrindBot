@@ -122,8 +122,8 @@ namespace Core
         public bool TargetYieldXP => Level.Value switch
         {
             int n when n < 5 => true,
-            int n when n >= 6 && n <= 39 => TargetLevel > (Level.Value - Math.Floor(Level.Value / 10f) - 5),
-            int n when n >= 40 && n <= 59 => TargetLevel > (Level.Value - Math.Floor(Level.Value / 5f) - 5),
+            int n when n >= 6 && n <= 39 => TargetLevel > (Level.Value - MathF.Floor(Level.Value / 10f) - 5),
+            int n when n >= 40 && n <= 59 => TargetLevel > (Level.Value - MathF.Floor(Level.Value / 5f) - 5),
             int n when n >= 60 && n <= 70 => TargetLevel > Level.Value - 9,
             _ => false
         };

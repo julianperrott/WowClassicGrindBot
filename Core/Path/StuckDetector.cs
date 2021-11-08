@@ -164,7 +164,7 @@ namespace Core
         {
             var currentDistanceToTarget = playerReader.PlayerLocation.DistanceTo(targetLocation);
 
-            if (Math.Abs(currentDistanceToTarget - previousDistanceToTarget) > 1)
+            if (MathF.Abs(currentDistanceToTarget - previousDistanceToTarget) > 1)
             {
                 ResetStuckParameters();
                 previousDistanceToTarget = currentDistanceToTarget;

@@ -155,7 +155,7 @@ namespace Core.Goals
 
         public override async Task PerformAction()
         {
-            if (Math.Abs(lastDirectionForTurnAround - playerReader.Direction) > Math.PI / 2)
+            if (MathF.Abs(lastDirectionForTurnAround - playerReader.Direction) > MathF.PI / 2)
             {
                 logger.LogInformation($"{GetType().Name}: Turning too fast!");
                 await stopMoving.Stop();
