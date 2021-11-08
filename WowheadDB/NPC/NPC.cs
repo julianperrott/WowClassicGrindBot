@@ -16,6 +16,6 @@ namespace WowheadDB
         public int reactalliance;
         public string description;
 
-        public List<Vector3> points => Vector3Ext.FromList(coords);
+        public List<Vector3> points => VectorExt.FromList(coords);
     }
 }

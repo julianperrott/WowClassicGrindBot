@@ -469,7 +469,7 @@ namespace Core.Goals
 
             var A = wayPoints.Pop();
             var B = wayPoints.Peek();
-            var result = GetClosestPointOnLineSegment(A.Vector2(), B.Vector2(), playerReader.PlayerLocation.Vector2());
+            var result = VectorExt.GetClosestPointOnLineSegment(A.AsVector2(), B.AsVector2(), playerReader.PlayerLocation.AsVector2());
             var newPoint = new Vector3(result.X, result.Y, 0);
             if (newPoint.DistanceTo(wayPoints.Peek()) >= 4)
             {
@@ -492,30 +492,6 @@ namespace Core.Goals
                 await input.TapJump($"{GetType().Name}: Random jump");
             }
         }
-
-        public static Vector2 GetClosestPointOnLineSegment(Vector2 A, Vector2 B, Vector2 P)
-        {
-            Vector2 AP = P - A;       //Vector from A to P
-            Vector2 AB = B - A;       //Vector from A to B
-
-            float magnitudeAB = AB.LengthSquared();     //Magnitude of AB vector (it's length squared)
-            float ABAPproduct = Vector2.Dot(AP, AB);    //The DOT product of a_to_p and a_to_b
-            float distance = ABAPproduct / magnitudeAB; //The normalized "distance" from a to your closest point
-
-            if (distance < 0)     //Check if P projection is over vectorAB
-            {
-                return A;
-            }
-            else if (distance > 1)
-            {
-                return B;
-            }
-            else
-            {
-                return A + AB * distance;
-            }
-        }
-
 
         private async Task StopDrowning()
         {

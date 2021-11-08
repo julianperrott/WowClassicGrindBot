@@ -317,7 +317,7 @@ namespace Core.Goals
                 routeToCorpse.AddRange(legFromSpiritEndToCorpse);
 
                 var myLocation = playerReader.PlayerLocation;
-                var truncatedRoute = Vector3Ext.ShortenRouteFromLocation(myLocation, routeToCorpse);
+                var truncatedRoute = VectorExt.ShortenRouteFromLocation(myLocation, routeToCorpse);
 
                 for (int i = truncatedRoute.Count - 1; i > -1; i--)
                 {
