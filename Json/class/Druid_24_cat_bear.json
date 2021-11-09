@@ -1,0 +1,229 @@
+{
+  "ClassName": "Druid",
+  "Loot": true,
+  "PathFilename": "_pack\\20-30\\Duskwood\\21-22.json",
+  "PathReduceSteps": true,
+  "CheckTargetGivesExp": true,
+  "Form": [
+    {
+      //macro: /cancelform
+      "Name": "cancelform",
+      "Key": "F1",
+      "Form": "None"
+    },
+    {
+      "Name": "Bear Form",
+      "Key": "F2",
+      "Form": "Druid_Bear",
+      "MinMana": 50
+    },
+    {
+      "Name": "Cat form",
+      "Key": "F3",
+      "Form": "Druid_Cat",
+      "MinMana": 123
+    }
+  ],
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Rejuvenation",
+        "Key": "6",
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": ["Health%<75", "not Rejuvenation"],
+        "Cooldown": 5000,
+        "Form": "None"
+      },
+      {
+        "Name": "Moonfire",
+        "Key": "5",
+        "CastIfAddsVisible": true,
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire"],
+        "Cooldown": 10000,
+        "Form": "None"
+      },
+      {
+        "Name": "Cat Form",
+        "Key": "F3",
+        "WaitForWithinMeleeRange": true,
+        "Requirements": ["Moonfire", "not Form:Druid_Cat", "Health%>50"]
+      },
+      {
+        "Name": "Cat Form",
+        "Key": "F3",
+        "Requirements": ["not Form:Druid_Cat", "Health%>50"]
+      },
+      {
+        "Name": "Tiger's Fury",
+        "Key": "5",
+        "WhenUsable": true,
+        "MinEnergy": 30,
+        "Requirements": ["Form:Druid_Cat", "not TigersFury", "InMeleeRange"]
+      },
+      {
+        "Name": "Bear Form",
+        "Key": "F2",
+        "Requirements": ["not Form:Druid_Bear", "Health%<50"]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Regrowth",
+        "Key": "0",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirement": "Health%<30",
+        "Cooldown": 8000,
+        "Form": "None"
+      },
+      {
+        "Name": "Tiger's Fury",
+        "Key": "5",
+        "MinComboPoints": 1,
+        "WhenUsable": true,
+        "MinEnergy": 30,
+        "Cooldown": 5000,
+        "Requirements": ["Form:Druid_Cat", "not TigersFury", "Rip", "Rake", "InMeleeRange"]
+      },
+      {
+        "Name": "Rip",
+        "Key": "3",
+        "MinEnergy": 30,
+        "MinComboPoints": 1,
+        "WhenUsable": true,
+        "Requirements": ["SpellInRange:2", "not Rip", "MobCount<2", "Form:Druid_Cat", "TargetHealth%>20"],
+      },
+      {
+        "Name": "Rake",
+        "Key": "4",
+        "MinEnergy": 35,
+        "WhenUsable": true,
+        "Requirements": ["SpellInRange:2", "not Rake", "MobCount<2", "Form:Druid_Cat", "TargetHealth%>20"],
+      },
+      {
+        "Name": "Claw",
+        "Key": "2",
+        "MinEnergy": 40,
+        "WhenUsable": true,
+        "Requirements": ["SpellInRange:2", "MobCount<2", "Form:Druid_Cat"],
+        "Form": "Druid_Cat"
+      },
+      {
+        "Name": "Bear Form",
+        "Key": "F2",
+        "Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>1"]
+      },
+      {
+        "Name": "Bash",
+        "Key": "5",
+        "Requirements": ["SpellInRange:1", "TargetCastingSpell||Health%<38"],
+        "WhenUsable": true,
+        "MinRage": 10,
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Enrage",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirement": "Form:Druid_Bear",
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Demoralizing Roar",
+        "Key": "3",
+        "MinRage": 10,
+        "WhenUsable": true,
+        "Requirements": ["InMeleeRange", "not Demoralizing Roar", "MobCount>1", "Form:Druid_Bear"],
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Swipe",
+        "Key": "6",
+        "MinRage": 20,
+        "WhenUsable": true,
+        "Requirements": ["InMeleeRange", "MobCount>1", "Form:Druid_Bear"],
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Maul",
+        "Key": "2",
+        "MinRage": 15,
+        "Requirements": ["InMeleeRange", "MobCount<2", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
+        "AfterCastWaitNextSwing": true,
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Cat Form",
+        "Key": "F3",
+        "Requirements": ["not Form:Druid_Cat", "Health%>60", "MobCount<2"]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirement": "not AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Mark of the Wild",
+        "Key": "4",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Mark of the Wild",
+        "Form": "None"
+      },
+      {
+        "Name": "Thorns",
+        "Key": "7",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Thorns",
+        "Form": "None"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health%<50",
+        "Form": "None"
+      },
+      {
+        "Name": "Water",
+        "Key": "-",
+        "Requirement": "Mana%<40",
+        "Form": "None"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}
