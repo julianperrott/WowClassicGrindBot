@@ -60,12 +60,12 @@
   "Combat": {
     "Sequence": [
       {
-        "Name": "Healing Touch",
-        "Key": "3",
+        "Name": "Regrowth",
+        "Key": "0",
         "HasCastBar": true,
         "WhenUsable": true,
         "Requirement": "Health%<30",
-        "Cooldown": 5000,
+        "Cooldown": 8000,
         "Form": "None"
       },
       {
@@ -167,6 +167,24 @@
         "Key": "-",
         "Requirement": "Mana%<30",
         "Form": "None"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "20_Westfall_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "20_Westfall_Vendor.json",
+        "Cost": 6
       }
     ]
   }
