@@ -220,3 +220,7 @@ app {
 .mat-autocomplete-list-popup-element {
     color: #d3d3d3;
 }
+
+.bg-majestic {
+    background-color: #620693;
+}
