@@ -205,36 +205,18 @@ app {
     border-top: none;
 }
 
-
-/* gray mode*/
-body, table, .card-body {
-    background-color: #333 !important
-}
-
-body {
-    color: #AAA;
-}
-
 .card-header, .card-header table {
-    background-color: darkslateblue !important
-}
-
-.card-header {
-    color: white;
-}
-
-.table-dark {
-    background-color: #343a40 !important;
-}
-
-.table {
-    color: gray;
-}
-
-td {
-    color: #999;
+    background-color: darkslateblue !important;
 }
 
 .hide {
     display: none;
+}
+
+.mat-autocomplete-list-popup {
+    background-color: #191d21;
+}
+
+.mat-autocomplete-list-popup-element {
+    color: #d3d3d3;
 }
