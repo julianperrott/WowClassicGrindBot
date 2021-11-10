@@ -30,7 +30,7 @@ namespace Core.Database
                 {
                     CurrentArea = JsonConvert.DeserializeObject<Area>(File.ReadAllText(Path.Join(dataConfig.Area, $"{areaId}.json")));
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     logger.LogError(e.Message, e.StackTrace);
                 }

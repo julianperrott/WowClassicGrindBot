@@ -5,27 +5,18 @@
 @inject Core.IBotController botController
 @implements IDisposable
 
-@using Core
-@using Microsoft.AspNetCore.Html
-@using System.Threading;
 @using SharedLib;
-@using Game;
 
-<style>
-    h5 {
-        margin-top: 20px
-    }
-</style>
+<div class="container">
 
 @if (saved)
 {
     <h1>Saved! - Please wait until restart! And press <b>Reload</b> when it prompts!</h1>
-
     <span class="row col-md-12">@playerClass</span>
 }
-else
+else if (frameConfigurator != null)
 {
-    if (DataFrameConfiguration.Exists())
+    @if (DataFrameConfiguration.Exists())
     {
         <h1>Frame Configuration file already exists</h1>
     }
@@ -34,400 +25,212 @@ else
         <h1>Frame configuration not found !</h1>
     }
 
-    @if (addonNotVisible)
-    {
-        <hr />
-        <div class="row col-md-12">
-            <span class="row col-md-12">I saw @dataFrames.Count data frames. But its keep changing! The addon is not visible.</span>
-        </div>
-        <div class="row col-md-12">
-            <p class="h3 text-danger">Restart the game</p>
-        </div>
-        <div class="row col-md-12">
-            <p class="h3 text-danger">Enable the addon</p>
-        </div>
-        <div class="row col-md-12">
-            <p class="h3 text-danger">Make sure nothing obstruct</p>
-        </div>
-    }
-
-    <hr />
-    <h5 class="row col-md-12">Your screen:</h5>
-    @if (@dataFrames.Count == dataFrameMeta.frames)
-    {
-        <span class="row col-md-12">I see @dataFrames.Count data frames. This is perfect, just click the Save button.</span>
-    }
-    else
-    {
-        <span class="row col-md-12">I see @dataFrames.Count data frames. I should see @dataFrameMeta.frames if you have typed <span class="ml-1"><b>&#47;@addonConfig?.Command</b></span></span>
-    }
-
-    <div class="row col-md-12">
-        @if (@dataFrames.Count != dataFrameMeta.frames)
-        {
-            <img style="border:1px solid red; margin: 5px" src="data:image/png;base64, @image" alt="Red dot" />
-        }
-        else
-        {
-            <img style="border:1px solid green; margin: 5px" src="data:image/png;base64, @image" alt="Red dot" />
-        }
-    </div>
-
-    <span class="row col-md-12">@playerClass</span>
-
     @if (DataFrameConfiguration.Exists())
     {
         <hr />
         <h4 class="text-warning">Tinkering with the following fields are not recommend! Unless experinecing strange behaviours then repeat the Frame Configuration process!</h4>
     }
 
-    <hr />
-    <h4 class="row col-md-12"><b>Auto config</b>: It will automatically setup the necessary stuffs.</h4>
-    <hr />
+    <div class="card-deck mb-3 text-center">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Auto</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mt-1 mb-1">
+                    <li>1-Click</li>
+                    <li>Recommended in general</li>
+                </ul>
+                <button class="btn btn-lg btn-block btn-primary" @onclick="StartAutoConfigure">
+                    <span>Start</span>
+                </button>
+            </div>
+        </div>
 
-    <button class="row col-md-1 btn btn-sm btn-success" @onclick="AutoConfigure">
-        <span>Auto Configure and Restart</span>
-    </button>
-
-    <hr />
-    <h4 class="row col-md-12"><b>Manually:</b></h4>
-    <h5 class="row col-md-12">Step 1: Please ensure the addon <span class="px-2"><b>@addonConfig?.Title</b></span> found in the addon folders is running. You should see the multi-coloured pixels at the top left of the screen.</h5>
-
-    <div class="row col-md-12">
-        @if (dataFrames.Count != dataFrameMeta.frames)
-        {
-            <img src="Addon_Normal.png" />
-        }
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Manual</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mt-1 mb-1">
+                    <li>Follow few steps</li>
+                    <li>Recommended for troubleshooting</li>
+                </ul>
+                <button type="button" class="btn btn-lg btn-block @manualButtonStyle" @onclick="ToggleManualConfig">@manualButtonText</button>
+            </div>
+        </div>
     </div>
 
-    <h5 class="row col-md-12">Step 2: Now we are going to put the addon into configuration mode, this will change the addon colours displayed. In the wow chat window: type <span class="ml-1"><b>&#47;@addonConfig?.Command</b></span></h5>
-
-    @if (dataFrames.Count != dataFrameMeta.frames)
+    @if (frameConfigurator.AddonNotVisible)
     {
-        <div class="row col-md-12" style="margin-top:10px">
-            <img src="Addon_Config.png" />
-        </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+            I saw @frameConfigurator.dataFrames.Count data frames. But its keep changing! The addon is not visible.
+        </li>
+        <li class="list-group-item">
+            <p class="text-danger">Restart the game</p>
+        </li>
+        <li class="list-group-item">
+            <p class="text-danger">Enable the addon</p>
+        </li>
+        <li class="list-group-item">
+            <p class="text-danger">Make sure nothing obstruct</p>
+        </li>
+    </ul>
+    <br>
     }
 
-    <h5 class="row col-md-12">Step 3: I see @dataFrames.Count data frames. Should see @dataFrameMeta.frames</h5>
+    <h5 class="row col-md-12">Your screen:</h5>
 
-    @if (dataFrameMeta.frames != 0 && dataFrames.Count == dataFrameMeta.frames)
+    <div class="row col-md-12">
+    @if (@frameConfigurator.dataFrames.Count != frameConfigurator.dataFrameMeta.frames)
     {
-        <h5 class="row col-md-12">Step 4: Now return to normal mode, In the wow chat window: type <span class="ml-1"><b>&#47;@addonConfig?.Command</b></span></h5>
+        <img style="border:1px solid red; margin: 5px" src="data:image/png;base64, @frameConfigurator.ImageBase64" alt="Red dot" />
+    }
+    else
+    {
+        <img style="border:1px solid green; margin: 5px" src="data:image/png;base64, @frameConfigurator.ImageBase64" alt="Red dot" />
+    }
+    </div>
 
-        @if (!playerClass.ToLower().Contains("unable to read player class"))
+    <span class="row col-md-12">@playerClass</span>
+
+@if (manual)
+{
+    <br>
+    <ul class="list-group">
+        <li class="list-group-item">
+            Step 1: Please ensure the addon <span class="px-2"><b>@addonConfig?.Title</b></span> found in the addon folders is running. You should see the multi-coloured pixels at the top left of the screen.
+            @if (frameConfigurator.dataFrames.Count != frameConfigurator.dataFrameMeta.frames)
+            {
+                <br>
+                <img src="Addon_Normal.png" />
+            }
+        </li>
+        <li class="list-group-item">
+            Step 2: Now we are going to put the addon into configuration mode, this will change the addon colours displayed. In the wow chat window: type <span class="ml-1"><b>&#47;@addonConfig?.Command</b></span>
+            @if (frameConfigurator.dataFrames.Count != frameConfigurator.dataFrameMeta.frames)
+            {
+                <br>
+                <img src="Addon_Config.png" />
+            }
+        </li>
+        <li class="list-group-item">
+            Step 3: Should see @frameConfigurator.dataFrameMeta.frames frames - Now i see @frameConfigurator.dataFrames.Count data frames.
+        </li>
+        @if (frameConfigurator.dataFrameMeta.frames != 0 && frameConfigurator.dataFrames.Count == frameConfigurator.dataFrameMeta.frames)
         {
-            <h5 class="row col-md-12">Step 5:  Click Save</h5>
-            <button class="row col-md-1 btn btn-sm btn-primary" @onclick="Configure">
-                <span>Save</span>
-            </button>
+            <li class="list-group-item">
+                <span>Step 4: Now return to normal mode, In the wow chat window: type <span class="ml-1"><b>&#47;@addonConfig?.Command</b></span></span>
+            </li>
         }
-    }
+        @if (!string.IsNullOrEmpty(playerClass) && !playerClass.ToLower().Contains("unable to read player class") && !playerClass.ToLower().Contains("none"))
+        {
+            <li class="list-group-item">
+                Step 5: This is perfect, just click the Save button.
+                <br>
+                <button class="btn btn-sm btn-success" @onclick="FinishManualConfigure">
+                    <span>Save</span>
+                </button>
+            </li>
+        }
+    </ul>
 }
+}
+
+    <LogComponent />
+</div>
 @code {
 
     private AddonConfig addonConfig = AddonConfig.Load();
-    private AddonConfigurator? addonConfigurator;
-
-    private DataConfig? dataConfig;
-    private Core.Database.AreaDB? areaDb;
-    private DataFrameMeta dataFrameMeta = DataFrameMeta.Empty;
-    private DataFrameConfiguration? config;
-    private List<DataFrame> dataFrames = new List<DataFrame>();
-    private IAddonDataProvider? addonDataProvider;
-    private AddonReader? addonReader;
-
-    private WowProcess? wowProcess;
-    private WowScreen? wowScreen;
-    private WowProcessInput? WowProcessInput;
 
     private bool saved = false;
-    private string playerClass = "";
-    private bool addonNotVisible = false;
+    private bool manual { get; set; } = false;
+    private string manualButtonText { get; set; } = "Start";
+    private string manualButtonStyle => manualButtonText == "Start" ? "btn-primary" : "btn-danger";
+    private string playerClass = string.Empty;
 
-    string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
-
-    private Thread? screenshotThread;
-    private const int interval = 1000;
-    private int counter = 0;
-    private CancellationTokenSource? cancellationTokenSource;
+    private FrameConfigurator? frameConfigurator;
 
     protected override void OnInitialized()
     {
-        if (config == null)
+        frameConfigurator = new FrameConfigurator(logger);
+        frameConfigurator.OnUpdate -= OnUpdate;
+        frameConfigurator.OnUpdate += OnUpdate;
+    }
+
+    private void OnUpdate(object? sender, EventArgs e)
+    {
+        if (frameConfigurator != null)
         {
-            wowProcess = new WowProcess();
-            wowScreen = new WowScreen(logger, wowProcess);
-            WowProcessInput = new WowProcessInput(logger, wowProcess);
-            config = new DataFrameConfiguration(wowScreen);
-            dataConfig = DataConfig.Load();
-
-            areaDb = new Core.Database.AreaDB(logger, dataConfig);
-
-            addonConfigurator = new AddonConfigurator(logger, addonConfig);
-
-            if (DataFrameConfiguration.Exists())
+            if (frameConfigurator.ResolveClass() && frameConfigurator.AddonReader != null)
             {
-                dataFrames = DataFrameConfiguration.LoadFrames();
-                dataFrameMeta = DataFrameConfiguration.LoadMeta();
-
-                addonDataProvider = new AddonDataProvider(wowScreen, dataFrames);
+                playerClass = frameConfigurator.AddonReader.PlayerReader.Race.ToString()
+                    + " " + frameConfigurator.AddonReader.PlayerReader.Class.ToString();
+            }
+            else
+            {
+                playerClass = "unable to read player class";
             }
 
-            cancellationTokenSource = new CancellationTokenSource();
-            screenshotThread = new System.Threading.Thread(ScreenshotRefreshThread);
-            screenshotThread.Start();
+            saved = frameConfigurator.Saved;
         }
+
+        InvokeAsync(() =>
+        {
+            base.StateHasChanged();
+        });
     }
 
     public void Dispose()
     {
-        cancellationTokenSource?.Cancel();
+        frameConfigurator?.Dispose();
     }
 
-    private DataFrameMeta GetDataFrameMeta()
+    public async Task ToggleManualConfig()
     {
-        if (config == null) return DataFrameMeta.Empty;
-
-        var screenshot = wowScreen?.GetBitmap(5, 5);
-        if (screenshot == null) return DataFrameMeta.Empty;
-
-        var meta = DataFrameConfiguration.GetMeta(screenshot);
-        return meta;
-    }
-
-    private void ScreenshotRefreshThread()
-    {
-        while (cancellationTokenSource != null && !cancellationTokenSource.Token.IsCancellationRequested)
+        if (frameConfigurator != null)
         {
-            if (wowProcess != null && wowScreen != null && config != null && dataConfig != null && areaDb != null)
+            manual = !manual;
+            if (manual)
             {
-                if (dataFrameMeta == DataFrameMeta.Empty)
-                {
-                    addonNotVisible = false;
-                    dataFrameMeta = GetDataFrameMeta();
-
-                    InvokeAsync(() =>
-                    {
-                        base.StateHasChanged();
-                    });
-                }
-                else
-                {
-                    var temp = GetDataFrameMeta();
-                    if (temp != DataFrameMeta.Empty && temp.rows != dataFrameMeta.rows)
-                    {
-                        addonNotVisible = true;
-                        dataFrameMeta = DataFrameMeta.Empty;
-
-                        InvokeAsync(() =>
-                        {
-                            base.StateHasChanged();
-                        });
-                    }
-                }
-
-                if (dataFrameMeta != DataFrameMeta.Empty)
-                {
-                    wowScreen.GetRectangle(out var rect);
-                    var size = dataFrameMeta.EstimatedSize(rect);
-
-                    if (size.Width <= rect.Size.Width &&
-                    size.Height <= rect.Size.Height && !size.IsEmpty)
-                    {
-                        var screenshot = wowScreen.GetBitmap(size.Width, size.Height);
-                        if (screenshot != null)
-                        {
-                            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-                            {
-                                screenshot.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                                byte[] byteImage = ms.ToArray();
-                                this.image = Convert.ToBase64String(byteImage); // Get Base64
-
-                                if (dataFrameMeta == DataFrameMeta.Empty)
-                                {
-                                    dataFrameMeta = DataFrameConfiguration.GetMeta(screenshot);
-                                }
-
-                                //if(dataFrames.Count == 0)
-                                if (dataFrames.Count != dataFrameMeta.frames)
-                                {
-                                    dataFrames = DataFrameConfiguration.CreateFrames(dataFrameMeta, screenshot);
-                                }
-
-                                if (dataFrames.Count == dataFrameMeta.frames)
-                                {
-                                    if (addonReader != null)
-                                    {
-                                        addonReader.Dispose();
-                                        addonDataProvider = null;
-                                    }
-
-                                    if (addonDataProvider == null)
-                                    {
-                                        addonDataProvider = new AddonDataProvider(wowScreen, dataFrames);
-                                    }
-
-                                    addonReader = new AddonReader(logger, dataConfig, areaDb, addonDataProvider);
-                                }
-
-                                if (addonReader != null) // && dataFrames.Count != dataFrameMeta.frames
-                                {
-                                    ResolveClass(addonReader);
-                                }
-
-                                InvokeAsync(() =>
-                                {
-                                    base.StateHasChanged();
-                                });
-                            }
-                        }
-                    }
-                    else
-                    {
-                        addonNotVisible = true;
-                        dataFrameMeta = DataFrameMeta.Empty;
-
-                        InvokeAsync(() =>
-                        {
-                            base.StateHasChanged();
-                        });
-                    }
-                }
+                manualButtonText = "Stop";
+            }
+            else
+            {
+                playerClass = string.Empty;
+                manualButtonText = "Start";
             }
 
-            System.Threading.Thread.Sleep(interval);
-            Interlocked.Increment(ref counter);
+            await frameConfigurator.ToggleManualConfig();
         }
     }
 
-    private async Task Configure()
+    public async Task FinishManualConfigure()
     {
-        if (wowScreen == null) return;
-        if (config == null) return;
-
-        var version = addonConfigurator?.GetInstalledVersion();
-        if (version == null) return;
-
-        if (dataFrames.Count != dataFrameMeta.frames)
+        if (frameConfigurator != null)
         {
-            return;
-        }
-
-        wowScreen.GetRectangle(out var rect);
-
-        DataFrameConfiguration.SaveConfiguration(rect, version, dataFrameMeta, dataFrames);
-        saved = true;
-
-        await InvokeAsync(() =>
-        {
-            base.StateHasChanged();
-        });
-
-        await Wait();
-
-        await RestartServer();
-    }
-
-    private async Task AutoConfigure()
-    {
-        if (config == null) return;
-
-        var version = addonConfigurator?.GetInstalledVersion();
-        if (version == null) return;
-
-        var meta = GetDataFrameMeta();
-        if (meta == DataFrameMeta.Empty || meta.hash == 0)
-        {
-            await ToggleInGameConfiguration();
-            await Wait();
-        }
-
-        meta = GetDataFrameMeta();
-
-        if (wowScreen == null) return;
-        wowScreen.GetRectangle(out var rect);
-
-        var size = meta.EstimatedSize(rect);
-        var screenshot = wowScreen?.GetBitmap(size.Width, size.Height);
-        if (screenshot == null) return;
-
-        var dataFrames = DataFrameConfiguration.CreateFrames(meta, screenshot);
-
-        if (dataFrames.Count != meta.frames)
-        {
-            return;
-        }
-
-        await Wait();
-
-        await ToggleInGameConfiguration();
-
-        if (addonReader != null && !ResolveClass(addonReader))
-        {
-            return;
-        }
-
-        await Wait();
-
-        DataFrameConfiguration.SaveConfiguration(rect, version, meta, dataFrames);
-        saved = true;
-
-        await InvokeAsync(() =>
-        {
-            base.StateHasChanged();
-        });
-
-        await Wait();
-
-        await RestartServer();
-    }
-
-    private async Task ToggleInGameConfiguration()
-    {
-        if (WowProcessInput != null)
-        {
-            WowProcessInput.SetForegroundWindow();
-            await WowProcessInput.KeyPress(ConsoleKey.Enter, 200);
-            WowProcessInput.SetForegroundWindow();
-            await WowProcessInput.SendText("/" + addonConfig?.Command);
-            WowProcessInput.SetForegroundWindow();
-            await WowProcessInput.KeyPress(ConsoleKey.Enter, 200);
+            if (await frameConfigurator.FinishManualConfig())
+                await RestartServer();
         }
     }
 
-    private async Task RestartServer()
+    public async Task StartAutoConfigure()
     {
-        cancellationTokenSource?.Cancel();
+        if (frameConfigurator != null)
+        {
+            if (await frameConfigurator.StartAutoConfig())
+                await RestartServer();
+        }
+    }
+
+    public async Task RestartServer()
+    {
+        frameConfigurator?.Dispose();
 
         this.botController.Shutdown();
         await Task.Delay(1000);
         NavigationManager.NavigateTo("/");
         lifetime.StopApplication();
-    }
-
-    private bool ResolveClass(AddonReader addonReader)
-    {
-        addonReader.Refresh();
-        if (Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(addonReader.PlayerReader.Class))
-        {
-            playerClass = "The class of the character is: " + addonReader.PlayerReader.Class.ToString();
-            return true;
-        }
-        else
-        {
-            playerClass = "Still unable to read player class";
-        }
-
-        return false;
-    }
-
-    private async Task Wait()
-    {
-        var temp = counter;
-        do
-        {
-            await Task.Delay(100);
-        } while (temp == counter);
     }
 }

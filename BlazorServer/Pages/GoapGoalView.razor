@@ -22,8 +22,8 @@
 @if ((this.goal.Keys.Count > 1 || this.goal.GetType().Name == "GenericPullGoal") && ShowKeys && (this.IsSelected || this.goal.GetType().Name == "ParallelGoal"))
 {
     <tr>
-        <td colspan="2">
-            <table style="margin-left: 60px;">
+        <td colspan="2" style="padding-top: 0 !important; padding-bottom: 0 !important; border-top: 0 !important;">
+            <table style="margin-left: 15px;">
 
                 @if (this.goal.Keys != null)
                 {
@@ -76,7 +76,7 @@
     {
         if (item == true)
         {
-            return "table-success animate__animated animate__fadeIn";
+            return "bg-majestic animate__animated animate__fadeIn";
         }
 
         return "table-default";

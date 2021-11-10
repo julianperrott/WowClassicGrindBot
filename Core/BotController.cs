@@ -55,8 +55,6 @@ namespace Core
 
         private NpcNameTargeting npcNameTargeting;
 
-        private AreaDB areaDb;
-
         private IAddonDataProvider addonDataProvider;
 
         public ClassConfiguration? ClassConfig { get; set; }
@@ -78,7 +76,6 @@ namespace Core
             this.logger = logger;
             this.pather = pather;
             this.DataConfig = dataConfig;
-            this.areaDb = new AreaDB(logger, dataConfig);
 
             updatePlayerPostion.Start();
             wowProcess = new WowProcess();
@@ -106,7 +103,7 @@ namespace Core
                 addonDataProvider = new AddonDataProvider(WowScreen, frames);
             }
 
-            AddonReader = new AddonReader(logger, DataConfig, areaDb, addonDataProvider);
+            AddonReader = new AddonReader(logger, DataConfig, addonDataProvider);
 
             minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
@@ -183,9 +180,6 @@ namespace Core
                     });
                     updatePlayerPostion.Reset();
                     updatePlayerPostion.Restart();
-
-                    if(RouteInfo != null)
-                        RouteInfo.CurrentArea = areaDb?.CurrentArea;
                 }
 
                 Thread.Sleep(10);

@@ -1,5 +1,4 @@
-﻿using Core.Database;
-using Core.Goals;
+﻿using Core.Goals;
 using SharedLib.NpcFinder;
 using Core.PPather;
 using Microsoft.Extensions.Logging;
@@ -149,12 +148,12 @@ namespace Core
                     .Cast<IRouteProvider>()
                     .ToList();
 
-                this.RouteInfo = new RouteInfo(pathPoints, spiritPath, pathProviders, addonReader.PlayerReader);
+                this.RouteInfo = new RouteInfo(pathPoints, spiritPath, pathProviders, addonReader);
 
                 this.pather.DrawLines(new List<LineArgs>()
                 {
-                      new LineArgs  { Spots = pathPoints, Name = "grindpath", Colour = 2, MapId = addonReader.UIMapId.Value },
-                      new LineArgs { Spots = spiritPath, Name = "spirithealer", Colour = 3, MapId = addonReader.UIMapId.Value }
+                    new LineArgs  { Spots = pathPoints, Name = "grindpath", Colour = 2, MapId = addonReader.UIMapId.Value },
+                    new LineArgs { Spots = spiritPath, Name = "spirithealer", Colour = 3, MapId = addonReader.UIMapId.Value }
                 });
             }
 

@@ -1,5 +1,4 @@
-﻿@using Core
-@using MatBlazor
+﻿@using MatBlazor
 @using SharedLib; 
 @inject Core.IBotController botController
 @inject Core.IAddonReader addonReader
@@ -10,14 +9,19 @@
             <span class="glyphicon glyphicon-refresh"></span>
         </button>
 
-        Path Profile
+        <label>Path Profile</label>
 
         <button class="btn btn-sm btn-primary float-right" @onclick="LoadPath" disabled="@(disableButton ? "disabled" : null)">
             <span>Load Path</span>
         </button>
 
-        <MatAutocompleteList Class="dark-ples" Items="@files" TItem="string" Label="Path" ValueChanged="OnSelectedPathChanged"
+        <MatAutocompleteList Items="@files" TItem="string" Label="Path" ValueChanged="OnSelectedPathChanged"
                              ShowClearButton="true" FullWidth="true" NumberOfElementsInPopup="@num" OnTextChanged="OnTextChanged">
+            <ItemTemplate>
+                <div class="mat-autocomplete-list-popup-element" style="display: flex; width: 100%;">
+                    @context
+                </div>
+            </ItemTemplate>
         </MatAutocompleteList>
     </div>
 </div>
