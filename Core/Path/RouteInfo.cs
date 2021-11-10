@@ -1,7 +1,5 @@
-﻿using Core.Database;
-using Core.Goals;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -52,30 +50,9 @@ namespace Core
         }
 
         private List<IRouteProvider> pathedRoutes = new List<IRouteProvider>();
-        private readonly PlayerReader playerReader;
+        private readonly AddonReader addonReader;
 
         public List<RouteInfoPoi> PoiList { get; } = new List<RouteInfoPoi>();
-
-        private Area? currentArea;
-        public Area? CurrentArea {
-            get => currentArea;
-            set
-            {
-                //rebuild poi list
-                if(value != null && value != currentArea)
-                {
-                    PoiList.Clear();
-                    currentArea = value;
-                    /*
-                    // Visualize the zone pois
-                    currentArea.vendor?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "green")));
-                    currentArea.repair?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "purple")));
-                    currentArea.innkeeper?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "blue")));
-                    currentArea.flightmaster?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "orange")));
-                    */
-                }
-            }
-        }
 
         private double min;
         private double diff;
@@ -122,15 +99,32 @@ namespace Core
 
         private double pointToGrid;
 
-        public RouteInfo(List<Vector3> pathPoints, List<Vector3> spiritPath, List<IRouteProvider> pathedRoutes, PlayerReader playerReader)
+        public RouteInfo(List<Vector3> pathPoints, List<Vector3> spiritPath, List<IRouteProvider> pathedRoutes, AddonReader addonReader)
         {
             this.PathPoints = pathPoints.ToList();
             this.SpiritPath = spiritPath.ToList();
 
             this.pathedRoutes = pathedRoutes;
-            this.playerReader = playerReader;
+            this.addonReader = addonReader;
+
+            //addonReader.UIMapId.Changed -= OnZoneChanged;
+            //addonReader.UIMapId.Changed += OnZoneChanged;
+            //OnZoneChanged(this, EventArgs.Empty);
 
             CalculateDiffs();
+        }
+
+        private void OnZoneChanged(object sender, EventArgs e)
+        {
+            if (addonReader.AreaDb.CurrentArea != null)
+            {
+                PoiList.Clear();
+                // Visualize the zone pois
+                addonReader.AreaDb.CurrentArea.vendor?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "green")));
+                addonReader.AreaDb.CurrentArea.repair?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "purple")));
+                addonReader.AreaDb.CurrentArea.innkeeper?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "blue")));
+                addonReader.AreaDb.CurrentArea.flightmaster?.ForEach(x => PoiList.Add(new RouteInfoPoi(x, "orange")));
+            }
         }
 
         private void CalculateDiffs()
@@ -141,7 +135,7 @@ namespace Core
 
             var pois = this.PoiList.Select(p => p.Location).ToList();
             allPoints.AddRange(pois);
-            allPoints.Add(this.playerReader.PlayerLocation);
+            allPoints.Add(addonReader.PlayerReader.PlayerLocation);
 
             var maxX = allPoints.Max(s => s.X);
             var minX = allPoints.Min(s => s.X);

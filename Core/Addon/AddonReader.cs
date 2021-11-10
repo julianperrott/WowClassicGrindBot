@@ -70,19 +70,21 @@ namespace Core
         private DateTime lastFrontendUpdate = DateTime.Now;
         private readonly int FrontendUpdateIntervalMs = 250;
 
-        public AddonReader(ILogger logger, DataConfig dataConfig, AreaDB areaDb, IAddonDataProvider addonDataProvider)
+        public AddonReader(ILogger logger, DataConfig dataConfig, IAddonDataProvider addonDataProvider)
         {
             this.logger = logger;
             this.addonDataProvider = addonDataProvider;
 
             this.squareReader = new SquareReader(this);
 
-            this.CreatureHistory = new CreatureHistory(squareReader, 64, 65, 66, 67);
-
+            this.AreaDb = new AreaDB(logger, dataConfig);
+            this.WorldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
             this.ItemDb = new ItemDB(logger, dataConfig);
             this.CreatureDb = new CreatureDB(logger, dataConfig);
             this.spellDb = new SpellDB(logger, dataConfig);
             this.talentDB = new TalentDB(logger, dataConfig, spellDb);
+
+            this.CreatureHistory = new CreatureHistory(squareReader, 64, 65, 66, 67);
 
             this.EquipmentReader = new EquipmentReader(squareReader, 24, 25);
             this.BagReader = new BagReader(squareReader, ItemDb, EquipmentReader, 20, 21, 22, 23);
@@ -95,11 +97,7 @@ namespace Core
 
             this.PlayerReader = new PlayerReader(squareReader);
             this.LevelTracker = new LevelTracker(PlayerReader, PlayerDeath, CreatureHistory);
-
             this.TalentReader = new TalentReader(squareReader, 72, PlayerReader, talentDB);
-
-            this.AreaDb = areaDb;
-            this.WorldMapAreaDb = new WorldMapAreaDB(logger, dataConfig);
 
             UpdateLatencys = new CircularBuffer<double>(10);
 
