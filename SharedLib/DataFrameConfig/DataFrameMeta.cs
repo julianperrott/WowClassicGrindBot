@@ -27,16 +27,16 @@ namespace SharedLib
 
         public Size EstimatedSize(Rectangle screenRect)
         {
-            SizeF estimatedSize = new SizeF(frames / rows * (size + spacing) * 2, rows * (size + spacing) * 2);
+            int squareSize = (size + spacing) * 2;
+            if (squareSize <= 0)
+                return Size.Empty;
 
-            if (estimatedSize.Width > screenRect.Width)
-            {
-                estimatedSize.Width = screenRect.Width;
-            }
+            SizeF estimatedSize = new SizeF(frames / rows * squareSize, rows * squareSize);
 
-            if (estimatedSize.Height > screenRect.Height)
+            if (estimatedSize.Width > screenRect.Width ||
+                estimatedSize.Height > screenRect.Height)
             {
-                estimatedSize.Height = screenRect.Height;
+                return Size.Empty;
             }
 
             return estimatedSize.ToSize();

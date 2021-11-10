@@ -13,7 +13,7 @@ namespace SharedLib
         public const int Version = 2;
     }
 
-    public class DataFrameConfiguration
+    public static class DataFrameConfiguration
     {
         private class DataFrameConfig
         {
@@ -22,13 +22,6 @@ namespace SharedLib
             public Rectangle rect;
             public DataFrameMeta meta;
             public List<DataFrame> frames = new List<DataFrame>();
-        }
-
-        private readonly IColorReader colorReader;
-
-        public DataFrameConfiguration(IColorReader colorReader)
-        {
-            this.colorReader = colorReader;
         }
 
         private const string ConfigurationFilename = "frame_config.json";
