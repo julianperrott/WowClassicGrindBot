@@ -300,6 +300,10 @@ namespace Core
             CreateChargeRequirement(item.RequirementObjects, item);
         }
 
+        public void CreateDynamicBindings(KeyAction item)
+        {
+            DynamicBindCooldown(item);
+        }
 
         private void CreateTargetIsCastingRequirement(List<Requirement> itemRequirementObjects, KeyAction item)
         {
@@ -369,6 +373,16 @@ namespace Core
                     (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
                     (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
             };
+        }
+
+        private void DynamicBindCooldown(KeyAction item)
+        {
+            string key = $"CD_{item.Name}";
+            if (!valueDictionary.ContainsKey(key))
+            {
+                valueDictionary.Add(key,
+                    () => addonReader.ActionBarCooldownReader.GetRemainingCooldown(playerReader, item));
+            }
         }
 
         private static void CreateCooldownRequirement(List<Requirement> RequirementObjects, KeyAction item)

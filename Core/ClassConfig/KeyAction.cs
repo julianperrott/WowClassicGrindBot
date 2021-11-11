@@ -79,6 +79,11 @@ namespace Core
 
         private ILogger? logger;
 
+        public void CreateDynamicBinding(RequirementFactory requirementFactory)
+        {
+            requirementFactory.CreateDynamicBindings(this);
+        }
+
         public void Initialise(AddonReader addonReader, RequirementFactory requirementFactory, ILogger logger, KeyActions? keyActions = null)
         {
             this.playerReader = addonReader.PlayerReader;

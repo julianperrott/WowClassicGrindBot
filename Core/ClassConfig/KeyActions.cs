@@ -14,6 +14,8 @@ namespace Core
                 logger.LogInformation($"[{prefix}] Initialise KeyActions.");
             }
 
+            Sequence.ForEach(i => i.CreateDynamicBinding(requirementFactory));
+
             Sequence.ForEach(i => i.Initialise(addonReader, requirementFactory, logger, this));
         }
     }
