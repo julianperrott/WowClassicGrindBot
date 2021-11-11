@@ -567,13 +567,21 @@ function DataToColor:CreateFrames(n)
                 end
             end
 
-            MakePixelSquareArrI(DataToColor:Base2CustomTrigger(DataToColor.customTrigger1), 73)
+            if DataToColor:Modulo(globalCounter, GOSSIP_ITERATION_FRAME_CHANGE_RATE) == 0 then
+                gossipNum = DataToColor.stack:pop(DataToColor.gossipQueue)
+                if gossipNum then
+                    MakePixelSquareArrI(gossipNum, 73)
+                end
+            end
+
+            MakePixelSquareArrI(DataToColor:Base2CustomTrigger(DataToColor.customTrigger1), 74)
 
             -- Timers
             MakePixelSquareArrI(DataToColor.lastLoot, 97)
             MakePixelSquareArrI(DataToColor.globalTime, 98)
 
             -- 99 Reserved
+            globalCounter = globalCounter + 1
 
             DataToColor:ConsumeChanges()
 

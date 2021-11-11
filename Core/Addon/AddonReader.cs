@@ -91,7 +91,7 @@ namespace Core
 
             this.ActionBarCostReader = new ActionBarCostReader(squareReader, 36);
 
-            this.GossipReader = new GossipReader(squareReader, 37);
+            this.GossipReader = new GossipReader(squareReader, 73);
 
             this.SpellBookReader = new SpellBookReader(squareReader, 71, spellDb);
 
