@@ -73,8 +73,8 @@ local targetBuffCount = 0
 local stack = {}
 DataToColor.stack = stack
 
-function stack:push(t, item)
-    t[item] = item
+function stack:push(t, key, value)
+    t[key] = value or key
 end
 
 function stack:pop(t)
@@ -95,11 +95,44 @@ function minKey(t)
     return k
 end
 
+
+local struct = {}
+DataToColor.struct = struct
+
+function struct:push(t, key, value)
+    t[key] = { value = value or key, dirty = 0 }
+end
+
+function struct:get(t)
+    for k, v in pairs(t) do
+        if v.dirty == 0 then
+            return k, v.value
+        end
+    end
+end
+
+function struct:exists(t, key)
+    return t[key] ~= nil
+end
+
+function struct:setDirty(t, key)
+    t[key].dirty = 1
+end
+
+function struct:isDirty(t, key)
+    return t[key].dirty == 1
+end
+
+function struct:remove(t, key)
+    t[key] = nil
+end
+
 DataToColor.equipmentQueue = {}
 DataToColor.bagQueue = {}
 DataToColor.inventoryQueue = {}
 DataToColor.gossipQueue = {}
 DataToColor.actionBarCostQueue = {}
+DataToColor.actionBarCooldownQueue = {}
 DataToColor.spellBookQueue = {}
 DataToColor.talentQueue = {}
 
@@ -107,7 +140,9 @@ local equipmentSlot = nil
 local bagNum = nil
 local bagSlotNum = nil
 local gossipNum = nil
-local actionNum = nil
+local actionCostNum = nil
+local actionCooldownKey = nil
+local actionCooldownValue = nil
 local spellId = nil
 local talentNum = nil
 
@@ -467,22 +502,26 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArrI(DataToColor:isActionUseable(49, 72), 33)
             MakePixelSquareArrI(DataToColor:isActionUseable(73, 96), 34)
             MakePixelSquareArrI(DataToColor:isActionUseable(97, 108), 35)
+            -- moonkin actionbar missing :(
 
             if DataToColor:Modulo(globalCounter, ACTION_BAR_ITERATION_FRAME_CHANGE_RATE) == 0 then
-                actionNum = DataToColor.stack:pop(DataToColor.actionBarCostQueue)
-                if actionNum then
-                    MakePixelSquareArrI(DataToColor:actionbarCost(actionNum), 36)
+                actionCostNum = DataToColor.stack:pop(DataToColor.actionBarCostQueue)
+                if actionCostNum then
+                    MakePixelSquareArrI(DataToColor:actionbarCost(actionCostNum), 36)
+                end
+
+                actionCooldownKey, actionCooldownValue = DataToColor.struct:get(DataToColor.actionBarCooldownQueue)
+                if actionCooldownKey then
+                    DataToColor.struct:setDirty(DataToColor.actionBarCooldownQueue, actionCooldownKey)
+
+                    --DataToColor:Print("actionBarCooldownQueue: "..actionCooldownKey.." "..math.floor(actionCooldownValue) * 100)
+                    MakePixelSquareArrI(actionCooldownKey * 100000 + math.floor(actionCooldownValue) * 100, 37)
+
+                    if actionCooldownValue == 0 then
+                        DataToColor.struct:remove(DataToColor.actionBarCooldownQueue, actionCooldownKey)
+                    end
                 end
             end
-
-            if DataToColor:Modulo(globalCounter, GOSSIP_ITERATION_FRAME_CHANGE_RATE) == 0 then
-                gossipNum = DataToColor.stack:pop(DataToColor.gossipQueue)
-                if gossipNum then
-                    MakePixelSquareArrI(gossipNum, 37)
-                end
-            end
-
-            globalCounter = globalCounter + 1
 
             MakePixelSquareArrI(DataToColor:getHealthMax(DataToColor.C.unitPet), 38)
             MakePixelSquareArrI(DataToColor:getHealthCurrent(DataToColor.C.unitPet), 39)
