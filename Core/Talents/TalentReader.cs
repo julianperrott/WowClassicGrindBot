@@ -48,7 +48,7 @@ namespace Core
                 CurrentRank = data
             };
 
-            if (talentDB.Update(talent, playerReader.Class))
+            if (talentDB.Update(ref talent, playerReader.Class))
             {
                 Talents.Add(hash, talent);
             }

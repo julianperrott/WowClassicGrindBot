@@ -10,5 +10,10 @@
         public int ColumnNum { get; set; }
         public int CurrentRank { get; set; }
         public string Name { get; set; }
+
+        public override string ToString()
+        {
+            return $"{TabNum} - {TierNum} - {ColumnNum} - {CurrentRank} - {Name}";
+        }
     }
 }
