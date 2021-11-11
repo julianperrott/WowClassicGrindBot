@@ -6,7 +6,7 @@
       {
         "Name": "Seal of the Crusader",
         "Key": "3",
-        "Requirement": "not Seal",
+        "Requirement": "not Seal of the Crusader",
         "WaitBuffAfterCast": true,
         "DelayAfterCast": 0
       }
@@ -37,7 +37,7 @@
         "Name": "Seal of the Righteousness",
         "Key": "2",
         "WaitBuffAfterCast": true,
-        "Requirement": "not Seal"
+        "Requirement": "not Seal of the Righteousness"
       },
       {
         "Name": "AutoAttack",
@@ -54,14 +54,14 @@
       {
         "Name": "Retribution Aura",
         "Key": "8",
-        "Requirement": "not Aura",
+        "Requirement": "not Retribution Aura",
         "Cooldown": 5000
       },
       {
         "Name": "Blessing of Might",
         "Key": "4",
         "WaitBuffAfterCast": true,
-        "Requirement": "not Blessing",
+        "Requirement": "not Blessing of Might",
         "Cooldown": 5000
       }
     ]

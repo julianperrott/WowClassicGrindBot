@@ -8,7 +8,7 @@
         "Name": "Seal of Righteousness",
         "Key": "2",
         "Cooldown": 2000,
-        "Requirement": "not Seal"
+        "Requirement": "not Seal of Righteousness"
       },
       {
         "Name": "AutoAttack",
@@ -27,7 +27,7 @@
         "HasCastBar": true,
         "Key": "3",
         "Requirement": "Health%<50",
-        "Cooldown": 2000
+        "Cooldown": 8000
       }
     ]
   }

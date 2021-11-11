@@ -32,13 +32,13 @@
         "Key": "2",
         "Cooldown": 3000,
         "MinMana": 82,
-        "Requirements": [ "not Seal"]
+        "Requirements": ["not Seal of Righteousness"]
       },
       {
         "Name": "Judgement",
         "Key": "3",
         "Cooldown": 12000,
-        "Requirement":  "Mana%>40",
+        "Requirement": "Mana%>40",
         "MinMana": 77
       },
       {
@@ -64,14 +64,14 @@
       {
         "Name": "Devotion Aura",
         "Key": "5",
-        "Requirement": "not Aura",
+        "Requirement": "not Devotion Aura",
         "Log": false
       },
       {
         "Name": "Blessing of Might",
         "Key": "4",
         "MinMana": 45,
-        "Requirement": "not Blessing",
+        "Requirement": "not Blessing of Might",
         "Log": false
       },
       {
