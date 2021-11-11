@@ -899,10 +899,31 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | Mage | `"Mana Shield"` |
 | Mage | `"Presence of Mind"` |
 | Mage | `"Arcane Power"` |
-| Paladin | `"Seal"` |
-| Paladin | `"Aura"` |
-| Paladin | `"Blessing"` |
+| Paladin | `"Concentration Aura"` |
+| Paladin | `"Crusader Aura"` |
+| Paladin | `"Devotion Aura"` |
+| Paladin | `"Fire Resistance Aura"` |
+| Paladin | `"Frost Resistance Aura"` |
+| Paladin | `"Retribution Aura"` |
+| Paladin | `"Shadow Resistance Aura"` |
+| Paladin | `"Seal of Righteousness"` |
+| Paladin | `"Seal of the Crusader"` |
+| Paladin | `"Seal of Command"` |
+| Paladin | `"Seal of Wisdom"` |
+| Paladin | `"Seal of Light"` |
+| Paladin | `"Seal of Blood"` |
+| Paladin | `"Seal of Vengeance"` |
 | Paladin | `"Blessing of Might"` |
+| Paladin | `"Blessing of Protection"` |
+| Paladin | `"Blessing of Wisdom"` |
+| Paladin | `"Blessing of Kings"` |
+| Paladin | `"Blessing of Salvation"` |
+| Paladin | `"Blessing of Sanctuary"` |
+| Paladin | `"Blessing of Light"` |
+| Paladin | `"Righteous Fury"` |
+| Paladin | `"Divine Protection"` |
+| Paladin | `"Avenging Wrath"` |
+| Paladin | `"Holy Shield"` |
 | Priest | `"Fortitude"` |
 | Priest | `"InnerFire"` |
 | Priest | `"Divine Spirit"` |

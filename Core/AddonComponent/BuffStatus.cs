@@ -29,9 +29,26 @@
         public bool Regrowth => IsBitSet(15);
 
         // Paladin
-        public bool Aura => IsBitSet(10);
-        public bool Blessing => IsBitSet(11);
-        public bool Seal => IsBitSet(12);
+        public bool SealofRighteousness => IsBitSet(5);
+        public bool SealoftheCrusader => IsBitSet(6);
+        public bool SealofCommand => IsBitSet(7);
+        public bool SealofWisdom => IsBitSet(8);
+        public bool SealofLight => IsBitSet(9);
+        public bool SealofBlood => IsBitSet(10);
+        public bool SealofVengeance => IsBitSet(11);
+
+        public bool BlessingofMight => IsBitSet(12);
+        public bool BlessingofProtection => IsBitSet(13);
+        public bool BlessingofWisdom => IsBitSet(14);
+        public bool BlessingofKings => IsBitSet(15);
+        public bool BlessingofSalvation => IsBitSet(16);
+        public bool BlessingofSanctuary => IsBitSet(17);
+        public bool BlessingofLight => IsBitSet(18);
+
+        public bool RighteousFury => IsBitSet(19);
+        public bool DivineProtection => IsBitSet(20);
+        public bool AvengingWrath => IsBitSet(21);
+        public bool HolyShield => IsBitSet(22);
 
         // Mage
         public bool FrostArmor => IsBitSet(10);
