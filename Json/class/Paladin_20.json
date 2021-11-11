@@ -67,7 +67,14 @@
         "Name": "Seal of Command",
         "Key": "9",
         "WhenUsable": true,
-        "Requirements": ["!Seal of Command", "Judgement of the Crusader", "TargetHealth%>20"],
+        "Requirements": ["Talent:Seal of Command", "!Seal of Command", "Judgement of the Crusader", "TargetHealth%>20"],
+        "WaitBuffAfterCast": true
+      },
+      {
+        "Name": "Seal of Righteousness",
+        "Key": "2",
+        "WhenUsable": true,
+        "Requirements": ["!Talent:Seal of Command", "!Seal of Righteousness", "Judgement of the Crusader", "TargetHealth%>20"],
         "WaitBuffAfterCast": true
       },
       {
