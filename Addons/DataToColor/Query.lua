@@ -314,12 +314,23 @@ end
 
 function DataToColor:isActionUseable(min,max)
     local isUsableBits = 0
-    local start, isUsable, notEnough
+    local isUsable, notEnough
     for i = min, max do
-        start = GetActionCooldown(i)
+        local start, duration, enabled = GetActionCooldown(i)
         isUsable, notEnough = IsUsableAction(i)
         if start == 0 and isUsable == true and notEnough == false then
             isUsableBits = isUsableBits + (2 ^ (i - min))
+        end
+
+        local elapsed = (start + duration - GetTime())
+        if enabled == 1 and start ~= 0 and duration ~= 1.5 then -- exclude GCD
+            if not DataToColor.struct:exists(DataToColor.actionBarCooldownQueue, i) then
+                -- add
+                DataToColor.struct:push(DataToColor.actionBarCooldownQueue, i, elapsed)
+            end
+        elseif elapsed <= 0 and DataToColor.struct:exists(DataToColor.actionBarCooldownQueue, i) then
+            -- update to show expired
+            DataToColor.struct:push(DataToColor.actionBarCooldownQueue, i, 0)
         end
     end
     return isUsableBits

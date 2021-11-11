@@ -26,6 +26,8 @@ namespace Core
 
         public ActionBarCostReader ActionBarCostReader { get; private set; }
 
+        public ActionBarCooldownReader ActionBarCooldownReader { get; private set; }
+
         public ActionBarBits CurrentAction => new ActionBarBits(PlayerReader, squareReader, 26, 27, 28, 29, 30);
         public ActionBarBits UsableAction => new ActionBarBits(PlayerReader, squareReader, 31, 32, 33, 34, 35);
 
@@ -90,8 +92,9 @@ namespace Core
             this.BagReader = new BagReader(squareReader, ItemDb, EquipmentReader, 20, 21, 22, 23);
 
             this.ActionBarCostReader = new ActionBarCostReader(squareReader, 36);
+            this.ActionBarCooldownReader = new ActionBarCooldownReader(squareReader, 37);
 
-            this.GossipReader = new GossipReader(squareReader, 37);
+            this.GossipReader = new GossipReader(squareReader, 73);
 
             this.SpellBookReader = new SpellBookReader(squareReader, 71, spellDb);
 
@@ -129,6 +132,7 @@ namespace Core
             EquipmentReader.Read();
 
             ActionBarCostReader.Read();
+            ActionBarCooldownReader.Read();
 
             GossipReader.Read();
 
@@ -166,6 +170,7 @@ namespace Core
             UIMapId.Reset();
 
             ActionBarCostReader.Reset();
+            ActionBarCooldownReader.Reset();
             SpellBookReader.Reset();
             TalentReader.Reset();
             CreatureHistory.Reset();

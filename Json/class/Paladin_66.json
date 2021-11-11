@@ -50,7 +50,7 @@
         "MinMana": 82,
         "Requirements": [
           "Mana%<50",
-          "not Seal"
+          "not Seal of Wisdom"
         ]
       },
       {
@@ -60,7 +60,7 @@
         "MinMana": 82,
         "Requirements": [
           "Mana%>50",
-          "not Seal"
+          "not Seal of Command"
         ]
       },
       {
@@ -116,14 +116,14 @@
       {
         "Name": "Devotion Aura",
         "Key": "F8",
-        "Requirement": "not Aura",
+        "Requirement": "not Devotion Aura",
         "Log": false
       },
       {
         "Name": "Blessing of Might",
         "Key": "0",
         "MinMana": 45,
-        "Requirement": "not Blessing",
+        "Requirement": "not Blessing of Might",
         "Log": false
       }
     ]

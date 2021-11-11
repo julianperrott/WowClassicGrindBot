@@ -1,0 +1,132 @@
+{
+  "ClassName": "Paladin",
+  "PathFilename": "\\_pack\\1-20\\Human\\15-18_Westfall_The Dagger Hills (defias).json",
+  "Pull": {
+    "Sequence":[
+      {
+        "Name": "Seal of the Crusader",
+        "Key": "3",
+        "WhenUsable": true,
+        "Requirements": ["!Seal of the Crusader", "!Judgement of the Crusader", "CD_Judgement<=1500"],
+        "WaitBuffAfterCast": true,
+        "DelayAfterCast": 0
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": ["SpellInRange:0", "Seal of the Crusader", "!Judgement of the Crusader"],
+        "DelayAfterCast": 0
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Flash of Light",
+        "Key": "6",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": ["Health%<60", "TargetHealth%>20", "CD_Flash of Light==0"],
+        "Cooldown": 6000
+      },
+      {
+        "Name": "Seal of the Crusader",
+        "Key": "3",
+        "Requirements": ["!Seal of the Crusader", "!Judgement of the Crusader"],
+        "WaitBuffAfterCast": true,
+        "DelayAfterCast": 0
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": ["Seal of the Crusader", "!Judgement of the Crusader"],
+        "DelayAfterCast": 0
+      },
+      {
+        "Name": "Hammer of Justice",
+        "Key": "7",
+        "WhenUsable": true,
+        "Requirement": "TargetCastingSpell"
+      },
+      {
+        "Name": "Hammer of Justice",
+        "Key": "7",
+        "WhenUsable": true,
+        "Requirements": ["Judgement of the Crusader", "CD_Judgement<=1500", "TargetHealth%>20"]
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": ["Hammer of Justice||CD_Hammer of Justice>8000", "Seal of Command||Seal of Righteousness"],
+        "DelayAfterCast": 0
+      },
+      {
+        "Name": "Seal of Command",
+        "Key": "9",
+        "WhenUsable": true,
+        "Requirements": ["!Seal of Command", "Judgement of the Crusader", "TargetHealth%>20"],
+        "WaitBuffAfterCast": true
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirement": "!AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Retribution Aura",
+        "Key": "8",
+        "Requirement": "!Retribution Aura",
+        "Cooldown": 5000
+      },
+      {
+        "Name": "Blessing of Might",
+        "Key": "4",
+        "WaitBuffAfterCast": true,
+        "Requirement": "!Blessing of Might",
+        "Cooldown": 5000
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Water",
+        "Key": "-",
+        "Requirement": "Mana%<50"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health%<50"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "20_Westfall_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "20_Westfall_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

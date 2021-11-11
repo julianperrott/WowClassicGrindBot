@@ -29,6 +29,7 @@
         Paladin_Shadow_Resistance_Aura = 18,
         Paladin_Frost_Resistance_Aura = 19,
         Paladin_Fire_Resistance_Aura = 20,
-        Paladin_Crusader_Aura = 21,
+        Paladin_Sanctity_Aura = 21,
+        Paladin_Crusader_Aura = 22,
     }
 }

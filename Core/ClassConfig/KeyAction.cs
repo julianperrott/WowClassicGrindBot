@@ -79,7 +79,12 @@ namespace Core
 
         private ILogger? logger;
 
-        public void Initialise(AddonReader addonReader, RequirementFactory requirementFactory, ILogger logger)
+        public void CreateDynamicBinding(RequirementFactory requirementFactory)
+        {
+            requirementFactory.CreateDynamicBindings(this);
+        }
+
+        public void Initialise(AddonReader addonReader, RequirementFactory requirementFactory, ILogger logger, KeyActions? keyActions = null)
         {
             this.playerReader = addonReader.PlayerReader;
             this.logger = logger;
@@ -116,7 +121,7 @@ namespace Core
 
             UpdateMinResourceRequirement(playerReader, addonReader.ActionBarCostReader);
 
-            requirementFactory.InitialiseRequirements(this);
+            requirementFactory.InitialiseRequirements(this, keyActions);
         }
 
         public void InitialiseForm(AddonReader addonReader, RequirementFactory requirementFactory, ILogger logger)

@@ -48,7 +48,7 @@ namespace Core
                 CurrentRank = data
             };
 
-            if (talentDB.Update(talent, playerReader.Class))
+            if (talentDB.Update(ref talent, playerReader.Class))
             {
                 Talents.Add(hash, talent);
             }
@@ -63,8 +63,12 @@ namespace Core
         {
             foreach (var kvp in Talents)
             {
-                if (kvp.Value.Name.ToLower() == name.ToLower() && kvp.Value.CurrentRank >= rank)
+                if (!string.IsNullOrEmpty(kvp.Value.Name) &&
+                    kvp.Value.Name.ToLower() == name.ToLower() &&
+                    kvp.Value.CurrentRank >= rank)
+                {
                     return true;
+                }
             }
 
             return false;

@@ -114,7 +114,7 @@ namespace Core
 
         public int CastCount => reader.GetIntAtCell(70);
 
-        public BitStatus CustomTrigger1 => new BitStatus(reader.GetIntAtCell(73));
+        public BitStatus CustomTrigger1 => new BitStatus(reader.GetIntAtCell(74));
 
         public int LastLootTime => reader.GetIntAtCell(97);
 

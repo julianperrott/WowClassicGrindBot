@@ -22,7 +22,7 @@ namespace Core.Database
             talentTreeElements = JsonConvert.DeserializeObject<List<TalentTreeElement>>(File.ReadAllText(Path.Join(dataConfig.Dbc, "talent.json")));
         }
 
-        public bool Update(Talent talent, PlayerClassEnum playerClassEnum)
+        public bool Update(ref Talent talent, PlayerClassEnum playerClassEnum)
         {
             if (talentTabs.Count == 0 || talentTreeElements.Count == 0)
                 return false;

@@ -19,6 +19,8 @@ namespace Core
         private readonly CreatureDB creatureDb;
         private readonly ItemDB itemDb;
 
+        private KeyActions? keyActions;
+
         private readonly Dictionary<string, Func<int>> valueDictionary = new Dictionary<string, Func<int>>();
 
         private readonly Dictionary<string, Func<bool>> booleanDictionary = new Dictionary<string, Func<bool>>();
@@ -58,7 +60,8 @@ namespace Core
                 { "Race", CreateRaceRequirement },
                 { "Spell", CreateSpellRequirement },
                 { "Talent", CreateTalentRequirement },
-                { "Trigger:", CreateTriggerRequirement }
+                { "Trigger:", CreateTriggerRequirement },
+                { "Usable:", CreateUsableRequirement }
             };
 
             booleanDictionary = new Dictionary<string, Func<bool>>
@@ -116,14 +119,34 @@ namespace Core
                 { "Prowl", ()=> playerReader.Buffs.Prowl },
                 { "Rejuvenation", ()=> playerReader.Buffs.Rejuvenation },
                 { "Regrowth", ()=> playerReader.Buffs.Regrowth },
-                
+
                 // Paladin
-                { "Seal", ()=> playerReader.Buffs.Seal },
-                { "Aura", ()=>playerReader.Buffs.Aura },
-                { "Devotion Aura", ()=>playerReader.Buffs.Aura },
-                { "Blessing", ()=> playerReader.Buffs.Blessing },
-                { "Blessing of Might", ()=> playerReader.Buffs.Blessing },
-                
+                { "Concentration Aura", ()=> playerReader.Form == Form.Paladin_Concentration_Aura },
+                { "Crusader Aura", ()=> playerReader.Form == Form.Paladin_Crusader_Aura },
+                { "Devotion Aura", ()=> playerReader.Form == Form.Paladin_Devotion_Aura },
+                { "Sanctity Aura", ()=> playerReader.Form == Form.Paladin_Sanctity_Aura },
+                { "Fire Resistance Aura", ()=> playerReader.Form == Form.Paladin_Fire_Resistance_Aura },
+                { "Frost Resistance Aura", ()=> playerReader.Form == Form.Paladin_Frost_Resistance_Aura },
+                { "Retribution Aura", ()=> playerReader.Form == Form.Paladin_Retribution_Aura },
+                { "Shadow Resistance Aura", ()=> playerReader.Form == Form.Paladin_Shadow_Resistance_Aura },
+                { "Seal of Righteousness", ()=> playerReader.Buffs.SealofRighteousness },
+                { "Seal of the Crusader", ()=> playerReader.Buffs.SealoftheCrusader },
+                { "Seal of Command", ()=> playerReader.Buffs.SealofCommand },
+                { "Seal of Wisdom", ()=> playerReader.Buffs.SealofWisdom },
+                { "Seal of Light", ()=> playerReader.Buffs.SealofLight },
+                { "Seal of Blood", ()=> playerReader.Buffs.SealofBlood },
+                { "Seal of Vengeance", ()=> playerReader.Buffs.SealofVengeance },
+                { "Blessing of Might", ()=> playerReader.Buffs.BlessingofMight },
+                { "Blessing of Protection", ()=> playerReader.Buffs.BlessingofProtection },
+                { "Blessing of Wisdom", ()=> playerReader.Buffs.BlessingofWisdom },
+                { "Blessing of Kings", ()=> playerReader.Buffs.BlessingofKings },
+                { "Blessing of Salvation", ()=> playerReader.Buffs.BlessingofSalvation },
+                { "Blessing of Sanctuary", ()=> playerReader.Buffs.BlessingofSanctuary },
+                { "Blessing of Light", ()=> playerReader.Buffs.BlessingofLight },
+                { "Righteous Fury", ()=> playerReader.Buffs.RighteousFury },
+                { "Divine Protection", ()=> playerReader.Buffs.DivineProtection },
+                { "Avenging Wrath", ()=> playerReader.Buffs.AvengingWrath },
+                { "Holy Shield", ()=> playerReader.Buffs.HolyShield },
                 // Mage
                 { "Frost Armor", ()=> playerReader.Buffs.FrostArmor },
                 { "Ice Armor", ()=> playerReader.Buffs.FrostArmor },
@@ -175,6 +198,10 @@ namespace Core
                 { "Entangling Roots", ()=> playerReader.TargetDebuffs.EntanglingRoots },
                 { "Rake", ()=> playerReader.TargetDebuffs.Rake },
                 
+                // Paladin Debuff
+                { "Judgement of the Crusader", ()=> playerReader.TargetDebuffs.JudgementoftheCrusader },
+                { "Hammer of Justice", ()=> playerReader.TargetDebuffs.HammerOfJustice },
+
                 // Warrior Debuff
                 { "Rend", ()=> playerReader.TargetDebuffs.Rend },
                 
@@ -215,8 +242,10 @@ namespace Core
             };
         }
 
-        public void InitialiseRequirements(KeyAction item)
+        public void InitialiseRequirements(KeyAction item, KeyActions? keyActions)
         {
+            this.keyActions = keyActions;
+
             CreateConsumableRequirement("Water", item);
             CreateConsumableRequirement("Food", item);
 
@@ -257,18 +286,24 @@ namespace Core
                 }
             }
 
-            CreateMinRequirement(item.RequirementObjects, PowerType.Mana, item.MinMana);
-            CreateMinRequirement(item.RequirementObjects, PowerType.Rage, item.MinRage);
-            CreateMinRequirement(item.RequirementObjects, PowerType.Energy, item.MinEnergy);
+            CreateMinRequirement(item.RequirementObjects, item);
 
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
             CreateTargetIsCastingRequirement(item.RequirementObjects, item);
-            CreateActionUsableRequirement(item.RequirementObjects, item);
+
+            if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
+            {
+                item.RequirementObjects.Add(CreateActionUsableRequirement(item));
+            }
 
             CreateCooldownRequirement(item.RequirementObjects, item);
             CreateChargeRequirement(item.RequirementObjects, item);
         }
 
+        public void CreateDynamicBindings(KeyAction item)
+        {
+            DynamicBindCooldown(item);
+        }
 
         private void CreateTargetIsCastingRequirement(List<Requirement> itemRequirementObjects, KeyAction item)
         {
@@ -280,6 +315,13 @@ namespace Core
                     LogMessage = () => "Target casting"
                 });
             }
+        }
+
+        private void CreateMinRequirement(List<Requirement> RequirementObjects, KeyAction item)
+        {
+            CreateMinRequirement(RequirementObjects, PowerType.Mana, item.MinMana);
+            CreateMinRequirement(RequirementObjects, PowerType.Rage, item.MinRage);
+            CreateMinRequirement(RequirementObjects, PowerType.Energy, item.MinEnergy);
         }
 
         private void CreateMinRequirement(List<Requirement> RequirementObjects, PowerType type, int value)
@@ -317,22 +359,29 @@ namespace Core
             }
         }
 
-        private void CreateActionUsableRequirement(List<Requirement> RequirementObjects, KeyAction item)
+        private Requirement CreateActionUsableRequirement(KeyAction item)
         {
-            if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
+            return new Requirement
             {
-                RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => 
-                        !item.HasFormRequirement() ? addonReader.UsableAction.Is(item) :
-                        (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ||
-                        (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()),
+                HasRequirement = () =>
+                    !item.HasFormRequirement() ? addonReader.UsableAction.Is(item) :
+                    (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ||
+                    (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()),
 
-                    LogMessage = () => 
-                        !item.HasFormRequirement() ? $"Usable" : // {playerReader.UsableAction.Num(item)}
-                        (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
-                        (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
-                });
+                LogMessage = () =>
+                    !item.HasFormRequirement() ? $"Usable" : // {playerReader.UsableAction.Num(item)}
+                    (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
+                    (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
+            };
+        }
+
+        private void DynamicBindCooldown(KeyAction item)
+        {
+            string key = $"CD_{item.Name}";
+            if (!valueDictionary.ContainsKey(key))
+            {
+                valueDictionary.Add(key,
+                    () => addonReader.ActionBarCooldownReader.GetRemainingCooldown(playerReader, item));
             }
         }
 
@@ -562,6 +611,19 @@ namespace Core
             };
         }
 
+        private Requirement CreateUsableRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            string name = parts[1];
+
+            if (keyActions == null)
+            {
+                throw new ArgumentNullException("keyActions must be present!");
+            }
+
+            var keyAction = keyActions.Sequence.First(x => x.Name == name);
+            return CreateActionUsableRequirement(keyAction);
+        }
 
         private Requirement GetExcusiveValueBasedRequirement(string requirement)
         {

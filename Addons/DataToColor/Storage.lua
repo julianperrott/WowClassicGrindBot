@@ -94,9 +94,24 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[14] = { "Rejuvenation", [136081]=1 }
         DataToColor.S.playerBuffs[15] = { "Regrowth", [136085]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
-        DataToColor.S.playerBuffs[10] = { "Aura", [135933]=1, [135890]=1, [135893]=1, [135824]=1, [135865]=1, [135873]=1, [135934]=1, [136192]=1 }
-        DataToColor.S.playerBuffs[11] = { "Blessing", [1359682]=1, [135995]=1, [135943]=1, [135906]=1, [135964]=1, [135966]=1, [135967]=1, [136051]=1, [135970]=1, [135993]=1, [135909]=1, [135908]=1, [135910]=1, [135911]=1, [135912]=1 }
-        DataToColor.S.playerBuffs[12] = { "Seal", [135961]=1, [132347]=1, [135969]=1, [135971]=1, [135917]=1, [132325]=1, [135924]=1, [135960]=1 }
+        DataToColor.S.playerBuffs[5] = { "Seal of Righteousness", [132325]=1 }
+        DataToColor.S.playerBuffs[6] = { "Seal of the Crusader", [135924]=1 }
+        DataToColor.S.playerBuffs[7] = { "Seal of Command", [132347]=1 }
+        DataToColor.S.playerBuffs[8] = { "Seal of Wisdom", [135960]=1 }
+        DataToColor.S.playerBuffs[9] = { "Seal of Light", [135917]=1 }
+        DataToColor.S.playerBuffs[10] = { "Seal of Blood", [135961]=1 }
+        DataToColor.S.playerBuffs[11] = { "Seal of Vengeance", [135969]=1 }
+        DataToColor.S.playerBuffs[12] = { "Blessing of Might", [135906]=1, [135908]=1 }
+        DataToColor.S.playerBuffs[13] = { "Blessing of Protection", [135964]=1 }
+        DataToColor.S.playerBuffs[14] = { "Blessing of Wisdom", [135970]=1, [135912]=1 }
+        DataToColor.S.playerBuffs[15] = { "Blessing of Kings", [135995]=1, [135993]=1 }
+        DataToColor.S.playerBuffs[16] = { "Blessing of Salvation", [135967]=1, [135910]=1 }
+        DataToColor.S.playerBuffs[17] = { "Blessing of Sanctuary", [136051]=1, [135911]=1 }
+        DataToColor.S.playerBuffs[18] = { "Blessing of Light", [135943]=1, [135909]=1 }
+        DataToColor.S.playerBuffs[19] = { "Righteous Fury", [135962]=1 }
+        DataToColor.S.playerBuffs[20] = { "Divine Protection", [135954]=1 }
+        DataToColor.S.playerBuffs[21] = { "Avenging Wrath", [135875]=1 }
+        DataToColor.S.playerBuffs[22] = { "Holy Shield", [135880]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
         DataToColor.S.playerBuffs[10] = { "Armor", [135843]=1, [135991]=1, [132221]=1 }
         DataToColor.S.playerBuffs[11] = { "Arcane Intellect", [135932]=1 }
@@ -140,6 +155,8 @@ function CreateTargetDebuffList()
         DataToColor.S.targetDebuffs[4] = { "Entangling Roots", [136100]=1 }
         DataToColor.S.targetDebuffs[5] = { "Rake", [132122]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
+        DataToColor.S.targetDebuffs[0] = { "Judgement of the Crusader", [135924]=1 }
+        DataToColor.S.targetDebuffs[1] = { "Hammer of Justice", [135963]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "MAGE" then
         DataToColor.S.targetDebuffs[0] = { "Frostbite", [135842]=1 }
         DataToColor.S.targetDebuffs[1] = { "Slow", [136091]=1 }

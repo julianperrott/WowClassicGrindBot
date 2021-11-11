@@ -18,6 +18,8 @@
         public bool Rake => IsBitSet(5);
 
         // Paladin
+        public bool JudgementoftheCrusader => IsBitSet(0);
+        public bool HammerOfJustice => IsBitSet(1);
 
         // Mage
         public bool Frostbite => IsBitSet(0);

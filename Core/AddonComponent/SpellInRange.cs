@@ -58,7 +58,8 @@
             PlayerClassEnum.Rogue => Rogue_Throw,
             PlayerClassEnum.Priest => Priest_Smite,
             PlayerClassEnum.Druid => Druid_Wrath,
-            PlayerClassEnum.Paladin => (playerReader.Level.Value >= 4 && Paladin_Judgement) || playerReader.IsInMeleeRange,
+            PlayerClassEnum.Paladin => (playerReader.Level.Value >= 4 && Paladin_Judgement) || playerReader.IsInMeleeRange ||
+                                       (playerReader.Level.Value >= 20 && playerReader.MinRange <= 20 && playerReader.MaxRange <= 25),
             PlayerClassEnum.Mage => (playerReader.Level.Value >= 4 && Mage_Frostbolt) || Mage_Fireball,
             PlayerClassEnum.Hunter => (playerReader.Level.Value >= 4 && Hunter_SerpentSting) || Hunter_AutoShoot,
             PlayerClassEnum.Warlock => Warlock_ShadowBolt,
