@@ -195,6 +195,10 @@ namespace Core
                 { "Entangling Roots", ()=> playerReader.TargetDebuffs.EntanglingRoots },
                 { "Rake", ()=> playerReader.TargetDebuffs.Rake },
                 
+                // Paladin Debuff
+                { "Judgement of the Crusader", ()=> playerReader.TargetDebuffs.JudgementoftheCrusader },
+                { "Hammer of Justice", ()=> playerReader.TargetDebuffs.HammerOfJustice },
+
                 // Warrior Debuff
                 { "Rend", ()=> playerReader.TargetDebuffs.Rend },
                 
