@@ -297,7 +297,7 @@ Can specify conditions with `Requirement(s)` in order to create a matching actio
 | Form | Shapeshift/Stance form to be in to cast this spell | `Form.None` |
 | CastIfAddsVisible | If the bot can "See" any adds | `false` |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | `1` |
-| Cooldown | The cooldown in milliseconds until the command can be done again | `0` |
+| Cooldown | **Note this is not the in-game cooldown!**<br>The time in milliseconds until the command can be used again.<br>This property will be updated when the backend registers the `Key` keypress. | `0` |
 | School | Indicate what type of element. `SchoolMask.`<br>(`Physical, Holy, Fire, Nature, Frost, Shadow, Arcane`) | `SchoolMask.None` |
 | MinMana | The minimum `Mana` required to cast the spell | `0` |
 | MinRage | The minimum `Rage` required to cast the spell | `0` |
@@ -639,6 +639,7 @@ Formula: `[Keyword][Operator][Numeric integer value]`
 | `MaxRange` | Maximum distance(yard) between the player and the target |
 | `LastAutoShotMs` | Time since last detected AutoShot happened in milliseconds |
 | `LastMainHandMs` | Time since last detected Main Hand Melee swing happened in milliseconds |
+| `CD_{KeyAction.Name}` | Returns the given `{KeyAction.Name}` **in-game** cooldown in milliseconds |
 
 For the `MinRange` and `MaxRange` gives an approximation range distance between the player and target.
 
@@ -648,6 +649,8 @@ For the `MinRange` and `MaxRange` gives an approximation range distance between 
 | --- | --- | --- |
 | 0 | 5 | "InMeleeRange" |
 | 5 | 15 | "IsInDeadZoneRange" |
+
+Its worth mention that `CD_{KeyAction.Name}` is a dynamic binding.<br>Each `KeyAction` has its own in-game Cooldown which is not the same as `KeyAction.Cooldown`!
 
 e.g.
 ```json
@@ -663,6 +666,8 @@ e.g.
 "Requirement": "MaxRange>35"
 "Requirement": "LastAutoShotMs<=500"
 "Requirement": "LastMainHandMs<=500"
+"Requirement": "CD_Judgement<1500"         // The remaining cooldown on Judgement is less then GCD(1500)
+"Requirement": "CD_Hammer of Justice>8000" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
 ```
 
 ---
