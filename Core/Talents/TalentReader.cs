@@ -63,8 +63,12 @@ namespace Core
         {
             foreach (var kvp in Talents)
             {
-                if (kvp.Value.Name.ToLower() == name.ToLower() && kvp.Value.CurrentRank >= rank)
+                if (!string.IsNullOrEmpty(kvp.Value.Name) &&
+                    kvp.Value.Name.ToLower() == name.ToLower() &&
+                    kvp.Value.CurrentRank >= rank)
+                {
                     return true;
+                }
             }
 
             return false;
