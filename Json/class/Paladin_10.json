@@ -16,16 +16,17 @@
     "Sequence": [
       {
         "Name": "Holy Light",
-        "HasCastBar": true,
         "Key": "6",
+        "HasCastBar": true,
+        "WhenUsable": true,
         "Requirements": ["Health%<60", "TargetHealth%>20"],
         "Cooldown": 5000
       },
       {
         "Name": "Judgement",
+        "Key": "1",
         "WhenUsable": true,
-        "DelayAfterCast": 0,
-        "Key": "1"
+        "DelayAfterCast": 0
       },
       {
         "Name": "Hammer of Justice",
@@ -34,10 +35,10 @@
         "Requirement": "TargetCastingSpell||TargetHealth%<50"
       },
       {
-        "Name": "Seal of the Righteousness",
+        "Name": "Seal of Righteousness",
         "Key": "2",
         "WaitBuffAfterCast": true,
-        "Requirement": "not Seal of the Righteousness"
+        "Requirement": "not Seal of Righteousness"
       },
       {
         "Name": "AutoAttack",
