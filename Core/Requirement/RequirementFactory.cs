@@ -19,6 +19,8 @@ namespace Core
         private readonly CreatureDB creatureDb;
         private readonly ItemDB itemDb;
 
+        private KeyActions? keyActions;
+
         private readonly Dictionary<string, Func<int>> valueDictionary = new Dictionary<string, Func<int>>();
 
         private readonly Dictionary<string, Func<bool>> booleanDictionary = new Dictionary<string, Func<bool>>();
@@ -58,7 +60,8 @@ namespace Core
                 { "Race", CreateRaceRequirement },
                 { "Spell", CreateSpellRequirement },
                 { "Talent", CreateTalentRequirement },
-                { "Trigger:", CreateTriggerRequirement }
+                { "Trigger:", CreateTriggerRequirement },
+                { "Usable:", CreateUsableRequirement }
             };
 
             booleanDictionary = new Dictionary<string, Func<bool>>
@@ -239,8 +242,10 @@ namespace Core
             };
         }
 
-        public void InitialiseRequirements(KeyAction item)
+        public void InitialiseRequirements(KeyAction item, KeyActions? keyActions)
         {
+            this.keyActions = keyActions;
+
             CreateConsumableRequirement("Water", item);
             CreateConsumableRequirement("Food", item);
 
@@ -281,13 +286,15 @@ namespace Core
                 }
             }
 
-            CreateMinRequirement(item.RequirementObjects, PowerType.Mana, item.MinMana);
-            CreateMinRequirement(item.RequirementObjects, PowerType.Rage, item.MinRage);
-            CreateMinRequirement(item.RequirementObjects, PowerType.Energy, item.MinEnergy);
+            CreateMinRequirement(item.RequirementObjects, item);
 
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
             CreateTargetIsCastingRequirement(item.RequirementObjects, item);
-            CreateActionUsableRequirement(item.RequirementObjects, item);
+
+            if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
+            {
+                item.RequirementObjects.Add(CreateActionUsableRequirement(item));
+            }
 
             CreateCooldownRequirement(item.RequirementObjects, item);
             CreateChargeRequirement(item.RequirementObjects, item);
@@ -304,6 +311,13 @@ namespace Core
                     LogMessage = () => "Target casting"
                 });
             }
+        }
+
+        private void CreateMinRequirement(List<Requirement> RequirementObjects, KeyAction item)
+        {
+            CreateMinRequirement(RequirementObjects, PowerType.Mana, item.MinMana);
+            CreateMinRequirement(RequirementObjects, PowerType.Rage, item.MinRage);
+            CreateMinRequirement(RequirementObjects, PowerType.Energy, item.MinEnergy);
         }
 
         private void CreateMinRequirement(List<Requirement> RequirementObjects, PowerType type, int value)
@@ -341,23 +355,20 @@ namespace Core
             }
         }
 
-        private void CreateActionUsableRequirement(List<Requirement> RequirementObjects, KeyAction item)
+        private Requirement CreateActionUsableRequirement(KeyAction item)
         {
-            if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
+            return new Requirement
             {
-                RequirementObjects.Add(new Requirement
-                {
-                    HasRequirement = () => 
-                        !item.HasFormRequirement() ? addonReader.UsableAction.Is(item) :
-                        (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ||
-                        (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()),
+                HasRequirement = () =>
+                    !item.HasFormRequirement() ? addonReader.UsableAction.Is(item) :
+                    (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ||
+                    (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()),
 
-                    LogMessage = () => 
-                        !item.HasFormRequirement() ? $"Usable" : // {playerReader.UsableAction.Num(item)}
-                        (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
-                        (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
-                });
-            }
+                LogMessage = () =>
+                    !item.HasFormRequirement() ? $"Usable" : // {playerReader.UsableAction.Num(item)}
+                    (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
+                    (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
+            };
         }
 
         private static void CreateCooldownRequirement(List<Requirement> RequirementObjects, KeyAction item)
@@ -586,6 +597,19 @@ namespace Core
             };
         }
 
+        private Requirement CreateUsableRequirement(string requirement)
+        {
+            var parts = requirement.Split(":");
+            string name = parts[1];
+
+            if (keyActions == null)
+            {
+                throw new ArgumentNullException("keyActions must be present!");
+            }
+
+            var keyAction = keyActions.Sequence.First(x => x.Name == name);
+            return CreateActionUsableRequirement(keyAction);
+        }
 
         private Requirement GetExcusiveValueBasedRequirement(string requirement)
         {
