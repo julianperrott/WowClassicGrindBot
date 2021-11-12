@@ -287,8 +287,6 @@ namespace Core
             }
 
             CreateMinRequirement(item.RequirementObjects, item);
-
-            CreateMinComboPointsRequirement(item.RequirementObjects, item);
             CreateTargetIsCastingRequirement(item.RequirementObjects, item);
 
             if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
@@ -319,31 +317,40 @@ namespace Core
 
         private void CreateMinRequirement(List<Requirement> RequirementObjects, KeyAction item)
         {
-            CreateMinRequirement(RequirementObjects, PowerType.Mana, item.MinMana);
-            CreateMinRequirement(RequirementObjects, PowerType.Rage, item.MinRage);
-            CreateMinRequirement(RequirementObjects, PowerType.Energy, item.MinEnergy);
+            CreateMinRequirement(RequirementObjects, PowerType.Mana, item);
+            CreateMinRequirement(RequirementObjects, PowerType.Rage, item);
+            CreateMinRequirement(RequirementObjects, PowerType.Energy, item);
+            CreateMinComboPointsRequirement(RequirementObjects, item);
         }
 
-        private void CreateMinRequirement(List<Requirement> RequirementObjects, PowerType type, int value)
+        private void CreateMinRequirement(List<Requirement> RequirementObjects, PowerType type, KeyAction keyAction)
         {
-            if (value > 0)
+            switch (type)
             {
-                if (type == PowerType.Mana)
-                {
+                case PowerType.Mana:
                     RequirementObjects.Add(new Requirement
                     {
-                        HasRequirement = () => playerReader.ManaCurrent >= value || playerReader.Buffs.Clearcasting,
-                        LogMessage = () => $"{type} {playerReader.ManaCurrent} >= {value}"
+                        HasRequirement = () => playerReader.ManaCurrent >= keyAction.MinMana || playerReader.Buffs.Clearcasting,
+                        LogMessage = () => $"{type} {playerReader.ManaCurrent} >= {keyAction.MinMana}",
+                        VisibleIfHasRequirement = keyAction.MinMana > 0
                     });
-                }
-                else
-                {
+                    break;
+                case PowerType.Rage:
                     RequirementObjects.Add(new Requirement
                     {
-                        HasRequirement = () => playerReader.PTCurrent >= value || playerReader.Buffs.Clearcasting,
-                        LogMessage = () => $"{type} {playerReader.PTCurrent} >= {value}"
+                        HasRequirement = () => playerReader.PTCurrent >= keyAction.MinRage,
+                        LogMessage = () => $"{type} {playerReader.PTCurrent} >= {keyAction.MinRage}",
+                        VisibleIfHasRequirement = keyAction.MinRage > 0
                     });
-                }
+                    break;
+                case PowerType.Energy:
+                    RequirementObjects.Add(new Requirement
+                    {
+                        HasRequirement = () => playerReader.PTCurrent >= keyAction.MinEnergy,
+                        LogMessage = () => $"{type} {playerReader.PTCurrent} >= {keyAction.MinEnergy}",
+                        VisibleIfHasRequirement = keyAction.MinEnergy > 0
+                    });
+                    break;
             }
         }
 

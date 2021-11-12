@@ -42,6 +42,7 @@ function DataToColor:RegisterEvents()
     DataToColor:RegisterEvent('PLAYER_EQUIPMENT_CHANGED', 'OnPlayerEquipmentChanged')
     DataToColor:RegisterEvent('GOSSIP_SHOW', 'OnGossipShow')
     DataToColor:RegisterEvent('SPELLS_CHANGED', 'OnSpellsChanged')
+    DataToColor:RegisterEvent('ACTIONBAR_SLOT_CHANGED', 'ActionbarSlotChanged')
 end
 
 function DataToColor:OnUIErrorMessage(event, messageType, message)
@@ -273,6 +274,13 @@ end
 function DataToColor:OnSpellsChanged(event)
     DataToColor:InitTalentQueue()
     DataToColor:InitSpellBookQueue()
+    DataToColor:InitActionBarCostQueue()
+end
+
+function DataToColor:ActionbarSlotChanged(event, slot)
+    if slot and HasAction(slot) then
+        DataToColor.stack:push(DataToColor.actionBarCostQueue, slot)
+    end
 end
 
 DataToColor.playerInteractIterator = 0

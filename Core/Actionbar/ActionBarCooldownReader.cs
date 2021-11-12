@@ -22,7 +22,7 @@ namespace Core
         public void Read()
         {
             // formula
-            // MAX_ACTION_IDX * index + cooldown
+            // MAX_ACTION_IDX * index + (cooldown / MAX_VALUE_MUL)
             float newCooldown = reader.GetIntAtCell(cActionbarNum);
             if (newCooldown == 0) return;
 
@@ -31,18 +31,12 @@ namespace Core
 
             newCooldown /= MAX_VALUE_MUL;
 
-            if (dict.TryGetValue(index, out var tuple))
+            if (dict.TryGetValue(index, out var tuple) && tuple.Item1 != (int)newCooldown)
             {
-                if (tuple.Item1 != (int)newCooldown)
-                {
-                    dict.Remove(index);
-                    dict.Add(index, Tuple.Create((int)newCooldown, DateTime.Now));
-                }
+                dict.Remove(index);
             }
-            else
-            {
-                dict.Add(index, Tuple.Create((int)newCooldown, DateTime.Now));
-            }
+
+            dict.TryAdd(index, Tuple.Create((int)newCooldown, DateTime.Now));
         }
 
         public void Reset()

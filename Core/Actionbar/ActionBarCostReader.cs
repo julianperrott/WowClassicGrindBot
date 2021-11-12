@@ -3,6 +3,20 @@ using System.Collections.Generic;
 
 namespace Core
 {
+    public class ActionBarCostEventArgs : EventArgs
+    {
+        public readonly int index;
+        public readonly PowerType powerType;
+        public readonly int cost;
+
+        public ActionBarCostEventArgs(int index, PowerType powerType, int cost)
+        {
+            this.index = index;
+            this.powerType = powerType;
+            this.cost = cost;
+        }
+    }
+
     public class ActionBarCostReader
     {
         private readonly ISquareReader reader;
@@ -19,6 +33,8 @@ namespace Core
         public int MaxCount { get; } = 108; // maximum amount of actionbar slot which tracked
 
         public int Count => dict.Count;
+
+        public event EventHandler<ActionBarCostEventArgs>? OnActionCostChanged;
 
         public ActionBarCostReader(ISquareReader reader, int cActionbarNum)
         {
@@ -40,17 +56,14 @@ namespace Core
 
             int cost = data;
 
-            if (dict.TryGetValue(index, out var tuple))
+            if (dict.TryGetValue(index, out var tuple) && tuple.Item2 != cost)
             {
-                if (tuple.Item2 != cost)
-                {
-                    dict.Remove(index);
-                    dict.Add(index, Tuple.Create((PowerType)type, cost));
-                }
+                dict.Remove(index);
             }
-            else
+
+            if (dict.TryAdd(index, Tuple.Create((PowerType)type, cost)))
             {
-                dict.Add(index, Tuple.Create((PowerType)type, cost));
+                OnActionCostChanged?.Invoke(this, new ActionBarCostEventArgs(index, (PowerType)type, cost));
             }
         }
 

@@ -264,6 +264,47 @@ namespace Core
 
                 logger.LogInformation($"[{Name}] Update {tuple.Item1} cost to {tuple.Item2} from {oldValue}" + (formCost > 0 ? $" +{formCost} Mana to change {FormEnum} Form" : ""));
             }
+
+            actionBarCostReader.OnActionCostChanged -= ActionBarCostReader_OnActionCostChanged;
+            actionBarCostReader.OnActionCostChanged += ActionBarCostReader_OnActionCostChanged;
+        }
+
+        private void ActionBarCostReader_OnActionCostChanged(object sender, ActionBarCostEventArgs e)
+        {
+            if (playerReader == null) return;
+
+            if (KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot))
+            {
+                if (slot <= 12)
+                {
+                    slot += Stance.RuntimeSlotToActionBar(this, playerReader, slot);
+                }
+
+                if (slot == e.index)
+                {
+                    int oldValue = 0;
+                    switch (e.powerType)
+                    {
+                        case PowerType.Mana:
+                            oldValue = MinMana;
+                            MinMana = e.cost;
+                            break;
+                        case PowerType.Rage:
+                            oldValue = MinRage;
+                            MinRage = e.cost;
+                            break;
+                        case PowerType.Energy:
+                            oldValue = MinEnergy;
+                            MinEnergy = e.cost;
+                            break;
+                    }
+
+                    if (e.cost != oldValue)
+                    {
+                        logger.LogInformation($"[{Name}] Update {e.powerType} cost to {e.cost} from {oldValue}");
+                    }
+                }
+            }
         }
 
         public void LogInformation(string message)
