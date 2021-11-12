@@ -74,23 +74,24 @@ namespace Core
             }
 
 
+            if (playerReader.TargetLevel > playerReader.Level.Value + above)
+            {
+                Warn($"Target is too high a level {playerReader.TargetGuid} - {playerReader.TargetId}");
+                return true; // ignore if current level + 2
+            }
+
             if (checkTargetGivesExp)
             {
-                return !playerReader.TargetYieldXP;
+                if (!playerReader.TargetYieldXP)
+                {
+                    Warn($"Target is not yield experience {playerReader.TargetGuid} - {playerReader.TargetId}");
+                    return true;
+                }
             }
-            else
+            else if (playerReader.TargetLevel < playerReader.Level.Value - below)
             {
-                if (playerReader.TargetLevel > playerReader.Level.Value + above)
-                {
-                    Warn($"Target is too high a level {playerReader.TargetGuid} - {playerReader.TargetId}");
-                    return true; // ignore if current level + 2
-                }
-
-                if (playerReader.TargetLevel < playerReader.Level.Value - below)
-                {
-                    Warn($"Target is too low a level {playerReader.TargetGuid} - {playerReader.TargetId}");
-                    return true; // ignore if current level - 7
-                }
+                Warn($"Target is too low a level {playerReader.TargetGuid} - {playerReader.TargetId}");
+                return true; // ignore if current level - 7
             }
 
             string blacklistMatch = blacklist.FirstOrDefault(s => addonReader.TargetName.ToUpper().StartsWith(s));
