@@ -8,6 +8,7 @@ E.callbacks = E.callbacks or CallbackHandler:New(E)
 E.C = {} -- Constants
 E.C.Spell = {} -- Spells
 E.C.MIRRORTIMER = {} -- Mirror Timers
+E.C.ActionType = {} -- GetActionType
 
 E.S = {} -- Storage
 E.R = {} -- Runtime

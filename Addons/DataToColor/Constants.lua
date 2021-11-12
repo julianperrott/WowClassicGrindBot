@@ -53,3 +53,6 @@ DataToColor.C.Gossip = {
 
 -- Mirror timer labels
 DataToColor.C.MIRRORTIMER.BREATH = "BREATH"
+
+DataToColor.C.ActionType.Spell = "spell"
+DataToColor.C.ActionType.Macro = "macro"

@@ -255,38 +255,20 @@ function DataToColor:uniqueGuid(npcId, spawn)
 end
 
 function DataToColor:actionbarCost(slot)
-    if HasAction(slot) then
-        local actionName, _
-        local actionType, id = GetActionInfo(slot)
-        if actionType == 'macro' then
-            id = GetMacroSpell(id)
-        end
-        if actionType == 'item' then
-            actionName = GetItemInfo(id)
-        elseif actionType == 'spell' or (actionType == 'macro' and id) then
-            actionName = GetSpellInfo(id)
-        end
-        if actionName then
-            local cost = 0
-            local type = 0
-            local costTable = GetSpellPowerCost(actionName)
-            if costTable ~= nil then
-                for key, costInfo in pairs(costTable) do
-                    cost = costInfo.cost
-                    type = costInfo.type
-                    --print(slot.." "..actionName.." "..cost)
-                    break
-                end
+    local actionType, id = GetActionInfo(slot)
+    if actionType == DataToColor.C.ActionType.Macro then
+        id = GetMacroSpell(id)
+    end
+    if id and actionType == DataToColor.C.ActionType.Spell or actionType == DataToColor.C.ActionType.Macro then
+        local costTable = GetSpellPowerCost(id)
+        if costTable ~= nil then
+            for _, costInfo in pairs(costTable) do
+                --print(slot, actionType, costInfo.type, costInfo.cost, GetSpellLink(id))
+                return DataToColor.C.MAX_POWER_TYPE * costInfo.type + DataToColor.C.MAX_ACTION_IDX * slot + costInfo.cost
             end
-            --DataToColor:Print(button:GetName(), actionType, (GetSpellLink(id)), actionName, type, cost, id)
-            return DataToColor.C.MAX_POWER_TYPE * type + DataToColor.C.MAX_ACTION_IDX * slot + cost
-        else
-        --    print(slot.. " no action name")
-            return nil
         end
     end
-    --return DataToColor.C.MAX_ACTION_IDX * slot
-    return nil
+    return DataToColor.C.MAX_POWER_TYPE * 0 + DataToColor.C.MAX_ACTION_IDX * slot + 0
 end
 
 function DataToColor:equipSlotItemId(slot)

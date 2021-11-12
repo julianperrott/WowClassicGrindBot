@@ -320,7 +320,7 @@ end
 
 function DataToColor:InitActionBarCostQueue()
     for slot=1, MAX_ACTIONBAR_SLOT do
-        if DataToColor:actionbarCost(slot) then
+        if HasAction(slot) then
             DataToColor.stack:push(DataToColor.actionBarCostQueue, slot)
         end
     end
