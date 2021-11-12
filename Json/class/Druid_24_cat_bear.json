@@ -77,7 +77,7 @@
         "Key": "0",
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirement": "Health%<30",
+        "Requirements": ["Health%<30", "CD==0"],
         "Cooldown": 8000,
         "Form": "None"
       },
@@ -88,7 +88,8 @@
         "WhenUsable": true,
         "MinEnergy": 30,
         "Cooldown": 5000,
-        "Requirements": ["Form:Druid_Cat", "not TigersFury", "Rip", "Rake", "InMeleeRange"]
+        "Requirements": ["Form:Druid_Cat", "not TigersFury", "Rip", "Rake", "InMeleeRange"],
+        "Form": "Druid_Cat"
       },
       {
         "Name": "Rip",
@@ -97,6 +98,7 @@
         "MinComboPoints": 1,
         "WhenUsable": true,
         "Requirements": ["SpellInRange:2", "not Rip", "MobCount<2", "Form:Druid_Cat", "TargetHealth%>20"],
+        "Form": "Druid_Cat"
       },
       {
         "Name": "Rake",
@@ -104,6 +106,7 @@
         "MinEnergy": 35,
         "WhenUsable": true,
         "Requirements": ["SpellInRange:2", "not Rake", "MobCount<2", "Form:Druid_Cat", "TargetHealth%>20"],
+        "Form": "Druid_Cat"
       },
       {
         "Name": "Claw",
