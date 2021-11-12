@@ -305,7 +305,7 @@ function DataToColor:isActionUseable(min,max)
         end
 
         local elapsed = (start + duration - GetTime())
-        if enabled == 1 and start ~= 0 and duration ~= 1.5 then -- exclude GCD
+        if enabled == 1 and start ~= 0 and duration > 1.5 then -- exclude GCD - according to internet everything counts as GCD below 1.5
             if not DataToColor.struct:exists(DataToColor.actionBarCooldownQueue, i) then
                 -- add
                 DataToColor.struct:push(DataToColor.actionBarCooldownQueue, i, elapsed)
