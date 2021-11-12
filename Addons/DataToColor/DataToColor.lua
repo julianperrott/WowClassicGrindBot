@@ -520,6 +520,8 @@ function DataToColor:CreateFrames(n)
                     if actionCooldownValue == 0 then
                         DataToColor.struct:remove(DataToColor.actionBarCooldownQueue, actionCooldownKey)
                     end
+                else
+                    MakePixelSquareArrI(0, 37)
                 end
             end
 
