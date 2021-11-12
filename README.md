@@ -633,12 +633,17 @@ Formula: `[Keyword][Operator][Numeric integer value]`
 | `TargetHealth%` | Target health in percentage |
 | `PetHealth%` | Pet health in percentage |
 | `Mana%` | Player mana in percentage |
+| `Mana` | Player current mana |
+| `Rage` | Player current rage |
+| `Energy` | Player current energy |
+| `Combo Point` | Player current combo points on the target |
 | `BagCount` | How many items in the player inventory |
 | `MobCount` | How many detected, alive, and currently fighting mob around the player |
 | `MinRange` | Minimum distance(yard) between the player and the target  |
 | `MaxRange` | Maximum distance(yard) between the player and the target |
 | `LastAutoShotMs` | Time since last detected AutoShot happened in milliseconds |
 | `LastMainHandMs` | Time since last detected Main Hand Melee swing happened in milliseconds |
+| `CD` | Returns the context KeyAction **in-game** cooldown in milliseconds |
 | `CD_{KeyAction.Name}` | Returns the given `{KeyAction.Name}` **in-game** cooldown in milliseconds |
 
 For the `MinRange` and `MaxRange` gives an approximation range distance between the player and target.
@@ -658,6 +663,9 @@ e.g.
 "Requirement": "TargetHealth%<=10"
 "Requirement": "PetHealth%<10"
 "Requirement": "Mana%<=40"
+"Requirement": "Mana<420"
+"Requirement": "Energy>=40"
+"Requirement": "Rage>90"
 "Requirement": "BagCount>80"
 "Requirement": "MobCount>1"
 "Requirement": "MinRange<5"
@@ -670,6 +678,34 @@ e.g.
 "Requirement": "CD_Hammer of Justice>8000" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
 ```
 
+e.g. for `CD`: It's a good idea to put `CD` in healing spells to take consideration of the spell interruption.
+```json
+{
+    "Name": "Flash of Light",
+    "Key": "6",
+    "HasCastBar": true,
+    "WhenUsable": true,
+    "Requirements": ["Health%<60", "TargetHealth%>20", "CD==0", "MobCount<2", "LastMainHandMs<=1000"],
+    "Cooldown": 6000
+},
+```
+
+e.g. for `CD_{KeyAction.Name}`: Where `Hammer of Justice` referencing the `Judgement` **in-game** Cooldown to do an awesome combo!
+```json
+{
+    "Name": "Judgement",
+    "Key": "1",
+    "WhenUsable": true,
+    "Requirements": ["Seal of the Crusader", "!Judgement of the Crusader"],
+    "DelayAfterCast": 0
+},
+{
+    "Name": "Hammer of Justice",
+    "Key": "7",
+    "WhenUsable": true,
+    "Requirements": ["Judgement of the Crusader", "CD_Judgement<=1500", "TargetHealth%>20"]
+}
+```
 ---
 ### **npcID requirements**
 

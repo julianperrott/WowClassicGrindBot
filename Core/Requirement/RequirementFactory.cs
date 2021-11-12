@@ -233,12 +233,17 @@ namespace Core
                 { "TargetHealth%", () => playerReader.TargetHealthPercentage },
                 { "PetHealth%", () => playerReader.PetHealthPercentage },
                 { "Mana%", () => playerReader.ManaPercentage },
+                { "Mana", () => playerReader.ManaCurrent },
+                { "Energy", () => playerReader.PTCurrent },
+                { "Rage", () => playerReader.PTCurrent },
+                { "Combo Point", () => playerReader.ComboPoints },
                 { "BagCount", () => bagReader.BagItems.Count },
                 { "MobCount", () => addonReader.CombatCreatureCount },
                 { "MinRange", () => playerReader.MinRange },
                 { "MaxRange", () => playerReader.MaxRange },
                 { "LastAutoShotMs", () => playerReader.AutoShot.ElapsedMs },
                 { "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }
+                //"CD_{item.Name}
             };
         }
 
@@ -248,6 +253,8 @@ namespace Core
 
             CreateConsumableRequirement("Water", item);
             CreateConsumableRequirement("Food", item);
+
+            CreatePerKeyActionRequirements(item);
 
             item.RequirementObjects.Clear();
             foreach (string requirement in item.Requirements)
@@ -301,6 +308,17 @@ namespace Core
         public void CreateDynamicBindings(KeyAction item)
         {
             DynamicBindCooldown(item);
+        }
+
+        private void CreatePerKeyActionRequirements(KeyAction item)
+        {
+            string key = $"CD_{item.Name}";
+
+            if (valueDictionary.ContainsKey("CD"))
+                valueDictionary.Remove("CD");
+
+            if(valueDictionary.ContainsKey(key))
+                valueDictionary.Add("CD", valueDictionary[key]);
         }
 
         private void CreateTargetIsCastingRequirement(List<Requirement> itemRequirementObjects, KeyAction item)
