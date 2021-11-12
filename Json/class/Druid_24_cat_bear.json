@@ -27,6 +27,15 @@
   "Pull": {
     "Sequence": [
       {
+        "Name": "Regrowth",
+        "Key": "0",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": ["Health%<50", "CD==0"],
+        "Cooldown": 8000,
+        "Form": "None"
+      },
+      {
         "Name": "Rejuvenation",
         "Key": "6",
         "StopBeforeCast": true,
@@ -84,7 +93,6 @@
       {
         "Name": "Tiger's Fury",
         "Key": "5",
-        "MinComboPoints": 1,
         "WhenUsable": true,
         "MinEnergy": 30,
         "Cooldown": 5000,
