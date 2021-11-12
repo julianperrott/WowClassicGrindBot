@@ -62,7 +62,7 @@ namespace Core
                 if (dict.TryGetValue(slot, out var tuple))
                 {
                     if (tuple.Item1 == 0) return 0;
-                    return (int)(tuple.Item2.AddSeconds(tuple.Item1) - DateTime.Now).TotalMilliseconds;
+                    return Math.Clamp((int)(tuple.Item2.AddSeconds(tuple.Item1) - DateTime.Now).TotalMilliseconds, 0, int.MaxValue);
                 }
             }
 
