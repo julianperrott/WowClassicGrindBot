@@ -259,38 +259,36 @@ namespace Core
             item.RequirementObjects.Clear();
             foreach (string requirement in item.Requirements)
             {
-                if (requirement.Contains("||"))
+                List<string> expressions = InfixToPostfix.Convert(requirement);
+                Stack<Requirement> stack = new Stack<Requirement>();
+                foreach (string c in expressions)
                 {
-                    Requirement orCombinedRequirement = new Requirement
+                    if (c.Contains("&&"))
                     {
-                        LogMessage = () => ""
-                    };
-                    foreach (string part in requirement.Split("||"))
-                    {
-                        var sub = GetRequirement(item.Name, part);
-                        orCombinedRequirement = orCombinedRequirement.Or(sub);
-                    }
+                        var a = stack.Pop();
+                        var b = stack.Pop();
 
-                    item.RequirementObjects.Add(orCombinedRequirement);
-                }
-                else if (requirement.Contains("&&"))
-                {
-                    Requirement andCombinedRequirement = new Requirement
-                    {
-                        LogMessage = () => ""
-                    };
-                    foreach (string part in requirement.Split("&&"))
-                    {
-                        var sub = GetRequirement(item.Name, part);
-                        andCombinedRequirement = andCombinedRequirement.And(sub);
+                        stack.Push(b.And(a));
                     }
+                    else if (c.Contains("||"))
+                    {
+                        var a = stack.Pop();
+                        var b = stack.Pop();
 
-                    item.RequirementObjects.Add(andCombinedRequirement);
+                        stack.Push(b.Or(a));
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(c.Trim()))
+                        {
+                            continue;
+                        }
+
+                        stack.Push(GetRequirement(item.Name, c));
+                    }
                 }
-                else
-                {
-                    item.RequirementObjects.Add(GetRequirement(item.Name, requirement));
-                }
+
+                item.RequirementObjects.Add(stack.Pop());
             }
 
             CreateMinRequirement(item.RequirementObjects, item);
@@ -452,14 +450,15 @@ namespace Core
 
         public Requirement GetRequirement(string name, string requirement)
         {
-            var requirementText = requirement;
-            logger.LogInformation($"[{name}] Processing requirement: \"{requirementText}\"");
+            logger.LogInformation($"[{name}] Processing requirement: \"{requirement}\"");
+
+            requirement = requirement.Trim();
 
             bool negated = false;
             string negateKeyword = negate.FirstOrDefault(x => requirement.StartsWith(x));
             if (!string.IsNullOrEmpty(negateKeyword))
             {
-                requirement = requirement.Substring(negateKeyword.Length);
+                requirement = requirement[negateKeyword.Length..];
                 negated = true;
             }
 
@@ -480,7 +479,7 @@ namespace Core
                 return negated ? requirementObj.Negate(negateKeyword) : requirementObj;
             }
 
-            logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", booleanDictionary.Keys)}");
+            logger.LogInformation($"UNKNOWN REQUIREMENT! \"{requirement}\": try one of: {string.Join(", ", booleanDictionary.Keys)}");
             return new Requirement
             {
                 HasRequirement = () => false,
@@ -543,34 +542,34 @@ namespace Core
         private Requirement CreateSpellRequirement(string requirement)
         {
             var parts = requirement.Split(":");
-            var spellName = parts[1];
+            var name = parts[1].Trim();
 
-            if (int.TryParse(parts[1], out int spellId) && spellBookReader.SpellDB.Spells.TryGetValue(spellId, out Spell spell))
+            if (int.TryParse(parts[1], out int id) && spellBookReader.SpellDB.Spells.TryGetValue(id, out Spell spell))
             {
-                spellName = $"{spell.Name}({spellId})";
+                name = $"{spell.Name}({id})";
             }
             else
             {
-                spellId = spellBookReader.GetSpellIdByName(spellName);
+                id = spellBookReader.GetSpellIdByName(name);
             }
 
             return new Requirement
             {
-                HasRequirement = () => spellBookReader.Spells.ContainsKey(spellId),
-                LogMessage = () => $"Spell {spellName}"
+                HasRequirement = () => spellBookReader.Spells.ContainsKey(id),
+                LogMessage = () => $"Spell {name}"
             };
         }
 
         private Requirement CreateTalentRequirement(string requirement)
         {
             var parts = requirement.Split(":");
-            var talentName = parts[1];
+            var name = parts[1].Trim();
             var rank = parts.Length < 3 ? 1 : int.Parse(parts[2]);
 
             return new Requirement
             {
-                HasRequirement = () => talentReader.HasTalent(talentName, rank),
-                LogMessage = () => rank == 1 ? $"Talent {talentName}" : $"Talent {talentName} (Rank {rank})"
+                HasRequirement = () => talentReader.HasTalent(name, rank),
+                LogMessage = () => rank == 1 ? $"Talent {name}" : $"Talent {name} (Rank {rank})"
             };
         }
 
@@ -639,7 +638,7 @@ namespace Core
         private Requirement CreateUsableRequirement(string requirement)
         {
             var parts = requirement.Split(":");
-            string name = parts[1];
+            string name = parts[1].Trim();
 
             if (keyActions == null)
             {
@@ -659,9 +658,10 @@ namespace Core
             }
 
             var parts = requirement.Split(symbol);
+            var key = parts[0].Trim();
             var value = int.Parse(parts[1]);
 
-            if (!valueDictionary.Keys.Contains(parts[0]))
+            if (!valueDictionary.Keys.Contains(key))
             {
                 logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
@@ -671,13 +671,13 @@ namespace Core
                 };
             }
 
-            var valueCheck = valueDictionary[parts[0]];
+            var valueCheck = valueDictionary[key];
             if (symbol == ">")
             {
                 return new Requirement
                 {
                     HasRequirement = () => valueCheck() > value,
-                    LogMessage = () => $"{parts[0]} {valueCheck()} > {value}"
+                    LogMessage = () => $"{key} {valueCheck()} > {value}"
                 };
             }
             else
@@ -685,7 +685,7 @@ namespace Core
                 return new Requirement
                 {
                     HasRequirement = () => valueCheck() < value,
-                    LogMessage = () => $"{parts[0]} {valueCheck()} < {value}"
+                    LogMessage = () => $"{key} {valueCheck()} < {value}"
                 };
             }
         }
@@ -699,9 +699,10 @@ namespace Core
             }
 
             var parts = requirement.Split(symbol);
+            var key = parts[0].Trim();
             var value = int.Parse(parts[1]);
 
-            if (!valueDictionary.Keys.Contains(parts[0]))
+            if (!valueDictionary.Keys.Contains(key))
             {
                 logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
@@ -711,13 +712,13 @@ namespace Core
                 };
             }
 
-            var valueCheck = valueDictionary[parts[0]];
+            var valueCheck = valueDictionary[key];
             if (symbol == ">=")
             {
                 return new Requirement
                 {
                     HasRequirement = () => valueCheck() >= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck()} >= {value}"
+                    LogMessage = () => $"{key} {valueCheck()} >= {value}"
                 };
             }
             else
@@ -725,7 +726,7 @@ namespace Core
                 return new Requirement
                 {
                     HasRequirement = () => valueCheck() <= value,
-                    LogMessage = () => $"{parts[0]} {valueCheck()} <= {value}"
+                    LogMessage = () => $"{key} {valueCheck()} <= {value}"
                 };
             }
         }
@@ -734,9 +735,10 @@ namespace Core
         {
             var symbol = "==";
             var parts = requirement.Split(symbol);
+            var key = parts[0].Trim();
             var value = int.Parse(parts[1]);
 
-            if (!valueDictionary.Keys.Contains(parts[0]))
+            if (!valueDictionary.Keys.Contains(key))
             {
                 logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
@@ -746,11 +748,11 @@ namespace Core
                 };
             }
 
-            var valueCheck = valueDictionary[parts[0]];
+            var valueCheck = valueDictionary[key];
             return new Requirement
             {
                 HasRequirement = () => valueCheck() == value,
-                LogMessage = () => $"{parts[0]} {valueCheck()} == {value}"
+                LogMessage = () => $"{key} {valueCheck()} == {value}"
             };
         }
 

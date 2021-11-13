@@ -348,12 +348,12 @@ The bare minimum for `Food` and `Water` is looks something like this.
 {
     "Name": "Food",
     "Key": "-",
-    "Requirement": "Health%<50"
+    "Requirement": "Health% < 50"
 },
 {
     "Name": "Water",
     "Key": "=",
-    "Requirement": "Mana%<50"
+    "Requirement": "Mana% < 50"
 }
 ```
 
@@ -365,7 +365,7 @@ e.g. for Rogue ability
     "MinEnergy": 25,
     "MinComboPoints": 2,
     "Cooldown": 3000,
-    "Requirement": "not Slice And Dice"
+    "Requirement": "!Slice And Dice"
 }
 ```
 
@@ -405,11 +405,11 @@ e.g.
             "Key": "2",
             "HasCastBar": true,
             "MinMana": 30,
-            "Requirement": "TargetHealth%>20"
+            "Requirement": "TargetHealth% > 20"
         },
         {
             "Name": "AutoAttack",
-            "Requirement": "not AutoAttacking"
+            "Requirement": "!AutoAttacking"
         },
         {
             "Name": "Approach",
@@ -431,17 +431,17 @@ e.g.
             "Name": "Frost Armor",
             "Key": "3",
             "MinMana": 60,
-            "Requirement": "not Frost Armor"
+            "Requirement": "!Frost Armor"
         },
         {
             "Name": "Food",
             "Key": "=",
-            "Requirement": "Health%<30"
+            "Requirement": "Health% < 30"
         },
         {
             "Name": "Water",
             "Key": "-",
-            "Requirement": "Mana%<30"
+            "Requirement": "Mana% < 30"
         }
     ]
 }
@@ -462,12 +462,12 @@ e.g.
         {
             "Name": "Food",
             "Key": "=",
-            "Requirement": "Health%<50"
+            "Requirement": "Health% < 50"
         },
         {
             "Name": "Water",
             "Key": "-",
-            "Requirement": "Mana%<50"
+            "Requirement": "Mana% < 50"
         }
     ]
 }
@@ -559,7 +559,7 @@ e.g.
     "Name": "Soul Shard",
     "Key": "9",
     "HasCastBar": true,
-    "Requirements": ["TargetHealth%<36", "not BagItem:6265:3"],     //<--- Requirement List
+    "Requirements": ["TargetHealth% < 36", "not BagItem:6265:3"],     //<--- Requirement List
     "MinMana": 55
 },
 {
@@ -594,28 +594,27 @@ e.g.
 
 Two or more Requirement can be merged into a single Requirement object. 
 
-By default every Requirement is concataneted with `[and]` operator which means in order to execute the `KeyAction`, every member in the `RequirementsObject` must be evaluated to `true`. However this consctruct allows to concatanete with `[or]`.
+By default every Requirement is concataneted with `[and]` operator which means in order to execute the `KeyAction`, every member in the `RequirementsObject` must be evaluated to `true`. However this consctruct allows to concatanete with `[or]`. Nesting parenthesis are also supported.
 
-Formula: `[Requirement1][Operator][[RequirementN]`
+Formula: `[Requirement1] [Operator] [RequirementN]`
 
 | Operator | Description |
 | --- | --- |
 | "&&" | And |
 | "\|\|" | Or |
 
-**Note:** _Currently only one type of the [Operator] is handled in a single Requirement. So mixing [&&] and [||] is not supported._
-
 e.g.
 ```json
-"Requirements": ["Has Pet", "TargetHealth%<70||TargetCastingSpell"]     // || in action
-"Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>2"]       // || in action
+"Requirements": ["Has Pet", "TargetHealth% < 70 || TargetCastingSpell"]
+"Requirement": "!Form:Druid_Bear && Health% < 50 || MobCount > 2",
+"Requirement": "(Judgement of the Crusader && CD_Judgement <= 1500 && TargetHealth% > 20) || TargetCastingSpell"
 ```
 ---
 ### **Value base requirements**
 
 Value base requirement is the most basic way to create a condition. 
 
-Formula: `[Keyword][Operator][Numeric integer value]`
+Formula: `[Keyword] [Operator] [Numeric integer value]`
 
 **Note:** `[Numeric integer value]` always the _right-hand_ side expression value
 
@@ -659,23 +658,23 @@ Its worth mention that `CD_{KeyAction.Name}` is a dynamic binding.<br>Each `KeyA
 
 e.g.
 ```json
-"Requirement": "Health%>70"
-"Requirement": "TargetHealth%<=10"
+"Requirement": "Health% > 70"
+"Requirement": "TargetHealth% <= 10"
 "Requirement": "PetHealth%<10"
-"Requirement": "Mana%<=40"
-"Requirement": "Mana<420"
-"Requirement": "Energy>=40"
+"Requirement": "Mana% <= 40"
+"Requirement": "Mana < 420"
+"Requirement": "Energy >= 40"
 "Requirement": "Rage>90"
-"Requirement": "BagCount>80"
+"Requirement": "BagCount > 80"
 "Requirement": "MobCount>1"
-"Requirement": "MinRange<5"
+"Requirement": "MinRange < 5"
 "Requirement": "MinRange>15"
-"Requirement": "MaxRange>20"
-"Requirement": "MaxRange>35"
+"Requirement": "MaxRange > 20"
+"Requirement": "MaxRange > 35"
 "Requirement": "LastAutoShotMs<=500"
-"Requirement": "LastMainHandMs<=500"
+"Requirement": "LastMainHandMs <= 500"
 "Requirement": "CD_Judgement<1500"         // The remaining cooldown on Judgement is less then GCD(1500)
-"Requirement": "CD_Hammer of Justice>8000" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
+"Requirement": "CD_Hammer of Justice > 8000" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
 ```
 
 e.g. for `CD`: It's a good idea to put `CD` in healing spells to take consideration of the spell interruption.
@@ -685,7 +684,7 @@ e.g. for `CD`: It's a good idea to put `CD` in healing spells to take considerat
     "Key": "6",
     "HasCastBar": true,
     "WhenUsable": true,
-    "Requirements": ["Health%<60", "TargetHealth%>20", "CD==0", "MobCount<2", "LastMainHandMs<=1000"],
+    "Requirements": ["Health% < 60", "TargetHealth% > 20", "CD==0", "MobCount < 2", "LastMainHandMs <= 1000"],
     "Cooldown": 6000
 },
 ```
@@ -703,7 +702,7 @@ e.g. for `CD_{KeyAction.Name}`: Where `Hammer of Justice` referencing the `Judge
     "Name": "Hammer of Justice",
     "Key": "7",
     "WhenUsable": true,
-    "Requirements": ["Judgement of the Crusader", "CD_Judgement<=1500", "TargetHealth%>20"]
+    "Requirements": ["Judgement of the Crusader && CD_Judgement <= 1500 && TargetHealth% > 20 || TargetCastingSpell"]
 }
 ```
 ---
@@ -715,7 +714,7 @@ Formula: `npcID:[Numeric integer value]`
 
 e.g.
 
-* `"Requirement": "not npcID:6195"` - target is not [6195](https://tbc.wowhead.com/npc=6195)
+* `"Requirement": "!npcID:6195"` - target is not [6195](https://tbc.wowhead.com/npc=6195)
 * `"Requirement": "npcID:6195"` - target is [6195](https://tbc.wowhead.com/npc=6195)
 
 ---
@@ -732,7 +731,7 @@ e.g.
 * `"Requirement": "BagItem:5175"` - Must have a [Earth Totem](https://tbc.wowhead.com/item=5175) in bag
 * `"Requirement": "BagItem:6265:3"` - Must have atleast [3x Soulshard](https://tbc.wowhead.com/item=6265) in bag
 * `"Requirement": "not BagItem:19007:1"` - Must not have a [Lesser Healthstone](https://tbc.wowhead.com/item=19007) in bag
-* `"Requirement": "not BagItem:6265:3"` - Must not have [3x Soulshard](https://tbc.wowhead.com/item=6265) in bag
+* `"Requirement": "!BagItem:6265:3"` - Must not have [3x Soulshard](https://tbc.wowhead.com/item=6265) in bag
 
 ---
 ### **Form requirements**
@@ -766,12 +765,13 @@ Formula: `Form:[form]`
 | Paladin_Shadow_Resistance_Aura |
 | Paladin_Frost_Resistance_Aura |
 | Paladin_Fire_Resistance_Aura |
+| Paladin_Sanctity_Aura |
 | Paladin_Crusader_Aura |
 
 e.g.
 ```json
-"Requirement": "Form:Druid_Bear"       // Must be in `Druid_Bear` form
-"Requirement": "not Form:Druid_Cat"    // Shoudn't be in `Druid_Cat` form
+"Requirement": "Form:Druid_Bear"    // Must be in `Druid_Bear` form
+"Requirement": "!Form:Druid_Cat"    // Shoudn't be in `Druid_Cat` form
 ```
 
 ---
@@ -801,7 +801,7 @@ Formula: `Race:[race]`
 e.g. 
 ```json
 "Requirement": "Race:Orc"          // Must be `Orc` race
-"Requirement": "not Race:Human"    // Shoudn't be `Human` race
+"Requirement": "!Race:Human"    // Shoudn't be `Human` race
 ```
 
 ---
@@ -820,7 +820,7 @@ e.g.
 
 * `"Requirement": "Spell:687"` - Must have know [`id=687`](https://tbc.wowhead.com/item=687)
 * `"Requirement": "Spell:Demon Skin"` - Must have known the given `name`
-* `"Requirement": "not Spell:702"` - Must not have known the given [`id=702`](https://tbc.wowhead.com/item=702)
+* `"Requirement": "!Spell:702"` - Must not have known the given [`id=702`](https://tbc.wowhead.com/item=702)
 * `"Requirement": "not Spell:Curse of Weakness"` - Must not have known the given `name`
 
 ---
@@ -1022,7 +1022,7 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 
 e.g.
 ```json
-"Requirement": "not Well Fed"      // I am not well fed.
+"Requirement": "!Well Fed"      // I am not well fed.
 "Requirement": "not Thorns"        // I don't have the thorns buff.
 "Requirement": "AutoAttacking"     // "Auto Attack" spell is active.
 "Requirement": "Shooting"          // "Shoot" spell is active.
@@ -1077,7 +1077,7 @@ Formula: `SpellInRange:[Numeric integer value]`
 e.g.
 ```json
 "Requirement": "SpellInRange:4"
-"Requirements": ["Health%<80", "SpellInRange:2"]
+"Requirements": ["Health% < 80", "SpellInRange:2"]
 ```
 
 ---
