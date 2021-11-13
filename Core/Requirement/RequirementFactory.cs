@@ -259,38 +259,31 @@ namespace Core
             item.RequirementObjects.Clear();
             foreach (string requirement in item.Requirements)
             {
-                if (requirement.Contains("||"))
+                List<string> expressions = InfixToPostfix.Convert(requirement);
+                Stack<Requirement> stack = new Stack<Requirement>();
+                foreach (string c in expressions)
                 {
-                    Requirement orCombinedRequirement = new Requirement
+                    if (c.Contains("&&"))
                     {
-                        LogMessage = () => ""
-                    };
-                    foreach (string part in requirement.Split("||"))
-                    {
-                        var sub = GetRequirement(item.Name, part);
-                        orCombinedRequirement = orCombinedRequirement.Or(sub);
-                    }
+                        var a = stack.Pop();
+                        var b = stack.Pop();
 
-                    item.RequirementObjects.Add(orCombinedRequirement);
-                }
-                else if (requirement.Contains("&&"))
-                {
-                    Requirement andCombinedRequirement = new Requirement
-                    {
-                        LogMessage = () => ""
-                    };
-                    foreach (string part in requirement.Split("&&"))
-                    {
-                        var sub = GetRequirement(item.Name, part);
-                        andCombinedRequirement = andCombinedRequirement.And(sub);
+                        stack.Push(b.And(a));
                     }
+                    else if (c.Contains("||"))
+                    {
+                        var a = stack.Pop();
+                        var b = stack.Pop();
 
-                    item.RequirementObjects.Add(andCombinedRequirement);
+                        stack.Push(b.Or(a));
+                    }
+                    else
+                    {
+                        stack.Push(GetRequirement(item.Name, c));
+                    }
                 }
-                else
-                {
-                    item.RequirementObjects.Add(GetRequirement(item.Name, requirement));
-                }
+
+                item.RequirementObjects.Add(stack.Pop());
             }
 
             CreateMinRequirement(item.RequirementObjects, item);
