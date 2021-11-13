@@ -473,7 +473,7 @@ namespace Core
                 return negated ? requirementObj.Negate(negateKeyword) : requirementObj;
             }
 
-            logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", booleanDictionary.Keys)}");
+            logger.LogInformation($"UNKNOWN REQUIREMENT! \"{requirement}\": try one of: {string.Join(", ", booleanDictionary.Keys)}");
             return new Requirement
             {
                 HasRequirement = () => false,
