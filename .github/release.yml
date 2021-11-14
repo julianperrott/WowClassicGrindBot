@@ -1,0 +1,16 @@
+# release.yml
+
+changelog:
+  categories:
+    - title: Breaking Changes!
+      labels:
+        - breaking change
+    - title: Fixes 🛠
+      labels:
+        - bugfix
+    - title: New Features 🎉
+      labels:
+        - enhancement 
+    - title: Other Changes
+      labels:
+        - "*"
