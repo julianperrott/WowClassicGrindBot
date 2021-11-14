@@ -151,7 +151,7 @@ namespace SharedLib.NpcFinder
             TargetCount = Npcs.Where(c => !c.IsAdd && Math.Abs(c.ClickPoint.X - c.screenMid) < c.screenTargetBuffer).Count();
             AddCount = Npcs.Where(c => c.IsAdd).Count();
 
-            if (AddCount > 0 || TargetCount > 1)
+            if (AddCount > 0 && TargetCount >= 1)
             {
                 PotentialAddsExist = true;
                 LastPotentialAddsSeen = DateTime.Now;
