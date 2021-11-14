@@ -322,7 +322,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task SwitchGatherType()
+        private async ValueTask SwitchGatherType()
         {
             if (this.classConfiguration.Mode == Mode.AttendedGather && this.lastGatherClick.AddSeconds(3) < DateTime.Now && this.classConfiguration.GatherFindKeyConfig.Count > 0)
             {
@@ -385,7 +385,7 @@ namespace Core.Goals
             routeToWaypoint = new Stack<Vector3>(simple);
         }
 
-        private async Task RefillRouteToNextWaypoint(bool forceUsePathing)
+        private async ValueTask RefillRouteToNextWaypoint(bool forceUsePathing)
         {
             LastReset = DateTime.Now;
 
@@ -420,7 +420,7 @@ namespace Core.Goals
             this.stuckDetector.SetTargetLocation(this.routeToWaypoint.Peek());
         }
 
-        private async Task AdjustHeading(float heading)
+        private async ValueTask AdjustHeading(float heading)
         {
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
@@ -435,10 +435,12 @@ namespace Core.Goals
             var diff = MathF.Min(diff1, diff2);
             if (diff > wanderAngle)
             {
+                /*
                 if(diff > wanderAngle * 3)
                 {
                     await stopMoving.StopForward();
                 }
+                */
 
                 await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");
             }
@@ -485,7 +487,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task RandomJump()
+        private async ValueTask RandomJump()
         {
             if (classConfiguration.Jump.MillisecondsSinceLastClick > random.Next(10000, 15000))
             {
@@ -493,7 +495,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task StopDrowning()
+        private async ValueTask StopDrowning()
         {
             await input.TapJump("Drowning! Swim up");
             await wait.Update(1);
