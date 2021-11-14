@@ -126,13 +126,13 @@ namespace Core
 
                 if (addItem)
                 {
-                    var item = new Item { Name = "Unknown" };
                     if (itemDb.Items.ContainsKey(itemId))
                     {
+                        var item = new Item { Name = "Unknown" };
                         item = itemDb.Items[itemId];
+                        BagItems.Add(new BagItem(bag, slot, itemId, itemCount, item, isSoulbound));
+                        hasChanged = true;
                     }
-                    BagItems.Add(new BagItem(bag, slot, itemId, itemCount, item, isSoulbound));
-                    hasChanged = true;
                 }
             }
             else

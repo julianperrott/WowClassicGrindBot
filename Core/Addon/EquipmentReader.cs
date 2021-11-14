@@ -53,7 +53,9 @@ namespace Core
             int index = reader.GetIntAtCell(cSlotNum);
             if (index < MAX_EQUIPMENT_COUNT && index >= 0)
             {
-                equipment[index] = reader.GetIntAtCell(cItemId);
+                int itemId = reader.GetIntAtCell(cItemId);
+                if(itemId > 0)
+                    equipment[index] = itemId;
             }
         }
 
