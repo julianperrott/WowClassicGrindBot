@@ -1,0 +1,86 @@
+{
+  "ClassName": "Paladin",
+  "PathFilename": "_pack\\1-20\\Draenei\\1-5_Azuremyst Isle.json",
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Holy Light",
+        "Key": "3",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": ["Health%<60", "TargetHealth%>20", "CD==0", "LastMainHandMs <= 1000"],
+        "Cooldown": 5000
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:0"
+        ],
+        "DelayAfterCast": 0
+      },
+      {
+        "Name": "Seal of Righteousness",
+        "Key": "2",
+        "WaitBuffAfterCast": true,
+        "Requirement": "!Seal of Righteousness"
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirement": "!AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Devotion Aura",
+        "Key": "5",
+        "Requirement": "!Devotion Aura"
+      },
+      {
+        "Name": "Blessing of Might",
+        "Key": "4",
+        "WaitBuffAfterCast": true,
+        "Requirement": "!Blessing of Might"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Water",
+        "Key": "-",
+        "Requirement": "Mana% < 50"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 50"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "1_Draenei_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "1_Draenei_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

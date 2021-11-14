@@ -1,18 +1,16 @@
 {
   "ClassName": "Paladin",
-  "Loot": true,
   "PathFilename": "_pack\\1-20\\Draenei\\1-5_Azuremyst Isle.json",
   "Combat": {
     "Sequence": [
       {
         "Name": "Seal of Righteousness",
         "Key": "2",
-        "Cooldown": 2000,
-        "Requirement": "not Seal of Righteousness"
+        "Requirement": "!Seal of Righteousness"
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
@@ -28,6 +26,11 @@
         "Key": "3",
         "Requirement": "Health%<50",
         "Cooldown": 8000
+      },
+      {
+        "Name": "Devotion Aura",
+        "Key": "5",
+        "Requirement": "!Devotion Aura"
       }
     ]
   }

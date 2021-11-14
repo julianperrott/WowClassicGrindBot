@@ -1,6 +1,6 @@
 {
   "ClassName": "Paladin",
-  "PathFilename": "_p2\\10-17_westfall.json",
+  "PathFilename": "_pack\\1-20\\Draenei\\5-9_Azuremyst Isle.json",
   "Pull": {
     "Sequence": [
       {
@@ -36,28 +36,7 @@
         "WhenUsable": true,
         "WaitBuffAfterCast": true,
         "Requirements": [
-          "Health% < 20",
-          "!Blessing of Protection"
-        ]
-      },
-      {
-        "Name": "Blessing of Protection",
-        "Key": "N2",
-        "WhenUsable": true,
-        "WaitBuffAfterCast": true,
-        "Requirements": [
-          "Health% < 20",
-          "!Divine Protection"
-        ]
-      },
-      {
-        "Name": "Lay on Hands",
-        "Key": "N3",
-        "WhenUsable": true,
-        "Requirements": [
-          "Health% < 20",
-          "!Blessing of Protection && CD_Blessing of Protection > 0",
-          "!Divine Protection && CD_Divine Protection > 0"
+          "Health%<20"
         ]
       },
       {
@@ -66,7 +45,7 @@
         "HasCastBar": true,
         "WhenUsable": true,
         "Requirements": [
-          "(Blessing of Protection || Divine Protection && Health% < 60) || (!Blessing of Protection && CD_Blessing of Protection > 0 && !Divine Protection && CD_Divine Protection > 0 && Health% < 50 && TargetHealth%>20 && LastMainHandMs <= 1000)",
+          "(Divine Protection && Health% < 60) || (!Divine Protection && CD_Divine Protection > 0 && Health% < 50 && TargetHealth%>20 && LastMainHandMs <= 1000)",
           "CD==0"
         ]
       },
@@ -74,41 +53,22 @@
         "Name": "Judgement",
         "Key": "1",
         "WhenUsable": true,
-        "DelayAfterCast": 0
-      },
-      {
-        "Name": "Hammer of Justice",
-        "Key": "7",
-        "WhenUsable": true,
-        "Requirement": "TargetCastingSpell || TargetHealth% < 50"
-      },
-      {
-        "Name": "Seal of the Crusader",
-        "Key": "6",
         "Requirements": [
-          "!Seal of the Crusader",
-          "!Judgement of the Crusader",
-          "TargetHealth% > 20"
+          "SpellInRange:0"
         ],
-        "WaitBuffAfterCast": true
+        "DelayAfterCast": 0
       },
       {
         "Name": "Seal of Righteousness",
         "Key": "2",
         "WaitBuffAfterCast": true,
         "Requirements": [
-          "Judgement of the Crusader",
-          "!Seal of Righteousness",
-          "TargetHealth% > 20"
+          "!Seal of Righteousness"
         ]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": [
-          "!AutoAttacking",
-          "!Divine Protection",
-          "!Blessing of Protection"
-        ]
+        "Requirements": ["!AutoAttacking", "!Divine Protection"]
       },
       {
         "Name": "Approach",
@@ -151,14 +111,14 @@
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "20_Westfall_Vendor.json",
+        "PathFilename": "5_Draenei_Vendor.json",
         "Cost": 6
       },
       {
         "Name": "Sell",
         "Key": "C",
         "Requirement": "BagFull",
-        "PathFilename": "20_Westfall_Vendor.json",
+        "PathFilename": "5_Draenei_Vendor.json",
         "Cost": 6
       }
     ]

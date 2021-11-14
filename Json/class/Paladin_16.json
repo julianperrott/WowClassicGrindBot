@@ -1,6 +1,6 @@
 {
   "ClassName": "Paladin",
-  "PathFilename": "_pack\\1-20\\Human\\19-21_Duskwood_Hushed Bank.json",
+  "PathFilename": "\\_pack\\1-20\\Human\\15-18_Westfall_The Dagger Hills (defias).json",
   "Pull": {
     "Sequence": [
       {
@@ -71,28 +71,16 @@
         ]
       },
       {
-        "Name": "Flash of Light",
-        "Key": "8",
-        "HasCastBar": true,
+        "Name": "Judgement",
+        "Key": "1",
         "WhenUsable": true,
-        "Requirements": [
-          "Health%<60",
-          "TargetHealth%>20",
-          "CD == 0",
-          "MobCount < 2",
-          "LastMainHandMs <= 1000"
-        ],
-        "Cooldown": 6000
+        "DelayAfterCast": 0
       },
       {
-        "Name": "Consecration",
-        "Key": "0",
+        "Name": "Hammer of Justice",
+        "Key": "7",
         "WhenUsable": true,
-        "Requirements": [
-          "Mana% > 50",
-          "CD==0",
-          "MobCount>1"
-        ]
+        "Requirement": "TargetCastingSpell || TargetHealth% < 50"
       },
       {
         "Name": "Seal of the Crusader",
@@ -105,47 +93,14 @@
         "WaitBuffAfterCast": true
       },
       {
-        "Name": "Judgement",
-        "Key": "1",
-        "WhenUsable": true,
-        "Requirements": [
-          "!Judgement of the Crusader || Hammer of Justice || CD_Hammer of Justice > 8000",
-          "Seal of Command || Seal of Righteousness || Seal of the Crusader"
-        ],
-        "DelayAfterCast": 400
-      },
-      {
-        "Name": "Hammer of Justice",
-        "Key": "7",
-        "WhenUsable": true,
-        "Requirements": [
-          "Judgement of the Crusader && CD_Judgement <= 400 && TargetHealth% > 20 || TargetCastingSpell",
-          "TargetHealth% > 30"
-        ]
-      },
-      {
-        "Name": "Seal of Command",
-        "Key": "9",
-        "WhenUsable": true,
-        "Requirements": [
-          "Talent:Seal of Command",
-          "!Seal of Command",
-          "Judgement of the Crusader",
-          "TargetHealth% > 20"
-        ],
-        "WaitBuffAfterCast": true
-      },
-      {
         "Name": "Seal of Righteousness",
         "Key": "2",
-        "WhenUsable": true,
+        "WaitBuffAfterCast": true,
         "Requirements": [
-          "!Talent:Seal of Command",
-          "!Seal of Righteousness",
           "Judgement of the Crusader",
+          "!Seal of Righteousness",
           "TargetHealth% > 20"
-        ],
-        "WaitBuffAfterCast": true
+        ]
       },
       {
         "Name": "AutoAttack",
@@ -164,29 +119,15 @@
   "Adhoc": {
     "Sequence": [
       {
+        "Name": "Retribution Aura",
+        "Key": "5",
+        "Requirement": "!Retribution Aura"
+      },
+      {
         "Name": "Blessing of Might",
         "Key": "4",
         "WaitBuffAfterCast": true,
         "Requirement": "!Blessing of Might"
-      },
-      {
-/*
-#showtooltip
-/use Heavy Weightstone
-/use 16
-/click StaticPopup1Button1
-*/
-        "Name": "sharpen",
-        "Key": "F1",
-        "WhenUsable": true,
-        "HasCastbar": true,
-        "Requirement": "!HasMainHandEnchant",
-        "Cooldown": 1000
-      },
-      {
-        "Name": "Retribution Aura",
-        "Key": "5",
-        "Requirement": "!Retribution Aura"
       }
     ]
   },
@@ -195,12 +136,12 @@
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana% < 40"
+        "Requirement": "Mana% < 50"
       },
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health% < 40"
+        "Requirement": "Health% < 50"
       }
     ]
   },
@@ -210,14 +151,14 @@
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "23_Duskwood_Vendor.json",
+        "PathFilename": "20_Westfall_Vendor.json",
         "Cost": 6
       },
       {
         "Name": "Sell",
         "Key": "C",
         "Requirement": "BagFull",
-        "PathFilename": "23_Duskwood_Vendor.json",
+        "PathFilename": "20_Westfall_Vendor.json",
         "Cost": 6
       }
     ]
