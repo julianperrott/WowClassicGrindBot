@@ -243,6 +243,7 @@ Take a look at the class files in `/Json/class` for examples of what you can do.
 | `"Loot"` | Should loot the mob | true | `true` |
 | `"Skin"` | Should skin the mob | true | `false` |
 | `"UseMount"` | Should use mount when its possible | true | `false` |
+| `"KeyboardOnly"` | Use keyboard to interact only. See [KeyboardOnly](#KeyboardOnly) | false | `true` |
 | `"PathFilename"` | [Path](#Path) to use while alive | **false** | `""` |
 | `"SpiritPathFilename"` | Path to use while dead | true | `""` |
 | `"PathThereAndBack"` | While using the path, [should go start to and reverse](#There-and-back) | true | `true` |
@@ -272,6 +273,12 @@ Take a look at the class files in `/Json/class` for examples of what you can do.
 | `"TargetPetKey"` | `Consolekey` to be pressed to target pet | true | `"Multiply"` |
 | `"PetAttackKey"` | `Consolekey` to be pressed to send attack pet | true | `"Subtract"` |
 | `"MountKey"` | `Consolekey` to be pressed to use mount | true | `"O"` |
+
+### KeyboardOnly
+
+Normally, the bot would try to click your wows window for two reasons: target selecting and looting. To achieve this it will move your cursor. If you have multiple screens or simply do not want the bot to move your cursor, you can set `KeyboardOnly` to `true`.
+
+Notice that when `KeyboardOnly` is enabled, the bot will only loot by selecting last target and tap interact key, which may fail to loot every target if there are many. And it will not be able to skin, either. The target selecting will also be limited to using `TargetNearestTargetKey` key, which would significantly reduce the range of selecting target.
 
 ### Path
 
