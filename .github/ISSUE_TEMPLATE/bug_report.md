@@ -4,24 +4,69 @@ about: Create a report to help us improve
 title: ''
 labels: bug
 assignees: ''
-
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+- type: textarea
+  attributes:
+    label: Description
+    description: What did you expect to happen and what happened instead?
+  validations:
+    required: true
+    
+- type: input
+  attributes:
+    label: Addon Version
+    description: |
+      You can see the current version upon login, if it dosen't show up, check the AddonName.toc file `## Version:` field.
+    placeholder: "1.1.42"
+  validations:
+    required: true
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+- type: dropdown
+  id: flavor
+  attributes:
+    label: World of Warcraft Client
+    description: What version of World of Warcraft are are you running?
+    options:
+      - The Burning Crusade Classic
+      - Classic
+      - Season of Mastery
+  validations:
+    required: true
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+- type: textarea
+  attributes:
+    label: Reproduction Steps
+    description: Please list out the steps to reproduce your bug.
+    placeholder: |
+      1. Go to '...'
+      2. Click on '....'
+      3. Scroll down to '....'
+      4. See error
+  validations:
+    required: true
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+- type: input
+  attributes:
+    label: Last Good Version
+    description: |
+      Was it working in a previous version? If yes, which was the last good one?
+    placeholder: "1.1.42"
+  validations:
+    required: false
 
-**Logs**
-If applicable, attach `*.log` files to reduce the investigation time.
+- type: textarea
+  attributes:
+    label: Screenshots
+    description: If applicable, add screenshots to help explain your problem.
+    placeholder: Click here to attach your screenshots via the editor button in the top right.
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Logs
+    description: If applicable, attach `\BlazorServer\*.log` files to reduce the investigation time.
+    placeholder: Please attach the **Full** log in order to avoid confusion.
+  validations:
+    required: false
