@@ -1,6 +1,11 @@
 name: "Bug report"
 description: Create a report to help us improve
 labels: 'bug'
+body:
+- type: markdown
+  attributes:
+    value: |
+      Please [search for existing issues](https://github.com/Xian55/WowClassicGrindBot/issues) before creating a new one.
 
 - type: textarea
   attributes:
