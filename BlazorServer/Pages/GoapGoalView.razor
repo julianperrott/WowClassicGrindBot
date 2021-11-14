@@ -1,4 +1,6 @@
-﻿<tr class="@ActionClass(this.IsSelected)">
+﻿@using System.Text
+
+<tr class="@ActionClass(this.IsSelected)">
     <td>
         <b style="color:@DisplayColour(goal.CheckIfActionCanRun())">@goal.CostOfPerformingAction: @goal.Description()</b>
     </td>
@@ -11,9 +13,9 @@
         {
             @foreach (var requirement in this.goal.Keys[0].RequirementObjects)
             {
-                @if (requirement.VisibleIfHasRequirement || !requirement.HasRequirement())
+                if (requirement.VisibleIfHasRequirement || !requirement.HasRequirement())
                 {
-                    <span class="badge @Badge(requirement.HasRequirement())">@requirement.LogMessage()</span>
+                    @((MarkupString)DisplayRequirementBadges(requirement))
                 }
             }
         }
@@ -37,9 +39,9 @@
                             <td>
                                 @foreach (var requirement in key.RequirementObjects)
                                 {
-                                    @if (requirement.VisibleIfHasRequirement || !requirement.HasRequirement())
+                                    if (requirement.VisibleIfHasRequirement || !requirement.HasRequirement())
                                     {
-                                        <span class="badge @Badge(requirement.HasRequirement())">@requirement.LogMessage()</span>
+                                        @((MarkupString)DisplayRequirementBadges(requirement))
                                     }
                                 }
                             </td>
@@ -85,5 +87,45 @@
     public string DisplayColour(bool item)
     {
         return item ? "black" : "gray";
+    }
+
+
+    private const string delAnd = " and ";
+    private const string delOr = " or ";
+    private string[] delimiters = new string[] { delAnd, delOr };
+    private StringBuilder stringBuilder = new StringBuilder();
+    private string[] split = new string[0];
+
+    public string DisplayRequirementBadges(Core.Requirement requirement)
+    {
+        split = requirement.LogMessage().Split(delimiters, StringSplitOptions.None);
+        if (split.Length > 1)
+        {
+            stringBuilder.Clear();
+            string original = requirement.LogMessage();
+            string badge = Badge(requirement.HasRequirement());
+
+            foreach (var sub in split)
+            {
+                stringBuilder.AppendLine($"<span class=\"badge {badge}\">{sub}</span>");
+                original = original[sub.Length..];
+
+                if (original.StartsWith(delAnd))
+                {
+                    stringBuilder.AppendLine($"<span class=\"badge badge-secondary\">{delAnd.Trim()}</span>\n");
+                    original = original[delAnd.Length..];
+                }
+                else if (original.StartsWith(delOr))
+                {
+                    stringBuilder.AppendLine($"<span class=\"badge badge-secondary\">{delOr.Trim()}</span>\n");
+                    original = original[delOr.Length..];
+                }
+            }
+            return stringBuilder.ToString();
+        }
+        else
+        {
+            return $"<span class=\"badge {Badge(requirement.HasRequirement())}\">{requirement.LogMessage()}</span>\n";
+        }
     }
 }
