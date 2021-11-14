@@ -100,9 +100,18 @@ namespace Core
 
                 if (classConfig.Loot)
                 {
-                    var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
-                    lootAction.AddPreconditions();
-                    availableActions.Add(lootAction);
+                    if (classConfig.KeyboardOnly)
+                    {
+                        var lootAction = new LastTargetLoot(logger, input, wait, addonReader, stopMoving, combatUtil);
+                        lootAction.AddPreconditions();
+                        availableActions.Add(lootAction);
+                    }
+                    else
+                    {
+                        var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
+                        lootAction.AddPreconditions();
+                        availableActions.Add(lootAction);
+                    }
 
                     if (classConfig.Skin)
                     {

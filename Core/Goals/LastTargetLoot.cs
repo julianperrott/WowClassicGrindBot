@@ -2,63 +2,125 @@
 using Microsoft.Extensions.Logging;
 using SharedLib.Extensions;
 using System.Numerics;
+using System;
 using System.Threading.Tasks;
 
 namespace Core.Goals
 {
     public class LastTargetLoot : GoapGoal
     {
-        private readonly ILogger logger;
-        private readonly ConfigurableInput input;
-        private readonly Wait wait;
-        private readonly PlayerReader playerReader;
-
         public override float CostOfPerformingAction { get => 4.3f; }
+        public override bool Repeatable => false;
 
-        public LastTargetLoot(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader)
+        private ILogger logger;
+        private readonly ConfigurableInput input;
+
+        private readonly PlayerReader playerReader;
+        private readonly Wait wait;
+        private readonly StopMoving stopMoving;
+        private readonly BagReader bagReader;
+        private readonly CombatUtil combatUtil;
+
+        private bool debug = true;
+        private int lastLoot;
+
+        public LastTargetLoot(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, CombatUtil combatUtil)
         {
             this.logger = logger;
             this.input = input;
-            this.wait = wait;
-            this.playerReader = playerReader;
 
-            AddPrecondition(GoapKey.hastarget, true);
-            AddPrecondition(GoapKey.targetisalive, false);
+            this.wait = wait;
+            this.playerReader = addonReader.PlayerReader;
+            this.stopMoving = stopMoving;
+            this.bagReader = addonReader.BagReader;
+
+            this.combatUtil = combatUtil;
+        }
+
+        public virtual void AddPreconditions()
+        {
+            AddPrecondition(GoapKey.shouldloot, true);
+            AddEffect(GoapKey.shouldloot, false);
+        }
+
+        public override async Task OnEnter()
+        {
+            await base.OnEnter();
+
+            if (bagReader.BagsFull)
+            {
+                logger.LogWarning("Inventory is full");
+                SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+            }
         }
 
         public override async ValueTask PerformAction()
         {
             int lastHealth = playerReader.HealthCurrent;
             var lastPosition = playerReader.PlayerLocation;
+            lastLoot = playerReader.LastLootTime;
 
-            SendActionEvent(new ActionEventArgs(GoapKey.shouldskin, !playerReader.Unskinnable));
+            await stopMoving.Stop();
+            combatUtil.Update();
 
-            await input.TapInteractKey("interact target");
-            while (IsPlayerMoving(lastPosition))
+            await input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
+            await wait.Update(1);
+            if (playerReader.HasTarget)
             {
-                logger.LogInformation("wait till the player become stil!");
-                lastPosition = playerReader.PlayerLocation;
-                if (!await wait.Interrupt(100, () => playerReader.HealthCurrent < lastHealth)) { return; }
+                if (playerReader.Bits.TargetIsDead)
+                {
+                    await input.TapInteractKey($"{GetType().Name}: Found last dead target");
+                    await wait.Update(1);
+
+                    (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
+                    if (foundTarget)
+                    {
+                        Log("Goal interrupted!");
+                        return;
+                    }
+
+                    if (moved)
+                    {
+                        await input.TapInteractKey($"{GetType().Name}: Last dead target double");
+                    }
+                }
+                else
+                {
+                    await input.TapClearTarget($"{GetType().Name}: Don't attack the target!");
+                }
             }
 
-            if (!await wait.Interrupt(100, () => playerReader.HealthCurrent < lastHealth)) { return; }
-            await input.TapInteractKey("Looting...");
-
-            // wait grabbing the loot
-            if (!await wait.Interrupt(200, () => playerReader.HealthCurrent < lastHealth)) { return; }
-
-            logger.LogDebug("Loot was Successfull");
-            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-
-            //clear target
-            //await wowProcess.KeyPress(ConsoleKey.F3, 50);
-            await input.TapClearTarget();
+            await GoalExit();
         }
 
-        private bool IsPlayerMoving(Vector3 lastPos)
+        private async Task GoalExit()
         {
-            var distance = playerReader.PlayerLocation.DistanceXYTo(lastPos);
-            return distance > 0.5f;
+            if (!await wait.Interrupt(1000, () => lastLoot != playerReader.LastLootTime))
+            {
+                Log($"Loot Successfull");
+            }
+            else
+            {
+                Log($"Loot Failed");
+            }
+
+            lastLoot = playerReader.LastLootTime;
+
+            SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
+
+            if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
+            {
+                await input.TapClearTarget($"{GetType().Name}: Exit Goal");
+                await wait.Update(1);
+            }
+        }
+
+        private void Log(string text)
+        {
+            if (debug)
+            {
+                logger.LogInformation($"{GetType().Name}: {text}");
+            }
         }
     }
 }
