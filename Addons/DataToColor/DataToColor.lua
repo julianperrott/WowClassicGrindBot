@@ -20,6 +20,7 @@ local CELL_SPACING = 1 -- 0 or 1
 
 -- Item slot trackers initialization
 local globalCounter = 0
+local initPhase = 10
 
 -- How often item frames change
 local ITEM_ITERATION_FRAME_CHANGE_RATE = 5
@@ -41,7 +42,6 @@ DataToColor.globalTime = 0
 DataToColor.lastLoot = 0
 
 DataToColor.frames = nil
-DataToColor.r = 0
 
 DataToColor.uiErrorMessage = 0
 
@@ -236,6 +236,8 @@ function DataToColor:Reset()
     playerBuffCount = 0
     targetDebuffCount = 0
     targetBuffCount = 0
+
+    globalCounter = 0
 end
 
 function DataToColor:Update()
@@ -386,7 +388,11 @@ function DataToColor:CreateFrames(n)
             end
         end
 
-        if not SETUP_SEQUENCE then
+        function UpdateGlobalTime(slot)
+            MakePixelSquareArrI(DataToColor.globalTime, slot)
+        end
+
+        if not SETUP_SEQUENCE and globalCounter >= initPhase then
 
             DataToColor.playerGUID = UnitGUID(DataToColor.C.unitPlayer)
             DataToColor.petGUID = UnitGUID(DataToColor.C.unitPet)
@@ -488,6 +494,9 @@ function DataToColor:CreateFrames(n)
                     MakePixelSquareArrI(equipmentSlot, 24)
                     MakePixelSquareArrI(DataToColor:equipSlotItemId(equipmentSlot), 25)
                     --DataToColor:Print("equipmentQueue "..equipmentSlot.." -> "..itemId)
+                else
+                    MakePixelSquareArrI(0, 24)
+                    MakePixelSquareArrI(0, 25)
                 end
             end
 
@@ -508,6 +517,8 @@ function DataToColor:CreateFrames(n)
                 actionCostNum = DataToColor.stack:pop(DataToColor.actionBarCostQueue)
                 if actionCostNum then
                     MakePixelSquareArrI(DataToColor:actionbarCost(actionCostNum), 36)
+                else
+                    MakePixelSquareArrI(0, 36)
                 end
 
                 actionCooldownKey, actionCooldownValue = DataToColor.struct:get(DataToColor.actionBarCooldownQueue)
@@ -598,6 +609,8 @@ function DataToColor:CreateFrames(n)
                 spellId = DataToColor.stack:pop(DataToColor.spellBookQueue)
                 if spellId then
                     MakePixelSquareArrI(spellId, 71)
+                else
+                    MakePixelSquareArrI(0, 71)
                 end
             end
 
@@ -605,6 +618,8 @@ function DataToColor:CreateFrames(n)
                 talentNum = DataToColor.stack:pop(DataToColor.talentQueue)
                 if talentNum then
                     MakePixelSquareArrI(talentNum, 72)
+                else
+                    MakePixelSquareArrI(0, 72)
                 end
             end
 
@@ -619,16 +634,21 @@ function DataToColor:CreateFrames(n)
 
             -- Timers
             MakePixelSquareArrI(DataToColor.lastLoot, 97)
-            MakePixelSquareArrI(DataToColor.globalTime, 98)
-
+            UpdateGlobalTime(98)
             -- 99 Reserved
-            globalCounter = globalCounter + 1
 
             DataToColor:ConsumeChanges()
 
             DataToColor:HandlePlayerInteractionEvents()
 
             DataToColor:Update()
+        elseif not SETUP_SEQUENCE then
+            if globalCounter < initPhase then
+                for i = 1, NUMBER_OF_FRAMES - 1 do
+                    MakePixelSquareArrI(0, i)
+                end
+            end
+            UpdateGlobalTime(98)
         end
 
         if SETUP_SEQUENCE then
@@ -639,6 +659,8 @@ function DataToColor:CreateFrames(n)
                 MakePixelSquareArrI(i, i)
             end
         end
+
+        globalCounter = globalCounter + 1
     end
     -- Function used to generate a single frame
     local function setFramePixelBackdrop(f)

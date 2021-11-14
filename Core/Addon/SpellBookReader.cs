@@ -23,6 +23,7 @@ namespace Core
         public void Read()
         {
             int spellId = reader.GetIntAtCell(cSpellId);
+            if (spellId == 0) return;
             if (!Spells.ContainsKey(spellId) && SpellDB.Spells.TryGetValue(spellId, out Spell spell))
             {
                 Spells.Add(spellId, spell);
