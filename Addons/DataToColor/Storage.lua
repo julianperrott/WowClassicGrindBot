@@ -29,9 +29,10 @@ function CreateSpellInRangeList()
         }
     elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
         DataToColor.S.spellInRangeList = {
-            100, -- "Charge"
-            772, -- "Rend"
-            3018 -- "Shoot" for classic -> 7918, -- "Shoot Gun"
+            100,  -- "Charge"
+            772,  -- "Rend"
+            3018, -- "Shoot" for classic -> 7918, -- "Shoot Gun"
+            2764  -- "Throw"
         }       
     elseif DataToColor.C.CHARACTER_CLASS == "PRIEST" then
         DataToColor.S.spellInRangeList = {

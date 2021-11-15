@@ -1064,6 +1064,7 @@ Formula: `SpellInRange:[Numeric integer value]`
 | Warrior | Charge | 0 |
 | Warrior | Rend | 1 |
 | Warrior | Shoot Gun | 2 |
+| Warrior | Throw | 3 |
 | Priest | Shadow Word: Pain | 0 |
 | Priest | Shoot | 1 |
 | Priest | Mind Flay | 2 |
