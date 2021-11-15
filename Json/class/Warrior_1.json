@@ -6,9 +6,9 @@
       {
         "Name": "Heroic Strike",
         "Key": "2",
-        "AfterCastWaitNextSwing": true,
+        "MinRage": 15,
         "WhenUsable": true,
-        "MinRage": 15
+        "AfterCastWaitNextSwing": true
       },
       {
         "Name": "AutoAttack",
@@ -25,7 +25,7 @@
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health%<60",
+        "Requirement": "Health% < 60",
         "Cost": 3
       }
     ]

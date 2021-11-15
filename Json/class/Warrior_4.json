@@ -6,9 +6,9 @@
       {
         "Name": "Charge",
         "Key": "3",
+        "WhenUsable": true,
         "Form": "Warrior_BattleStance",
-        "Requirement": "not InMeleeRange",
-        "WhenUsable": true
+        "Requirement": "SpellInRange:0"
       },
       {
         "Name": "Approach",
@@ -21,29 +21,29 @@
       {
         "Name": "Battle Shout",
         "Key": "4",
-        "AfterCastWaitBuff": true,
         "WhenUsable": true,
-        "Requirement": "not Battle Shout",
-        "MinRage": 10
+        "MinRage": 10,
+        "Requirement": "!Battle Shout",
+        "AfterCastWaitBuff": true
       },
       {
         "Name": "Rend",
         "Key": "5",
         "WhenUsable": true,
+        "MinRage": 10,
         "Requirement": "TargetHealth%>90",
-        "Form": "Warrior_BattleStance",
-        "MinRage": 10
+        "Form": "Warrior_BattleStance"
       },
       {
         "Name": "Heroic Strike",
         "Key": "2",
-        "AfterCastWaitNextSwing": true,
         "WhenUsable": true,
-        "MinRage": 15
+        "MinRage": 15,
+        "AfterCastWaitNextSwing": true
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
