@@ -163,6 +163,8 @@ function CreateTargetDebuffList()
     elseif DataToColor.C.CHARACTER_CLASS == "ROGUE" then
     elseif DataToColor.C.CHARACTER_CLASS == "WARRIOR" then
         DataToColor.S.targetDebuffs[0] = { "Rend", [132155]=1 }
+        DataToColor.S.targetDebuffs[1] = { "Thunder Clap", [136105]=1 }
+        DataToColor.S.targetDebuffs[2] = { "Hamstring", [132316]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "WARLOCK" then
         DataToColor.S.targetDebuffs[0] = { "Curse of", [136139]=1, [136122]=1, [136162]=1, [136225]=1, [136130]=1, [136140]=1, [136138]=1 }
         DataToColor.S.targetDebuffs[1] = { "Corruption", [136118]=1, [136193]=1 }

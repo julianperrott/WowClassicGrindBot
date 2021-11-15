@@ -1023,6 +1023,8 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | Warlock | `"Corruption"` |
 | Warlock | `"Immolate"` |
 | Warrior | `"Rend"` |
+| Warrior | `"Thunder Clap"` |
+| Warrior | `"Hamstring"` |
 | Hunter | `"Serpent Sting"` |
 
 </td></tr> </table>

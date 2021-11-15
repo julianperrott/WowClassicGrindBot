@@ -29,6 +29,8 @@
 
         // Warrior
         public bool Rend => IsBitSet(0);
+        public bool ThunderClap => IsBitSet(1);
+        public bool Hamstring => IsBitSet(2);
 
         // Warlock
         public bool Curseof => IsBitSet(0);

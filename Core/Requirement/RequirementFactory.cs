@@ -204,6 +204,8 @@ namespace Core
 
                 // Warrior Debuff
                 { "Rend", ()=> playerReader.TargetDebuffs.Rend },
+                { "Thunder Clap", ()=> playerReader.TargetDebuffs.ThunderClap },
+                { "Hamstring", ()=> playerReader.TargetDebuffs.Hamstring },
                 
                 // Priest Debuff
                 { "Shadow Word: Pain", ()=> playerReader.TargetDebuffs.ShadowWordPain },
