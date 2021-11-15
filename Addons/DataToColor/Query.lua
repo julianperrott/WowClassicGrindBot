@@ -418,6 +418,18 @@ function DataToColor:ComboPoints()
     return GetComboPoints(DataToColor.C.unitPlayer, DataToColor.C.unitTarget) or 0
 end
 
+function DataToColor:getMeleeAttackSpeed(unit)
+    local mainHand, offHand = UnitAttackSpeed(unit)
+    if not mainHand then
+        mainHand = 0
+    end
+
+    if not offHand then
+        offHand = 0
+    end
+    return 10000 * math.floor(mainHand * 100) + math.floor(offHand * 100)
+end
+
 -----------------------------------------------------------------
 -- Boolean functions --------------------------------------------
 -- Only put functions here that are part of a boolean sequence --

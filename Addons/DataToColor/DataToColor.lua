@@ -631,6 +631,7 @@ function DataToColor:CreateFrames(n)
             end
 
             MakePixelSquareArrI(DataToColor:Base2CustomTrigger(DataToColor.customTrigger1), 74)
+            MakePixelSquareArrI(DataToColor:getMeleeAttackSpeed(DataToColor.C.unitPlayer), 75)
 
             -- Timers
             MakePixelSquareArrI(DataToColor.lastLoot, 97)

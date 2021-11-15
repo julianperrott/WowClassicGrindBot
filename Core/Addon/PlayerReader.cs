@@ -116,6 +116,10 @@ namespace Core
 
         public BitStatus CustomTrigger1 => new BitStatus(reader.GetIntAtCell(74));
 
+        public int MainHandSpeed => (int)(reader.GetIntAtCell(75) / 10000f);
+
+        public int OffHandSpeed => (int)(reader.GetIntAtCell(75) - (MainHandSpeed * 10000f));
+
         public int LastLootTime => reader.GetIntAtCell(97);
 
         // https://wowpedia.fandom.com/wiki/Mob_experience

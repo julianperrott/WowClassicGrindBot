@@ -244,8 +244,10 @@ namespace Core
                 { "MinRange", () => playerReader.MinRange },
                 { "MaxRange", () => playerReader.MaxRange },
                 { "LastAutoShotMs", () => playerReader.AutoShot.ElapsedMs },
-                { "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }
+                { "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }, 
                 //"CD_{item.Name}
+                { "MainHandSpeed", () => playerReader.MainHandSpeed },
+                { "MainHandSwing", () => Math.Clamp(playerReader.MainHandSwing.ElapsedMs - (playerReader.MainHandSpeed * 10), -(playerReader.MainHandSpeed * 10), 0) },
             };
         }
 
