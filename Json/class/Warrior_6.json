@@ -1,6 +1,6 @@
 {
   "ClassName": "Warrior",
-  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\4-6_Dun Morogh.json",
+  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\6-10_Dun Morogh.json",
   "Pull": {
     "Sequence": [
       {
@@ -35,6 +35,14 @@
         "Form": "Warrior_BattleStance"
       },
       {
+        "Name": "Thunder Clap",
+        "Key": "6",
+        "WhenUsable": true,
+        "MinRage": 20,
+        "Requirements": ["MobCount > 1", "!Thunder Clap"],
+        "Form": "Warrior_BattleStance"
+      },
+      {
         "Name": "Heroic Strike",
         "Key": "2",
         "WhenUsable": true,
@@ -57,7 +65,7 @@
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health%<60",
+        "Requirement": "Health% < 60",
         "Cost": 3
       }
     ]
@@ -68,14 +76,14 @@
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "1_Gnome_Vendor.json",
+        "PathFilename": "5_Gnome_Vendor.json",
         "Cost": 6
       },
       {
         "Name": "Sell",
         "Key": "C",
         "Requirement": "BagFull",
-        "PathFilename": "1_Gnome_Vendor.json",
+        "PathFilename": "5_Gnome_Vendor.json",
         "Cost": 6
       }
     ]

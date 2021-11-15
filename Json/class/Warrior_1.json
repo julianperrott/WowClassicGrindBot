@@ -6,13 +6,14 @@
       {
         "Name": "Heroic Strike",
         "Key": "2",
-        "MinRage": 15,
         "WhenUsable": true,
-        "AfterCastWaitNextSwing": true
+        "MinRage": 15,
+        "AfterCastWaitNextSwing": true,
+        "Requirement": "MainHandSwing > -400"
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
