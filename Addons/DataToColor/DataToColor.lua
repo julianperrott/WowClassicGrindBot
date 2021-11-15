@@ -454,6 +454,8 @@ function DataToColor:CreateFrames(n)
                     -- BagType + Index + FreeSpace + BagSlots
                     MakePixelSquareArrI(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + DataToColor:bagSlots(bagNum), 20)
                     --DataToColor:Print("bagQueue bagType:"..bagType.." | bagNum: "..bagNum.." | freeSlots: "..freeSlots.." | BagSlots: "..DataToColor:bagSlots(bagNum))
+                else
+                    MakePixelSquareArrI(0, 20)
                 end
 
                 -- 21 22 23
@@ -486,6 +488,10 @@ function DataToColor:CreateFrames(n)
 
                     -- item bits
                     MakePixelSquareArrI(soulbound, 23)
+                else
+                    MakePixelSquareArrI(0, 21)
+                    MakePixelSquareArrI(0, 22)
+                    MakePixelSquareArrI(0, 23)
                 end
 
                 -- 24 25
