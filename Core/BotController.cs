@@ -206,7 +206,7 @@ namespace Core
                 {
                     actionThread.Active = false;
                     GrindSession.StopBotSession("Stopped By Player", false);
-                    AddonReader.LevelTracker.Reset();
+                    AddonReader.SoftReset();
                 }
 
                 StatusChanged?.Invoke(this, actionThread.Active);
@@ -248,6 +248,8 @@ namespace Core
 
         private void Initialize(ClassConfiguration config)
         {
+            AddonReader.SoftReset();
+
             ConfigurableInput = new ConfigurableInput(logger, wowProcess, config);
 
             ActionBarPopulator = new ActionBarPopulator(logger, config, AddonReader, ExecGameCommand);

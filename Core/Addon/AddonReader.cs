@@ -161,6 +161,12 @@ namespace Core
             UIMapId.Update(squareReader);
         }
 
+        public void SoftReset()
+        {
+            LevelTracker.Reset();
+            CreatureHistory.Reset();
+        }
+
         public void Reset()
         {
             Initialized = false;
@@ -173,7 +179,8 @@ namespace Core
             ActionBarCooldownReader.Reset();
             SpellBookReader.Reset();
             TalentReader.Reset();
-            CreatureHistory.Reset();
+
+            SoftReset();
 
             Initialized = true;
         }
