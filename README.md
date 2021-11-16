@@ -985,6 +985,7 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | Warlock | `"Soulstone Resurraction"` |
 | Warlock | `"Soul Link"` |
 | Warrior | `"Battle Shout"` |
+| Warrior | `"Bloodrage"` |
 | Shaman | `"Lightning Shield"` |
 | Shaman | `"Water Shield"` |
 | Shaman | `"Shamanistic Focus"` |
@@ -1025,6 +1026,7 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | Warrior | `"Rend"` |
 | Warrior | `"Thunder Clap"` |
 | Warrior | `"Hamstring"` |
+| Warrior | `"Charge Stun"` |
 | Hunter | `"Serpent Sting"` |
 
 </td></tr> </table>

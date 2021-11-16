@@ -31,6 +31,7 @@
         public bool Rend => IsBitSet(0);
         public bool ThunderClap => IsBitSet(1);
         public bool Hamstring => IsBitSet(2);
+        public bool ChargeStun => IsBitSet(3);
 
         // Warlock
         public bool Curseof => IsBitSet(0);

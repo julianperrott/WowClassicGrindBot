@@ -164,6 +164,7 @@ namespace Core
                 
                 // Warrior
                 { "Battle Shout", ()=> playerReader.Buffs.BattleShout },
+                { "Bloodrage", ()=> playerReader.Buffs.Bloodrage },
                 
                 // Warlock
                 { "Demon Skin", ()=> playerReader.Buffs.Demon },
@@ -206,6 +207,7 @@ namespace Core
                 { "Rend", ()=> playerReader.TargetDebuffs.Rend },
                 { "Thunder Clap", ()=> playerReader.TargetDebuffs.ThunderClap },
                 { "Hamstring", ()=> playerReader.TargetDebuffs.Hamstring },
+                { "Charge Stun", ()=> playerReader.TargetDebuffs.ChargeStun },
                 
                 // Priest Debuff
                 { "Shadow Word: Pain", ()=> playerReader.TargetDebuffs.ShadowWordPain },
