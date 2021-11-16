@@ -665,7 +665,20 @@ namespace Core
 
             var parts = requirement.Split(symbol);
             var key = parts[0].Trim();
-            var value = int.Parse(parts[1]);
+
+            Func<int> value = () => 0;
+            if (int.TryParse(parts[1], out int v))
+            {
+                value = () => v;
+            }
+            else
+            {
+                string variable = parts[1].Trim();
+                if (valueDictionary.ContainsKey(variable))
+                {
+                    value = valueDictionary[variable];
+                }
+            }
 
             if (!valueDictionary.Keys.Contains(key))
             {
@@ -682,16 +695,16 @@ namespace Core
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() > value,
-                    LogMessage = () => $"{key} {valueCheck()} > {value}"
+                    HasRequirement = () => valueCheck() > value(),
+                    LogMessage = () => $"{key} {valueCheck()} > {value()}"
                 };
             }
             else
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() < value,
-                    LogMessage = () => $"{key} {valueCheck()} < {value}"
+                    HasRequirement = () => valueCheck() < value(),
+                    LogMessage = () => $"{key} {valueCheck()} < {value()}"
                 };
             }
         }
@@ -706,7 +719,20 @@ namespace Core
 
             var parts = requirement.Split(symbol);
             var key = parts[0].Trim();
-            var value = int.Parse(parts[1]);
+
+            Func<int> value = () => 0;
+            if (int.TryParse(parts[1], out int v))
+            {
+                value = () => v;
+            }
+            else
+            {
+                string variable = parts[1].Trim();
+                if (valueDictionary.ContainsKey(variable))
+                {
+                    value = valueDictionary[variable];
+                }
+            }
 
             if (!valueDictionary.Keys.Contains(key))
             {
@@ -723,16 +749,16 @@ namespace Core
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() >= value,
-                    LogMessage = () => $"{key} {valueCheck()} >= {value}"
+                    HasRequirement = () => valueCheck() >= value(),
+                    LogMessage = () => $"{key} {valueCheck()} >= {value()}"
                 };
             }
             else
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() <= value,
-                    LogMessage = () => $"{key} {valueCheck()} <= {value}"
+                    HasRequirement = () => valueCheck() <= value(),
+                    LogMessage = () => $"{key} {valueCheck()} <= {value()}"
                 };
             }
         }
@@ -742,7 +768,20 @@ namespace Core
             var symbol = "==";
             var parts = requirement.Split(symbol);
             var key = parts[0].Trim();
-            var value = int.Parse(parts[1]);
+
+            Func<int> value = () => 0;
+            if (int.TryParse(parts[1], out int v))
+            {
+                value = () => v;
+            }
+            else
+            {
+                string variable = parts[1].Trim();
+                if (valueDictionary.ContainsKey(variable))
+                {
+                    value = valueDictionary[variable];
+                }
+            }
 
             if (!valueDictionary.Keys.Contains(key))
             {
@@ -757,8 +796,8 @@ namespace Core
             var valueCheck = valueDictionary[key];
             return new Requirement
             {
-                HasRequirement = () => valueCheck() == value,
-                LogMessage = () => $"{key} {valueCheck()} == {value}"
+                HasRequirement = () => valueCheck() == value(),
+                LogMessage = () => $"{key} {valueCheck()} == {value()}"
             };
         }
 
