@@ -126,7 +126,7 @@ namespace SharedLib
         {
             for (int x = startX; x < bmp.Width; x++)
             {
-                for (int y = 0; y < meta.rows; y++)
+                for (int y = 0; y < bmp.Height; y++)
                 {
                     if (bmp.GetPixel(x, y).B == dataframe)
                     {

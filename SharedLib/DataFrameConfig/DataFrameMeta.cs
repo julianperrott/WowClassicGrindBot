@@ -27,11 +27,13 @@ namespace SharedLib
 
         public Size EstimatedSize(Rectangle screenRect)
         {
-            int squareSize = (size + spacing) * 2;
+            const int error = 2;
+
+            int squareSize = size + error + (spacing != 0 ? spacing + error : 0);
             if (squareSize <= 0)
                 return Size.Empty;
 
-            SizeF estimatedSize = new SizeF(frames / rows * squareSize, rows * squareSize);
+            SizeF estimatedSize = new SizeF((float)System.Math.Ceiling(frames / (float)rows) * squareSize, rows * squareSize);
 
             if (estimatedSize.Width > screenRect.Width ||
                 estimatedSize.Height > screenRect.Height)
