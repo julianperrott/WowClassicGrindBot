@@ -92,8 +92,13 @@ namespace Core
                     KillCredit?.Invoke(this, EventArgs.Empty);
                 }
             }
-        }
 
+            RemoveExpired(Targets);
+            RemoveExpired(Creatures);
+            RemoveExpired(DamageTaken);
+            RemoveExpired(DamageDone);
+            RemoveExpired(Deads);
+        }
 
         private static void Update(int creatureId, float healthPercent, List<CreatureRecord> CombatCreatures)
         {
@@ -122,10 +127,11 @@ namespace Core
                     });
                 }
             }
+        }
 
-            CombatCreatures.Where(c => c.HasExpired(LifeTimeInSeconds))
-                .ToList()
-                .ForEach(c => CombatCreatures.Remove(c));
+        private static void RemoveExpired(List<CreatureRecord> CombatCreatures)
+        {
+            CombatCreatures.RemoveAll(x => x.HasExpired(LifeTimeInSeconds));
         }
     }
 }
