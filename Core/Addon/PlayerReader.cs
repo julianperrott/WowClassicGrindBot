@@ -116,9 +116,9 @@ namespace Core
 
         public BitStatus CustomTrigger1 => new BitStatus(reader.GetIntAtCell(74));
 
-        public int MainHandSpeed => (int)(reader.GetIntAtCell(75) / 10000f);
+        public int MainHandSpeedMs => (int)(reader.GetIntAtCell(75) / 10000f) * 10;
 
-        public int OffHandSpeed => (int)(reader.GetIntAtCell(75) - (MainHandSpeed * 10000f));
+        public int OffHandSpeed => (int)(reader.GetIntAtCell(75) - (MainHandSpeedMs * 1000f));  // supposed to be 10000f - but theres a 10x
 
         public int LastLootTime => reader.GetIntAtCell(97);
 

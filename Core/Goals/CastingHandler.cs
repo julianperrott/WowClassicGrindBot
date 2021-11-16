@@ -132,7 +132,7 @@ namespace Core.Goals
 
             if (item.AfterCastWaitNextSwing)
             {
-                (inputNotHappened, inputElapsedMs) = await wait.InterruptTask(playerReader.MainHandSpeed * 10,
+                (inputNotHappened, inputElapsedMs) = await wait.InterruptTask(playerReader.MainHandSpeedMs,
                     interrupt: () => !addonReader.CurrentAction.Is(item),
                     repeat: async () =>
                     {

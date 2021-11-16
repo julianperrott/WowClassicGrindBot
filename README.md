@@ -649,6 +649,8 @@ Formula: `[Keyword] [Operator] [Numeric integer value]`
 | `MaxRange` | Maximum distance(yard) between the player and the target |
 | `LastAutoShotMs` | Time since last detected AutoShot happened in milliseconds |
 | `LastMainHandMs` | Time since last detected Main Hand Melee swing happened in milliseconds |
+| `MainHandSpeed` | Returns the player Main hand attack speed in milliseconds |
+| `MainHandSwing` | Returns the player predicted next main hand swing time |
 | `CD` | Returns the context KeyAction **in-game** cooldown in milliseconds |
 | `CD_{KeyAction.Name}` | Returns the given `{KeyAction.Name}` **in-game** cooldown in milliseconds |
 | `Cost_{KeyAction.Name}` | Returns the given `{KeyAction.Name}` cost value |
@@ -684,6 +686,8 @@ e.g.
 "Requirement": "CD_Judgement < 1500"                 // The remaining cooldown on Judgement is less then GCD(1500)
 "Requirement": "CD_Hammer of Justice > CD_Judgement" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
 "Requirement": "Rage >= Cost_Heroic Strike"          // Create a condition like if player current rage is greater then or equal the cost of Heroic Strike
+"Requirement": "MainHandSpeed > 3500"   // Main hand attack speed is greater then 3.5 seconds
+"Requirement": "MainHandSwing > -400"   // 400 milliseconds before next predicted main swing happen
 ```
 
 e.g. for `CD`: It's a good idea to put `CD` in healing spells to take consideration of the spell interruption.

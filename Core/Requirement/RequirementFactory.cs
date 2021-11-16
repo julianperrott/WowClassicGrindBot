@@ -251,8 +251,8 @@ namespace Core
                 { "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }, 
                 //"CD_{KeyAction.Name}
                 //"Cost_{KeyAction.Name}"
-                { "MainHandSpeed", () => playerReader.MainHandSpeed },
-                { "MainHandSwing", () => Math.Clamp(playerReader.MainHandSwing.ElapsedMs - (playerReader.MainHandSpeed * 10), -(playerReader.MainHandSpeed * 10), 0) },
+                { "MainHandSpeed", () => playerReader.MainHandSpeedMs },
+                { "MainHandSwing", () => Math.Clamp(playerReader.MainHandSwing.ElapsedMs - playerReader.MainHandSpeedMs, -playerReader.MainHandSpeedMs, 0) }
             };
         }
 
