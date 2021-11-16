@@ -19,7 +19,7 @@ namespace Core
         private readonly CreatureDB creatureDb;
         private readonly ItemDB itemDb;
 
-        private KeyActions? keyActions;
+        private readonly KeyActions keyActions;
 
         private readonly Dictionary<string, Func<int>> valueDictionary = new Dictionary<string, Func<int>>();
 
@@ -44,6 +44,8 @@ namespace Core
             this.talentReader = addonReader.TalentReader;
             this.creatureDb = addonReader.CreatureDb;
             this.itemDb = addonReader.ItemDb;
+
+            this.keyActions = new KeyActions();
 
             keywordDictionary = new Dictionary<string, Func<string, Requirement>>()
             {
@@ -255,7 +257,8 @@ namespace Core
 
         public void InitialiseRequirements(KeyAction item, KeyActions? keyActions)
         {
-            this.keyActions = keyActions;
+            if (keyActions != null)
+                this.keyActions.Sequence.AddRange(keyActions.Sequence);
 
             CreateConsumableRequirement("Water", item);
             CreateConsumableRequirement("Food", item);
