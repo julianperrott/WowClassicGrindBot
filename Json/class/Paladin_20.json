@@ -109,7 +109,7 @@
         "Key": "1",
         "WhenUsable": true,
         "Requirements": [
-          "!Judgement of the Crusader || Hammer of Justice || CD_Hammer of Justice > 8000",
+          "!Judgement of the Crusader || Hammer of Justice || CD_Hammer of Justice > CD_Judgement",
           "Seal of Command || Seal of Righteousness || Seal of the Crusader"
         ],
         "DelayAfterCast": 400
