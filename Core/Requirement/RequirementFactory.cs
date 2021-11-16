@@ -249,7 +249,8 @@ namespace Core
                 { "MaxRange", () => playerReader.MaxRange },
                 { "LastAutoShotMs", () => playerReader.AutoShot.ElapsedMs },
                 { "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }, 
-                //"CD_{item.Name}
+                //"CD_{KeyAction.Name}
+                //"Cost_{KeyAction.Name}"
                 { "MainHandSpeed", () => playerReader.MainHandSpeed },
                 { "MainHandSwing", () => Math.Clamp(playerReader.MainHandSwing.ElapsedMs - (playerReader.MainHandSpeed * 10), -(playerReader.MainHandSpeed * 10), 0) },
             };
@@ -314,18 +315,24 @@ namespace Core
 
         public void CreateDynamicBindings(KeyAction item)
         {
-            DynamicBindCooldown(item);
+            BindCooldown(item);
+            BindMinCost(item);
         }
 
         private void CreatePerKeyActionRequirements(KeyAction item)
         {
-            string key = $"CD_{item.Name}";
+            CreatePerKeyActionRequirementByKey(item, "CD");
+            CreatePerKeyActionRequirementByKey(item, "Cost");
+        }
 
-            if (valueDictionary.ContainsKey("CD"))
-                valueDictionary.Remove("CD");
+        private void CreatePerKeyActionRequirementByKey(KeyAction item, string prefixKey)
+        {
+            string key = $"{prefixKey}_{item.Name}";
+            if (valueDictionary.ContainsKey(prefixKey))
+                valueDictionary.Remove(prefixKey);
 
-            if(valueDictionary.ContainsKey(key))
-                valueDictionary.Add("CD", valueDictionary[key]);
+            if (valueDictionary.ContainsKey(key))
+                valueDictionary.Add(prefixKey, valueDictionary[key]);
         }
 
         private void CreateTargetIsCastingRequirement(List<Requirement> itemRequirementObjects, KeyAction item)
@@ -407,13 +414,23 @@ namespace Core
             };
         }
 
-        private void DynamicBindCooldown(KeyAction item)
+        private void BindCooldown(KeyAction item)
         {
             string key = $"CD_{item.Name}";
             if (!valueDictionary.ContainsKey(key))
             {
                 valueDictionary.Add(key,
                     () => addonReader.ActionBarCooldownReader.GetRemainingCooldown(playerReader, item));
+            }
+        }
+
+        private void BindMinCost(KeyAction item)
+        {
+            string key = $"Cost_{item.Name}";
+            if (!valueDictionary.ContainsKey(key))
+            {
+                valueDictionary.Add(key,
+                    () => addonReader.ActionBarCostReader.GetCostByActionBarSlot(playerReader, item).Item2);
             }
         }
 
