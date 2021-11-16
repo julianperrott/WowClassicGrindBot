@@ -19,7 +19,7 @@ namespace Core
         private readonly CreatureDB creatureDb;
         private readonly ItemDB itemDb;
 
-        private KeyActions? keyActions;
+        private readonly KeyActions keyActions;
 
         private readonly Dictionary<string, Func<int>> valueDictionary = new Dictionary<string, Func<int>>();
 
@@ -44,6 +44,8 @@ namespace Core
             this.talentReader = addonReader.TalentReader;
             this.creatureDb = addonReader.CreatureDb;
             this.itemDb = addonReader.ItemDb;
+
+            this.keyActions = new KeyActions();
 
             keywordDictionary = new Dictionary<string, Func<string, Requirement>>()
             {
@@ -164,6 +166,7 @@ namespace Core
                 
                 // Warrior
                 { "Battle Shout", ()=> playerReader.Buffs.BattleShout },
+                { "Bloodrage", ()=> playerReader.Buffs.Bloodrage },
                 
                 // Warlock
                 { "Demon Skin", ()=> playerReader.Buffs.Demon },
@@ -204,6 +207,9 @@ namespace Core
 
                 // Warrior Debuff
                 { "Rend", ()=> playerReader.TargetDebuffs.Rend },
+                { "Thunder Clap", ()=> playerReader.TargetDebuffs.ThunderClap },
+                { "Hamstring", ()=> playerReader.TargetDebuffs.Hamstring },
+                { "Charge Stun", ()=> playerReader.TargetDebuffs.ChargeStun },
                 
                 // Priest Debuff
                 { "Shadow Word: Pain", ()=> playerReader.TargetDebuffs.ShadowWordPain },
@@ -242,14 +248,18 @@ namespace Core
                 { "MinRange", () => playerReader.MinRange },
                 { "MaxRange", () => playerReader.MaxRange },
                 { "LastAutoShotMs", () => playerReader.AutoShot.ElapsedMs },
-                { "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }
-                //"CD_{item.Name}
+                { "LastMainHandMs", () => playerReader.MainHandSwing.ElapsedMs }, 
+                //"CD_{KeyAction.Name}
+                //"Cost_{KeyAction.Name}"
+                { "MainHandSpeed", () => playerReader.MainHandSpeed },
+                { "MainHandSwing", () => Math.Clamp(playerReader.MainHandSwing.ElapsedMs - (playerReader.MainHandSpeed * 10), -(playerReader.MainHandSpeed * 10), 0) },
             };
         }
 
         public void InitialiseRequirements(KeyAction item, KeyActions? keyActions)
         {
-            this.keyActions = keyActions;
+            if (keyActions != null)
+                this.keyActions.Sequence.AddRange(keyActions.Sequence);
 
             CreateConsumableRequirement("Water", item);
             CreateConsumableRequirement("Food", item);
@@ -305,18 +315,24 @@ namespace Core
 
         public void CreateDynamicBindings(KeyAction item)
         {
-            DynamicBindCooldown(item);
+            BindCooldown(item);
+            BindMinCost(item);
         }
 
         private void CreatePerKeyActionRequirements(KeyAction item)
         {
-            string key = $"CD_{item.Name}";
+            CreatePerKeyActionRequirementByKey(item, "CD");
+            CreatePerKeyActionRequirementByKey(item, "Cost");
+        }
 
-            if (valueDictionary.ContainsKey("CD"))
-                valueDictionary.Remove("CD");
+        private void CreatePerKeyActionRequirementByKey(KeyAction item, string prefixKey)
+        {
+            string key = $"{prefixKey}_{item.Name}";
+            if (valueDictionary.ContainsKey(prefixKey))
+                valueDictionary.Remove(prefixKey);
 
-            if(valueDictionary.ContainsKey(key))
-                valueDictionary.Add("CD", valueDictionary[key]);
+            if (valueDictionary.ContainsKey(key))
+                valueDictionary.Add(prefixKey, valueDictionary[key]);
         }
 
         private void CreateTargetIsCastingRequirement(List<Requirement> itemRequirementObjects, KeyAction item)
@@ -398,13 +414,23 @@ namespace Core
             };
         }
 
-        private void DynamicBindCooldown(KeyAction item)
+        private void BindCooldown(KeyAction item)
         {
             string key = $"CD_{item.Name}";
             if (!valueDictionary.ContainsKey(key))
             {
                 valueDictionary.Add(key,
                     () => addonReader.ActionBarCooldownReader.GetRemainingCooldown(playerReader, item));
+            }
+        }
+
+        private void BindMinCost(KeyAction item)
+        {
+            string key = $"Cost_{item.Name}";
+            if (!valueDictionary.ContainsKey(key))
+            {
+                valueDictionary.Add(key,
+                    () => addonReader.ActionBarCostReader.GetCostByActionBarSlot(playerReader, item).Item2);
             }
         }
 
@@ -659,7 +685,20 @@ namespace Core
 
             var parts = requirement.Split(symbol);
             var key = parts[0].Trim();
-            var value = int.Parse(parts[1]);
+
+            Func<int> value = () => 0;
+            if (int.TryParse(parts[1], out int v))
+            {
+                value = () => v;
+            }
+            else
+            {
+                string variable = parts[1].Trim();
+                if (valueDictionary.ContainsKey(variable))
+                {
+                    value = valueDictionary[variable];
+                }
+            }
 
             if (!valueDictionary.Keys.Contains(key))
             {
@@ -676,16 +715,16 @@ namespace Core
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() > value,
-                    LogMessage = () => $"{key} {valueCheck()} > {value}"
+                    HasRequirement = () => valueCheck() > value(),
+                    LogMessage = () => $"{key} {valueCheck()} > {value()}"
                 };
             }
             else
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() < value,
-                    LogMessage = () => $"{key} {valueCheck()} < {value}"
+                    HasRequirement = () => valueCheck() < value(),
+                    LogMessage = () => $"{key} {valueCheck()} < {value()}"
                 };
             }
         }
@@ -700,7 +739,20 @@ namespace Core
 
             var parts = requirement.Split(symbol);
             var key = parts[0].Trim();
-            var value = int.Parse(parts[1]);
+
+            Func<int> value = () => 0;
+            if (int.TryParse(parts[1], out int v))
+            {
+                value = () => v;
+            }
+            else
+            {
+                string variable = parts[1].Trim();
+                if (valueDictionary.ContainsKey(variable))
+                {
+                    value = valueDictionary[variable];
+                }
+            }
 
             if (!valueDictionary.Keys.Contains(key))
             {
@@ -717,16 +769,16 @@ namespace Core
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() >= value,
-                    LogMessage = () => $"{key} {valueCheck()} >= {value}"
+                    HasRequirement = () => valueCheck() >= value(),
+                    LogMessage = () => $"{key} {valueCheck()} >= {value()}"
                 };
             }
             else
             {
                 return new Requirement
                 {
-                    HasRequirement = () => valueCheck() <= value,
-                    LogMessage = () => $"{key} {valueCheck()} <= {value}"
+                    HasRequirement = () => valueCheck() <= value(),
+                    LogMessage = () => $"{key} {valueCheck()} <= {value()}"
                 };
             }
         }
@@ -736,7 +788,20 @@ namespace Core
             var symbol = "==";
             var parts = requirement.Split(symbol);
             var key = parts[0].Trim();
-            var value = int.Parse(parts[1]);
+
+            Func<int> value = () => 0;
+            if (int.TryParse(parts[1], out int v))
+            {
+                value = () => v;
+            }
+            else
+            {
+                string variable = parts[1].Trim();
+                if (valueDictionary.ContainsKey(variable))
+                {
+                    value = valueDictionary[variable];
+                }
+            }
 
             if (!valueDictionary.Keys.Contains(key))
             {
@@ -751,8 +816,8 @@ namespace Core
             var valueCheck = valueDictionary[key];
             return new Requirement
             {
-                HasRequirement = () => valueCheck() == value,
-                LogMessage = () => $"{key} {valueCheck()} == {value}"
+                HasRequirement = () => valueCheck() == value(),
+                LogMessage = () => $"{key} {valueCheck()} == {value()}"
             };
         }
 

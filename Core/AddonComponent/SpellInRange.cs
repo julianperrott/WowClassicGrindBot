@@ -10,6 +10,7 @@
         public bool Warrior_Charge => IsBitSet(0);
         public bool Warrior_Rend => IsBitSet(1);
         public bool Warrior_ShootGun => IsBitSet(2);
+        public bool Warrior_Throw => IsBitSet(3);
 
         // Rogue
         public bool Rogue_SinisterStrike => IsBitSet(0);

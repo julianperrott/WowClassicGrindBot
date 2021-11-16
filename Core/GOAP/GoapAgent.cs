@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Core.GOAP
 {
-    public sealed class GoapAgent
+    public sealed class GoapAgent : IDisposable
     {
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
@@ -45,6 +45,11 @@ namespace Core.GOAP
             this.blacklist = blacklist;
 
             this.planner = new GoapPlanner(logger);
+        }
+
+        public void Dispose()
+        {
+            this.addonReader.CreatureHistory.KillCredit -= OnKillCredit;
         }
 
         public void UpdateWorldState()

@@ -254,6 +254,7 @@ function DataToColor:uniqueGuid(npcId, spawn)
     return tonumber(num, 16)
 end
 
+local offsetEnumPowerType = 2
 function DataToColor:actionbarCost(slot)
     local actionType, id = GetActionInfo(slot)
     if actionType == DataToColor.C.ActionType.Macro then
@@ -264,11 +265,11 @@ function DataToColor:actionbarCost(slot)
         if costTable ~= nil then
             for _, costInfo in pairs(costTable) do
                 --print(slot, actionType, costInfo.type, costInfo.cost, GetSpellLink(id))
-                return DataToColor.C.MAX_POWER_TYPE * costInfo.type + DataToColor.C.MAX_ACTION_IDX * slot + costInfo.cost
+                return DataToColor.C.MAX_POWER_TYPE * (costInfo.type + offsetEnumPowerType) + DataToColor.C.MAX_ACTION_IDX * slot + costInfo.cost
             end
         end
     end
-    return DataToColor.C.MAX_POWER_TYPE * 0 + DataToColor.C.MAX_ACTION_IDX * slot + 0
+    return DataToColor.C.MAX_POWER_TYPE * offsetEnumPowerType + DataToColor.C.MAX_ACTION_IDX * slot + 0
 end
 
 function DataToColor:equipSlotItemId(slot)
@@ -415,6 +416,18 @@ end
 
 function DataToColor:ComboPoints()
     return GetComboPoints(DataToColor.C.unitPlayer, DataToColor.C.unitTarget) or 0
+end
+
+function DataToColor:getMeleeAttackSpeed(unit)
+    local mainHand, offHand = UnitAttackSpeed(unit)
+    if not mainHand then
+        mainHand = 0
+    end
+
+    if not offHand then
+        offHand = 0
+    end
+    return 10000 * math.floor(mainHand * 100) + math.floor(offHand * 100)
 end
 
 -----------------------------------------------------------------

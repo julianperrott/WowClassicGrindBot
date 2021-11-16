@@ -30,7 +30,6 @@ namespace Core.Goals
         private const int MaxWaitCastTimeMs = GCD;
         private const int MaxWaitBuffTimeMs = GCD;
         private const int MaxCastTimeMs = 15000;
-        private const int MaxSwingTimeMs = 4000;
         private const int MaxAirTimeMs = 10000;
 
         public CastingHandler(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder, StopMoving stopMoving)
@@ -133,7 +132,7 @@ namespace Core.Goals
 
             if (item.AfterCastWaitNextSwing)
             {
-                (inputNotHappened, inputElapsedMs) = await wait.InterruptTask(MaxSwingTimeMs,
+                (inputNotHappened, inputElapsedMs) = await wait.InterruptTask(playerReader.MainHandSpeed * 10,
                     interrupt: () => !addonReader.CurrentAction.Is(item),
                     repeat: async () =>
                     {
@@ -249,7 +248,8 @@ namespace Core.Goals
 
             if (item.Name == classConfig.Approach.Name ||
                 item.Name == classConfig.AutoAttack.Name ||
-                item.Name == classConfig.Interact.Name)
+                item.Name == classConfig.Interact.Name ||
+                item.Name == classConfig.StopAttack.Name)
             {
                 await PressKeyAction(item);
                 return true;

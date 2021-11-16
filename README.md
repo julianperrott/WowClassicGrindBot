@@ -651,6 +651,7 @@ Formula: `[Keyword] [Operator] [Numeric integer value]`
 | `LastMainHandMs` | Time since last detected Main Hand Melee swing happened in milliseconds |
 | `CD` | Returns the context KeyAction **in-game** cooldown in milliseconds |
 | `CD_{KeyAction.Name}` | Returns the given `{KeyAction.Name}` **in-game** cooldown in milliseconds |
+| `Cost_{KeyAction.Name}` | Returns the given `{KeyAction.Name}` cost value |
 
 For the `MinRange` and `MaxRange` gives an approximation range distance between the player and target.
 
@@ -680,8 +681,9 @@ e.g.
 "Requirement": "MaxRange > 35"
 "Requirement": "LastAutoShotMs<=500"
 "Requirement": "LastMainHandMs <= 500"
-"Requirement": "CD_Judgement<1500"         // The remaining cooldown on Judgement is less then GCD(1500)
-"Requirement": "CD_Hammer of Justice > 8000" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
+"Requirement": "CD_Judgement < 1500"                 // The remaining cooldown on Judgement is less then GCD(1500)
+"Requirement": "CD_Hammer of Justice > CD_Judgement" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
+"Requirement": "Rage >= Cost_Heroic Strike"          // Create a condition like if player current rage is greater then or equal the cost of Heroic Strike
 ```
 
 e.g. for `CD`: It's a good idea to put `CD` in healing spells to take consideration of the spell interruption.
@@ -985,6 +987,7 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | Warlock | `"Soulstone Resurraction"` |
 | Warlock | `"Soul Link"` |
 | Warrior | `"Battle Shout"` |
+| Warrior | `"Bloodrage"` |
 | Shaman | `"Lightning Shield"` |
 | Shaman | `"Water Shield"` |
 | Shaman | `"Shamanistic Focus"` |
@@ -1023,6 +1026,9 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | Warlock | `"Corruption"` |
 | Warlock | `"Immolate"` |
 | Warrior | `"Rend"` |
+| Warrior | `"Thunder Clap"` |
+| Warrior | `"Hamstring"` |
+| Warrior | `"Charge Stun"` |
 | Hunter | `"Serpent Sting"` |
 
 </td></tr> </table>
@@ -1062,6 +1068,7 @@ Formula: `SpellInRange:[Numeric integer value]`
 | Warrior | Charge | 0 |
 | Warrior | Rend | 1 |
 | Warrior | Shoot Gun | 2 |
+| Warrior | Throw | 3 |
 | Priest | Shadow Word: Pain | 0 |
 | Priest | Shoot | 1 |
 | Priest | Mind Flay | 2 |

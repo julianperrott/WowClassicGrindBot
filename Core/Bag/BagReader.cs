@@ -39,21 +39,24 @@ namespace Core
 
         public void Read()
         {
-            ReadBagMeta();
+            ReadBagMeta(out bool metaChanged);
 
-            ReadInventory(out bool hasChanged);
+            ReadInventory(out bool inventoryChanged);
 
-            if (hasChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
+            if (metaChanged || inventoryChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
             {
                 DataChanged?.Invoke(this, new EventArgs());
                 lastEvent = DateTime.Now;
             }
         }
 
-        private void ReadBagMeta()
+        private void ReadBagMeta(out bool changed)
         {
+            changed = false;
+
             //bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)
             int data = reader.GetIntAtCell(cBagMeta);
+            if (data == 0) return;
 
             int bagType = (int)(data / 1000000f);
             data -= 1000000 * bagType;
@@ -68,13 +71,18 @@ namespace Core
 
             if (index >= 0 && index < bags.Length)
             {
+                Bag bag = bags[index];
+
                 // default bag, the first has no equipment slot
                 if (index != 0)
-                    bags[index].ItemId = equipmentReader.GetId((int)InventorySlotId.Bag_0 + index - 1);
+                    bag.ItemId = equipmentReader.GetId((int)InventorySlotId.Bag_0 + index - 1);
 
-                bags[index].BagType = (BagType)bagType;
-                bags[index].SlotCount = slotCount;
-                bags[index].FreeSlot = freeSlots;
+                bag.BagType = (BagType)bagType;
+                bag.SlotCount = slotCount;
+                bag.FreeSlot = freeSlots;
+
+                bags[index] = bag;
+                changed = true;
             }
         }
 
@@ -84,6 +92,7 @@ namespace Core
 
             // 20 -- 0-4 bagNum + 1-21 itenNum + 1-1000 quantity
             int itemCount = reader.GetIntAtCell(cItemNumCount);
+            if (itemCount == 0) return;
 
             int bag = (int)(itemCount / 1000000f);
             itemCount -= 1000000 * bag;

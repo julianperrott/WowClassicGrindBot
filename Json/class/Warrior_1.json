@@ -6,13 +6,14 @@
       {
         "Name": "Heroic Strike",
         "Key": "2",
-        "AfterCastWaitNextSwing": true,
         "WhenUsable": true,
-        "MinRage": 15
+        "MinRage": 15,
+        "AfterCastWaitNextSwing": true,
+        "Requirement": "MainHandSwing > -400"
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
@@ -25,7 +26,7 @@
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health%<60",
+        "Requirement": "Health% < 60",
         "Cost": 3
       }
     ]

@@ -66,6 +66,7 @@
 
         // Warrior
         public bool BattleShout => IsBitSet(10);
+        public bool Bloodrage => IsBitSet(11);
 
         // Warlock
         public bool Demon => IsBitSet(10); //Skin and Armor

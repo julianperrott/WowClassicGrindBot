@@ -206,7 +206,7 @@ namespace Core
                 {
                     actionThread.Active = false;
                     GrindSession.StopBotSession("Stopped By Player", false);
-                    AddonReader.LevelTracker.Reset();
+                    AddonReader.SoftReset();
                 }
 
                 StatusChanged?.Invoke(this, actionThread.Active);
@@ -248,20 +248,23 @@ namespace Core
 
         private void Initialize(ClassConfiguration config)
         {
+            AddonReader.SoftReset();
+
             ConfigurableInput = new ConfigurableInput(logger, wowProcess, config);
 
             ActionBarPopulator = new ActionBarPopulator(logger, config, AddonReader, ExecGameCommand);
 
             var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(logger, AddonReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist);
 
-            var goapAgentState = new GoapAgentState();
-
             var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, ExecGameCommand);
-            var availableActions = actionFactory.CreateGoals(config, blacklist, goapAgentState);
-            RouteInfo = actionFactory.RouteInfo;
 
+            var goapAgentState = new GoapAgentState();
+            var availableActions = actionFactory.CreateGoals(config, blacklist, goapAgentState);
+
+            this.GoapAgent?.Dispose();
             this.GoapAgent = new GoapAgent(logger, goapAgentState, ConfigurableInput, AddonReader, availableActions, blacklist);
 
+            RouteInfo = actionFactory.RouteInfo;
             this.actionThread = new GoalThread(logger, GoapAgent, AddonReader, RouteInfo);
 
             // hookup events between actions
