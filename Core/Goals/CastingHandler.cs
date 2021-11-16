@@ -248,7 +248,8 @@ namespace Core.Goals
 
             if (item.Name == classConfig.Approach.Name ||
                 item.Name == classConfig.AutoAttack.Name ||
-                item.Name == classConfig.Interact.Name)
+                item.Name == classConfig.Interact.Name ||
+                item.Name == classConfig.StopAttack.Name)
             {
                 await PressKeyAction(item);
                 return true;

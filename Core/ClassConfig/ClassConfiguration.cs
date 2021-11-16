@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -123,10 +123,12 @@ namespace Core
             AutoAttack.DelayAfterCast = 0;
             AutoAttack.Initialise(addonReader, requirementFactory, logger);
 
-            StopAttack.PressDuration = 10;
+            StopAttack.Name = "StopAttack";
+            StopAttack.WaitForGCD = false;
+            StopAttack.PressDuration = 20;
 
-            InitializeKeyActions(Pull, Interact, Approach, AutoAttack);
-            InitializeKeyActions(Combat, Interact, Approach, AutoAttack);
+            InitializeKeyActions(Pull, Interact, Approach, AutoAttack, StopAttack);
+            InitializeKeyActions(Combat, Interact, Approach, AutoAttack, StopAttack);
 
             logger.LogInformation("[Form] Initialise KeyActions.");
             Form.ForEach(i => i.InitialiseForm(addonReader, requirementFactory, logger));
@@ -217,6 +219,8 @@ namespace Core
                         a.DelayAfterCast = l.DelayAfterCast;
                         a.WaitForGCD = l.WaitForGCD;
                         a.PressDuration = l.PressDuration;
+                        a.Requirement = l.Requirement;
+                        a.Requirements.AddRange(l.Requirements);
                         a.Cooldown = l.Cooldown;
                     }
                 });
