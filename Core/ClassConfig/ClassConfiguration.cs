@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -102,6 +102,37 @@ namespace Core
         {
             SpiritPathFilename = string.Empty;
 
+            Jump.Key = JumpKey;
+            Jump.Initialise(addonReader, requirementFactory, logger);
+
+            TargetLastTarget.Key = TargetLastTargetKey;
+            TargetLastTarget.Initialise(addonReader, requirementFactory, logger);
+
+            StandUp.Key = StandUpKey;
+            StandUp.Initialise(addonReader, requirementFactory, logger);
+
+            ClearTarget.Key = ClearTargetKey;
+            ClearTarget.Initialise(addonReader, requirementFactory, logger);
+
+            StopAttack.Key = StopAttackKey;
+            StopAttack.Initialise(addonReader, requirementFactory, logger);
+
+            TargetNearestTarget.Key = TargetNearestTargetKey;
+            TargetNearestTarget.Initialise(addonReader, requirementFactory, logger);
+
+            TargetPet.Key = TargetPetKey;
+            TargetPet.Initialise(addonReader, requirementFactory, logger);
+
+            TargetTargetOfTarget.Key = TargetTargetOfTargetKey;
+            TargetTargetOfTarget.Initialise(addonReader, requirementFactory, logger);
+
+            PetAttack.Key = PetAttackKey;
+            PetAttack.PressDuration = 10;
+            PetAttack.Initialise(addonReader, requirementFactory, logger);
+
+            Mount.Key = MountKey;
+            Mount.Initialise(addonReader, requirementFactory, logger);
+
             Interact.Key = InteractKey;
             Interact.Name = "Interact";
             Interact.WaitForGCD = false;
@@ -133,42 +164,17 @@ namespace Core
             logger.LogInformation("[Form] Initialise KeyActions.");
             Form.ForEach(i => i.InitialiseForm(addonReader, requirementFactory, logger));
 
+            Pull.PreInitialise("Pull", requirementFactory, logger);
+            Combat.PreInitialise("Combat", requirementFactory, logger);
+            Adhoc.PreInitialise("Adhoc", requirementFactory, logger);
+            NPC.PreInitialise("AdhocNpc", requirementFactory, logger);
+            Parallel.PreInitialise("Parallel", requirementFactory, logger);
+
             Pull.Initialise("Pull", addonReader, requirementFactory, logger);
             Combat.Initialise("Combat", addonReader, requirementFactory, logger);
             Adhoc.Initialise("Adhoc", addonReader, requirementFactory, logger);
             NPC.Initialise("AdhocNpc", addonReader, requirementFactory, logger);
             Parallel.Initialise("Parallel", addonReader, requirementFactory, logger);
-
-            Jump.Key = JumpKey;
-            Jump.Initialise(addonReader, requirementFactory, logger);
-
-            TargetLastTarget.Key = TargetLastTargetKey;
-            TargetLastTarget.Initialise(addonReader, requirementFactory, logger);
-
-            StandUp.Key = StandUpKey;
-            StandUp.Initialise(addonReader, requirementFactory, logger);
-
-            ClearTarget.Key = ClearTargetKey;
-            ClearTarget.Initialise(addonReader, requirementFactory, logger);
-
-            StopAttack.Key = StopAttackKey;
-            StopAttack.Initialise(addonReader, requirementFactory, logger);
-
-            TargetNearestTarget.Key = TargetNearestTargetKey;
-            TargetNearestTarget.Initialise(addonReader, requirementFactory, logger);
-
-            TargetPet.Key = TargetPetKey;
-            TargetPet.Initialise(addonReader, requirementFactory, logger);
-
-            TargetTargetOfTarget.Key = TargetTargetOfTargetKey;
-            TargetTargetOfTarget.Initialise(addonReader, requirementFactory, logger);
-
-            PetAttack.Key = PetAttackKey;
-            PetAttack.PressDuration = 10;
-            PetAttack.Initialise(addonReader, requirementFactory, logger);
-
-            Mount.Key = MountKey;
-            Mount.Initialise(addonReader, requirementFactory, logger);
 
             GatherFindKeys.ForEach(key =>
             {
