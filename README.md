@@ -651,6 +651,7 @@ Formula: `[Keyword] [Operator] [Numeric integer value]`
 | `LastMainHandMs` | Time since last detected Main Hand Melee swing happened in milliseconds |
 | `CD` | Returns the context KeyAction **in-game** cooldown in milliseconds |
 | `CD_{KeyAction.Name}` | Returns the given `{KeyAction.Name}` **in-game** cooldown in milliseconds |
+| `Cost_{KeyAction.Name}` | Returns the given `{KeyAction.Name}` cost value |
 
 For the `MinRange` and `MaxRange` gives an approximation range distance between the player and target.
 
@@ -680,8 +681,9 @@ e.g.
 "Requirement": "MaxRange > 35"
 "Requirement": "LastAutoShotMs<=500"
 "Requirement": "LastMainHandMs <= 500"
-"Requirement": "CD_Judgement<1500"         // The remaining cooldown on Judgement is less then GCD(1500)
-"Requirement": "CD_Hammer of Justice > 8000" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
+"Requirement": "CD_Judgement < 1500"                 // The remaining cooldown on Judgement is less then GCD(1500)
+"Requirement": "CD_Hammer of Justice > CD_Judgement" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
+"Requirement": "Rage >= Cost_Heroic Strike"          // Create a condition like if player current rage is greater then or equal the cost of Heroic Strike
 ```
 
 e.g. for `CD`: It's a good idea to put `CD` in healing spells to take consideration of the spell interruption.
