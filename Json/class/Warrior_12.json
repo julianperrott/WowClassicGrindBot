@@ -1,6 +1,6 @@
 {
   "ClassName": "Warrior",
-  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\7-9_Dun Morogh_Tundred Hills (cl 9-11).json",
+  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\10-12_Loch Modan.json",
   "Pull": {
     "Sequence": [
       {
@@ -49,6 +49,12 @@
         "Form": "Warrior_BattleStance"
       },
       {
+        "Name": "Overpower",
+        "Key": "0",
+        "WhenUsable": true,
+        "MinRage": 5
+      },
+      {
         "Name": "Heroic Strike",
         "Key": "2",
         "WhenUsable": true,
@@ -61,7 +67,7 @@
         "Key": "5",
         "WhenUsable": true,
         "MinRage": 10,
-        "Requirements": ["!Charge Stun && TargetHealth% > 80", "!Rend"],
+        "Requirements": ["!Charge Stun && TargetHealth% > 50", "!Rend"],
         "Form": "Warrior_BattleStance"
       },
       {
@@ -90,7 +96,7 @@
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health% < 60",
+        "Requirement": "Health% < 40",
         "Cost": 3
       }
     ]
@@ -101,14 +107,14 @@
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "5_Gnome_Vendor.json",
+        "PathFilename": "10_Loch_Modan_Vendor.json",
         "Cost": 6
       },
       {
         "Name": "Sell",
         "Key": "C",
         "Requirement": "BagFull",
-        "PathFilename": "5_Gnome_Vendor.json",
+        "PathFilename": "10_Loch_Modan_Vendor.json",
         "Cost": 6
       }
     ]
