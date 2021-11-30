@@ -28,10 +28,12 @@ local ITEM_ITERATION_FRAME_CHANGE_RATE = 5
 local ACTION_BAR_ITERATION_FRAME_CHANGE_RATE = 5
 -- How often the gossip frames change
 local GOSSIP_ITERATION_FRAME_CHANGE_RATE = 5
--- How ofthen the spellbook frames change
+-- How often the spellbook frames change
 local SPELLBOOK_ITERATION_FRAME_CHANGE_RATE = 5
--- How ofthen the spellbook frames change
+-- How often the spellbook frames change
 local TALENT_ITERATION_FRAME_CHANGE_RATE = 5
+-- How often the spellbook frames change
+local COMBAT_LOG_ITERATION_FRAME_CHANGE_RATE = 5
 
 -- Action bar configuration for which spells are tracked
 local MAX_ACTIONBAR_SLOT = 108
@@ -45,7 +47,6 @@ DataToColor.frames = nil
 
 DataToColor.uiErrorMessage = 0
 
-DataToColor.lastCombatDamageTakenCreature = 0
 DataToColor.lastCombatDamageDoneCreature = 0
 DataToColor.lastCombatCreature = 0
 DataToColor.lastCombatCreatureDied = 0
@@ -135,6 +136,7 @@ DataToColor.actionBarCostQueue = {}
 DataToColor.actionBarCooldownQueue = {}
 DataToColor.spellBookQueue = {}
 DataToColor.talentQueue = {}
+DataToColor.CombatDamageTakenQueue = {}
 
 local equipmentSlot = nil
 local bagNum = nil
@@ -219,7 +221,6 @@ function DataToColor:Reset()
     DataToColor.lastLoot = 0
     DataToColor.uiErrorMessage = 0
 
-    DataToColor.lastCombatDamageTakenCreature = 0
     DataToColor.lastCombatDamageDoneCreature = 0
     DataToColor.lastCombatCreature = 0
     DataToColor.lastCombatCreatureDied = 0
@@ -604,7 +605,11 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArrI(DataToColor.lastCombatCreature, 64) -- Combat message creature
             MakePixelSquareArrI(DataToColor.lastCombatDamageDoneCreature, 65) -- Last Combat damage done
-            MakePixelSquareArrI(DataToColor.lastCombatDamageTakenCreature, 66) -- Last Combat Damage taken
+
+            if DataToColor:Modulo(globalCounter, COMBAT_LOG_ITERATION_FRAME_CHANGE_RATE) == 0 then
+                MakePixelSquareArrI(DataToColor.stack:pop(DataToColor.CombatDamageTakenQueue) or 0, 66) -- Last Combat Damage taken
+            end
+
             MakePixelSquareArrI(DataToColor.lastCombatCreatureDied, 67) -- Last Killed Unit
 
             MakePixelSquareArrI(DataToColor:getGuid(DataToColor.C.unitPet), 68) -- pet guid
