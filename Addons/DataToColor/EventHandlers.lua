@@ -137,7 +137,7 @@ function DataToColor:OnCombatEvent(...)
     end
 
     if string.find(sourceGUID, "Creature") and (destGUID == DataToColor.playerGUID or destGUID == DataToColor.petGUID) then
-        DataToColor.lastCombatDamageTakenCreature = DataToColor:getGuidFromUUID(sourceGUID);
+        DataToColor.stack:push(DataToColor.CombatDamageTakenQueue, DataToColor:getGuidFromUUID(sourceGUID))
     end
 
     if sourceGUID == DataToColor.playerGUID then

@@ -2,7 +2,7 @@
 ## Title: DataToColor
 ## Author: FreeHongKongMMO
 ## Notes: Displays data as colors
-## Version: 1.1.46
+## Version: 1.1.47
 ## RequiredDeps:
 ## OptionalDeps: Ace3, LibRangeCheck
 ## SavedVariables:
