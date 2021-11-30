@@ -102,30 +102,29 @@ namespace Core
 
         private static void Update(int creatureId, float healthPercent, List<CreatureRecord> CombatCreatures)
         {
-            if (creatureId > 0)
+            if (creatureId <= 0) return;
+
+            int index = CombatCreatures.FindIndex(c => c.Guid == creatureId);
+            if (index > -1)
             {
-                int index = CombatCreatures.FindIndex(c => c.Guid == creatureId);
-                if (index > -1)
+                if (healthPercent < CombatCreatures[index].HealthPercent)
                 {
                     CreatureRecord creature = CombatCreatures[index];
 
-                    if (creature.HealthPercent > healthPercent)
-                    {
-                        creature.HealthPercent = healthPercent;
-                    }
+                    creature.HealthPercent = healthPercent;
                     creature.LastEvent = DateTime.Now;
 
                     CombatCreatures[index] = creature;
                 }
-                else
+            }
+            else
+            {
+                CombatCreatures.Add(new CreatureRecord
                 {
-                    CombatCreatures.Add(new CreatureRecord
-                    {
-                        Guid = creatureId,
-                        HealthPercent = healthPercent,
-                        LastEvent = DateTime.Now
-                    });
-                }
+                    Guid = creatureId,
+                    HealthPercent = healthPercent,
+                    LastEvent = DateTime.Now
+                });
             }
         }
 
