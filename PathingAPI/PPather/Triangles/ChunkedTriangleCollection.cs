@@ -124,7 +124,7 @@ namespace WowTriangles
             grid_y = (int)(y / ChunkReader.TILESIZE);
         }
 
-        private void GetGridLimits(int grid_x, int grid_y,
+        private static void GetGridLimits(int grid_x, int grid_y,
                                     out float min_x, out float min_y,
                                     out float max_x, out float max_y)
         {

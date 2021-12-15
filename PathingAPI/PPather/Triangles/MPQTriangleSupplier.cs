@@ -367,7 +367,7 @@ namespace WowTriangles
             }
         }
 
-        private void AddTriangles(TriangleCollection s, MapChunk c)
+        private static void AddTriangles(TriangleCollection s, MapChunk c)
         {
             int[,] vertices = new int[9, 9];
             int[,] verticesMid = new int[8, 8];

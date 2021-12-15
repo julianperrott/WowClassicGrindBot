@@ -137,13 +137,13 @@ namespace PatherPath.Graph
             chunks = new SparseMatrix2D<GraphChunk>(8);
         }
 
-        private void GetChunkCoord(float x, float y, out int ix, out int iy)
+        private static void GetChunkCoord(float x, float y, out int ix, out int iy)
         {
             ix = (int)((CHUNK_BASE + x) / GraphChunk.CHUNK_SIZE);
             iy = (int)((CHUNK_BASE + y) / GraphChunk.CHUNK_SIZE);
         }
 
-        private void GetChunkBase(int ix, int iy, out float bx, out float by)
+        private static void GetChunkBase(int ix, int iy, out float bx, out float by)
         {
             bx = (float)ix * GraphChunk.CHUNK_SIZE - CHUNK_BASE;
             by = (float)iy * GraphChunk.CHUNK_SIZE - CHUNK_BASE;
@@ -475,7 +475,7 @@ namespace PatherPath.Graph
             return wasAt;
         }
 
-        private bool LineCrosses(Location line0, Location line1, Location point)
+        private static bool LineCrosses(Location line0, Location line1, Location point)
         {
             float LineMag = line0.GetDistanceTo(line1); // Magnitude( LineEnd, LineStart );
 
@@ -542,14 +542,14 @@ namespace PatherPath.Graph
         public Spot currentSearchStartSpot = null;
         public Spot currentSearchSpot = null;
 
-        private float TurnCost(Spot from, Spot to)
+        private static float TurnCost(Spot from, Spot to)
         {
             Spot prev = from.traceBack;
             if (prev == null) { return 0.0f; }
             return TurnCost(prev.X, prev.Y, prev.Z, from.X, from.Y, from.Z, to.X, to.Y, to.Z);
         }
 
-        private float TurnCost(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2)
+        private static float TurnCost(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2)
         {
             float v1x = x1 - x0;
             float v1y = y1 - y0;
@@ -855,7 +855,7 @@ namespace PatherPath.Graph
             return FollowTraceBack(currentSearchStartSpot, currentSearchSpot); ;
         }
 
-        private List<Spot> FollowTraceBack(Spot from, Spot to)
+        private static List<Spot> FollowTraceBack(Spot from, Spot to)
         {
             List<Spot> path = new List<Spot>();
             int count = 0;

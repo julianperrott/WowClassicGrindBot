@@ -1424,7 +1424,7 @@ namespace Wmo
             }
         }
 
-        private void HandleMVER(uint size)
+        private static void HandleMVER(uint size)
         {
         }
 
@@ -1439,7 +1439,7 @@ namespace Wmo
             }
         }
 
-        private void HandleMTEX(uint size)
+        private static void HandleMTEX(uint size)
         {
         }
 
@@ -1649,7 +1649,7 @@ namespace Wmo
             } while (!done);
         }
 
-        private void HandleChunkMCNR(MapChunk chunk, uint size)
+        private static void HandleChunkMCNR(MapChunk chunk, uint size)
         {
             // Normals
         }
@@ -1681,21 +1681,21 @@ namespace Wmo
             }
         }
 
-        private void HandleChunkMCRF(MapChunk chunk, uint size)
+        private static void HandleChunkMCRF(MapChunk chunk, uint size)
         {
         }
 
-        private void HandleChunkMCLY(MapChunk chunk, uint size)
+        private static void HandleChunkMCLY(MapChunk chunk, uint size)
         {
             // texture info
         }
 
-        private void HandleChunkMCSH(MapChunk chunk, uint size)
+        private static void HandleChunkMCSH(MapChunk chunk, uint size)
         {
             // shadow map 64 x 64
         }
 
-        private void HandleChunkMCAL(MapChunk chunk, uint size)
+        private static void HandleChunkMCAL(MapChunk chunk, uint size)
         {
             // alpha maps  64 x 64
         }
@@ -1730,7 +1730,7 @@ namespace Wmo
             }
         }
 
-        private void HandleChunkMCSE(MapChunk chunk, uint size)
+        private static void HandleChunkMCSE(MapChunk chunk, uint size)
         {
             // Sound emitters
         }
@@ -1804,7 +1804,7 @@ namespace Wmo
             stream.Close();
         }
 
-        private void HandleMVER(uint size)
+        private static void HandleMVER(uint size)
         {
         }
 
@@ -1834,7 +1834,7 @@ namespace Wmo
             wmo.groups = new WMOGroup[nGroups];
         }
 
-        private void HandleMOGN(uint size)
+        private static void HandleMOGN(uint size)
         {
             // group name
             // groupnames = ChunkReader.ReadString(file);
@@ -1905,7 +1905,7 @@ namespace Wmo
             // List of filenames for M2 (mdx) models that appear in this WMO.
         }
 
-        private void HandleMOGP(uint size)
+        private static void HandleMOGP(uint size)
         {
         }
 
@@ -2024,7 +2024,7 @@ namespace Wmo
             stream.Close();
         }
 
-        private void HandleMVER(uint size)
+        private static void HandleMVER(uint size)
         {
         }
 
@@ -2081,27 +2081,27 @@ namespace Wmo
             }
         }
 
-        private void HandleMONR(uint size)
+        private static void HandleMONR(uint size)
         {
         }
 
-        private void HandleMOLR(uint size)
+        private static void HandleMOLR(uint size)
         {
         }
 
-        private void HandleMODR(uint size)
+        private static void HandleMODR(uint size)
         {
         }
 
-        private void HandleMOBA(uint size)
+        private static void HandleMOBA(uint size)
         {
         }
 
-        private void HandleMOCV(uint size)
+        private static void HandleMOCV(uint size)
         {
         }
 
-        private void HandleMLIQ(uint size)
+        private static void HandleMLIQ(uint size)
         {
         }
 
@@ -2117,7 +2117,7 @@ namespace Wmo
 			public float fDist;
 		};*/
 
-        private void HandleMOBN(uint size)
+        private static void HandleMOBN(uint size)
         {
             /*
 			t_BSP_NODE bsp;
@@ -2144,7 +2144,7 @@ namespace Wmo
 			}*/
         }
 
-        private void HandleMOBR(uint size)
+        private static void HandleMOBR(uint size)
         {
         }
 
