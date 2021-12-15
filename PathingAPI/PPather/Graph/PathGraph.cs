@@ -26,7 +26,7 @@ namespace PatherPath.Graph
 {
     public class PathGraph
     {
-        public static bool SearchEnabled = false;
+        public static bool SearchEnabled;
 
         private static Object m_LockObject = new Object();
 
@@ -38,7 +38,7 @@ namespace PatherPath.Graph
         }
 
         public eSearchScoreSpot searchScoreSpot = eSearchScoreSpot.A_Star_With_Model_Avoidance;
-        public int sleepMSBetweenSpots = 0;
+        public int sleepMSBetweenSpots;
 
         public const float toonHeight = 2.0f;
         public const float toonSize = 0.5f;
@@ -47,7 +47,7 @@ namespace PatherPath.Graph
         public const float WantedStepLength = 3f;
         public const float MaxStepLength = 5f;
 
-        public Path lastReducedPath = null;
+        public Path lastReducedPath;
 
         public static float IsCloseToModelRange = 2;
 
@@ -66,7 +66,7 @@ namespace PatherPath.Graph
         public TriangleCollection paint;
 
         private List<GraphChunk> ActiveChunks = new List<GraphChunk>();
-        private long LRU = 0;
+        private long LRU;
 
         public int GetTriangleClosenessScore(Location loc)
         {
@@ -539,8 +539,8 @@ namespace PatherPath.Graph
         // Searching
         //////////////////////////////////////////////////////
 
-        public Spot currentSearchStartSpot = null;
-        public Spot currentSearchSpot = null;
+        public Spot currentSearchStartSpot;
+        public Spot currentSearchSpot;
 
         private static float TurnCost(Spot from, Spot to)
         {
@@ -585,12 +585,12 @@ namespace PatherPath.Graph
         //        return searchProgress;
         //    }
         //}
-        private int searchID = 0;
+        private int searchID;
 
         private float heuristicsFactor = 5f;
 
-        public Spot ClosestSpot = null;
-        public Spot PeekSpot = null;
+        public Spot ClosestSpot;
+        public Spot PeekSpot;
 
         private Spot Search(Spot fromSpot, Spot destinationSpot, float minHowClose, ILocationHeuristics locationHeuristics)
         {
@@ -842,7 +842,7 @@ namespace PatherPath.Graph
             }
         }
 
-        private Spot lastCurrentSearchSpot = null;
+        private Spot lastCurrentSearchSpot;
 
         public List<Spot> CurrentSearchPath()
         {
@@ -919,7 +919,7 @@ namespace PatherPath.Graph
             return false;
         }
 
-        public Path LastPath = null;
+        public Path LastPath;
 
         private Path CreatePath(Spot from, Spot to, float minHowClose, ILocationHeuristics locationHeuristics)
         {

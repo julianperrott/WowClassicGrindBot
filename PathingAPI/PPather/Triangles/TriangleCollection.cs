@@ -44,10 +44,10 @@ namespace WowTriangles
         }
 
         private VertexArray vertices = new VertexArray();
-        private int no_vertices = 0;
+        private int no_vertices;
 
         private IndexArray triangles = new IndexArray();
-        private int no_triangles = 0;
+        private int no_triangles;
 
         private SparseFloatMatrix3D<int> vertexMatrix = new SparseFloatMatrix3D<int>(0.1f);
 
@@ -70,7 +70,7 @@ namespace WowTriangles
         private float limit_min_z = -1E30f;
 
         public float[] color;
-        public bool fill = false;
+        public bool fill;
 
         public void Clear()
         {
@@ -80,7 +80,7 @@ namespace WowTriangles
             changed = true;
         }
 
-        private TriangleOctree oct = null;
+        private TriangleOctree oct;
 
         public TriangleOctree GetOctree()
         {

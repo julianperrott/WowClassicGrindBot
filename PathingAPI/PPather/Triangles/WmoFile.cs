@@ -308,7 +308,7 @@ namespace Wmo
         private Dictionary<string, T> items = new Dictionary<string, T>();
         private Dictionary<string, int> items_LRU = new Dictionary<string, int>();
 
-        private int NOW = 0;
+        private int NOW;
         private int maxItems;
 
         public Manager(int maxItems)
@@ -483,8 +483,8 @@ namespace Wmo
 
     public class ModelFile
     {
-        private System.IO.Stream model_stream = null;
-        private System.IO.BinaryReader file = null;
+        private System.IO.Stream model_stream;
+        private System.IO.BinaryReader file;
         private Model model;
 
         public ModelFile(string path, Model m)
@@ -738,9 +738,9 @@ namespace Wmo
 
     internal class WDTFile
     {
-        public bool loaded = false;
-        private System.IO.Stream stream = null;
-        private System.IO.BinaryReader file = null;
+        public bool loaded;
+        private System.IO.Stream stream;
+        private System.IO.BinaryReader file;
         private WMOManager wmomanager;
         private ModelManager modelmanager;
         private WDT wdt;
@@ -1091,8 +1091,8 @@ namespace Wmo
 
     internal class DBCFile
     {
-        private System.IO.Stream stream = null;
-        private System.IO.BinaryReader file = null;
+        private System.IO.Stream stream;
+        private System.IO.BinaryReader file;
         private DBC dbc;
 
         private Logger logger;
@@ -1244,9 +1244,9 @@ namespace Wmo
         }
 
         private MapTile tile;
-        private LiquidData[] LiquidDataChunk = null; //256 elements
-        private System.IO.Stream stream = null;
-        private System.IO.BinaryReader file = null;
+        private LiquidData[] LiquidDataChunk; //256 elements
+        private System.IO.Stream stream;
+        private System.IO.BinaryReader file;
         private int[] mcnk_offsets = new int[256];
         private int[] mcnk_sizes = new int[256];
         private WMOManager wmomanager;
@@ -1338,11 +1338,11 @@ namespace Wmo
 
         public class LiquidData
         {
-            public uint offsetData1 = 0;
-            public int used = 0;
-            public uint offsetData2 = 0;
+            public uint offsetData1;
+            public int used;
+            public uint offsetData2;
 
-            public MH2OData1 data1 = null;
+            public MH2OData1 data1;
 
             public float[,] water_height = new float[9, 9];
             public byte[,] water_flags = new byte[8, 8];
@@ -1350,16 +1350,16 @@ namespace Wmo
 
         public class MH2OData1
         {
-            public UInt16 flags = 0; //0x1 might mean there is a height map @ data2b ??
-            public UInt16 type = 0; //0 = normal/lake, 1 = lava, 2 = ocean
-            public float heightLevel1 = 0;
-            public float heightLevel2 = 0;
-            public byte xOffset = 0;
-            public byte yOffset = 0;
-            public byte Width = 0;
-            public byte Height = 0;
-            public uint offsetData2a = 0;
-            public uint offsetData2b = 0;
+            public UInt16 flags; //0x1 might mean there is a height map @ data2b ??
+            public UInt16 type; //0 = normal/lake, 1 = lava, 2 = ocean
+            public float heightLevel1;
+            public float heightLevel2;
+            public byte xOffset;
+            public byte yOffset;
+            public byte Width;
+            public byte Height;
+            public uint offsetData2a;
+            public uint offsetData2b;
             //public uint Data2bLength = 0;
         }
 
@@ -1738,8 +1738,8 @@ namespace Wmo
 
     internal class WmoRootFile
     {
-        private System.IO.Stream stream = null;
-        private System.IO.BinaryReader file = null;
+        private System.IO.Stream stream;
+        private System.IO.BinaryReader file;
         private ModelManager modelmanager;
 
         public WMO wmo;
@@ -1934,8 +1934,8 @@ namespace Wmo
 
     internal class WmoGroupFile
     {
-        private System.IO.Stream stream = null;
-        private System.IO.BinaryReader file = null;
+        private System.IO.Stream stream;
+        private System.IO.BinaryReader file;
         private WMOGroup g;
 
         //long indicesFileMarker;

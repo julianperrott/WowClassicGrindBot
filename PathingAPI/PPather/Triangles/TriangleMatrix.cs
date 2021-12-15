@@ -13,7 +13,7 @@ namespace WowTriangles
     {
         private float resolution = 2.0f;
         private SparseFloatMatrix2D<List<int>> matrix;
-        private int maxAtOne = 0;
+        private int maxAtOne;
 
         private void AddTriangleAt(float x, float y, int triangle)
         {

@@ -542,10 +542,10 @@ namespace WowTriangles
     {
         public SuperMap<XY, T> dic = new SuperMap<XY, T>();
 
-        private bool last = false;
+        private bool last;
         private bool last_HasValue;
         private int last_x, last_y;
-        private T last_value = default(T);
+        private T last_value;
 
         public class XY
         {
@@ -695,7 +695,7 @@ namespace WowTriangles
         // pointer chasing FTL
 
         // SIZE*(SIZE*3)
-        private T[][] arrays = null;
+        private T[][] arrays;
 
         private static void getIndices(int index, out int i0, out int i1)
         {
@@ -760,7 +760,7 @@ namespace WowTriangles
         // pointer chasing FTL
 
         // SIZE*(SIZE*4)
-        private T[][] arrays = null;
+        private T[][] arrays;
 
         private static void getIndices(int index, out int i0, out int i1)
         {
@@ -1202,8 +1202,8 @@ namespace WowTriangles
            1509949439
          };
 
-        private int elements = 0; // elements in hash
-        private int size_table_entry = 0;
+        private int elements; // elements in hash
+        private int size_table_entry;
         private Entry[] array;
 
         public SuperMap()
@@ -1464,8 +1464,8 @@ namespace WowTriangles
            1509949439
          };
 
-        private int elements = 0; // elements in hash
-        private int size_table_entry = 0;
+        private int elements; // elements in hash
+        private int size_table_entry;
         private Entry[] array;
 
         public SuperHash()

@@ -33,7 +33,7 @@ namespace WowTriangles
 
         private StormDll.ArchiveSet archive;
 
-        private int sequence = 0;
+        private int sequence;
 
         //TriangleSet global_triangles = new TriangleSet();
 
