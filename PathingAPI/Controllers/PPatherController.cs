@@ -28,8 +28,8 @@ namespace PathingAPI.Controllers
         private PPatherService service;
         private Logger logger;
 
-        private static bool isBusy = false;
-        private static bool initialised = false;
+        private static bool isBusy;
+        private static bool initialised;
 
         public PPatherController(PPatherService service, Logger logger)
         {

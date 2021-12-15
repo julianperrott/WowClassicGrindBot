@@ -29,7 +29,7 @@ namespace PathingAPI
         
 
         private Path lastPath;
-        public bool HasInitialised = false;
+        public bool HasInitialised;
 
         public PPatherService()
         {
@@ -195,7 +195,7 @@ namespace PathingAPI
             }
 
             List<Spot> spots = new List<Spot>();
-            for (int i = 0; i < coords.Count(); i++)
+            for (int i = 0; i < coords.Count; i++)
             {
                 Location l = new Location(coords[i][0], coords[i][1], coords[i][2], "l" + i.ToString(), continent);
                 Spot spot = new Spot(l);

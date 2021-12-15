@@ -29,16 +29,16 @@ namespace BlazorServer
         private IAddonDataProvider? addonDataProvider;
         public AddonReader? AddonReader { get; private set; }
 
-        public bool Saved { get; private set; } = false;
-        public bool AddonNotVisible { get; private set; } = false;
+        public bool Saved { get; private set; }
+        public bool AddonNotVisible { get; private set; }
 
         public string ImageBase64 { private set; get; } = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
 
-        private Thread? screenshotThread = null;
+        private Thread? screenshotThread;
         private CancellationTokenSource? cts;
 
         private const int interval = 500;
-        private int counter = 0;
+        private int counter;
 
         public event EventHandler? OnUpdate;
 
