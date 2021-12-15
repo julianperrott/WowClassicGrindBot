@@ -95,7 +95,11 @@
 
     private void OnListBoxChanged(ChangeEventArgs changeEventArgs)
     {
-        selectedProfile = (string)changeEventArgs.Value;
+        if(changeEventArgs.Value != null)
+        {
+            selectedProfile = (string)changeEventArgs.Value;
+        }
+
         disableButton = string.IsNullOrEmpty(selectedProfile);
     }
 
