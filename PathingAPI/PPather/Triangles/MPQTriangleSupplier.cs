@@ -33,7 +33,7 @@ namespace WowTriangles
 
         private StormDll.ArchiveSet archive;
 
-        private int sequence = 0;
+        private int sequence;
 
         //TriangleSet global_triangles = new TriangleSet();
 
@@ -367,7 +367,7 @@ namespace WowTriangles
             }
         }
 
-        private void AddTriangles(TriangleCollection s, MapChunk c)
+        private static void AddTriangles(TriangleCollection s, MapChunk c)
         {
             int[,] vertices = new int[9, 9];
             int[,] verticesMid = new int[8, 8];

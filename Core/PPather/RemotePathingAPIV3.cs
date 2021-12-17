@@ -113,9 +113,8 @@ namespace Core
                 }
 
                 logger.LogInformation($"Finding route from {fromPoint}({start}) map {uiMapId} to {toPoint}({end}) map {targetMapId}...");
-
-                var path = Client.Send((byte)EMessageType.PATH_LOCATIONS, (area.MapID, start, end, 2)).AsArray<Vector3>();
-                if (path == null)
+                var path = Client.Send((byte)EMessageType.PATH_LOCATIONS, (area.MapID, 2, start, end)).AsArray<Vector3>();
+                if (path == null || (path.Length == 1 && path[0] == Vector3.Zero))
                     return result;
 
                 for (int i = 0; i < path.Length; i++)
@@ -130,6 +129,10 @@ namespace Core
                 {
                     addonReader.PlayerReader.ZCoord = result[0].Z;
                     logger.LogInformation($"PlayerLocation.Z = {addonReader.PlayerReader.PlayerLocation.Z}");
+                }
+                else
+                {
+                    logger.LogWarning($"Found route length is {path.Length}");
                 }
 
                 return result;

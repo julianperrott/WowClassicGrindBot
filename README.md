@@ -74,7 +74,7 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 
 ## 1. Download this repository
 
-Put the contents of the repo into a folder. e.g "C:\WowClassicGrindBot". I am going to refer to this folder from now on, so just substitute your own folder path.
+Put the contents of the repo into a folder. e.g `C:\WowClassicGrindBot`. I am going to refer to this folder from now on, so just substitute your own folder path.
 
 ## 2 Using V1 Local/Remote Pathhing: Download the MPQ route files
 
@@ -83,42 +83,50 @@ This files are required for to find paths from where you are to the grind area, 
 * Classic: [**common-2.MPQ**](https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing) (1.7Gb)
 * TBC: [**expansion.MPQ**](https://mega.nz/file/Of4i2YQS#egDGj-SXi9RigG-_8kPITihFsLom2L1IFF-ltnB3wmU) (1.8Gb)
 
-Copy the previusly mentioned files to **\Json\MPQ** folder (e.g. C:\WowClassicGrindBot\Json\MPQ)
+Copy the previusly mentioned files to **\Json\MPQ** folder (e.g. `C:\WowClassicGrindBot\Json\MPQ`)
 
-## 3.1 System Requirements
+# 3.1 System / Video Requirements
 
-* Windows 7 and above
-* [.netCore 3.1 **x86** SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1 )
-* Nvidia Control panel settings
-    * Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings or Program Settings(for WoW) is set to `Sharpening Off, Scaling disabled`!
-* Resultions which based on 4:3 aspect ratio 1024x768, 1920x1080, 4k
-* Check these settings in the game client. Other values will stop the bot from being able to read the addon data.
-  * System > Advanced > Constrast: 50
-  * System > Advanced > Brightness: 50
-  * System > Advanced > Gamma from: 1.0
-  * System > Render Scale: 100%
+Resultions which based on either 4:3 aspect ratio, tested resolutions:
+* 1024 x 768
+* 1920 x 1080
+* 3840 x 2160
+
+For Nvidia users, under Nvidia Control panel settings
+* Make sure the `Image Sharpening` under the `Manage 3D Settings`-> Global settings or Program Settings(for WoW) is set to `Sharpening Off, Scaling disabled`!
+
+# 3.2 In-game Requirements
+
+Required game client settings. Press `ESC` -> `System`
+  * System > Advanced > Constrast: `50`
+  * System > Advanced > Brightness: `50`
+  * System > Advanced > Gamma from: `1.0`
+  * System > Render Scale: `100%`
   * Disable Glow effect - type in the chat `/console ffxGlow 0`
   * To keep/save this settings make sure to properly shutdown the game.
 
-## 3.2 Optional - Replace default game Font
+## 3.3 Optional - Replace default game Font
 
-I would highly suggest to replace the default World of Warcraft font with a much **Bolder** one with [this guide](https://tbc.wowhead.com/guides/changing-wow-text-font)
+Highly suggested to replace the default game font with a much **Bolder** one with [this guide](https://tbc.wowhead.com/guides/changing-wow-text-font)
 
 Should be only concerned about `Friz Quadrata: the "Everything Else" Font` which is the `FRIZQT__.ttf` named file.
 
 Example - [Robot-Medium](https://fonts.google.com/specimen/Roboto?thickness=5) - Shows big improvement to the `NpcNameFinder` compontent which is responsible to find - friendly, enemy, corpse - names above NPCs head.
 
-## 4. Build the application
+## 4.1 Build Requirements
+
+* Windows 7 and above
+* [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
+* **Note:** By default all builds will be **x86**.
+
+## 4.2 Build the application
 
 One of the following IDE or command line
 * Visual Studio
 * Visual Studio Code
 * Powershell
 
-You will need .net core 3.1 **x86** SDK installed. **Note:** you need the **x86** version, not the **x64** one.
-
 e.g. Build from Powershell
-
 ```ps
 cd C:\WowClassicGrindBot
 dotnet build

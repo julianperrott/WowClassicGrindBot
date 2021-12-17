@@ -26,7 +26,7 @@ namespace PatherPath.Graph
 {
     public class PathGraph
     {
-        public static bool SearchEnabled = false;
+        public static bool SearchEnabled;
 
         private static Object m_LockObject = new Object();
 
@@ -38,7 +38,7 @@ namespace PatherPath.Graph
         }
 
         public eSearchScoreSpot searchScoreSpot = eSearchScoreSpot.A_Star_With_Model_Avoidance;
-        public int sleepMSBetweenSpots = 0;
+        public int sleepMSBetweenSpots;
 
         public const float toonHeight = 2.0f;
         public const float toonSize = 0.5f;
@@ -47,7 +47,7 @@ namespace PatherPath.Graph
         public const float WantedStepLength = 3f;
         public const float MaxStepLength = 5f;
 
-        public Path lastReducedPath = null;
+        public Path lastReducedPath;
 
         public static float IsCloseToModelRange = 2;
 
@@ -66,7 +66,7 @@ namespace PatherPath.Graph
         public TriangleCollection paint;
 
         private List<GraphChunk> ActiveChunks = new List<GraphChunk>();
-        private long LRU = 0;
+        private long LRU;
 
         public int GetTriangleClosenessScore(Location loc)
         {
@@ -137,13 +137,13 @@ namespace PatherPath.Graph
             chunks = new SparseMatrix2D<GraphChunk>(8);
         }
 
-        private void GetChunkCoord(float x, float y, out int ix, out int iy)
+        private static void GetChunkCoord(float x, float y, out int ix, out int iy)
         {
             ix = (int)((CHUNK_BASE + x) / GraphChunk.CHUNK_SIZE);
             iy = (int)((CHUNK_BASE + y) / GraphChunk.CHUNK_SIZE);
         }
 
-        private void GetChunkBase(int ix, int iy, out float bx, out float by)
+        private static void GetChunkBase(int ix, int iy, out float bx, out float by)
         {
             bx = (float)ix * GraphChunk.CHUNK_SIZE - CHUNK_BASE;
             by = (float)iy * GraphChunk.CHUNK_SIZE - CHUNK_BASE;
@@ -475,7 +475,7 @@ namespace PatherPath.Graph
             return wasAt;
         }
 
-        private bool LineCrosses(Location line0, Location line1, Location point)
+        private static bool LineCrosses(Location line0, Location line1, Location point)
         {
             float LineMag = line0.GetDistanceTo(line1); // Magnitude( LineEnd, LineStart );
 
@@ -539,17 +539,17 @@ namespace PatherPath.Graph
         // Searching
         //////////////////////////////////////////////////////
 
-        public Spot currentSearchStartSpot = null;
-        public Spot currentSearchSpot = null;
+        public Spot currentSearchStartSpot;
+        public Spot currentSearchSpot;
 
-        private float TurnCost(Spot from, Spot to)
+        private static float TurnCost(Spot from, Spot to)
         {
             Spot prev = from.traceBack;
             if (prev == null) { return 0.0f; }
             return TurnCost(prev.X, prev.Y, prev.Z, from.X, from.Y, from.Z, to.X, to.Y, to.Z);
         }
 
-        private float TurnCost(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2)
+        private static float TurnCost(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2)
         {
             float v1x = x1 - x0;
             float v1y = y1 - y0;
@@ -585,12 +585,12 @@ namespace PatherPath.Graph
         //        return searchProgress;
         //    }
         //}
-        private int searchID = 0;
+        private int searchID;
 
         private float heuristicsFactor = 5f;
 
-        public Spot ClosestSpot = null;
-        public Spot PeekSpot = null;
+        public Spot ClosestSpot;
+        public Spot PeekSpot;
 
         private Spot Search(Spot fromSpot, Spot destinationSpot, float minHowClose, ILocationHeuristics locationHeuristics)
         {
@@ -842,7 +842,7 @@ namespace PatherPath.Graph
             }
         }
 
-        private Spot lastCurrentSearchSpot = null;
+        private Spot lastCurrentSearchSpot;
 
         public List<Spot> CurrentSearchPath()
         {
@@ -855,7 +855,7 @@ namespace PatherPath.Graph
             return FollowTraceBack(currentSearchStartSpot, currentSearchSpot); ;
         }
 
-        private List<Spot> FollowTraceBack(Spot from, Spot to)
+        private static List<Spot> FollowTraceBack(Spot from, Spot to)
         {
             List<Spot> path = new List<Spot>();
             int count = 0;
@@ -919,7 +919,7 @@ namespace PatherPath.Graph
             return false;
         }
 
-        public Path LastPath = null;
+        public Path LastPath;
 
         private Path CreatePath(Spot from, Spot to, float minHowClose, ILocationHeuristics locationHeuristics)
         {

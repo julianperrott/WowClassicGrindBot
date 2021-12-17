@@ -52,7 +52,7 @@
         {
             this.botController.MinimapImageFinder.NodeEvent += (s, e) =>
             {
-                var nodeFound = e.Point != null && e.Point.X > 0 && e.Point.Y > 0;
+                var nodeFound = e.Point != default && e.Point.X > 0 && e.Point.Y > 0;
 
                 if (lastNodeFound != nodeFound)
                 {

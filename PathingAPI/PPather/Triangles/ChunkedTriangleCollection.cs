@@ -17,8 +17,8 @@ namespace WowTriangles
     /// </summary>
     public class ChunkedTriangleCollection
     {
-        private bool UseOctree = false;
-        private bool UseMatrix = true;
+        private bool UseOctree;
+        private bool UseMatrix;
 
         public Action<ChunkAddedEventArgs> NotifyChunkAdded;
 
@@ -31,10 +31,10 @@ namespace WowTriangles
         private SparseMatrix2D<TriangleCollection> chunks;
 
         public List<TriangleCollection> loadedChunks = new List<TriangleCollection>();
-        private int NOW = 0;
+        private int NOW;
         private int maxCached = 1000;
 
-        private bool m_Updated = false;
+        private bool m_Updated;
 
         public bool Updated
         {
@@ -124,7 +124,7 @@ namespace WowTriangles
             grid_y = (int)(y / ChunkReader.TILESIZE);
         }
 
-        private void GetGridLimits(int grid_x, int grid_y,
+        private static void GetGridLimits(int grid_x, int grid_y,
                                     out float min_x, out float min_y,
                                     out float max_x, out float max_y)
         {
@@ -204,7 +204,7 @@ namespace WowTriangles
             m_Updated = true;
         }
 
-        public TriangleCollection LastTriangleCollection = null;
+        public TriangleCollection LastTriangleCollection;
 
         public TriangleCollection GetChunkAt(float x, float y)
         {

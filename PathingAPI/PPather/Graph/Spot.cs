@@ -42,15 +42,15 @@ namespace PatherPath.Graph
         public float X, Y, Z;
         public uint flags;
 
-        public int n_paths = 0;
+        public int n_paths;
         public float[] paths; // 3 floats per outgoing path
 
-        public GraphChunk chunk = null;
+        public GraphChunk chunk;
         public Spot next;  // list on same x,y, used by chunk
 
-        public int searchID = 0;
+        public int searchID;
         public Spot traceBack; // Used by search
-        public float traceBackDistance = 0; // Used by search
+        public float traceBackDistance; // Used by search
         public float score; // Used by search
         public bool closed, scoreSet;
 

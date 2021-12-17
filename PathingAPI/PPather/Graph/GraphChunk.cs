@@ -29,8 +29,8 @@ namespace PatherPath.Graph
 
         private float base_x, base_y;
         public int ix, iy;
-        public bool modified = false;
-        public long LRU = 0;
+        public bool modified;
+        public long LRU;
 
         private Spot[,] spots;
 

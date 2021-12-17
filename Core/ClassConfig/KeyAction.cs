@@ -75,9 +75,9 @@ namespace Core
             return last.Key;
         }
 
-        private PlayerReader? playerReader;
+        private PlayerReader playerReader = null!;
 
-        private ILogger? logger;
+        private ILogger logger = null!;
 
         public void CreateDynamicBinding(RequirementFactory requirementFactory)
         {

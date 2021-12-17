@@ -542,10 +542,10 @@ namespace WowTriangles
     {
         public SuperMap<XY, T> dic = new SuperMap<XY, T>();
 
-        private bool last = false;
+        private bool last;
         private bool last_HasValue;
         private int last_x, last_y;
-        private T last_value = default(T);
+        private T last_value;
 
         public class XY
         {
@@ -695,9 +695,9 @@ namespace WowTriangles
         // pointer chasing FTL
 
         // SIZE*(SIZE*3)
-        private T[][] arrays = null;
+        private T[][] arrays;
 
-        private void getIndices(int index, out int i0, out int i1)
+        private static void getIndices(int index, out int i0, out int i1)
         {
             i1 = index % SIZE; index /= SIZE;
             i0 = index % SIZE;
@@ -760,9 +760,9 @@ namespace WowTriangles
         // pointer chasing FTL
 
         // SIZE*(SIZE*4)
-        private T[][] arrays = null;
+        private T[][] arrays;
 
-        private void getIndices(int index, out int i0, out int i1)
+        private static void getIndices(int index, out int i0, out int i1)
         {
             i1 = index % SIZE; index /= SIZE;
             i0 = index % SIZE;
@@ -1202,8 +1202,8 @@ namespace WowTriangles
            1509949439
          };
 
-        private int elements = 0; // elements in hash
-        private int size_table_entry = 0;
+        private int elements; // elements in hash
+        private int size_table_entry;
         private Entry[] array;
 
         public SuperMap()
@@ -1216,19 +1216,19 @@ namespace WowTriangles
             Clear(initialCapacity);
         }
 
-        private uint GetEntryIn(Entry[] array, TKey key)
+        private static uint GetEntryIn(Entry[] array, TKey key)
         {
             return (uint)key.GetHashCode() % (uint)array.Length;
         }
 
-        private void AddToArrayNoCheck(Entry[] array, Entry e)
+        private static void AddToArrayNoCheck(Entry[] array, Entry e)
         {
             uint key = GetEntryIn(array, e.key);
             e.next = array[key];
             array[key] = e;
         }
 
-        private bool HasValue(Entry[] array, TKey k, TValue val)
+        private static bool HasValue(Entry[] array, TKey k, TValue val)
         {
             uint key = GetEntryIn(array, k);
             Entry rover = array[key];
@@ -1241,7 +1241,7 @@ namespace WowTriangles
             return false;
         }
 
-        private void AddToArray(Entry[] array, Entry e)
+        private static void AddToArray(Entry[] array, Entry e)
         {
             uint key = GetEntryIn(array, e.key);
             TValue val = e.value;
@@ -1464,8 +1464,8 @@ namespace WowTriangles
            1509949439
          };
 
-        private int elements = 0; // elements in hash
-        private int size_table_entry = 0;
+        private int elements; // elements in hash
+        private int size_table_entry;
         private Entry[] array;
 
         public SuperHash()
@@ -1478,19 +1478,19 @@ namespace WowTriangles
             Clear(initialCapacity);
         }
 
-        private uint GetEntryIn(Entry[] array, T key)
+        private static uint GetEntryIn(Entry[] array, T key)
         {
             return (uint)key.GetHashCode() % (uint)array.Length;
         }
 
-        private void AddToArrayNoCheck(Entry[] array, Entry e)
+        private static void AddToArrayNoCheck(Entry[] array, Entry e)
         {
             uint key = GetEntryIn(array, e.value);
             e.next = array[key];
             array[key] = e;
         }
 
-        private bool HasValue(Entry[] array, T k)
+        private static bool HasValue(Entry[] array, T k)
         {
             uint key = GetEntryIn(array, k);
             Entry rover = array[key];
@@ -1503,7 +1503,7 @@ namespace WowTriangles
             return false;
         }
 
-        private void AddToArray(Entry[] array, Entry e)
+        private static void AddToArray(Entry[] array, Entry e)
         {
             uint key = GetEntryIn(array, e.value);
             T val = e.value;

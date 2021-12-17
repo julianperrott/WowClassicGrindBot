@@ -20,7 +20,7 @@ namespace BlazorServer
 
         private bool Enabled = true;
 
-        private int targetMapId = 0;
+        private int targetMapId;
 
         public LocalPathingApi(ILogger logger, PPatherService service)
         {
