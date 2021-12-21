@@ -424,7 +424,7 @@ namespace Core.Goals
             return true;
         }
 
-        protected async ValueTask<bool> SwitchToCorrectStanceForm(Form beforeForm, KeyAction item)
+        public async ValueTask<bool> SwitchToCorrectStanceForm(Form beforeForm, KeyAction item)
         {
             if (string.IsNullOrEmpty(item.Form))
                 return true;

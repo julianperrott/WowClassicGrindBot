@@ -42,7 +42,7 @@ namespace Core
                 classConfig.Form
                     .Where(s => s.FormEnum == Form.Druid_Travel)
                     .ToList()
-                    .ForEach(async key => await castingHandler.CastIfReady(key, key.DelayBeforeCast));
+                    .ForEach(async key => await castingHandler.SwitchToCorrectStanceForm(playerReader.Form, key));
             }
             else
             {
