@@ -221,9 +221,9 @@ namespace Core.Goals
             rpath.Reverse();
             rpath.ForEach(p => this.routeToWaypoint.Push(p));
 
-            if (this.playerReader.Bits.IsMounted)
+            if (mountHandler.IsMounted())
             {
-                await input.TapDismount();
+                await mountHandler.Dismount();
             }
 
             foreach (var point in path)
@@ -255,7 +255,7 @@ namespace Core.Goals
 
         private async Task MountIfRequired()
         {
-            if (shouldMount && !playerReader.Bits.IsMounted && !playerReader.Bits.PlayerInCombat)
+            if (shouldMount && !mountHandler.IsMounted() && !playerReader.Bits.PlayerInCombat)
             {
                 shouldMount = false;
 
@@ -347,12 +347,7 @@ namespace Core.Goals
 
         private int PointReachedDistance()
         {
-            if (this.playerReader.Class == PlayerClassEnum.Druid && this.playerReader.Form == Form.Druid_Travel)
-            {
-                return 50;
-            }
-
-            return (this.playerReader.Bits.IsMounted ? 50 : 20);
+            return mountHandler.IsMounted() ? 50 : 20;
         }
 
         private bool HasBeenActiveRecently()

@@ -21,6 +21,7 @@ namespace Core.Goals
         private readonly ClassConfiguration classConfiguration;
         
         private readonly CastingHandler castingHandler;
+        private readonly MountHandler mountHandler;
 
         private readonly Random random = new Random(DateTime.Now.Millisecond);
 
@@ -28,7 +29,7 @@ namespace Core.Goals
 
         private int SecondsSincePullStarted => (int)(DateTime.Now - pullStart).TotalSeconds;
 
-        public PullTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, CastingHandler castingHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
+        public PullTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, CastingHandler castingHandler, MountHandler mountHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
             this.logger = logger;
             this.input = input;
@@ -39,6 +40,8 @@ namespace Core.Goals
             this.stopMoving = stopMoving;
             
             this.castingHandler = castingHandler;
+            this.mountHandler = mountHandler;
+
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
 
@@ -57,9 +60,9 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            if (playerReader.Bits.IsMounted)
+            if (mountHandler.IsMounted())
             {
-                await input.TapDismount();
+                await mountHandler.Dismount();
             }
 
             await input.TapApproachKey($"{GetType().Name}: OnEnter - Face the target and stop");
