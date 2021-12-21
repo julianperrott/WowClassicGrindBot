@@ -55,7 +55,7 @@ namespace Core
 
             var stuckDetector = new StuckDetector(logger, input, addonReader.PlayerReader, playerDirection, stopMoving);
             var combatUtil = new CombatUtil(logger, input, wait, addonReader.PlayerReader);
-            var mountHandler = new MountHandler(logger, input, classConfig, wait, addonReader.PlayerReader, stopMoving);
+            var mountHandler = new MountHandler(logger, input, classConfig, wait, addonReader.PlayerReader, castingHandler, stopMoving);
 
             var targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
 
@@ -86,7 +86,7 @@ namespace Core
                     availableActions.Add(walkToCorpseAction);
                 }
 
-                availableActions.Add(new ApproachTargetGoal(logger, input, wait, addonReader.PlayerReader, stopMoving));
+                availableActions.Add(new ApproachTargetGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, mountHandler));
 
                 if (classConfig.WrongZone.ZoneId > 0)
                 {
@@ -95,7 +95,7 @@ namespace Core
 
                 if (classConfig.Parallel.Sequence.Count > 0)
                 {
-                    availableActions.Add(new ParallelGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler));
+                    availableActions.Add(new ParallelGoal(logger, input, wait, addonReader.PlayerReader, stopMoving, classConfig.Parallel.Sequence, castingHandler, mountHandler));
                 }
 
                 if (classConfig.Loot)
@@ -121,7 +121,7 @@ namespace Core
 
                 try
                 {
-                    var genericCombat = new CombatGoal(logger, input, wait, addonReader, stopMoving, classConfig, castingHandler);
+                    var genericCombat = new CombatGoal(logger, input, wait, addonReader, stopMoving, classConfig, castingHandler, mountHandler);
                     availableActions.Add(genericCombat);
 
                     if (addonReader.PlayerReader.Class == PlayerClassEnum.Hunter ||
@@ -131,14 +131,14 @@ namespace Core
                         availableActions.Add(new TargetPetTarget(input, addonReader.PlayerReader));
                     }
 
-                    availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader, stopMoving, castingHandler, stuckDetector, classConfig));
+                    availableActions.Add(new PullTargetGoal(logger, input, wait, addonReader, stopMoving, castingHandler, mountHandler, stuckDetector, classConfig));
 
                     availableActions.Add(new ConsumeCorpse(logger, classConfig));
                     availableActions.Add(new CorpseConsumed(logger, goapAgentState));
 
                     foreach (var item in classConfig.Adhoc.Sequence)
                     {
-                        availableActions.Add(new AdhocGoal(logger, input, wait, item, addonReader.PlayerReader, stopMoving, castingHandler));
+                        availableActions.Add(new AdhocGoal(logger, input, wait, item, addonReader.PlayerReader, stopMoving, castingHandler, mountHandler));
                     }
                 }
                 catch (Exception ex)

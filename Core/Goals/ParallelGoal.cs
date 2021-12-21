@@ -18,10 +18,11 @@ namespace Core.Goals
         private readonly StopMoving stopMoving;
         private readonly Wait wait;
         private readonly PlayerReader playerReader;
-        
-        private readonly CastingHandler castingHandler;
 
-        public ParallelGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving, List<KeyAction> keysConfig, CastingHandler castingHandler)
+        private readonly CastingHandler castingHandler;
+        private readonly MountHandler mountHandler;
+
+        public ParallelGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving, List<KeyAction> keysConfig, CastingHandler castingHandler, MountHandler mountHandler)
         {
             this.logger = logger;
             this.input = input;
@@ -31,6 +32,7 @@ namespace Core.Goals
             this.playerReader = playerReader;
             
             this.castingHandler = castingHandler;
+            this.mountHandler = mountHandler;
 
             AddPrecondition(GoapKey.incombat, false);
 
@@ -49,9 +51,9 @@ namespace Core.Goals
                 await stopMoving.Stop();
                 await wait.Update(1);
 
-                if (playerReader.Bits.IsMounted)
+                if (mountHandler.IsMounted())
                 {
-                    await input.TapDismount();
+                    await mountHandler.Dismount();
                     await wait.Update(1);
                     //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
                 }

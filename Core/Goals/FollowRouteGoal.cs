@@ -339,7 +339,7 @@ namespace Core.Goals
 
         private async ValueTask MountIfRequired()
         {
-            if (shouldMount && !playerReader.Bits.IsMounted && !playerReader.Bits.PlayerInCombat)
+            if (shouldMount && !mountHandler.IsMounted() && !playerReader.Bits.PlayerInCombat)
             {
                 if (classConfiguration.Mode != Mode.AttendedGather)
                 {
@@ -452,12 +452,7 @@ namespace Core.Goals
 
         private int PointReachedDistance(int distance)
         {
-            if (this.playerReader.Class == PlayerClassEnum.Druid && this.playerReader.Form == Form.Druid_Travel)
-            {
-                return 50;
-            }
-
-            return (this.playerReader.Bits.IsMounted ? 50 : distance);
+            return mountHandler.IsMounted() ? 50 : distance;
         }
 
         private bool HasBeenActiveRecently()

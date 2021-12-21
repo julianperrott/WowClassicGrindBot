@@ -18,6 +18,7 @@ namespace Core.Goals
         private readonly Wait wait;
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
+        private readonly MountHandler mountHandler;
 
         private readonly bool debug = true;
 
@@ -42,7 +43,7 @@ namespace Core.Goals
             }
         }
 
-        public ApproachTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving)
+        public ApproachTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, PlayerReader playerReader, StopMoving stopMoving, MountHandler mountHandler)
         {
             this.logger = logger;
             this.input = input;
@@ -50,6 +51,7 @@ namespace Core.Goals
             this.wait = wait;
             this.playerReader = playerReader;
             this.stopMoving = stopMoving;
+            this.mountHandler = mountHandler;
 
             lastPlayerDistance = 0;
             lastPlayerLocation = playerReader.PlayerLocation;
@@ -68,9 +70,9 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            if (playerReader.Bits.IsMounted)
+            if (mountHandler.IsMounted())
             {
-                await input.TapDismount();
+                await mountHandler.Dismount();
             }
 
             playerWasInCombat = playerReader.Bits.PlayerInCombat;

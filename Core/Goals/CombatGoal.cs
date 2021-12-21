@@ -20,7 +20,8 @@ namespace Core.Goals
         private readonly PlayerReader playerReader;
         private readonly StopMoving stopMoving;
         private readonly CastingHandler castingHandler;
-        
+        private readonly MountHandler mountHandler;
+
         private readonly ClassConfiguration classConfiguration;
 
         private float lastDirectionForTurnAround;
@@ -29,7 +30,7 @@ namespace Core.Goals
         private float lastKnownMinDistance;
         private float lastKnownMaxDistance;
 
-        public CombatGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, CastingHandler castingHandler)
+        public CombatGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, CastingHandler castingHandler, MountHandler mountHandler)
         {
             this.logger = logger;
             this.input = input;
@@ -41,6 +42,7 @@ namespace Core.Goals
             
             this.classConfiguration = classConfiguration;
             this.castingHandler = castingHandler;
+            this.mountHandler = mountHandler;
 
             AddPrecondition(GoapKey.incombat, true);
             AddPrecondition(GoapKey.hastarget, true);
@@ -135,9 +137,9 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            if (playerReader.Bits.IsMounted)
+            if (mountHandler.IsMounted())
             {
-                await input.TapDismount();
+                await mountHandler.Dismount();
             }
 
             lastDirectionForTurnAround = playerReader.Direction;

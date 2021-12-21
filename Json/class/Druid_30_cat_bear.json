@@ -1,0 +1,247 @@
+{
+  "ClassName": "Druid",
+  "Loot": true,
+  "PathFilename": "24-30 Duskwood wolf ravager.json",
+  "PathReduceSteps": true,
+  "PathThere/obtainerflushAndBack": false,
+  "CheckTargetGivesExp": true,
+  "Form": [
+    {
+      //macro: /cancelform
+      "Name": "cancelform",
+      "Key": "F1",
+      "Form": "None"
+    },
+    {
+      "Name": "Bear Form",
+      "Key": "F2",
+      "Form": "Druid_Bear",
+      "MinMana": 50
+    },
+    {
+      "Name": "Cat form",
+      "Key": "F3",
+      "Form": "Druid_Cat",
+      "MinMana": 123
+    },
+    {
+      "Name": "Travel form",
+      "Key": "F4",
+      "Form": "Druid_Travel",
+      "MinMana": 63
+    }
+  ],
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Regrowth",
+        "Key": "0",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": ["Health% < 65", "CD == 0"],
+        "Cooldown": 8000,
+        "Form": "None"
+      },
+      {
+        "Name": "Rejuvenation",
+        "Key": "6",
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": ["Health% < 75", "!Rejuvenation"],
+        "Cooldown": 5000,
+        "Form": "None"
+      },
+      {
+        "Name": "Moonfire",
+        "Key": "5",
+        "CastIfAddsVisible": true,
+        "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": ["SpellInRange:0", "!InMeleeRange", "!Moonfire"],
+        "Cooldown": 10000,
+        "Form": "None"
+      },
+      {
+        "Name": "Cat Form",
+        "Key": "F3",
+        "WaitForWithinMeleeRange": true,
+        "Requirements": ["Moonfire", "!Form:Druid_Cat", "Health% > 50"]
+      },
+      {
+        "Name": "Cat Form",
+        "Key": "F3",
+        "Requirements": ["!Form:Druid_Cat", "Health% > 50"]
+      },
+      {
+        "Name": "Tiger's Fury",
+        "Key": "5",
+        "WhenUsable": true,
+        "MinEnergy": 30,
+        "Requirements": ["Form:Druid_Cat", "!TigersFury", "InMeleeRange"]
+      },
+      {
+        "Name": "Bear Form",
+        "Key": "F2",
+        "Requirements": ["!Form:Druid_Bear", "Health%<50"]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Regrowth",
+        "Key": "0",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": ["Health% < 30", "CD == 0"],
+        "Cooldown": 8000,
+        "Form": "None"
+      },
+      {
+        "Name": "Tiger's Fury",
+        "Key": "5",
+        "WhenUsable": true,
+        "MinEnergy": 30,
+        "Cooldown": 5000,
+        "Requirements": ["Form:Druid_Cat", "!TigersFury", "Rip", "Rake", "InMeleeRange"],
+        "Form": "Druid_Cat"
+      },
+      {
+        "Name": "Rip",
+        "Key": "3",
+        "MinEnergy": 30,
+        "MinComboPoints": 1,
+        "WhenUsable": true,
+        "Requirements": ["SpellInRange:2", "!Rip", "MobCount < 2", "Form:Druid_Cat", "TargetHealth% > 20"],
+        "Form": "Druid_Cat"
+      },
+      {
+        "Name": "Rake",
+        "Key": "4",
+        "MinEnergy": 35,
+        "WhenUsable": true,
+        "Requirements": ["SpellInRange:2", "!Rake", "MobCount < 2", "Form:Druid_Cat", "TargetHealth% > 20"],
+        "Form": "Druid_Cat"
+      },
+      {
+        "Name": "Claw",
+        "Key": "2",
+        "MinEnergy": 40,
+        "WhenUsable": true,
+        "Requirements": ["SpellInRange:2", "MobCount < 2", "Form:Druid_Cat"],
+        "Form": "Druid_Cat"
+      },
+      {
+        "Name": "Bear Form",
+        "Key": "F2",
+        "Requirements": ["!Form:Druid_Bear", "Health% < 50 || MobCount > 1"]
+      },
+      {
+        "Name": "Bash",
+        "Key": "5",
+        "Requirements": ["SpellInRange:1", "TargetCastingSpell || Health% < 38"],
+        "WhenUsable": true,
+        "MinRage": 10,
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Enrage",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirement": "Form:Druid_Bear",
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Demoralizing Roar",
+        "Key": "3",
+        "MinRage": 10,
+        "WhenUsable": true,
+        "Requirements": ["InMeleeRange", "!Demoralizing Roar", "MobCount>1", "Form:Druid_Bear"],
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Swipe",
+        "Key": "6",
+        "MinRage": 20,
+        "WhenUsable": true,
+        "Requirements": ["InMeleeRange", "MobCount>1", "Form:Druid_Bear"],
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Maul",
+        "Key": "2",
+        "MinRage": 15,
+        "Requirements": ["InMeleeRange", "MobCount<2", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
+        "AfterCastWaitNextSwing": true,
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Cat Form",
+        "Key": "F3",
+        "Requirements": ["!Form:Druid_Cat", "Health%>60", "MobCount<2"]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": ["!AutoAttacking"]
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Mark of the Wild",
+        "Key": "4",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Mark of the Wild",
+        "Form": "None"
+      },
+      {
+        "Name": "Thorns",
+        "Key": "7",
+        "AfterCastWaitBuff": true,
+        "DelayAfterCast": 0,
+        "Requirement": "not Thorns",
+        "Form": "None"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health%<40",
+        "Form": "None"
+      },
+      {
+        "Name": "Water",
+        "Key": "-",
+        "Requirement": "Mana%<40",
+        "Form": "None"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

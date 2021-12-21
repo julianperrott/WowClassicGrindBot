@@ -16,8 +16,9 @@ namespace Core.Goals
         
         private readonly KeyAction key;
         private readonly CastingHandler castingHandler;
+        private readonly MountHandler mountHandler;
 
-        public AdhocGoal(ILogger logger, ConfigurableInput input, Wait wait, KeyAction key, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler)
+        public AdhocGoal(ILogger logger, ConfigurableInput input, Wait wait, KeyAction key, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler, MountHandler mountHandler)
         {
             this.logger = logger;
             this.input = input;
@@ -26,6 +27,7 @@ namespace Core.Goals
             this.playerReader = playerReader;
             this.key = key;
             this.castingHandler = castingHandler;
+            this.mountHandler = mountHandler;
 
             if (key.InCombat == "false")
             {
@@ -53,9 +55,9 @@ namespace Core.Goals
                 await stopMoving.Stop();
                 await wait.Update(1);
 
-                if (playerReader.Bits.IsMounted)
+                if (mountHandler.IsMounted())
                 {
-                    await input.TapDismount();
+                    await mountHandler.Dismount();
                     //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
                 }
             }
