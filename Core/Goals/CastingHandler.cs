@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Numerics;
 
@@ -369,7 +368,7 @@ namespace Core.Goals
             }
             else
             {
-                if (item.RequirementObjects.Any())
+                if (item.RequirementObjects.Count > 0)
                 {
                     (bool firstReq, double firstReqElapsedMs) = await wait.InterruptTask(SpellQueueTimeMs,
                         () => !item.CanRun()
@@ -434,15 +433,14 @@ namespace Core.Goals
                 return true;
             }
 
-            var formKeyAction = classConfig.Form
-                .Where(s => s.FormEnum == item.FormEnum)
-                .FirstOrDefault();
-
-            if (formKeyAction == null)
+            int index = classConfig.Form.FindIndex(x => x.FormEnum == item.FormEnum);
+            if (index == -1)
             {
                 logger.LogWarning($"Unable to find key in Form to transform into {item.FormEnum}");
                 return false;
             }
+
+            KeyAction formKeyAction = classConfig.Form[index];
 
             await input.KeyPress(formKeyAction.ConsoleKey, formKeyAction.PressDuration);
             (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => beforeForm != playerReader.Form);
