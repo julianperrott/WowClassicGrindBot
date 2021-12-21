@@ -35,7 +35,7 @@ namespace Core
             return true;
         }
 
-        public async ValueTask<Tuple<bool, double>> InterruptTask(int durationMs, Func<bool> interrupt)
+        public async ValueTask<(bool interrupted, double elapsedMs)> InterruptTask(int durationMs, Func<bool> interrupt)
         {
             DateTime start = DateTime.Now;
             double elapsedMs;
@@ -43,13 +43,13 @@ namespace Core
             {
                 await Update(1);
                 if (interrupt())
-                    return Tuple.Create(false, elapsedMs);
+                    return (false, elapsedMs);
             }
 
-            return Tuple.Create(true, elapsedMs);
+            return (true, elapsedMs);
         }
 
-        public async ValueTask<Tuple<bool, double>> InterruptTask(int durationMs, Func<bool> interrupt, Action repeat)
+        public async ValueTask<(bool interrupted, double elapsedMs)> InterruptTask(int durationMs, Func<bool> interrupt, Action repeat)
         {
             DateTime start = DateTime.Now;
             double elapsedMs;
@@ -58,13 +58,13 @@ namespace Core
                 repeat();
                 await Update(1);
                 if (interrupt())
-                    return Tuple.Create(false, elapsedMs);
+                    return (false, elapsedMs);
             }
 
-            return Tuple.Create(true, elapsedMs);
+            return (true, elapsedMs);
         }
 
-        public async ValueTask<bool> Interrupt(int durationMs, Task<bool> exit)
+        public async ValueTask<bool> Interrupt(int durationMs, ValueTask<bool> exit)
         {
             DateTime start = DateTime.Now;
             while ((DateTime.Now - start).TotalMilliseconds < durationMs)
