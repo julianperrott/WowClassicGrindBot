@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 using WinAPI;
@@ -84,7 +83,7 @@ namespace Game
             return false;
         }
 
-        public async Task SendText(string payload)
+        public async ValueTask SendText(string payload)
         {
             await simulatorInput.SendText(payload);
         }
@@ -100,7 +99,7 @@ namespace Game
         }
 
 
-        public async Task KeyPress(ConsoleKey key, int milliseconds, string description = "")
+        public async ValueTask KeyPress(ConsoleKey key, int milliseconds, string description = "")
         {
             if (!string.IsNullOrEmpty(description))
                 Log($"[{key}] {description} pressing for {milliseconds}ms");
@@ -132,12 +131,12 @@ namespace Game
             nativeInput.SetCursorPosition(position);
         }
 
-        public async Task RightClickMouse(Point position)
+        public async ValueTask RightClickMouse(Point position)
         {
             await nativeInput.RightClickMouse(position);
         }
 
-        public async Task LeftClickMouse(Point position)
+        public async ValueTask LeftClickMouse(Point position)
         {
             await nativeInput.LeftClickMouse(position);
         }

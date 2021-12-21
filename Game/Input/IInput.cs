@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Threading.Tasks;
 
 namespace Game
@@ -10,17 +9,17 @@ namespace Game
 
         void KeyUp(int key);
 
-        Task KeyPress(int key, int milliseconds);
+        ValueTask KeyPress(int key, int milliseconds);
 
         void KeyPressSleep(int key, int milliseconds);
 
         void SetCursorPosition(Point p);
 
-        Task RightClickMouse(Point p);
+        ValueTask RightClickMouse(Point p);
 
-        Task LeftClickMouse(Point p);
+        ValueTask LeftClickMouse(Point p);
 
-        Task SendText(string text);
+        ValueTask SendText(string text);
 
         void PasteFromClipboard();
     }

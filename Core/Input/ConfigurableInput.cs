@@ -16,89 +16,89 @@ namespace Core
             ClassConfig = classConfig;
         }
 
-        public async Task TapStopKey(string desc = "")
+        public async ValueTask TapStopKey(string desc = "")
         {
             await KeyPress(ConsoleKey.UpArrow, defaultKeyPress, $"TapStopKey: {desc}");
         }
 
-        public async Task TapInteractKey(string source)
+        public async ValueTask TapInteractKey(string source)
         {
             await KeyPress(ClassConfig.Interact.ConsoleKey, defaultKeyPress, string.IsNullOrEmpty(source) ? "" : $"TapInteract ({source})");
             this.ClassConfig.Interact.SetClicked();
         }
 
-        public async Task TapApproachKey(string source)
+        public async ValueTask TapApproachKey(string source)
         {
             await KeyPress(ClassConfig.Approach.ConsoleKey, ClassConfig.Approach.PressDuration, string.IsNullOrEmpty(source) ? "" : $"TapApproachKey ({source})");
             this.ClassConfig.Approach.SetClicked();
         }
 
-        public async Task TapLastTargetKey(string source)
+        public async ValueTask TapLastTargetKey(string source)
         {
             await KeyPress(ClassConfig.TargetLastTarget.ConsoleKey, defaultKeyPress, $"TapLastTarget ({source})");
             this.ClassConfig.TargetLastTarget.SetClicked();
         }
 
-        public async Task TapStandUpKey(string desc = "")
+        public async ValueTask TapStandUpKey(string desc = "")
         {
             await KeyPress(ClassConfig.StandUp.ConsoleKey, defaultKeyPress, $"TapStandUpKey: {desc}");
             this.ClassConfig.StandUp.SetClicked();
         }
 
-        public async Task TapClearTarget(string desc = "")
+        public async ValueTask TapClearTarget(string desc = "")
         {
             await KeyPress(ClassConfig.ClearTarget.ConsoleKey, defaultKeyPress, string.IsNullOrEmpty(desc) ? "" : $"TapClearTarget: {desc}");
             this.ClassConfig.ClearTarget.SetClicked();
         }
 
-        public async Task TapStopAttack(string desc = "")
+        public async ValueTask TapStopAttack(string desc = "")
         {
             await KeyPress(ClassConfig.StopAttack.ConsoleKey, ClassConfig.StopAttack.PressDuration, string.IsNullOrEmpty(desc) ? "" : $"TapStopAttack: {desc}");
             this.ClassConfig.StopAttack.SetClicked();
         }
 
-        public async Task TapNearestTarget(string desc = "")
+        public async ValueTask TapNearestTarget(string desc = "")
         {
             await KeyPress(ClassConfig.TargetNearestTarget.ConsoleKey, defaultKeyPress, $"TapNearestTarget: {desc}");
             this.ClassConfig.TargetNearestTarget.SetClicked();
         }
 
-        public async Task TapTargetPet(string desc = "")
+        public async ValueTask TapTargetPet(string desc = "")
         {
             await KeyPress(ClassConfig.TargetPet.ConsoleKey, defaultKeyPress, $"TapTargetPet: {desc}");
             this.ClassConfig.TargetPet.SetClicked();
         }
 
-        public async Task TapTargetOfTarget(string desc = "")
+        public async ValueTask TapTargetOfTarget(string desc = "")
         {
             await KeyPress(ClassConfig.TargetTargetOfTarget.ConsoleKey, defaultKeyPress, $"TapTargetsTarget: {desc}");
             this.ClassConfig.TargetTargetOfTarget.SetClicked();
         }
 
-        public async Task TapJump(string desc = "")
+        public async ValueTask TapJump(string desc = "")
         {
             await KeyPress(ClassConfig.Jump.ConsoleKey, defaultKeyPress, $"TapJump: {desc}");
             this.ClassConfig.Jump.SetClicked();
         }
 
-        public async Task TapPetAttack(string source = "")
+        public async ValueTask TapPetAttack(string source = "")
         {
             await KeyPress(ClassConfig.PetAttack.ConsoleKey, ClassConfig.PetAttack.PressDuration, $"TapPetAttack ({source})");
             this.ClassConfig.PetAttack.SetClicked();
         }
 
-        public async Task TapHearthstone()
+        public async ValueTask TapHearthstone()
         {
             await KeyPress(ConsoleKey.I, defaultKeyPress, "TapHearthstone");
         }
 
-        public async Task TapMount()
+        public async ValueTask TapMount()
         {
             await KeyPress(ClassConfig.Mount.ConsoleKey, defaultKeyPress, "TapMount");
             this.ClassConfig.Mount.SetClicked();
         }
 
-        public async Task TapDismount()
+        public async ValueTask TapDismount()
         {
             await KeyPress(ClassConfig.Mount.ConsoleKey, defaultKeyPress, "TapDismount");
         }

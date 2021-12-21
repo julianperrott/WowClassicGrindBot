@@ -1,5 +1,4 @@
-﻿using Core;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Threading.Tasks;
 using Game;
 
@@ -7,12 +6,12 @@ namespace CoreTests
 {
     public class MockWoWProcess : IMouseInput
     {
-        public Task RightClickMouse(Point position)
+        public ValueTask RightClickMouse(Point position)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task LeftClickMouse(Point position)
+        public ValueTask LeftClickMouse(Point position)
         {
             throw new System.NotImplementedException();
         }

@@ -7,8 +7,8 @@ namespace Game
     {
         void SetCursorPosition(Point point);
 
-        Task RightClickMouse(Point position);
+        ValueTask RightClickMouse(Point position);
 
-        Task LeftClickMouse(Point position);
+        ValueTask LeftClickMouse(Point position);
     }
 }

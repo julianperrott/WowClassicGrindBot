@@ -27,7 +27,7 @@ namespace Game
             MAX_DELAY = maxDelay;
         }
 
-        private async Task Delay(int milliseconds)
+        private async ValueTask Delay(int milliseconds)
         {
             await Task.Delay(milliseconds + random.Next(1, MAX_DELAY));
         }
@@ -42,7 +42,7 @@ namespace Game
             NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
         }
 
-        public async Task KeyPress(int key, int milliseconds)
+        public async ValueTask KeyPress(int key, int milliseconds)
         {
             NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
             await Delay(milliseconds);
@@ -56,7 +56,7 @@ namespace Game
             NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
         }
 
-        public async Task LeftClickMouse(Point p)
+        public async ValueTask LeftClickMouse(Point p)
         {
             SetCursorPosition(p);
 
@@ -84,7 +84,7 @@ namespace Game
             NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_LBUTTONUP, 0, lparam);
         }
 
-        public async Task RightClickMouse(Point p)
+        public async ValueTask RightClickMouse(Point p)
         {
             SetCursorPosition(p);
 
@@ -117,7 +117,7 @@ namespace Game
             NativeMethods.SetCursorPos(p.X, p.Y);
         }
 
-        public async Task SendText(string text)
+        public async ValueTask SendText(string text)
         {
             // only works with ConsoleKey characters
             var chars = text.ToCharArray();
