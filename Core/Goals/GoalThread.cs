@@ -49,7 +49,7 @@ namespace Core.Goals
             }
             else if (e.Key == GoapKey.consumecorpse && (bool)e.Value == false)
             {
-                if (routeInfo != null && routeInfo.PoiList.Any())
+                if (routeInfo != null && routeInfo.PoiList.Count > 0)
                 {
                     var closest = routeInfo.PoiList.Where(p => p.Name == "Corpse").
                         Select(i => new { i, d = addonReader.PlayerReader.PlayerLocation.DistanceXYTo(i.Location) }).

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Core
@@ -57,7 +56,7 @@ namespace Core
         private void AddUnique(KeyAction a)
         {
             if (!KeyReader.KeyMapping.ContainsKey(a.Key)) return;
-            if (sources.Any(i => i.KeyAction.ConsoleKeyFormHash == a.ConsoleKeyFormHash)) return;
+            if (sources.FindIndex(i => i.KeyAction.ConsoleKeyFormHash == a.ConsoleKeyFormHash) > -1) return;
 
             var source = new ActionBarSource
             {

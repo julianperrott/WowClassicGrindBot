@@ -1,10 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Core
+﻿namespace Core
 {
-    public class NoBlacklist: IBlacklist
+    public class NoBlacklist : IBlacklist
     {
         public void Add(string name)
         {

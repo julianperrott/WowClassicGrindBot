@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -52,7 +51,7 @@ namespace Core.Database
 
         public WorldMapAreaSpot ToMapAreaSpot(float x, float y, float z, string continent, int mapHint)
         {
-            var area = WorldMapAreaFactory.GetWorldMapArea(areas.Values.ToList(), x, y, continent, mapHint);
+            var area = WorldMapAreaFactory.GetWorldMapArea(new List<WorldMapArea>(areas.Values), x, y, continent, mapHint);
             return new WorldMapAreaSpot
             {
                 Y = area.ToMapX(x),

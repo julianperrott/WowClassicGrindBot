@@ -1,7 +1,5 @@
 ﻿using Core.Goals;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Core
@@ -39,10 +37,11 @@ namespace Core
 
             if (playerReader.Class == PlayerClassEnum.Druid)
             {
-                classConfig.Form
-                    .Where(s => s.FormEnum == Form.Druid_Travel)
-                    .ToList()
-                    .ForEach(async key => await castingHandler.SwitchToCorrectStanceForm(playerReader.Form, key));
+                int index = classConfig.Form.FindIndex(s => s.FormEnum == Form.Druid_Travel);
+                if (index > -1)
+                {
+                    await castingHandler.SwitchToCorrectStanceForm(playerReader.Form, classConfig.Form[index]);
+                }
             }
             else
             {
@@ -72,10 +71,11 @@ namespace Core
         {
             if (playerReader.Class == PlayerClassEnum.Druid && playerReader.Form == Form.Druid_Travel)
             {
-                classConfig.Form
-                    .Where(s => s.FormEnum == Form.Druid_Travel)
-                    .ToList()
-                    .ForEach(async k => await input.KeyPress(k.ConsoleKey, 50));
+                int index = classConfig.Form.FindIndex(s => s.FormEnum == Form.Druid_Travel);
+                if (index > -1)
+                {
+                    await input.KeyPress(classConfig.Form[index].ConsoleKey, 50);
+                }
             }
             else
             {

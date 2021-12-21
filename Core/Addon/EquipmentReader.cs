@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Core
+﻿namespace Core
 {
     public enum InventorySlotId
     {
@@ -61,7 +59,7 @@ namespace Core
 
         public string ToStringList()
         {
-            return string.Join(", ", equipment.Where(i => i > 0));
+            return string.Join(", ", equipment);
         }
 
         public bool HasRanged()
