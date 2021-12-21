@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using SharedLib.Extensions;
 
@@ -31,7 +30,7 @@ namespace Core.Goals
             this.input = input;
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
-            this.spiritWalkerPath = spiritWalker.ToList();
+            this.spiritWalkerPath = spiritWalker;
             this.logger = logger;
             this.stuckDetector = stuckDetector;
 
@@ -101,7 +100,7 @@ namespace Core.Goals
 
             lastDistance = distance;
 
-            if (distance < 30 && points.Any())
+            if (distance < 30 && points.Count > 0)
             {
                 logger.LogInformation($"Move to next point");
                 points.Pop();

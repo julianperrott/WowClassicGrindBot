@@ -1,7 +1,6 @@
 ﻿using Core.GOAP;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -107,9 +106,7 @@ namespace Core.Goals
 
         public void RemovePrecondition(GoapKey key)
         {
-            Preconditions.Where(o => o.Key.Equals(key))
-              .ToList()
-              .ForEach(o => Preconditions.Remove(o));
+            Preconditions.RemoveWhere(o => o.Key.Equals(key));
         }
 
         public void AddEffect(GoapKey key, object value)
@@ -119,9 +116,7 @@ namespace Core.Goals
 
         public void RemoveEffect(GoapKey key)
         {
-            Effects.Where(o => o.Key.Equals(key))
-                .ToList()
-                .ForEach(o => Effects.Remove(o));
+            Effects.RemoveWhere(o => o.Key.Equals(key));
         }
 
         public virtual void OnActionEvent(object sender, ActionEventArgs e)
@@ -130,7 +125,7 @@ namespace Core.Goals
 
         public virtual string Description()
         {
-            return $"{Name} " + (Keys.Count == 1 ? $"[{Keys.First().ConsoleKey}]" : "");
+            return $"{Name} " + (Keys.Count == 1 ? $"[{Keys[0].ConsoleKey}]" : "");
         }
     }
 }
