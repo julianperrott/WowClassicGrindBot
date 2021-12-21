@@ -28,7 +28,7 @@ namespace Game
             simulator = new GregsStack.InputSimulatorStandard.InputSimulator();
         }
 
-        private async Task Delay(int milliseconds)
+        private async ValueTask Delay(int milliseconds)
         {
             await Task.Delay(milliseconds + random.Next(1, MAX_DELAY));
         }
@@ -49,7 +49,7 @@ namespace Game
             simulator.Keyboard.KeyUp((VirtualKeyCode)key);
         }
 
-        public async Task KeyPress(int key, int milliseconds)
+        public async ValueTask KeyPress(int key, int milliseconds)
         {
             simulator.Keyboard.KeyDown((VirtualKeyCode)key);
             await Delay(milliseconds);
@@ -63,7 +63,7 @@ namespace Game
             simulator.Keyboard.KeyUp((VirtualKeyCode)key);
         }
 
-        public async Task LeftClickMouse(Point p)
+        public async ValueTask LeftClickMouse(Point p)
         {
             SetCursorPosition(p);
             simulator.Mouse.LeftButtonDown();
@@ -71,7 +71,7 @@ namespace Game
             simulator.Mouse.LeftButtonUp();
         }
 
-        public async Task RightClickMouse(Point p)
+        public async ValueTask RightClickMouse(Point p)
         {
             SetCursorPosition(p);
             simulator.Mouse.RightButtonDown();
@@ -87,7 +87,7 @@ namespace Game
             simulator.Mouse.MoveMouseTo(Convert.ToDouble(p.X), Convert.ToDouble(p.Y));
         }
 
-        public async Task SendText(string text)
+        public async ValueTask SendText(string text)
         {
             if (NativeMethods.GetForegroundWindow() != process.MainWindowHandle)
                 NativeMethods.SetForegroundWindow(process.MainWindowHandle);
