@@ -97,7 +97,7 @@ namespace Core
             return distance > 0.01f;
         }
 
-        public async ValueTask<Tuple<bool, bool>> FoundTargetWhileMoved()
+        public async ValueTask<(bool foundTarget, bool hadToMove)> FoundTargetWhileMoved()
         {
             bool hadToMove = false;
             var startedMoving = await wait.InterruptTask(200, () => lastPosition != playerReader.PlayerLocation);
@@ -113,12 +113,12 @@ namespace Core
                 if (!await Wait(100, EnteredCombat()))
                 {
                     if (await AquiredTarget())
-                        return Tuple.Create(true, hadToMove);
+                        return (true, hadToMove);
                 }
             }
 
 
-            return Tuple.Create(false, hadToMove);
+            return (false, hadToMove);
         }
 
 

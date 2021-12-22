@@ -13,10 +13,10 @@ namespace Core
             return MathF.PI + target;
         }
 
-        public static Tuple<float, float> ToNormalRadian(float wowRadian)
+        public static (float, float) ToNormalRadian(float wowRadian)
         {
             // wow origo is north side - shifted 90 degree
-            return new Tuple<float, float>(
+            return (
                 MathF.Cos(wowRadian + (MathF.PI / 2)),
                 MathF.Sin(wowRadian - (MathF.PI / 2)));
         }

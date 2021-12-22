@@ -237,22 +237,22 @@ namespace Core
         private void UpdateMinResourceRequirement(PlayerReader playerReader, ActionBarCostReader actionBarCostReader)
         {
             var tuple = actionBarCostReader.GetCostByActionBarSlot(playerReader, this);
-            if (tuple.Item2 != 0)
+            if (tuple.cost != 0)
             {
                 int oldValue = 0;
-                switch (tuple.Item1)
+                switch (tuple.type)
                 {
                     case PowerType.Mana:
                         oldValue = MinMana;
-                        MinMana = tuple.Item2;
+                        MinMana = tuple.cost;
                         break;
                     case PowerType.Rage:
                         oldValue = MinRage;
-                        MinRage = tuple.Item2;
+                        MinRage = tuple.cost;
                         break;
                     case PowerType.Energy:
                         oldValue = MinEnergy;
-                        MinEnergy = tuple.Item2;
+                        MinEnergy = tuple.cost;
                         break;
                 }
 

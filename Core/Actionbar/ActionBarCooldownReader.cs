@@ -11,7 +11,7 @@ namespace Core
         private readonly float MAX_ACTION_IDX = 100000f;
         private readonly float MAX_VALUE_MUL = 100f;
 
-        private readonly Dictionary<int, Tuple<int, DateTime>> dict = new Dictionary<int, Tuple<int, DateTime>>();
+        private readonly Dictionary<int, (int duration, DateTime startTime)> dict = new Dictionary<int, (int, DateTime)>();
 
         public ActionBarCooldownReader(ISquareReader reader, int cActionbarNum)
         {
@@ -31,12 +31,12 @@ namespace Core
 
             newCooldown /= MAX_VALUE_MUL;
 
-            if (dict.TryGetValue(index, out var tuple) && tuple.Item1 != (int)newCooldown)
+            if (dict.TryGetValue(index, out var tuple) && tuple.duration != (int)newCooldown)
             {
                 dict.Remove(index);
             }
 
-            dict.TryAdd(index, Tuple.Create((int)newCooldown, DateTime.Now));
+            dict.TryAdd(index, ((int)newCooldown, DateTime.Now));
         }
 
         public void Reset()
@@ -55,8 +55,9 @@ namespace Core
 
                 if (dict.TryGetValue(slot, out var tuple))
                 {
-                    if (tuple.Item1 == 0) return 0;
-                    return Math.Clamp((int)(tuple.Item2.AddSeconds(tuple.Item1) - DateTime.Now).TotalMilliseconds, 0, int.MaxValue);
+                    return tuple.duration == 0
+                        ? 0
+                        : Math.Clamp((int)(tuple.startTime.AddSeconds(tuple.duration) - DateTime.Now).TotalMilliseconds, 0, int.MaxValue);
                 }
             }
 
