@@ -26,9 +26,9 @@ namespace Core
         private readonly float MAX_ACTION_IDX = 1000f;
 
         //https://wowwiki-archive.fandom.com/wiki/ActionSlot
-        private readonly Dictionary<int, Tuple<PowerType, int>> dict = new Dictionary<int, Tuple<PowerType, int>>();
+        private readonly Dictionary<int, (PowerType type, int cost)> dict = new Dictionary<int, (PowerType, int)>();
 
-        private readonly Tuple<PowerType, int> empty = new Tuple<PowerType, int>(PowerType.Mana,0);
+        private readonly (PowerType type, int cost) empty = (PowerType.Mana, 0);
 
         public int MaxCount { get; } = 108; // maximum amount of actionbar slot which tracked
 
@@ -57,12 +57,12 @@ namespace Core
 
             int cost = data;
 
-            if (dict.TryGetValue(index, out var tuple) && tuple.Item2 != cost)
+            if (dict.TryGetValue(index, out var tuple) && tuple.cost != cost)
             {
                 dict.Remove(index);
             }
 
-            if (dict.TryAdd(index, Tuple.Create((PowerType)type, cost)))
+            if (dict.TryAdd(index, ((PowerType)type, cost)))
             {
                 OnActionCostChanged?.Invoke(this, new ActionBarCostEventArgs(index, (PowerType)type, cost));
             }
@@ -73,7 +73,7 @@ namespace Core
             dict.Clear();
         }
 
-        public Tuple<PowerType, int> GetCostByActionBarSlot(PlayerReader playerReader, KeyAction keyAction)
+        public (PowerType type, int cost) GetCostByActionBarSlot(PlayerReader playerReader, KeyAction keyAction)
         {
             if (KeyReader.ActionBarSlotMap.TryGetValue(keyAction.Key, out int slot))
             {

@@ -430,7 +430,7 @@ namespace Core
             if (!valueDictionary.ContainsKey(key))
             {
                 valueDictionary.Add(key,
-                    () => addonReader.ActionBarCostReader.GetCostByActionBarSlot(playerReader, item).Item2);
+                    () => addonReader.ActionBarCostReader.GetCostByActionBarSlot(playerReader, item).cost);
             }
         }
 
