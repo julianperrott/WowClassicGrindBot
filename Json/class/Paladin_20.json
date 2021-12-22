@@ -66,8 +66,9 @@
         "HasCastBar": true,
         "WhenUsable": true,
         "Requirements": [
-          "(Blessing of Protection || Divine Protection && Health% < 60) || (!Blessing of Protection && CD_Blessing of Protection > 0 && !Divine Protection && CD_Divine Protection > 0 && Health% < 50 && TargetHealth%>20 && LastMainHandMs <= 1000)",
-          "CD==0"
+          "Health% < 75",
+          "(Blessing of Protection || Divine Protection)",
+          "CD == 0"
         ]
       },
       {
@@ -76,8 +77,8 @@
         "HasCastBar": true,
         "WhenUsable": true,
         "Requirements": [
-          "Health%<60",
-          "TargetHealth%>20",
+          "Health% < 60",
+          "!Blessing of Protection && CD_Blessing of Protection > 0 && !Divine Protection && CD_Divine Protection > 0",
           "CD == 0",
           "MobCount < 2",
           "LastMainHandMs <= 1000"
@@ -90,8 +91,8 @@
         "WhenUsable": true,
         "Requirements": [
           "Mana% > 50",
-          "CD==0",
-          "MobCount>1"
+          "CD == 0",
+          "MobCount > 1"
         ]
       },
       {
@@ -129,7 +130,7 @@
         "WhenUsable": true,
         "Requirements": [
           "Talent:Seal of Command",
-          "!Seal of Command",
+          "!Seal of Command || MainHandSpeedMs > 3000",
           "Judgement of the Crusader",
           "TargetHealth% > 20"
         ],
@@ -140,7 +141,7 @@
         "Key": "2",
         "WhenUsable": true,
         "Requirements": [
-          "!Talent:Seal of Command",
+          "!Talent:Seal of Command || MainHandSpeedMs < 3000",
           "!Seal of Righteousness",
           "Judgement of the Crusader",
           "TargetHealth% > 20"
