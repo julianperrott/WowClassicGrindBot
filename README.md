@@ -937,6 +937,9 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | General boolean condition | Desciption |
 | --- | --- |
 | `"TargetYieldXP"` | The target yields experience upon death. (Grey Level) |
+| `"TargetsMe"` | The target currently targets the player |
+| `"TargetsPet"` | The target currently targets the player's pet |
+| `"TargetsNone"` | The target currently has not target |
 | `"TargetCastingSpell"` | Target casts any spell |
 | `"Swimming"` | The player is currently swimming. |
 | `"Falling"` | The player is currently falling down, not touching the ground. |

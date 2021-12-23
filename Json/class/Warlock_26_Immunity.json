@@ -70,7 +70,7 @@
         "Requirements": [
           "TargetHealth% > DOT_MIN_HEALTH%",
           "!Immolate",
-          "!InMeleeRange"
+          "!TargetsMe"
         ],
         "ResetOnNewTarget": true,
         "MinMana": 90,
@@ -107,7 +107,7 @@
         "MinMana": 110,
         "Requirements": [
           "TargetHealth% > DOT_MIN_HEALTH%",
-          "!InMeleeRange"
+          "!TargetsMe"
         ],
         "School": "Shadow",
         "Cooldown": 8000

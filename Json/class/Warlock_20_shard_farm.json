@@ -58,7 +58,8 @@
         "Key": "5",
         "Requirements": [
           "TargetHealth% > DOT_MIN_HEALTH%",
-          "!Immolate"
+          "!Immolate",
+          "!TargetsMe"
         ],
         "HasCastBar": true,
         "ResetOnNewTarget": true,
@@ -95,7 +96,10 @@
         "HasCastBar": true,
         "ResetOnNewTarget": true,
         "MinMana": 110,
-        "Requirement": "TargetHealth% > DOT_MIN_HEALTH%",
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!TargetsMe"
+        ],
         "Cooldown": 8000
       },
       {

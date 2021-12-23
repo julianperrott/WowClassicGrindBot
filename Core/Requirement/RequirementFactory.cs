@@ -70,6 +70,9 @@ namespace Core
             {
                 // Target Based
                 { "TargetYieldXP", () => playerReader.TargetYieldXP },
+                { "TargetsMe", () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe },
+                { "TargetsPet", () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingPet },
+                { "TargetsNone", () => playerReader.TargetTarget == TargetTargetEnum.TargetHasNoTarget },
 
                 // Range
                 { "InMeleeRange", ()=> playerReader.IsInMeleeRange },

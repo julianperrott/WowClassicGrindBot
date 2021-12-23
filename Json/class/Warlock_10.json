@@ -64,7 +64,10 @@
         "Name": "Shadow Bolt",
         "Key": "2",
         "HasCastBar": true,
-        "Requirement": "TargetHealth% > DOT_MIN_HEALTH%",
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!TargetsMe"
+        ],
         "MinMana": 25,
         "Cooldown": 8000
       },
