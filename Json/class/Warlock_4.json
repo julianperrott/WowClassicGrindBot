@@ -5,7 +5,9 @@
   "PathFilename": "1_Gnome.json",
   "PathThereAndBack": true,
   "PathReduceSteps": false,
-
+  "IntVariables": {
+    "DOT_MIN_HEALTH%": 35
+  },
   "Pull": {
     "Sequence": [
       {
@@ -22,14 +24,20 @@
         "Name": "Immolate",
         "Key": "5",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%>35", "not Immolate"], 
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate"
+        ],
         "MinMana": 25
       },
       {
         "Name": "Corruption",
         "Key": "7",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%>35", "not Corruption"], 
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption"
+        ],
         "MinMana": 25
       },
       {
@@ -41,7 +49,7 @@
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
@@ -55,24 +63,24 @@
         "Name": "Demon Skin",
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "not Demon Skin"
+        "Requirement": "!Demon Skin"
       },
       {
         "Name": "Summon Imp",
         "Key": "4",
         "HasCastBar": true,
         "MinMana": 122,
-        "Requirement": "not Has Pet"
+        "Requirement": "!Has Pet"
       },
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health%<50"
+        "Requirement": "Health% < 50"
       },
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<50"
+        "Requirement": "Mana% < 50"
       }
     ]
   },

@@ -5,7 +5,9 @@
   "PathFilename": "5_Gnome.json",
   "PathThereAndBack": false,
   "PathReduceSteps": true,
-
+  "IntVariables": {
+    "DOT_MIN_HEALTH%": 35
+  },
   "Pull": {
     "Sequence": [
       {
@@ -22,34 +24,47 @@
         "Name": "Drain Soul",
         "Key": "9",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%<25", "not BagItem:6265:3", "TargetYieldXP"],
+        "Requirements": [
+          "TargetHealth% < 25",
+          "!BagItem:6265:3",
+          "TargetYieldXP"
+        ],
         "MinMana": 55
       },
       {
         "Name": "Immolate",
         "Key": "5",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%>35", "not Immolate"], 
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate"
+        ],
         "MinMana": 25
       },
       {
         "Name": "Curse of Agony",
         "Key": "1",
-        "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Curse of Agony"
+        ],
         "MinMana": 25
       },
       {
         "Name": "Corruption",
         "Key": "7",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%>35", "not Corruption"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption"
+        ],
         "MinMana": 25
       },
       {
         "Name": "Shadow Bolt",
         "Key": "2",
         "HasCastBar": true,
-        "Requirement": "TargetHealth%>35",
+        "Requirement": "TargetHealth% > DOT_MIN_HEALTH%",
         "MinMana": 25,
         "Cooldown": 8000
       },
@@ -57,11 +72,18 @@
         "Name": "Shoot",
         "Key": "0",
         "HasCastbar": true,
-        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"]
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1"
+        ]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Requirements": [
+          "!HasRangedWeapon",
+          "!AutoAttacking"
+        ]
       }
     ]
   },
@@ -70,12 +92,12 @@
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health%<50"
+        "Requirement": "Health% < 50"
       },
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<40"
+        "Requirement": "Mana% < 40"
       }
     ]
   },
@@ -85,20 +107,26 @@
         "Name": "Demon Skin",
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "not Demon Skin"
+        "Requirement": "!Demon Skin"
       },
       {
         "Name": "Summon Voidwalker",
         "Key": "4",
         "HasCastBar": true,
         "MinMana": 122,
-        "Requirements": ["BagItem:6265:1", "not Has Pet"]
+        "Requirements": [
+          "BagItem:6265:1",
+          "!Has Pet"
+        ]
       },
       {
         "Name": "Life Tap",
         "Key": "8",
         "Charge": 2,
-        "Requirements": ["Health%>70","Mana%<60"]
+        "Requirements": [
+          "Health% > 70",
+          "Mana% < 60"
+        ]
       }
     ]
   },
