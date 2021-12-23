@@ -14,7 +14,7 @@
             PlayerClassEnum.Warrior => Form.Warrior_BattleStance + value - 1,
             PlayerClassEnum.Rogue => Form.Rogue_Stealth + value - 1,
             PlayerClassEnum.Priest => Form.Priest_Shadowform + value - 1,
-            PlayerClassEnum.Druid => playerReader.Buffs.Prowl ? Form.Druid_Cat_Prowl + value - 1 : Form.Druid_Bear + value - 1,
+            PlayerClassEnum.Druid => playerReader.Buffs.Prowl ? Form.Druid_Cat_Prowl : Form.Druid_Bear + value - 1,
             PlayerClassEnum.Paladin => Form.Paladin_Devotion_Aura + value - 1,
             PlayerClassEnum.Shaman => Form.Shaman_GhostWolf + value - 1,
             _ => Form.None
