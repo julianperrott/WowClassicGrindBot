@@ -288,13 +288,11 @@ namespace Core
                 throw new Exception("Not allowed to load other class profile!");
             }
 
-            var requirementFactory = new RequirementFactory(logger, AddonReader);
-
-            ClassConfiguration classConfig;
             var classFilePath = Path.Join(DataConfig.Class, classFilename);
             if (File.Exists(classFilePath))
             {
-                classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilePath));
+                ClassConfiguration classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilePath));
+                var requirementFactory = new RequirementFactory(logger, AddonReader);
                 classConfig.Initialise(DataConfig, AddonReader, requirementFactory, logger, pathFilename);
 
                 logger.LogDebug($"Loaded `{classFilename}` with Path Profile `{classConfig.PathFilename}`.");

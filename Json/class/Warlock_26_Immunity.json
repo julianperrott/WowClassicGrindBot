@@ -5,13 +5,14 @@
   "PathFilename": "24-30 Duskwood wolf ravager.json",
   "PathThereAndBack": false,
   "PathReduceSteps": true,
-
   "ImmunityBlacklist": {
     "1043": [
       "Shadow"
     ]
   },
-
+  "IntVariables": {
+    "DOT_MIN_HEALTH%": 35
+  },
   "Pull": {
     "Sequence": [
       {
@@ -19,7 +20,10 @@
         "Key": "5",
         "HasCastBar": true,
         "DelayBeforeCast": 1500,
-        "Requirements": ["TargetHealth%>35", "not Immolate"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate"
+        ],
         "ResetOnNewTarget": true,
         "MinMana": 90,
         "School": "Fire"
@@ -31,7 +35,10 @@
       {
         "Name": "heal",
         "Key": "N3",
-        "Requirements": ["Health%<50", "BagItem:19005:1"],
+        "Requirements": [
+          "Health% < 50",
+          "BagItem:19005:1"
+        ],
         "Cooldown": 120000,
         "InCombat": "true"
       },
@@ -39,7 +46,11 @@
         "Name": "Drain Soul",
         "Key": "9",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%<25", "not BagItem:6265:3", "TargetYieldXP"],
+        "Requirements": [
+          "TargetHealth% < 25",
+          "!BagItem:6265:3",
+          "TargetYieldXP"
+        ],
         "School": "Shadow",
         "MinMana": 55
       },
@@ -47,14 +58,20 @@
         "Name": "Drain Life",
         "Key": "N4",
         "HasCastBar": true,
-        "Requirements": ["Health%<30"],
+        "Requirements": [
+          "Health% < 30"
+        ],
         "MinMana": 55
       },
       {
         "Name": "Immolate",
         "Key": "5",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%>35", "not Immolate", "not InMeleeRange"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate",
+          "!InMeleeRange"
+        ],
         "ResetOnNewTarget": true,
         "MinMana": 90,
         "School": "Fire"
@@ -63,14 +80,21 @@
         "Name": "Curse of Agony",
         "Key": "1",
         "ResetOnNewTarget": true,
-        "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Curse of Agony"
+        ],
         "MinMana": 50,
         "School": "Shadow"
       },
       {
         "Name": "Corruption",
         "Key": "7",
-        "Requirements": ["TargetHealth%>35", "not Corruption", "Talent:Improved Corruption:5"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption",
+          "Talent:Improved Corruption:5"
+        ],
         "ResetOnNewTarget": true,
         "MinMana": 55,
         "School": "Shadow"
@@ -81,7 +105,10 @@
         "HasCastBar": true,
         "ResetOnNewTarget": true,
         "MinMana": 110,
-        "Requirements": ["TargetHealth%>35", "not InMeleeRange"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!InMeleeRange"
+        ],
         "School": "Shadow",
         "Cooldown": 8000
       },
@@ -90,17 +117,28 @@
         "Key": "N6",
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirements": ["Has Pet", "Health%>70", "PetHealth%<30"]
+        "Requirements": [
+          "Has Pet",
+          "Health% > 70",
+          "PetHealth% < 30"
+        ]
       },
       {
         "Name": "Shoot",
         "Key": "0",
         "HasCastbar": true,
-        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"]
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1"
+        ]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Requirements": [
+          "!HasRangedWeapon",
+          "!AutoAttacking"
+        ]
       }
     ]
   },
@@ -109,61 +147,69 @@
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health%<50"
+        "Requirement": "Health% < 50"
       },
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<40"
+        "Requirement": "Mana% < 40"
       }
     ]
-    },
+  },
   "Adhoc": {
     "Sequence": [
       {
         "Name": "Demon Armor",
         "Key": "3",
         "MinMana": 275,
-        "Requirement": "not Demon Armor"
+        "Requirement": "!Demon Armor"
       },
       {
         "Name": "Summon Voidwalker",
         "HasCastBar": true,
         "Key": "4",
         "MinMana": 122,
-        "Requirements": ["BagItem:6265:1", "not Has Pet"]
+        "Requirements": [
+          "BagItem:6265:1",
+          "!Has Pet"
+        ]
       },
       {
         "Name": "Life Tap",
         "Key": "8",
         "Charge": 2,
-        "Requirements": ["Health%>70","Mana%<60"]
+        "Requirements": [
+          "Health% > 70",
+          "Mana% < 60"
+        ]
       },
       {
         "Name": "heal",
         "Key": "N3",
         "HasCastBar": true,
-        "Requirements": ["BagItem:6265:1", "not BagItem:19007:1"]
+        "Requirements": [
+          "BagItem:6265:1",
+          "!BagItem:19007:1"
+        ]
       }
     ]
-  }
-,
+  },
   "NPC": {
-      "Sequence": [
-        {
-          "Name": "Repair",
-          "Key": "C",
-          "Requirement": "Items Broken",
-          "PathFilename": "23_Duskwood_Vendor.json",
-          "Cost": 6
-        },
-        {
-          "Name": "Sell",
-          "Key": "C",
-          "Requirement": "BagFull",
-          "PathFilename": "23_Duskwood_Vendor.json",
-          "Cost": 6
-        }
-      ]
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      }
+    ]
   }
 }

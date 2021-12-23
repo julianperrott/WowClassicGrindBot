@@ -6,15 +6,19 @@
   "PathFilename": "23_Duskwood.json",
   "PathThereAndBack": false,
   "PathReduceSteps": true,
-
-  "Blacklist": ["Murloc Hunter", "Murloc Oracle", "Murloc Tidehunter"],
-
+  "Blacklist": [
+    "Murloc Hunter",
+    "Murloc Oracle",
+    "Murloc Tidehunter"
+  ],
   "ImmunityBlacklist": {
     "1043": [
       "Shadow"
     ]
   },
-
+  "IntVariables": {
+    "DOT_MIN_HEALTH%": 35
+  },
   "Pull": {
     "Sequence": [
       {
@@ -32,7 +36,11 @@
         "Key": "9",
         "School": "Shadow",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%<40", "not BagItem:6265:72", "TargetYieldXP"],
+        "Requirements": [
+          "TargetHealth% < 40",
+          "!BagItem:6265:72",
+          "TargetYieldXP"
+        ],
         "MinMana": 55
       },
       {
@@ -40,13 +48,18 @@
         "Key": "N4",
         "School": "Shadow",
         "HasCastBar": true,
-        "Requirements": ["Health%<30"],
+        "Requirements": [
+          "Health% < 30"
+        ],
         "MinMana": 55
       },
       {
         "Name": "Immolate",
         "Key": "5",
-        "Requirements": ["TargetHealth%>35", "not Immolate"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate"
+        ],
         "HasCastBar": true,
         "ResetOnNewTarget": true,
         "MinMana": 90
@@ -56,14 +69,21 @@
         "Key": "1",
         "School": "Shadow",
         "ResetOnNewTarget": true,
-        "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Curse of Agony"
+        ],
         "MinMana": 50
       },
       {
         "Name": "Corruption",
         "Key": "7",
         "School": "Shadow",
-        "Requirements": ["TargetHealth%>35", "not Corruption", "Talent:Improved Corruption:5"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption",
+          "Talent:Improved Corruption:5"
+        ],
         "ResetOnNewTarget": true,
         "MinMana": 55,
         "Log": false
@@ -75,7 +95,7 @@
         "HasCastBar": true,
         "ResetOnNewTarget": true,
         "MinMana": 110,
-        "Requirement": "TargetHealth%>35",
+        "Requirement": "TargetHealth% > DOT_MIN_HEALTH%",
         "Cooldown": 8000
       },
       {
@@ -83,17 +103,28 @@
         "Key": "N6",
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirements": ["Has Pet", "Health%>70", "PetHealth%<30"]
+        "Requirements": [
+          "Has Pet",
+          "Health% > 70",
+          "PetHealth% < 30"
+        ]
       },
       {
         "Name": "Shoot",
         "Key": "0",
         "HasCastbar": true,
-        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"]
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1"
+        ]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Requirements": [
+          "!HasRangedWeapon",
+          "!AutoAttacking"
+        ]
       }
     ]
   },
@@ -102,55 +133,60 @@
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health%<50"
+        "Requirement": "Health% < 50"
       },
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<40"
+        "Requirement": "Mana% < 40"
       }
     ]
-    },
+  },
   "Adhoc": {
     "Sequence": [
       {
         "Name": "Demon Armor",
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "not Demon Armor"
+        "Requirement": "!Demon Armor"
       },
       {
         "Name": "Summon Voidwalker",
         "Key": "4",
         "HasCastBar": true,
         "MinMana": 122,
-        "Requirements": ["BagItem:6265:1", "not Has Pet"]
+        "Requirements": [
+          "BagItem:6265:1",
+          "!Has Pet"
+        ]
       },
       {
         "Name": "Life Tap",
         "Key": "8",
         "Charge": 2,
-        "Requirements": ["Health%>70","Mana%<60"]
+        "Requirements": [
+          "Health% > 70",
+          "Mana% < 60"
+        ]
       }
     ]
-  }
-,
+  },
   "NPC": {
-      "Sequence": [
-        {
-          "Name": "Repair",
-          "Key": "C",
-          "Requirement": "Items Broken",
-          "PathFilename": "23_Duskwood_Vendor.json",
-          "Cost": 6
-        },
-        {
-          "Name": "Sell",
-          "Key": "C",
-          "Requirement": "BagFull",
-          "PathFilename": "23_Duskwood_Vendor.json",
-          "Cost": 6
-        }
-      ]
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      }
+    ]
   }
 }

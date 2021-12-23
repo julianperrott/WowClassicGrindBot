@@ -313,6 +313,21 @@ namespace Core
             CreateChargeRequirement(item.RequirementObjects, item);
         }
 
+        public void PopulateUserDefinedIntVariables(Dictionary<string, int> intKeyValues)
+        {
+            foreach (var kvp in intKeyValues)
+            {
+                if (!valueDictionary.TryAdd(kvp.Key, () => kvp.Value))
+                {
+                    throw new Exception($"Unable to add user defined variable to values. [{kvp.Key} -> {kvp.Value}]");
+                }
+                else
+                {
+                    logger.LogInformation($"[{GetType().Name}] Added user defined int variable [{kvp.Key} -> {kvp.Value}]");
+                }
+            }
+        }
+
         public void CreateDynamicBindings(KeyAction item)
         {
             BindCooldown(item);

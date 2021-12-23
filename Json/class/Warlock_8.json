@@ -5,7 +5,9 @@
   "PathFilename": "5_Gnome.json",
   "PathThereAndBack": false,
   "PathReduceSteps": false,
-
+  "IntVariables": {
+    "DOT_MIN_HEALTH%": 35
+  },
   "Pull": {
     "Sequence": [
       {
@@ -22,13 +24,19 @@
         "Name": "Immolate",
         "Key": "5",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%>35", "not Immolate"], 
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate"
+        ],
         "MinMana": 25
       },
       {
         "Name": "Curse of Agony",
         "Key": "1",
-        "Requirements": [ "TargetHealth%>35", "not Curse of Agony"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Curse of Agony"
+        ],
         "MinMana": 25,
         "Log": false
       },
@@ -36,7 +44,10 @@
         "Name": "Corruption",
         "Key": "7",
         "HasCastBar": true,
-        "Requirements": ["TargetHealth%>35", "not Corruption"],
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption"
+        ],
         "MinMana": 25
       },
       {
@@ -50,11 +61,18 @@
         "Name": "Shoot",
         "Key": "0",
         "HasCastbar": true,
-        "Requirements": ["HasRangedWeapon", "not Shooting", "SpellInRange:1"]
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1"
+        ]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["not HasRangedWeapon", "not AutoAttacking"]
+        "Requirements": [
+          "!HasRangedWeapon",
+          "!AutoAttacking"
+        ]
       }
     ]
   },
@@ -63,12 +81,12 @@
       {
         "Name": "Food",
         "Key": "=",
-        "Requirement": "Health%<50"
+        "Requirement": "Health% < 50"
       },
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<40"
+        "Requirement": "Mana% < 40"
       }
     ]
   },
@@ -78,20 +96,23 @@
         "Name": "Demon Skin",
         "Key": "3",
         "MinMana": 50,
-        "Requirement": "not Demon Skin"
+        "Requirement": "!Demon Skin"
       },
       {
         "Name": "Summon Imp",
         "Key": "4",
         "HasCastBar": true,
         "MinMana": 122,
-        "Requirement": "not Has Pet"
+        "Requirement": "!Has Pet"
       },
       {
         "Name": "Life Tap",
         "Key": "8",
         "Charge": 2,
-        "Requirements": ["Health%>70","Mana%<60"]
+        "Requirements": [
+          "Health% > 70",
+          "Mana% < 60"
+        ]
       }
     ]
   },

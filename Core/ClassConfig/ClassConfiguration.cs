@@ -50,6 +50,8 @@ namespace Core
 
         public Dictionary<int, List<SchoolMask>> ImmunityBlacklist { get; } = new Dictionary<int, List<SchoolMask>>();
 
+        public Dictionary<string, int> IntVariables { get; } = new Dictionary<string, int>();
+
         public KeyActions Pull { get; set; } = new KeyActions();
         public KeyActions Combat { get; set; } = new KeyActions();
         public KeyActions Adhoc { get; set; } = new KeyActions();
@@ -101,6 +103,8 @@ namespace Core
         public void Initialise(DataConfig dataConfig, AddonReader addonReader, RequirementFactory requirementFactory, ILogger logger, string? overridePathProfileFile)
         {
             SpiritPathFilename = string.Empty;
+
+            requirementFactory.PopulateUserDefinedIntVariables(IntVariables);
 
             Jump.Key = JumpKey;
             Jump.Initialise(addonReader, requirementFactory, logger);
