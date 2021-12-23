@@ -262,6 +262,7 @@ Take a look at the class files in `/Json/class` for examples of what you can do.
 | `"CheckTargetGivesExp"` | Only engage the target if it yields experience | true | `false` |
 | `"Blacklist"` | List of Npc names which should be avoided | true | `[""]` |
 | `"ImmunityBlacklist"` | List of Npc ids which have some sort of `School` immunities | true | `""` |
+| `"IntVariables"` | List of user defined `integer` variables | true | `[]` |
 | --- | --- | --- | --- |
 | `"Pull"` | Sequence of `KeyAction(s)` to execute upon [Pull Goal](#Pull-Goal) | true | `[]` |
 | `"Combat"` | Sequence of `KeyAction(s)` to execute upon [Combat Goal](#Combat-Goal) | **false** | `[]` |
@@ -287,6 +288,17 @@ Take a look at the class files in `/Json/class` for examples of what you can do.
 Normally, the bot would try to click your wows window for two reasons: target selecting and looting. To achieve this it will move your cursor. If you have multiple screens or simply do not want the bot to move your cursor, you can set `KeyboardOnly` to `true`.
 
 Notice that when `KeyboardOnly` is enabled, the bot will only loot by selecting last target and tap interact key, which may fail to loot every target if there are many. And it will not be able to skin, either. The target selecting will also be limited to using `TargetNearestTargetKey` key, which would significantly reduce the range of selecting target.
+
+### IntVariables
+
+Gives the ability to the user to define global integer variables along the whole ClassConfiguration scope. 
+
+For example look at the Warlock profiles.
+```json
+"IntVariables": {
+    "DOT_MIN_HEALTH%": 35
+}
+```
 
 ### Path
 
@@ -674,28 +686,37 @@ For the `MinRange` and `MaxRange` gives an approximation range distance between 
 
 Its worth mention that `CD_{KeyAction.Name}` is a dynamic binding.<br>Each `KeyAction` has its own in-game Cooldown which is not the same as `KeyAction.Cooldown`!
 
-e.g.
+e.g. Single Requirement
 ```json
-"Requirement": "Health% > 70"
-"Requirement": "TargetHealth% <= 10"
-"Requirement": "PetHealth%<10"
+"Requirement": "Health%>70"
+"Requirement": "TargetHealth%<=10"
+"Requirement": "PetHealth% < 10"
 "Requirement": "Mana% <= 40"
 "Requirement": "Mana < 420"
 "Requirement": "Energy >= 40"
-"Requirement": "Rage>90"
+"Requirement": "Rage > 90"
 "Requirement": "BagCount > 80"
-"Requirement": "MobCount>1"
+"Requirement": "MobCount > 1"
 "Requirement": "MinRange < 5"
-"Requirement": "MinRange>15"
+"Requirement": "MinRange > 15"
 "Requirement": "MaxRange > 20"
 "Requirement": "MaxRange > 35"
-"Requirement": "LastAutoShotMs<=500"
+"Requirement": "LastAutoShotMs <= 500"
 "Requirement": "LastMainHandMs <= 500"
 "Requirement": "CD_Judgement < 1500"                 // The remaining cooldown on Judgement is less then GCD(1500)
 "Requirement": "CD_Hammer of Justice > CD_Judgement" // The remaining cooldown on Hammer of Justice is greater then 8 seconds
 "Requirement": "Rage >= Cost_Heroic Strike"          // Create a condition like if player current rage is greater then or equal the cost of Heroic Strike
 "Requirement": "MainHandSpeed > 3500"   // Main hand attack speed is greater then 3.5 seconds
 "Requirement": "MainHandSwing > -400"   // 400 milliseconds before next predicted main swing happen
+"Requirement": "MainHandSwing > -400"   // 400 milliseconds before next predicted main swing happen
+```
+
+e.g. List of Requirements
+```json
+"Requirements": [
+    "TargetHealth% > DOT_MIN_HEALTH%",  // where DOT_MIN_HEALTH% is a user defined variable
+    "!Immolate"
+],
 ```
 
 e.g. for `CD`: It's a good idea to put `CD` in healing spells to take consideration of the spell interruption.
