@@ -1,46 +1,44 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using Game;
 
 namespace Core.Goals
 {
     public class StopMoving
     {
-        private readonly WowProcessInput input;
+        private readonly ConfigurableInput input;
         private readonly PlayerReader playerReader;
 
         private const double MinDist = 0.01;
 
-        private float XCoord = 0;
-        private float YCoord = 0;
-        private float Direction = 0;
+        private float XCoord;
+        private float YCoord;
+        private float Direction;
 
-        public StopMoving(WowProcessInput input, PlayerReader playerReader)
+        public StopMoving(ConfigurableInput input, PlayerReader playerReader)
         {
             this.input = input;
             this.playerReader = playerReader;
         }
 
-        public async Task Stop()
+        public async ValueTask Stop()
         {
             await StopForward();
             await StopTurn();
         }
 
-        public async Task StopForward()
+        public async ValueTask StopForward()
         {
             if (XCoord != playerReader.XCoord || YCoord != playerReader.YCoord)
             {
-                if (!input.IsKeyDown(ConsoleKey.DownArrow) && !input.IsKeyDown(ConsoleKey.UpArrow) &&
+                if (!input.IsKeyDown(input.BackwardKey) && !input.IsKeyDown(input.ForwardKey) &&
                     (MathF.Abs(XCoord - playerReader.XCoord) > MinDist || MathF.Abs(YCoord - playerReader.YCoord) > MinDist))
                 {
-                    input.SetKeyState(ConsoleKey.UpArrow, true, false, "StopForward - Cancel interact");
+                    input.SetKeyState(input.ForwardKey, true, false, "StopForward - Cancel interact");
                     await Task.Delay(1);
                 }
 
-                input.SetKeyState(ConsoleKey.UpArrow, false, false, "");
-                input.SetKeyState(ConsoleKey.DownArrow, false, false, "StopForward");
+                input.SetKeyState(input.ForwardKey, false, false, "");
+                input.SetKeyState(input.BackwardKey, false, false, "StopForward");
                 await Task.Delay(10);
             }
 
@@ -48,13 +46,13 @@ namespace Core.Goals
             this.YCoord = playerReader.YCoord;
         }
 
-        public async Task StopTurn()
+        public async ValueTask StopTurn()
         {
             if (Direction != playerReader.Direction)
             {
-                input.SetKeyState(ConsoleKey.LeftArrow, false, false, "");
+                input.SetKeyState(input.TurnLeftKey, false, false, "");
                 await Task.Delay(1);
-                input.SetKeyState(ConsoleKey.RightArrow, false, false, "StopTurn");
+                input.SetKeyState(input.TurnRightKey, false, false, "StopTurn");
                 await Task.Delay(1);
             }
 
