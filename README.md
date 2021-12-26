@@ -177,33 +177,42 @@ From the main menu (ESC) set the following under Interface Options:
 
 | Interface Option | Value |
 | ---- | ---- |
-| Controls - Auto Loot | **Ticked** |
-| Controls - Interact on Left click | **Not ticked** |
-| Combat - Do Not Flash Screen at Low Health | **Ticked** |
-| Combat - Auto Self Cast | **Ticked** |
-| Names - NPC Names | **Ticked** |
-| Names - Enemy Units (V) | **Not ticked** |
+| Controls - Auto Loot | &#9745; |
+| Controls - Interact on Left click | &#9744; |
+| Combat - Do Not Flash Screen at Low Health | &#9745; |
+| Combat - Auto Self Cast | &#9745; |
+| Names - NPC Names | &#9745; |
+| Names - Enemy Units (V) | &#9744; |
 | Camera - Auto-Follow Speed | **Fast** |
 | Camera - Camera Following Style | **Always** |
-| Mouse - Click-to-Move | **Ticked** |
+| Mouse - Click-to-Move | &#9745; |
 | Mouse - Click-to-Move Camera Style | **Always** |
 
 ## 7. Configure the Wow Client - Key Bindings
 
-The "Interact with Target" keybind is super important as it allows the bot to turn towards and approach the target.
-The "Target Last Target " keybind helps with looting.
+From the main menu (ESC) -> `Key Bindings` set the following:
 
-From the main menu (ESC) set the following:
+`Movement Keys`:
 
-"Movement Keys" Key Bindings:
-| Command | Key | ClassConfiguration KeyAction | Desciption |
+| In-Game | ClassConfiguration Name | Default ConsoleKey | Desciption |
 | ---- | ---- | ---- | ---- |
-| Jump | Spacebar | JumpKey | ---- |
-| Sit/Move Down | X | StandUpKey | Used after drinking or eating |
+| Move Forward | ForwardKey | UpArrow | Change this to `87` for pressing `W` |
+| Move Backward | BackwardKey | DownArrow | Change this to `83` for pressing `S` |
+| Turn Left | TurnLeftKey | LeftArrow | Change this to `65` for pressing `A` |
+| Turn Right | TurnRightKey | RightArrow | Change this to `68` for pressing `D` |
+| Jump | JumpKey | Spacebar | ---- |
+| Sit/Move down | StandUpKey | X |  Used after drinking or eatin |
 
-"Targeting" Key Bindings:
+To change the default movement keys to `WASD` in the ClassConfiguration file or look at the example `Json\class\Warrior_1_MovementKeys.json`
+```json
+"ForwardKey": 87,   // W
+"BackwardKey": 83,  // S
+"TurnLeftKey": 65,  // A
+"TurnRightKey": 68, // D
+```
 
-| Command | Key | ClassConfiguration KeyAction | Desciption |
+`Targeting`:
+| In-Game | Key | ClassConfiguration KeyAction Name | Desciption |
 | ---- | ---- | ---- | ---- |
 | Target Nearest Enemy | Tab | TargetNearestTargetKey | ---- |
 | Target Pet | Multiply | TargetPetKey | Only pet based class |
@@ -211,6 +220,9 @@ From the main menu (ESC) set the following:
 | Interact With Target | I | InteractKey | ---- |
 | Assist Target | F | TargetTargetOfTargetKey | ---- |
 | Pet attack | Subtract | PetAttackKey | Only pet based class |
+
+The `"Interact with Target"` keybind is super important as it allows the bot to turn towards and approach the target.
+The `"Target Last Target"` keybind helps with looting.
 
 ## 7.1. Actionbar Key Bindings:
 
