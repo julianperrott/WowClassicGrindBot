@@ -1,0 +1,56 @@
+{
+  "ClassName": "Warrior",
+  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\1-4_Dun Morogh.json",
+  "ForwardKey": 87,   // W
+  "BackwardKey": 83,  // S
+  "TurnLeftKey": 65,  // A
+  "TurnRightKey": 68, // D
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Heroic Strike",
+        "Key": "2",
+        "WhenUsable": true,
+        "MinRage": 15,
+        "AfterCastWaitNextSwing": true,
+        "Requirement": "MainHandSwing > -400"
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirement": "!AutoAttacking"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 60",
+        "Cost": 3
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}
