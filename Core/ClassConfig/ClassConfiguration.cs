@@ -97,6 +97,10 @@ namespace Core
         public KeyAction Mount { get; set; } = new KeyAction();
         public string MountKey { get; set; } = "O";
 
+        public ConsoleKey ForwardKey { get; set; } = ConsoleKey.UpArrow;  // 38
+        public ConsoleKey BackwardKey { get; set; } = ConsoleKey.DownArrow; // 40
+        public ConsoleKey TurnLeftKey { get; set; } = ConsoleKey.LeftArrow; // 37
+        public ConsoleKey TurnRightKey { get; set; } = ConsoleKey.RightArrow; // 39
 
         public static Dictionary<Form, ConsoleKey> FormKeys { get; private set; } = new Dictionary<Form, ConsoleKey>();
 
