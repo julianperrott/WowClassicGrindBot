@@ -99,16 +99,16 @@ namespace Core
                 {
                     // back up a bit, added "remove" move forward
                     logger.LogInformation($"Trying to unstick by backing up for {actionDuration}ms");
-                    input.SetKeyState(ConsoleKey.DownArrow, true, false, "StuckDetector_back_up");
-                    input.SetKeyState(ConsoleKey.UpArrow, false, false, "StuckDetector");
+                    input.SetKeyState(input.BackwardKey, true, false, "StuckDetector_back_up");
+                    input.SetKeyState(input.ForwardKey, false, false, "StuckDetector");
                     await Task.Delay(actionDuration);
-                    input.SetKeyState(ConsoleKey.DownArrow, false, false, "StuckDetector");
+                    input.SetKeyState(input.BackwardKey, false, false, "StuckDetector");
                 }
                 this.stopMoving?.Stop();
 
                 // Turn
                 var r = random.Next(0, 2);
-                var key = r == 0 ? ConsoleKey.A : ConsoleKey.D;
+                var key = r == 0 ? input.TurnLeftKey : input.TurnRightKey;
                 var turnDuration = random.Next(0, 800) + 200;
                 logger.LogInformation($"Trying to unstick by turning for {turnDuration}ms");
                 input.SetKeyState(key, true, false, "StuckDetector");
@@ -118,7 +118,7 @@ namespace Core
                 // Move forward
                 var strafeDuration = random.Next(0, 2000) + actionDurationSeconds;
                 logger.LogInformation($"Trying to unstick by moving forward after turning for {strafeDuration}ms");
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "StuckDetector");
+                input.SetKeyState(input.ForwardKey, true, false, "StuckDetector");
                 await Task.Delay(strafeDuration);
 
                 await input.TapJump();

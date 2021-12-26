@@ -1,6 +1,11 @@
 {
   "ClassName": "Paladin",
   "PathFilename": "_pack\\1-20\\Human\\19-21_Duskwood_Hushed Bank.json",
+  "IntVariables": {
+    "MIN_SPEED_SEAL": 3000,
+    "MIN_TARGET_HP%": 20,
+    "MIN_HP_BEFORE_HEAL%": 20
+  },
   "Pull": {
     "Sequence": [
       {
@@ -36,7 +41,7 @@
         "WhenUsable": true,
         "WaitBuffAfterCast": true,
         "Requirements": [
-          "Health% < 20",
+          "Health% < MIN_HP_BEFORE_HEAL%",
           "!Blessing of Protection"
         ]
       },
@@ -46,7 +51,7 @@
         "WhenUsable": true,
         "WaitBuffAfterCast": true,
         "Requirements": [
-          "Health% < 20",
+          "Health% < MIN_HP_BEFORE_HEAL%",
           "!Divine Protection"
         ]
       },
@@ -55,7 +60,7 @@
         "Key": "N3",
         "WhenUsable": true,
         "Requirements": [
-          "Health% < 20",
+          "Health% < MIN_HP_BEFORE_HEAL%",
           "!Blessing of Protection && CD_Blessing of Protection > 0",
           "!Divine Protection && CD_Divine Protection > 0"
         ]
@@ -101,7 +106,7 @@
         "Requirements": [
           "!Seal of the Crusader",
           "!Judgement of the Crusader",
-          "TargetHealth% > 20"
+          "TargetHealth% > MIN_TARGET_HP%"
         ],
         "WaitBuffAfterCast": true
       },
@@ -120,8 +125,7 @@
         "Key": "7",
         "WhenUsable": true,
         "Requirements": [
-          "Judgement of the Crusader && CD_Judgement <= 400 && TargetHealth% > 20 || TargetCastingSpell",
-          "TargetHealth% > 30"
+          "Judgement of the Crusader && CD_Judgement <= 400 && TargetHealth% > MIN_TARGET_HP% || TargetCastingSpell"
         ]
       },
       {
@@ -129,10 +133,10 @@
         "Key": "9",
         "WhenUsable": true,
         "Requirements": [
-          "Talent:Seal of Command",
-          "!Seal of Command || MainHandSpeedMs > 3000",
+          "Talent:Seal of Command && MainHandSpeed > MIN_SPEED_SEAL",
+          "!Seal of Command",
           "Judgement of the Crusader",
-          "TargetHealth% > 20"
+          "TargetHealth% > MIN_TARGET_HP%"
         ],
         "WaitBuffAfterCast": true
       },
@@ -141,10 +145,10 @@
         "Key": "2",
         "WhenUsable": true,
         "Requirements": [
-          "!Talent:Seal of Command || MainHandSpeedMs < 3000",
+          "!Talent:Seal of Command || MainHandSpeed < MIN_SPEED_SEAL",
           "!Seal of Righteousness",
           "Judgement of the Crusader",
-          "TargetHealth% > 20"
+          "TargetHealth% > MIN_TARGET_HP%"
         ],
         "WaitBuffAfterCast": true
       },

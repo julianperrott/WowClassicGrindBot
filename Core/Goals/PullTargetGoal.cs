@@ -85,7 +85,7 @@ namespace Core.Goals
             if (SecondsSincePullStarted > 7)
             {
                 await input.TapClearTarget();
-                await input.KeyPress(random.Next(2) == 0 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow, 1000, "Too much time to pull!");
+                await input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, "Too much time to pull!");
                 pullStart = DateTime.Now;
 
                 return;

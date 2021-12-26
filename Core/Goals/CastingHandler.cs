@@ -379,14 +379,14 @@ namespace Core.Goals
 
             if (item.StepBackAfterCast > 0)
             {
-                input.SetKeyState(ConsoleKey.DownArrow, true, false, $"Step back for {item.StepBackAfterCast}ms");
+                input.SetKeyState(input.BackwardKey, true, false, $"Step back for {item.StepBackAfterCast}ms");
                 (bool notStepback, double stepbackElapsedMs) =
                     await wait.InterruptTask(item.StepBackAfterCast, () => beforeHasTarget != playerReader.HasTarget);
                 if (!notStepback)
                 {
                     item.LogInformation($" .... interrupted stepback | lost target? {beforeHasTarget != playerReader.HasTarget} | {stepbackElapsedMs}ms");
                 }
-                input.SetKeyState(ConsoleKey.DownArrow, false, false);
+                input.SetKeyState(input.BackwardKey, false, false);
             }
 
             if (item.AfterCastWaitNextSwing)
@@ -495,7 +495,7 @@ namespace Core.Goals
 
                     logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_OUT_OF_RANGE} -- Face enemy and start moving forward");
                     await input.TapInteractKey("");
-                    input.SetKeyState(ConsoleKey.UpArrow, true, false, "");
+                    input.SetKeyState(input.ForwardKey, true, false, "");
 
                     await wait.Update(1);
                     playerReader.LastUIErrorMessage = UI_ERROR.NONE;
@@ -638,7 +638,7 @@ namespace Core.Goals
                         else
                         {
                             logger.LogInformation($"{source} -- React to {UI_ERROR.ERR_SPELL_OUT_OF_RANGE} -- Start moving forward");
-                            input.SetKeyState(ConsoleKey.UpArrow, true, false, "");
+                            input.SetKeyState(input.ForwardKey, true, false, "");
                         }
 
 

@@ -196,7 +196,7 @@ namespace Core.Goals
                     }
                 }
 
-                input.SetKeyState(ConsoleKey.UpArrow, true, false);
+                input.SetKeyState(input.ForwardKey, true, false);
             }
 
             await RandomJump();
@@ -216,7 +216,7 @@ namespace Core.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 2");
+                input.SetKeyState(input.ForwardKey, true, false, "FollowRouteAction 2");
                 await wait.Update(1);
                 if (HasBeenActiveRecently())
                 {
@@ -357,7 +357,7 @@ namespace Core.Goals
                 {
                     logger.LogInformation("Not mounting as can see NPC.");
                 }
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "Move Forward");
+                input.SetKeyState(input.ForwardKey, true, false, "Move Forward");
             }
         }
 

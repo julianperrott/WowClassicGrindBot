@@ -225,7 +225,9 @@ namespace Core
                 }
             }
 
-            await new StopMoving(WowProcessInput, AddonReader.PlayerReader).Stop();
+            if (ConfigurableInput != null)
+                await new StopMoving(ConfigurableInput, AddonReader.PlayerReader).Stop();
+
             logger.LogInformation("Stopped!");
         }
 

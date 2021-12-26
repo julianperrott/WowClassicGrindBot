@@ -46,7 +46,7 @@ namespace Core.Goals
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
             await Task.Delay(200);
-            input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 5");
+            input.SetKeyState(input.ForwardKey, true, false, "FollowRouteAction 5");
 
             if (this.playerReader.Bits.PlayerInCombat) { return; }
 
@@ -66,7 +66,7 @@ namespace Core.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "FollowRouteAction 6");
+                input.SetKeyState(input.ForwardKey, true, false, "FollowRouteAction 6");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {

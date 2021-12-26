@@ -11,14 +11,26 @@ namespace Core
 
         private const int defaultKeyPress = 50;
 
+        public readonly ConsoleKey ForwardKey;
+        public readonly ConsoleKey BackwardKey;
+        public readonly ConsoleKey TurnLeftKey;
+        public readonly ConsoleKey TurnRightKey;
+
         public ConfigurableInput(ILogger logger, WowProcess wowProcess, ClassConfiguration classConfig) : base(logger, wowProcess)
         {
             ClassConfig = classConfig;
+
+            ForwardKey = classConfig.ForwardKey;
+            BackwardKey = classConfig.BackwardKey;
+            TurnLeftKey = classConfig.TurnLeftKey;
+            TurnRightKey = classConfig.TurnRightKey;
+
+            logger.LogInformation($"[{GetType().Name}] Movement Keys. Forward: {ForwardKey} - Backward: {BackwardKey} - TurnLeft: {TurnLeftKey} - TurnRight: {TurnRightKey}");
         }
 
         public async ValueTask TapStopKey(string desc = "")
         {
-            await KeyPress(ConsoleKey.UpArrow, defaultKeyPress, $"TapStopKey: {desc}");
+            await KeyPress(ForwardKey, defaultKeyPress, $"TapStopKey: {desc}");
         }
 
         public async ValueTask TapInteractKey(string source)
