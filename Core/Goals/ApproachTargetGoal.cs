@@ -126,7 +126,7 @@ namespace Core.Goals
             {
                 playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, $"{GetType().Name}: Too far, start moving forward!");
+                input.SetKeyState(input.ForwardKey, true, false, $"{GetType().Name}: Too far, start moving forward!");
                 await wait.Update(1);
             }
 
@@ -134,7 +134,7 @@ namespace Core.Goals
             {
                 await input.TapClearTarget("");
                 await wait.Update(1);
-                await input.KeyPress(random.Next(2) == 0 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow, 1000, $"Seems stuck! Clear Target. Turn away. d: {lastPlayerDistance}");
+                await input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, $"Seems stuck! Clear Target. Turn away. d: {lastPlayerDistance}");
 
                 approachStart = DateTime.Now;
             }
@@ -143,7 +143,7 @@ namespace Core.Goals
             {
                 await input.TapClearTarget("");
                 await wait.Update(1);
-                await input.KeyPress(random.Next(2) == 0 ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow, 1000, "Too long time. Clear Target. Turn away.");
+                await input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, "Too long time. Clear Target. Turn away.");
 
                 approachStart = DateTime.Now;
             }

@@ -10,7 +10,7 @@ namespace Core
     public class PlayerDirection : IPlayerDirection
     {
         private readonly ILogger logger;
-        private readonly WowProcessInput input;
+        private readonly ConfigurableInput input;
         private readonly PlayerReader playerReader;
 
         public DateTime LastSetDirection { get; private set; } = DateTime.Now.AddDays(-1);
@@ -21,7 +21,7 @@ namespace Core
 
         private bool debug = false;
 
-        public PlayerDirection(ILogger logger, WowProcessInput input, PlayerReader playerReader)
+        public PlayerDirection(ILogger logger, ConfigurableInput input, PlayerReader playerReader)
         {
             this.logger = logger;
             this.input = input;
@@ -115,7 +115,7 @@ namespace Core
         private ConsoleKey GetDirectionKeyToPress(float desiredDirection)
         {
             var result = (RADIAN + desiredDirection - playerReader.Direction) % RADIAN < MathF.PI
-                ? ConsoleKey.LeftArrow : ConsoleKey.RightArrow;
+                ? input.TurnLeftKey : input.TurnRightKey;
 
             //var text = $"GetDirectionKeyToPress: Desired direction: {desiredDirection}, actual: {playerReader.Direction}, key: {result}";
             //if (text != lastText)

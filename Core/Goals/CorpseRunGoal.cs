@@ -81,7 +81,7 @@ namespace Core.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "WalkToCorpseAction");
+                input.SetKeyState(input.ForwardKey, true, false, "WalkToCorpseAction");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {

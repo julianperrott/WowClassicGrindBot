@@ -118,7 +118,7 @@ namespace Core.Goals
             }
             else
             {
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 1");
+                input.SetKeyState(input.ForwardKey, true, false, "NPC Goal 1");
             }
 
             var location = playerReader.PlayerLocation;
@@ -134,7 +134,7 @@ namespace Core.Goals
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "NPC Goal 2");
+                input.SetKeyState(input.ForwardKey, true, false, "NPC Goal 2");
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
@@ -247,7 +247,7 @@ namespace Core.Goals
                 var heading = DirectionCalculator.CalculateHeading(playerReader.PlayerLocation, target);
                 await playerDirection.SetDirection(heading, this.StartOfPathToNPC(), "Correcting direction", 0);
 
-                await this.input.KeyPress(ConsoleKey.UpArrow, pressDuration);
+                await this.input.KeyPress(input.ForwardKey, pressDuration);
                 await this.stopMoving.Stop();
                 distance = playerReader.PlayerLocation.DistanceXYTo(target);
             }
@@ -261,7 +261,7 @@ namespace Core.Goals
 
                 await mountHandler.MountUp();
 
-                input.SetKeyState(ConsoleKey.UpArrow, true, false, "Move forward");
+                input.SetKeyState(input.ForwardKey, true, false, "Move forward");
             }
         }
 
