@@ -40,7 +40,7 @@
         "Key": "5",
         "AfterCastWaitBuff": true,
         "CastIfAddsVisible": true,
-        "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire", "Mana%>40"],
+        "Requirements": ["SpellInRange:0", "MinRange > 10", "not Moonfire", "Mana%>40"],
         "StopBeforeCast": true,
         "Form": "None"
       },

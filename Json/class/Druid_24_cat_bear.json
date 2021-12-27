@@ -50,7 +50,7 @@
         "CastIfAddsVisible": true,
         "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
-        "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire"],
+        "Requirements": ["SpellInRange:0", "MinRange > 10", "not Moonfire"],
         "Cooldown": 10000,
         "Form": "None"
       },
