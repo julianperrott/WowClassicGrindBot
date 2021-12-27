@@ -28,9 +28,11 @@ namespace Game
             simulator = new GregsStack.InputSimulatorStandard.InputSimulator();
         }
 
-        private async ValueTask Delay(int milliseconds)
+        private async ValueTask<int> Delay(int milliseconds)
         {
-            await Task.Delay(milliseconds + random.Next(1, MAX_DELAY));
+            int delay = milliseconds + random.Next(1, MAX_DELAY);
+            await Task.Delay(delay);
+            return delay;
         }
 
         public void KeyDown(int key)
@@ -49,10 +51,18 @@ namespace Game
             simulator.Keyboard.KeyUp((VirtualKeyCode)key);
         }
 
-        public async ValueTask KeyPress(int key, int milliseconds)
+        public async ValueTask<int> KeyPress(int key, int milliseconds)
         {
             simulator.Keyboard.KeyDown((VirtualKeyCode)key);
-            await Delay(milliseconds);
+            int delay = await Delay(milliseconds);
+            simulator.Keyboard.KeyUp((VirtualKeyCode)key);
+            return delay;
+        }
+
+        public async ValueTask KeyPressNoDelay(int key, int milliseconds)
+        {
+            simulator.Keyboard.KeyDown((VirtualKeyCode)key);
+            await Task.Delay(milliseconds);
             simulator.Keyboard.KeyUp((VirtualKeyCode)key);
         }
 

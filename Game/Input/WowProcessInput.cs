@@ -101,10 +101,17 @@ namespace Game
 
         public async ValueTask KeyPress(ConsoleKey key, int milliseconds, string description = "")
         {
+            int totalDelayMs = await nativeInput.KeyPress((int)key, milliseconds);
+            if (!string.IsNullOrEmpty(description))
+                Log($"[{key}] {description} pressed for {totalDelayMs}ms");
+        }
+
+        public async ValueTask KeyPressNoDelay(ConsoleKey key, int milliseconds, string description = "")
+        {
             if (!string.IsNullOrEmpty(description))
                 Log($"[{key}] {description} pressing for {milliseconds}ms");
 
-            await nativeInput.KeyPress((int)key, milliseconds);
+            await nativeInput.KeyPressNoDelay((int)key, milliseconds);
         }
 
         public void KeyPressSleep(ConsoleKey key, int milliseconds, string description = "")
