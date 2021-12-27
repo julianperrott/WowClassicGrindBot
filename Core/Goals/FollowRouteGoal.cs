@@ -38,6 +38,8 @@ namespace Core.Goals
         private bool shouldMount = true;
 
         private readonly int MinDistance;
+        private readonly int MinDistanceMount = 15;
+
         private float lastDistance = 999;
 
         private readonly List<Vector3> pointsList;
@@ -95,7 +97,7 @@ namespace Core.Goals
             this.mountHandler = mountHandler;
             this.targetFinder = targetFinder;
 
-            MinDistance = !(pather is RemotePathingAPIV3) ? 15 : 8;
+            MinDistance = !(pather is RemotePathingAPIV3) ? MinDistanceMount : 10;
 
             if (classConfiguration.Mode != Mode.AttendedGather)
             {
@@ -398,7 +400,7 @@ namespace Core.Goals
 
             var location = playerReader.PlayerLocation;
             var heading = DirectionCalculator.CalculateHeading(location, wayPoints.Peek());
-            await playerDirection.SetDirection(heading, wayPoints.Peek(), "Reached waypoint").ConfigureAwait(false);
+            await playerDirection.SetDirection(heading, wayPoints.Peek(), "Reached waypoint");
 
             //Create path back to route
             var distance = location.DistanceXYTo(wayPoints.Peek());
@@ -452,7 +454,7 @@ namespace Core.Goals
 
         private int PointReachedDistance(int distance)
         {
-            return mountHandler.IsMounted() ? 50 : distance;
+            return mountHandler.IsMounted() ? MinDistanceMount : distance;
         }
 
         private bool HasBeenActiveRecently()
