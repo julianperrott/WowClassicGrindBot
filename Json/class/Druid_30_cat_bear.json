@@ -3,7 +3,7 @@
   "Loot": true,
   "PathFilename": "24-30 Duskwood wolf ravager.json",
   "PathReduceSteps": true,
-  "PathThere/obtainerflushAndBack": false,
+  "PathThereAndBack": false,
   "CheckTargetGivesExp": true,
   "Form": [
     {
@@ -57,7 +57,7 @@
         "CastIfAddsVisible": true,
         "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
-        "Requirements": ["SpellInRange:0", "!InMeleeRange", "!Moonfire"],
+        "Requirements": ["SpellInRange:0", "MinRange > 10", "!Moonfire"],
         "Cooldown": 10000,
         "Form": "None"
       },
