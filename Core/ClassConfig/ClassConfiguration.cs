@@ -233,7 +233,8 @@ namespace Core
                         a.DelayAfterCast = l.DelayAfterCast;
                         a.WaitForGCD = l.WaitForGCD;
                         a.PressDuration = l.PressDuration;
-                        a.Requirement = l.Requirement;
+                        if (!string.IsNullOrEmpty(l.Requirement))
+                            a.Requirement += " " + l.Requirement;
                         a.Requirements.AddRange(l.Requirements);
                         a.Cooldown = l.Cooldown;
                     }
