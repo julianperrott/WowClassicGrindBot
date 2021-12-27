@@ -27,9 +27,11 @@ namespace Game
             MAX_DELAY = maxDelay;
         }
 
-        private async ValueTask Delay(int milliseconds)
+        private async ValueTask<int> Delay(int milliseconds)
         {
-            await Task.Delay(milliseconds + random.Next(1, MAX_DELAY));
+            int delay = milliseconds + random.Next(1, MAX_DELAY);
+            await Task.Delay(delay);
+            return delay;
         }
 
         public void KeyDown(int key)
@@ -42,10 +44,18 @@ namespace Game
             NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
         }
 
-        public async ValueTask KeyPress(int key, int milliseconds)
+        public async ValueTask<int> KeyPress(int key, int milliseconds)
         {
             NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
-            await Delay(milliseconds);
+            int delay = await Delay(milliseconds);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
+            return delay;
+        }
+
+        public async ValueTask KeyPressNoDelay(int key, int milliseconds)
+        {
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
+            await Task.Delay(milliseconds);
             NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
         }
 

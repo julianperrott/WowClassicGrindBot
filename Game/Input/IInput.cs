@@ -9,7 +9,9 @@ namespace Game
 
         void KeyUp(int key);
 
-        ValueTask KeyPress(int key, int milliseconds);
+        ValueTask<int> KeyPress(int key, int milliseconds);
+
+        ValueTask KeyPressNoDelay(int key, int milliseconds);
 
         void KeyPressSleep(int key, int milliseconds);
 

@@ -347,7 +347,7 @@ namespace Core.Goals
 
         private int PointReachedDistance()
         {
-            return mountHandler.IsMounted() ? 50 : 20;
+            return mountHandler.IsMounted() ? 25 : 9;
         }
 
         private bool HasBeenActiveRecently()
