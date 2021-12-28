@@ -6,7 +6,6 @@ namespace Core.Goals
     public class TargetPetTarget : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.01f; }
-        public override bool Repeatable => false;
 
         private readonly ConfigurableInput input;
         private readonly PlayerReader playerReader;
@@ -27,7 +26,7 @@ namespace Core.Goals
         {
             await input.TapTargetPet();
             await input.TapTargetOfTarget();
-            if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
+            if (playerReader.HasTarget && (playerReader.Bits.TargetIsDead || playerReader.TargetGuid == playerReader.PetGuid))
             {
                 await input.TapClearTarget();
             }
