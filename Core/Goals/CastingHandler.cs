@@ -1,4 +1,4 @@
-﻿using SharedLib.NpcFinder;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -74,25 +74,6 @@ namespace Core.Goals
             }
 
             return item.CanRun();
-        }
-
-        protected async ValueTask PressCastKeyAndWaitForCastToEnd(ConsoleKey key, int maxWaitMs)
-        {
-            await PressKey(key);
-            if (!this.playerReader.IsCasting)
-            {
-                // try again
-                await PressKey(key);
-            }
-
-            for (int i = 0; i < maxWaitMs; i += 100)
-            {
-                if (!this.playerReader.IsCasting)
-                {
-                    return;
-                }
-                await Task.Delay(100);
-            }
         }
 
         private async ValueTask PressKeyAction(KeyAction item)
