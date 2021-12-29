@@ -91,7 +91,10 @@ namespace Core
 
             ResetCharges();
 
-            KeyReader.ReadKey(logger, this);
+            if (!KeyReader.ReadKey(logger, this))
+            {
+                throw new Exception($"[{Name}] has no valid Key={ConsoleKey}");
+            }
 
             if (!string.IsNullOrEmpty(this.Requirement))
             {

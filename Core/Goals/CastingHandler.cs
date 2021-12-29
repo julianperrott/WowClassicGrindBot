@@ -240,11 +240,6 @@ namespace Core.Goals
                 return false;
             }
 
-            if (item.ConsoleKey == 0)
-            {
-                return false;
-            }
-
             if (item.Name == classConfig.Approach.Name ||
                 item.Name == classConfig.AutoAttack.Name ||
                 item.Name == classConfig.Interact.Name ||
