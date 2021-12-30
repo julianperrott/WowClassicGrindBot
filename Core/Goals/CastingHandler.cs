@@ -241,6 +241,7 @@ namespace Core.Goals
                     return false;
                 }
 
+                //TODO: upon form change and GCD - have to check Usable state
                 if (beforeForm != playerReader.Form && !beforeUsable && !addonReader.UsableAction.Is(item))
                 {
                     item.LogInformation($" ... after switch {beforeForm}->{playerReader.Form} still not usable!");
