@@ -1,4 +1,4 @@
-using SharedLib.NpcFinder;
+﻿using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -394,18 +394,10 @@ namespace Core.Goals
 
         public async ValueTask<bool> SwitchToCorrectStanceForm(Form beforeForm, KeyAction item)
         {
-            if (string.IsNullOrEmpty(item.Form))
-                return true;
-
-            if (playerReader.Form == item.FormEnum)
-            {
-                return true;
-            }
-
             int index = classConfig.Form.FindIndex(x => x.FormEnum == item.FormEnum);
             if (index == -1)
             {
-                logger.LogWarning($"Unable to find key in Form to transform into {item.FormEnum}");
+                logger.LogWarning($"Unable to find Key in ClassConfig.Form to transform into {item.FormEnum}");
                 return false;
             }
 
@@ -415,11 +407,6 @@ namespace Core.Goals
             (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => beforeForm != playerReader.Form);
             item.LogInformation($" ... form changed: {!notChanged} | Delay: {elapsedMs}ms");
 
-            if (playerReader.Form == Form.None)
-            {
-                item.LogInformation($" ... wait for GCD after form change {beforeForm}->{playerReader.Form}!");
-                await WaitForGCD(item, playerReader.HasTarget);
-            }
 
             return playerReader.Form == item.FormEnum;
         }
