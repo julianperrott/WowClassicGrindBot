@@ -87,6 +87,13 @@ namespace BlazorServer
                         if (dataFrameMeta != DataFrameMeta.Empty)
                         {
                             wowScreen.GetRectangle(out var screenRect);
+
+                            if (screenRect.Location.X < 0 || screenRect.Location.Y < 0)
+                            {
+                                logger.LogWarning($"Client window outside of the visible area of the screen {screenRect.Location}");
+                                return;
+                            }
+
                             var addonRect = dataFrameMeta.EstimatedSize(screenRect);
 
                             if (!addonRect.IsEmpty &&
@@ -163,6 +170,14 @@ namespace BlazorServer
 
         private DataFrameMeta GetDataFrameMeta()
         {
+            System.Drawing.Point location = System.Drawing.Point.Empty;
+            wowScreen?.GetPosition(out location);
+            if (location.X < 0)
+            {
+                logger.LogWarning($"Client window outside of the visible area of the screen by {location}");
+                return DataFrameMeta.Empty;
+            }
+
             var screenshot = wowScreen?.GetBitmap(5, 5);
             if (screenshot == null) return DataFrameMeta.Empty;
             return DataFrameConfiguration.GetMeta(screenshot);
@@ -219,7 +234,16 @@ namespace BlazorServer
             logger.LogInformation("Found WowProcess");
 
             if (wowScreen == null) return false;
-            logger.LogInformation("Found WowScreen");
+            wowScreen.GetPosition(out var location);
+
+            if (location.X < 0)
+            {
+                logger.LogWarning($"Please make sure the client window does not outside of the visible area! Currently outside by {location}");
+                return false;
+            }
+
+            wowScreen.GetRectangle(out var rect);
+            logger.LogInformation($"Found WowScreen Location: {location} - Size: {rect}");
 
             var wowProcessInput = new WowProcessInput(logger, wowProcess);
             var execGameCommand = new ExecGameCommand(logger, wowProcessInput);
@@ -238,10 +262,9 @@ namespace BlazorServer
                 meta = GetDataFrameMeta();
             }
 
-            wowScreen.GetRectangle(out var rect);
+            logger.LogInformation($"DataFrameMeta: hash: {meta.hash} | spacing: {meta.spacing} | size: {meta.size} | rows: {meta.rows} | frames: {meta.frames}");
 
             var size = meta.EstimatedSize(rect);
-
             if (size.Height > 50)
             {
                 logger.LogWarning($"Something is worng. ({size}) is too big.");
