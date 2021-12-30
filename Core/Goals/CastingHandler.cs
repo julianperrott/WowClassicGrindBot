@@ -272,8 +272,7 @@ namespace Core.Goals
             bool beforeHasTarget = playerReader.HasTarget;
             int auraHash = playerReader.AuraCount.Hash;
 
-
-            if (!await WaitForGCD(item, beforeHasTarget))
+            if (item.WaitForGCD && !await WaitForGCD(item, beforeHasTarget))
             {
                 return false;
             }
@@ -372,24 +371,22 @@ namespace Core.Goals
 
         private async ValueTask<bool> WaitForGCD(KeyAction item, bool beforeHasTarget)
         {
-            if (item.WaitForGCD)
-            {
-                (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
-                    () => addonReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
-                if (!gcd)
-                {
-                    item.LogInformation($" ... gcd interrupted {gcdElapsedMs}ms");
+            (bool interrupted, double elapsedMs) = await wait.InterruptTask(GCD,
+                () => addonReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
 
-                    if (beforeHasTarget != playerReader.HasTarget)
-                    {
-                        item.LogInformation($" ... lost target!");
-                        return false;
-                    }
-                }
-                else
+            if (!interrupted)
+            {
+                item.LogInformation($" ... gcd interrupted {elapsedMs}ms");
+
+                if (beforeHasTarget != playerReader.HasTarget)
                 {
-                    item.LogInformation($" ... gcd fully waited {gcdElapsedMs}ms");
+                    item.LogInformation($" ... lost target!");
+                    return false;
                 }
+            }
+            else
+            {
+                item.LogInformation($" ... gcd fully waited {elapsedMs}ms");
             }
 
             return true;
