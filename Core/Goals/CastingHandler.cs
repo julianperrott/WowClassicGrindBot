@@ -231,18 +231,21 @@ namespace Core.Goals
                 return true;
             }
 
-            bool beforeUsable = addonReader.UsableAction.Is(item);
-            var beforeForm = playerReader.Form;
-
-            if (!await SwitchToCorrectStanceForm(beforeForm, item))
+            if (item.HasFormRequirement() && playerReader.Form != item.FormEnum)
             {
-                return false;
-            }
+                bool beforeUsable = addonReader.UsableAction.Is(item);
+                var beforeForm = playerReader.Form;
 
-            if (beforeForm != playerReader.Form && !beforeUsable && !addonReader.UsableAction.Is(item))
-            {
-                item.LogInformation(" ... after Form switch still not usable!");
-                return false;
+                if (!await SwitchToCorrectStanceForm(beforeForm, item))
+                {
+                    return false;
+                }
+
+                if (beforeForm != playerReader.Form && !beforeUsable && !addonReader.UsableAction.Is(item))
+                {
+                    item.LogInformation($" ... after switch {beforeForm}->{playerReader.Form} still not usable!");
+                    return false;
+                }
             }
 
             if (playerReader.Bits.IsAutoRepeatSpellOn_Shoot)
