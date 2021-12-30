@@ -252,6 +252,9 @@ namespace BlazorServer
             if (version == null) return false;
             logger.LogInformation($"Addon installed. Version {version}");
 
+            wowProcessInput.SetForegroundWindow();
+            await Task.Delay(100);
+
             var meta = GetDataFrameMeta();
             if (meta == DataFrameMeta.Empty || meta.hash == 0)
             {
