@@ -253,14 +253,6 @@ namespace Core.Goals
                 await input.TapStopAttack("Stop AutoRepeat Shoot");
                 await input.TapStopAttack("Stop AutoRepeat Shoot");
                 await wait.Update(1);
-
-                (bool interrupted, double elapsedMs) = await wait.InterruptTask(GCD, 
-                    () => addonReader.UsableAction.Is(item));
-
-                if (!interrupted)
-                {
-                    item.LogInformation($" ... waited to end Shoot {elapsedMs}ms");
-                }
             }
 
             if (sleepBeforeCast > 0)
