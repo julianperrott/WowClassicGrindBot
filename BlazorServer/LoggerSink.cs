@@ -3,8 +3,7 @@ using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 using System;
-using System.Linq;
-using System.Collections.Generic;
+using Cyotek.Collections.Generic;
 
 namespace BlazorServer
 {
@@ -30,19 +29,12 @@ namespace BlazorServer
 
         public static event OnLogChangedEventHandler? OnLogChanged;
 
-        public static List<LogItem> Log { get; private set; } = new List<LogItem>();
-
-        EventArgs args = new EventArgs();
+        public static CircularBuffer<LogItem> Log { get; private set; } = new CircularBuffer<LogItem>(250);
 
         public void Emit(LogEvent logEvent)
         {
-            Log.Add(new LogItem { Timestamp = logEvent.Timestamp, Level = logEvent.Level, Message = logEvent.RenderMessage() });
-            if (Log.Count > 1000)
-            {
-                Log = Log.Skip(Math.Max(0, Log.Count - 500)).ToList();
-            }
-
-            OnLogChanged?.Invoke(this, args);
+            Log.Put(new LogItem { Timestamp = logEvent.Timestamp, Level = logEvent.Level, Message = logEvent.RenderMessage() });
+            OnLogChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public override bool Equals(object? obj)
