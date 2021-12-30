@@ -46,7 +46,7 @@ namespace Core.Goals
             this.stopMoving = stopMoving;
         }
 
-        protected bool CanRun(KeyAction item)
+        public bool CanRun(KeyAction item)
         {
             if (!string.IsNullOrEmpty(item.CastIfAddsVisible))
             {
@@ -62,15 +62,11 @@ namespace Core.Goals
                 }
             }
 
-            if(item.School != SchoolMask.None)
+            if (item.School != SchoolMask.None &&
+                classConfig.ImmunityBlacklist.TryGetValue(playerReader.TargetId, out var list) &&
+                list.Contains(item.School))
             {
-                if(classConfig.ImmunityBlacklist.TryGetValue(playerReader.TargetId, out var list))
-                {
-                    if(list.Contains(item.School))
-                    {
-                        return false;
-                    }
-                }
+                return false;
             }
 
             return item.CanRun();
@@ -214,13 +210,18 @@ namespace Core.Goals
             return true;
         }
 
-        public async ValueTask<bool> CastIfReady(KeyAction item, int sleepBeforeCast = 0)
+        public async ValueTask<bool> CastIfReady(KeyAction item, int sleepBeforeCast)
         {
             if (!CanRun(item))
             {
                 return false;
             }
 
+            return await Cast(item, sleepBeforeCast);
+        }
+
+        public async ValueTask<bool> Cast(KeyAction item, int sleepBeforeCast)
+        {
             if (item.Name == classConfig.Approach.Name ||
                 item.Name == classConfig.AutoAttack.Name ||
                 item.Name == classConfig.Interact.Name ||
