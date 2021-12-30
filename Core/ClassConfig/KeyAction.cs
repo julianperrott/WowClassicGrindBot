@@ -145,55 +145,31 @@ namespace Core
 
         public float GetCooldownRemaining()
         {
-            try
-            {
-                if (!LastClicked.ContainsKey(ConsoleKeyFormHash))
-                {
-                    return 0;
-                }
-
-                var remaining = Cooldown - (float)(DateTime.Now - LastClicked[ConsoleKeyFormHash]).TotalMilliseconds;
-
-                return remaining < 0 ? 0 : remaining;
-            }
-            catch (Exception e)
-            {
-                this.logger.LogError(e, "GetCooldownRemaining()");
-                return 0;
-            }
+            var remain = MillisecondsSinceLastClick;
+            if (remain == double.MaxValue) return 0;
+            return MathF.Max(Cooldown - (float)remain, 0);
         }
 
         public bool CanDoFormChangeAndHaveMinimumMana()
         {
-            return playerReader != null &&
-                (playerReader.FormCost.ContainsKey(FormEnum) && playerReader.ManaCurrent >= playerReader.FormCost[FormEnum] + MinMana);
+            return playerReader.FormCost.ContainsKey(FormEnum) &&
+                playerReader.ManaCurrent >= playerReader.FormCost[FormEnum] + MinMana;
         }
 
         internal void SetClicked()
         {
-            try
-            {
-                if (this.playerReader != null)
-                {
-                    LastClickPostion = this.playerReader.PlayerLocation;
-                }
+            LastClickPostion = playerReader.PlayerLocation;
 
-                if (LastClicked.ContainsKey(ConsoleKeyFormHash))
-                {
-                    LastClicked[ConsoleKeyFormHash] = DateTime.Now;
-                }
-                else
-                {
-                    LastClicked.TryAdd(ConsoleKeyFormHash, DateTime.Now);
-                }
-            }
-            catch (Exception ex)
+            if (!LastClicked.TryAdd(ConsoleKeyFormHash, DateTime.Now))
             {
-                this.logger.LogError(ex, "SetClicked()");
+                LastClicked[ConsoleKeyFormHash] = DateTime.Now;
             }
         }
 
-        public double MillisecondsSinceLastClick => LastClicked.ContainsKey(ConsoleKeyFormHash) ? (DateTime.Now - LastClicked[ConsoleKeyFormHash]).TotalMilliseconds : double.MaxValue;
+        public double MillisecondsSinceLastClick =>
+            LastClicked.TryGetValue(ConsoleKeyFormHash, out DateTime lastTime) ?
+            (DateTime.Now - lastTime).TotalMilliseconds :
+            double.MaxValue;
 
         internal void ResetCooldown()
         {
@@ -207,10 +183,10 @@ namespace Core
 
         public void ConsumeCharge()
         {
-            if(Charge > 1)
+            if (Charge > 1)
             {
                 _charge--;
-                if(_charge > 0)
+                if (_charge > 0)
                 {
                     ResetCooldown();
                 }
@@ -239,23 +215,23 @@ namespace Core
 
         private void UpdateMinResourceRequirement(PlayerReader playerReader, ActionBarCostReader actionBarCostReader)
         {
-            var tuple = actionBarCostReader.GetCostByActionBarSlot(playerReader, this);
-            if (tuple.cost != 0)
+            var (type, cost) = actionBarCostReader.GetCostByActionBarSlot(playerReader, this);
+            if (cost != 0)
             {
                 int oldValue = 0;
-                switch (tuple.type)
+                switch (type)
                 {
                     case PowerType.Mana:
                         oldValue = MinMana;
-                        MinMana = tuple.cost;
+                        MinMana = cost;
                         break;
                     case PowerType.Rage:
                         oldValue = MinRage;
-                        MinRage = tuple.cost;
+                        MinRage = cost;
                         break;
                     case PowerType.Energy:
                         oldValue = MinEnergy;
-                        MinEnergy = tuple.cost;
+                        MinEnergy = cost;
                         break;
                 }
 
@@ -265,7 +241,7 @@ namespace Core
                     formCost = playerReader.FormCost[FormEnum];
                 }
 
-                logger.LogInformation($"[{Name}] Update {tuple.Item1} cost to {tuple.Item2} from {oldValue}" + (formCost > 0 ? $" +{formCost} Mana to change {FormEnum} Form" : ""));
+                logger.LogInformation($"[{Name}] Update {type} cost to {cost} from {oldValue}" + (formCost > 0 ? $" +{formCost} Mana to change {FormEnum} Form" : ""));
             }
 
             actionBarCostReader.OnActionCostChanged -= ActionBarCostReader_OnActionCostChanged;
@@ -274,47 +250,44 @@ namespace Core
 
         private void ActionBarCostReader_OnActionCostChanged(object sender, ActionBarCostEventArgs e)
         {
-            if (playerReader == null) return;
+            if (!KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot)) return;
 
-            if (KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot))
+            if (slot <= 12)
             {
-                if (slot <= 12)
+                slot += Stance.RuntimeSlotToActionBar(this, playerReader, slot);
+            }
+
+            if (slot == e.index)
+            {
+                int oldValue = 0;
+                switch (e.powerType)
                 {
-                    slot += Stance.RuntimeSlotToActionBar(this, playerReader, slot);
+                    case PowerType.Mana:
+                        oldValue = MinMana;
+                        MinMana = e.cost;
+                        break;
+                    case PowerType.Rage:
+                        oldValue = MinRage;
+                        MinRage = e.cost;
+                        break;
+                    case PowerType.Energy:
+                        oldValue = MinEnergy;
+                        MinEnergy = e.cost;
+                        break;
                 }
 
-                if (slot == e.index)
+                if (e.cost != oldValue)
                 {
-                    int oldValue = 0;
-                    switch (e.powerType)
-                    {
-                        case PowerType.Mana:
-                            oldValue = MinMana;
-                            MinMana = e.cost;
-                            break;
-                        case PowerType.Rage:
-                            oldValue = MinRage;
-                            MinRage = e.cost;
-                            break;
-                        case PowerType.Energy:
-                            oldValue = MinEnergy;
-                            MinEnergy = e.cost;
-                            break;
-                    }
-
-                    if (e.cost != oldValue)
-                    {
-                        logger.LogInformation($"[{Name}] Update {e.powerType} cost to {e.cost} from {oldValue}");
-                    }
+                    logger.LogInformation($"[{Name}] Update {e.powerType} cost to {e.cost} from {oldValue}");
                 }
             }
         }
 
         public void LogInformation(string message)
         {
-            if (this.Log)
+            if (Log)
             {
-                logger.LogInformation($"{this.Name}: {message}");
+                logger.LogInformation($"{Name}: {message}");
             }
         }
     }
