@@ -5,6 +5,7 @@
 <div class="card" style="margin-top: 10px">
     <div class="card-header">
         Goals -> @addonReader.PlayerReader.MinRange - @addonReader.PlayerReader.MaxRange
+        | Expand <input type="checkbox" @bind="@Expand" />
         <span class="float-right">Update: @addonReader.AvgUpdateLatency.ToString("0.00") ms</span>
     </div>
     @if (ShowGoals)
@@ -15,7 +16,7 @@
                 {
                     foreach (var goal in botController.GoapAgent.AvailableGoals)
                     {
-                        <GoapGoalView goal="goal" IsSelected="(goal == botController.GoapAgent.CurrentGoal)" ShowKeys="true" />
+                        <GoapGoalView goal="goal" IsSelected="(goal == botController.GoapAgent.CurrentGoal)" Expand="@(Expand || goal.GetType().Name == "ParallelGoal")" />
                     }
                 }
             </table>
@@ -28,6 +29,8 @@
 
     [Parameter]
     public bool ShowGoals { get; set; } = true;
+
+    public bool Expand { get; set; } = false;
 
     protected override void OnInitialized()
     {
