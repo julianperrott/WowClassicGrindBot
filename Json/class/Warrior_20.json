@@ -1,0 +1,137 @@
+{
+  "ClassName": "Warrior",
+  "PathFilename": "_pack\\1-20\\Human\\18-20_Duskwood_The Darkened Bank - wolves spiders.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Bloodrage",
+        "Key": "8",
+        "WhenUsable": true,
+        "Requirement": "Health% > 50"
+      },
+      {
+        "Name": "Throw",
+        "Key": "9",
+        "HasCastbar": true,
+        "WhenUsable": true,
+        "WaitForWithinMeleeRange": true,
+        "CastIfAddsVisible": true,
+        "Requirements": ["HasRangedWeapon && !Items Broken && SpellInRange:3"]
+      },
+      {
+        "Name": "Charge",
+        "Key": "3",
+        "WhenUsable": true,
+        "Requirement": "SpellInRange:0",
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "StopAttack",
+        "DelayBeforeCast": 30,
+        "Requirements": ["Battle Shout && AutoAttacking && Rage >= Cost_Heroic Strike"],
+        "DelayAfterCast": 50
+      },
+      {
+        "Name": "Approach",
+        "Requirements": ["!Battle Shout && Rage < Cost_Heroic Strike"],
+        "Log": false
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Retaliation",
+        "Key": "N1",
+        "WhenUsable": true,
+        "Requirement": "MobCount > 1"
+      },
+      {
+        "Name": "Thunder Clap",
+        "Key": "6",
+        "WhenUsable": true,
+        "MinRage": 20,
+        "Cooldown": 14000,
+        "Requirements": ["!Thunder Clap && MobCount > 1"],
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "Overpower",
+        "Key": "0",
+        "WhenUsable": true,
+        "MinRage": 5
+      },
+      {
+        "Name": "Cleave",
+        "Key": "1",
+        "WhenUsable": true,
+        "MinRage": 20,
+        "Requirements": ["!Charge Stun && MainHandSwing > -400", "MobCount > 1"],
+        "AfterCastWaitNextSwing": true
+      },
+      {
+        "Name": "Heroic Strike",
+        "Key": "2",
+        "WhenUsable": true,
+        "MinRage": 15,
+        "Requirements": ["!Charge Stun && MainHandSwing > -400", "MobCount < 2"],
+        "AfterCastWaitNextSwing": true
+      },
+      {
+        "Name": "Rend",
+        "Key": "5",
+        "WhenUsable": true,
+        "MinRage": 10,
+        "Requirements": ["!Charge Stun && TargetHealth% > 50", "!Rend"],
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": ["InMeleeRange", "!Charge Stun", "!AutoAttacking"]
+      },
+      {
+        "Name": "Approach",
+        "Requirement": "!Charge Stun",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Cost": 3.1,
+        "Name": "Battle Shout",
+        "Key": "4",
+        "InCombat": "i dont care",
+        "WhenUsable": true,
+        "MinRage": 10,
+        "Requirement": "!Battle Shout",
+        "AfterCastWaitBuff": true
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 40",
+        "Cost": 3
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "10_Loch_Modan_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirement": "BagFull",
+        "PathFilename": "10_Loch_Modan_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}
