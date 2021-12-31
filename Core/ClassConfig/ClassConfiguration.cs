@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -146,6 +146,7 @@ namespace Core
             Interact.WaitForGCD = false;
             Interact.DelayAfterCast = 0;
             Interact.PressDuration = 30;
+            Interact.SkipValidation = true;
             Interact.Initialise(addonReader, requirementFactory, logger);
 
             Approach.Key = InteractKey;
@@ -154,17 +155,20 @@ namespace Core
             Approach.DelayAfterCast = 0;
             Approach.PressDuration = 10;
             Approach.Cooldown = 150;
+            Approach.SkipValidation = true;
             Approach.Initialise(addonReader, requirementFactory, logger);
 
             AutoAttack.Key = InteractKey;
             AutoAttack.Name = "AutoAttack";
             AutoAttack.WaitForGCD = false;
             AutoAttack.DelayAfterCast = 0;
+            AutoAttack.SkipValidation = true;
             AutoAttack.Initialise(addonReader, requirementFactory, logger);
 
             StopAttack.Name = "StopAttack";
             StopAttack.WaitForGCD = false;
             StopAttack.PressDuration = 20;
+            StopAttack.SkipValidation = true;
 
             InitializeKeyActions(Pull, Interact, Approach, AutoAttack, StopAttack);
             InitializeKeyActions(Combat, Interact, Approach, AutoAttack, StopAttack);

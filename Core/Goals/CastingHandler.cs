@@ -1,4 +1,4 @@
-using SharedLib.NpcFinder;
+﻿using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -102,6 +102,12 @@ namespace Core.Goals
 
             await PressKeyAction(item);
 
+            if (item.SkipValidation)
+            {
+                item.LogInformation($" ... instant skip validation");
+                return true;
+            }
+
             bool inputNotHappened;
             double inputElapsedMs;
 
@@ -169,6 +175,12 @@ namespace Core.Goals
 
             await PressKeyAction(item);
 
+            if (item.SkipValidation)
+            {
+                item.LogInformation($" ... castbar skip validation");
+                return true;
+            }
+
             (bool input, double inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
                 interrupt: () =>
                 beforeCastEventValue != playerReader.CastEvent.Value ||
@@ -221,15 +233,6 @@ namespace Core.Goals
 
         public async ValueTask<bool> Cast(KeyAction item, int sleepBeforeCast)
         {
-            if (item.Name == classConfig.Approach.Name ||
-                item.Name == classConfig.AutoAttack.Name ||
-                item.Name == classConfig.Interact.Name ||
-                item.Name == classConfig.StopAttack.Name)
-            {
-                await PressKeyAction(item);
-                return true;
-            }
-
             if (item.HasFormRequirement() && playerReader.Form != item.FormEnum)
             {
                 bool beforeUsable = addonReader.UsableAction.Is(item);
@@ -344,7 +347,7 @@ namespace Core.Goals
                     (bool firstReq, double firstReqElapsedMs) = await wait.InterruptTask(SpellQueueTimeMs,
                         () => !item.CanRun()
                     );
-                    item.LogInformation($" ... instant interrupt: {!firstReq} | CanRun:{item.CanRun()} | Delay: {firstReqElapsedMs}ms");
+                    item.LogInformation($" ... instant interrupt: {!firstReq} | CanRun: {item.CanRun()} | Delay: {firstReqElapsedMs}ms");
                 }
             }
 
