@@ -122,7 +122,7 @@ namespace Core
 
             ConsoleKeyFormHash = ((int)FormEnum * 1000) + (int)ConsoleKey;
 
-            UpdateMinResourceRequirement(playerReader, addonReader.ActionBarCostReader);
+            InitialiseMinResourceRequirement(playerReader, addonReader.ActionBarCostReader);
 
             requirementFactory.InitialiseRequirements(this, keyActions);
         }
@@ -213,7 +213,7 @@ namespace Core
             return !string.IsNullOrEmpty(Form);
         }
 
-        private void UpdateMinResourceRequirement(PlayerReader playerReader, ActionBarCostReader actionBarCostReader)
+        private void InitialiseMinResourceRequirement(PlayerReader playerReader, ActionBarCostReader actionBarCostReader)
         {
             var (type, cost) = actionBarCostReader.GetCostByActionBarSlot(playerReader, this);
             if (cost != 0)
