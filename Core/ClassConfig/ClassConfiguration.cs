@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -224,23 +224,35 @@ namespace Core
             }
         }
 
-        private static void InitializeKeyActions(KeyActions keyActions, params KeyAction[] listKeyAction)
+        private static void InitializeKeyActions(KeyActions userActions, params KeyAction[] defaultActions)
         {
-            var list = listKeyAction.ToList();
-            keyActions.Sequence.ForEach(a =>
+            KeyAction dummyDefault = new KeyAction();
+            var defaults = defaultActions.ToList();
+
+            userActions.Sequence.ForEach(user =>
             {
-                list.ForEach(l =>
+                defaults.ForEach(@default =>
                 {
-                    if (a.Name == l.Name)
+                    if (user.Name == @default.Name)
                     {
-                        a.Key = l.Key;
-                        a.DelayAfterCast = l.DelayAfterCast;
-                        a.WaitForGCD = l.WaitForGCD;
-                        a.PressDuration = l.PressDuration;
-                        if (!string.IsNullOrEmpty(l.Requirement))
-                            a.Requirement += " " + l.Requirement;
-                        a.Requirements.AddRange(l.Requirements);
-                        a.Cooldown = l.Cooldown;
+                        user.Key = @default.Key;
+                        user.WaitForGCD = @default.WaitForGCD;
+
+                        //if (!string.IsNullOrEmpty(@default.Requirement))
+                        //    user.Requirement += " " + @default.Requirement;
+                        //user.Requirements.AddRange(@default.Requirements);
+
+                        if (user.DelayAfterCast == dummyDefault.DelayAfterCast)
+                            user.DelayAfterCast = @default.DelayAfterCast;
+
+                        if (user.DelayAfterCast == dummyDefault.DelayAfterCast)
+                            user.PressDuration = @default.PressDuration;
+
+                        if (user.Cooldown == dummyDefault.Cooldown)
+                            user.Cooldown = @default.Cooldown;
+
+                        if (user.SkipValidation == dummyDefault.SkipValidation)
+                            user.SkipValidation = @default.SkipValidation;
                     }
                 });
             });
