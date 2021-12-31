@@ -1,4 +1,4 @@
-﻿using SharedLib.NpcFinder;
+using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -403,8 +403,8 @@ namespace Core.Goals
 
             await PressKeyAction(classConfig.Form[index]);
 
-            (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => beforeForm != playerReader.Form);
-            item.LogInformation($" ... form changed: {!notChanged} | Delay: {elapsedMs}ms");
+            (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => playerReader.Form == item.FormEnum);
+            item.LogInformation($" ... form changed: {!notChanged} | {beforeForm} -> {playerReader.Form} | Delay: {elapsedMs}ms");
 
             return playerReader.Form == item.FormEnum;
         }

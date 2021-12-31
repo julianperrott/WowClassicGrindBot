@@ -1,4 +1,4 @@
-﻿using Core.Goals;
+using Core.Goals;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
@@ -38,10 +38,10 @@ namespace Core
             if (playerReader.Class == PlayerClassEnum.Druid)
             {
                 int index = classConfig.Form.FindIndex(s => s.FormEnum == Form.Druid_Travel);
-                if (index > -1)
+                if (index > -1 &&
+                    await castingHandler.SwitchForm(playerReader.Form, classConfig.Form[index]))
                 {
-                    if (await castingHandler.SwitchForm(playerReader.Form, classConfig.Form[index]))
-                        return;
+                    return;
                 }
             }
 
