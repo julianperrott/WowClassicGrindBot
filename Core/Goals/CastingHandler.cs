@@ -75,8 +75,7 @@ namespace Core.Goals
         private async ValueTask PressKeyAction(KeyAction item)
         {
             playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-
-            await PressKey(item.ConsoleKey, item.Log ? item.Name + (item.AfterCastWaitNextSwing ? " and wait for next swing!" : "") : string.Empty, item.PressDuration);
+            await input.KeyPress(item.ConsoleKey, item.PressDuration, item.Log ? item.Name + (item.AfterCastWaitNextSwing ? " and wait for next swing!" : "") : string.Empty);
             item.SetClicked();
         }
 
@@ -236,7 +235,7 @@ namespace Core.Goals
                 bool beforeUsable = addonReader.UsableAction.Is(item);
                 var beforeForm = playerReader.Form;
 
-                if (!await SwitchToCorrectStanceForm(beforeForm, item))
+                if (!await SwitchForm(beforeForm, item))
                 {
                     return false;
                 }
@@ -393,7 +392,7 @@ namespace Core.Goals
             return true;
         }
 
-        public async ValueTask<bool> SwitchToCorrectStanceForm(Form beforeForm, KeyAction item)
+        public async ValueTask<bool> SwitchForm(Form beforeForm, KeyAction item)
         {
             int index = classConfig.Form.FindIndex(x => x.FormEnum == item.FormEnum);
             if (index == -1)
@@ -402,19 +401,12 @@ namespace Core.Goals
                 return false;
             }
 
-            KeyAction formKeyAction = classConfig.Form[index];
+            await PressKeyAction(classConfig.Form[index]);
 
-            await input.KeyPress(formKeyAction.ConsoleKey, formKeyAction.PressDuration);
             (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => beforeForm != playerReader.Form);
             item.LogInformation($" ... form changed: {!notChanged} | Delay: {elapsedMs}ms");
 
-
             return playerReader.Form == item.FormEnum;
-        }
-
-        public async ValueTask PressKey(ConsoleKey key, string description = "", int duration = 50)
-        {
-            await input.KeyPress(key, duration, description);
         }
 
         public async ValueTask ReactToLastUIErrorMessage(string source)

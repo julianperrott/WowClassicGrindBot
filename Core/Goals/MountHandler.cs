@@ -40,7 +40,7 @@ namespace Core
                 int index = classConfig.Form.FindIndex(s => s.FormEnum == Form.Druid_Travel);
                 if (index > -1)
                 {
-                    await castingHandler.SwitchToCorrectStanceForm(playerReader.Form, classConfig.Form[index]);
+                    await castingHandler.SwitchForm(playerReader.Form, classConfig.Form[index]);
                 }
             }
             else
