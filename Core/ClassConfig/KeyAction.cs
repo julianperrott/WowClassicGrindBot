@@ -41,6 +41,8 @@ namespace Core
 
         public bool WaitForGCD { get; set; } = true;
 
+        public bool SkipValidation { get; set; } = false;
+
         public bool AfterCastWaitBuff = false;
 
         public bool AfterCastWaitNextSwing = false;

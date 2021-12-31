@@ -351,6 +351,7 @@ Can specify conditions with `Requirement(s)` in order to create a matching actio
 | Requirements | A list of "Requirements" which must be true | |
 | WaitForWithinMeleeRange | `PullGoal` only - After casting wait for the mob to be in melee range. Will be repeated until the conditions are met | `false` |
 | WaitForGCD | Indicates should wait for the GCD | `true` |
+| SkipValidation | After button press, skip awaiting in-game effect | `false` |
 | ResetOnNewTarget | Reset the cooldown if the target changes | `false` |
 | Log | Write to the log when this key is evaluated | `true` |
 | DelayBeforeCast | A delay in milliseconds before this spell is cast | `0` |

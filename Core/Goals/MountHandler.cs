@@ -1,4 +1,4 @@
-using Core.Goals;
+﻿using Core.Goals;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
