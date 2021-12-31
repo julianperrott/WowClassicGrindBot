@@ -9,7 +9,7 @@
         {
             <span class="badge @Badge(item)">@item.Key</span>
         }
-        @if (this.goal.Keys.Count == 1 && this.goal.GetType().Name != "GenericPullGoal")
+        @if (this.goal.Keys.Count == 1)
         {
             @foreach (var requirement in this.goal.Keys[0].RequirementObjects)
             {
@@ -21,7 +21,7 @@
         }
     </td>
 </tr>
-@if ((this.goal.Keys.Count > 1 || this.goal.GetType().Name == "GenericPullGoal") && ShowKeys && (this.IsSelected || this.goal.GetType().Name == "ParallelGoal"))
+@if (this.goal.Keys.Count > 1 && (this.IsSelected || this.Expand))
 {
     <tr>
         <td colspan="2" style="padding-top: 0 !important; padding-bottom: 0 !important; border-top: 0 !important;">
@@ -59,7 +59,7 @@
     public bool IsSelected { get; set; }
 
     [Parameter]
-    public bool ShowKeys { get; set; } = false;
+    public bool Expand { get; set; } = false;
 
     [Parameter]
     public Core.Goals.GoapGoal goal { get; set; } = new Core.Goals.NullGoal();

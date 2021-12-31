@@ -46,7 +46,7 @@ namespace Core.Goals
             this.stopMoving = stopMoving;
         }
 
-        protected bool CanRun(KeyAction item)
+        public bool CanRun(KeyAction item)
         {
             if (!string.IsNullOrEmpty(item.CastIfAddsVisible))
             {
@@ -62,44 +62,20 @@ namespace Core.Goals
                 }
             }
 
-            if(item.School != SchoolMask.None)
+            if (item.School != SchoolMask.None &&
+                classConfig.ImmunityBlacklist.TryGetValue(playerReader.TargetId, out var list) &&
+                list.Contains(item.School))
             {
-                if(classConfig.ImmunityBlacklist.TryGetValue(playerReader.TargetId, out var list))
-                {
-                    if(list.Contains(item.School))
-                    {
-                        return false;
-                    }
-                }
+                return false;
             }
 
             return item.CanRun();
         }
 
-        protected async ValueTask PressCastKeyAndWaitForCastToEnd(ConsoleKey key, int maxWaitMs)
-        {
-            await PressKey(key);
-            if (!this.playerReader.IsCasting)
-            {
-                // try again
-                await PressKey(key);
-            }
-
-            for (int i = 0; i < maxWaitMs; i += 100)
-            {
-                if (!this.playerReader.IsCasting)
-                {
-                    return;
-                }
-                await Task.Delay(100);
-            }
-        }
-
         private async ValueTask PressKeyAction(KeyAction item)
         {
             playerReader.LastUIErrorMessage = UI_ERROR.NONE;
-
-            await PressKey(item.ConsoleKey, item.Log ? item.Name + (item.AfterCastWaitNextSwing ? " and wait for next swing!" : "") : string.Empty, item.PressDuration);
+            await input.KeyPress(item.ConsoleKey, item.PressDuration, item.Log ? item.Name + (item.AfterCastWaitNextSwing ? " and wait for next swing!" : "") : string.Empty);
             item.SetClicked();
         }
 
@@ -125,6 +101,12 @@ namespace Core.Goals
             bool beforeUsable = addonReader.UsableAction.Is(item);
 
             await PressKeyAction(item);
+
+            if (item.SkipValidation)
+            {
+                item.LogInformation($" ... instant skip validation");
+                return true;
+            }
 
             bool inputNotHappened;
             double inputElapsedMs;
@@ -193,6 +175,12 @@ namespace Core.Goals
 
             await PressKeyAction(item);
 
+            if (item.SkipValidation)
+            {
+                item.LogInformation($" ... castbar skip validation");
+                return true;
+            }
+
             (bool input, double inputElapsedMs) = await wait.InterruptTask(MaxWaitCastTimeMs,
                 interrupt: () =>
                 beforeCastEventValue != playerReader.CastEvent.Value ||
@@ -233,39 +221,34 @@ namespace Core.Goals
             return true;
         }
 
-        public async ValueTask<bool> CastIfReady(KeyAction item, int sleepBeforeCast = 0)
+        public async ValueTask<bool> CastIfReady(KeyAction item, int sleepBeforeCast)
         {
             if (!CanRun(item))
             {
                 return false;
             }
 
-            if (item.ConsoleKey == 0)
-            {
-                return false;
-            }
+            return await Cast(item, sleepBeforeCast);
+        }
 
-            if (item.Name == classConfig.Approach.Name ||
-                item.Name == classConfig.AutoAttack.Name ||
-                item.Name == classConfig.Interact.Name ||
-                item.Name == classConfig.StopAttack.Name)
+        public async ValueTask<bool> Cast(KeyAction item, int sleepBeforeCast)
+        {
+            if (item.HasFormRequirement() && playerReader.Form != item.FormEnum)
             {
-                await PressKeyAction(item);
-                return true;
-            }
+                bool beforeUsable = addonReader.UsableAction.Is(item);
+                var beforeForm = playerReader.Form;
 
-            bool beforeUsable = addonReader.UsableAction.Is(item);
-            var beforeForm = playerReader.Form;
+                if (!await SwitchForm(beforeForm, item))
+                {
+                    return false;
+                }
 
-            if (!await SwitchToCorrectStanceForm(beforeForm, item))
-            {
-                return false;
-            }
-
-            if (beforeForm != playerReader.Form && !beforeUsable && !addonReader.UsableAction.Is(item))
-            {
-                item.LogInformation(" ... after Form switch still not usable!");
-                return false;
+                //TODO: upon form change and GCD - have to check Usable state
+                if (beforeForm != playerReader.Form && !beforeUsable && !addonReader.UsableAction.Is(item))
+                {
+                    item.LogInformation($" ... after switch {beforeForm}->{playerReader.Form} still not usable!");
+                    return false;
+                }
             }
 
             if (playerReader.Bits.IsAutoRepeatSpellOn_Shoot)
@@ -273,14 +256,6 @@ namespace Core.Goals
                 await input.TapStopAttack("Stop AutoRepeat Shoot");
                 await input.TapStopAttack("Stop AutoRepeat Shoot");
                 await wait.Update(1);
-
-                (bool interrupted, double elapsedMs) = await wait.InterruptTask(GCD, 
-                    () => addonReader.UsableAction.Is(item));
-
-                if (!interrupted)
-                {
-                    item.LogInformation($" ... waited to end Shoot {elapsedMs}ms");
-                }
             }
 
             if (sleepBeforeCast > 0)
@@ -300,8 +275,7 @@ namespace Core.Goals
             bool beforeHasTarget = playerReader.HasTarget;
             int auraHash = playerReader.AuraCount.Hash;
 
-
-            if (!await WaitForGCD(item, beforeHasTarget))
+            if (item.WaitForGCD && !await WaitForGCD(item, beforeHasTarget))
             {
                 return false;
             }
@@ -373,7 +347,7 @@ namespace Core.Goals
                     (bool firstReq, double firstReqElapsedMs) = await wait.InterruptTask(SpellQueueTimeMs,
                         () => !item.CanRun()
                     );
-                    item.LogInformation($" ... instant interrupt: {!firstReq} | CanRun:{item.CanRun()} | Delay: {firstReqElapsedMs}ms");
+                    item.LogInformation($" ... instant interrupt: {!firstReq} | CanRun: {item.CanRun()} | Delay: {firstReqElapsedMs}ms");
                 }
             }
 
@@ -400,64 +374,42 @@ namespace Core.Goals
 
         private async ValueTask<bool> WaitForGCD(KeyAction item, bool beforeHasTarget)
         {
-            if (item.WaitForGCD)
-            {
-                (bool gcd, double gcdElapsedMs) = await wait.InterruptTask(GCD,
-                    () => addonReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
-                if (!gcd)
-                {
-                    item.LogInformation($" ... gcd interrupted {gcdElapsedMs}ms");
+            (bool interrupted, double elapsedMs) = await wait.InterruptTask(GCD,
+                () => addonReader.UsableAction.Is(item) || beforeHasTarget != playerReader.HasTarget);
 
-                    if (beforeHasTarget != playerReader.HasTarget)
-                    {
-                        item.LogInformation($" ... lost target!");
-                        return false;
-                    }
-                }
-                else
+            if (!interrupted)
+            {
+                item.LogInformation($" ... gcd interrupted {elapsedMs}ms");
+
+                if (beforeHasTarget != playerReader.HasTarget)
                 {
-                    item.LogInformation($" ... gcd fully waited {gcdElapsedMs}ms");
+                    item.LogInformation($" ... lost target!");
+                    return false;
                 }
+            }
+            else
+            {
+                item.LogInformation($" ... gcd fully waited {elapsedMs}ms");
             }
 
             return true;
         }
 
-        public async ValueTask<bool> SwitchToCorrectStanceForm(Form beforeForm, KeyAction item)
+        public async ValueTask<bool> SwitchForm(Form beforeForm, KeyAction item)
         {
-            if (string.IsNullOrEmpty(item.Form))
-                return true;
-
-            if (playerReader.Form == item.FormEnum)
-            {
-                return true;
-            }
-
             int index = classConfig.Form.FindIndex(x => x.FormEnum == item.FormEnum);
             if (index == -1)
             {
-                logger.LogWarning($"Unable to find key in Form to transform into {item.FormEnum}");
+                logger.LogWarning($"Unable to find Key in ClassConfig.Form to transform into {item.FormEnum}");
                 return false;
             }
 
-            KeyAction formKeyAction = classConfig.Form[index];
+            await PressKeyAction(classConfig.Form[index]);
 
-            await input.KeyPress(formKeyAction.ConsoleKey, formKeyAction.PressDuration);
-            (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => beforeForm != playerReader.Form);
-            item.LogInformation($" ... form changed: {!notChanged} | Delay: {elapsedMs}ms");
-
-            if (playerReader.Form == Form.None)
-            {
-                item.LogInformation($" ... wait for GCD after form change {beforeForm}->{playerReader.Form}!");
-                await WaitForGCD(item, playerReader.HasTarget);
-            }
+            (bool notChanged, double elapsedMs) = await wait.InterruptTask(SpellQueueTimeMs, () => playerReader.Form == item.FormEnum);
+            item.LogInformation($" ... form changed: {!notChanged} | {beforeForm} -> {playerReader.Form} | Delay: {elapsedMs}ms");
 
             return playerReader.Form == item.FormEnum;
-        }
-
-        public async ValueTask PressKey(ConsoleKey key, string description = "", int duration = 50)
-        {
-            await input.KeyPress(key, duration, description);
         }
 
         public async ValueTask ReactToLastUIErrorMessage(string source)

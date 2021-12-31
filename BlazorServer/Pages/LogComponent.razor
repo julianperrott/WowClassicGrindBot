@@ -27,7 +27,7 @@
 </style>
 
 <table class="table table-borderless table-dark" cellspacing="20">
-    @foreach (var evt in LoggerSink.Log.AsEnumerable().Reverse())
+    @foreach (var evt in LoggerSink.Log.Reverse())
     {
         var cls = string.Empty;
         switch (evt.Level)

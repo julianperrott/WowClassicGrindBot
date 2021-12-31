@@ -38,38 +38,37 @@ namespace Core
             if (playerReader.Class == PlayerClassEnum.Druid)
             {
                 int index = classConfig.Form.FindIndex(s => s.FormEnum == Form.Druid_Travel);
-                if (index > -1)
+                if (index > -1 &&
+                    await castingHandler.SwitchForm(playerReader.Form, classConfig.Form[index]))
                 {
-                    await castingHandler.SwitchToCorrectStanceForm(playerReader.Form, classConfig.Form[index]);
+                    return;
                 }
             }
-            else
+
+            if (playerReader.Bits.IsFalling)
             {
-                if (playerReader.Bits.IsFalling)
-                {
-                    (bool notfalling, double fallingElapsedMs) = await wait.InterruptTask(10000, () => !playerReader.Bits.IsFalling);
-                    logger.LogInformation($"{GetType().Name}: waited for landing interrupted: {!notfalling} - {fallingElapsedMs}ms");
-                }
+                (bool notfalling, double fallingElapsedMs) = await wait.InterruptTask(10000, () => !playerReader.Bits.IsFalling);
+                Log($"{GetType().Name}: waited for landing interrupted: {!notfalling} - {fallingElapsedMs}ms");
+            }
 
-                await stopMoving.Stop();
-                await wait.Update(1);
+            await stopMoving.Stop();
+            await wait.Update(1);
 
-                await input.TapMount();
+            await input.TapMount();
 
-                (bool notStartedCasted, double castStartElapsedMs) = await wait.InterruptTask(400, () => playerReader.Bits.IsMounted || playerReader.IsCasting);
-                logger.LogInformation($"{GetType().Name}: casting: {!notStartedCasted} | Mounted: {playerReader.Bits.IsMounted} | Delay: {castStartElapsedMs}ms");
+            (bool notStartedCasted, double castStartElapsedMs) = await wait.InterruptTask(400, () => playerReader.Bits.IsMounted || playerReader.IsCasting);
+            Log($"{GetType().Name}: casting: {!notStartedCasted} | Mounted: {playerReader.Bits.IsMounted} | Delay: {castStartElapsedMs}ms");
 
-                if (!playerReader.Bits.IsMounted)
-                {
-                    (bool notmounted, double elapsedMs) = await wait.InterruptTask(mountCastTimeMs, () => playerReader.Bits.IsMounted || !playerReader.IsCasting);
-                    logger.LogInformation($"{GetType().Name}: interrupted: {!notmounted} | Mounted: {playerReader.Bits.IsMounted} | Delay: {elapsedMs}ms");
-                }
+            if (!playerReader.Bits.IsMounted)
+            {
+                (bool notmounted, double elapsedMs) = await wait.InterruptTask(mountCastTimeMs, () => playerReader.Bits.IsMounted || !playerReader.IsCasting);
+                Log($"{GetType().Name}: interrupted: {!notmounted} | Mounted: {playerReader.Bits.IsMounted} | Delay: {elapsedMs}ms");
             }
         }
 
         public async ValueTask Dismount()
         {
-            if (playerReader.Class == PlayerClassEnum.Druid && playerReader.Form == Form.Druid_Travel)
+            if (playerReader.Form == Form.Druid_Travel)
             {
                 int index = classConfig.Form.FindIndex(s => s.FormEnum == Form.Druid_Travel);
                 if (index > -1)
