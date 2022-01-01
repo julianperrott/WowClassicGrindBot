@@ -94,6 +94,7 @@ function CreatePlayerBuffList()
         DataToColor.S.playerBuffs[13] = { "Prowl", [132089]=1 }
         DataToColor.S.playerBuffs[14] = { "Rejuvenation", [136081]=1 }
         DataToColor.S.playerBuffs[15] = { "Regrowth", [136085]=1 }
+        DataToColor.S.playerBuffs[16] = { "Omen of Clarity", [136017]=1 }
     elseif DataToColor.C.CHARACTER_CLASS == "PALADIN" then
         DataToColor.S.playerBuffs[5] = { "Seal of Righteousness", [132325]=1 }
         DataToColor.S.playerBuffs[6] = { "Seal of the Crusader", [135924]=1 }

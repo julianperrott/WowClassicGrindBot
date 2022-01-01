@@ -27,6 +27,7 @@
         public bool Prowl => IsBitSet(13);
         public bool Rejuvenation => IsBitSet(14);
         public bool Regrowth => IsBitSet(15);
+        public bool OmenOfClarity => IsBitSet(16);
 
         // Paladin
         public bool SealofRighteousness => IsBitSet(5);
