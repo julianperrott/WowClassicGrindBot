@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Database;
 using Core.Session;
 using SharedLib;
 using Game;
@@ -157,9 +156,16 @@ namespace Core
             {
                 if ((DateTime.Now - lastScreenshot).TotalMilliseconds > screenshotTickMs)
                 {
-                    this.WowScreen.UpdateScreenshot();
-                    this.npcNameFinder.Update();
-                    this.WowScreen.PostProcess();
+                    if (this.WowScreen.Enabled)
+                    {
+                        this.WowScreen.UpdateScreenshot();
+                        this.npcNameFinder.Update();
+                        this.WowScreen.PostProcess();
+                    }
+                    else
+                    {
+                        this.npcNameFinder.FakeUpdate();
+                    }
 
                     lastScreenshot = DateTime.Now;
                 }

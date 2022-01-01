@@ -25,6 +25,10 @@ namespace Game
 
         public int Size { get; set; } = 1024;
 
+        public bool Enabled { get; set; } = true;
+
+        public bool EnablePostProcess { get; set; } = true;
+
         public DirectBitmap DirectBitmap
         {
             get
@@ -55,12 +59,14 @@ namespace Game
 
         public void PostProcess()
         {
-            var bitmap = DirectBitmap.Bitmap;
-            using (var gr = Graphics.FromImage(bitmap))
+            if (!EnablePostProcess)
+                return;
+
+            using (var gr = Graphics.FromImage(DirectBitmap.Bitmap))
             {
                 using (var blackPen = new SolidBrush(Color.Black))
                 {
-                    gr.FillRectangle(blackPen, new Rectangle(new Point(bitmap.Width / 15, bitmap.Height / 40), new Size(bitmap.Width / 15, bitmap.Height / 40)));
+                    gr.FillRectangle(blackPen, new Rectangle(new Point(DirectBitmap.Bitmap.Width / 15, DirectBitmap.Bitmap.Height / 40), new Size(DirectBitmap.Bitmap.Width / 15, DirectBitmap.Bitmap.Height / 40)));
                 }
 
                 drawActions.ForEach(x => x(gr));

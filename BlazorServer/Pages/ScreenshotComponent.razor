@@ -1,12 +1,11 @@
 ﻿@inject Core.IBotController botController
 
 <div class="@(Stretch ? "w-100 h-auto m-0 p-0" : "")">
-    <div class="row">
-        <img class="@(Stretch ? "img-fluid w-100" : "")" src="data:image/png;base64, @image" alt="Red dot" />
+    <div class="row" @onclick="Toggle">
+        <img class="@(Stretch ? "img-fluid w-100" : "")" src="data:image/png;base64, @image" alt="dot" />
     </div>
 </div>
 
-@using SharedLib;
 @using Game;
 @code {
 
@@ -16,8 +15,11 @@
     [Parameter]
     public bool Stretch { get; set; } = false;
 
-    string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
-    string eventTime = "";
+    private bool Enabled { get; set; } = true;
+
+    const string defaultImage = "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAGklEQVR42mM0NTH5z0AmYBzVPKp5VDOVNQMA2VMYNGMHmqcAAAAASUVORK5CYII=";
+
+    string image = defaultImage;
 
     protected override void OnInitialized()
     {
@@ -35,10 +37,24 @@
         }
     }
 
+    protected async void Toggle()
+    {
+        if (Enabled)
+        {
+            image = defaultImage;
+        }
+
+        this.botController.WowScreen.EnablePostProcess = !this.botController.WowScreen.EnablePostProcess;
+
+        await InvokeAsync(() =>
+        {
+            base.StateHasChanged();
+        });
+    }
+
     private async void ImageChanged(object sender, ScreenChangeEventArgs args)
     {
         this.image = args.Screenshot;
-        this.eventTime = args.EventTime.ToString("HH:mm:ss");
 
         await InvokeAsync(() =>
         {

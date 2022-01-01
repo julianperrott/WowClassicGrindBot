@@ -146,6 +146,15 @@ namespace SharedLib.NpcFinder
             Sequence++;
         }
 
+        public void FakeUpdate()
+        {
+            npcNameLine.Clear();
+            npcs.Clear();
+            Npcs.Clear();
+
+            Sequence++;
+        }
+
         public void UpdatePotentialAddsExist()
         {
             TargetCount = Npcs.Where(c => !c.IsAdd && Math.Abs(c.ClickPoint.X - c.screenMid) < c.screenTargetBuffer).Count();
