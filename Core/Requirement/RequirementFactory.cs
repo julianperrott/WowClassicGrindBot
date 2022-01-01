@@ -124,6 +124,7 @@ namespace Core
                 { "Prowl", ()=> playerReader.Buffs.Prowl },
                 { "Rejuvenation", ()=> playerReader.Buffs.Rejuvenation },
                 { "Regrowth", ()=> playerReader.Buffs.Regrowth },
+                { "Omen of Clarity", ()=> playerReader.Buffs.OmenOfClarity },
 
                 // Paladin
                 { "Concentration Aura", ()=> playerReader.Form == Form.Paladin_Concentration_Aura },
