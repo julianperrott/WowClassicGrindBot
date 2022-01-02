@@ -4,10 +4,10 @@ using System.Drawing;
 
 namespace SharedLib.NpcFinder
 {
-    public class NpcPosition
+    public struct NpcPosition
     {
-        public Point Min { get; set; }
-        public Point Max { get; set; }
+        public Point Min;
+        public Point Max;
 
         public int Height => Max.Y - Min.Y;
         public int Width => Max.X - Min.X;
