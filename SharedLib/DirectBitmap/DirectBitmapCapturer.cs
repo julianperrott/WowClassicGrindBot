@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace SharedLib
 {
-    public sealed class DirectBitmapCapturer : IDirectBitmapProvider, IColorReader, IDisposable
+    public sealed class DirectBitmapCapturer : IDirectBitmapProvider, IBitmapProvider, IColorReader, IDisposable
     {
         private DirectBitmap directBitmap;
         public DirectBitmap DirectBitmap
@@ -20,19 +20,18 @@ namespace SharedLib
         }
 
         private Rectangle rect;
-        public Rectangle Rect 
+        public Rectangle Rect
         {
-            get 
-            { 
-                return rect; 
-            }
+            get => rect;
 
             set
             {
                 directBitmap?.Dispose();
                 rect = value;
-            }  
+            }
         }
+
+        public Bitmap Bitmap => DirectBitmap.Bitmap;
 
         public DirectBitmapCapturer(Rectangle rect)
         {
