@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SharedLib
+﻿namespace SharedLib
 {
     public interface IDirectBitmapProvider
     {

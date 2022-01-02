@@ -2,21 +2,18 @@
 using SharedLib;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Threading;
 using WinAPI;
 
 namespace Game
 {
-    public sealed class WowScreen : IWowScreen, IDirectBitmapProvider, IDisposable
+    public sealed class WowScreen : IWowScreen, IBitmapProvider, IDisposable
     {
         private readonly ILogger logger;
         private readonly WowProcess wowProcess;
-        private readonly DirectBitmapCapturer capturer;
 
         public delegate void ScreenChangeEventHandler(object sender, ScreenChangeEventArgs args);
         public event ScreenChangeEventHandler OnScreenChanged;
@@ -29,27 +26,51 @@ namespace Game
 
         public bool EnablePostProcess { get; set; } = true;
 
-        public DirectBitmap DirectBitmap
+        private Bitmap bitmap1, bitmap2;
+        private bool isBitmap1 = false;
+        public Bitmap Bitmap
         {
             get
             {
-                return capturer.DirectBitmap;
+                return isBitmap1 ? bitmap1 : bitmap2;
+            }
+            set
+            {
+                if (isBitmap1)
+                {
+                    bitmap2 = value;
+                    if (bitmap1 != null) bitmap1.Dispose();
+                }
+                else
+                {
+                    bitmap1 = value;
+                    if (bitmap2 != null) bitmap2.Dispose();
+                }
+                isBitmap1 = !isBitmap1;
             }
         }
+
+        private Rectangle rect;
+        public Rectangle Rect => rect;
 
         public WowScreen(ILogger logger, WowProcess wowProcess)
         {
             this.logger = logger;
             this.wowProcess = wowProcess;
-
-            GetRectangle(out var rect);
-            this.capturer = new DirectBitmapCapturer(rect);
         }
 
         public void UpdateScreenshot()
         {
-            GetRectangle(out var rect);
-            capturer.Capture(rect);
+            GetPosition(out var p);
+            GetRectangle(out rect);
+            rect.X = p.X;
+            rect.Y = p.Y;
+
+            Bitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppPArgb);
+            using (var graphics = Graphics.FromImage(Bitmap))
+            {
+                graphics.CopyFromScreen(rect.Left, rect.Top, 0, 0, Bitmap.Size);
+            }
         }
 
         public void AddDrawAction(Action<Graphics> a)
@@ -62,17 +83,17 @@ namespace Game
             if (!EnablePostProcess)
                 return;
 
-            using (var gr = Graphics.FromImage(DirectBitmap.Bitmap))
+            using (var gr = Graphics.FromImage(Bitmap))
             {
                 using (var blackPen = new SolidBrush(Color.Black))
                 {
-                    gr.FillRectangle(blackPen, new Rectangle(new Point(DirectBitmap.Bitmap.Width / 15, DirectBitmap.Bitmap.Height / 40), new Size(DirectBitmap.Bitmap.Width / 15, DirectBitmap.Bitmap.Height / 40)));
+                    gr.FillRectangle(blackPen, new Rectangle(new Point(Bitmap.Width / 15, Bitmap.Height / 40), new Size(Bitmap.Width / 15, Bitmap.Height / 40)));
                 }
 
                 drawActions.ForEach(x => x(gr));
             }
 
-            this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(DirectBitmap.ToBase64(Size)));
+            this.OnScreenChanged?.Invoke(this, new ScreenChangeEventArgs(ToBase64(Bitmap, Size)));
         }
 
         public void GetPosition(out Point point)
@@ -89,12 +110,19 @@ namespace Game
         public Bitmap GetBitmap(int width, int height)
         {
             UpdateScreenshot();
-            return capturer.GetBitmap(width, height);
+
+            Bitmap bitmap = new Bitmap(width, height);
+            Rectangle sourceRect = new Rectangle(0, 0, width, height);
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.DrawImage(Bitmap, 0, 0, sourceRect, GraphicsUnit.Pixel);
+            }
+            return bitmap;
         }
 
         public Color GetColorAt(Point point)
         {
-            return DirectBitmap.GetPixel(point.X, point.Y);
+            return Bitmap.GetPixel(point.X, point.Y);
         }
 
         public Bitmap GetCroppedMinimapBitmap(bool highlight)
@@ -117,7 +145,7 @@ namespace Game
 
         public void Dispose()
         {
-            capturer?.Dispose();
+            Bitmap?.Dispose();
         }
 
         private static Bitmap CropImage(Bitmap img, bool highlight)
