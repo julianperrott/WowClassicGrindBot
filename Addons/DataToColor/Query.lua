@@ -117,14 +117,9 @@ end
 
 function DataToColor:CastingInfoSpellId(unitId)
 
-    local startTime = nil
-    local spellID = nil
-
-    if DataToColor.C.IsClassic_BCC then
-        _, _, _, _, startTime, _, _, spellID = UnitCastingInfo(unitId)
-    elseif DataToColor.C.IsClassic then
-        _, _, _, _, startTime, _, _, _, spellID = UnitCastingInfo(unitId)
-    end
+    local UnitCastingInfo = { DataToColor.UnitCastingInfo(unitId) }
+    local startTime = UnitCastingInfo[5]
+    local spellID = UnitCastingInfo[#UnitCastingInfo]
 
     if spellID ~= nil then
         if unitId == DataToColor.C.unitPlayer and startTime ~= DataToColor.lastCastStartTime then
@@ -134,11 +129,9 @@ function DataToColor:CastingInfoSpellId(unitId)
         return spellID
     end
 
-    if DataToColor.C.IsClassic_BCC then
-        _, _, _, startTime, _, _, spellID = UnitChannelInfo(unitId)
-    elseif DataToColor.C.IsClassic then
-        _, _, _, startTime, _, _, _, spellID = UnitChannelInfo(unitId)
-    end
+    local UnitChannelInfo = { DataToColor.UnitChannelInfo(unitId) }
+    startTime = UnitChannelInfo[4]
+    spellID = UnitChannelInfo[#UnitChannelInfo]
 
     if spellID ~= nil then
         if unitId == DataToColor.C.unitPlayer and startTime ~= DataToColor.lastCastStartTime then
