@@ -82,8 +82,12 @@
         public bool Stoneskin => IsBitSet(13);
 
         // Hunter
-        public bool Aspect => IsBitSet(10); //Any Aspect of
-        public bool RapidFire => IsBitSet(11);
-        public bool QuickShots => IsBitSet(12);
+        public bool AspectoftheCheetah => IsBitSet(10);
+        public bool AspectofthePack => IsBitSet(11);
+        public bool AspectoftheHawk => IsBitSet(12);
+        public bool AspectoftheMonkey => IsBitSet(13);
+        public bool AspectoftheViper => IsBitSet(14);
+        public bool RapidFire => IsBitSet(15);
+        public bool QuickShots => IsBitSet(16);
     }
 }

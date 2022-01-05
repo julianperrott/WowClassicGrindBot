@@ -1048,10 +1048,9 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | Shaman | `"Stoneskin"` |
 | Hunter | `"Aspect of the Cheetah"` |
 | Hunter | `"Aspect of the Pack"` |
-| Hunter | `"Aspect of the Beast"` |
 | Hunter | `"Aspect of the Hawk"` |
-| Hunter | `"Aspect of the Wild"` |
 | Hunter | `"Aspect of the Monkey"` |
+| Hunter | `"Aspect of the Viper"` |
 | Hunter | `"Rapid Fire"` |
 | Hunter | `"Quick Shots"` |
 
