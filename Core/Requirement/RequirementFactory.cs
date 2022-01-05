@@ -187,12 +187,11 @@ namespace Core
                 { "Stoneskin", ()=> playerReader.Buffs.Stoneskin },
                 
                 //Hunter
-                { "Aspect of the Cheetah", ()=> playerReader.Buffs.Aspect },
-                { "Aspect of the Pack", ()=> playerReader.Buffs.Aspect },
-                { "Aspect of the Beast", ()=> playerReader.Buffs.Aspect },
-                { "Aspect of the Hawk", ()=> playerReader.Buffs.Aspect },
-                { "Aspect of the Wild", ()=> playerReader.Buffs.Aspect },
-                { "Aspect of the Monkey", ()=> playerReader.Buffs.Aspect },
+                { "Aspect of the Cheetah", ()=> playerReader.Buffs.AspectoftheCheetah },
+                { "Aspect of the Pack", ()=> playerReader.Buffs.AspectofthePack },
+                { "Aspect of the Hawk", ()=> playerReader.Buffs.AspectoftheHawk },
+                { "Aspect of the Monkey", ()=> playerReader.Buffs.AspectoftheMonkey },
+                { "Aspect of the Viper", ()=> playerReader.Buffs.AspectoftheViper },
                 { "Rapid Fire", ()=> playerReader.Buffs.RapidFire },
                 { "Quick Shots", ()=> playerReader.Buffs.QuickShots },
 

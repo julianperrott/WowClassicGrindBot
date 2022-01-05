@@ -7,7 +7,7 @@
         "Name": "Auto Shot",
         "HasCastBar": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
+        "Requirements": ["HasRangedWeapon", "!InMeleeRange", "!AutoShot", "HasAmmo"]
       },
       {
         "Name": "Raptor Strike",
@@ -16,7 +16,7 @@
         "AfterCastWaitNextSwing": true,
         "StepBackAfterCast": 1000,
         "MinMana": 15,
-        "Requirements": ["InMeleeRange", "not AutoShot"]
+        "Requirements": ["InMeleeRange", "!AutoShot"]
       }
     ]
   },
@@ -26,7 +26,7 @@
         "Name": "Auto Shot",
         "HasCastBar": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "not AutoShot", "HasAmmo"]
+        "Requirements": ["HasRangedWeapon", "!InMeleeRange", "!AutoShot", "HasAmmo"]
       },
       {
         "Name": "Raptor Strike",
@@ -34,11 +34,11 @@
         "WhenUsable": true,
         "AfterCastWaitNextSwing": true,
         "MinMana": 15,
-        "Requirements": ["InMeleeRange", "not AutoShot"]
+        "Requirements": ["InMeleeRange", "!AutoShot"]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["InMeleeRange", "not AutoAttacking"]
+        "Requirements": ["InMeleeRange", "!AutoAttacking"]
       }
     ]
   },
