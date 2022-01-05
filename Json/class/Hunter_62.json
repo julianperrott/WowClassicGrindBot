@@ -13,7 +13,7 @@
         "Name": "Concussive Shot",
         "Key": "9",
         "StopBeforeCast": true,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "HasAmmo"]
+        "Requirements": ["HasRangedWeapon", "!InMeleeRange", "HasAmmo"]
       },
       {
         "Name": "Raptor Strike",
@@ -21,7 +21,7 @@
         "AfterCastWaitNextSwing": true,
         "WhenUsable": true,
         "MinMana": 15,
-        "Requirements": ["InMeleeRange", "not AutoShot"]
+        "Requirements": ["InMeleeRange", "!AutoShot"]
       }
     ]
   },
@@ -32,35 +32,35 @@
         "Key": "1",
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirements": ["Race:Draenei", "Health%<45"]
+        "Requirements": ["Race:Draenei", "Health% < 45"]
       },
       {
         "Name": "Mend Pet",
         "Key": "N7",
         "MinMana": 200,
         "Cooldown": 15000,
-        "Requirements": ["Has Pet", "PetHealth%<50"]
+        "Requirements": ["Has Pet", "PetHealth% < 50"]
       },
       {
         "Name": "Intimidation",
         "Key": "N4",
         "MinMana": 15,
         "WhenUsable": true,
-        "Requirements": ["Has Pet", "TargetHealth%<70||TargetCastingSpell"]
+        "Requirements": ["Has Pet", "TargetHealth% < 70 || TargetCastingSpell"]
       },
       {
         "Name": "Bestial Wrath",
         "Key": "N2",
         "MinMana": 15,
         "WhenUsable": true,
-        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "Has Pet", "TargetHealth%>85"]
+        "Requirements": ["!InMeleeRange", "HasRangedWeapon", "HasAmmo", "Has Pet", "TargetHealth% > 85"]
       },
       {
         "Name": "Rapid Fire",
         "Key": "N3",
         "MinMana": 15,
         "WhenUsable": true,
-        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "TargetHealth%>75"]
+        "Requirements": ["!InMeleeRange", "HasRangedWeapon", "HasAmmo", "TargetHealth% > 75"]
       },
       {
         "Name": "Steady Shot",
@@ -69,14 +69,14 @@
         "HasCastBar": true,
         "Charge": 2,
         "Cooldown": 5000,
-        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "HasAmmo", "LastAutoShotMs<500"]
+        "Requirements": ["!InMeleeRange", "HasRangedWeapon", "HasAmmo", "LastAutoShotMs < 500"]
       },
       {
         "Name": "Auto Shot",
         "HasCastBar": true,
         "WhenUsable": true,
         "Key": "3",
-        "Requirements": ["not InMeleeRange", "HasRangedWeapon", "not AutoShot", "HasAmmo"]
+        "Requirements": ["!InMeleeRange", "HasRangedWeapon", "!AutoShot", "HasAmmo"]
       },
       {
         "Name": "Disengage",
@@ -93,11 +93,11 @@
         "AfterCastWaitNextSwing": true,
         "MinMana": 15,
         "StepBackAfterCast": 1000,
-        "Requirements": ["InMeleeRange", "not AutoShot"]
+        "Requirements": ["InMeleeRange", "!AutoShot"]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["InMeleeRange", "not AutoShot", "not AutoAttacking"]
+        "Requirements": ["InMeleeRange", "!AutoShot", "!AutoAttacking"]
       }
     ]
   },
@@ -107,13 +107,14 @@
         "Name": "Aspect of the Hawk",
         "Key": "5",
         "MinMana": 20,
-        "Requirement": "not Aspect of the Hawk"
+        "Requirement": "!Aspect of the Hawk"
       },
       {
         "Name": "feedpet",
         "Key": "N5",
+        "WhenUsable": true,
         "Cooldown": 20000,
-        "Requirements": ["Has Pet", "not Pet Happy"]
+        "Requirements": ["Has Pet", "!Pet Happy"]
       },
       {
         "Name": "sumpet",
@@ -121,7 +122,7 @@
         "MinMana": 20,
         "HasCastBar": true,
         "Cooldown": 4000,
-        "Requirement": "not Has Pet"
+        "Requirement": "!Has Pet"
       }
     ]
   },
@@ -130,12 +131,12 @@
       {
         "Name": "Food",
         "Key": "-",
-        "Requirement": "Health%<40"
+        "Requirement": "Health% < 40"
       },
       {
         "Name": "Water",
         "Key": "=",
-        "Requirement": "Mana%<40"
+        "Requirement": "Mana% < 40"
       }
     ]
   }

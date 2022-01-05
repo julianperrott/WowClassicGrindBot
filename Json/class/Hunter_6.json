@@ -7,7 +7,7 @@
         "Name": "Serpent Sting",
         "Key": "2",
         "MinMana": 15,
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Serpent Sting"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "!InMeleeRange", "!Serpent Sting"]
       },
       {
         "Name": "Raptor Strike",
@@ -15,7 +15,7 @@
         "WhenUsable": true,
         "AfterCastWaitNextSwing": true,
         "MinMana": 15,
-        "Requirements": ["InMeleeRange", "not AutoShot"]
+        "Requirements": ["InMeleeRange", "!AutoShot"]
       }
     ]
   },
@@ -25,7 +25,7 @@
         "Name": "Auto Shot",
         "HasCastBar": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "!InMeleeRange", "!AutoShot"]
       },
       {
         "Name": "Raptor Strike",
@@ -33,11 +33,11 @@
         "WhenUsable": true,
         "AfterCastWaitNextSwing": true,
         "MinMana": 15,
-        "Requirements": ["InMeleeRange", "not AutoShot"]
+        "Requirements": ["InMeleeRange", "!AutoShot"]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["InMeleeRange", "not AutoShot", "not AutoAttacking"]
+        "Requirements": ["InMeleeRange", "!AutoShot", "!AutoAttacking"]
       }
     ]
   },
@@ -47,7 +47,7 @@
         "Name": "Aspect of the Monkey",
         "Key": "5",
         "MinMana": 20,
-        "Requirement": "not Aspect of the Monkey"
+        "Requirement": "!Aspect of the Monkey"
       }
     ]
   },
@@ -56,12 +56,12 @@
       {
         "Name": "Food",
         "Key": "6",
-        "Requirement": "Health%<30"
+        "Requirement": "Health% < 30"
       },
       {
         "Name": "Water",
         "Key": "7",
-        "Requirement": "Mana%<30"
+        "Requirement": "Mana% < 30"
       }
     ]
   },

@@ -8,7 +8,7 @@
         "Key": "9",
         "MinMana": 15,
         "Cooldown": 12000,
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "!InMeleeRange"]
       },
       {
         "Name": "Raptor Strike",
@@ -17,7 +17,7 @@
         "AfterCastWaitNextSwing": true,
         "MinMana": 15,
         "StepBackAfterCast": 1000,
-        "Requirements": ["InMeleeRange", "not AutoShot"]
+        "Requirements": ["InMeleeRange", "!AutoShot"]
       }
     ]
   },
@@ -28,21 +28,21 @@
         "Key": "1",
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirements": ["Race:Draenei", "Health%<45"]
+        "Requirements": ["Race:Draenei", "Health% < 45"]
       },
       {
         "Name": "Mend Pet",
         "Key": "N7",
         "MinMana": 200,
         "Cooldown": 15000,
-        "Requirements": ["Has Pet", "PetHealth%<50"]
+        "Requirements": ["Has Pet", "PetHealth% < 50"]
       },
       {
         "Name": "Serpent Sting",
         "Key": "2",
         "MinMana": 15,
         "Cooldown": 4000,
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Serpent Sting", "Mana%>55"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "!InMeleeRange", "!Serpent Sting", "Mana% > 55"]
       },
       {
         "Name": "Rapid Fire",
@@ -50,13 +50,13 @@
         "MinMana": 15,
         "Cooldown": 8000,
         "WhenUsable": true,
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "TargetHealth%>90"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "!InMeleeRange", "TargetHealth% > 90"]
       },
       {
         "Name": "Auto Shot",
         "HasCastBar": true,
         "Key": "3",
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not AutoShot"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "!InMeleeRange", "!AutoShot"]
       },
       {
         "Name": "Arcane Shot",
@@ -64,7 +64,7 @@
         "MinMana": 15,
         "Cooldown": 6000,
         "WhenUsable": true,
-        "Requirements": ["HasRangedWeapon", "HasAmmo", "not InMeleeRange", "not Rapid Fire", "not Quick Shots", "TargetHealth%>60", "Mana%>70"]
+        "Requirements": ["HasRangedWeapon", "HasAmmo", "!InMeleeRange", "!Rapid Fire", "!Quick Shots", "TargetHealth% > 60", "Mana% > 70"]
       },
       {
         "Name": "Raptor Strike",
@@ -73,11 +73,11 @@
         "AfterCastWaitNextSwing": true,
         "MinMana": 15,
         "StepBackAfterCast": 1000,
-        "Requirements": ["InMeleeRange", "not AutoShot"]
+        "Requirements": ["InMeleeRange", "!AutoShot"]
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["InMeleeRange", "not AutoShot", "not AutoAttacking"]
+        "Requirements": ["InMeleeRange", "!AutoShot", "!AutoAttacking"]
       }
     ]
   },
@@ -87,13 +87,14 @@
         "Name": "Aspect of the Hawk",
         "Key": "5",
         "MinMana": 20,
-        "Requirement": "not Aspect of the Hawk"
+        "Requirement": "!Aspect of the Hawk"
       },
       {
         "Name": "feedpet",
         "Key": "N5",
+        "WhenUsable": true,
         "Cooldown": 20000,
-        "Requirements": ["Has Pet", "not Pet Happy"]
+        "Requirements": ["Has Pet", "!Pet Happy"]
       },
       {
         "Name": "sumpet",
@@ -101,7 +102,7 @@
         "MinMana": 20,
         "HasCastBar": true,
         "Cooldown": 4000,
-        "Requirement": "not Has Pet"
+        "Requirement": "!Has Pet"
       }
     ]
   },
@@ -110,12 +111,12 @@
       {
         "Name": "Food",
         "Key": "6",
-        "Requirement": "Health%<40"
+        "Requirement": "Health% < 40"
       },
       {
         "Name": "Water",
         "Key": "7",
-        "Requirement": "Mana%<40"
+        "Requirement": "Mana% < 40"
       }
     ]
   },
