@@ -50,7 +50,7 @@ namespace SharedLib.NpcFinder
 
         #region variables
 
-        public int topOffset { get; set; } = 30;
+        public int topOffset { get; set; } = 110;
 
         public int npcPosYOffset { get; set; } = 0;
         public int npcPosYHeightMul { get; set; } = 10;
@@ -128,7 +128,7 @@ namespace SharedLib.NpcFinder
             scaleToRefHeight = ScaleHeight(1);
 
             Area = new Rectangle(new Point(0, (int)ScaleHeight(topOffset)),
-                new Size(bitmapProvider.Bitmap.Width, (int)(bitmapProvider.Bitmap.Height * 0.6f)));
+                new Size((int)(bitmapProvider.Bitmap.Width * 0.87f), (int)(bitmapProvider.Bitmap.Height * 0.6f)));
 
             PopulateLinesOfNpcNames();
 
