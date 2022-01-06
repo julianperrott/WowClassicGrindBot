@@ -19,8 +19,15 @@ namespace SharedLib.NpcFinder
         Corpse = 8
     }
 
+    public enum SearchMode
+    {
+        Simple = 0,
+        Fuzzy = 1
+    }
+
     public class NpcNameFinder
     {
+        private SearchMode searchMode = SearchMode.Simple;
         private NpcNames nameType = NpcNames.Enemy | NpcNames.Neutral;
 
         private readonly List<LineOfNpcName> npcNameLine = new List<LineOfNpcName>();
@@ -45,10 +52,13 @@ namespace SharedLib.NpcFinder
         public bool PotentialAddsExist { get; private set; }
         public DateTime LastPotentialAddsSeen { get; private set; } = default;
 
+        private Func<Color, bool> colorMatcher;
+
         public int Sequence { get; private set; } = 0;
 
-
         #region variables
+
+        public float colorFuzziness { get; set; } = 15f;
 
         public int topOffset { get; set; } = 110;
 
@@ -71,11 +81,25 @@ namespace SharedLib.NpcFinder
 
         #endregion
 
+        #region Colors
+
+        private readonly Color fEnemy = Color.FromArgb(0, 250, 5, 5);
+        private readonly Color fFriendly = Color.FromArgb(0, 5, 250, 5);
+        private readonly Color fNeutrual = Color.FromArgb(0, 250, 250, 5);
+        private readonly Color fCorpse = Color.FromArgb(0, 128, 128, 128);
+
+        private readonly Color sEnemy = Color.FromArgb(0, 240, 35, 35);
+        private readonly Color sFriendly = Color.FromArgb(0, 0, 250, 0);
+        private readonly Color sNeutrual = Color.FromArgb(0, 250, 250, 0);
+
+        #endregion
 
         public NpcNameFinder(ILogger logger, IBitmapProvider bitmapProvider)
         {
             this.logger = logger;
             this.bitmapProvider = bitmapProvider;
+
+            UpdateSearchMode();
         }
 
         private float ScaleWidth(int value)
@@ -103,24 +127,113 @@ namespace SharedLib.NpcFinder
                     npcPosYHeightMul = 10;
                 }
 
-                logger.LogInformation($"{GetType().Name}.ChangeNpcType = {type}");
+                UpdateSearchMode();
+
+                logger.LogInformation($"{GetType().Name}.ChangeNpcType = {type} | searchMode = {searchMode}");
             }
         }
 
-        private bool ColorMatch(Color p)
+        private void UpdateSearchMode()
         {
-            return nameType switch
+            switch (searchMode)
             {
-                NpcNames.Enemy | NpcNames.Neutral => (p.R > 240 && p.G <= 35 && p.B <= 35) || (p.R > 250 && p.G > 250 && p.B == 0),
-                NpcNames.Friendly | NpcNames.Neutral => (p.R == 0 && p.G > 250 && p.B == 0) || (p.R > 250 && p.G > 250 && p.B == 0),
-                NpcNames.Enemy => p.R > 240 && p.G <= 35 && p.B <= 35,
-                NpcNames.Friendly => p.R == 0 && p.G > 250 && p.B == 0,
-                NpcNames.Neutral => p.R > 250 && p.G > 250 && p.B == 0,
-                NpcNames.Corpse => p.R == 128 && p.G == 128 && p.B == 128,
-                _ => false,
-            };
+                case SearchMode.Simple:
+                    BakeSimpleColorMatcher();
+                    break;
+                case SearchMode.Fuzzy:
+                    BakeFuzzyColorMatcher();
+                    break;
+            }
         }
 
+
+        #region Simple Color matcher
+
+        private void BakeSimpleColorMatcher()
+        {
+            switch (nameType)
+            {
+                case NpcNames.Enemy | NpcNames.Neutral:
+                    colorMatcher = (Color c) => SimpleColorEnemy(c) || SimpleColorNeutral(c);
+                    return;
+                case NpcNames.Friendly | NpcNames.Neutral:
+                    colorMatcher = (Color c) => SimpleColorFriendly(c) || SimpleColorNeutral(c);
+                    return;
+                case NpcNames.Enemy:
+                    colorMatcher = SimpleColorEnemy;
+                    return;
+                case NpcNames.Friendly:
+                    colorMatcher = SimpleColorFriendly;
+                    return;
+                case NpcNames.Neutral:
+                    colorMatcher = SimpleColorNeutral;
+                    return;
+                case NpcNames.Corpse:
+                    colorMatcher = SimpleColorCorpse;
+                    return;
+            }
+        }
+
+        private bool SimpleColorEnemy(Color p)
+        {
+            return p.R > sEnemy.R && p.G <= sEnemy.G && p.B <= sEnemy.B;
+        }
+
+        private bool SimpleColorFriendly(Color p)
+        {
+            return p.R == sFriendly.R && p.G > sFriendly.G && p.B == sFriendly.B;
+        }
+
+        private bool SimpleColorNeutral(Color p)
+        {
+            return p.R > sNeutrual.R && p.G > sNeutrual.G && p.B == sNeutrual.B;
+        }
+
+        private bool SimpleColorCorpse(Color p)
+        {
+            return p.R == fCorpse.R && p.G == fCorpse.G && p.B == fCorpse.B;
+        }
+
+        #endregion
+
+
+        #region Color Fuzziness matcher
+
+        private void BakeFuzzyColorMatcher()
+        {
+            switch (nameType)
+            {
+                case NpcNames.Enemy | NpcNames.Neutral:
+                    colorMatcher = (Color c) => FuzzyColor(fEnemy, c) || FuzzyColor(fNeutrual, c);
+                    return;
+                case NpcNames.Friendly | NpcNames.Neutral:
+                    colorMatcher = (Color c) => FuzzyColor(fFriendly, c) || FuzzyColor(fNeutrual, c);
+                    return;
+                case NpcNames.Enemy:
+                    colorMatcher = (Color c) => FuzzyColor(fEnemy, c);
+                    return;
+                case NpcNames.Friendly:
+                    colorMatcher = (Color c) => FuzzyColor(fFriendly, c);
+                    return;
+                case NpcNames.Neutral:
+                    colorMatcher = (Color c) => FuzzyColor(fNeutrual, c);
+                    return;
+                case NpcNames.Corpse:
+                    colorMatcher = (Color c) => FuzzyColor(fCorpse, c);
+                    return;
+            }
+        }
+
+        private bool FuzzyColor(Color target, Color c)
+        {
+            return MathF.Sqrt(
+                ((target.R - c.R) * (target.R - c.R)) +
+                ((target.G - c.G) * (target.G - c.G)) +
+                ((target.B - c.B) * (target.B - c.B)))
+                <= colorFuzziness;
+        }
+
+        #endregion
 
         public void Update()
         {
@@ -230,7 +343,7 @@ namespace SharedLib.NpcFinder
                     {
                         int xi = x * bytesPerPixel;
 
-                        if (ColorMatch(Color.FromArgb(255, currentLine[xi + 2], currentLine[xi + 1], currentLine[xi])))
+                        if (colorMatcher(Color.FromArgb(255, currentLine[xi + 2], currentLine[xi + 1], currentLine[xi])))
                         {
                             var isSameSection = lengthStart > -1 && (x - lengthEnd) < minLength;
                             if (isSameSection)
