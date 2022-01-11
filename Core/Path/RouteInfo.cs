@@ -171,7 +171,6 @@ namespace Core
 
         public string RenderPathLines(List<Vector3> path)
         {
-            //var sb = new StringBuilder();
             sb.Clear();
             for (var i = 0; i < path.Count - 1; i++)
             {
@@ -184,7 +183,6 @@ namespace Core
 
         public string RenderPathPoints(List<Vector3> path)
         {
-            //var sb = new StringBuilder();
             sb.Clear();
             for (int i = 0; i < path.Count; i++)
             {
