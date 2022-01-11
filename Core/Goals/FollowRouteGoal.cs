@@ -298,9 +298,10 @@ namespace Core.Goals
 
         private void RefillWaypoints(bool findClosest = false)
         {
+            Log($"RefillWaypoints firstLoad:{firstLoad} - findClosest:{findClosest} - ThereAndBack:{classConfiguration.PathThereAndBack}");
+
             if (firstLoad)
             {
-                // start path at closest point
                 firstLoad = false;
                 var closestPoint = pointsList.OrderBy(p => playerReader.PlayerLocation.DistanceXYTo(p)).FirstOrDefault();
 
@@ -312,11 +313,38 @@ namespace Core.Goals
             }
             else
             {
-                pointsList.ForEach(p => wayPoints.Push(p));
+                RefillWayPointsBasedonClassConfigRule();
                 if (findClosest)
                 {
                     AdjustNextPointToClosest();
                 }
+            }
+        }
+
+        private void RefillWayPointsBasedonClassConfigRule()
+        {
+            if (classConfiguration.PathThereAndBack)
+            {
+                var player = playerReader.PlayerLocation;
+                var distanceToFirst = player.DistanceXYTo(pointsList[0]);
+                var distanceToLast = player.DistanceXYTo(pointsList[^1]);
+
+                if (distanceToLast > distanceToFirst)
+                {
+                    var reversed = pointsList.ToList();
+                    reversed.Reverse();
+                    reversed.ForEach(p => wayPoints.Push(p));
+                }
+                else
+                {
+                    pointsList.ForEach(p => wayPoints.Push(p));
+                }
+            }
+            else
+            {
+                var reversed = pointsList.ToList();
+                reversed.Reverse();
+                reversed.ForEach(p => wayPoints.Push(p));
             }
         }
 

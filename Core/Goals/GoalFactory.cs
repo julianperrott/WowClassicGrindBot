@@ -238,18 +238,6 @@ namespace Core
                 }
             }
 
-            //TODO: move this logic into each relevant Goal
-            // currently only the FollowRouteGoal uses it.
-            /*
-            if (classConfig.PathThereAndBack)
-            {
-                var reversePoints = pathPoints.ToList();
-                reversePoints.Reverse();
-                pathPoints.AddRange(reversePoints);
-            }
-            pathPoints.Reverse();
-            */
-
             return output;
         }
     }
