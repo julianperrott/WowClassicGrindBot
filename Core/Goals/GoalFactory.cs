@@ -43,8 +43,7 @@ namespace Core
         {
             var availableActions = new HashSet<GoapGoal>();
 
-            List<Vector3> pathPoints, spiritPath;
-            GetPaths(out pathPoints, out spiritPath, classConfig);
+            GetPaths(out List<Vector3> pathPoints, out List<Vector3> spiritPath, classConfig);
 
             var wait = new Wait(addonReader);
 
@@ -225,32 +224,21 @@ namespace Core
 
         private static List<Vector3> CreatePathPoints(ClassConfiguration classConfig)
         {
-            List<Vector3> pathPoints;
-            string pathText = File.ReadAllText(classConfig.PathFilename);
-            bool thereAndBack = classConfig.PathThereAndBack;
+            List<Vector3> output = new List<Vector3>();
+
+            string text = File.ReadAllText(classConfig.PathFilename);
+            var points = JsonConvert.DeserializeObject<List<Vector3>>(text);
 
             int step = classConfig.PathReduceSteps ? 2 : 1;
-
-            var pathPoints2 = JsonConvert.DeserializeObject<List<Vector3>>(pathText);
-
-            pathPoints = new List<Vector3>();
-            for (int i = 0; i < pathPoints2.Count; i += step)
+            for (int i = 0; i < points.Count; i += step)
             {
-                if (i < pathPoints2.Count)
+                if (i < points.Count)
                 {
-                    pathPoints.Add(pathPoints2[i]);
+                    output.Add(points[i]);
                 }
             }
 
-            if (thereAndBack)
-            {
-                var reversePoints = pathPoints.ToList();
-                reversePoints.Reverse();
-                pathPoints.AddRange(reversePoints);
-            }
-
-            pathPoints.Reverse();
-            return pathPoints;
+            return output;
         }
     }
 }
