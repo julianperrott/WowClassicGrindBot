@@ -43,20 +43,20 @@ namespace Core.Goals
         private float lastDistance = 999;
 
         private readonly List<Vector3> pointsList;
-        private Stack<Vector3> routeToWaypoint = new Stack<Vector3>();
+        private readonly Stack<Vector3> routeToWaypoint = new Stack<Vector3>();
         private readonly Stack<Vector3> wayPoints = new Stack<Vector3>();
 
         private DateTime LastReset = DateTime.Now;
 
         private int lastGatherKey = 0;
-        private DateTime lastGatherClick = DateTime.Now.AddSeconds(-10);
+        private DateTime lastGatherClick = default;
 
         private readonly Random random = new Random();
 
 
         #region IRouteProvider
 
-        public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
+        public DateTime LastActive { get; set; } = default;
 
         public List<Vector3> PathingRoute()
         {
@@ -312,14 +312,10 @@ namespace Core.Goals
             }
             else
             {
+                pointsList.ForEach(p => wayPoints.Push(p));
                 if (findClosest)
                 {
-                    pointsList.ForEach(p => wayPoints.Push(p));
                     AdjustNextPointToClosest();
-                }
-                else
-                {
-                    pointsList.ForEach(p => wayPoints.Push(p));
                 }
             }
         }
@@ -384,7 +380,9 @@ namespace Core.Goals
         {
             var simple = PathSimplify.Simplify(routeToWaypoint.ToArray(), 0.05f);
             simple.Reverse();
-            routeToWaypoint = new Stack<Vector3>(simple);
+
+            routeToWaypoint.Clear();
+            simple.ForEach((x) => routeToWaypoint.Push(x));
         }
 
         private async ValueTask RefillRouteToNextWaypoint(bool forceUsePathing)
@@ -437,13 +435,6 @@ namespace Core.Goals
             var diff = MathF.Min(diff1, diff2);
             if (diff > wanderAngle)
             {
-                /*
-                if(diff > wanderAngle * 3)
-                {
-                    await stopMoving.StopForward();
-                }
-                */
-
                 await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");
             }
             else

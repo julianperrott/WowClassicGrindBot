@@ -27,6 +27,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\RecordPath.razor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\RecordPath.razor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AddonConfig\AddonConfig.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\PathingAPI\PathingAPI.csproj" />

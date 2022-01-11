@@ -233,6 +233,10 @@ function DataToColor:targetNpcId()
 end
 
 function DataToColor:getGuid(src)
+    -- todo take
+    -- care of Player-4731-02AAD4FF
+    -- Creature-0-4488-530-222-19350-000005C0D70
+    -- Pet-0-4448-530-222-22123-15004E200E
     local _, _, _, _, _, npcID, spawnUID = strsplit('-', UnitGUID(src) or '')
     if npcID ~= nil then
         return DataToColor:uniqueGuid(npcID, spawnUID)

@@ -63,6 +63,12 @@ namespace Core
         private int margin = 0;
         private int canvasSize = 0;
 
+        private double pointToGrid;
+
+        private int dSize = 2;
+
+        private readonly StringBuilder sb = new StringBuilder();
+
         public void SetMargin(int margin)
         {
             this.margin = margin;
@@ -73,12 +79,6 @@ namespace Core
         {
             this.canvasSize = size;
             CalculatePointToGrid();
-
-            StringBuilder sb = new StringBuilder();
-            foreach (Vector3 point in PathPoints)
-            {
-                sb.AppendLine(point.X + "," + point.Y + "," + ToCanvasPointX(point.X) + "," + ToCanvasPointY(point.Y));
-            }
         }
 
         public void CalculatePointToGrid()
@@ -97,7 +97,10 @@ namespace Core
             return (int)(margin + ((value + addY - min) * pointToGrid));
         }
 
-        private double pointToGrid;
+        public double DistanceToGrid(int value)
+        {
+            return value / 100f * pointToGrid;
+        }
 
         public RouteInfo(List<Vector3> pathPoints, List<Vector3> spiritPath, List<IRouteProvider> pathedRoutes, AddonReader addonReader)
         {
@@ -129,12 +132,16 @@ namespace Core
 
         private void CalculateDiffs()
         {
-            var allPoints = this.PathPoints.Select(s => s).ToList();
-            allPoints.AddRange(this.SpiritPath);
+            var allPoints = this.PathPoints.ToList();
+
+            if (SpiritPath.Count > 1)
+                allPoints.AddRange(this.SpiritPath);
+
             allPoints.AddRange(this.RouteToWaypoint);
 
-            var pois = this.PoiList.Select(p => p.Location).ToList();
+            var pois = this.PoiList.Select(p => p.Location);
             allPoints.AddRange(pois);
+
             allPoints.Add(addonReader.PlayerReader.PlayerLocation);
 
             var maxX = allPoints.Max(s => s.X);
@@ -164,7 +171,8 @@ namespace Core
 
         public string RenderPathLines(List<Vector3> path)
         {
-            var sb = new StringBuilder();
+            //var sb = new StringBuilder();
+            sb.Clear();
             for (var i = 0; i < path.Count - 1; i++)
             {
                 var pt1 = path[i];
@@ -176,23 +184,30 @@ namespace Core
 
         public string RenderPathPoints(List<Vector3> path)
         {
-            var sb = new StringBuilder();
-
-            foreach (var wowpoint in path)
+            //var sb = new StringBuilder();
+            sb.Clear();
+            for (int i = 0; i < path.Count; i++)
             {
-                var x = wowpoint.X.ToString("0.00");
-                var y = wowpoint.Y.ToString("0.00");
-                sb.AppendLine($"<circle  onmousemove=\"showTooltip(evt, '{x},{y}');\" onmouseout=\"hideTooltip();\"  cx = '{ToCanvasPointX(wowpoint.X)}' cy = '{ToCanvasPointY(wowpoint.Y)}' r = '2' />");
+                var wowpoint = path[i];
+                float x = wowpoint.X;
+                float y = wowpoint.Y;
+                sb.AppendLine($"<circle onmousedown=\"pointClick(evt,{x},{y},{i});\"  onmousemove=\"showTooltip(evt,'{x},{y}');\" onmouseout=\"hideTooltip();\"  cx = '{ToCanvasPointX(wowpoint.X)}' cy = '{ToCanvasPointY(wowpoint.Y)}' r = '{dSize}' />");
             }
             return sb.ToString();
         }
 
-        public string NextPoint()
+        public Vector3 NextPoint()
         {
             var route = this.pathedRoutes.OrderByDescending(s => s.LastActive).FirstOrDefault();
-            if (route == null || !route.HasNext()) { return string.Empty; }
-            var pt = route.NextPoint();
-            return $"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '3' />";
+            if (route == null || !route.HasNext()) { return Vector3.Zero; }
+            return route.NextPoint();
+        }
+
+        public string RenderNextPoint()
+        {
+            var pt = NextPoint();
+            if (pt == Vector3.Zero) { return string.Empty; }
+            return $"<circle cx = '{ToCanvasPointX(pt.X)}' cy = '{ToCanvasPointY(pt.Y)}'r = '{dSize + 1}' />";
         }
 
         public string DeathImage(Vector3 pt)
@@ -201,10 +216,9 @@ namespace Core
             return pt == null ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X) - size / 2}' y = '{ToCanvasPointY(pt.Y) - size / 2}' height='{size}' width='{size}' />";
         }
 
-        public string DrawPoi(RouteInfoPoi pt)
+        public string DrawPoi(RouteInfoPoi poi)
         {
-            var size = 4;
-            return $"<circle onmousemove=\"showTooltip(evt, '{pt.Name}');\" onmouseout=\"hideTooltip();\" cx='{ToCanvasPointX(pt.Location.X) - size / 2}' cy='{ToCanvasPointY(pt.Location.Y) - size / 2}' " + (pt.Radius == 1 ? $"fill='{pt.Color}' r='{size}'" : $"r='{size * pt.Radius}' stroke='{pt.Color}' stroke-width='1' fill='none'") + " />";
+            return $"<circle onmousemove=\"showTooltip(evt, '{poi.Name}<br/>{poi.Location.X},{poi.Location.Y}');\" onmouseout=\"hideTooltip();\" cx='{ToCanvasPointX(poi.Location.X)}' cy='{ToCanvasPointY(poi.Location.Y)}' r='{(poi.Radius == 1 ? dSize : DistanceToGrid((int)poi.Radius))}' " + (poi.Radius == 1 ? $"fill='{poi.Color}'" : $"stroke='{poi.Color}' stroke-width='1' fill='none'") + " />";
         }
     }
 }
