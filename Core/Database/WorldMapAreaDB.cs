@@ -43,24 +43,27 @@ namespace Core.Database
             }
             else
             {
-                var worldX = worldMapArea.ToWorldX(p.X);
-                var worldY = worldMapArea.ToWorldY(p.Y);
-                return new Vector3(worldX, worldY, p.Z);
+                return new Vector3(worldMapArea.ToWorldX(p.X), worldMapArea.ToWorldY(p.Y), p.Z);
             }
         }
 
         public WorldMapAreaSpot ToMapAreaSpot(float x, float y, float z, string continent, int mapHint)
         {
-            var area = WorldMapAreaFactory.GetWorldMapArea(new List<WorldMapArea>(areas.Values), x, y, continent, mapHint);
+            var area = WorldMapAreaFactory.GetWorldMapArea(areas.Values, x, y, continent, mapHint);
             return new WorldMapAreaSpot
             {
-                Y = area.ToMapX(x),
                 X = area.ToMapY(y),
+                Y = area.ToMapX(x),
                 Z = z,
                 MapID = area.UIMapId
             };
         }
-        
+        public Vector3 ToAreaLoc(float x, float y, float z, string continent, int mapHint)
+        {
+            var area = WorldMapAreaFactory.GetWorldMapArea(areas.Values, x, y, continent, mapHint);
+            return new Vector3(area.ToMapY(y), area.ToMapX(x), z);
+        }
+
         public bool TryGet(int uiMapId, out WorldMapArea area)
         {
             if (areas.TryGetValue(uiMapId, out var map))
