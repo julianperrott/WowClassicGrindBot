@@ -76,14 +76,26 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 
 Put the contents of the repo into a folder. e.g `C:\WowClassicGrindBot`. I am going to refer to this folder from now on, so just substitute your own folder path.
 
-## 2 Using V1 Local/Remote Pathhing: Download the MPQ route files
+## 2.1 Using V1 Local/Remote Pathhing
 
+Download the MPQ route files.
 This files are required for to find paths from where you are to the grind area, vendor and repair.
 
 * Classic: [**common-2.MPQ**](https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing) (1.7Gb)
 * TBC: [**expansion.MPQ**](https://mega.nz/file/Of4i2YQS#egDGj-SXi9RigG-_8kPITihFsLom2L1IFF-ltnB3wmU) (1.8Gb)
 
 Copy the previusly mentioned files to **\Json\MPQ** folder (e.g. `C:\WowClassicGrindBot\Json\MPQ`)
+
+## 2.2 Using V3 Remote Pathing
+
+Download the navmesh files.
+
+* [**Classic + TBC**](https://mega.nz/file/7HgkHIyA#c_gzUeTadecWY0JDY3KT39ktfPGLs2vzt_90bMvhszk)
+
+1. Extract and copy anywhere you want. like `C:\mmaps`
+1. Create a build of [AmeisenNavigation](https://github.com/Xian55/AmeisenNavigation/tree/feature/guess-z-coord-after-rewrite)
+1. Navigate to the build location and find `config.cfg`
+1. Edit the file last line to look as `sMmapsPath=C:\mmaps`
 
 # 3.1 System / Video Requirements
 

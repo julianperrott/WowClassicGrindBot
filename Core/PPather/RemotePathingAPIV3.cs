@@ -21,19 +21,25 @@ namespace Core
             RANDOM_POINT,
             RANDOM_POINT_AROUND,
             CAST_RAY,
-            RANDOM_PATH,
-            PATH_LOCATIONS
+            RANDOM_PATH
         }
+        public enum PathRequestFlags : int
+        {
+            NONE = 0,
+            CHAIKIN = 1,
+            CATMULLROM = 2,
+            FIND_LOCATION = 4
+        };
+
 
         private readonly ILogger logger;
         private readonly WorldMapAreaDB worldMapAreaDB;
+        private readonly bool debug = false;
 
         // TODO remove this
         private int watchdogPollMs = 1000;
 
         private List<LineArgs> lineArgs = new List<LineArgs>();
-
-        private int targetMapId = 0;
 
         private AnTcpClient Client { get; }
         private Thread ConnectionWatchdog { get; }
@@ -73,24 +79,18 @@ namespace Core
         {
             await Task.Delay(0);
             throw new NotImplementedException();
-            //return new List<WowPoint>();
         }
 
         public async Task<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
         {
-            int uiMapId = addonReader.UIMapId.Value;
-            Vector3 fromPoint = addonReader.PlayerReader.PlayerLocation;
-            Vector3 toPoint = destination;
-
             if (!Client.IsConnected)
             {
                 return new List<Vector3>();
             }
 
-            if (targetMapId == 0)
-            {
-                targetMapId = uiMapId;
-            }
+            int uiMapId = addonReader.UIMapId.Value;
+            Vector3 fromPoint = addonReader.PlayerReader.PlayerLocation;
+            Vector3 toPoint = destination;
 
             try
             {
@@ -102,7 +102,7 @@ namespace Core
                 var result = new List<Vector3>();
 
                 if (!worldMapAreaDB.TryGet(uiMapId, out WorldMapArea area))
-                    return new List<Vector3>();
+                    return result;
 
                 // incase haven't asked a pathfinder for a route this value will be 0
                 // that case use the highest location
@@ -112,27 +112,32 @@ namespace Core
                     end.Z = area.LocTop / 2;
                 }
 
-                logger.LogInformation($"Finding route from {fromPoint}({start}) map {uiMapId} to {toPoint}({end}) map {targetMapId}...");
-                var path = Client.Send((byte)EMessageType.PATH_LOCATIONS, (area.MapID, 2, start, end)).AsArray<Vector3>();
-                if (path == null || (path.Length == 1 && path[0] == Vector3.Zero))
+                if (debug)
+                    logger.LogInformation($"Finding route from {fromPoint}({start}) map {uiMapId} to {toPoint}({end}) map {uiMapId}...");
+
+                var path = Client.Send((byte)EMessageType.PATH, (area.MapID, PathRequestFlags.FIND_LOCATION | PathRequestFlags.CATMULLROM, start, end)).AsArray<Vector3>();
+                if (path.Length == 1 && path[0] == Vector3.Zero)
                     return result;
 
                 for (int i = 0; i < path.Length; i++)
                 {
-                    // Z X Y -> X Y Z
-                    var p = worldMapAreaDB.ToMapAreaSpot(path[i].Z, path[i].X, path[i].Y, area.Continent, uiMapId);
-                    result.Add(new Vector3(p.X, p.Y, p.Z));
-                    logger.LogInformation($"new float[] {{ {path[i].Z}f, {path[i].X}f, {path[i].Y}f }},");
+                    if (debug)
+                        logger.LogInformation($"new float[] {{ {path[i].X}f, {path[i].Y}f, {path[i].Z}f }},");
+
+                    Vector3 point = worldMapAreaDB.ToAreaLoc(path[i].X, path[i].Y, path[i].Z, area.Continent, uiMapId);
+                    result.Add(point);
                 }
 
                 if (result.Count > 0)
                 {
                     addonReader.PlayerReader.ZCoord = result[0].Z;
-                    logger.LogInformation($"PlayerLocation.Z = {addonReader.PlayerReader.PlayerLocation.Z}");
+                    if (debug)
+                        logger.LogInformation($"PlayerLocation.Z = {addonReader.PlayerReader.PlayerLocation.Z}");
                 }
                 else
                 {
-                    logger.LogWarning($"Found route length is {path.Length}");
+                    if (debug)
+                        logger.LogWarning($"Found route length is {path.Length}");
                 }
 
                 return result;
