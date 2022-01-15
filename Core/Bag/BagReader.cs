@@ -45,7 +45,7 @@ namespace Core
 
             if (metaChanged || inventoryChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
             {
-                DataChanged?.Invoke(this, new EventArgs());
+                DataChanged?.Invoke(this, EventArgs.Empty);
                 lastEvent = DateTime.Now;
             }
         }

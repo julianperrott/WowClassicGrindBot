@@ -14,6 +14,10 @@ namespace Core
 
         ActionBarCostReader ActionBarCostReader { get; }
 
+        SpellBookReader SpellBookReader { get; }
+
+        TalentReader TalentReader { get; }
+
         LevelTracker LevelTracker { get; }
 
         WorldMapAreaDB WorldMapAreaDb { get; }
