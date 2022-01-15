@@ -174,6 +174,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
     * Enter world with your desired character
     * Click `5. Frame Configuration`
     * Click `Auto Configure and Restart`
+    * [Validate FrameConfiguration](https://github.com/Xian55/WowClassicGrindBot/wiki/Validating-FrameConfiguration)
 
 4. Under the `Addon Configuration` you can check if theres a **newer version available** for the addon. In that case just press the `install` button then have to restart the game client and the bot it self in order to use it properly. 
 
