@@ -13,6 +13,9 @@ namespace Core.Addon
         public LevelTracker LevelTracker { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ActionBarCostReader ActionBarCostReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        public SpellBookReader SpellBookReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public TalentReader TalentReader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public WorldMapAreaDB WorldMapAreaDb { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public double AvgUpdateLatency => throw new NotImplementedException();

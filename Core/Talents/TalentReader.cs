@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Core.Talents;
 using Core.Database;
+using System.Linq;
 
 namespace Core
 {
@@ -11,6 +12,7 @@ namespace Core
         private readonly ISquareReader reader;
         private readonly PlayerReader playerReader;
         private readonly TalentDB talentDB;
+        public int Count => Talents.Sum(x => x.Value.CurrentRank);
 
         public Dictionary<int, Talent> Talents { get; private set; } = new Dictionary<int, Talent>();
 
