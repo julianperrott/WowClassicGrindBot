@@ -11,6 +11,8 @@ namespace Core
         private readonly ISquareReader reader;
         public SpellDB SpellDB { private set; get; }
 
+        public int Count => Spells.Count;
+
         public Dictionary<int, Spell> Spells { get; private set; } = new Dictionary<int, Spell>();
 
         public SpellBookReader(ISquareReader reader, int cSpellId, SpellDB spellDB)

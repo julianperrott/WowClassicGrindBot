@@ -76,14 +76,26 @@ You are welcome to create pull requests. Some ideas of things that could be impr
 
 Put the contents of the repo into a folder. e.g `C:\WowClassicGrindBot`. I am going to refer to this folder from now on, so just substitute your own folder path.
 
-## 2 Using V1 Local/Remote Pathhing: Download the MPQ route files
+## 2.1 Using V1 Local/Remote Pathhing
 
+Download the MPQ route files.
 This files are required for to find paths from where you are to the grind area, vendor and repair.
 
 * Classic: [**common-2.MPQ**](https://drive.google.com/file/d/1k80qqC02Xvpxfy5JQjzAkoixj8b4-EEP/view?usp=sharing) (1.7Gb)
 * TBC: [**expansion.MPQ**](https://mega.nz/file/Of4i2YQS#egDGj-SXi9RigG-_8kPITihFsLom2L1IFF-ltnB3wmU) (1.8Gb)
 
 Copy the previusly mentioned files to **\Json\MPQ** folder (e.g. `C:\WowClassicGrindBot\Json\MPQ`)
+
+## 2.2 Using V3 Remote Pathing
+
+Download the navmesh files.
+
+* [**Classic + TBC**](https://mega.nz/file/7HgkHIyA#c_gzUeTadecWY0JDY3KT39ktfPGLs2vzt_90bMvhszk)
+
+1. Extract and copy anywhere you want. like `C:\mmaps`
+1. Create a build of [AmeisenNavigation](https://github.com/Xian55/AmeisenNavigation/tree/feature/guess-z-coord-after-rewrite)
+1. Navigate to the build location and find `config.cfg`
+1. Edit the file last line to look as `sMmapsPath=C:\mmaps`
 
 # 3.1 System / Video Requirements
 
@@ -116,7 +128,7 @@ Example - [Robot-Medium](https://fonts.google.com/specimen/Roboto?thickness=5) -
 ## 4.1 Build Requirements
 
 * Windows 7 and above
-* [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
+* [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
 * **Note:** By default all builds will be **x86**.
 
 ## 4.2 Build the application
@@ -162,6 +174,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
     * Enter world with your desired character
     * Click `5. Frame Configuration`
     * Click `Auto Configure and Restart`
+    * [Validate FrameConfiguration](https://github.com/Xian55/WowClassicGrindBot/wiki/Validating-FrameConfiguration)
 
 4. Under the `Addon Configuration` you can check if theres a **newer version available** for the addon. In that case just press the `install` button then have to restart the game client and the bot it self in order to use it properly. 
 

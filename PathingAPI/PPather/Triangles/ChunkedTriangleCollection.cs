@@ -18,7 +18,7 @@ namespace WowTriangles
     public class ChunkedTriangleCollection
     {
         private bool UseOctree;
-        private bool UseMatrix;
+        private bool UseMatrix = true;
 
         public Action<ChunkAddedEventArgs> NotifyChunkAdded;
 

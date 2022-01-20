@@ -291,9 +291,14 @@ end
 
 function DataToColor:InitUpdateQueues()
     DataToColor:InitEquipmentQueue()
+    DataToColor:InitBagQueue()
 
-    DataToColor:InitBagQueue(0, 0)
+    DataToColor:InitInventoryQueue(4)
+    DataToColor:InitInventoryQueue(3)
+    DataToColor:InitInventoryQueue(2)
+    DataToColor:InitInventoryQueue(1)
     DataToColor:InitInventoryQueue(0)
+
     DataToColor:InitActionBarCostQueue()
     DataToColor:InitSpellBookQueue()
     DataToColor:InitTalentQueue()

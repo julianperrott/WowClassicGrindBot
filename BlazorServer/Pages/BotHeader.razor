@@ -6,32 +6,33 @@
     <div class="card-header">
         Player <ToggleButton />
         <span class="float-right badge @CombatBadge()">@Core.GOAP.GoapKeyDescription.ToString(Core.GOAP.GoapKey.incombat, PlayerInCombat)</span>
+        <span class="float-right">@playerReader.Race @playerReader.Class | </span>
     </div>
     <div class="card-body" style="padding-bottom: 0">
         <table class="table table-bordered">
             <tr>
-                <th>Level @playerReader.Level.Value (XP: @((int)playerReader.PlayerXpPercentage)%)</th>
+                <th>Level @playerReader.Level.Value<br>(XP: @((int)playerReader.PlayerXpPercentage)%)</th>
+                <th>Health / Resource:</th>
                 <th>Bag Items:</th>
-                <th>Health:</th>
-                <th>Mana / Rage / Energy:</th>
+                <th>Actionbar / Spell / Talent:</th>
                 <th>Target:</th>
-                <th>Actionbar:</th>
             </tr>
             <tr>
                 <td>
                     Time to level: @levelTracker.TimeToLevel<br />
                     at @levelTracker.PredictedLevelUpTime.ToString("HH:mm:ss")
                 </td>
+                <td>@playerReader.HealthCurrent (@playerReader.HealthPercent %)<br />@playerReader.PTCurrent (@playerReader.PTPercentage %)</td>
+
                 <td>@addonReader.BagReader.BagItems.Count / @addonReader.BagReader.SlotCount</td>
-                <td>@playerReader.HealthPercent %</td>
-                <td>@playerReader.PTCurrent (@playerReader.PTPercentage %) </td>
+                <td>@addonReader.ActionBarCostReader.Count / @addonReader.SpellBookReader.Count / @addonReader.TalentReader.Count</td>
                 <td>
-                    @if (!string.IsNullOrEmpty(addonReader.TargetName))
+                    @if (addonReader.PlayerReader.Bits.HasTarget)
                     {
                         <a href="https://tbc.wowhead.com/npc=@playerReader.TargetId" target="_blank">
                             <div>
-                                @addonReader.TargetName<br/>
-                                (@playerReader.TargetLevel) @((int)playerReader.TargetHealthPercentage) %<br/>
+                                @addonReader.TargetName<br />
+                                (@playerReader.TargetLevel) @((int)playerReader.TargetHealthPercentage) %<br />
                                 GUID: @playerReader.TargetGuid
 
                                 @if (!playerReader.Bits.TargetIsNormal)
@@ -55,7 +56,6 @@
                         <div>Kills: @levelTracker.MobsKilled</div>
                     }
                 </td>
-                <td>@addonReader.ActionBarCostReader.Count</td>
             </tr>
         </table>
 

@@ -1,4 +1,5 @@
-﻿@using System.Linq;
+﻿@using System.Linq
+@using Serilog.Events
 
 <style>
     .log {
@@ -23,56 +24,48 @@
     .light {
         color: #f8f9fa;
     }
-
 </style>
 
 <table class="table table-borderless table-dark" cellspacing="20">
-    @foreach (var evt in LoggerSink.Log.Reverse())
-    {
-        var cls = string.Empty;
-        switch (evt.Level)
-        {
-            case Serilog.Events.LogEventLevel.Error:
-                cls = "danger";
-                break;
-            case Serilog.Events.LogEventLevel.Warning:
-                cls = "warning";
-                break;
-            case Serilog.Events.LogEventLevel.Information:
-                cls = "";
-                break;
-            case Serilog.Events.LogEventLevel.Debug:
-                cls = "success";
-                break;
-
-        };
-
-        <tr class="@cls">
-            <td class="log">@evt.Timestamp.ToString("HH:mm:ss")</td>
-            <td class="log">@evt.Message</td>
-        </tr>
-    }
+@foreach (var evt in LoggerSink.Log.Reverse())
+{
+    <tr class="@logLevelColor[evt.Level]">
+        <td class="log">@evt.Timestamp.ToString("HH:mm:ss")</td>
+        <td class="log">@evt.Message</td>
+    </tr>
+}
 </table>
 
 @code {
 
+    private readonly Dictionary<LogEventLevel, string> logLevelColor =
+        new Dictionary<LogEventLevel, string>
+    {
+        { LogEventLevel.Verbose, string.Empty },
+        { LogEventLevel.Debug, "success" },
+        { LogEventLevel.Information, string.Empty },
+        { LogEventLevel.Warning, "warning" },
+        { LogEventLevel.Error, "danger" },
+        { LogEventLevel.Fatal, "danger" },
+    };
+
+
     protected override void OnInitialized()
-        {
-            LoggerSink.OnLogChanged -= this.LogChanged;
-            LoggerSink.OnLogChanged += this.LogChanged;
-        }
-
-        private async void LogChanged(object sender, EventArgs args)
-        {
-            await InvokeAsync(() =>
-            {
-                base.StateHasChanged();
-            });
-        }
-
-        public void Dispose()
-        {
-            LoggerSink.OnLogChanged -= this.LogChanged;
-        }
-
+    {
+        LoggerSink.OnLogChanged -= LogChanged;
+        LoggerSink.OnLogChanged += LogChanged;
     }
+
+    private async void LogChanged(object? sender, EventArgs args)
+    {
+        await InvokeAsync(() =>
+        {
+            base.StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        LoggerSink.OnLogChanged -= LogChanged;
+    }
+}

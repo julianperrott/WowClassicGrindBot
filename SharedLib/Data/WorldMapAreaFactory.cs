@@ -14,7 +14,7 @@ namespace SharedLib.Data
             return JsonConvert.DeserializeObject<List<WorldMapArea>>(File.ReadAllText(Path.Join(dataConfig.WorldToMap, "WorldMapArea.json")));
         }
 
-        public static WorldMapArea GetWorldMapArea(List<WorldMapArea> worldMapAreas, float x, float y, string continent, int uiMapIdHint)
+        public static WorldMapArea GetWorldMapArea(IEnumerable<WorldMapArea> worldMapAreas, float x, float y, string continent, int uiMapIdHint)
         {
             var maps = worldMapAreas
                 .Where(i => x <= i.LocTop)
