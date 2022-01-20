@@ -66,9 +66,6 @@ namespace Core
         private double pointToGrid;
 
         private int dSize = 2;
-
-        private readonly StringBuilder sb = new StringBuilder();
-
         public void SetMargin(int margin)
         {
             this.margin = margin;
@@ -171,7 +168,7 @@ namespace Core
 
         public string RenderPathLines(List<Vector3> path)
         {
-            sb.Clear();
+            StringBuilder sb = new StringBuilder();
             for (var i = 0; i < path.Count - 1; i++)
             {
                 var pt1 = path[i];
@@ -183,7 +180,7 @@ namespace Core
 
         public string RenderPathPoints(List<Vector3> path)
         {
-            sb.Clear();
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < path.Count; i++)
             {
                 var wowpoint = path[i];
