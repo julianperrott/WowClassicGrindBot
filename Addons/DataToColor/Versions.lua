@@ -18,7 +18,9 @@ if DataToColor.IsClassic() then
   LibClassicCasterino = _G.LibStub("LibClassicCasterino")
 end
 
-if DataToColor.IsRetail() then
+local TBC253 = DataToColor.IsClassic_BCC() and select(4, GetBuildInfo()) >= 20503
+
+if DataToColor.IsRetail() or TBC253 then
     DataToColor.UnitCastingInfo = UnitCastingInfo
   elseif DataToColor.IsClassic_BCC() then
     DataToColor.UnitCastingInfo = function(unit)
@@ -28,7 +30,7 @@ if DataToColor.IsRetail() then
   else
     DataToColor.UnitCastingInfo = function(unit)
       if UnitIsUnit(unit, DataToColor.C.unitPlayer) then
-        return CastingInfo()
+        return UnitCastingInfo("player")
       else
         return LibClassicCasterino:UnitCastingInfo(unit)
       end
@@ -45,7 +47,7 @@ if DataToColor.IsRetail() then
   else
     DataToColor.UnitChannelInfo = function(unit)
       if UnitIsUnit(unit, DataToColor.C.unitPlayer) then
-        return ChannelInfo()
+        return UnitChannelInfo("player")
       else
         return LibClassicCasterino:UnitChannelInfo(unit)
       end
