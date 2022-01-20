@@ -128,7 +128,7 @@ Example - [Robot-Medium](https://fonts.google.com/specimen/Roboto?thickness=5) -
 ## 4.1 Build Requirements
 
 * Windows 7 and above
-* [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
+* [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
 * **Note:** By default all builds will be **x86**.
 
 ## 4.2 Build the application

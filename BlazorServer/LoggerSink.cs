@@ -15,19 +15,16 @@ namespace BlazorServer
         }
     }
 
-    public class LogItem
+    public readonly struct LogItem
     {
-        public DateTimeOffset Timestamp { get; set; }
-        public LogEventLevel Level { get; set; }
-        public string Message { get; set; } = string.Empty;
+        public DateTimeOffset Timestamp { get; init; }
+        public LogEventLevel Level { get; init; }
+        public string Message { get; init; }
     }
 
     public class LoggerSink : ILogEventSink
     {
-
-        public delegate void OnLogChangedEventHandler(object sender, EventArgs args);
-
-        public static event OnLogChangedEventHandler? OnLogChanged;
+        public static event EventHandler? OnLogChanged;
 
         public static CircularBuffer<LogItem> Log { get; private set; } = new CircularBuffer<LogItem>(250);
 

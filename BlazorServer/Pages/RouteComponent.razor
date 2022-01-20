@@ -168,7 +168,7 @@
     }
 
 
-    private void OnTimerTick(object s, ElapsedEventArgs e)
+    private void OnTimerTick(object? s, ElapsedEventArgs e)
     {
         if (botController.RouteInfo == null) return;
         botController.RouteInfo.CalculatePointToGrid();
