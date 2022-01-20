@@ -608,7 +608,7 @@ namespace PatherPath.Graph
             //searchProgress = new SearchProgress(fromSpot, destinationSpot, searchID);
 
             // lowest first queue
-            PriorityQueue<Spot, float> prioritySpotQueue = new PriorityQueue<Spot, float>(); // (new SpotSearchComparer(dst, score)); ;
+            WowTriangles.PriorityQueue<Spot, float> prioritySpotQueue = new WowTriangles.PriorityQueue<Spot, float>(); // (new SpotSearchComparer(dst, score)); ;
             prioritySpotQueue.Enqueue(fromSpot, -fromSpot.GetDistanceTo(destinationSpot) * heuristicsFactor);
 
             fromSpot.SearchScoreSet(currentSearchID, 0.0f);
@@ -682,7 +682,7 @@ namespace PatherPath.Graph
             return null;
         }
 
-        private void ScoreSpot(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, PriorityQueue<Spot, float> prioritySpotQueue)
+        private void ScoreSpot(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, WowTriangles.PriorityQueue<Spot, float> prioritySpotQueue)
         {
             switch (searchScoreSpot)
             {
@@ -701,7 +701,7 @@ namespace PatherPath.Graph
             }
         }
 
-        public void ScoreSpot_A_Star(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, PriorityQueue<Spot, float> prioritySpotQueue)
+        public void ScoreSpot_A_Star(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, WowTriangles.PriorityQueue<Spot, float> prioritySpotQueue)
         {
             //score spot
             float G_Score = currentSearchSpot.traceBackDistance + currentSearchSpot.GetDistanceTo(spotLinkedToCurrent);//  the movement cost to move from the starting point A to a given square on the grid, following the path generated to get there.
@@ -722,7 +722,7 @@ namespace PatherPath.Graph
 
         public static int gradiantMax = 5;
 
-        public void ScoreSpot_A_Star_With_Model_And_Gradient_Avoidance(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, PriorityQueue<Spot, float> prioritySpotQueue)
+        public void ScoreSpot_A_Star_With_Model_And_Gradient_Avoidance(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, WowTriangles.PriorityQueue<Spot, float> prioritySpotQueue)
         {
             //score spot
             float G_Score = currentSearchSpot.traceBackDistance + currentSearchSpot.GetDistanceTo(spotLinkedToCurrent);//  the movement cost to move from the starting point A to a given square on the grid, following the path generated to get there.
@@ -745,7 +745,7 @@ namespace PatherPath.Graph
             }
         }
 
-        public void ScoreSpot_Pather(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, PriorityQueue<Spot, float> prioritySpotQueue)
+        public void ScoreSpot_Pather(Spot spotLinkedToCurrent, Spot destinationSpot, int currentSearchID, ILocationHeuristics locationHeuristics, WowTriangles.PriorityQueue<Spot, float> prioritySpotQueue)
         {
             //score spots
             float currentSearchSpotScore = currentSearchSpot.SearchScoreGet(currentSearchID);
