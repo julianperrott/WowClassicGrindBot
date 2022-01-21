@@ -11,44 +11,44 @@ namespace Core
     {
         public string Name { get; set; } = string.Empty;
         public bool HasCastBar { get; set; }
-        public bool StopBeforeCast { get; set; } = false;
-        public ConsoleKey ConsoleKey { get; set; } = 0;
+        public bool StopBeforeCast { get; set; }
+        public ConsoleKey ConsoleKey { get; set; }
         public string Key { get; set; } = string.Empty;
         public int PressDuration { get; set; } = 50;
         public string Form { get; set; } = string.Empty;
         public Form FormEnum { get; set; } = Core.Form.None;
         public string CastIfAddsVisible { get; set; } = "";
-        public float Cooldown { get; set; } = 0;
+        public float Cooldown { get; set; }
 
         private int _charge;
         public int Charge { get; set; } = 1;
         public SchoolMask School { get; set; } = SchoolMask.None;
-        public int MinMana { get; set; } = 0;
-        public int MinRage { get; set; } = 0;
-        public int MinEnergy { get; set; } = 0;
-        public int MinComboPoints { get; set; } = 0;
+        public int MinMana { get; set; }
+        public int MinRage { get; set; }
+        public int MinEnergy { get; set; }
+        public int MinComboPoints { get; set; }
 
         public string Requirement { get; set; } = string.Empty;
         public List<string> Requirements { get; } = new List<string>();
 
-        public bool WhenUsable { get; set; } = false;
+        public bool WhenUsable { get; set; }
 
-        public bool WaitForWithinMeleeRange { get; set; } = false;
-        public bool ResetOnNewTarget { get; set; } = false;
+        public bool WaitForWithinMeleeRange { get; set; }
+        public bool ResetOnNewTarget { get; set; }
 
         public bool Log { get; set; } = true;
         public int DelayAfterCast { get; set; } = 1450; // GCD 1500 - but spell queue window 400 ms
 
         public bool WaitForGCD { get; set; } = true;
 
-        public bool SkipValidation { get; set; } = false;
+        public bool SkipValidation { get; set; }
 
-        public bool AfterCastWaitBuff = false;
+        public bool AfterCastWaitBuff { get; set; }
 
-        public bool AfterCastWaitNextSwing = false;
+        public bool AfterCastWaitNextSwing { get; set; }
 
-        public bool DelayUntilCombat { get; set; } = false;
-        public int DelayBeforeCast { get; set; } = 0;
+        public bool DelayUntilCombat { get; set; }
+        public int DelayBeforeCast { get; set; }
         public float Cost { get; set; } = 18;
         public string InCombat { get; set; } = "false";
 
@@ -57,7 +57,7 @@ namespace Core
         public string PathFilename { get; set; } = string.Empty;
         public List<Vector3> Path { get; } = new List<Vector3>();
 
-        public int StepBackAfterCast { get; set; } = 0;
+        public int StepBackAfterCast { get; set; }
 
         public Vector3 LastClickPostion { get; private set; }
 
@@ -105,9 +105,9 @@ namespace Core
 
             if (HasFormRequirement())
             {
-                if (Enum.TryParse(typeof(Form), Form, out var desiredForm))
+                if (Enum.TryParse(Form, out Form desiredForm))
                 {
-                    this.FormEnum = (Form)desiredForm;
+                    this.FormEnum = desiredForm;
                     this.logger.LogInformation($"[{Name}] Required Form: {FormEnum}");
 
                     if (KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot))
@@ -250,7 +250,7 @@ namespace Core
             actionBarCostReader.OnActionCostChanged += ActionBarCostReader_OnActionCostChanged;
         }
 
-        private void ActionBarCostReader_OnActionCostChanged(object sender, ActionBarCostEventArgs e)
+        private void ActionBarCostReader_OnActionCostChanged(object? sender, ActionBarCostEventArgs e)
         {
             if (!KeyReader.ActionBarSlotMap.TryGetValue(Key, out int slot)) return;
 

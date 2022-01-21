@@ -12,7 +12,7 @@ namespace Core
         public int Count { get; private set; }
         public Item Item { get; private set; }
         public string LastChangeDescription { get; private set; } = "New";
-        public int LastChange { get; private set; } = 0;
+        public int LastChange { get; private set; }
         public bool IsSoulbound { get; private set; }
 
         public void UpdateCount(int count)

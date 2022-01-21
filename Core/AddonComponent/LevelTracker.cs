@@ -7,7 +7,7 @@ namespace Core
         private readonly PlayerReader playerReader;
 
         private DateTime levelStartTime = DateTime.Now;
-        private int levelStartXP = 0;
+        private int levelStartXP;
 
         public string TimeToLevel { get; private set; } = "∞";
         public DateTime PredictedLevelUpTime { get; private set; } = DateTime.MaxValue;
@@ -40,23 +40,23 @@ namespace Core
             UpdateExpPerHour();
         }
 
-        private void PlayerExp_Changed(object sender, EventArgs e)
+        private void PlayerExp_Changed(object? sender, EventArgs e)
         {
             UpdateExpPerHour();
         }
 
-        private void PlayerLevel_Changed(object sender, EventArgs e)
+        private void PlayerLevel_Changed(object? sender, EventArgs e)
         {
             levelStartTime = DateTime.Now;
             levelStartXP = playerReader.PlayerXp.Value;
         }
 
-        private void OnPlayerDeath(object sender, EventArgs e)
+        private void OnPlayerDeath(object? sender, EventArgs e)
         {
             Death++;
         }
 
-        private void OnKillCredit(object sender, EventArgs e)
+        private void OnKillCredit(object? sender, EventArgs e)
         {
             MobsKilled++;
         }

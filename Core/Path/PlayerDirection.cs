@@ -18,7 +18,7 @@ namespace Core
 
         private const int DefaultIgnoreDistance = 15;
 
-        public DateTime LastSetDirection { get; private set; } = default;
+        public DateTime LastSetDirection { get; private set; }
 
         public PlayerDirection(ILogger logger, ConfigurableInput input, PlayerReader playerReader)
         {

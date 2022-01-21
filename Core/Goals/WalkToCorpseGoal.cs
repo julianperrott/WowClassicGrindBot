@@ -231,7 +231,7 @@ namespace Core.Goals
             LastActive = DateTime.Now;
         }
 
-        private int PointReachedDistance()
+        private static int PointReachedDistance()
         {
             return 40;
         }

@@ -48,15 +48,15 @@ namespace Core.Goals
 
         private DateTime LastReset = DateTime.Now;
 
-        private int lastGatherKey = 0;
-        private DateTime lastGatherClick = default;
+        private int lastGatherKey;
+        private DateTime lastGatherClick;
 
         private readonly Random random = new Random();
 
 
         #region IRouteProvider
 
-        public DateTime LastActive { get; set; } = default;
+        public DateTime LastActive { get; set; }
 
         public List<Vector3> PathingRoute()
         {

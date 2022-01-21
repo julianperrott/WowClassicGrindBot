@@ -3,12 +3,12 @@ namespace Core.GOAP
 {
     public class GoapAgentState
     {
-        public bool ShouldConsumeCorpse { get; set; } = false;
+        public bool ShouldConsumeCorpse { get; set; }
 
-        public bool NeedLoot { get; set; } = false;
-        public bool NeedSkin { get; set; } = false;
+        public bool NeedLoot { get; set; }
+        public bool NeedSkin { get; set; }
 
-        public int LastCombatKillCount { get; private set; } = 0;
+        public int LastCombatKillCount { get; private set; }
 
         public void IncKillCount()
         {

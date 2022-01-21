@@ -60,8 +60,8 @@ namespace Core
         private double addY;
         private double addX;
 
-        private int margin = 0;
-        private int canvasSize = 0;
+        private int margin;
+        private int canvasSize;
 
         private double pointToGrid;
 
@@ -208,7 +208,7 @@ namespace Core
         public string DeathImage(Vector3 pt)
         {
             var size = this.canvasSize / 25;
-            return pt == null ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X) - size / 2}' y = '{ToCanvasPointY(pt.Y) - size / 2}' height='{size}' width='{size}' />";
+            return pt == Vector3.Zero ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X) - size / 2}' y = '{ToCanvasPointY(pt.Y) - size / 2}' height='{size}' width='{size}' />";
         }
 
         public string DrawPoi(RouteInfoPoi poi)

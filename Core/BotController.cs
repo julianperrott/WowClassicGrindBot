@@ -35,7 +35,7 @@ namespace Core
         public Thread? screenshotThread { get; set; }
 
         private const int screenshotTickMs = 150;
-        private DateTime lastScreenshot = default;
+        private DateTime lastScreenshot;
 
         public Thread addonThread { get; set; }
         public Thread? botThread { get; set; }

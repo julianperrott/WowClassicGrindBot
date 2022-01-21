@@ -15,7 +15,7 @@ namespace Core
         private readonly int below;
         private readonly bool checkTargetGivesExp;
 
-        private int LastWarningTargetGuid = 0;
+        private int LastWarningTargetGuid;
 
         public Blacklist(ILogger logger, AddonReader addonReader, int above, int below, bool checkTargetGivesExp, List<string> blacklisted)
         {
@@ -94,7 +94,7 @@ namespace Core
                 return true; // ignore if current level - 7
             }
 
-            string blacklistMatch = blacklist.FirstOrDefault(s => addonReader.TargetName.ToUpper().StartsWith(s));
+            string blacklistMatch = blacklist.FirstOrDefault(s => addonReader.TargetName.ToUpper().StartsWith(s)) ?? string.Empty;
             if (!string.IsNullOrEmpty(blacklistMatch))
             {
                 Warn($"Target is in the blacklist {addonReader.TargetName} starts with {blacklistMatch}");
