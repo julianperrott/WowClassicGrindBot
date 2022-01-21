@@ -26,9 +26,9 @@ namespace Core
     {
         public string ClassName { get; set; } = string.Empty;
         public bool Loot { get; set; } = true;
-        public bool Skin { get; set; } = false;
+        public bool Skin { get; set; }
         public bool UseMount { get; set; } = true;
-        public bool KeyboardOnly { get; set; } = false;
+        public bool KeyboardOnly { get; set; }
 
         public string PathFilename { get; set; } = string.Empty;
         public string SpiritPathFilename { get; set; } = string.Empty;
@@ -36,7 +36,7 @@ namespace Core
         public string? OverridePathFilename { get; set; } = string.Empty;
 
         public bool PathThereAndBack { get; set; } = true;
-        public bool PathReduceSteps { get; set; } = false;
+        public bool PathReduceSteps { get; set; }
 
         public Mode Mode { get; set; } = Mode.Grind;
 
@@ -45,7 +45,7 @@ namespace Core
         public int NPCMaxLevels_Above { get; set; } = 1;
         public int NPCMaxLevels_Below { get; set; } = 7;
 
-        public bool CheckTargetGivesExp { get; set; } = false;
+        public bool CheckTargetGivesExp { get; set; }
         public List<string> Blacklist { get; } = new List<string>();
 
         public Dictionary<int, List<SchoolMask>> ImmunityBlacklist { get; } = new Dictionary<int, List<SchoolMask>>();

@@ -89,7 +89,7 @@ namespace Core
         private class Score
         {
             public Point point;
-            public int count = 0;
+            public int count;
 
             public static Score? ScorePoints(List<Score> points)
             {

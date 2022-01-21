@@ -499,7 +499,7 @@ namespace Core
             requirement = requirement.Trim();
 
             bool negated = false;
-            string negateKeyword = negate.FirstOrDefault(x => requirement.StartsWith(x));
+            string negateKeyword = negate.FirstOrDefault(x => requirement.StartsWith(x)) ?? string.Empty;
             if (!string.IsNullOrEmpty(negateKeyword))
             {
                 requirement = requirement[negateKeyword.Length..];
@@ -513,7 +513,7 @@ namespace Core
                 return negated ? requirementObj.Negate(negateKeyword) : requirementObj;
             }
 
-            if (booleanDictionary.Keys.Contains(requirement))
+            if (booleanDictionary.ContainsKey(requirement))
             {
                 var requirementObj = new Requirement
                 {
@@ -534,7 +534,7 @@ namespace Core
 
         private Requirement CreateTargetCastingSpellRequirement(string requirement)
         {
-            if (requirement.Contains(":"))
+            if (requirement.Contains(':'))
             {
                 var parts = requirement.Split(":");
                 var spellsPart = parts[1].Split("|");
@@ -696,7 +696,7 @@ namespace Core
         private Requirement GetExcusiveValueBasedRequirement(string requirement)
         {
             var symbol = "<";
-            if (requirement.Contains(">"))
+            if (requirement.Contains('>'))
             {
                 symbol = ">";
             }
@@ -718,7 +718,7 @@ namespace Core
                 }
             }
 
-            if (!valueDictionary.Keys.Contains(key))
+            if (!valueDictionary.ContainsKey(key))
             {
                 logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
@@ -772,7 +772,7 @@ namespace Core
                 }
             }
 
-            if (!valueDictionary.Keys.Contains(key))
+            if (!valueDictionary.ContainsKey(key))
             {
                 logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
@@ -821,7 +821,7 @@ namespace Core
                 }
             }
 
-            if (!valueDictionary.Keys.Contains(key))
+            if (!valueDictionary.ContainsKey(key))
             {
                 logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement

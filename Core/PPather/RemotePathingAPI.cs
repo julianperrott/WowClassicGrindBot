@@ -24,7 +24,7 @@ namespace Core
 
         private List<LineArgs> lineArgs = new List<LineArgs>();
 
-        private int targetMapId = 0;
+        private int targetMapId;
 
         public RemotePathingAPI(ILogger logger, string host="", int port=0)
         {

@@ -12,9 +12,9 @@ namespace Core
         private readonly ISquareReader squareReader;
         private readonly IAddonDataProvider addonDataProvider;
 
-        public bool Initialized { get; private set; } = false;
+        public bool Initialized { get; private set; }
 
-        public int Sequence { get; private set; } = 0;
+        public int Sequence { get; private set; }
 
         public bool Active { get; set; } = true;
         public PlayerReader PlayerReader { get; private set; }
@@ -104,13 +104,13 @@ namespace Core
 
             UpdateLatencys = new CircularBuffer<double>(10);
 
-            UIMapId.Changed += (object obj, EventArgs e) =>
+            UIMapId.Changed += (object? obj, EventArgs e) =>
             {
                 this.AreaDb.Update(WorldMapAreaDb.GetAreaId(UIMapId.Value));
                 ZoneChanged?.Invoke(this, EventArgs.Empty);
             };
 
-            GlobalTime.Changed += (object obj, EventArgs e) =>
+            GlobalTime.Changed += (object? obj, EventArgs e) =>
             {
                 UpdateLatencys.Put((DateTime.Now - GlobalTime.LastChanged).TotalMilliseconds);
                 AvgUpdateLatency = 0;

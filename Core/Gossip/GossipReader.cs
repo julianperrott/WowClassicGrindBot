@@ -12,7 +12,7 @@ namespace Core
 
         private DateTime lastEvent = DateTime.Now;
 
-        public int Count { private set; get; } = 0;
+        public int Count { private set; get; }
         public Dictionary<Gossip, int> Gossips { get; private set; } = new Dictionary<Gossip, int>();
 
         private int data;

@@ -24,14 +24,14 @@ namespace Core.Goals
 
         public override async ValueTask PerformAction()
         {
-            await input.TapLastTargetKey(this.ToString());
+            await input.TapLastTargetKey(GetType().Name);
         }
 
         private void Log(string text)
         {
             if (debug)
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{GetType().Name}: {text}");
             }
         }
     }

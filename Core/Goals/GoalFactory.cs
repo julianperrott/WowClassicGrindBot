@@ -170,7 +170,7 @@ namespace Core
 
         private string FixPathFilename(string path)
         {
-            if (!path.Contains(":") && !string.IsNullOrEmpty(path) && !path.Contains(dataConfig.Path))
+            if (!path.Contains(':') && !string.IsNullOrEmpty(path) && !path.Contains(dataConfig.Path))
             {
                 return Path.Join(dataConfig.Path, path);
             }
