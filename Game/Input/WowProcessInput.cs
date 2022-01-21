@@ -7,7 +7,7 @@ using WinAPI;
 
 namespace Game
 {
-    public class WowProcessInput : IMouseInput
+    public partial class WowProcessInput : IMouseInput
     {
         private const int MIN_DELAY = 25;
         private const int MAX_DELAY = 55;
@@ -17,9 +17,7 @@ namespace Game
         private readonly IInput nativeInput;
         private readonly IInput simulatorInput;
 
-        private readonly ConcurrentDictionary<ConsoleKey, bool> keyDict = new ConcurrentDictionary<ConsoleKey, bool>();
-
-        private bool debug = true;
+        private readonly ConcurrentDictionary<ConsoleKey, bool> keyDict = new();
 
         public WowProcessInput(ILogger logger, WowProcess wowProcess)
         {
@@ -38,14 +36,14 @@ namespace Game
             }
             else
             {
-                if(!keyDict.TryAdd(key, true))
+                if (!keyDict.TryAdd(key, true))
                 {
                     return;
                 }
             }
 
             if (!string.IsNullOrEmpty(description))
-                Log($"KeyDown {key} " + description);
+                LogKeyDown(logger, key, description);
 
             nativeInput.KeyDown((int)key);
             keyDict[key] = true;
@@ -62,13 +60,13 @@ namespace Game
             }
             else
             {
-                if(!keyDict.TryAdd(key, false))
+                if (!keyDict.TryAdd(key, false))
                 {
                     return;
                 }
             }
 
-            Log($"KeyUp {key}");
+            LogKeyUp(logger, key);
             nativeInput.KeyUp((int)key);
 
             keyDict[key] = false;
@@ -76,7 +74,7 @@ namespace Game
 
         public bool IsKeyDown(ConsoleKey key)
         {
-            if(keyDict.TryGetValue(key, out var down))
+            if (keyDict.TryGetValue(key, out var down))
             {
                 return down;
             }
@@ -101,15 +99,15 @@ namespace Game
 
         public async ValueTask KeyPress(ConsoleKey key, int milliseconds, string description = "")
         {
-            int totalDelayMs = await nativeInput.KeyPress((int)key, milliseconds);
+            int totalElapsedMs = await nativeInput.KeyPress((int)key, milliseconds);
             if (!string.IsNullOrEmpty(description))
-                Log($"[{key}] {description} pressed for {totalDelayMs}ms");
+                LogKeyPress(logger, key, description, totalElapsedMs);
         }
 
         public async ValueTask KeyPressNoDelay(ConsoleKey key, int milliseconds, string description = "")
         {
             if (!string.IsNullOrEmpty(description))
-                Log($"[{key}] {description} pressing for {milliseconds}ms");
+                LogKeyPressNoDelay(logger, key, description, milliseconds);
 
             await nativeInput.KeyPressNoDelay((int)key, milliseconds);
         }
@@ -120,7 +118,7 @@ namespace Game
                 return;
 
             if (!string.IsNullOrEmpty(description))
-                Log($"[{key}] {description} pressing for {milliseconds}ms");
+                LogKeyPress(logger, key, description, milliseconds);
 
             nativeInput.KeyPressSleep((int)key, milliseconds);
         }
@@ -148,10 +146,28 @@ namespace Game
             await nativeInput.LeftClickMouse(position);
         }
 
-        private void Log(string text)
-        {
-            if (debug)
-                logger.LogInformation($"Input: {text}");
-        }
+        [LoggerMessage(
+            EventId = 25,
+            Level = LogLevel.Debug,
+            Message = @"Input: KeyDown {key} {description}")]
+        static partial void LogKeyDown(ILogger logger, ConsoleKey key, string description);
+
+        [LoggerMessage(
+            EventId = 26,
+            Level = LogLevel.Debug,
+            Message = @"Input: KeyUp {key}")]
+        static partial void LogKeyUp(ILogger logger, ConsoleKey key);
+
+        [LoggerMessage(
+            EventId = 27,
+            Level = LogLevel.Debug,
+            Message = @"Input: [{key}] {description} pressed for {milliseconds}ms")]
+        static partial void LogKeyPress(ILogger logger, ConsoleKey key, string description, int milliseconds);
+
+        [LoggerMessage(
+            EventId = 28,
+            Level = LogLevel.Debug,
+            Message = @"Input: [{key}] {description} pressing for {milliseconds}ms")]
+        static partial void LogKeyPressNoDelay(ILogger logger, ConsoleKey key, string description, int milliseconds);
     }
 }
