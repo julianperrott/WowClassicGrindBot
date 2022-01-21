@@ -17,7 +17,7 @@ namespace Core
             int s = addonReader.GlobalTime.Value;
             while (Math.Abs(s - addonReader.GlobalTime.Value) <= n)
             {
-                await Task.Delay(4);
+                await Task.Delay(2);
             }
         }
 
