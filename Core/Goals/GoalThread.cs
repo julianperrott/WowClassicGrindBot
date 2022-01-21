@@ -63,7 +63,7 @@ namespace Core.Goals
             }
         }
 
-        public async Task GoapPerformGoal()
+        public async ValueTask GoapPerformGoal()
         {
             if (this.goapAgent != null)
             {

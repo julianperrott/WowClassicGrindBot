@@ -57,7 +57,7 @@ namespace Core.GOAP
             WorldState = GetWorldState();
         }
 
-        public async Task<GoapGoal?> GetAction()
+        public async ValueTask<GoapGoal?> GetAction()
         {
             if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
