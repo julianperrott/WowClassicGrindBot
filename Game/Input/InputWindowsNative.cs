@@ -36,34 +36,34 @@ namespace Game
 
         public void KeyDown(int key)
         {
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, key, 0);
         }
 
         public void KeyUp(int key)
         {
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, key, 0);
         }
 
         public async ValueTask<int> KeyPress(int key, int milliseconds)
         {
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, key, 0);
             int delay = await Delay(milliseconds);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, key, 0);
             return delay;
         }
 
         public async ValueTask KeyPressNoDelay(int key, int milliseconds)
         {
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, key, 0);
             await Task.Delay(milliseconds);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, key, 0);
         }
 
         public void KeyPressSleep(int key, int milliseconds)
         {
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, (int)key, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYDOWN, key, 0);
             Thread.Sleep(milliseconds);
-            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, (int)key, 0);
+            NativeMethods.PostMessage(process.MainWindowHandle, NativeMethods.WM_KEYUP, key, 0);
         }
 
         public async ValueTask LeftClickMouse(Point p)
