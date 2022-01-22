@@ -7,7 +7,7 @@ using SharedLib;
 
 namespace Core
 {
-    public class RequirementFactory
+    public partial class RequirementFactory
     {
         private readonly ILogger logger;
         private readonly AddonReader addonReader;
@@ -326,7 +326,7 @@ namespace Core
                 }
                 else
                 {
-                    logger.LogInformation($"[{GetType().Name}] Added user defined int variable [{kvp.Key} -> {kvp.Value}]");
+                    LogUserDefinedValue(logger, GetType().Name, kvp.Key, kvp.Value);
                 }
             }
         }
@@ -494,7 +494,7 @@ namespace Core
 
         public Requirement GetRequirement(string name, string requirement)
         {
-            logger.LogInformation($"[{name}] Processing requirement: \"{requirement}\"");
+            LogProcessingRequirement(logger, name, requirement);
 
             requirement = requirement.Trim();
 
@@ -839,5 +839,16 @@ namespace Core
             };
         }
 
+        [LoggerMessage(
+            EventId = 12,
+            Level = LogLevel.Information,
+            Message = "[{typeName}] Added user defined int variable [{key} -> {value}]")]
+        static partial void LogUserDefinedValue(ILogger logger, string typeName, string key, int value);
+
+        [LoggerMessage(
+            EventId = 13,
+            Level = LogLevel.Information,
+            Message = "[{name}] Processing requirement: \"{requirement}\"")]
+        static partial void LogProcessingRequirement(ILogger logger, string name, string requirement);
     }
 }

@@ -118,7 +118,7 @@ namespace Core
                 }
                 else
                 {
-                    logger.LogInformation($"Unknown form: {Form}");
+                    throw new Exception($"[{Name}] Unknown form: {Form}");
                 }
             }
 

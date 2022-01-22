@@ -173,20 +173,20 @@ namespace Core
             InitializeKeyActions(Pull, Interact, Approach, AutoAttack, StopAttack);
             InitializeKeyActions(Combat, Interact, Approach, AutoAttack, StopAttack);
 
-            logger.LogInformation("[Form] Initialise KeyActions.");
+            logger.LogInformation($"[{nameof(Form)}] Initialise KeyActions.");
             Form.ForEach(i => i.InitialiseForm(addonReader, requirementFactory, logger));
 
-            Pull.PreInitialise("Pull", requirementFactory, logger);
-            Combat.PreInitialise("Combat", requirementFactory, logger);
-            Adhoc.PreInitialise("Adhoc", requirementFactory, logger);
-            NPC.PreInitialise("AdhocNpc", requirementFactory, logger);
-            Parallel.PreInitialise("Parallel", requirementFactory, logger);
+            Pull.PreInitialise(nameof(Pull), requirementFactory, logger);
+            Combat.PreInitialise(nameof(Combat), requirementFactory, logger);
+            Adhoc.PreInitialise(nameof(Adhoc), requirementFactory, logger);
+            NPC.PreInitialise(nameof(NPC), requirementFactory, logger);
+            Parallel.PreInitialise(nameof(Parallel), requirementFactory, logger);
 
-            Pull.Initialise("Pull", addonReader, requirementFactory, logger);
-            Combat.Initialise("Combat", addonReader, requirementFactory, logger);
-            Adhoc.Initialise("Adhoc", addonReader, requirementFactory, logger);
-            NPC.Initialise("AdhocNpc", addonReader, requirementFactory, logger);
-            Parallel.Initialise("Parallel", addonReader, requirementFactory, logger);
+            Pull.Initialise(nameof(Pull), addonReader, requirementFactory, logger);
+            Combat.Initialise(nameof(Combat), addonReader, requirementFactory, logger);
+            Adhoc.Initialise(nameof(Adhoc), addonReader, requirementFactory, logger);
+            NPC.Initialise(nameof(NPC), addonReader, requirementFactory, logger);
+            Parallel.Initialise(nameof(Parallel), addonReader, requirementFactory, logger);
 
             GatherFindKeys.ForEach(key =>
             {

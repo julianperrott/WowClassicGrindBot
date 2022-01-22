@@ -239,17 +239,21 @@ namespace Core
 
         public bool InitialiseFromFile(string classFile, string? pathFile)
         {
+            Stopwatch stopwatch = Stopwatch.StartNew();
             try
             {
                 ClassConfig = ReadClassConfiguration(classFile, pathFile);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 logger.LogError(e.Message);
                 return false;
             }
 
             Initialize(ClassConfig);
+
+            stopwatch.Stop();
+            logger.LogInformation($"[{GetType().Name}] Elapsed time: {stopwatch.ElapsedMilliseconds}ms");
 
             return true;
         }
@@ -262,7 +266,7 @@ namespace Core
 
             ActionBarPopulator = new ActionBarPopulator(logger, config, AddonReader, ExecGameCommand);
 
-            var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(logger, AddonReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist);
+            IBlacklist blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : new Blacklist(logger, AddonReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist);
 
             var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, ExecGameCommand);
 
@@ -293,7 +297,7 @@ namespace Core
         {
             if(!classFilename.ToLower().Contains(AddonReader.PlayerReader.Class.ToString().ToLower()))
             {
-                throw new Exception("Not allowed to load other class profile!");
+                throw new Exception($"[{GetType().Name}] Not allowed to load other class profile!");
             }
 
             var classFilePath = Path.Join(DataConfig.Class, classFilename);
@@ -303,7 +307,7 @@ namespace Core
                 var requirementFactory = new RequirementFactory(logger, AddonReader);
                 classConfig.Initialise(DataConfig, AddonReader, requirementFactory, logger, pathFilename);
 
-                logger.LogDebug($"Loaded `{classFilename}` with Path Profile `{classConfig.PathFilename}`.");
+                logger.LogInformation($"[{GetType().Name}] Profile Loaded `{classFilename}` with `{classConfig.PathFilename}`.");
 
                 return classConfig;
             }
