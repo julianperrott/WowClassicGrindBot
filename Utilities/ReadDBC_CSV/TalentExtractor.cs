@@ -34,7 +34,7 @@ namespace ReadDBC_CSV
             File.WriteAllText(Path.Join(path, "talent.json"), JsonConvert.SerializeObject(talents));
         }
 
-        private List<TalentTab> ExtractTalentTabs(string path)
+        private static List<TalentTab> ExtractTalentTabs(string path)
         {
             int idIndex = -1;
             int NameIndex = -1;

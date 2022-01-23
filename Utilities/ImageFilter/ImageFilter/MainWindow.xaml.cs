@@ -122,7 +122,7 @@ namespace ImageFilter
         }
 
 
-        public BitmapImage ToBitmapImage(Bitmap Bitmap)
+        public static BitmapImage ToBitmapImage(Bitmap Bitmap)
         {
             using (var memory = new MemoryStream())
             {
@@ -144,7 +144,7 @@ namespace ImageFilter
 
         #region Cursor Input 
 
-        public void SetCursorPosition(System.Drawing.Point position)
+        public static void SetCursorPosition(System.Drawing.Point position)
         {
             //SetCursorPos(position.X, position.Y);
         }

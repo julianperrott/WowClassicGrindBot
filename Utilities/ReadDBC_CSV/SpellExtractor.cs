@@ -34,7 +34,7 @@ namespace ReadDBC_CSV
             File.WriteAllText(Path.Join(path, "spells.json"), JsonConvert.SerializeObject(spells));
         }
 
-        private List<Spell> ExtractNames(string path)
+        private static List<Spell> ExtractNames(string path)
         {
             int entryIndex = -1;
             int nameIndex = -1;
@@ -65,7 +65,7 @@ namespace ReadDBC_CSV
             return spells;
         }
 
-        private void ExtractLevels(string path, List<Spell> spells)
+        private static void ExtractLevels(string path, List<Spell> spells)
         {
             int entryIndex = -1;
             int spellIdIndex = -1;
@@ -92,9 +92,12 @@ namespace ReadDBC_CSV
                         int index = spells.FindIndex(0, x => x.Id == spellId);
                         if (index > -1)
                         {
-                            Spell spell = spells[index];
-                            spell.Level = level;
-                            spells[index] = spell;
+                            spells[index] = new Spell
+                            {
+                                Id = spellId,
+                                Level = level,
+                                Name = spells[index].Name,
+                            };
                         }
                     }
                 }

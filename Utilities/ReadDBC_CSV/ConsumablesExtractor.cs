@@ -48,7 +48,7 @@ namespace ReadDBC_CSV
             File.WriteAllText(Path.Join(path, "waters.json"), JsonConvert.SerializeObject(waterIds));
         }
 
-        private List<EntityId> ExtractSpells(string path, string descLang)
+        private static List<EntityId> ExtractSpells(string path, string descLang)
         {
             int entryIndex = -1;
             int descIndex = -1;
@@ -79,7 +79,7 @@ namespace ReadDBC_CSV
             return items;
         }
 
-        private List<EntityId> ExtractItem(string path, List<EntityId> spells)
+        private static List<EntityId> ExtractItem(string path, List<EntityId> spells)
         {
             int entryIndex = -1;
             int spellIdIndex = -1;

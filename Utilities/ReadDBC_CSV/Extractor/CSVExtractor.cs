@@ -41,7 +41,7 @@ namespace ReadDBC_CSV
             throw new ArgumentOutOfRangeException(v);
         }
 
-        public string[] SplitQuotes(string csvText)
+        public static string[] SplitQuotes(string csvText)
         {
             List<string> tokens = new List<string>();
 
