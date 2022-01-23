@@ -37,7 +37,7 @@ if DataToColor.IsRetail() or TBC253 then
     end
   end
 
-  if DataToColor.IsRetail() then
+  if DataToColor.IsRetail() or TBC253 then
     DataToColor.UnitChannelInfo = UnitChannelInfo
   elseif DataToColor.IsClassic_BCC() then
     DataToColor.UnitChannelInfo = function(unit)
