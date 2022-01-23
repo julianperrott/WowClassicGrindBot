@@ -1,11 +1,9 @@
 ﻿namespace SharedLib
 {
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-    public struct Spell
-#pragma warning restore CA1815 // Override equals and operator equals on value types
+    public readonly struct Spell
     {
-        public int Id { set; get; }
-        public string Name { set; get; }
-        public int Level { set; get; }
+        public int Id { get; init; }
+        public string Name { get; init; }
+        public int Level { get; init; }
     }
 }

@@ -2,13 +2,11 @@
 
 namespace SharedLib
 {
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-    public struct TalentTreeElement
-#pragma warning restore CA1815 // Override equals and operator equals on value types
+    public readonly struct TalentTreeElement
     {
-        public int TierID { set; get; }
-        public int ColumnIndex { set; get; }
-        public int TabID { set; get; }
-        public List<int> SpellIds { set; get; }
+        public int TierID { get; init; }
+        public int ColumnIndex { get; init; }
+        public int TabID { get; init; }
+        public List<int> SpellIds { get; init; }
     }
 }

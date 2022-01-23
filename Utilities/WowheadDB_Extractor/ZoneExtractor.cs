@@ -15,12 +15,12 @@ namespace WowheadDB_Extractor
         private const string ZONE_CLASSIC_URL = "https://classic.wowhead.com/zone=";
         private const string ZONE_TBC_URL = "https://tbc.wowhead.com/zone=";
 
-        public async Task Run()
+        public static async Task Run()
         {
             await ExtractZones();
         }
 
-        async Task ExtractZones()
+        static async Task ExtractZones()
         {
             foreach (KeyValuePair<string, int> entry in Areas.List)
             {
@@ -47,7 +47,7 @@ namespace WowheadDB_Extractor
             }
         }
 
-        async Task<string> LoadPage(int zoneId)
+        static async Task<string> LoadPage(int zoneId)
         {
             var url = ZONE_TBC_URL + zoneId;
 
@@ -56,7 +56,7 @@ namespace WowheadDB_Extractor
             return await response.Content.ReadAsStringAsync();
         }
 
-        string GetPayloadFromWebpage(string content)
+        static string GetPayloadFromWebpage(string content)
         {
             string beginPat = "new ShowOnMap(";
             string endPat = ");</script>";
@@ -67,12 +67,12 @@ namespace WowheadDB_Extractor
             return content.Substring(beginPos + beginPat.Length, endPos - beginPos - beginPat.Length);
         }
 
-        Area ZoneFromJson(string content)
+        static Area ZoneFromJson(string content)
         {
             return JsonConvert.DeserializeObject<Area>(content);
         }
 
-        void SaveZone(Area zone, string name)
+        static void SaveZone(Area zone, string name)
         {
             var output = JsonConvert.SerializeObject(zone);
             var file = Path.Join(outputPath, name + ".json");
@@ -83,14 +83,14 @@ namespace WowheadDB_Extractor
 
         #region local tests
 
-        void SerializeTest()
+        static void SerializeTest()
         {
             int zoneId = 40;
             var file = Path.Join(outputPath, zoneId + ".json");
             var zone = ZoneFromJson(File.ReadAllText(file));
         }
 
-        void ExtractFromFileTest()
+        static void ExtractFromFileTest()
         {
             var file = Path.Join(outputPath, "a.html");
             var html = File.ReadAllText(file);

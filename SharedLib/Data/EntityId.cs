@@ -1,7 +1,7 @@
 ﻿namespace SharedLib
 {
-    public struct EntityId
+    public readonly struct EntityId
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
     }
 }

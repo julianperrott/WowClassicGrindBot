@@ -2,12 +2,12 @@
 
 namespace SharedLib
 {
-    public struct Item
+    public readonly struct Item
     {
-        public int Entry { get; set; }
-        public string Name { get; set; }
-        public int Quality { get; set; }
-        public int SellPrice { get; set; }
+        public int Entry { get; init; }
+        public string Name { get; init; }
+        public int Quality { get; init; }
+        public int SellPrice { get; init; }
 
         public static int[] ToSellPrice(int sellPrice)
         {
