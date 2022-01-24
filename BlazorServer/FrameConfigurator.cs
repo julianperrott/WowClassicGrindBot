@@ -265,12 +265,18 @@ namespace BlazorServer
                 meta = GetDataFrameMeta();
             }
 
+            if (meta == DataFrameMeta.Empty)
+            {
+                logger.LogWarning("Unable to enter configuration mode! You most likely running the game with admin privileges! Please restart the game without it!");
+                return false;
+            }
+
             logger.LogInformation($"DataFrameMeta: hash: {meta.hash} | spacing: {meta.spacing} | size: {meta.size} | rows: {meta.rows} | frames: {meta.frames}");
 
             var size = meta.EstimatedSize(rect);
-            if (size.Height > 50)
+            if (size.Height > 50 || size.IsEmpty)
             {
-                logger.LogWarning($"Something is worng. ({size}) is too big.");
+                logger.LogWarning($"Something is worng. esimated size: {size}.");
                 return false;
             }
 

@@ -20,6 +20,12 @@ namespace Game
                     {
                         throw new ArgumentOutOfRangeException("Unable to find the Wow process");
                     }
+
+                    if (process.MainWindowHandle == IntPtr.Zero)
+                    {
+                        throw new NullReferenceException($"Unable read {nameof(process.MainWindowHandle)} {process.ProcessName} - {process.Id} - {process.Handle}");
+                    }
+
                     this._warcraftProcess = process;
                 }
 
@@ -36,6 +42,11 @@ namespace Game
             if (process == null)
             {
                 throw new ArgumentOutOfRangeException("Unable to find the Wow process");
+            }
+
+            if (process.MainWindowHandle == IntPtr.Zero)
+            {
+                throw new NullReferenceException($"Unable read {nameof(process.MainWindowHandle)} {process.ProcessName} - {process.Id} - {process.Handle}");
             }
 
             this._warcraftProcess = process;
