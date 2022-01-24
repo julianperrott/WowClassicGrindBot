@@ -1415,14 +1415,15 @@ The bot will use the PathingAPI to work out routes, these are shown on the route
 
 Warlock `heal` macro used in warlock profiles.
 ```css
-#showtooltip
-/cast [nocombat] Create Healthstone
+#showtooltip Create Healthstone
 /use Minor Healthstone
 /use Lesser Healthstone
 /use Healthstone
 /use Greater Healthstone
 /use Major Healthstone
 /use Master Healthstone
+/stopmacro [combat]
+/cast [nocombat] Create Healthstone
 ```
 
 Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
