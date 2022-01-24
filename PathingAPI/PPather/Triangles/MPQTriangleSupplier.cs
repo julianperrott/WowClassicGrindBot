@@ -110,7 +110,8 @@ namespace WowTriangles
                     TotalName = Name + ":" + ParentName;
                 try
                 {
-                    zoneToMapId.Add(TotalName, WorldID);
+                    if (!zoneToMapId.ContainsKey(TotalName))
+                        zoneToMapId.Add(TotalName, WorldID);
                     //logger.WriteLine(TotalName + " => " + WorldID);
                 }
                 catch
@@ -127,46 +128,9 @@ namespace WowTriangles
 
         public static string[] GetArchiveNames(DataConfig dataConfig, Action<string> log)
         {
-            string[] archiveNames = {
-                    "patch.MPQ",
-                    "enUS\\patch-enUS.MPQ",
-                    "enGB\\patch-enGB.MPQ",
-                    "lichking.MPQ",
-                    "common-2.MPQ",
-                    "common.MPQ",
-                    "expansion.MPQ",
-                    "enUS\\lichking-locale-enUS.MPQ", "enUS\\locale-enUS.MPQ", "enUS\\expansion-locale-enUS.MPQ",
-                    "enGB\\lichking-locale-enGB.MPQ", "enGB\\locale-enGB.MPQ", "enGB\\expansion-locale-enGB.MPQ",
-                    "enUS\\base-enUS.MPQ",
-                    "enGB\\base-enGB.MPQ",
-                    "enUS\\backup-enUS.MPQ",
-                    "enGB\\backup-enGB.MPQ",
-                    "expansion1.MPQ",
-                    "expansion2.MPQ",
-                    "OldWorld.MPQ",
-                    "world.MPQ",
-                    "enGB\\expansion1-locale-enGB.MPQ",
-                    "enGB\\expansion2-locale-enGB.MPQ",
-                    "enGB\\locale-enGB.MPQ",
-                    "enGB\\locale-enGB.MPQ",
+            //log("MPQ dir is " + dataConfig.MPQ);
 
-                    "wow-update-13164.MPQ",
-                    "wow-update-oldworld-13154.MPQ",
-                    "Cache\\patch-base-oldworld-13154.MPQ",
-                    "Cache\\enGB\\patch-enGB-oldworld-13154.MPQ",
-                    "expansion2.MPQ","expansion1.MPQ",
-                    "world.MPQ",
-                    "sound.MPQ",
-                    "art.MPQ",
-                    "enGB\\expansion2-locale-enGB.MPQ",
-                    "enGB\\expansion1-locale-enGB.MPQ",
-                    "enGB\\locale-enGB.MPQ",
-                    "enGB\\base-enGB.MPQ"
-                                    };
-
-            string regGameDir = dataConfig.MPQ;
-            log("MPQ dir is " + regGameDir);
-            return archiveNames.Select(a => Path.Join(regGameDir, a)).ToArray();
+            return Directory.GetFiles(dataConfig.MPQ);
         }
 
         public void SetContinent(string continent)
@@ -307,7 +271,7 @@ namespace WowTriangles
                     }
                 }
 
-                logger.WriteLine("wee");
+                //logger.WriteLine("wee");
                 /*logger.WriteLine(
 					String.Format(" Triangles - Map: {0,6} Objects: {1,6} Models: {2,6}",
 								  map_triangles.GetNumberOfTriangles(),
@@ -315,7 +279,7 @@ namespace WowTriangles
 								  model_triangles.GetNumberOfTriangles()));
 				*/
             }
-            logger.WriteLine(" done");
+            //logger.WriteLine(" done");
             wdt.maptiles[chunk_x, chunk_y] = null; // clear it atain
                                                    //myChunk.triangles.ClearVertexMatrix(); // not needed anymore
                                                    //return myChunk;
@@ -450,7 +414,7 @@ namespace WowTriangles
             float dir_y = wi.dir.y - 90;
             float dir_z = -wi.dir.x;
 
-            logger.WriteLine("modeli: " + dir_x + " " + dir_y + " " + dir_z);
+            //logger.WriteLine("modeli: " + dir_x + " " + dir_y + " " + dir_z);
             WMO wmo = wi.wmo;
 
             foreach (WMOGroup g in wmo.groups)
@@ -496,7 +460,7 @@ namespace WowTriangles
                     if (finalz > maxz) { maxz = finalx; }
                 }
 
-                logger.WriteLine("AddTriangles: x(" + minx + " - " + maxx + ") y(" + miny + " - " + maxy + ") z(" + minz + " - " + maxz + ")");
+                //logger.WriteLine("AddTriangles: x(" + minx + " - " + maxx + ") y(" + miny + " - " + maxy + ") z(" + minz + " - " + maxz + ")");
 
                 for (int i = 0; i < g.nTriangles; i++)
                 {
