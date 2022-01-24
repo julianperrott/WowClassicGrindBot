@@ -750,31 +750,31 @@ namespace Wmo
         private Logger logger;
         private DataConfig dataConfig;
 
-        //Alterac Valley> ZonePath :” world\\maps\\PVPZone01\\PVPZone01”
+        //Alterac Valley> ZonePath :ï¿½ world\\maps\\PVPZone01\\PVPZone01ï¿½
 
         // 238.
-        //  Warsong Gulch> ZonePath : world\\maps\\PVPZone03\\PVPZone03”
+        //  Warsong Gulch> ZonePath : world\\maps\\PVPZone03\\PVPZone03ï¿½
 
         // 239.
-        //  Arathi Basin> ZonePath : “world\\mapsPVPZone04\\PVPZone04”
+        //  Arathi Basin> ZonePath : ï¿½world\\mapsPVPZone04\\PVPZone04ï¿½
 
         // 240.
-        //  Eye of the Storm> ZonePath : “world\\maps\\NetherstormBG\\NetherstormBG”
+        //  Eye of the Storm> ZonePath : ï¿½world\\maps\\NetherstormBG\\NetherstormBGï¿½
 
         // 241.
-        //  Strand of the Ancients> ZonePath : "world\\maps\\NorthrendBG\\NorthrendBG”
+        //  Strand of the Ancients> ZonePath : "world\\maps\\NorthrendBG\\NorthrendBGï¿½
 
         // 242.
-        //  Isle of Conquest> ZonePath : “world\\maps\\IsleofConquest\\IsleofConquest”
+        //  Isle of Conquest> ZonePath : ï¿½world\\maps\\IsleofConquest\\IsleofConquestï¿½
 
         // 243.
-        //  Twin Peaks> ZonePath : “world\\maps\\CataclysmCTF\\CataclysmCTF”
+        //  Twin Peaks> ZonePath : ï¿½world\\maps\\CataclysmCTF\\CataclysmCTFï¿½
 
         // 244.
-        //  Tol Barad> ZonePath : “world\\maps\\TolBarad\\TolBarad”
+        //  Tol Barad> ZonePath : ï¿½world\\maps\\TolBarad\\TolBaradï¿½
 
         // 245.
-        //  The Battle for Gilneas > ZonePath : “world\\maps\\Gilneas_BG_2\\Gilneas_BG_2”*/
+        //  The Battle for Gilneas > ZonePath : ï¿½world\\maps\\Gilneas_BG_2\\Gilneas_BG_2ï¿½*/
 
         //        1.
         //Azeroth
@@ -989,7 +989,7 @@ namespace Wmo
                     else if (type == ChunkReader.MAIN)
                     {
                         int cnt = HandleMAIN(size);
-                        logger.WriteLine("Map Tiles available in " + wdtfile + " = " + cnt);
+                        //logger.WriteLine("Map Tiles available in " + wdtfile + " = " + cnt);
                     }
                     else
                     {
@@ -1002,7 +1002,7 @@ namespace Wmo
                 {
                     done = true;
                 }
-            } while (!done);
+            } while (!done && file.BaseStream.Position != file.BaseStream.Length);
 
             file.Close();
             stream.Close();
@@ -1128,7 +1128,7 @@ namespace Wmo
                 {
                     done = true;
                 }
-            } while (!done);
+            } while (!done && file.BaseStream.Position != file.BaseStream.Length);
 
             file.Close();
             stream.Close();
@@ -1297,7 +1297,7 @@ namespace Wmo
                 {
                     done = true;
                 }
-            } while (!done);
+            } while (!done && file.BaseStream.Position != file.BaseStream.Length);
 
             for (int j = 0; j < 16; j++)
             {
@@ -1646,7 +1646,7 @@ namespace Wmo
                 {
                     done = true;
                 }
-            } while (!done);
+            } while (!done && file.BaseStream.Position != file.BaseStream.Length);
         }
 
         private static void HandleChunkMCNR(MapChunk chunk, uint size)
@@ -1799,7 +1799,7 @@ namespace Wmo
                 {
                     done = true;
                 }
-            } while (!done);
+            } while (!done && file.BaseStream.Position != file.BaseStream.Length);
             file.Close();
             stream.Close();
         }
@@ -2018,7 +2018,7 @@ namespace Wmo
                 {
                     done = true;
                 }
-            } while (!done);
+            } while (!done && file.BaseStream.Position != file.BaseStream.Length);
 
             file.Close();
             stream.Close();
