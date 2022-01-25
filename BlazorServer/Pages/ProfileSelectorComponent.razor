@@ -100,7 +100,7 @@
             selectedProfile = (string)changeEventArgs.Value;
         }
 
-        disableButton = string.IsNullOrEmpty(selectedProfile);
+        disableButton = string.IsNullOrEmpty(selectedProfile) || selectedProfile == files[0];
     }
 
     private void RefreshData()

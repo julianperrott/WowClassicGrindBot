@@ -351,7 +351,7 @@ namespace Core
             DirectoryInfo directory = new DirectoryInfo(DataConfig.Class);
             var list = directory.GetFiles().Select(i => i.Name).ToList();
             list.Sort(new NaturalStringComparer());
-            list.Insert(0, String.Empty);
+            list.Insert(0, "Press Init State first!");
             return list;
         }
 
