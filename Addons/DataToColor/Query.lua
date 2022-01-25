@@ -313,7 +313,8 @@ function DataToColor:isActionUseable(min,max)
     for i = min, max do
         local start, duration, enabled = GetActionCooldown(i)
         isUsable, notEnough = IsUsableAction(i)
-        if start == 0 and isUsable == true and notEnough == false then
+
+        if start == 0 and isUsable == true and notEnough == false and GetActionTexture(i) ~= 134400 then -- red question mark texture
             isUsableBits = isUsableBits + (2 ^ (i - min))
         end
 
