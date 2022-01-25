@@ -173,6 +173,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
     * Required to restart the Game 
     * Enter world with your desired character
     * Click `5. Frame Configuration`
+    * [Guidance for good DataFrame](https://github.com/Xian55/WowClassicGrindBot/wiki/Guidance-for-good-DataFrame)
     * Click `Auto Configure and Restart`
     * [Validate FrameConfiguration](https://github.com/Xian55/WowClassicGrindBot/wiki/Validating-FrameConfiguration)
 
