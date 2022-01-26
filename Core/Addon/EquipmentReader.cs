@@ -1,4 +1,6 @@
-﻿namespace Core
+﻿using System;
+
+namespace Core
 {
     public enum InventorySlotId
     {
@@ -38,6 +40,8 @@
 
         private readonly int[] equipment = new int[MAX_EQUIPMENT_COUNT];
 
+        public event EventHandler<(int, int)>? OnEquipmentChanged;
+
         public EquipmentReader(ISquareReader reader, int cSlotNum, int cItemId)
         {
             this.reader = reader;
@@ -52,8 +56,12 @@
             if (index < MAX_EQUIPMENT_COUNT && index >= 0)
             {
                 int itemId = reader.GetIntAtCell(cItemId);
-                if(itemId > 0)
-                    equipment[index] = itemId;
+                bool changed = equipment[index] != itemId;
+
+                equipment[index] = itemId;
+
+                if (changed)
+                    OnEquipmentChanged?.Invoke(this, (index, itemId));
             }
         }
 

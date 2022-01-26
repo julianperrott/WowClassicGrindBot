@@ -207,6 +207,10 @@ function DataToColor:OnBagUpdate(event, containerID)
     if containerID >= 0 and containerID <=4 then
         DataToColor.stack:push(DataToColor.bagQueue, containerID)
         DataToColor:InitInventoryQueue(containerID)
+
+        if containerID >= 1 then
+            DataToColor.stack:push(DataToColor.equipmentQueue, 19 + containerID) -- from tabard
+        end
     end
     --DataToColor:Print("OnBagUpdate "..containerID)
 end

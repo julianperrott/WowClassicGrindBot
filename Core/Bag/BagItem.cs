@@ -1,5 +1,4 @@
-﻿using Core.Addon;
-using System;
+﻿using System;
 using SharedLib;
 
 namespace Core

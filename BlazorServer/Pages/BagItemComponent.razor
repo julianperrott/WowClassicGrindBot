@@ -1,26 +1,33 @@
 ﻿@using SharedLib
-@using Core 
+@using Core
+@using System.Xml
+
 @if (BagItem != null)
 {
-    <a href="https://tbc.wowhead.com/item=@BagItem.ItemId" target="_blank" data-wowhead="item=@BagItem.ItemId" class="small" style="text-decoration:none">
+    <a href="@($"{WApi.ItemId}{BagItem.ItemId}")" target="_blank" data-wowhead="item=@BagItem.ItemId" class="small" style="text-decoration:none">
         <b>
-            <span style="color:@BagItemColour(BagItem.Item)">
-            @if (BagItem.WasRecentlyUpdated)
-            {
-                <span class="badge badge-info">@BagItem.LastChangeDescription</span>
-            }
+            <span style="color:@BagItemColour(BagItem.Item);font-weight:normal">
             @if (BagItem.Count > 1)
             {
                 @BagItem.Count<span>&nbsp;</span>
+            }
+
+            @if(iconName != string.Empty)
+            {
+                <img src="@imgLink"/>
             }
             @BagItem.Item.Name
             @if (BagItem.IsSoulbound)
             {
                 <span>(S)</span>
             }
-            @if (BagItem.Item.SellPrice > 0)
+            @if (ShowPrice && BagItem.Item.SellPrice > 0)
             {
                 <Money Value="GetItemPrice(BagItem)" />
+            }
+            @if (BagItem.WasRecentlyUpdated)
+            {
+                <span class="float-right badge badge-info">@BagItem.LastChangeDescription</span>
             }
             </span>
         </b>
@@ -34,15 +41,58 @@
     [Parameter]
     public bool ShowChangesPrice { get; set; } = false;
 
-    List<string> itemColour = new List<string> { "grey", "white", "green", "blue", "purple", "yellow", "yellow", "yellow" };
+    [Parameter]
+    public bool ShowPrice { get; set; } = false;
+
+    [Parameter]
+    public bool ShowIcon { get; set; }
+
+    private string iconName { get; set; } = string.Empty;
+
+    private static List<string> colors = new List<string> { "#9d9d9d", "#fff", "#1eff00", "#0070dd", "#9345ff", "#ff8000", "#e5cc80", "#e5cc80" };
+    private static List<string> itemBadge = new List<string> { "badge-secondary", "badge-dark", "badge-success", "badge-primary", "badge-warning", "badge-warning", "badge-warning", "badge-warning" };
+
+    private static Dictionary<int, string> icons = new();
+
+    private string imgLink => string.Format(WApi.IconUrl, iconName);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ShowIcon && BagItem != null && BagItem.ItemId != 0)
+        {
+            if (icons.TryGetValue(BagItem.ItemId, out var icon))
+            {
+                iconName = icon;
+                return;
+            }
+
+            try
+            {
+                XmlReader reader = XmlReader.Create($"{WApi.ItemId}{BagItem.ItemId}&xml", new XmlReaderSettings { Async = true, LineNumberOffset = 14 });
+                while (await reader.ReadAsync())
+                {
+                    if ((reader.NodeType == XmlNodeType.Element) && (reader.Name.Contains("icon")))
+                    {
+                        await reader.ReadAsync();
+                        iconName = reader.Value;
+
+                        icons.TryAdd(BagItem.ItemId, iconName);
+                        break;
+                    }
+                }
+            }
+            catch
+            {
+                
+            }
+        }
+    }
 
     protected string BagItemColour(Item item)
     {
         if (item.Quality < 0 || item.Quality > 7) { return "black"; }
-        return itemColour[item.Quality];
+        return colors[item.Quality];
     }
-
-    List<string> itemBadge = new List<string> { "badge-secondary", "badge-dark", "badge-success", "badge-primary", "badge-warning", "badge-warning", "badge-warning", "badge-warning" };
 
     protected string BagItemBadge(Item item)
     {
