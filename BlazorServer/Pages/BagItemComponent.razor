@@ -1,8 +1,8 @@
-﻿@using SharedLib
+@using SharedLib
 @using Core 
 @if (BagItem != null)
 {
-    <a href="https://tbc.wowhead.com/item=@BagItem.ItemId" target="_blank" data-wowhead="item=@BagItem.ItemId" class="small" style="text-decoration:none">
+    <a href="@($"{WApi.ItemId}{BagItem.ItemId}")" target="_blank" data-wowhead="item=@BagItem.ItemId" class="small" style="text-decoration:none">
         <b>
             <span style="color:@BagItemColour(BagItem.Item)">
             @if (BagItem.WasRecentlyUpdated)
