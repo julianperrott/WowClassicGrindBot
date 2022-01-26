@@ -312,7 +312,7 @@ end
 
 function DataToColor:InitInventoryQueue(containerID)
     if containerID >= 0 and containerID <= 4 then
-        for i = 1, 21 do
+        for i = 1, GetContainerNumSlots(containerID) do
             DataToColor.stack:push(DataToColor.inventoryQueue, containerID * 1000 + i)
         end
     end
