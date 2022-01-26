@@ -99,7 +99,8 @@ namespace Core
                 bag.SlotCount = slotCount;
                 bag.FreeSlot = freeSlots;
 
-                bags[index] = bag;
+                BagItems.RemoveAll(b => b.Bag == index && b.BagIndex > bag.SlotCount);
+
                 changed = true;
             }
         }
