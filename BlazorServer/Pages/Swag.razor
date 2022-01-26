@@ -3,7 +3,8 @@
 @inject Core.IAddonReader addonReader
 @inject Core.IBotController botController
 @inject IJSRuntime JSRuntime;
-@using SharedLib 
+@using Core
+@using SharedLib
 
 <BotHeader />
 
@@ -15,27 +16,27 @@
         </div>
     </div>
     <div class="card-body" style="padding-bottom: 0">
-
         <table class="table table-sm table-striped table-no-border">
             <thead class="thead-dark">
                 <tr>
-                    <th>Bag 1</th>
-                    <th>Bag 2</th>
-                    <th>Bag 3</th>
-                    <th>Bag 4</th>
-                    <th>Bag 5</th>
+                    @foreach(var bag in bagReader.Bags.Reverse())
+                    {
+                        <th>
+                            <a href="@($"{WApi.ItemId}{bag.ItemId}")" target="_blank">@bag.Name</a>
+                        </th>
+                    }
                 </tr>
             </thead>
-            @for (int bagIndex = 0; bagIndex < 20; bagIndex++)
+            @for (int bagIndex = 0; bagIndex < maxSlot; bagIndex++)
             {
                 <tr>
-                    @for (int bag = 0; bag < 5; bag++)
+                    @for (int bag = 4; bag >= 0; bag--)
                     {
                         <td width="20%">
-                            @{ var bagItem = addonReader.BagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
+                            @{ var bagItem = bagReader.BagItems.Where(i => i.Bag == bag).Where(i => i.BagIndex == bagIndex).FirstOrDefault();}
                             @if (bagItem != null)
                             {
-                                <BagItemComponent BagItem="bagItem" />
+                                <BagItemComponent BagItem="bagItem" ShowIcon="true" />
                             }
                         </td>
                     }
@@ -45,17 +46,34 @@
     </div>
 </div>
 
+<div class="card">
+    <div class="card-header">
+        Equipments
+    </div>
+    <div class="card-body" style="padding-bottom: 0">
+        @for (int index = 0; index <= (int)InventorySlotId.Bag_3; index++)
+        {
+            <a href="@($"{WApi.ItemId}{addonReader.EquipmentReader.GetId(index)}")" target="_blank">@((InventorySlotId)index)</a><br/>
+        }
+    </div>
+</div>
+
 <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
 
 @code {
 
     int[] vendMoney = new int[0];
 
+    private BagReader bagReader = null!;
+
+    private int maxSlot => bagReader.Bags.Max(b => b.SlotCount);
+
     protected override void OnInitialized()
     {
-        addonReader.BagReader.DataChanged += (o, e) =>
+        bagReader = addonReader.BagReader;
+        bagReader.DataChanged += (o, e) =>
         {
-            vendMoney = Item.ToSellPrice(addonReader.BagReader.BagItems.Sum(s => s.Item.SellPrice * s.Count));
+            vendMoney = Item.ToSellPrice(bagReader.BagItems.Sum(s => s.Item.SellPrice * s.Count));
 
             base.InvokeAsync(() => { try { StateHasChanged(); } catch { } });
         };
