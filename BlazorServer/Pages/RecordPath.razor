@@ -34,8 +34,8 @@
     </div>
     <div class="col-sm">
         <h3><span style="color:orange">&#9650;</span> Player</h3>
-        <input type="text" class="col-sm-2" disabled="disabled" value="@addonReader.PlayerReader.XCoord" />
-        <input type="text" class="col-sm-2" disabled="disabled" value="@addonReader.PlayerReader.YCoord" />
+        <input type="text" class="col-sm-2 form-control" disabled="disabled" value="@addonReader.PlayerReader.XCoord" />
+        <input type="text" class="col-sm-2 form-control" disabled="disabled" value="@addonReader.PlayerReader.YCoord" />
         <hr>
     </div>
 </div>
@@ -100,14 +100,14 @@
             </tr>
             <tr>
                 <td>
-                    <input type="text" id="posx" class="col-sm-4" @bind="X" />
-                    <input type="text" id="posy" class="col-sm-4" @bind="Y" />
+                    <input type="text" id="posx" class="col-sm-6 form-control" @bind="X" />
+                    <input type="text" id="posy" class="col-sm-6 form-control" @bind="Y" />
                 </td>
                 <td>
                 @if (selectedPoint != previewPoint)
                 {
-                    <input type="text" class="col-sm-4" disabled="disabled" @bind="selectedPoint.X" />
-                    <input type="text" class="col-sm-4" disabled="disabled" @bind="selectedPoint.Y" />
+                    <input type="text" class="col-sm-6 form-control" disabled="disabled" @bind="selectedPoint.X" />
+                    <input type="text" class="col-sm-6 form-control" disabled="disabled" @bind="selectedPoint.Y" />
                 }
                 </td>
             </tr>

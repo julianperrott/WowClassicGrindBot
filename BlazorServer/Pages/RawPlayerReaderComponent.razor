@@ -4,6 +4,7 @@
 
 @if (addonReader.PlayerReader != null)
 {
+<div class="container">
     <div class="card">
         <div class="card-header">
             Raw PlayerReader
@@ -16,14 +17,15 @@
                 <tr>
                     <td>@(property.Name)</td>
                     <td>
-                        <input value="@property.Value" Disabled="true" />
+                        <input value="@property.Value" class="form-control" Disabled="true" />
                     </td>
                 </tr>
                 }
             </table>
         </div>
     </div>
-    }
+</div>
+}
 
 @using SharedLib; 
 @code {
@@ -89,12 +91,22 @@
                 {
                     propList.Add(new ObjectField() { Name = objName + pinfo.Name, Value = value.ToString() ?? "" });
                 }
+                else if(value is RecordInt recordInt)
+                {
+                    propList.Add(new ObjectField() { Name = objName + pinfo.Name, Value = recordInt.Value.ToString() });
+                }
+                else if(value is BitStatus bitStatus)
+                {
+                    propList.Add(new ObjectField() { Name = objName + pinfo.Name, Value = bitStatus.ToString() });
+                }
+                /*
                 else if(pinfo.PropertyType.IsGenericType)
                 {
                     var lst = GetPropertyValues(value);
                     if (lst != null && lst.Count > 0)
                         propList.AddRange(lst);
                 }
+                */
             }
         }
         return propList;
