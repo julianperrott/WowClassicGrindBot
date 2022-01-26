@@ -1,4 +1,4 @@
-using SharedLib;
+﻿using SharedLib;
 using Core.Database;
 using System;
 using System.Collections.Generic;
