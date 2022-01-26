@@ -1443,6 +1443,7 @@ Hunter `sumpet` macro
 
 Rogue weapon enchant (use 17 for second weapon):
 ```css
+#showtooltip
 /use Instant Poison V 
 /use 16
 /click StaticPopup1Button1 
@@ -1450,6 +1451,7 @@ Rogue weapon enchant (use 17 for second weapon):
 
 Melee weapon enchant:
 ```css
+#showtooltip
 /use Dense Sharpening Stone
 /use 16
 /click StaticPopup1Button1
