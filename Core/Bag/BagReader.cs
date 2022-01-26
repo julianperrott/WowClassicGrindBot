@@ -1,4 +1,4 @@
-﻿using SharedLib;
+using SharedLib;
 using Core.Database;
 using System;
 using System.Collections.Generic;
@@ -21,9 +21,11 @@ namespace Core
 
         public List<BagItem> BagItems { get; private set; } = new List<BagItem>();
 
-        private readonly Bag[] bags = new Bag[5];
+        public Bag[] Bags { get; private set; } = new Bag[5];
 
         public event EventHandler? DataChanged;
+
+        private bool changedFromEvent;
 
         public BagReader(ISquareReader reader, ItemDB itemDb, EquipmentReader equipmentReader, int cbagMeta, int citemNumCount, int cItemId, int cItemBits)
         {
@@ -31,10 +33,22 @@ namespace Core
             this.itemDb = itemDb;
             this.equipmentReader = equipmentReader;
 
+            this.equipmentReader.OnEquipmentChanged -= OnEquipmentChanged;
+            this.equipmentReader.OnEquipmentChanged += OnEquipmentChanged;
+
             this.cBagMeta = cbagMeta;
             this.cItemNumCount = citemNumCount;
             this.cItemId = cItemId;
             this.cItemBits = cItemBits;
+
+            for (int i = 0; i < Bags.Length; i++)
+            {
+                Bags[i] = new Bag();
+                if (i == 0)
+                {
+                    Bags[i].Name = "Backpack";
+                }
+            }
         }
 
         public void Read()
@@ -43,8 +57,9 @@ namespace Core
 
             ReadInventory(out bool inventoryChanged);
 
-            if (metaChanged || inventoryChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
+            if (changedFromEvent || metaChanged || inventoryChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
             {
+                changedFromEvent = false;
                 DataChanged?.Invoke(this, EventArgs.Empty);
                 lastEvent = DateTime.Now;
             }
@@ -69,13 +84,16 @@ namespace Core
 
             int slotCount = data;
 
-            if (index >= 0 && index < bags.Length)
+            if (index >= 0 && index < Bags.Length)
             {
-                Bag bag = bags[index];
+                Bag bag = Bags[index];
 
                 // default bag, the first has no equipment slot
                 if (index != 0)
+                {
                     bag.ItemId = equipmentReader.GetId((int)InventorySlotId.Bag_0 + index - 1);
+                    UpdateBagName(index);
+                }
 
                 bag.BagType = (BagType)bagType;
                 bag.SlotCount = slotCount;
@@ -135,10 +153,8 @@ namespace Core
 
                 if (addItem)
                 {
-                    if (itemDb.Items.ContainsKey(itemId))
+                    if (itemDb.Items.TryGetValue(itemId, out var item))
                     {
-                        var item = new Item { Name = "Unknown" };
-                        item = itemDb.Items[itemId];
                         BagItems.Add(new BagItem(bag, slot, itemId, itemCount, item, isSoulbound));
                         hasChanged = true;
                     }
@@ -165,9 +181,9 @@ namespace Core
                 .ToList();
         }
 
-        public int SlotCount => bags.Sum((x) => x.SlotCount);
+        public int SlotCount => Bags.Sum((x) => x.SlotCount);
 
-        public bool BagsFull => bags.Sum((x) => x.BagType == BagType.Unspecified ? x.FreeSlot : 0) == 0;
+        public bool BagsFull => Bags.Sum((x) => x.BagType == BagType.Unspecified ? x.FreeSlot : 0) == 0;
 
         public int ItemCount(int itemId) => BagItems.Where(bi => bi.ItemId == itemId).Sum(bi => bi.Count);
 
@@ -185,6 +201,31 @@ namespace Core
             return itemDb.FoodIds.
                 OrderByDescending(c => ItemCount(c)).
                 FirstOrDefault();
+        }
+
+        private void OnEquipmentChanged(object? s, (int, int) tuple)
+        {
+            if (tuple.Item1 is >= ((int)InventorySlotId.Bag_0) and <= ((int)InventorySlotId.Bag_3))
+            {
+                int index = tuple.Item1 - (int)InventorySlotId.Tabard;
+                Bags[index].ItemId = tuple.Item2;
+
+                UpdateBagName(index);
+
+                changedFromEvent = true;
+            }
+        }
+
+        private void UpdateBagName(int index)
+        {
+            if (itemDb.Items.TryGetValue(Bags[index].ItemId, out var item))
+            {
+                Bags[index].Name = item.Name;
+            }
+            else
+            {
+                Bags[index].Name = string.Empty;
+            }
         }
     }
 }

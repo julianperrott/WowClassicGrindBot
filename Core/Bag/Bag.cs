@@ -1,14 +1,13 @@
-﻿using System;
+﻿using SharedLib;
 
 namespace Core
 {
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-    public struct Bag
-#pragma warning restore CA1815 // Override equals and operator equals on value types
+    public class Bag
     {
         public int ItemId { get; set; }
         public BagType BagType { get; set; }
         public int SlotCount { get; set; }
         public int FreeSlot { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }
