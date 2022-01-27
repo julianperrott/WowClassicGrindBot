@@ -107,7 +107,7 @@ namespace Core
                     }
                     else
                     {
-                        var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
+                        var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil, playerDirection);
                         lootAction.AddPreconditions();
                         availableActions.Add(lootAction);
                     }
