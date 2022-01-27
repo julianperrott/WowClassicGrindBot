@@ -117,7 +117,7 @@ namespace Core.Goals
             LastActive = DateTime.Now;
         }
 
-        private async Task AdjustHeading(float heading)
+        private async ValueTask AdjustHeading(float heading)
         {
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
@@ -132,7 +132,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task<bool> IsDead()
+        private async ValueTask<bool> IsDead()
         {
             bool hadNoHealth = true;
             if (playerReader.HealthPercent > 0)

@@ -129,22 +129,23 @@ namespace Core.Goals
             }
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
-            await base.OnEnter();
-
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
             if (classConfiguration.Mode != Mode.AttendedGather)
             {
                 StartLookingForTarget();
             }
+
+            return ValueTask.CompletedTask;
         }
 
-        public override async ValueTask OnExit()
+        public override ValueTask OnExit()
         {
-            await base.OnExit();
             targetFinderCts?.Cancel();
+
+            return ValueTask.CompletedTask;
         }
 
         public override async ValueTask PerformAction()

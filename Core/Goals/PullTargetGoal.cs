@@ -58,8 +58,6 @@ namespace Core.Goals
 
         public override async ValueTask OnEnter()
         {
-            await base.OnEnter();
-
             if (mountHandler.IsMounted())
             {
                 await mountHandler.Dismount();
@@ -145,7 +143,7 @@ namespace Core.Goals
             }
         }
 
-        protected async Task WaitForWithinMeleeRange(KeyAction item, bool lastCastSuccess)
+        protected async ValueTask WaitForWithinMeleeRange(KeyAction item, bool lastCastSuccess)
         {
             await stopMoving.Stop();
             await wait.Update(1);
@@ -181,7 +179,7 @@ namespace Core.Goals
             }
         }
 
-        public async Task<bool> Pull()
+        public async ValueTask<bool> Pull()
         {
             if (Keys.Count != 0)
             {

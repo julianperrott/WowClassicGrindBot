@@ -86,14 +86,14 @@ namespace Core.Goals
             return true;
         }
 
-        public virtual async ValueTask OnEnter()
+        public virtual ValueTask OnEnter()
         {
-            await Task.Delay(0);
+            return ValueTask.CompletedTask;
         }
 
-        public virtual async ValueTask OnExit()
+        public virtual ValueTask OnExit()
         {
-            await Task.Delay(0);
+            return ValueTask.CompletedTask;
         }
 
         public abstract ValueTask PerformAction();

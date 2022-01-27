@@ -52,7 +52,7 @@ namespace Core.Looting
             lastLootFoundAt = new Point(0, 0);
         }
 
-        public async Task<bool> Loot(bool searchForMobs)
+        public async ValueTask<bool> Loot(bool searchForMobs)
         {
             input.SetCursorPosition(new Point(this.lastLootFoundAt.X + 200, this.lastLootFoundAt.Y + 120));
             await Task.Delay(150);
@@ -94,7 +94,7 @@ namespace Core.Looting
             return false;
         }
 
-        private async Task<bool> SearchInCircle(float rx, float ry, bool searchForMobs, Point circleCentre, bool ignoreMobs)
+        private async ValueTask<bool> SearchInCircle(float rx, float ry, bool searchForMobs, Point circleCentre, bool ignoreMobs)
         {
             float theta = 0;
             for (int i = 0; i < num_theta; i++)
@@ -116,7 +116,7 @@ namespace Core.Looting
             return false;
         }
 
-        private async Task<bool> CheckForLoot(Point mousePosition, bool searchForMobs, bool ignoreMobs)
+        private async ValueTask<bool> CheckForLoot(Point mousePosition, bool searchForMobs, bool ignoreMobs)
         {
             var inCombat = this.playerReader.Bits.PlayerInCombat;
 
@@ -182,7 +182,7 @@ namespace Core.Looting
             return cls == CursorType.Loot || cls == CursorType.Skin || cls == CursorType.Kill;
         }
 
-        private async Task Wait(int delay, bool isInCombat)
+        private async ValueTask Wait(int delay, bool isInCombat)
         {
             for (int i = 0; i < delay; i += 100)
             {

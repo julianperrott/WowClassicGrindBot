@@ -122,7 +122,7 @@ namespace Core
         }
 
 
-        public static async Task<bool> Wait(int durationMs, Func<bool> exit)
+        public static async ValueTask<bool> Wait(int durationMs, Func<bool> exit)
         {
             int elapsedMs = 0;
             while (elapsedMs <= durationMs)
@@ -137,7 +137,7 @@ namespace Core
             return true;
         }
 
-        public static async Task<bool> Wait(int durationMs, ValueTask<bool> exit)
+        public static async ValueTask<bool> Wait(int durationMs, ValueTask<bool> exit)
         {
             int elapsedMs = 0;
             while (elapsedMs <= durationMs)

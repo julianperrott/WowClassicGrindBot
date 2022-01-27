@@ -55,7 +55,7 @@ namespace Core.Goals
             classConfiguration.Combat.Sequence.Where(k => k != null).ToList().ForEach(key => Keys.Add(key));
         }
 
-        protected async Task Fight()
+        protected async ValueTask Fight()
         {
             if (playerReader.Bits.HasPet && !playerReader.PetHasTarget)
             {
@@ -134,8 +134,6 @@ namespace Core.Goals
 
         public override async ValueTask OnEnter()
         {
-            await base.OnEnter();
-
             if (mountHandler.IsMounted())
             {
                 await mountHandler.Dismount();
@@ -183,7 +181,7 @@ namespace Core.Goals
             await wait.Update(1);
         }
 
-        private async Task CreatureTargetMeOrMyPet()
+        private async ValueTask CreatureTargetMeOrMyPet()
         {
             await wait.Update(1);
             if (playerReader.PetHasTarget && addonReader.CreatureHistory.CombatDeadGuid.Value != playerReader.PetTargetGuid)
@@ -230,7 +228,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task StopDrowning()
+        private async ValueTask StopDrowning()
         {
             await input.TapJump("Drowning! Swim up");
             await wait.Update(1);

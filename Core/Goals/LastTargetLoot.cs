@@ -43,15 +43,15 @@ namespace Core.Goals
             AddEffect(GoapKey.shouldloot, false);
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
-            await base.OnEnter();
-
             if (bagReader.BagsFull)
             {
                 logger.LogWarning("Inventory is full");
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
             }
+
+            return ValueTask.CompletedTask;
         }
 
         public override async ValueTask PerformAction()
@@ -93,7 +93,7 @@ namespace Core.Goals
             await GoalExit();
         }
 
-        private async Task GoalExit()
+        private async ValueTask GoalExit()
         {
             if (!await wait.Interrupt(1000, () => lastLoot != playerReader.LastLootTime))
             {

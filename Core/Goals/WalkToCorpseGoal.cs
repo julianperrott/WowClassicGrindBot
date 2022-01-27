@@ -83,13 +83,14 @@ namespace Core.Goals
             LastEventReceived = DateTime.Now;
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
-            await base.OnEnter();
             playerReader.ZCoord = 0;
             logger.LogInformation($"{GetType().Name} Player got teleported to the graveyard!");
 
             addonReader.PlayerDied();
+
+            return ValueTask.CompletedTask;
         }
 
         public override async ValueTask PerformAction()
@@ -248,7 +249,7 @@ namespace Core.Goals
             points = new Stack<Vector3>(simple);
         }
 
-        public async Task Reset()
+        public async ValueTask Reset()
         {
             LastReset = DateTime.Now;
 
@@ -376,7 +377,7 @@ namespace Core.Goals
             return pathToCorpse;
         }
 
-        private async Task RandomJump()
+        private async ValueTask RandomJump()
         {
             if (input.ClassConfig.Jump.MillisecondsSinceLastClick > random.Next(5000, 7000))
             {

@@ -58,10 +58,8 @@ namespace Core.Goals
             AddEffect(GoapKey.shouldloot, false);
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
-            await base.OnEnter();
-
             if (bagReader.BagsFull)
             {
                 logger.LogWarning("Inventory is full");
@@ -70,6 +68,8 @@ namespace Core.Goals
 
             Log($"OnEnter: Search for {NpcNames.Corpse}");
             npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
+
+            return ValueTask.CompletedTask;
         }
 
         public override async ValueTask PerformAction()

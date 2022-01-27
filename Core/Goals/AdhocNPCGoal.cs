@@ -213,7 +213,7 @@ namespace Core.Goals
             LastActive = DateTime.Now;
         }
 
-        private async Task FollowPath(List<Vector3> path)
+        private async ValueTask FollowPath(List<Vector3> path)
         {
             // show route on map
             this.routeToWaypoint.Clear();
@@ -232,7 +232,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task MoveCloserToPoint(int pressDuration, Vector3 target)
+        private async ValueTask MoveCloserToPoint(int pressDuration, Vector3 target)
         {
             logger.LogInformation($"Moving to spot = {target}");
 
@@ -253,7 +253,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task MountIfRequired()
+        private async ValueTask MountIfRequired()
         {
             if (shouldMount && !mountHandler.IsMounted() && !playerReader.Bits.PlayerInCombat)
             {
@@ -282,7 +282,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task FillRouteToDestination()
+        private async ValueTask FillRouteToDestination()
         {
             this.routeToWaypoint.Clear();
             Vector3 target = StartOfPathToNPC();
@@ -322,7 +322,7 @@ namespace Core.Goals
             return this.key.Path[0];
         }
 
-        private async Task AdjustHeading(float heading)
+        private async ValueTask AdjustHeading(float heading)
         {
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
@@ -358,7 +358,7 @@ namespace Core.Goals
         public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
 
 
-        private async Task InteractWithTarget()
+        private async ValueTask InteractWithTarget()
         {
             if (playerReader.HealthPercent == 0) 
             {

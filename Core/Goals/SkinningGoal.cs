@@ -56,10 +56,8 @@ namespace Core.Goals
             equipmentReader.HasItem(19901);
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
-            await base.OnEnter();
-
             if (bagReader.BagsFull)
             {
                 logger.LogWarning("Inventory is full");
@@ -68,6 +66,8 @@ namespace Core.Goals
 
             Log($"OnEnter: Search for {NpcNames.Corpse}");
             npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
+
+            return ValueTask.CompletedTask;
         }
 
         public override async ValueTask PerformAction()
@@ -143,7 +143,7 @@ namespace Core.Goals
 
         }
 
-        private async Task GoalExit()
+        private async ValueTask GoalExit()
         {
             if (!await wait.Interrupt(1000, () => lastLoot != playerReader.LastLootTime))
             {

@@ -66,17 +66,16 @@ namespace Core.Goals
             AddEffect(GoapKey.incombatrange, true);
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
-            await base.OnEnter();
-
-
             playerWasInCombat = playerReader.Bits.PlayerInCombat;
 
             initialTargetGuid = playerReader.TargetGuid;
             initialMinRange = playerReader.MinRange;
 
             approachStart = DateTime.Now;
+
+            return ValueTask.CompletedTask;
         }
 
         public override async ValueTask PerformAction()
@@ -196,7 +195,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task RandomJump()
+        private async ValueTask RandomJump()
         {
             if (input.ClassConfig.Jump.MillisecondsSinceLastClick > random.Next(5000, 7000))
             {

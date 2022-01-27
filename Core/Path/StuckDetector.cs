@@ -72,7 +72,7 @@ namespace Core
         public int actionDurationSeconds => (int)(LastReachedDestiationTimer.ElapsedMilliseconds / 1000);
         public int unstickSeconds => (int)(LastUnstickAttemptTimer.ElapsedMilliseconds / 1000);
 
-        public async Task Unstick()
+        public async ValueTask Unstick()
         {
             await input.TapJump();
 

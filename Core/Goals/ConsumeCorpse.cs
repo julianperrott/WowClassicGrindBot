@@ -37,7 +37,7 @@ namespace Core.Goals
             }
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             logger.LogWarning("----- Safe to consume a corpse.");
             SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, true));
@@ -47,7 +47,7 @@ namespace Core.Goals
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
             }
 
-            await Task.Delay(5);
+            return ValueTask.CompletedTask;
         }
     }
 }
