@@ -70,6 +70,8 @@ local playerBuffCount = 0
 local targetDebuffCount = 0
 local targetBuffCount = 0
 
+local bagCache = {}
+
 -- Update Queue
 local stack = {}
 DataToColor.stack = stack
@@ -239,6 +241,8 @@ function DataToColor:Reset()
     targetBuffCount = 0
 
     globalCounter = 0
+
+    bagCache = {}
 end
 
 function DataToColor:Update()
@@ -313,9 +317,34 @@ end
 function DataToColor:InitInventoryQueue(containerID)
     if containerID >= 0 and containerID <= 4 then
         for i = 1, GetContainerNumSlots(containerID) do
-            DataToColor.stack:push(DataToColor.inventoryQueue, containerID * 1000 + i)
+            if DataToColor:BagSlotChanged(containerID, i) then
+                DataToColor.stack:push(DataToColor.inventoryQueue, containerID * 1000 + i)
+            end
         end
     end
+end
+
+function DataToColor:BagSlotChanged(container, slot)
+
+    local _, count, _, _, _, _,
+    _, _, _, id = GetContainerItemInfo(container, slot)
+
+    if id == nil then
+        count = 0
+        id = 0
+    end
+
+    local index = container * 1000 + slot;
+    if bagCache[index] == nil then
+        bagCache[index] = { id = id, count = count };
+        return true
+    elseif bagCache[index].id ~= id or bagCache[index].count ~= count then
+        bagCache[index].id = id
+        bagCache[index].count = count
+        return true
+    end
+
+    return false
 end
 
 function DataToColor:InitBagQueue(min, max)
