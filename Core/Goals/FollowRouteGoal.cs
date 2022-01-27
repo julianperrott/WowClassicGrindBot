@@ -201,8 +201,6 @@ namespace Core.Goals
                 input.SetKeyState(input.ForwardKey, true, false);
             }
 
-            await RandomJump();
-
             var location = playerReader.PlayerLocation;
             var distance = location.DistanceXYTo(routeToWaypoint.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
@@ -266,6 +264,8 @@ namespace Core.Goals
 
             // should mount
             await MountIfRequired();
+
+            await RandomJump();
 
             LastActive = DateTime.Now;
 
@@ -365,7 +365,7 @@ namespace Core.Goals
 
         private async ValueTask MountIfRequired()
         {
-            if (shouldMount && !mountHandler.IsMounted() && !playerReader.Bits.PlayerInCombat)
+            if (shouldMount && !mountHandler.IsMounted() && !playerReader.Bits.PlayerInCombat && !playerReader.Bits.HasTarget)
             {
                 if (classConfiguration.Mode != Mode.AttendedGather)
                 {
