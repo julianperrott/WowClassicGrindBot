@@ -70,10 +70,6 @@ namespace Core.Goals
         {
             await base.OnEnter();
 
-            if (mountHandler.IsMounted())
-            {
-                await mountHandler.Dismount();
-            }
 
             playerWasInCombat = playerReader.Bits.PlayerInCombat;
 
