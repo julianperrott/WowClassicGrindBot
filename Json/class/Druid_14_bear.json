@@ -74,7 +74,7 @@
         "Key": "5",
         "WhenUsable": true,
         "MinRage": 10,
-        "Requirements": ["SpellInRange:1", "TargetCastingSpell||Health%<38"],
+        "Requirements": ["SpellInRange:1", "CD == 0", "TargetCastingSpell || Health%<38"],
         "Form": "Druid_Bear"
       },
       {
