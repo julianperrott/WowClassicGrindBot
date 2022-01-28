@@ -1,7 +1,6 @@
 ﻿using Game;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TextCopy;
 
@@ -24,7 +23,6 @@ namespace Core
             logger.LogInformation(content);
 
             ClipboardService.SetText(content);
-            //await Task.Delay(50);
             Thread.Sleep(50);
 
             // Open chat inputbox
@@ -32,12 +30,10 @@ namespace Core
 
             // Send Paste keys
             wowProcessInput.PasteFromClipboard();
-            //await Task.Delay(250);
             Thread.Sleep(250);
 
             //
             wowProcessInput.KeyPress(ConsoleKey.Enter, 50);
-            //await Task.Delay(250);
             Thread.Sleep(250);
         }
     }
