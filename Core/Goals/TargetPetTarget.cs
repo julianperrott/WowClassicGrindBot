@@ -22,14 +22,16 @@ namespace Core.Goals
             AddEffect(GoapKey.hastarget, true);
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
-            await input.TapTargetPet();
-            await input.TapTargetOfTarget();
+            input.TapTargetPet();
+            input.TapTargetOfTarget();
             if (playerReader.HasTarget && (playerReader.Bits.TargetIsDead || playerReader.TargetGuid == playerReader.PetGuid))
             {
-                await input.TapClearTarget();
+                input.TapClearTarget();
             }
+
+            return ValueTask.CompletedTask;
         }
     }
 }

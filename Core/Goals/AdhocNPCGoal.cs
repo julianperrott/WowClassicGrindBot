@@ -125,11 +125,11 @@ namespace Core.Goals
             var distance = location.DistanceXYTo(routeToWaypoint.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
 
-            await AdjustHeading(heading);
+            AdjustHeading(heading);
 
             if (lastDistance < distance)
             {
-                await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Further away");
+                playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Further away");
             }
             else if (!this.stuckDetector.IsGettingCloser())
             {
@@ -163,7 +163,7 @@ namespace Core.Goals
                 lastDistance = 999;
                 if (routeToWaypoint.Count == 0)
                 {
-                    await this.stopMoving.Stop();
+                    stopMoving.Stop();
                     distance = location.DistanceXYTo(StartOfPathToNPC());
                     if (distance > 50)
                     {
@@ -172,27 +172,27 @@ namespace Core.Goals
 
                     if (routeToWaypoint.Count == 0)
                     {
-                        await MoveCloserToPoint(400, StartOfPathToNPC());
-                        await MoveCloserToPoint(100, StartOfPathToNPC());
+                        MoveCloserToPoint(400, StartOfPathToNPC());
+                        MoveCloserToPoint(100, StartOfPathToNPC());
 
                         // we have reached the start of the path to the npc
-                        await FollowPath(this.key.Path);
+                        FollowPath(this.key.Path);
 
-                        await this.stopMoving.Stop();
-                        await input.TapClearTarget();
-                        await wait.Update(1);
+                        stopMoving.Stop();
+                        input.TapClearTarget();
+                        wait.Update(1);
 
                         npcNameTargeting.ChangeNpcType(NpcNames.Friendly | NpcNames.Neutral);
-                        await npcNameTargeting.WaitForNUpdate(2);
-                        var foundVendor = await npcNameTargeting.FindBy(CursorType.Vendor, CursorType.Repair);
+                        npcNameTargeting.WaitForNUpdate(1);
+                        var foundVendor = npcNameTargeting.FindBy(CursorType.Vendor, CursorType.Repair);
 
-                        await InteractWithTarget();
-                        await input.TapClearTarget();
+                        InteractWithTarget();
+                        input.TapClearTarget();
 
                         // walk back to the start of the path to the npc
                         var pathFrom = this.key.Path.ToList();
                         pathFrom.Reverse();
-                        await FollowPath(pathFrom);
+                        FollowPath(pathFrom);
                     }
                 }
 
@@ -204,16 +204,16 @@ namespace Core.Goals
                 this.stuckDetector.SetTargetLocation(this.routeToWaypoint.Peek());
 
                 heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
-                await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Move to next point");
+                playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Move to next point");
             }
 
             // should mount
-            await MountIfRequired();
+            MountIfRequired();
 
             LastActive = DateTime.Now;
         }
 
-        private async ValueTask FollowPath(List<Vector3> path)
+        private void FollowPath(List<Vector3> path)
         {
             // show route on map
             this.routeToWaypoint.Clear();
@@ -223,16 +223,16 @@ namespace Core.Goals
 
             if (mountHandler.IsMounted())
             {
-                await mountHandler.Dismount();
+                mountHandler.Dismount();
             }
 
             foreach (var point in path)
             {
-                await MoveCloserToPoint(400, point);
+                MoveCloserToPoint(400, point);
             }
         }
 
-        private async ValueTask MoveCloserToPoint(int pressDuration, Vector3 target)
+        private void MoveCloserToPoint(int pressDuration, Vector3 target)
         {
             logger.LogInformation($"Moving to spot = {target}");
 
@@ -245,21 +245,21 @@ namespace Core.Goals
                 logger.LogInformation($"Distance to spot = {distance}");
                 lastDistance = distance;
                 var heading = DirectionCalculator.CalculateHeading(playerReader.PlayerLocation, target);
-                await playerDirection.SetDirection(heading, this.StartOfPathToNPC(), "Correcting direction", 0);
+                playerDirection.SetDirection(heading, this.StartOfPathToNPC(), "Correcting direction", 0);
 
-                await this.input.KeyPress(input.ForwardKey, pressDuration);
-                await this.stopMoving.Stop();
+                this.input.KeyPress(input.ForwardKey, pressDuration);
+                stopMoving.Stop();
                 distance = playerReader.PlayerLocation.DistanceXYTo(target);
             }
         }
 
-        private async ValueTask MountIfRequired()
+        private void MountIfRequired()
         {
             if (shouldMount && !mountHandler.IsMounted() && !playerReader.Bits.PlayerInCombat)
             {
                 shouldMount = false;
 
-                await mountHandler.MountUp();
+                mountHandler.MountUp();
 
                 input.SetKeyState(input.ForwardKey, true, false, "Move forward");
             }
@@ -288,10 +288,10 @@ namespace Core.Goals
             Vector3 target = StartOfPathToNPC();
             var location = playerReader.PlayerLocation;
             var heading = DirectionCalculator.CalculateHeading(location, target);
-            await playerDirection.SetDirection(heading, target, "Set Location target").ConfigureAwait(false);
+            playerDirection.SetDirection(heading, target, "Set Location target");
 
             // create route to vendo
-            await this.stopMoving.Stop();
+            stopMoving.Stop();
             var path = await this.pather.FindRouteTo(addonReader, target);
             path.Reverse();
             path.ForEach(p => this.routeToWaypoint.Push(p));
@@ -322,7 +322,7 @@ namespace Core.Goals
             return this.key.Path[0];
         }
 
-        private async ValueTask AdjustHeading(float heading)
+        private void AdjustHeading(float heading)
         {
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
@@ -337,7 +337,7 @@ namespace Core.Goals
             if (MathF.Min(diff1, diff2) > wanderAngle)
             {
                 logger.LogInformation("Correct direction");
-                await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");
+                playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");
             }
             else
             {
@@ -358,7 +358,7 @@ namespace Core.Goals
         public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
 
 
-        private async ValueTask InteractWithTarget()
+        private void InteractWithTarget()
         {
             if (playerReader.HealthPercent == 0) 
             {
@@ -370,12 +370,12 @@ namespace Core.Goals
 
             for (int i = 0; i < 5; i++)
             {
-                await input.TapInteractKey("Make sure to the gossip window is open!");
+                input.TapInteractKey("Make sure to the gossip window is open!");
 
                 DateTime start = DateTime.Now;
                 while (!gossipReader.MerchantWindowOpened && (DateTime.Now - start).TotalMilliseconds < 1)
                 {
-                    await wait.Update(1);
+                    wait.Update(1);
 
                     if (gossipReader.Count != 0)
                     {
@@ -384,14 +384,14 @@ namespace Core.Goals
                         if (gossipReader.Gossips.TryGetValue(Gossip.Vendor, out int orderNum))
                         {
                             logger.LogInformation($"Pick {Gossip.Vendor} -> {orderNum}");
-                            await execGameCommand.Run($"/run SelectGossipOption({orderNum})--");
-                            await wait.Update(2);
+                            execGameCommand.Run($"/run SelectGossipOption({orderNum})--");
+                            wait.Update(2);
                         }
                     }
                 }
 
                 // Macro runs: targets NPC and does action such as sell
-                await this.input.KeyPress(key.ConsoleKey, 100);
+                this.input.KeyPress(key.ConsoleKey, 100);
 
                 // Interact with NPC
                 if (!string.IsNullOrEmpty(addonReader.TargetName))
@@ -399,7 +399,7 @@ namespace Core.Goals
                     // black list it so we don't get stuck trying to kill it
                     this.blacklist.Add(addonReader.TargetName);
 
-                    await input.TapInteractKey($"InteractWithTarget {i}");
+                    input.TapInteractKey($"InteractWithTarget {i}");
                 }
                 else
                 {
@@ -408,7 +408,7 @@ namespace Core.Goals
                 }
 
                 System.Threading.Thread.Sleep(1000);
-                await this.input.KeyPress(ConsoleKey.Escape, 50);
+                this.input.KeyPress(ConsoleKey.Escape, 50);
             }
 
             if(CheckIfActionCanRun())

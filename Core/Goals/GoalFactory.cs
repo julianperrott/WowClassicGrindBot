@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using Core.GOAP;
 using System.Numerics;
+using System.Threading;
 
 namespace Core
 {
@@ -39,13 +40,11 @@ namespace Core
             this.exec = execGameCommand;
         }
 
-        public HashSet<GoapGoal> CreateGoals(ClassConfiguration classConfig, IBlacklist blacklist, GoapAgentState goapAgentState)
+        public HashSet<GoapGoal> CreateGoals(ClassConfiguration classConfig, IBlacklist blacklist, GoapAgentState goapAgentState, Wait wait)
         {
             var availableActions = new HashSet<GoapGoal>();
 
             GetPaths(out List<Vector3> pathPoints, out List<Vector3> spiritPath, classConfig);
-
-            var wait = new Wait(addonReader);
 
             var playerDirection = new PlayerDirection(logger, input, addonReader.PlayerReader);
             var stopMoving = new StopMoving(input, addonReader.PlayerReader);

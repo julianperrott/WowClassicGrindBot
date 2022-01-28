@@ -57,13 +57,13 @@ namespace Core.GOAP
             WorldState = GetWorldState();
         }
 
-        public async ValueTask<GoapGoal?> GetAction()
+        public GoapGoal? GetAction()
         {
             if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
                 logger.LogWarning($"{GetType().Name}: Target is blacklisted - StopAttack & ClearTarget");
-                await input.TapStopAttack("");
-                await input.TapClearTarget("");
+                input.TapStopAttack("");
+                input.TapClearTarget("");
                 UpdateWorldState();
             }
 
@@ -90,7 +90,7 @@ namespace Core.GOAP
                     logger.LogInformation($"Plan= {CurrentGoal.GetType().Name} is not Repeatable!");
                     CurrentGoal = null;
 
-                    await stopMoving.Stop();
+                    stopMoving.Stop();
                 }
             }
 
@@ -165,7 +165,7 @@ namespace Core.GOAP
                     CurrentGoal.OnActionEvent(this, new ActionEventArgs(GoapKey.producedcorpse, true));
                 }
 
-                logger.LogInformation($"{GetType().Name} --- Kill credit detected! Known kills: {GoapAgentState.LastCombatKillCount} | Combat mobs remaing: {addonReader.CombatCreatureCount}");
+                logger.LogInformation($"{GetType().Name} --- Kill credit detected! Known kills: {GoapAgentState.LastCombatKillCount} | Remains: {addonReader.CombatCreatureCount}");
             }
             else
             {

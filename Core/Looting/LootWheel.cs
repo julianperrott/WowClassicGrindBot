@@ -146,7 +146,7 @@ namespace Core.Looting
             if (cls == CursorType.Loot && !searchForMobs)
             {
                 Log("Found: " + cls.ToString());
-                await input.RightClickMouse(mousePosition);
+                input.RightClickMouse(mousePosition);
                 Classification = cls;
                 await Task.Delay(500);
                 await Wait(2000, inCombat);
@@ -155,7 +155,7 @@ namespace Core.Looting
             if (cls == CursorType.Skin && !searchForMobs)
             {
                 Log("Found: " + cls.ToString());
-                await input.RightClickMouse(mousePosition);
+                input.RightClickMouse(mousePosition);
                 Classification = cls;
                 await Task.Delay(1000);
                 await Wait(6000, inCombat);
@@ -164,7 +164,7 @@ namespace Core.Looting
             if (cls == CursorType.Kill && !ignoreMobs)
             {
                 Log("Found: " + cls.ToString());
-                await input.RightClickMouse(mousePosition);
+                input.RightClickMouse(mousePosition);
                 Classification = cls;
             }
 

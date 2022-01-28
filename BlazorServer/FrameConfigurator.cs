@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Core;
 using System.Threading;
@@ -21,6 +20,7 @@ namespace BlazorServer
 
         private readonly AddonConfig addonConfig;
         private readonly AddonConfigurator addonConfigurator;
+        private readonly AutoResetEvent autoResetEvent = new(false);
 
         public DataFrameMeta dataFrameMeta { get; private set; } = DataFrameMeta.Empty;
 
@@ -38,7 +38,6 @@ namespace BlazorServer
         private CancellationTokenSource? cts;
 
         private const int interval = 500;
-        private int counter;
 
         public event EventHandler? OnUpdate;
 
@@ -160,7 +159,7 @@ namespace BlazorServer
                     OnUpdate?.Invoke(this, EventArgs.Empty);
                 }
 
-                counter++;
+                autoResetEvent.Set();
                 Thread.Sleep(interval);
             }
 
@@ -183,7 +182,7 @@ namespace BlazorServer
             return DataFrameConfiguration.GetMeta(screenshot);
         }
 
-        public async Task ToggleManualConfig()
+        public void ToggleManualConfig()
         {
             if (cts == null)
             {
@@ -195,14 +194,10 @@ namespace BlazorServer
             {
                 cts?.Cancel();
             }
-
-            await Task.Delay(0);
         }
 
-        public async Task<bool> FinishManualConfig()
+        public bool FinishManualConfig()
         {
-            await Task.Delay(0);
-
             var version = addonConfigurator?.GetInstalledVersion();
             if (version == null) return false;
 
@@ -222,7 +217,7 @@ namespace BlazorServer
             return true;
         }
 
-        public async Task<bool> StartAutoConfig()
+        public bool StartAutoConfig()
         {
             if (wowProcess == null)
                 wowProcess = new WowProcess();
@@ -253,15 +248,15 @@ namespace BlazorServer
             logger.LogInformation($"Addon installed. Version {version}");
 
             wowProcessInput.SetForegroundWindow();
-            await Task.Delay(100);
+            Thread.Sleep(100);
 
             var meta = GetDataFrameMeta();
             if (meta == DataFrameMeta.Empty || meta.hash == 0)
             {
                 logger.LogInformation("Enter configuration mode.");
 
-                await ToggleInGameConfiguration(execGameCommand);
-                await Wait();
+                ToggleInGameConfiguration(execGameCommand);
+                Wait();
                 meta = GetDataFrameMeta();
             }
 
@@ -288,7 +283,7 @@ namespace BlazorServer
             UpdatePreview(screenshot);
 
             OnUpdate?.Invoke(this, EventArgs.Empty);
-            await Wait();
+            Wait();
 
             var dataFrames = DataFrameConfiguration.CreateFrames(meta, screenshot);
             if (dataFrames.Count != meta.frames)
@@ -297,8 +292,8 @@ namespace BlazorServer
             }
 
             logger.LogInformation($"Exit configuration mode.");
-            await ToggleInGameConfiguration(execGameCommand);
-            await Wait();
+            ToggleInGameConfiguration(execGameCommand);
+            Wait();
 
             addonDataProvider?.Dispose();
             AddonReader?.Dispose();
@@ -315,7 +310,7 @@ namespace BlazorServer
             logger.LogInformation("Found Class!");
 
             OnUpdate?.Invoke(this, EventArgs.Empty);
-            await Wait();
+            Wait();
 
             DataFrameConfiguration.SaveConfiguration(rect, version, meta, dataFrames);
             Saved = true;
@@ -323,14 +318,14 @@ namespace BlazorServer
             logger.LogInformation($"Frame configuration was successful! Configuration saved!");
 
             OnUpdate?.Invoke(this, EventArgs.Empty);
-            await Wait();
+            Wait();
 
             return true;
         }
 
-        private async Task ToggleInGameConfiguration(ExecGameCommand execGameCommand)
+        private void ToggleInGameConfiguration(ExecGameCommand execGameCommand)
         {
-            await execGameCommand.Run($"/{addonConfig.Command}");
+            execGameCommand.Run($"/{addonConfig.Command}");
         }
 
         private void UpdatePreview(System.Drawing.Bitmap screenshot)
@@ -353,19 +348,18 @@ namespace BlazorServer
             return false;
         }
 
-        public async Task Wait()
+        public void Wait()
         {
             if (cts != null)
             {
-                var temp = counter;
-                do
+                while (!autoResetEvent.WaitOne())
                 {
-                    await Task.Delay(100);
-                } while (temp == counter);
+                    Thread.Sleep(1);
+                }
             }
             else
             {
-                await Task.Delay(interval);
+                Thread.Sleep(interval);
             }
         }
 

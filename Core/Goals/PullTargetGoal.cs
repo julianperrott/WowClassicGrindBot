@@ -56,18 +56,20 @@ namespace Core.Goals
             AddEffect(GoapKey.pulled, true);
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
             if (mountHandler.IsMounted())
             {
-                await mountHandler.Dismount();
+                mountHandler.Dismount();
             }
 
-            await input.TapApproachKey($"{GetType().Name}: OnEnter - Face the target and stop");
-            await stopMoving.Stop();
-            await wait.Update(1);
+            input.TapApproachKey($"{GetType().Name}: OnEnter - Face the target and stop");
+            stopMoving.Stop();
+            wait.Update(1);
 
             pullStart = DateTime.Now;
+
+            return ValueTask.CompletedTask;
         }
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
@@ -82,8 +84,8 @@ namespace Core.Goals
         {
             if (SecondsSincePullStarted > 7)
             {
-                await input.TapClearTarget();
-                await input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, "Too much time to pull!");
+                input.TapClearTarget();
+                input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, "Too much time to pull!");
                 pullStart = DateTime.Now;
 
                 return;
@@ -91,17 +93,17 @@ namespace Core.Goals
 
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
 
-            if (!await Pull())
+            if (!Pull())
             {
                 if (HasPickedUpAnAdd)
                 {
                     Log($"Combat={this.playerReader.Bits.PlayerInCombat}, Is Target targetting me={this.playerReader.Bits.TargetOfTargetIsPlayer}");
                     Log($"Add on approach");
 
-                    await stopMoving.Stop();
+                    stopMoving.Stop();
 
-                    await input.TapNearestTarget();
-                    await wait.Update(1);
+                    input.TapNearestTarget();
+                    wait.Update(1);
 
                     if (this.playerReader.HasTarget && playerReader.Bits.TargetInCombat)
                     {
@@ -111,8 +113,8 @@ namespace Core.Goals
                         }
                     }
 
-                    await input.TapClearTarget();
-                    await wait.Update(1);
+                    input.TapClearTarget();
+                    wait.Update(1);
                     pullStart = DateTime.Now;
 
                     return;
@@ -125,8 +127,8 @@ namespace Core.Goals
 
                 if (classConfiguration.Approach.GetCooldownRemaining() == 0)
                 {
-                    await input.TapApproachKey($"{GetType().Name}");
-                    await wait.Update(1);
+                    input.TapApproachKey($"{GetType().Name}");
+                    wait.Update(1);
                 }
             }
             else
@@ -143,10 +145,10 @@ namespace Core.Goals
             }
         }
 
-        protected async ValueTask WaitForWithinMeleeRange(KeyAction item, bool lastCastSuccess)
+        protected void WaitForWithinMeleeRange(KeyAction item, bool lastCastSuccess)
         {
-            await stopMoving.Stop();
-            await wait.Update(1);
+            stopMoving.Stop();
+            wait.Update(1);
 
             var start = DateTime.Now;
             var lastKnownHealth = playerReader.HealthCurrent;
@@ -171,31 +173,31 @@ namespace Core.Goals
                 if (lastCastSuccess && addonReader.UsableAction.Is(item))
                 {
                     Log($"While waiting, repeat current action: {item.Name}");
-                    lastCastSuccess = await castingHandler.CastIfReady(item, item.DelayBeforeCast);
+                    lastCastSuccess = castingHandler.CastIfReady(item, item.DelayBeforeCast);
                     Log($"Repeat current action: {lastCastSuccess}");
                 }
 
-                await wait.Update(1);
+                wait.Update(1);
             }
         }
 
-        public async ValueTask<bool> Pull()
+        public bool Pull()
         {
             if (Keys.Count != 0)
             {
-                await input.TapStopAttack();
-                await wait.Update(1);
+                input.TapStopAttack();
+                wait.Update(1);
             }
 
             if (playerReader.Bits.HasPet && !playerReader.PetHasTarget)
             {
-                await input.TapPetAttack();
+                input.TapPetAttack();
             }
 
             bool castAny = false;
             foreach (var item in Keys)
             {
-                var success = await castingHandler.CastIfReady(item, item.DelayBeforeCast);
+                var success = castingHandler.CastIfReady(item, item.DelayBeforeCast);
                 if (success)
                 {
                     if (!playerReader.HasTarget)
@@ -207,17 +209,17 @@ namespace Core.Goals
 
                     if (item.WaitForWithinMeleeRange)
                     {
-                        await WaitForWithinMeleeRange(item, success);
+                        WaitForWithinMeleeRange(item, success);
                     }
                 }
             }
 
             if (castAny)
             {
-                (bool interrupted, double elapsedMs) = await wait.InterruptTask(1000,
+                (bool timeout, double elapsedMs) = wait.Until(1000,
                     () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe ||
                           playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingPet);
-                if (!interrupted)
+                if (!timeout)
                 {
                     Log($"Entered combat after {elapsedMs}ms");
                 }

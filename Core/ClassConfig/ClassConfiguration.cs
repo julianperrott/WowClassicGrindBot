@@ -126,6 +126,7 @@ namespace Core
             StopAttack.Initialise(addonReader, requirementFactory, logger);
 
             TargetNearestTarget.Key = TargetNearestTargetKey;
+            TargetNearestTarget.Cooldown = 400;
             TargetNearestTarget.Initialise(addonReader, requirementFactory, logger);
 
             TargetPet.Key = TargetPetKey;
@@ -154,7 +155,7 @@ namespace Core
             Approach.WaitForGCD = false;
             Approach.DelayAfterCast = 0;
             Approach.PressDuration = 10;
-            Approach.Cooldown = 150;
+            Approach.Cooldown = 400;
             Approach.SkipValidation = true;
             Approach.Initialise(addonReader, requirementFactory, logger);
 

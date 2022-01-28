@@ -66,9 +66,13 @@ namespace Core
         public ExecGameCommand ExecGameCommand { get; set; }
 
         private bool Enabled = true;
+        private Wait wait;
 
         public event EventHandler? ProfileLoaded;
         public event EventHandler<bool>? StatusChanged;
+
+        private readonly AutoResetEvent addonAutoResetEvent = new(false);
+        private readonly AutoResetEvent npcNameFinderAutoResetEvent = new(false);
 
         public BotController(ILogger logger, IPPather pather, DataConfig dataConfig, IConfiguration configuration)
         {
@@ -85,7 +89,6 @@ namespace Core
 
             GrindSessionHandler = new LocalGrindSessionHandler(dataConfig.History);
             GrindSession = new GrindSession(this, GrindSessionHandler);
-            
 
             var frames = DataFrameConfiguration.LoadFrames();
 
@@ -104,6 +107,8 @@ namespace Core
 
             AddonReader = new AddonReader(logger, DataConfig, addonDataProvider);
 
+            wait = new Wait(AddonReader, addonAutoResetEvent);
+
             minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
 
@@ -113,19 +118,19 @@ namespace Core
             // wait for addon to read the wow state
             var sw = new Stopwatch();
             sw.Start();
-            while (AddonReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.Class))
+            while (!Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.Class))
             {
                 if (sw.ElapsedMilliseconds > 5000)
                 {
                     logger.LogWarning("There is a problem with the addon, I have been unable to read the player class. Is it running ?");
                     sw.Restart();
                 }
-                Thread.Sleep(100);
+                wait.Update(1);
             }
 
             logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.Race} {AddonReader.PlayerReader.Class}.");
 
-            npcNameFinder = new NpcNameFinder(logger, WowScreen);
+            npcNameFinder = new NpcNameFinder(logger, WowScreen, npcNameFinderAutoResetEvent);
             npcNameTargeting = new NpcNameTargeting(logger, npcNameFinder, WowProcessInput);
             WowScreen.AddDrawAction(npcNameFinder.ShowNames);
             WowScreen.AddDrawAction(npcNameTargeting.ShowClickPositions);
@@ -142,7 +147,7 @@ namespace Core
             {
                 this.AddonReader.AddonRefresh();
                 this.GoapAgent?.UpdateWorldState();
-                System.Threading.Thread.Sleep(1);
+                addonAutoResetEvent.Set();
             }
             this.logger.LogInformation("Addon thread stoppped!");
         }
@@ -232,7 +237,7 @@ namespace Core
             }
 
             if (ConfigurableInput != null)
-                await new StopMoving(ConfigurableInput, AddonReader.PlayerReader).Stop();
+                new StopMoving(ConfigurableInput, AddonReader.PlayerReader).Stop();
 
             logger.LogInformation("Stopped!");
         }
@@ -271,7 +276,7 @@ namespace Core
             var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, ExecGameCommand);
 
             var goapAgentState = new GoapAgentState();
-            var availableActions = actionFactory.CreateGoals(config, blacklist, goapAgentState);
+            var availableActions = actionFactory.CreateGoals(config, blacklist, goapAgentState, wait);
 
             this.GoapAgent?.Dispose();
             this.GoapAgent = new GoapAgent(logger, goapAgentState, ConfigurableInput, AddonReader, availableActions, blacklist);
@@ -317,6 +322,8 @@ namespace Core
 
         public void Dispose()
         {
+            npcNameFinderAutoResetEvent.Dispose();
+            addonAutoResetEvent.Dispose();
             WowScreen.Dispose();
             addonDataProvider?.Dispose();
         }

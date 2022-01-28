@@ -2,7 +2,6 @@
 using Core.GOAP;
 using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Numerics;
@@ -72,17 +71,17 @@ namespace Core.Goals
             return ValueTask.CompletedTask;
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             lastLoot = playerReader.LastLootTime;
 
-            await stopMoving.Stop();
+            stopMoving.Stop();
             combatUtil.Update();
 
             bool foundByCursor = false;
 
-            await npcNameTargeting.WaitForNUpdate(2);
-            if (await FoundByCursor())
+            npcNameTargeting.WaitForNUpdate(1);
+            if (FoundByCursor())
             {
                 foundByCursor = true;
                 corpseLocations.Remove(GetClosestCorpse());
@@ -92,10 +91,10 @@ namespace Core.Goals
                 var location = playerReader.PlayerLocation;
                 var closestCorpse = GetClosestCorpse();
                 var heading = DirectionCalculator.CalculateHeading(location, closestCorpse);
-                await playerDirection.SetDirection(heading, closestCorpse, "Look at possible corpse and try again");
+                playerDirection.SetDirection(heading, closestCorpse, "Look at possible corpse and try again");
 
-                await npcNameTargeting.WaitForNUpdate(2);
-                if (await FoundByCursor())
+                npcNameTargeting.WaitForNUpdate(1);
+                if (FoundByCursor())
                 {
                     foundByCursor = true;
                     corpseLocations.Remove(closestCorpse);
@@ -106,37 +105,38 @@ namespace Core.Goals
             {
                 corpseLocations.Remove(GetClosestCorpse());
 
-                await input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
-                await wait.Update(1);
+                input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
+                wait.Update(1);
                 if (playerReader.HasTarget)
                 {
                     if (playerReader.Bits.TargetIsDead)
                     {
                         CheckForSkinning();
 
-                        await input.TapInteractKey($"{GetType().Name}: Found last dead target");
-                        await wait.Update(1);
+                        input.TapInteractKey($"{GetType().Name}: Found last dead target");
+                        wait.Update(1);
 
-                        (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
+                        (bool foundTarget, bool moved) = combatUtil.FoundTargetWhileMoved();
                         if (foundTarget)
                         {
                             Log("Goal interrupted!");
-                            return;
+                            return ValueTask.CompletedTask;
                         }
 
                         if (moved)
                         {
-                            await input.TapInteractKey($"{GetType().Name}: Last dead target double");
+                            input.TapInteractKey($"{GetType().Name}: Last dead target double");
                         }
                     }
                     else
                     {
-                        await input.TapClearTarget($"{GetType().Name}: Don't attack the target!");
+                        input.TapClearTarget($"{GetType().Name}: Don't attack the target!");
                     }
                 }
             }
 
-            await GoalExit();
+            GoalExit();
+            return ValueTask.CompletedTask;
         }
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
@@ -148,23 +148,23 @@ namespace Core.Goals
             }
         }
 
-        private async ValueTask<bool> FoundByCursor()
+        private bool FoundByCursor()
         {
-            if (!await npcNameTargeting.FindBy(CursorType.Loot))
+            if (!npcNameTargeting.FindBy(CursorType.Loot))
             {
                 return false;
             }
 
             Log("Found corpse - clicked");
-            (bool notFoundTarget, double elapsedMs) = await wait.InterruptTask(200, () => playerReader.HasTarget);
-            if (!notFoundTarget)
+            (bool searchTimeOut, double elapsedMs) = wait.Until(200, () => playerReader.HasTarget);
+            if (!searchTimeOut)
             {
                 Log($"Found target after {elapsedMs}ms");
             }
 
             CheckForSkinning();
 
-            (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
+            (bool foundTarget, bool moved) = combatUtil.FoundTargetWhileMoved();
             if (foundTarget)
             {
                 Log("Interrupted!");
@@ -173,8 +173,8 @@ namespace Core.Goals
 
             if (moved)
             {
-                await input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
-                await wait.Update(1);
+                input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
+                wait.Update(1);
             }
 
             return true;
@@ -182,6 +182,9 @@ namespace Core.Goals
 
         private Vector3 GetClosestCorpse()
         {
+            if (corpseLocations.Count == 0)
+                return Vector3.Zero;
+
             var closest = corpseLocations.
                 Select(loc => new { loc, d = playerReader.PlayerLocation.DistanceXYTo(loc) }).
                 Aggregate((a, b) => a.d <= b.d ? a : b);
@@ -212,9 +215,9 @@ namespace Core.Goals
             }
         }
 
-        private async ValueTask GoalExit()
+        private void GoalExit()
         {
-            if (!await wait.Interrupt(1000, () => lastLoot != playerReader.LastLootTime))
+            if (!wait.Till(1000, () => lastLoot != playerReader.LastLootTime))
             {
                 Log($"Loot Successfull");
             }
@@ -231,8 +234,8 @@ namespace Core.Goals
 
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
-                await input.TapClearTarget($"{GetType().Name}: Exit Goal");
-                await wait.Update(1);
+                input.TapClearTarget($"{GetType().Name}: Exit Goal");
+                wait.Update(1);
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Core
 {
@@ -30,10 +29,10 @@ namespace Core
         private readonly List<ActionBarSource> sources = new List<ActionBarSource>();
 
 
-        public async Task Execute()
+        public void Execute()
         {
             CollectKeyActions();
-            await Run();
+            Run();
         }
 
         private void CollectKeyActions()
@@ -69,12 +68,12 @@ namespace Core
             sources.Add(source);
         }
 
-        private async Task Run()
+        private void Run()
         {
-            foreach(var a in sources)
+            foreach (var a in sources)
             {
                 var content = ScriptBuilder(a);
-                await execGameCommand.Run(content);
+                execGameCommand.Run(content);
             }
         }
 

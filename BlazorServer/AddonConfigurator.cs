@@ -31,7 +31,7 @@ namespace BlazorServer
         }
 
         public bool Installed()
-        {;
+        {
             return GetInstalledVersion() != null;
         }
 

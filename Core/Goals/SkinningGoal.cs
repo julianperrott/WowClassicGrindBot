@@ -70,62 +70,65 @@ namespace Core.Goals
             return ValueTask.CompletedTask;
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             lastLoot = playerReader.LastLootTime;
 
-            await stopMoving.Stop();
+            stopMoving.Stop();
             combatUtil.Update();
 
             Log($"Try to find {NpcNames.Corpse}");
-            await npcNameTargeting.WaitForNUpdate(1);
+            npcNameTargeting.WaitForNUpdate(1);
 
             int attempts = 1;
             while (attempts < 5)
             {
-                if (await combatUtil.EnteredCombat())
+                if (combatUtil.EnteredCombat())
                 {
-                    if (await combatUtil.AquiredTarget())
+                    if (combatUtil.AquiredTarget())
                     {
                         Log("Interrupted!");
-                        return;
+
+                        return ValueTask.CompletedTask;
                     }
                 }
 
-                bool foundCursor = await npcNameTargeting.FindBy(CursorType.Skin);
+                bool foundCursor = npcNameTargeting.FindBy(CursorType.Skin);
                 if (foundCursor)
                 {
                     Log("Found corpse - interacted with right click");
-                    await wait.Update(1);
+                    wait.Update(1);
 
-                    (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
+                    (bool foundTarget, bool moved) = combatUtil.FoundTargetWhileMoved();
                     if (foundTarget)
                     {
                         Log("Interrupted!");
-                        return;
+
+                        return ValueTask.CompletedTask;
                     }
 
                     if (moved)
                     {
-                        await input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
-                        await wait.Update(1);
+                        input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
+                        wait.Update(1);
                     }
 
                     // wait until start casting
-                    await wait.Interrupt(500, () => playerReader.IsCasting);
+                    wait.Till(500, () => playerReader.IsCasting);
                     Log("Started casting...");
 
                     playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
-                    await wait.Interrupt(3000, () => !playerReader.IsCasting || playerReader.LastUIErrorMessage != UI_ERROR.NONE);
+                    wait.Till(3000, () => !playerReader.IsCasting || playerReader.LastUIErrorMessage != UI_ERROR.NONE);
                     Log("Cast finished!");
 
                     if (playerReader.LastUIErrorMessage != UI_ERROR.ERR_SPELL_FAILED_S)
                     {
                         playerReader.LastUIErrorMessage = UI_ERROR.NONE;
                         Log($"Skinning Successful! {playerReader.LastUIErrorMessage}");
-                        await GoalExit();
-                        return;
+
+                        GoalExit();
+                        return ValueTask.CompletedTask;
                     }
                     else
                     {
@@ -136,16 +139,18 @@ namespace Core.Goals
                 else
                 {
                     Log($"Target is not skinnable - NPC Count: {npcNameTargeting.NpcCount}");
-                    await GoalExit();
-                    return;
+
+                    GoalExit();
+                    return ValueTask.CompletedTask;
                 }
             }
 
+            return ValueTask.CompletedTask;
         }
 
-        private async ValueTask GoalExit()
+        private void GoalExit()
         {
-            if (!await wait.Interrupt(1000, () => lastLoot != playerReader.LastLootTime))
+            if (!wait.Till(1000, () => lastLoot != playerReader.LastLootTime))
             {
                 Log($"Skin-Loot Successfull");
             }
@@ -160,8 +165,8 @@ namespace Core.Goals
 
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
-                await input.TapClearTarget();
-                await wait.Update(1);
+                input.TapClearTarget();
+                wait.Update(1);
             }
         }
 
