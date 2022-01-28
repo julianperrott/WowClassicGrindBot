@@ -71,7 +71,6 @@ namespace Core.Goals
 
                 var clickPostion = npcNameFinder.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                 input.SetCursorPosition(clickPostion);
-                //await Task.Delay(MOUSE_DELAY);
                 Thread.Sleep(MOUSE_DELAY);
 
                 if (cancellationToken.IsCancellationRequested)
@@ -103,7 +102,6 @@ namespace Core.Goals
                 {
                     var clickPostion = npcNameFinder.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                     input.SetCursorPosition(clickPostion);
-                    //await Task.Delay(MOUSE_DELAY);
                     Thread.Sleep(MOUSE_DELAY);
                     CursorClassifier.Classify(out var cls);
                     if (cursor.Contains(cls))
