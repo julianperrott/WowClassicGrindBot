@@ -74,7 +74,7 @@ namespace Core
 
         public async ValueTask Unstick()
         {
-            await input.TapJump();
+            input.TapJump();
 
             logger.LogInformation($"Stuck for {actionDurationSeconds}s, last tried to unstick {unstickSeconds}s ago. Unstick seconds={unstickSeconds}.");
 
@@ -121,17 +121,17 @@ namespace Core
                 input.SetKeyState(input.ForwardKey, true, false, "StuckDetector");
                 await Task.Delay(strafeDuration);
 
-                await input.TapJump();
+                input.TapJump();
 
                 var heading = DirectionCalculator.CalculateHeading(this.playerReader.PlayerLocation, targetLocation);
-                await playerDirection.SetDirection(heading, targetLocation, "Move to next point");
+                playerDirection.SetDirection(heading, targetLocation, "Move to next point");
 
                 LastUnstickAttemptTimer.Reset();
                 LastUnstickAttemptTimer.Start();
             }
             else
             {
-                await input.TapJump();
+                input.TapJump();
             }
         }
 

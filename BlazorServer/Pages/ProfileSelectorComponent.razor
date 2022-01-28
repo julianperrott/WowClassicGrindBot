@@ -85,12 +85,12 @@
         }
     }
 
-    private async Task LoadState()
+    private void LoadState()
     {
         addonReader.Reset();
 
         var config = AddonConfig.Load();
-        await botController.ExecGameCommand.Run("/" + config.Command + "flush");
+        botController.ExecGameCommand.Run("/" + config.Command + "flush");
     }
 
     private void OnListBoxChanged(ChangeEventArgs changeEventArgs)
@@ -110,10 +110,10 @@
         disableButton = string.IsNullOrEmpty(selectedProfile);
     }
 
-    private async Task SyncActionBar()
+    private void SyncActionBar()
     {
         if (botController.ActionBarPopulator == null) return;
-        await botController.ActionBarPopulator.Execute();
+        botController.ActionBarPopulator.Execute();
     }
 
 }

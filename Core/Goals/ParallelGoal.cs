@@ -48,22 +48,23 @@ namespace Core.Goals
         {
             if (Keys.Any(k => k.StopBeforeCast))
             {
-                await stopMoving.Stop();
-                await wait.Update(1);
+                stopMoving.Stop();
+                wait.Update(1);
 
                 if (mountHandler.IsMounted())
                 {
-                    await mountHandler.Dismount();
-                    await wait.Update(1);
+                    mountHandler.Dismount();
+                    wait.Update(1);
                     //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
                 }
             }
 
-            await AsyncExt.Loop(Keys, async (KeyAction key) =>
+            await AsyncExt.Loop(Keys, (KeyAction key) =>
             {
-                var pressed = await castingHandler.CastIfReady(key, key.DelayBeforeCast);
+                var pressed = castingHandler.CastIfReady(key, key.DelayBeforeCast);
                 key.ResetCooldown();
                 key.SetClicked();
+                return Task.CompletedTask;
             });
 
             bool wasDrinkingOrEating = playerReader.Buffs.Drinking || playerReader.Buffs.Eating;
@@ -73,7 +74,7 @@ namespace Core.Goals
             DateTime startTime = DateTime.Now;
             while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.Bits.PlayerInCombat)
             {
-                await wait.Update(1);
+                wait.Update(1);
 
                 if (playerReader.Buffs.Drinking && playerReader.Buffs.Eating)
                 {
@@ -97,7 +98,7 @@ namespace Core.Goals
 
             if (wasDrinkingOrEating)
             {
-                await input.TapStandUpKey();
+                input.TapStandUpKey();
             }
         }
     }

@@ -98,7 +98,7 @@ namespace Core.Goals
             // is corpse visible
             if (this.playerReader.CorpseX < 1 && this.playerReader.CorpseX < 1)
             {
-                await this.stopMoving.Stop();
+                stopMoving.Stop();
                 logger.LogInformation($"Waiting for corpse location to update update before performing action. Corpse is @ {playerReader.CorpseX},{playerReader.CorpseY}");
                 await Task.Delay(5000);
                 NeedsToReset = true;
@@ -107,7 +107,7 @@ namespace Core.Goals
 
             if (NeedsToReset)
             {
-                await this.stopMoving.Stop();
+                stopMoving.Stop();
 
                 while (this.playerReader.Bits.DeadStatus)
                 {
@@ -126,7 +126,7 @@ namespace Core.Goals
             var timeSinceResetSeconds = (DateTime.Now - LastReset).TotalSeconds;
             if (timeSinceResetSeconds > 80)
             {
-                await this.stopMoving.Stop();
+                stopMoving.Stop();
                 logger.LogInformation("We have been dead for over 1 minute, trying to path a new route.");
                 await this.Reset();
             }
@@ -148,7 +148,7 @@ namespace Core.Goals
                     distance = location.DistanceXYTo(corpseLocation);
                     heading = DirectionCalculator.CalculateHeading(location, corpseLocation);
                     this.logger.LogInformation("no more points, heading to corpse");
-                    await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
+                    playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
                     input.SetKeyState(input.ForwardKey, true, false, "WalkToCorpse");
                     this.stuckDetector.SetTargetLocation(points.Peek());
                 }
@@ -161,7 +161,7 @@ namespace Core.Goals
 
             if (lastDistance < distance)
             {
-                await playerDirection.SetDirection(heading, points.Peek(), "Further away");
+                playerDirection.SetDirection(heading, points.Peek(), "Further away");
             }
             else if (!this.stuckDetector.IsGettingCloser())
             {
@@ -197,7 +197,7 @@ namespace Core.Goals
 
                 if (MathF.Min(diff1, diff2) > 0.3)
                 {
-                    await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
+                    playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
                 }
             }
 
@@ -224,7 +224,7 @@ namespace Core.Goals
                 if (points.Count > 0)
                 {
                     heading = DirectionCalculator.CalculateHeading(location, points.Peek());
-                    await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
+                    playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
                     this.stuckDetector.SetTargetLocation(points.Peek());
                 }
             }
@@ -253,7 +253,7 @@ namespace Core.Goals
         {
             LastReset = DateTime.Now;
 
-            await this.stopMoving.Stop();
+            stopMoving.Stop();
 
             points.Clear();
 
@@ -341,7 +341,7 @@ namespace Core.Goals
                 NeedsToReset = false;
                 this.stuckDetector.SetTargetLocation(points.Peek());
                 var heading = DirectionCalculator.CalculateHeading(this.playerReader.PlayerLocation, points.Peek());
-                await playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
+                playerDirection.SetDirection(heading, this.playerReader.CorpseLocation, "Heading to corpse");
                 input.SetKeyState(input.ForwardKey, true, false, "WalkToCorpse");
                 this.stuckDetector.SetTargetLocation(points.Peek());
                 this.LastActive = DateTime.Now;
@@ -377,11 +377,11 @@ namespace Core.Goals
             return pathToCorpse;
         }
 
-        private async ValueTask RandomJump()
+        private void RandomJump()
         {
             if (input.ClassConfig.Jump.MillisecondsSinceLastClick > random.Next(5000, 7000))
             {
-                await input.TapJump($"{GetType().Name}: Random jump");
+                input.TapJump($"{GetType().Name}: Random jump");
             }
         }
     }

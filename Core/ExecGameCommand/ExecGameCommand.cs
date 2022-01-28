@@ -1,7 +1,6 @@
 ﻿using Game;
 using System;
-using System.Threading.Tasks;
-using WinAPI;
+using System.Threading;
 using Microsoft.Extensions.Logging;
 using TextCopy;
 
@@ -18,24 +17,24 @@ namespace Core
             this.wowProcessInput = wowProcessInput;
         }
 
-        public async Task Run(string content)
+        public void Run(string content)
         {
             wowProcessInput.SetForegroundWindow();
             logger.LogInformation(content);
 
             ClipboardService.SetText(content);
-            await Task.Delay(50);
+            Thread.Sleep(50);
 
             // Open chat inputbox
-            await wowProcessInput.KeyPress(ConsoleKey.Enter, 50);
+            wowProcessInput.KeyPress(ConsoleKey.Enter, 50);
 
             // Send Paste keys
             wowProcessInput.PasteFromClipboard();
-            await Task.Delay(250);
+            Thread.Sleep(250);
 
             //
-            await wowProcessInput.KeyPress(ConsoleKey.Enter, 50);
-            await Task.Delay(250);
+            wowProcessInput.KeyPress(ConsoleKey.Enter, 50);
+            Thread.Sleep(250);
         }
     }
 }

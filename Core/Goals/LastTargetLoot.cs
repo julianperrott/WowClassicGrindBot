@@ -60,19 +60,19 @@ namespace Core.Goals
             var lastPosition = playerReader.PlayerLocation;
             lastLoot = playerReader.LastLootTime;
 
-            await stopMoving.Stop();
+            stopMoving.Stop();
             combatUtil.Update();
 
-            await input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
-            await wait.Update(1);
+            input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
+            wait.Update(1);
             if (playerReader.HasTarget)
             {
                 if (playerReader.Bits.TargetIsDead)
                 {
-                    await input.TapInteractKey($"{GetType().Name}: Found last dead target");
-                    await wait.Update(1);
+                    input.TapInteractKey($"{GetType().Name}: Found last dead target");
+                    wait.Update(1);
 
-                    (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
+                    (bool foundTarget, bool moved) = combatUtil.FoundTargetWhileMoved();
                     if (foundTarget)
                     {
                         Log("Goal interrupted!");
@@ -81,21 +81,21 @@ namespace Core.Goals
 
                     if (moved)
                     {
-                        await input.TapInteractKey($"{GetType().Name}: Last dead target double");
+                        input.TapInteractKey($"{GetType().Name}: Last dead target double");
                     }
                 }
                 else
                 {
-                    await input.TapClearTarget($"{GetType().Name}: Don't attack the target!");
+                    input.TapClearTarget($"{GetType().Name}: Don't attack the target!");
                 }
             }
 
             await GoalExit();
         }
 
-        private async ValueTask GoalExit()
+        private ValueTask GoalExit()
         {
-            if (!await wait.Interrupt(1000, () => lastLoot != playerReader.LastLootTime))
+            if (!wait.Till(1000, () => lastLoot != playerReader.LastLootTime))
             {
                 Log($"Loot Successfull");
             }
@@ -110,9 +110,11 @@ namespace Core.Goals
 
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
-                await input.TapClearTarget($"{GetType().Name}: Exit Goal");
-                await wait.Update(1);
+                input.TapClearTarget($"{GetType().Name}: Exit Goal");
+                wait.Update(1);
             }
+
+            return ValueTask.CompletedTask;
         }
 
         private void Log(string text)

@@ -48,21 +48,21 @@ namespace Core.Goals
 
         public override float CostOfPerformingAction { get => key.Cost; }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             if (key.StopBeforeCast)
             {
-                await stopMoving.Stop();
-                await wait.Update(1);
+                stopMoving.Stop();
+                wait.Update(1);
 
                 if (mountHandler.IsMounted())
                 {
-                    await mountHandler.Dismount();
+                    mountHandler.Dismount();
                     //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
                 }
             }
 
-            await castingHandler.CastIfReady(key, key.DelayBeforeCast);
+            castingHandler.CastIfReady(key, key.DelayBeforeCast);
 
             bool wasDrinkingOrEating = playerReader.Buffs.Drinking || playerReader.Buffs.Eating;
 
@@ -71,7 +71,7 @@ namespace Core.Goals
             DateTime startTime = DateTime.Now;
             while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.Bits.PlayerInCombat)
             {
-                await wait.Update(1);
+                wait.Update(1);
 
                 if (playerReader.Buffs.Drinking)
                 {
@@ -95,10 +95,11 @@ namespace Core.Goals
 
             if (wasDrinkingOrEating)
             {
-                await input.TapStopKey(); // stand up
+                input.TapStopKey(); // stand up
             }
 
-            await wait.Update(1);
+            wait.Update(1);
+            return ValueTask.CompletedTask;
         }
 
         public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;

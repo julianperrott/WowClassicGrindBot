@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Drawing;
-using System.Threading.Tasks;
 using WinAPI;
 
 namespace Game
@@ -81,9 +80,9 @@ namespace Game
             return false;
         }
 
-        public async ValueTask SendText(string payload)
+        public void SendText(string payload)
         {
-            await simulatorInput.SendText(payload);
+            simulatorInput.SendText(payload);
         }
 
         public void PasteFromClipboard()
@@ -97,19 +96,15 @@ namespace Game
         }
 
 
-        public async ValueTask KeyPress(ConsoleKey key, int milliseconds, string description = "")
+        public void KeyPress(ConsoleKey key, int milliseconds, string description = "")
         {
-            int totalElapsedMs = await nativeInput.KeyPress((int)key, milliseconds);
+            keyDict[key] = true;
+            int totalElapsedMs = nativeInput.KeyPress((int)key, milliseconds);
+            keyDict[key] = false;
             if (!string.IsNullOrEmpty(description))
+            {
                 LogKeyPress(logger, key, description, totalElapsedMs);
-        }
-
-        public async ValueTask KeyPressNoDelay(ConsoleKey key, int milliseconds, string description = "")
-        {
-            if (!string.IsNullOrEmpty(description))
-                LogKeyPressNoDelay(logger, key, description, milliseconds);
-
-            await nativeInput.KeyPressNoDelay((int)key, milliseconds);
+            }
         }
 
         public void KeyPressSleep(ConsoleKey key, int milliseconds, string description = "")
@@ -118,9 +113,13 @@ namespace Game
                 return;
 
             if (!string.IsNullOrEmpty(description))
+            {
                 LogKeyPress(logger, key, description, milliseconds);
+            }
 
+            keyDict[key] = true;
             nativeInput.KeyPressSleep((int)key, milliseconds);
+            keyDict[key] = false;
         }
 
         public void SetKeyState(ConsoleKey key, bool pressDown, bool forceClick, string description = "")
@@ -136,14 +135,14 @@ namespace Game
             nativeInput.SetCursorPosition(position);
         }
 
-        public async ValueTask RightClickMouse(Point position)
+        public void RightClickMouse(Point position)
         {
-            await nativeInput.RightClickMouse(position);
+            nativeInput.RightClickMouse(position);
         }
 
-        public async ValueTask LeftClickMouse(Point position)
+        public void LeftClickMouse(Point position)
         {
-            await nativeInput.LeftClickMouse(position);
+            nativeInput.LeftClickMouse(position);
         }
 
         [LoggerMessage(

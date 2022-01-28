@@ -76,7 +76,7 @@ namespace Core.Goals
 
             if (lastDistance < distance)
             {
-                await playerDirection.SetDirection(heading, points.Peek(), "Further away");
+                playerDirection.SetDirection(heading, points.Peek(), "Further away");
             }
             else if (!this.stuckDetector.IsGettingCloser())
             {
@@ -95,7 +95,7 @@ namespace Core.Goals
             }
             else // distance closer
             {
-                await AdjustHeading(heading);
+                AdjustHeading(heading);
             }
 
             lastDistance = distance;
@@ -108,7 +108,7 @@ namespace Core.Goals
                 if (points.Count > 0)
                 {
                     heading = DirectionCalculator.CalculateHeading(location, points.Peek());
-                    await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
+                    playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
 
                     this.stuckDetector.SetTargetLocation(points.Peek());
                 }
@@ -117,14 +117,14 @@ namespace Core.Goals
             LastActive = DateTime.Now;
         }
 
-        private async ValueTask AdjustHeading(float heading)
+        private void AdjustHeading(float heading)
         {
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
             if (MathF.Min(diff1, diff2) > 0.3)
             {
-                await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
+                playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
             }
             else
             {

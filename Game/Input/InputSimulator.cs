@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
-using System.Threading.Tasks;
 using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using WinAPI;
@@ -14,7 +13,7 @@ namespace Game
         private readonly int MIN_DELAY;
         private readonly int MAX_DELAY;
 
-        private readonly Random random = new Random();
+        private readonly Random random = new();
         private readonly GregsStack.InputSimulatorStandard.InputSimulator simulator;
         private readonly Process process;
 
@@ -28,10 +27,10 @@ namespace Game
             simulator = new GregsStack.InputSimulatorStandard.InputSimulator();
         }
 
-        private async ValueTask<int> Delay(int milliseconds)
+        private int Delay(int milliseconds)
         {
             int delay = milliseconds + random.Next(1, MAX_DELAY);
-            await Task.Delay(delay);
+            Thread.Sleep(delay);
             return delay;
         }
 
@@ -51,19 +50,12 @@ namespace Game
             simulator.Keyboard.KeyUp((VirtualKeyCode)key);
         }
 
-        public async ValueTask<int> KeyPress(int key, int milliseconds)
+        public int KeyPress(int key, int milliseconds)
         {
             simulator.Keyboard.KeyDown((VirtualKeyCode)key);
-            int delay = await Delay(milliseconds);
+            int delay = Delay(milliseconds);
             simulator.Keyboard.KeyUp((VirtualKeyCode)key);
             return delay;
-        }
-
-        public async ValueTask KeyPressNoDelay(int key, int milliseconds)
-        {
-            simulator.Keyboard.KeyDown((VirtualKeyCode)key);
-            await Task.Delay(milliseconds);
-            simulator.Keyboard.KeyUp((VirtualKeyCode)key);
         }
 
         public void KeyPressSleep(int key, int milliseconds)
@@ -73,19 +65,19 @@ namespace Game
             simulator.Keyboard.KeyUp((VirtualKeyCode)key);
         }
 
-        public async ValueTask LeftClickMouse(Point p)
+        public void LeftClickMouse(Point p)
         {
             SetCursorPosition(p);
             simulator.Mouse.LeftButtonDown();
-            await Delay(MIN_DELAY);
+            Delay(MIN_DELAY);
             simulator.Mouse.LeftButtonUp();
         }
 
-        public async ValueTask RightClickMouse(Point p)
+        public void RightClickMouse(Point p)
         {
             SetCursorPosition(p);
             simulator.Mouse.RightButtonDown();
-            await Delay(MIN_DELAY);
+            Delay(MIN_DELAY);
             simulator.Mouse.RightButtonUp();
         }
 
@@ -97,13 +89,13 @@ namespace Game
             simulator.Mouse.MoveMouseTo(Convert.ToDouble(p.X), Convert.ToDouble(p.Y));
         }
 
-        public async ValueTask SendText(string text)
+        public void SendText(string text)
         {
             if (NativeMethods.GetForegroundWindow() != process.MainWindowHandle)
                 NativeMethods.SetForegroundWindow(process.MainWindowHandle);
 
             simulator.Keyboard.TextEntry(text);
-            await Task.Delay(25);
+            Delay(25);
         }
 
         public void PasteFromClipboard()

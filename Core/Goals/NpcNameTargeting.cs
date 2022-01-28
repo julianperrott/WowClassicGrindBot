@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Core.Extensions;
 using SharedLib.NpcFinder;
 using Game;
@@ -51,13 +50,13 @@ namespace Core.Goals
             npcNameFinder.ChangeNpcType(npcNames);
         }
 
-        public async ValueTask WaitForNUpdate(int n)
+        public void WaitForNUpdate(int n)
         {
-            await npcNameFinder.WaitForNUpdate(n);
+            npcNameFinder.WaitForNUpdate(n);
         }
 
 
-        public async ValueTask TargetingAndClickNpc(bool leftClick, CancellationToken cancellationToken)
+        public void TargetingAndClickNpc(bool leftClick, CancellationToken cancellationToken)
         {
             if (npcNameFinder.NpcCount == 0)
                 return;
@@ -72,7 +71,7 @@ namespace Core.Goals
 
                 var clickPostion = npcNameFinder.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                 input.SetCursorPosition(clickPostion);
-                await Task.Delay(MOUSE_DELAY);
+                Thread.Sleep(MOUSE_DELAY);
 
                 if (cancellationToken.IsCancellationRequested)
                     return;
@@ -80,13 +79,13 @@ namespace Core.Goals
                 CursorClassifier.Classify(out var cls);
                 if (cls == CursorType.Kill || cls == CursorType.Vendor)
                 {
-                    await AquireTargetAtCursor(clickPostion, npc, leftClick);
+                    AquireTargetAtCursor(clickPostion, npc, leftClick);
                     return;
                 }
             }
         }
 
-        public async ValueTask<bool> FindBy(params CursorType[] cursor)
+        public bool FindBy(params CursorType[] cursor)
         {
             List<Point> attemptPoints = new List<Point>();
 
@@ -103,11 +102,11 @@ namespace Core.Goals
                 {
                     var clickPostion = npcNameFinder.ToScreenCoordinates(npc.ClickPoint.X + location.X, npc.ClickPoint.Y + location.Y);
                     input.SetCursorPosition(clickPostion);
-                    await Task.Delay(MOUSE_DELAY);
+                    Thread.Sleep(MOUSE_DELAY);
                     CursorClassifier.Classify(out var cls);
                     if (cursor.Contains(cls))
                     {
-                        await AquireTargetAtCursor(clickPostion, npc);
+                        AquireTargetAtCursor(clickPostion, npc);
                         return true;
                     }
                 }
@@ -116,12 +115,12 @@ namespace Core.Goals
             return false;
         }
 
-        private async ValueTask AquireTargetAtCursor(Point clickPostion, NpcPosition npc, bool leftClick = false)
+        private void AquireTargetAtCursor(Point clickPostion, NpcPosition npc, bool leftClick = false)
         {
             if (leftClick)
-                await input.LeftClickMouse(clickPostion);
+                input.LeftClickMouse(clickPostion);
             else
-                await input.RightClickMouse(clickPostion);
+                input.RightClickMouse(clickPostion);
 
             logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}, pos={clickPostion}");
         }

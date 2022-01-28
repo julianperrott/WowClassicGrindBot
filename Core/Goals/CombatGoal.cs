@@ -55,11 +55,11 @@ namespace Core.Goals
             classConfiguration.Combat.Sequence.Where(k => k != null).ToList().ForEach(key => Keys.Add(key));
         }
 
-        protected async ValueTask Fight()
+        protected void Fight()
         {
             if (playerReader.Bits.HasPet && !playerReader.PetHasTarget)
             {
-                await input.TapPetAttack("");
+                input.TapPetAttack("");
             }
 
             foreach (var item in Keys)
@@ -67,7 +67,7 @@ namespace Core.Goals
                 if (!playerReader.HasTarget)
                 {
                     logger.LogInformation($"{GetType().Name}: Lost Target!");
-                    await stopMoving.Stop();
+                    stopMoving.Stop();
                     return;
                 }
                 else
@@ -77,12 +77,12 @@ namespace Core.Goals
                     lastKnownMaxDistance = playerReader.MaxRange;
                 }
 
-                if (await castingHandler.CastIfReady(item, item.DelayBeforeCast))
+                if (castingHandler.CastIfReady(item, item.DelayBeforeCast))
                 {
                     if (item.Name == classConfiguration.Approach.Name ||
                         item.Name == classConfiguration.AutoAttack.Name)
                     {
-                        await castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}: Fight {item.Name}");
+                        castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}: Fight {item.Name}");
                     }
 
                     break;
@@ -103,7 +103,7 @@ namespace Core.Goals
             {
                 // have to check range
                 // ex. target died far away have to consider the range and approximate
-                logger.LogInformation($"{GetType().Name}: --- Target is killed! Record death location.");
+                //logger.LogInformation($"{GetType().Name}: --- Target is killed! Record death location.");
                 float distance = (lastKnownMaxDistance + lastKnownMinDistance) / 2f;
                 SendActionEvent(new ActionEventArgs(GoapKey.corpselocation, new CorpseLocation(GetCorpseLocation(distance), distance)));
             }
@@ -132,73 +132,78 @@ namespace Core.Goals
             }
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
             if (mountHandler.IsMounted())
             {
-                await mountHandler.Dismount();
+                mountHandler.Dismount();
             }
 
             lastDirectionForTurnAround = playerReader.Direction;
 
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
+
+            return ValueTask.CompletedTask;
         }
 
-        public override async ValueTask OnExit()
+        public override ValueTask OnExit()
         {
-            if (addonReader.CombatCreatureCount > 0)
+            if (addonReader.CombatCreatureCount > 0 && !playerReader.HasTarget)
             {
-                await stopMoving.Stop();
+                stopMoving.Stop();
             }
+
+            return ValueTask.CompletedTask;
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             if (MathF.Abs(lastDirectionForTurnAround - playerReader.Direction) > MathF.PI / 2)
             {
                 logger.LogInformation($"{GetType().Name}: Turning too fast!");
-                await stopMoving.Stop();
+                stopMoving.Stop();
 
                 lastDirectionForTurnAround = playerReader.Direction;
             }
 
             if (playerReader.Bits.IsDrowning)
             {
-                await StopDrowning();
-                return;
+                StopDrowning();
+                return ValueTask.CompletedTask;
             }
 
             if (playerReader.HasTarget)
             {
-                await Fight();
+                Fight();
             }
 
             if (!playerReader.HasTarget && addonReader.CombatCreatureCount > 0)
             {
-                await CreatureTargetMeOrMyPet();
+                CreatureTargetMeOrMyPet();
             }
 
-            await wait.Update(1);
+            wait.Update(1);
+            return ValueTask.CompletedTask;
         }
 
-        private async ValueTask CreatureTargetMeOrMyPet()
+        private void CreatureTargetMeOrMyPet()
         {
-            await wait.Update(1);
+            wait.Update(1);
             if (playerReader.PetHasTarget && addonReader.CreatureHistory.CombatDeadGuid.Value != playerReader.PetTargetGuid)
             {
                 logger.LogWarning("---- My pet has a target!");
                 ResetCooldowns();
 
-                await input.TapTargetPet();
-                await input.TapTargetOfTarget();
-                await wait.Update(1);
+                input.TapTargetPet();
+                input.TapTargetOfTarget();
+                wait.Update(1);
                 return;
             }
 
             if (addonReader.CombatCreatureCount > 1)
             {
-                await input.TapNearestTarget($"{GetType().Name}: Checking target in front of me");
-                await wait.Update(1);
+                input.TapNearestTarget($"{GetType().Name}: Checking target in front of me");
+                wait.Update(1);
                 if (playerReader.HasTarget)
                 {
                     if (playerReader.Bits.TargetInCombat && playerReader.Bits.TargetOfTargetIsPlayer)
@@ -206,14 +211,14 @@ namespace Core.Goals
                         ResetCooldowns();
 
                         logger.LogWarning("---- Somebody is attacking me!");
-                        await input.TapInteractKey("Found new target to attack");
-                        await stopMoving.Stop();
-                        await wait.Update(1);
+                        input.TapInteractKey("Found new target to attack");
+                        stopMoving.Stop();
+                        wait.Update(1);
                         return;
                     }
 
-                    await input.TapClearTarget();
-                    await wait.Update(1);
+                    input.TapClearTarget();
+                    wait.Update(1);
                 }
                 else
                 {
@@ -222,16 +227,16 @@ namespace Core.Goals
                     if (anyDamageTakens.Any())
                     {
                         logger.LogWarning($"---- Possible threats found behind {anyDamageTakens.Count()}. Waiting for my target to change!");
-                        await wait.Interrupt(2000, () => playerReader.HasTarget);
+                        wait.Till(2000, () => playerReader.HasTarget);
                     }
                 }
             }
         }
 
-        private async ValueTask StopDrowning()
+        private void StopDrowning()
         {
-            await input.TapJump("Drowning! Swim up");
-            await wait.Update(1);
+            input.TapJump("Drowning! Swim up");
+            wait.Update(1);
         }
 
         private Vector3 GetCorpseLocation(float distance)

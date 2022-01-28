@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Drawing.Imaging;
+using System.Threading;
 
 namespace SharedLib.NpcFinder
 {
@@ -28,6 +28,7 @@ namespace SharedLib.NpcFinder
 
         private readonly ILogger logger;
         private readonly IBitmapProvider bitmapProvider;
+        private readonly AutoResetEvent autoResetEvent;
 
         public Rectangle Area { private set; get; }
 
@@ -43,10 +44,7 @@ namespace SharedLib.NpcFinder
         public int TargetCount { private set; get; }
         public bool MobsVisible => npcs.Count > 0;
         public bool PotentialAddsExist { get; private set; }
-        public DateTime LastPotentialAddsSeen { get; private set; } = default;
-
-        public int Sequence { get; private set; } = 0;
-
+        public DateTime LastPotentialAddsSeen { get; private set; }
 
         #region variables
 
@@ -72,10 +70,11 @@ namespace SharedLib.NpcFinder
         #endregion
 
 
-        public NpcNameFinder(ILogger logger, IBitmapProvider bitmapProvider)
+        public NpcNameFinder(ILogger logger, IBitmapProvider bitmapProvider, AutoResetEvent autoResetEvent)
         {
             this.logger = logger;
             this.bitmapProvider = bitmapProvider;
+            this.autoResetEvent = autoResetEvent;
         }
 
         private float ScaleWidth(int value)
@@ -144,7 +143,7 @@ namespace SharedLib.NpcFinder
 
             UpdatePotentialAddsExist();
 
-            Sequence++;
+            autoResetEvent.Set();
         }
 
         public void FakeUpdate()
@@ -153,7 +152,7 @@ namespace SharedLib.NpcFinder
             npcs.Clear();
             Npcs.Clear();
 
-            Sequence++;
+            autoResetEvent.Set();
         }
 
         public void UpdatePotentialAddsExist()
@@ -262,12 +261,12 @@ namespace SharedLib.NpcFinder
             }
         }
 
-        public async ValueTask WaitForNUpdate(int n)
+        public void WaitForNUpdate(int n)
         {
-            var s = this.Sequence;
-            while (this.Sequence <= s + n)
+            while (n > 0)
             {
-                await Task.Delay(10);
+                autoResetEvent.WaitOne();
+                n--;
             }
         }
 

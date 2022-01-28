@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Core.Goals
 {
@@ -33,12 +32,12 @@ namespace Core.Goals
             this.npcNameTargeting = npcNameTargeting;
         }
 
-        public async ValueTask<bool> Search(string source, CancellationToken cancellationToken)
+        public bool Search(string source, CancellationToken cancellationToken)
         {
             if (!cancellationToken.IsCancellationRequested && !playerReader.Bits.PlayerInCombat
                 && classConfig.TargetNearestTarget.MillisecondsSinceLastClick > random.Next(1000, 1500))
             {
-                if (await LookForTarget(source, cancellationToken))
+                if (LookForTarget(source, cancellationToken))
                 {
                     if (playerReader.HasTarget && !playerReader.Bits.TargetIsDead)
                     {
@@ -48,10 +47,10 @@ namespace Core.Goals
                     else
                     {
                         if (!cancellationToken.IsCancellationRequested)
-                            await input.TapClearTarget($"{source}: Target is dead!");
+                            input.TapClearTarget($"{source}: Target is dead!");
 
                         if (!cancellationToken.IsCancellationRequested)
-                            await wait.Update(1);
+                            wait.Update(1);
                     }
                 }
             }
@@ -59,31 +58,30 @@ namespace Core.Goals
             return false;
         }
 
-        private async ValueTask<bool> LookForTarget(string source, CancellationToken cancellationToken)
+        private bool LookForTarget(string source, CancellationToken cancellationToken)
         {
             if (playerReader.HasTarget && !playerReader.Bits.TargetIsDead && !blacklist.IsTargetBlacklisted())
             {
                 return true;
             }
-            else
-            {
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    npcNameTargeting.ChangeNpcType(NpcNameToFind);
-                    await input.TapNearestTarget(source);
-                }
-                if (!classConfig.KeyboardOnly)
-                {
-                    if (!playerReader.HasTarget && !cancellationToken.IsCancellationRequested)
-                    {
-                        npcNameTargeting.ChangeNpcType(NpcNameToFind);
-                        if (npcNameTargeting.NpcCount > 0 && !cancellationToken.IsCancellationRequested)
-                        {
-                            await npcNameTargeting.TargetingAndClickNpc(true, cancellationToken);
 
-                            if (!cancellationToken.IsCancellationRequested)
-                                await wait.Update(1);
-                        }
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                npcNameTargeting.ChangeNpcType(NpcNameToFind);
+                input.TapNearestTarget(source);
+            }
+
+            if (!classConfig.KeyboardOnly && !playerReader.HasTarget && !cancellationToken.IsCancellationRequested)
+            {
+                npcNameTargeting.ChangeNpcType(NpcNameToFind);
+                if (npcNameTargeting.NpcCount > 0 && !cancellationToken.IsCancellationRequested)
+                {
+                    if (!input.IsKeyDown(input.TurnLeftKey) && !input.IsKeyDown(input.TurnRightKey))
+                    {
+                        npcNameTargeting.TargetingAndClickNpc(true, cancellationToken);
+
+                        if (!cancellationToken.IsCancellationRequested)
+                            wait.Update(1);
                     }
                 }
             }

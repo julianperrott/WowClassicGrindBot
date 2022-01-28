@@ -14,8 +14,6 @@ namespace Core
 
         public bool Initialized { get; private set; }
 
-        public int Sequence { get; private set; }
-
         public bool Active { get; set; } = true;
         public PlayerReader PlayerReader { get; private set; }
 
@@ -149,7 +147,6 @@ namespace Core
         public void Refresh()
         {
             addonDataProvider.Update();
-            Sequence++;
 
             if (GlobalTime.Updated(squareReader) && (GlobalTime.Value <= 3 || !Initialized))
             {

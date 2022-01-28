@@ -32,6 +32,7 @@ namespace Core.Goals
         private readonly MountHandler mountHandler;
         private readonly TargetFinder targetFinder;
         private CancellationTokenSource? targetFinderCts;
+        private Thread? targetFinderThread;
 
         private readonly bool debug = false;
         private bool firstLoad = true;
@@ -154,21 +155,21 @@ namespace Core.Goals
             {
                 if (playerReader.Bits.TargetIsDead)
                 {
-                    await input.TapClearTarget("Target is dead.");
-                    await wait.Update(1);
+                    input.TapClearTarget("Target is dead.");
+                    wait.Update(1);
                     return;
                 }
 
-                await stopMoving.StopTurn();
+                stopMoving.StopTurn();
                 return;
             }
 
             if (playerReader.Bits.IsDrowning)
             {
-                await StopDrowning();
+                StopDrowning();
             }
 
-            await SwitchGatherType();
+            SwitchGatherType();
 
             if (this.playerReader.Bits.PlayerInCombat && classConfiguration.Mode != Mode.AttendedGather) { return; }
 
@@ -206,19 +207,19 @@ namespace Core.Goals
             var distance = location.DistanceXYTo(routeToWaypoint.Peek());
             var heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
 
-            await AdjustHeading(heading);
+            AdjustHeading(heading);
 
             if (lastDistance < distance)
             {
                 AdjustNextPointToClosest();
 
-                await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Further away");
+                playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Further away");
             }
             else if (!this.stuckDetector.IsGettingCloser())
             {
                 // stuck so jump
                 input.SetKeyState(input.ForwardKey, true, false, "FollowRouteAction 2");
-                await wait.Update(1);
+                wait.Update(1);
                 if (HasBeenActiveRecently())
                 {
                     await this.stuckDetector.Unstick();
@@ -226,13 +227,13 @@ namespace Core.Goals
                 }
                 else
                 {
-                    await wait.Update(1);
+                    wait.Update(1);
                     logger.LogInformation("Resuming movement");
                 }
             }
             else // distance closer
             {
-                await AdjustHeading(heading);
+                AdjustHeading(heading);
             }
 
             lastDistance = distance;
@@ -260,41 +261,50 @@ namespace Core.Goals
                 this.stuckDetector.SetTargetLocation(this.routeToWaypoint.Peek());
 
                 heading = DirectionCalculator.CalculateHeading(location, routeToWaypoint.Peek());
-                await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Move to next point");
+                playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Move to next point");
             }
 
             // should mount
-            await MountIfRequired();
+            MountIfRequired();
 
-            await RandomJump();
+            RandomJump();
 
             LastActive = DateTime.Now;
 
-            await wait.Update(1);
+            wait.Update(1);
         }
 
         private void StartLookingForTarget()
         {
             targetFinderCts?.Dispose();
             targetFinderCts = new CancellationTokenSource();
-            var task = Task.Factory.StartNew(async () =>
+
+            targetFinderThread = new Thread(LookingForTarget);
+            targetFinderThread.Start();
+        }
+
+        private void LookingForTarget()
+        {
+            if (targetFinderCts == null)
             {
-                logger.LogInformation($"{GetType().Name}: .. Start searching for target...");
+                logger.LogWarning($"{GetType().Name}: .. Unable to start search target!");
+                return;
+            }
 
-                bool found = false;
-                while (!found && !targetFinderCts.IsCancellationRequested)
-                {
-                    found = await targetFinder.Search(GetType().Name, targetFinderCts.Token);
-                    await wait.Update(1);
-                }
+            logger.LogInformation($"{GetType().Name}: .. Start searching for target...");
 
-                if (found)
-                    logger.LogInformation($"{GetType().Name}: .. Found target!");
+            bool found = false;
+            while (!found && !targetFinderCts.IsCancellationRequested)
+            {
+                found = targetFinder.Search(GetType().Name, targetFinderCts.Token);
+                wait.Update(1);
+            }
 
-                if (targetFinderCts.IsCancellationRequested)
-                    logger.LogInformation($"{GetType().Name}: .. Finding target aborted!");
+            if (found)
+                logger.LogInformation($"{GetType().Name}: .. Found target!");
 
-            }, targetFinderCts.Token);
+            if (targetFinderCts.IsCancellationRequested)
+                logger.LogInformation($"{GetType().Name}: .. Finding target aborted!");
         }
 
         private void RefillWaypoints(bool findClosest = false)
@@ -349,7 +359,7 @@ namespace Core.Goals
             }
         }
 
-        private async ValueTask SwitchGatherType()
+        private void SwitchGatherType()
         {
             if (this.classConfiguration.Mode == Mode.AttendedGather && this.lastGatherClick.AddSeconds(3) < DateTime.Now && this.classConfiguration.GatherFindKeyConfig.Count > 0)
             {
@@ -359,12 +369,12 @@ namespace Core.Goals
                     lastGatherKey = 0;
                 }
 
-                await input.KeyPress(classConfiguration.GatherFindKeyConfig[lastGatherKey].ConsoleKey, 200, "Gatherkey 1");
+                input.KeyPress(classConfiguration.GatherFindKeyConfig[lastGatherKey].ConsoleKey, 200, "Gatherkey 1");
                 lastGatherClick = DateTime.Now;
             }
         }
 
-        private async ValueTask MountIfRequired()
+        private void MountIfRequired()
         {
             if (shouldMount && !mountHandler.IsMounted() && !playerReader.Bits.PlayerInCombat && !playerReader.Bits.HasTarget)
             {
@@ -377,7 +387,7 @@ namespace Core.Goals
                 Log("Mounting if level >=40 (druid 30) and no NPC in sight");
                 if (!npcNameFinder.MobsVisible)
                 {
-                    await mountHandler.MountUp();
+                    mountHandler.MountUp();
                     stuckDetector.ResetStuckParameters();
                 }
                 else
@@ -427,13 +437,13 @@ namespace Core.Goals
 
             var location = playerReader.PlayerLocation;
             var heading = DirectionCalculator.CalculateHeading(location, wayPoints.Peek());
-            await playerDirection.SetDirection(heading, wayPoints.Peek(), "Reached waypoint");
+            playerDirection.SetDirection(heading, wayPoints.Peek(), "Reached waypoint");
 
             //Create path back to route
             var distance = location.DistanceXYTo(wayPoints.Peek());
             if (forceUsePathing || distance > 200)
             {
-                await this.stopMoving.Stop();
+                stopMoving.Stop();
                 var path = await this.pather.FindRouteTo(addonReader, wayPoints.Peek());
                 path.Reverse();
                 path.ForEach(p => this.routeToWaypoint.Push(p));
@@ -449,7 +459,7 @@ namespace Core.Goals
             this.stuckDetector.SetTargetLocation(this.routeToWaypoint.Peek());
         }
 
-        private async ValueTask AdjustHeading(float heading)
+        private void AdjustHeading(float heading)
         {
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
@@ -464,7 +474,7 @@ namespace Core.Goals
             var diff = MathF.Min(diff1, diff2);
             if (diff > wanderAngle)
             {
-                await playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");
+                playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");
             }
             else
             {
@@ -504,18 +514,18 @@ namespace Core.Goals
             }
         }
 
-        private async ValueTask RandomJump()
+        private void RandomJump()
         {
             if (classConfiguration.Jump.MillisecondsSinceLastClick > random.Next(10000, 15000))
             {
-                await input.TapJump($"{GetType().Name}: Random jump");
+                input.TapJump($"{GetType().Name}: Random jump");
             }
         }
 
-        private async ValueTask StopDrowning()
+        private void StopDrowning()
         {
-            await input.TapJump("Drowning! Swim up");
-            await wait.Update(1);
+            input.TapJump("Drowning! Swim up");
+            wait.Update(1);
         }
 
         private void Log(string text)

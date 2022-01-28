@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Threading.Tasks;
 using System.Numerics;
 using SharedLib.Extensions;
 
@@ -27,12 +26,12 @@ namespace Core
             this.playerReader = playerReader;
         }
 
-        public async ValueTask SetDirection(float desiredDirection, Vector3 point, string source)
+        public void SetDirection(float desiredDirection, Vector3 point, string source)
         {
-            await SetDirection(desiredDirection, point, source, DefaultIgnoreDistance);
+            SetDirection(desiredDirection, point, source, DefaultIgnoreDistance);
         }
 
-        public async ValueTask SetDirection(float desiredDirection, Vector3 point, string source, int ignoreDistance)
+        public void SetDirection(float desiredDirection, Vector3 point, string source, int ignoreDistance)
         {
             float distance = playerReader.PlayerLocation.DistanceXYTo(point);
             if (distance < ignoreDistance)
@@ -41,7 +40,7 @@ namespace Core
                 return;
             }
 
-            await input.KeyPressNoDelay(GetDirectionKeyToPress(desiredDirection),
+            input.KeyPressSleep(GetDirectionKeyToPress(desiredDirection),
                 TurnDuration(desiredDirection),
                 debug ? $"SetDirection: {source} -- Desired: {desiredDirection:0.000} - Current: {playerReader.Direction:0.000} - Distance: {distance:0.000}" : string.Empty);
 

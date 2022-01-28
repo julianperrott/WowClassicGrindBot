@@ -187,7 +187,7 @@ else if (frameConfigurator != null)
         frameConfigurator?.Dispose();
     }
 
-    public async Task ToggleManualConfig()
+    public void ToggleManualConfig()
     {
         if (frameConfigurator != null)
         {
@@ -202,7 +202,7 @@ else if (frameConfigurator != null)
                 manualButtonText = "Start";
             }
 
-            await frameConfigurator.ToggleManualConfig();
+            frameConfigurator.ToggleManualConfig();
         }
     }
 
@@ -210,7 +210,7 @@ else if (frameConfigurator != null)
     {
         if (frameConfigurator != null)
         {
-            if (await frameConfigurator.FinishManualConfig())
+            if (frameConfigurator.FinishManualConfig())
                 await RestartServer();
         }
     }
@@ -219,7 +219,7 @@ else if (frameConfigurator != null)
     {
         if (frameConfigurator != null)
         {
-            if (await frameConfigurator.StartAutoConfig())
+            if (frameConfigurator.StartAutoConfig())
                 await RestartServer();
         }
     }
