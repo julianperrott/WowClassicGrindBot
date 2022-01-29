@@ -165,8 +165,9 @@ namespace Core.Goals
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
                 input.TapClearTarget();
-                wait.Update(1);
             }
+
+            wait.Update(1);
         }
 
         private void Log(string text)
