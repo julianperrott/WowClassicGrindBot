@@ -135,6 +135,8 @@ namespace Core.Goals
             {
                 SendActionEvent(new ActionEventArgs(GoapKey.pulled, true));
             }
+
+            wait.Update(1);
         }
 
         protected bool HasPickedUpAnAdd
