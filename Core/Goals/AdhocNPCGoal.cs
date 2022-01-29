@@ -155,7 +155,7 @@ namespace Core.Goals
                 if (routeToWaypoint.Any())
                 {
                     playerReader.ZCoord = routeToWaypoint.Peek().Z;
-                    logger.LogInformation($"{GetType().Name}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                    logger.LogInformation($"{nameof(AdhocNPCGoal)}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
                 }
 
                 ReduceRoute();
@@ -299,7 +299,7 @@ namespace Core.Goals
             if (routeToWaypoint.Any())
             {
                 playerReader.ZCoord = routeToWaypoint.Peek().Z;
-                logger.LogInformation($"{GetType().Name}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                logger.LogInformation($"{nameof(AdhocNPCGoal)}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
             }
 
             this.ReduceRoute();

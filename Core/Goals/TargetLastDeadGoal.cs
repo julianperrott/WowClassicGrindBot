@@ -24,7 +24,7 @@ namespace Core.Goals
 
         public override ValueTask PerformAction()
         {
-            input.TapLastTargetKey(GetType().Name);
+            input.TapLastTargetKey(nameof(TargetLastDeadGoal));
 
             return ValueTask.CompletedTask;
         }
@@ -33,7 +33,7 @@ namespace Core.Goals
         {
             if (debug)
             {
-                logger.LogInformation($"{GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(TargetLastDeadGoal)}: {text}");
             }
         }
     }

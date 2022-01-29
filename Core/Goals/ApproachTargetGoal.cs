@@ -120,7 +120,7 @@ namespace Core.Goals
             {
                 playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
-                input.SetKeyState(input.ForwardKey, true, false, $"{GetType().Name}: Too far, start moving forward!");
+                input.SetKeyState(input.ForwardKey, true, false, $"{nameof(ApproachTargetGoal)}: Too far, start moving forward!");
                 wait.Update(1);
             }
 
@@ -211,7 +211,7 @@ namespace Core.Goals
         {
             if (debug)
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(ApproachTargetGoal)}: {text}");
             }
         }
 

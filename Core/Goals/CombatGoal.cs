@@ -66,7 +66,7 @@ namespace Core.Goals
             {
                 if (!playerReader.HasTarget)
                 {
-                    logger.LogInformation($"{GetType().Name}: Lost Target!");
+                    logger.LogInformation($"{nameof(CombatGoal)}: Lost Target!");
                     stopMoving.Stop();
                     return;
                 }
@@ -82,7 +82,7 @@ namespace Core.Goals
                     if (item.Name == classConfiguration.Approach.Name ||
                         item.Name == classConfiguration.AutoAttack.Name)
                     {
-                        castingHandler.ReactToLastUIErrorMessage($"{GetType().Name}: Fight {item.Name}");
+                        castingHandler.ReactToLastUIErrorMessage($"{nameof(CombatGoal)}: Fight {item.Name}");
                     }
 
                     break;
@@ -94,7 +94,7 @@ namespace Core.Goals
         {
             if (e.Key == GoapKey.newtarget)
             {
-                logger.LogInformation($"{GetType().Name}: Reset cooldowns");
+                logger.LogInformation($"{nameof(CombatGoal)}: Reset cooldowns");
 
                 ResetCooldowns();
             }
@@ -103,7 +103,7 @@ namespace Core.Goals
             {
                 // have to check range
                 // ex. target died far away have to consider the range and approximate
-                //logger.LogInformation($"{GetType().Name}: --- Target is killed! Record death location.");
+                //logger.LogInformation($"{nameof(CombatGoal)}: --- Target is killed! Record death location.");
                 float distance = (lastKnownMaxDistance + lastKnownMinDistance) / 2f;
                 SendActionEvent(new ActionEventArgs(GoapKey.corpselocation, new CorpseLocation(GetCorpseLocation(distance), distance)));
             }
@@ -160,7 +160,7 @@ namespace Core.Goals
         {
             if (MathF.Abs(lastDirectionForTurnAround - playerReader.Direction) > MathF.PI / 2)
             {
-                logger.LogInformation($"{GetType().Name}: Turning too fast!");
+                logger.LogInformation($"{nameof(CombatGoal)}: Turning too fast!");
                 stopMoving.Stop();
 
                 lastDirectionForTurnAround = playerReader.Direction;
@@ -202,7 +202,7 @@ namespace Core.Goals
 
             if (addonReader.CombatCreatureCount > 1)
             {
-                input.TapNearestTarget($"{GetType().Name}: Checking target in front of me");
+                input.TapNearestTarget($"{nameof(CombatGoal)}: Checking target in front of me");
                 wait.Update(1);
                 if (playerReader.HasTarget)
                 {

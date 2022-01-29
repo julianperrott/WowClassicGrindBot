@@ -86,7 +86,7 @@ namespace Core.Goals
         public override ValueTask OnEnter()
         {
             playerReader.ZCoord = 0;
-            logger.LogInformation($"{GetType().Name} Player got teleported to the graveyard!");
+            logger.LogInformation($"{nameof(WalkToCorpseGoal)} Player got teleported to the graveyard!");
 
             addonReader.PlayerDied();
 
@@ -208,7 +208,7 @@ namespace Core.Goals
                 if (points.Any())
                 {
                     playerReader.ZCoord = points.Peek().Z;
-                    logger.LogInformation($"{GetType().Name}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                    logger.LogInformation($"{nameof(WalkToCorpseGoal)}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
                 }
 
                 while (distance < PointReachedDistance() && points.Any())
@@ -274,7 +274,7 @@ namespace Core.Goals
                 if (path.Any())
                 {
                     playerReader.ZCoord = path[0].Z;
-                    logger.LogInformation($"{GetType().Name}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                    logger.LogInformation($"{nameof(WalkToCorpseGoal)}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
                 }
 
                 path.Reverse();
@@ -381,7 +381,7 @@ namespace Core.Goals
         {
             if (input.ClassConfig.Jump.MillisecondsSinceLastClick > random.Next(5000, 7000))
             {
-                input.TapJump($"{GetType().Name}: Random jump");
+                input.TapJump($"{nameof(WalkToCorpseGoal)}: Random jump");
             }
         }
     }

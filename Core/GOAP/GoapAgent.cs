@@ -61,7 +61,7 @@ namespace Core.GOAP
         {
             if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
-                logger.LogWarning($"{GetType().Name}: Target is blacklisted - StopAttack & ClearTarget");
+                logger.LogWarning($"{nameof(GoapAgent)}: Target is blacklisted - StopAttack & ClearTarget");
                 input.TapStopAttack("");
                 input.TapClearTarget("");
                 UpdateWorldState();
@@ -75,7 +75,7 @@ namespace Core.GOAP
             {
                 if (CurrentGoal == plan.Peek() && !CurrentGoal.Repeatable)
                 {
-                    logger.LogInformation($"Plan= {CurrentGoal.GetType().Name} is not Repeatable!");
+                    logger.LogInformation($"Plan= {CurrentGoal.Name} is not Repeatable!");
                     CurrentGoal = null;
                 }
                 else
@@ -87,7 +87,7 @@ namespace Core.GOAP
             {
                 if (CurrentGoal != null && !CurrentGoal.Repeatable)
                 {
-                    logger.LogInformation($"Plan= {CurrentGoal.GetType().Name} is not Repeatable!");
+                    logger.LogInformation($"Plan= {CurrentGoal.Name} is not Repeatable!");
                     CurrentGoal = null;
 
                     stopMoving.Stop();
@@ -165,11 +165,11 @@ namespace Core.GOAP
                     CurrentGoal.OnActionEvent(this, new ActionEventArgs(GoapKey.producedcorpse, true));
                 }
 
-                logger.LogInformation($"{GetType().Name} --- Kill credit detected! Known kills: {GoapAgentState.LastCombatKillCount} | Remains: {addonReader.CombatCreatureCount}");
+                logger.LogInformation($"{nameof(GoapAgent)} --- Kill credit detected! Known kills: {GoapAgentState.LastCombatKillCount} | Remains: {addonReader.CombatCreatureCount}");
             }
             else
             {
-                logger.LogInformation($"{GetType().Name} --- Not active, but kill credit detected!");
+                logger.LogInformation($"{nameof(GoapAgent)} --- Not active, but kill credit detected!");
             }
         }
     }

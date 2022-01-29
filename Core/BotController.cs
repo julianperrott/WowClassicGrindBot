@@ -258,7 +258,7 @@ namespace Core
             Initialize(ClassConfig);
 
             stopwatch.Stop();
-            logger.LogInformation($"[{GetType().Name}] Elapsed time: {stopwatch.ElapsedMilliseconds}ms");
+            logger.LogInformation($"[{nameof(BotController)}] Elapsed time: {stopwatch.ElapsedMilliseconds}ms");
 
             return true;
         }
@@ -302,7 +302,7 @@ namespace Core
         {
             if(!classFilename.ToLower().Contains(AddonReader.PlayerReader.Class.ToString().ToLower()))
             {
-                throw new Exception($"[{GetType().Name}] Not allowed to load other class profile!");
+                throw new Exception($"[{nameof(BotController)}] Not allowed to load other class profile!");
             }
 
             var classFilePath = Path.Join(DataConfig.Class, classFilename);
@@ -312,7 +312,7 @@ namespace Core
                 var requirementFactory = new RequirementFactory(logger, AddonReader);
                 classConfig.Initialise(DataConfig, AddonReader, requirementFactory, logger, pathFilename);
 
-                logger.LogInformation($"[{GetType().Name}] Profile Loaded `{classFilename}` with `{classConfig.PathFilename}`.");
+                logger.LogInformation($"[{nameof(BotController)}] Profile Loaded `{classFilename}` with `{classConfig.PathFilename}`.");
 
                 return classConfig;
             }

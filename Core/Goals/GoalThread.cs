@@ -45,7 +45,7 @@ namespace Core.Goals
             if (e.Key == GoapKey.corpselocation && e.Value is CorpseLocation corpseLocation)
             {
                 routeInfo?.PoiList.Add(new RouteInfoPoi(corpseLocation.WowPoint, "Corpse", "black", corpseLocation.Radius));
-                //logger.LogInformation($"{GetType().Name} Kill location added to list");
+                //logger.LogInformation($"{nameof(GoalThread)} Kill location added to list");
             }
             else if (e.Key == GoapKey.consumecorpse && (bool)e.Value == false)
             {
@@ -81,7 +81,7 @@ namespace Core.Goals
                             }
                             catch (Exception ex)
                             {
-                                logger.LogError(ex, $"OnExit on {currentGoal.GetType().Name}");
+                                logger.LogError(ex, $"OnExit on {currentGoal.Name}");
                             }
                         }
 
@@ -89,7 +89,7 @@ namespace Core.Goals
                         this.currentGoal = newGoal;
 
                         logger.LogInformation("---------------------------------");
-                        logger.LogInformation($"New Plan= {newGoal.GetType().Name}");
+                        logger.LogInformation($"New Plan= {newGoal.Name}");
                         
                         if (currentGoal != null)
                         {
@@ -99,7 +99,7 @@ namespace Core.Goals
                             }
                             catch (Exception ex)
                             {
-                                logger.LogError(ex, $"OnEnter on {currentGoal.GetType().Name}");
+                                logger.LogError(ex, $"OnEnter on {currentGoal.Name}");
                             }
                         }
                     }
@@ -115,7 +115,7 @@ namespace Core.Goals
                     }
                     catch (Exception ex)
                     {
-                        logger.LogError(ex, $"PerformAction on {newGoal.GetType().Name}");
+                        logger.LogError(ex, $"PerformAction on {newGoal.Name}");
                     }
                 }
                 else

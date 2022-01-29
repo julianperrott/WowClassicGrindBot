@@ -122,7 +122,7 @@ namespace Core.Goals
             else
                 input.RightClickMouse(clickPostion);
 
-            logger.LogInformation($"{ this.GetType().Name}.FindAndClickNpc: NPC found! Height={npc.Height}, width={npc.Width}, pos={clickPostion}");
+            logger.LogInformation($"{nameof(NpcNameTargeting)}: NPC found! Height={npc.Height}, width={npc.Width}, pos={clickPostion}");
         }
 
         public void ShowClickPositions(Graphics gr)
