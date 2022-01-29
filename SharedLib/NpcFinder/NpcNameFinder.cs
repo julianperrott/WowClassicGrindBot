@@ -39,7 +39,7 @@ namespace SharedLib.NpcFinder
         public float scaleToRefHeight { private set; get; } = 1;
 
         public List<NpcPosition> Npcs { get; private set; } = new List<NpcPosition>();
-        public int NpcCount => npcs.Count;
+        public int NpcCount => Npcs.Count;
         public int AddCount { private set; get; }
         public int TargetCount { private set; get; }
         public bool MobsVisible => npcs.Count > 0;
