@@ -69,7 +69,7 @@ namespace Core
         {
             if (debug)
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(PlayerDirection)}: {text}");
             }
         }
     }

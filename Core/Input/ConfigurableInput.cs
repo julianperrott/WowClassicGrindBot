@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Threading.Tasks;
 using Game;
 
 namespace Core
@@ -9,7 +8,7 @@ namespace Core
     {
         public ClassConfiguration ClassConfig { private set; get; }
 
-        private const int defaultKeyPress = 50;
+        public readonly int defaultKeyPress = 50;
 
         public readonly ConsoleKey ForwardKey;
         public readonly ConsoleKey BackwardKey;
@@ -25,7 +24,7 @@ namespace Core
             TurnLeftKey = classConfig.TurnLeftKey;
             TurnRightKey = classConfig.TurnRightKey;
 
-            logger.LogInformation($"[{GetType().Name}] Movement Keys. Forward: {ForwardKey} - Backward: {BackwardKey} - TurnLeft: {TurnLeftKey} - TurnRight: {TurnRightKey}");
+            logger.LogInformation($"[{nameof(ConfigurableInput)}] Movement Keys. Forward: {ForwardKey} - Backward: {BackwardKey} - TurnLeft: {TurnLeftKey} - TurnRight: {TurnRightKey}");
         }
 
         public void TapStopKey(string desc = "")

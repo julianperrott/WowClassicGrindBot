@@ -66,7 +66,7 @@ namespace Core
                     Log($"Pets target {this.playerReader.TargetTarget}");
                     if (this.playerReader.TargetTarget == TargetTargetEnum.PetHasATarget)
                     {
-                        input.TapTargetOfTarget($"{GetType().Name}.AquiredTarget: Found target by pet");
+                        input.TapTargetOfTarget($"{nameof(CombatUtil)}.AquiredTarget: Found target by pet");
                         return true;
                     }
                 }
@@ -85,7 +85,7 @@ namespace Core
                     return true;
                 }
 
-                input.TapClearTarget($"{GetType().Name}.AquiredTarget: No target found");
+                input.TapClearTarget($"{nameof(CombatUtil)}.AquiredTarget: No target found");
                 wait.Update(1);
             }
             return false;
@@ -122,7 +122,7 @@ namespace Core
         {
             if (debug)
             {
-                logger.LogInformation($"{GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(CombatUtil)}: {text}");
             }
         }
     }

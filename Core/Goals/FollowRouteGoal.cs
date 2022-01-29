@@ -287,24 +287,24 @@ namespace Core.Goals
         {
             if (targetFinderCts == null)
             {
-                logger.LogWarning($"{GetType().Name}: .. Unable to start search target!");
+                logger.LogWarning($"{nameof(FollowRouteGoal)}: .. Unable to start search target!");
                 return;
             }
 
-            logger.LogInformation($"{GetType().Name}: .. Start searching for target...");
+            logger.LogInformation($"{nameof(FollowRouteGoal)}: .. Start searching for target...");
 
             bool found = false;
             while (!found && !targetFinderCts.IsCancellationRequested)
             {
-                found = targetFinder.Search(GetType().Name, targetFinderCts.Token);
+                found = targetFinder.Search(nameof(FollowRouteGoal), targetFinderCts.Token);
                 wait.Update(1);
             }
 
             if (found)
-                logger.LogInformation($"{GetType().Name}: .. Found target!");
+                logger.LogInformation($"{nameof(FollowRouteGoal)}: .. Found target!");
 
             if (targetFinderCts.IsCancellationRequested)
-                logger.LogInformation($"{GetType().Name}: .. Finding target aborted!");
+                logger.LogInformation($"{nameof(FollowRouteGoal)}: .. Finding target aborted!");
         }
 
         private void RefillWaypoints(bool findClosest = false)
@@ -518,7 +518,7 @@ namespace Core.Goals
         {
             if (classConfiguration.Jump.MillisecondsSinceLastClick > random.Next(10000, 15000))
             {
-                input.TapJump($"{GetType().Name}: Random jump");
+                input.TapJump($"Random jump");
             }
         }
 
@@ -532,7 +532,7 @@ namespace Core.Goals
         {
             if (debug)
             {
-                logger.LogInformation($"{GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(FollowRouteGoal)}: {text}");
             }
         }
     }

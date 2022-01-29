@@ -63,7 +63,7 @@ namespace Core.Goals
                 mountHandler.Dismount();
             }
 
-            input.TapApproachKey($"{GetType().Name}: OnEnter - Face the target and stop");
+            input.TapApproachKey($"{nameof(PullTargetGoal)}: OnEnter - Face the target and stop");
             stopMoving.Stop();
             wait.Update(1);
 
@@ -127,7 +127,7 @@ namespace Core.Goals
 
                 if (classConfiguration.Approach.GetCooldownRemaining() == 0)
                 {
-                    input.TapApproachKey($"{GetType().Name}");
+                    input.TapApproachKey($"{nameof(PullTargetGoal)}");
                     wait.Update(1);
                 }
             }
@@ -230,7 +230,7 @@ namespace Core.Goals
 
         private void Log(string s)
         {
-            logger.LogInformation($"{GetType().Name}: {s}");
+            logger.LogInformation($"{nameof(PullTargetGoal)}: {s}");
         }
     }
 }

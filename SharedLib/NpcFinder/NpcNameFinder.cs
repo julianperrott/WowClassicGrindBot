@@ -102,7 +102,7 @@ namespace SharedLib.NpcFinder
                     npcPosYHeightMul = 10;
                 }
 
-                logger.LogInformation($"{GetType().Name}.ChangeNpcType = {type}");
+                logger.LogInformation($"{nameof(NpcNameFinder)}.{nameof(ChangeNpcType)} = {type}");
             }
         }
 

@@ -326,7 +326,7 @@ namespace Core
                 }
                 else
                 {
-                    LogUserDefinedValue(logger, GetType().Name, kvp.Key, kvp.Value);
+                    LogUserDefinedValue(logger, nameof(RequirementFactory), kvp.Key, kvp.Value);
                 }
             }
         }

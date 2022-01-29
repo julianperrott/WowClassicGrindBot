@@ -146,7 +146,7 @@ namespace Core.Goals
 
             if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value))
             {
-                ReactToLastCastingEvent(item, $"{item.Name}-{GetType().Name}: CastInstant");
+                ReactToLastCastingEvent(item, $"{item.Name}-{nameof(CastingHandler)}: CastInstant");
                 return false;
             }
             return true;
@@ -202,7 +202,7 @@ namespace Core.Goals
 
             if (!CastSuccessfull((UI_ERROR)playerReader.CastEvent.Value))
             {
-                ReactToLastCastingEvent(item, $"{item.Name}-{GetType().Name}: CastCastbar");
+                ReactToLastCastingEvent(item, $"{item.Name}-{nameof(CastingHandler)}: CastCastbar");
                 return false;
             }
 

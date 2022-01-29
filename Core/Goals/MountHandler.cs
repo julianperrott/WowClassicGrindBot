@@ -48,7 +48,7 @@ namespace Core
             if (playerReader.Bits.IsFalling)
             {
                 (bool fallTimeOut, double fallElapsedMs) = wait.Until(10000, () => !playerReader.Bits.IsFalling);
-                Log($"{GetType().Name}: waited for landing interrupted: {!fallTimeOut} - {fallElapsedMs}ms");
+                Log($"waited for landing interrupted: {!fallTimeOut} - {fallElapsedMs}ms");
             }
 
             stopMoving.Stop();
@@ -57,12 +57,12 @@ namespace Core
             input.TapMount();
 
             (bool castStartTimeOut, double castStartElapsedMs) = wait.Until(400, () => playerReader.Bits.IsMounted || playerReader.IsCasting);
-            Log($"{GetType().Name}: casting: {!castStartTimeOut} | Mounted: {playerReader.Bits.IsMounted} | Delay: {castStartElapsedMs}ms");
+            Log($"casting: {!castStartTimeOut} | Mounted: {playerReader.Bits.IsMounted} | Delay: {castStartElapsedMs}ms");
 
             if (!playerReader.Bits.IsMounted)
             {
                 (bool mountTimeOut, double elapsedMs) = wait.Until(mountCastTimeMs, () => playerReader.Bits.IsMounted || !playerReader.IsCasting);
-                Log($"{GetType().Name}: interrupted: {!mountTimeOut} | Mounted: {playerReader.Bits.IsMounted} | Delay: {elapsedMs}ms");
+                Log($"interrupted: {!mountTimeOut} | Mounted: {playerReader.Bits.IsMounted} | Delay: {elapsedMs}ms");
             }
         }
 
@@ -92,7 +92,7 @@ namespace Core
 
         private void Log(string text)
         {
-            logger.LogInformation(text);
+            logger.LogInformation($"{nameof(MountHandler)}: {text}");
         }
     }
 }

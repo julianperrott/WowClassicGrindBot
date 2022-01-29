@@ -1,7 +1,6 @@
 ﻿using Core.GOAP;
 using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
 
 namespace Core.Goals
@@ -109,7 +108,7 @@ namespace Core.Goals
 
                     if (moved)
                     {
-                        input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
+                        input.TapInteractKey($"{nameof(SkinningGoal)}: Had to move so interact again");
                         wait.Update(1);
                     }
 
@@ -172,7 +171,7 @@ namespace Core.Goals
 
         private void Log(string text)
         {
-            logger.LogInformation($"{this.GetType().Name}: {text}");
+            logger.LogInformation($"{nameof(SkinningGoal)}: {text}");
         }
 
     }

@@ -105,7 +105,7 @@ namespace Core.Goals
             {
                 corpseLocations.Remove(GetClosestCorpse());
 
-                input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
+                input.TapLastTargetKey($"{nameof(LootGoal)}: No corpse name found - check last dead target exists");
                 wait.Update(1);
                 if (playerReader.HasTarget)
                 {
@@ -113,7 +113,7 @@ namespace Core.Goals
                     {
                         CheckForSkinning();
 
-                        input.TapInteractKey($"{GetType().Name}: Found last dead target");
+                        input.TapInteractKey($"{nameof(LootGoal)}: Found last dead target");
                         wait.Update(1);
 
                         (bool foundTarget, bool moved) = combatUtil.FoundTargetWhileMoved();
@@ -125,12 +125,12 @@ namespace Core.Goals
 
                         if (moved)
                         {
-                            input.TapInteractKey($"{GetType().Name}: Last dead target double");
+                            input.TapInteractKey($"{nameof(LootGoal)}: Last dead target double");
                         }
                     }
                     else
                     {
-                        input.TapClearTarget($"{GetType().Name}: Don't attack the target!");
+                        input.TapClearTarget($"{nameof(LootGoal)}: Don't attack the target!");
                     }
                 }
             }
@@ -143,7 +143,7 @@ namespace Core.Goals
         {
             if (e.Key == GoapKey.corpselocation && e.Value is CorpseLocation location)
             {
-                //logger.LogInformation($"{GetType().Name}: --- Target is killed! Recorded death location.");
+                //logger.LogInformation($"{nameof(LootGoal)}: --- Target is killed! Recorded death location.");
                 corpseLocations.Add(location.WowPoint);
             }
         }
@@ -173,7 +173,7 @@ namespace Core.Goals
 
             if (moved)
             {
-                input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
+                input.TapInteractKey($"{nameof(LootGoal)}: Had to move so interact again");
                 wait.Update(1);
             }
 
@@ -234,7 +234,7 @@ namespace Core.Goals
 
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
-                input.TapClearTarget($"{GetType().Name}: Exit Goal");
+                input.TapClearTarget($"{nameof(LootGoal)}: Exit Goal");
                 wait.Update(1);
             }
         }
@@ -243,7 +243,7 @@ namespace Core.Goals
         {
             if (debug)
             {
-                logger.LogInformation($"{GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(LootGoal)}: {text}");
             }
         }
     }

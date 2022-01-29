@@ -171,7 +171,7 @@ namespace Core
 
                 sw.Stop();
 
-                logger.LogInformation($"{GetType().Name} PingServer {sw.ElapsedMilliseconds}ms {Client.IsConnected}");
+                logger.LogInformation($"{nameof(RemotePathingAPIV3)} PingServer {sw.ElapsedMilliseconds}ms {Client.IsConnected}");
 
                 return Client.IsConnected;
             });
