@@ -91,6 +91,10 @@ namespace SharedLib.NpcFinder
         {
             if (nameType != type)
             {
+                npcNameLine.Clear();
+                npcs.Clear();
+                Npcs.Clear();
+
                 nameType = type;
 
                 if (nameType.HasFlag(NpcNames.Corpse))
