@@ -34,9 +34,9 @@ namespace Core.Goals
 
         private Stack<Vector3> routeToWaypoint = new Stack<Vector3>();
 
-        public List<Vector3> PathingRoute()
+        public Stack<Vector3> PathingRoute()
         {
-            return routeToWaypoint.ToList();
+            return routeToWaypoint;
         }
 
         public bool HasNext()

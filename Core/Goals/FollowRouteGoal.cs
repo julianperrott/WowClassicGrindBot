@@ -59,9 +59,9 @@ namespace Core.Goals
 
         public DateTime LastActive { get; set; }
 
-        public List<Vector3> PathingRoute()
+        public Stack<Vector3> PathingRoute()
         {
-            return routeToWaypoint.ToList();
+            return routeToWaypoint;
         }
 
         public bool HasNext()

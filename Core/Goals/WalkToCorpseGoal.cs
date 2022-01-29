@@ -26,12 +26,12 @@ namespace Core.Goals
         private readonly StuckDetector stuckDetector;
         private readonly IPPather pather;
 
-        private Stack<Vector3> points = new Stack<Vector3>();
+        private Stack<Vector3> points = new();
         private float RADIAN = MathF.PI * 2;
 
-        public List<Vector3> PathingRoute()
+        public Stack<Vector3> PathingRoute()
         {
-            return points.ToList();
+            return points;
         }
 
         public List<Vector3> Deaths { get; } = new List<Vector3>();
@@ -246,7 +246,9 @@ namespace Core.Goals
         {
             var simple = PathSimplify.Simplify(points.ToArray(), 0.1f);
             simple.Reverse();
-            points = new Stack<Vector3>(simple);
+
+            points.Clear();
+            simple.ForEach((x) => points.Push(x));
         }
 
         public async ValueTask Reset()

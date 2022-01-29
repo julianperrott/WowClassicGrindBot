@@ -37,15 +37,15 @@ namespace Core
         public List<Vector3> PathPoints { get; private set; }
         public List<Vector3> SpiritPath { get; private set; }
 
-        public List<Vector3> RouteToWaypoint
+        public Stack<Vector3>? RouteToWaypoint
         {
             get
             {
-                var route = pathedRoutes.Select(r => r.PathingRoute())
-                    .Where(r => r.Any())
-                    .FirstOrDefault();
-
-                return route ?? new List<Vector3>();
+                if (pathedRoutes.Any(x => x.HasNext()))
+                {
+                    return pathedRoutes.Select(r => r.PathingRoute()).First();
+                }
+                return default;
             }
         }
 
@@ -134,7 +134,9 @@ namespace Core
             if (SpiritPath.Count > 1)
                 allPoints.AddRange(this.SpiritPath);
 
-            allPoints.AddRange(this.RouteToWaypoint);
+            var wayPoints = RouteToWaypoint;
+            if (wayPoints != null)
+                allPoints.AddRange(wayPoints);
 
             var pois = this.PoiList.Select(p => p.Location);
             allPoints.AddRange(pois);

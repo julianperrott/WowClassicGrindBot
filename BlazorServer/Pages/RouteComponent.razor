@@ -220,14 +220,27 @@
         if (botController.RouteInfo == null) { return; }
         var routeinfo = botController.RouteInfo;
 
-        this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
-        this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
+        var paths = routeinfo.PathPoints;
+        this.PathLines = new MarkupString(routeinfo.RenderPathLines(paths));
+        this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(paths));
 
-        this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
-        this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
+        var spirits = routeinfo.SpiritPath;
+        this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(spirits));
+        this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(spirits));
 
-        this.RouteToWaypointLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.RouteToWaypoint));
-        this.RouteToWaypointPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.RouteToWaypoint));
+        var waypoints = routeinfo.RouteToWaypoint;
+        if(waypoints != null)
+        {
+            var waylist = waypoints.ToList();
+            this.RouteToWaypointLines = new MarkupString(routeinfo.RenderPathLines(waylist));
+            this.RouteToWaypointPoints = new MarkupString(routeinfo.RenderPathPoints(waylist));
+        }
+        else
+        {
+            this.RouteToWaypointLines = new MarkupString();
+            this.RouteToWaypointPoints = new MarkupString();
+        }
+
     }
 
     private void OnProfileLoaded(object? sender, EventArgs e)
