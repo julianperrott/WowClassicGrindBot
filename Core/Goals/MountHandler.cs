@@ -1,6 +1,5 @@
 ﻿using Core.Goals;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace Core
 {
@@ -15,7 +14,9 @@ namespace Core
         private readonly StopMoving stopMoving;
 
         private readonly int minLevelToMount = 30;
-        private readonly int mountCastTimeMs = 3000;
+        private readonly int mountCastTimeMs = 5000;
+        private readonly int spellQueueWindowMs = 400;
+        private readonly int maxFallTimeMs = 10000;
 
         public MountHandler(ILogger logger, ConfigurableInput input, ClassConfiguration classConfig, Wait wait, PlayerReader playerReader, CastingHandler castingHandler, StopMoving stopMoving)
         {
@@ -47,7 +48,7 @@ namespace Core
 
             if (playerReader.Bits.IsFalling)
             {
-                (bool fallTimeOut, double fallElapsedMs) = wait.Until(10000, () => !playerReader.Bits.IsFalling);
+                (bool fallTimeOut, double fallElapsedMs) = wait.Until(maxFallTimeMs, () => !playerReader.Bits.IsFalling);
                 Log($"waited for landing interrupted: {!fallTimeOut} - {fallElapsedMs}ms");
             }
 
@@ -56,12 +57,13 @@ namespace Core
 
             input.TapMount();
 
-            (bool castStartTimeOut, double castStartElapsedMs) = wait.Until(400, () => playerReader.Bits.IsMounted || playerReader.IsCasting);
+            (bool castStartTimeOut, double castStartElapsedMs) = wait.Until(spellQueueWindowMs, () => playerReader.Bits.IsMounted || playerReader.IsCasting);
             Log($"casting: {!castStartTimeOut} | Mounted: {playerReader.Bits.IsMounted} | Delay: {castStartElapsedMs}ms");
 
             if (!playerReader.Bits.IsMounted)
             {
-                (bool mountTimeOut, double elapsedMs) = wait.Until(mountCastTimeMs, () => playerReader.Bits.IsMounted || !playerReader.IsCasting);
+                bool hadTarget = playerReader.HasTarget;
+                (bool mountTimeOut, double elapsedMs) = wait.Until(mountCastTimeMs, () => playerReader.Bits.IsMounted || !playerReader.IsCasting || playerReader.HasTarget != hadTarget);
                 Log($"interrupted: {!mountTimeOut} | Mounted: {playerReader.Bits.IsMounted} | Delay: {elapsedMs}ms");
             }
         }
@@ -73,7 +75,7 @@ namespace Core
                 int index = classConfig.Form.FindIndex(s => s.FormEnum == Form.Druid_Travel);
                 if (index > -1)
                 {
-                    input.KeyPress(classConfig.Form[index].ConsoleKey, 50);
+                    input.KeyPress(classConfig.Form[index].ConsoleKey, input.defaultKeyPress);
                 }
             }
             else
