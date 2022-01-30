@@ -32,6 +32,8 @@ namespace Core.Goals
         private readonly ExecGameCommand execGameCommand;
         private readonly GossipReader gossipReader;
 
+        private readonly int GossipTimeout = 5000;
+
         private Stack<Vector3> routeToWaypoint = new Stack<Vector3>();
 
         public Stack<Vector3> PathingRoute()
@@ -52,7 +54,7 @@ namespace Core.Goals
         private float lastDistance = 999;
         public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
         private bool shouldMount = true;
-        
+
         private readonly KeyAction key;
 
         public AdhocNPCGoal(ILogger logger, ConfigurableInput input, AddonReader addonReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler, Wait wait, ExecGameCommand exec)
@@ -64,7 +66,7 @@ namespace Core.Goals
             this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.npcNameTargeting = npcNameTargeting;
-            
+
             this.stuckDetector = stuckDetector;
             this.classConfiguration = classConfiguration;
             this.pather = pather;
@@ -108,8 +110,7 @@ namespace Core.Goals
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
-            await Task.Delay(200);
-
+            await Task.Delay(50);
             if (this.playerReader.Bits.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
 
             if ((DateTime.Now - LastActive).TotalSeconds > 10 || routeToWaypoint.Count == 0)
@@ -143,7 +144,7 @@ namespace Core.Goals
                 else
                 {
                     await Task.Delay(1000);
-                    logger.LogInformation("Resuming movement");
+                    Log("Resuming movement");
                 }
             }
 
@@ -151,11 +152,11 @@ namespace Core.Goals
 
             if (distance < PointReachedDistance())
             {
-                logger.LogInformation($"Move to next point");
+                Log($"Move to next point");
                 if (routeToWaypoint.Any())
                 {
                     playerReader.ZCoord = routeToWaypoint.Peek().Z;
-                    logger.LogInformation($"{nameof(AdhocNPCGoal)}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                    Log($"{nameof(AdhocNPCGoal)}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
                 }
 
                 ReduceRoute();
@@ -184,9 +185,28 @@ namespace Core.Goals
 
                         npcNameTargeting.ChangeNpcType(NpcNames.Friendly | NpcNames.Neutral);
                         npcNameTargeting.WaitForNUpdate(1);
-                        var foundVendor = npcNameTargeting.FindBy(CursorType.Vendor, CursorType.Repair);
+                        bool foundVendor = npcNameTargeting.FindBy(CursorType.Vendor, CursorType.Repair, CursorType.Innkeeper);
+                        if (!foundVendor)
+                        {
+                            LogWarn("Not found target by cursor. Attempt to use macro to aquire target");
+                            input.KeyPress(key.ConsoleKey, input.defaultKeyPress);
+                        }
 
-                        InteractWithTarget();
+                        (bool targetTimeout, double targetElapsedMs) = wait.Until(1000, () => playerReader.HasTarget);
+                        if (targetTimeout)
+                        {
+                            LogWarn("No target found!");
+                            return;
+                        }
+
+                        Log($"Found Target after {targetElapsedMs}ms");
+
+                        if (!foundVendor)
+                        {
+                            input.TapInteractKey("Interact with target from macro");
+                        }
+
+                        OpenMerchantWindow();
                         input.TapClearTarget();
 
                         // walk back to the start of the path to the npc
@@ -234,7 +254,7 @@ namespace Core.Goals
 
         private void MoveCloserToPoint(int pressDuration, Vector3 target)
         {
-            logger.LogInformation($"Moving to spot = {target}");
+            Log($"Moving to spot = {target}");
 
             var distance = playerReader.PlayerLocation.DistanceXYTo(target);
             var lastDistance = distance;
@@ -242,7 +262,7 @@ namespace Core.Goals
             {
                 if (this.playerReader.HealthPercent == 0) { return; }
 
-                logger.LogInformation($"Distance to spot = {distance}");
+                Log($"Distance to spot = {distance}");
                 lastDistance = distance;
                 var heading = DirectionCalculator.CalculateHeading(playerReader.PlayerLocation, target);
                 playerDirection.SetDirection(heading, this.StartOfPathToNPC(), "Correcting direction", 0);
@@ -299,7 +319,7 @@ namespace Core.Goals
             if (routeToWaypoint.Any())
             {
                 playerReader.ZCoord = routeToWaypoint.Peek().Z;
-                logger.LogInformation($"{nameof(AdhocNPCGoal)}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
+                Log($"{nameof(AdhocNPCGoal)}: PlayerLocation.Z = {playerReader.PlayerLocation.Z}");
             }
 
             this.ReduceRoute();
@@ -336,12 +356,12 @@ namespace Core.Goals
 
             if (MathF.Min(diff1, diff2) > wanderAngle)
             {
-                logger.LogInformation("Correct direction");
+                Log("Correct direction");
                 playerDirection.SetDirection(heading, routeToWaypoint.Peek(), "Correcting direction");
             }
             else
             {
-                logger.LogInformation($"Direction ok heading: {heading}, player direction {playerReader.Direction}");
+                Log($"Direction ok heading: {heading}, player direction {playerReader.Direction}");
             }
         }
 
@@ -357,64 +377,71 @@ namespace Core.Goals
 
         public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
 
-
-        private void InteractWithTarget()
+        private bool OpenMerchantWindow()
         {
-            if (playerReader.HealthPercent == 0) 
+            (bool timeout, double elapsedMs) = wait.Until(GossipTimeout, () => gossipReader.GossipStart || gossipReader.MerchantWindowOpened);
+            if (gossipReader.MerchantWindowOpened)
             {
-                logger.LogInformation("Target is dead!");
-                return;
+                LogWarn($"Gossip no options! {elapsedMs}ms");
             }
-
-            logger.LogInformation("Interacting with NPC");
-
-            for (int i = 0; i < 5; i++)
+            else
             {
-                input.TapInteractKey("Make sure to the gossip window is open!");
-
-                DateTime start = DateTime.Now;
-                while (!gossipReader.MerchantWindowOpened && (DateTime.Now - start).TotalMilliseconds < 1)
+                (bool gossipEndTimeout, double gossipEndElapsedMs) = wait.Until(GossipTimeout, () => gossipReader.GossipEnd);
+                if (timeout)
                 {
-                    wait.Update(1);
-
-                    if (gossipReader.Count != 0)
-                    {
-                        logger.LogInformation($"There are gossip options! {gossipReader.Count}");
-
-                        if (gossipReader.Gossips.TryGetValue(Gossip.Vendor, out int orderNum))
-                        {
-                            logger.LogInformation($"Pick {Gossip.Vendor} -> {orderNum}");
-                            execGameCommand.Run($"/run SelectGossipOption({orderNum})--");
-                            wait.Update(2);
-                        }
-                    }
-                }
-
-                // Macro runs: targets NPC and does action such as sell
-                this.input.KeyPress(key.ConsoleKey, 100);
-
-                // Interact with NPC
-                if (!string.IsNullOrEmpty(addonReader.TargetName))
-                {
-                    // black list it so we don't get stuck trying to kill it
-                    this.blacklist.Add(addonReader.TargetName);
-
-                    input.TapInteractKey($"InteractWithTarget {i}");
+                    LogWarn($"Gossip too many options? {gossipEndElapsedMs}ms");
+                    return false;
                 }
                 else
                 {
-                    logger.LogError($"Error: No target has been selected. Key {key.ConsoleKey} should be /tar an NPC.");
-                    break;
+                    if (gossipReader.Gossips.TryGetValue(Gossip.Vendor, out int orderNum))
+                    {
+                        Log($"Picked {orderNum}th for {Gossip.Vendor}");
+                        execGameCommand.Run($"/run SelectGossipOption({orderNum})--");
+                    }
+                    else
+                    {
+                        LogWarn($"Target({playerReader.TargetId}) has no {Gossip.Vendor} option!");
+                        return false;
+                    }
                 }
-
-                System.Threading.Thread.Sleep(1000);
-                this.input.KeyPress(ConsoleKey.Escape, 50);
             }
 
-            if(CheckIfActionCanRun())
+            Log($"Merchant window opened after {elapsedMs}ms");
+
+            (bool sellStartedTimeout, double sellStartedElapsedMs) = wait.Until(GossipTimeout, () => gossipReader.MerchantWindowSelling);
+            if (!sellStartedTimeout)
             {
-                logger.LogError("We failed to do anything at the NPC! Aborting.");
+                Log($"Merchant sell grey items started after {sellStartedElapsedMs}ms");
+
+                (bool sellFinishedTimeout, double sellFinishedElapsedMs) = wait.Until(GossipTimeout, () => gossipReader.MerchantWindowSellingFinished);
+                if (!sellFinishedTimeout)
+                {
+                    Log($"Merchant sell grey items finished, took {sellFinishedElapsedMs}ms");
+                }
+                else
+                {
+                    Log($"Merchant sell grey items timeout! Too many items to sell?! Increase {nameof(GossipTimeout)} - {sellFinishedElapsedMs}ms");
+                    return true;
+                }
             }
+            else
+            {
+                Log($"Merchant sell nothing! {sellStartedElapsedMs}ms");
+                return true;
+            }
+
+            return false;
+        }
+
+        private void Log(string text)
+        {
+            logger.LogInformation($"[{nameof(AdhocNPCGoal)}]: {text}");
+        }
+
+        private void LogWarn(string text)
+        {
+            logger.LogWarning($"[{nameof(AdhocNPCGoal)}]: {text}");
         }
     }
 }
