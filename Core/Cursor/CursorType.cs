@@ -9,6 +9,7 @@
         Mine = 50,
         Herb = 60,
         Vendor = 70,
-        Repair = 80
+        Repair = 80,
+        Innkeeper = 90
     }
 }
