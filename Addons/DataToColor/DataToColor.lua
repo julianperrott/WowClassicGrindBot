@@ -22,6 +22,16 @@ local CELL_SPACING = 1 -- 0 or 1
 local globalCounter = 0
 local initPhase = 10
 
+DataToColor.DATA_CONFIG = {
+    ACCEPT_PARTY_REQUESTS = false, -- O
+    DECLINE_PARTY_REQUESTS = false, -- O
+    AUTO_REPAIR_ITEMS = true, -- O
+    AUTO_LEARN_TALENTS = false, -- O
+    AUTO_TRAIN_SPELLS = false, -- O
+    AUTO_RESURRECT = true,
+    AUTO_SELL_GREY_ITEMS = true
+}
+
 -- How often item frames change
 local ITEM_ITERATION_FRAME_CHANGE_RATE = 5
 -- How often the actionbar frames change
@@ -671,6 +681,7 @@ function DataToColor:CreateFrames(n)
             if DataToColor:Modulo(globalCounter, GOSSIP_ITERATION_FRAME_CHANGE_RATE) == 0 then
                 gossipNum = DataToColor.stack:pop(DataToColor.gossipQueue)
                 if gossipNum then
+                    --DataToColor:Print("gossipQueue:" .. gossipNum)
                     MakePixelSquareArrI(gossipNum, 73)
                 end
             end
