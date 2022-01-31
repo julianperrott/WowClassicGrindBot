@@ -19,9 +19,16 @@ namespace Core
 
         public bool Ready => Gossips.Count == Count;
 
+        public bool GossipStart => data == 69;
+        public bool GossipEnd => data == 9999994;
+
         public bool MerchantWindowOpened => data == 9999999;
 
         public bool MerchantWindowClosed => data == 9999998;
+
+        public bool MerchantWindowSelling => data == 9999997;
+
+        public bool MerchantWindowSellingFinished => data == 9999996;
 
         public GossipReader(ISquareReader reader, int cGossip)
         {
@@ -34,10 +41,10 @@ namespace Core
             data = reader.GetIntAtCell(cGossip);
 
             // used for merchant window open state
-            if (MerchantWindowOpened || MerchantWindowClosed)
+            if (MerchantWindowClosed || MerchantWindowOpened || MerchantWindowSelling || MerchantWindowSellingFinished || GossipEnd)
                 return;
 
-            if (data == 0)
+            if (data == 0 || GossipStart)
             {
                 Count = 0;
                 Gossips.Clear();
