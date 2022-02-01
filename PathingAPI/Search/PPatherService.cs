@@ -77,7 +77,7 @@ namespace PathingAPI
             }
             return false;
         }
-        public Location GetWorldLocation(int uiMapId, float v1, float v2)
+        public Location GetWorldLocation(int uiMapId, float v1, float v2, float z = 0)
         {
             var worldMapArea = worldMapAreas.First(i => i.UIMapId == uiMapId);
             var worldX = worldMapArea.ToWorldX(v2);
@@ -85,7 +85,7 @@ namespace PathingAPI
 
             Initialise(worldMapArea.Continent);
 
-            var location = search.CreateLocation(worldX, worldY);
+            var location = search.CreateLocation(worldX, worldY, z);
             location.Continent = worldMapArea.Continent;
             return location;
         }

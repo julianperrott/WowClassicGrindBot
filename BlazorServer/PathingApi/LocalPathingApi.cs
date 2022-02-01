@@ -1,4 +1,4 @@
-using Core;
+﻿using Core;
 using Core.PPather;
 using Microsoft.Extensions.Logging;
 using PathingAPI;
@@ -58,12 +58,10 @@ namespace BlazorServer
                 targetMapId = map;
             }
 
-            await Task.Delay(0);
-
             var sw = new Stopwatch();
             sw.Start();
 
-            service.SetLocations(service.GetWorldLocation(map, (float)fromPoint.X, (float)fromPoint.Y), service.GetWorldLocation(targetMapId, (float)toPoint.X, (float)toPoint.Y));
+            service.SetLocations(service.GetWorldLocation(map, fromPoint.X, fromPoint.Y, fromPoint.Z), service.GetWorldLocation(targetMapId, toPoint.X, toPoint.Y));
             var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star_With_Model_Avoidance);
 
             if (path == null)

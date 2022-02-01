@@ -38,10 +38,10 @@ namespace PathingAPI
             }
         }
 
-        public Location CreateLocation(float x, float y)
+        public Location CreateLocation(float x, float y, float z = 0)
         {
             // find model 0 i.e. terrain
-            var z0 = GetZValueAt(x, y, new int[] { 0 });
+            var z0 = GetZValueAt(x, y, new int[] { (int)z });
 
             // if no z value found then try any model
             if (z0 == float.MinValue) { z0 = GetZValueAt(x, y, null); }
