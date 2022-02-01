@@ -49,23 +49,25 @@ namespace Core.Goals
 
         private readonly Random random = new();
 
+        private readonly Navigation navigation;
+
         #region IRouteProvider
 
         public DateTime LastActive { get; set; }
 
-        public Stack<Vector3> PathingRoute()
+        public List<Vector3> PathingRoute()
         {
-            return routeToWaypoint;
+            return navigation.TotalRoute;
         }
 
         public bool HasNext()
         {
-            return routeToWaypoint.Count != 0;
+            return navigation.RouteToWaypoint.Count != 0;
         }
 
         public Vector3 NextPoint()
         {
-            return routeToWaypoint.Peek();
+            return navigation.RouteToWaypoint.Peek();
         }
 
         #endregion

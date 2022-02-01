@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -36,7 +36,8 @@ namespace Core.Goals
         private readonly Stack<Vector3> wayPoints = new();
         public Stack<Vector3> RouteToWaypoint { private init; get; } = new();
 
-        private DateTime LastReset = DateTime.Now;
+        public List<Vector3> TotalRoute { private init; get; } = new();
+
         public DateTime LastActive { get; set; }
 
         public event EventHandler? OnWayPointReached;

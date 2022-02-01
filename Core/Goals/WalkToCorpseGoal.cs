@@ -1,4 +1,4 @@
-﻿using Core.GOAP;
+using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using SharedLib.Extensions;
 using System;
@@ -29,9 +29,9 @@ namespace Core.Goals
         private Stack<Vector3> points = new();
         private float RADIAN = MathF.PI * 2;
 
-        public Stack<Vector3> PathingRoute()
+        public List<Vector3> PathingRoute()
         {
-            return points;
+            return points.ToList();
         }
 
         public List<Vector3> Deaths { get; } = new List<Vector3>();

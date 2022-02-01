@@ -1,4 +1,4 @@
-﻿using Core.GOAP;
+using Core.GOAP;
 using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
@@ -47,9 +47,9 @@ namespace Core.Goals
 
         #region IRouteProvider
 
-        public Stack<Vector3> PathingRoute()
+        public List<Vector3> PathingRoute()
         {
-            return navigation.RouteToWaypoint;
+            return navigation.TotalRoute;
         }
 
         public bool HasNext()

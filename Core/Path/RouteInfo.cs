@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -37,13 +37,13 @@ namespace Core
         public List<Vector3> PathPoints { get; private set; }
         public List<Vector3> SpiritPath { get; private set; }
 
-        public Stack<Vector3>? RouteToWaypoint
+        public List<Vector3>? RouteToWaypoint
         {
             get
             {
-                if (pathedRoutes.Any(x => x.HasNext()))
+                if (pathedRoutes.Any())
                 {
-                    return pathedRoutes.Select(r => r.PathingRoute()).First();
+                    return pathedRoutes.OrderByDescending(x => x.LastActive).First().PathingRoute();
                 }
                 return default;
             }
