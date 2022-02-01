@@ -104,6 +104,7 @@ namespace Core.Goals
                 if (classConfiguration.Mode != Mode.AttendedGather)
                 {
                     StartLookingForTarget();
+                    navigation.ResetStuckParameters();
                 }
             }
         }
