@@ -1,4 +1,4 @@
-using Core.GOAP;
+﻿using Core.GOAP;
 using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,14 +11,16 @@ namespace Core.Goals
 {
     public class AdhocNPCGoal : GoapGoal, IRouteProvider
     {
-        enum PathState
+        private enum PathState
         {
-            MoveToPathStart,
-            MovePathFile,
+            ApproachPathStart,
+            FollowPath,
             MoveBackToPathStart,
         }
 
         private PathState pathState;
+
+        private readonly bool debug = false;
 
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
@@ -87,13 +89,9 @@ namespace Core.Goals
             this.execGameCommand = exec;
             this.gossipReader = addonReader.GossipReader;
 
-            shouldMount = classConfiguration.UseMount;
-
-            navigation = new Navigation(logger, playerDirection, input, addonReader, wait, stopMoving, stuckDetector, pather, mountHandler, key.Path, false);
+            navigation = new Navigation(logger, playerDirection, input, addonReader, wait, stopMoving, stuckDetector, pather, mountHandler);
             navigation.OnDestinationReached += Navigation_OnDestinationReached;
             navigation.OnWayPointReached += Navigation_OnWayPointReached;
-
-            //MinDistance = !(pather is RemotePathingAPIV3) ? MinDistanceMount : 10;
 
             if (key.InCombat == "false")
             {
@@ -114,24 +112,35 @@ namespace Core.Goals
             return key.CanRun();
         }
 
-        public override void OnActionEvent(object sender, ActionEventArgs e)
-        {
-            if (sender != this)
-            {
-                shouldMount = true;
-                navigation.RouteToWaypoint.Clear();
-            }
-        }
-
         public override ValueTask OnEnter()
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
-            //TODO: 
-            pathState = PathState.MoveToPathStart;
+            input.TapClearTarget();
+            stopMoving.Stop();
 
+            navigation.PreciseEnd = true;
+            var path = key.Path;
+            navigation.SetWayPoints(path);
 
-            return ValueTask.CompletedTask;
+            pathState = PathState.ApproachPathStart;
+
+            if (classConfiguration.UseMount &&
+                mountHandler.CanMount() && !shouldMount &&
+                mountHandler.ShouldMount(navigation.TotalRoute.Last()))
+            {
+                shouldMount = true;
+                Log("Mount up since desination far away");
+            }
+
+            return base.OnEnter();
+        }
+
+        public override ValueTask OnExit()
+        {
+            navigation.Stop();
+
+            return base.OnExit();
         }
 
         public override async ValueTask PerformAction()
@@ -140,12 +149,11 @@ namespace Core.Goals
 
             if (playerReader.Bits.IsDrowning)
             {
-                StopDrowning();
+                input.TapJump("Drowning! Swim up");
             }
 
             await navigation.Update();
 
-            // should mount
             MountIfRequired();
 
             LastActive = DateTime.Now;
@@ -155,9 +163,18 @@ namespace Core.Goals
 
         private void Navigation_OnWayPointReached(object? sender, EventArgs e)
         {
-            if (pathState is PathState.MovePathFile or PathState.MoveBackToPathStart)
+            if (pathState is PathState.ApproachPathStart or PathState.FollowPath or PathState.MoveBackToPathStart)
             {
                 stopMoving.Stop();
+                wait.Update(1);
+            }
+
+            if (pathState is PathState.ApproachPathStart)
+            {
+                LogDebug("Reached the start point of the path.");
+
+                navigation.SimplifyRouteToWaypoint = false;
+                navigation.PreciseMovement = true;
             }
         }
 
@@ -168,28 +185,9 @@ namespace Core.Goals
             // 2 = follow Key.Path to reach vendor
             // 3 = reverse Key.Path to safe location
 
-            if (pathState == PathState.MoveToPathStart)
+            if (pathState == PathState.ApproachPathStart)
             {
-                LogWarn("Reached the start point of the path.");
-                stopMoving.Stop();
-
-                // we have reached the start of the path to the npc
-                navigation.RouteToWaypoint.Clear();
-
-                var path = key.Path.ToList();
-                path.Reverse();
-                path.ForEach(x => navigation.RouteToWaypoint.Push(x));
-                navigation.UpdatedRouteToWayPoint();
-
-                navigation.AllowReduceByDistance = false;
-                navigation.PreciseMovement = true;
-                stopMoving.Stop();
-
-                pathState++;
-            }
-            else if (pathState == PathState.MovePathFile)
-            {
-                LogWarn("Reached defined path end");
+                LogDebug("Reached defined path end");
                 stopMoving.Stop();
 
                 input.TapClearTarget();
@@ -200,7 +198,7 @@ namespace Core.Goals
                 bool foundVendor = npcNameTargeting.FindBy(CursorType.Vendor, CursorType.Repair, CursorType.Innkeeper);
                 if (!foundVendor)
                 {
-                    LogWarn("Not found target by cursor. Attempt to use macro to aquire target");
+                    LogWarn($"No target found by cursor({nameof(CursorType.Vendor)}, {nameof(CursorType.Repair)}, {nameof(CursorType.Innkeeper)})! Attempt to use macro to aquire target");
                     input.KeyPress(key.ConsoleKey, input.defaultKeyPress);
                 }
 
@@ -208,6 +206,7 @@ namespace Core.Goals
                 if (targetTimeout)
                 {
                     LogWarn("No target found!");
+                    input.KeyPressSleep(input.TurnLeftKey, 250, "Turn left to find NPC");
                     return;
                 }
 
@@ -221,33 +220,25 @@ namespace Core.Goals
                 if (OpenMerchantWindow())
                 {
                     input.KeyPress(ConsoleKey.Escape, input.defaultKeyPress);
-                    wait.Update(1);
-
                     input.TapClearTarget();
                     wait.Update(1);
 
-                    navigation.RouteToWaypoint.Clear();
-
                     var path = key.Path.ToList();
-                    path.ForEach(x => navigation.RouteToWaypoint.Push(x));
-                    navigation.UpdatedRouteToWayPoint();
-
-                    Log("Look at where i came from!");
-                    navigation.LookAtNextWayPoint();
-
-                    wait.Update(1);
+                    path.Reverse();
+                    navigation.SetWayPoints(path);
 
                     pathState++;
 
-                    LogWarn("Go back reverse to the start point of the path.");
+                    LogDebug("Go back reverse to the start point of the path.");
+                    navigation.ResetStuckParameters();
 
-                    while (HasNext())
+                    while (navigation.HasWaypoint())
                     {
                         await navigation.Update();
                         wait.Update(1);
                     }
 
-                    LogWarn("Reached the start point of the path.");
+                    LogDebug("Reached the start point of the path.");
                 }
             }
             else if (pathState == PathState.MoveBackToPathStart)
@@ -255,25 +246,17 @@ namespace Core.Goals
                 pathState = PathState.MoveBackToPathStart;
 
                 navigation.PreciseMovement = false;
-                navigation.AllowReduceByDistance = true;
+                navigation.SimplifyRouteToWaypoint = true;
+                navigation.PreciseEnd = false;
             }
-        }
-
-
-        private void StopDrowning()
-        {
-            input.TapJump("Drowning! Swim up");
         }
 
         private void MountIfRequired()
         {
-            if (shouldMount && !mountHandler.IsMounted() && !playerReader.Bits.PlayerInCombat)
+            if (shouldMount && !mountHandler.IsMounted())
             {
                 shouldMount = false;
-
                 mountHandler.MountUp();
-
-                input.SetKeyState(input.ForwardKey, true, false, "Move forward");
             }
         }
 
@@ -291,7 +274,7 @@ namespace Core.Goals
                 (bool gossipEndTimeout, double gossipEndElapsedMs) = wait.Until(GossipTimeout, () => gossipReader.GossipEnd);
                 if (timeout)
                 {
-                    LogWarn($"Gossip too many options? {gossipEndElapsedMs}ms");
+                    LogWarn($"Gossip - {nameof(gossipReader.GossipEnd)} not fired after {gossipEndElapsedMs}ms");
                     return false;
                 }
                 else
@@ -338,6 +321,12 @@ namespace Core.Goals
         private void Log(string text)
         {
             logger.LogInformation($"[{nameof(AdhocNPCGoal)}]: {text}");
+        }
+
+        private void LogDebug(string text)
+        {
+            if(debug)
+                logger.LogDebug($"[{nameof(AdhocNPCGoal)}]: {text}");
         }
 
         private void LogWarn(string text)

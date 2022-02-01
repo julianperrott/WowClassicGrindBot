@@ -1,4 +1,4 @@
-using Core.GOAP;
+﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
 using SharedLib.Extensions;
 using System;
