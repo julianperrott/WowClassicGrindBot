@@ -39,7 +39,7 @@ namespace Core.Goals
 
                 input.SetKeyState(input.ForwardKey, false, false, "");
                 input.SetKeyState(input.BackwardKey, false, false, "StopForward");
-                Thread.Sleep(10);
+                Thread.Sleep(1);
             }
 
             this.XCoord = playerReader.XCoord;
@@ -51,7 +51,6 @@ namespace Core.Goals
             if (Direction != playerReader.Direction)
             {
                 input.SetKeyState(input.TurnLeftKey, false, false, "");
-                Thread.Sleep(1);
                 input.SetKeyState(input.TurnRightKey, false, false, "StopTurn");
                 Thread.Sleep(1);
             }
