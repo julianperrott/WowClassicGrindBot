@@ -1,5 +1,7 @@
 ﻿using Core.Goals;
 using Microsoft.Extensions.Logging;
+using SharedLib.Extensions;
+using System.Numerics;
 
 namespace Core
 {
@@ -17,6 +19,7 @@ namespace Core
         private readonly int mountCastTimeMs = 5000;
         private readonly int spellQueueWindowMs = 400;
         private readonly int maxFallTimeMs = 10000;
+        private readonly int minDistanceToMount = 40;
 
         public MountHandler(ILogger logger, ConfigurableInput input, ClassConfiguration classConfig, Wait wait, PlayerReader playerReader, CastingHandler castingHandler, StopMoving stopMoving)
         {
@@ -29,9 +32,14 @@ namespace Core
             this.stopMoving = stopMoving;
         }
 
+        public bool CanMount()
+        {
+            return playerReader.Level.Value >= minLevelToMount;
+        }
+
         public void MountUp()
         {
-            if (playerReader.Level.Value < minLevelToMount)
+            if (!CanMount())
             {
                 return;
             }
@@ -66,6 +74,13 @@ namespace Core
                 (bool mountTimeOut, double elapsedMs) = wait.Until(mountCastTimeMs, () => playerReader.Bits.IsMounted || !playerReader.IsCasting || playerReader.HasTarget != hadTarget);
                 Log($"interrupted: {!mountTimeOut} | Mounted: {playerReader.Bits.IsMounted} | Delay: {elapsedMs}ms");
             }
+        }
+
+        public bool ShouldMount(Vector3 target)
+        {
+            var location = playerReader.PlayerLocation;
+            var distance = location.DistanceXYTo(target);
+            return distance > minDistanceToMount;
         }
 
         public void Dismount()
