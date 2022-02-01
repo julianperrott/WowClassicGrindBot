@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -180,6 +180,9 @@ namespace Core
             return sb.ToString();
         }
 
+        private readonly string first = "<br><b>First</b>";
+        private readonly string last = "<br><b>Last</b>";
+
         public string RenderPathPoints(List<Vector3> path)
         {
             StringBuilder sb = new StringBuilder();
@@ -188,7 +191,7 @@ namespace Core
                 var wowpoint = path[i];
                 float x = wowpoint.X;
                 float y = wowpoint.Y;
-                sb.AppendLine($"<circle onmousedown=\"pointClick(evt,{x},{y},{i});\"  onmousemove=\"showTooltip(evt,'{x},{y}');\" onmouseout=\"hideTooltip();\"  cx = '{ToCanvasPointX(wowpoint.X)}' cy = '{ToCanvasPointY(wowpoint.Y)}' r = '{dSize}' />");
+                sb.AppendLine($"<circle onmousedown=\"pointClick(evt,{x},{y},{i});\"  onmousemove=\"showTooltip(evt,'{x},{y}{(i == 0 ? first : i == path.Count-1 ? last : string.Empty)}');\" onmouseout=\"hideTooltip();\"  cx = '{ToCanvasPointX(wowpoint.X)}' cy = '{ToCanvasPointY(wowpoint.Y)}' r = '{dSize}' />");
             }
             return sb.ToString();
         }
