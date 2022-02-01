@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.PPather;
 using Microsoft.Extensions.Logging;
 using PathingAPI;
@@ -30,21 +30,23 @@ namespace BlazorServer
 
         public async Task DrawLines(List<LineArgs> lineArgs)
         {
-            await Task.Delay(0);
+            await ValueTask.CompletedTask;
         }
 
         public async Task DrawLines()
         {
-            await Task.Delay(0);
+            await ValueTask.CompletedTask;
         }
 
         public async Task DrawSphere(SphereArgs args)
         {
-            await Task.Delay(0);
+            await ValueTask.CompletedTask;
         }
 
         public async Task<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
         {
+            await ValueTask.CompletedTask;
+
             if (!Enabled)
             {
                 logger.LogWarning($"Pathing is disabled, please check the messages when the bot started.");
@@ -66,17 +68,16 @@ namespace BlazorServer
 
             if (path == null)
             {
-                logger.LogWarning($"LocalPathingApi: Failed to find a path from {fromPoint} to {toPoint}");
+                logger.LogWarning($"[{nameof(LocalPathingApi)}]: Failed to find a path from {fromPoint} to {toPoint}");
                 return new List<Vector3>();
             }
             else
             {
-                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} took {sw.ElapsedMilliseconds} ms.");
+                logger.LogInformation($"[{nameof(LocalPathingApi)}]: Finding route from {fromPoint} map {map} to {toPoint} took {sw.ElapsedMilliseconds} ms.");
                 service.Save();
             }
 
             var worldLocations = path.locations.Select(s => service.ToMapAreaSpot(s.X, s.Y, s.Z, map));
-
             var result = worldLocations.Select(l => new Vector3(l.X, l.Y, l.Z)).ToList();
             return result;
         }
@@ -91,8 +92,6 @@ namespace BlazorServer
             var mpqFiles = MPQTriangleSupplier.GetArchiveNames(DataConfig.Load(), s => logger.LogInformation(s));
 
             var countOfMPQFiles = mpqFiles.Where(f => File.Exists(f)).Count();
-            //countOfMPQFiles = 0;
-
             if (countOfMPQFiles == 0)
             {
                 logger.LogWarning("Some of these MPQ files should exist!");

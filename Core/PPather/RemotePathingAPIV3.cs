@@ -60,7 +60,7 @@ namespace Core
 
         public async Task DrawLines(List<LineArgs> lineArgs)
         {
-            await Task.Delay(0);
+            await ValueTask.CompletedTask;
         }
 
         public async Task DrawLines()
@@ -70,14 +70,13 @@ namespace Core
 
         public async Task DrawSphere(SphereArgs args)
         {
-            await Task.Delay(0);
+            await ValueTask.CompletedTask;
         }
 
 
 
-        public async Task<List<Vector3>> FindRoute(int uiMapId, Vector3 fromPoint, Vector3 toPoint)
+        public Task<List<Vector3>> FindRoute(int uiMapId, Vector3 fromPoint, Vector3 toPoint)
         {
-            await Task.Delay(0);
             throw new NotImplementedException();
         }
 
@@ -94,7 +93,7 @@ namespace Core
 
             try
             {
-                await Task.Delay(0);
+                await ValueTask.CompletedTask;
 
                 Vector3 start = worldMapAreaDB.GetWorldLocation(uiMapId, fromPoint, true);
                 Vector3 end = worldMapAreaDB.GetWorldLocation(uiMapId, toPoint, true);
