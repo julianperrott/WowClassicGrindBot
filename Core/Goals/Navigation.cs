@@ -300,10 +300,15 @@ namespace Core.Goals
             var distance = location.DistanceXYTo(wayPoints.Peek());
             if (forceUsePathing || (!PreciseMovement && distance > (AvgDistance + MinDistance)) || distance > MaxDistance)
             {
-                LogDebug($"RefillRouteToNextWaypoint - {distance} - ask pathfinder {location} -> {wayPoints.Peek()}");
+                Log($"RefillRouteToNextWaypoint - {distance} - ask pathfinder {location} -> {wayPoints.Peek()}");
 
                 stopMoving.Stop();
                 var path = await pather.FindRouteTo(addonReader, wayPoints.Peek());
+                if (path.Count == 0)
+                {
+                    LogWarn($"Unable to find path from {location} -> {wayPoints.Peek()}. Character may stuck!");
+                }
+
                 path.Reverse();
                 path.ForEach(p => RouteToWaypoint.Push(p));
 
