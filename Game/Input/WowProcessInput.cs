@@ -48,7 +48,7 @@ namespace Game
             keyDict[key] = true;
         }
 
-        private void KeyUp(ConsoleKey key, bool forceClick)
+        private void KeyUp(ConsoleKey key, bool forceClick, string description = "")
         {
             if (keyDict.ContainsKey(key))
             {
@@ -65,7 +65,9 @@ namespace Game
                 }
             }
 
-            LogKeyUp(logger, key);
+            if (!string.IsNullOrEmpty(description))
+                LogKeyUp(logger, key, description);
+
             nativeInput.KeyUp((int)key);
 
             keyDict[key] = false;
@@ -127,7 +129,7 @@ namespace Game
             if (!string.IsNullOrEmpty(description))
                 description = "SetKeyState-" + description;
 
-            if (pressDown) { KeyDown(key, description); } else { KeyUp(key, forceClick); }
+            if (pressDown) { KeyDown(key, description); } else { KeyUp(key, forceClick, description); }
         }
 
         public void SetCursorPosition(Point position)
@@ -154,8 +156,8 @@ namespace Game
         [LoggerMessage(
             EventId = 26,
             Level = LogLevel.Debug,
-            Message = @"Input: KeyUp {key}")]
-        static partial void LogKeyUp(ILogger logger, ConsoleKey key);
+            Message = @"Input: KeyUp {key} {description}")]
+        static partial void LogKeyUp(ILogger logger, ConsoleKey key, string description);
 
         [LoggerMessage(
             EventId = 27,
