@@ -61,8 +61,6 @@ namespace Core.Goals
             this.mountHandler = mountHandler;
 
             AvgDistance = MinDistance;
-
-            MinDistance = pather is not RemotePathingAPIV3 ? MinDistanceMount : 10;
         }
 
         public async ValueTask Update()
@@ -331,7 +329,7 @@ namespace Core.Goals
 
         private void SimplyfyRouteToWaypoint()
         {
-            var simple = PathSimplify.Simplify(RouteToWaypoint.ToArray(), 0.05f);
+            var simple = PathSimplify.Simplify(RouteToWaypoint.ToArray(), pather is RemotePathingAPIV3 ? 0.05f : 0.1f);
             simple.Reverse();
 
             RouteToWaypoint.Clear();
