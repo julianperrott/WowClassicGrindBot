@@ -28,7 +28,8 @@ namespace PatherPath
             {
                 onWrite(message);
             }
-            System.Diagnostics.Debug.WriteLine(message);
+            else
+                System.Diagnostics.Debug.WriteLine(message);
         }
 
         public void Debug(string message)
