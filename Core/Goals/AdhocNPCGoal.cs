@@ -95,7 +95,7 @@ namespace Core.Goals
 
             if (key.InCombat == "false")
             {
-                AddPrecondition(GoapKey.incombat, false);
+                AddPrecondition(GoapKey.dangercombat, false);
             }
             else if (key.InCombat == "true")
             {
@@ -110,6 +110,14 @@ namespace Core.Goals
         public override bool CheckIfActionCanRun()
         {
             return key.CanRun();
+        }
+
+        public override void OnActionEvent(object sender, ActionEventArgs e)
+        {
+            if (e.Key == GoapKey.resume)
+            {
+                navigation.ResetStuckParameters();
+            }
         }
 
         public override ValueTask OnEnter()
