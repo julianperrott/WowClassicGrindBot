@@ -267,7 +267,7 @@ namespace SharedLib.NpcFinder
 
         public void WaitForNUpdate(int n)
         {
-            while (n > 0)
+            while (n >= 0)
             {
                 autoResetEvent.WaitOne();
                 n--;
