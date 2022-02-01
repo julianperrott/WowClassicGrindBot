@@ -29,7 +29,9 @@ namespace Core
 
             {CursorType.Repair, new List<ulong>{ 16207573517913036808, 4669140166357294088 } },
 
-            {CursorType.Innkeeper, new List<ulong> { 4667452417086599168, 4676529985085517824 } }
+            {CursorType.Innkeeper, new List<ulong> { 4667452417086599168, 4676529985085517824 } },
+
+            {CursorType.Quest, new List<ulong> { 4682718988357606424, 4682718988358655000 } }
         };
 
         public static void Classify(out CursorType classification)
