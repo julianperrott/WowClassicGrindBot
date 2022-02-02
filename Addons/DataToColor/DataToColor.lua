@@ -74,6 +74,8 @@ DataToColor.targetChanged = true
 DataToColor.playerGUID = UnitGUID(DataToColor.C.unitPlayer)
 DataToColor.petGUID = UnitGUID(DataToColor.C.unitPet)
 
+DataToColor.corpseInRange = 0
+
 -- buff / debuff counters
 local playerDebuffCount = 0
 local playerBuffCount = 0
@@ -244,6 +246,8 @@ function DataToColor:Reset()
 
     DataToColor.lastCastStartTime = 0
     DataToColor.CastNum = 0
+
+    DataToColor.corpseInRange = 0
 
     playerDebuffCount = 0
     playerBuffCount = 0

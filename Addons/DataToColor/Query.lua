@@ -50,7 +50,8 @@ end
 
 function DataToColor:Base2Converter2()
     return
-    DataToColor:MakeIndexBase2(DataToColor:IsPlayerDrowning(), 0)
+    DataToColor:MakeIndexBase2(DataToColor:IsPlayerDrowning(), 0) +
+    DataToColor:MakeIndexBase2(DataToColor.corpseInRange, 1)
 end
 
 function DataToColor:Base2CustomTrigger(t)
