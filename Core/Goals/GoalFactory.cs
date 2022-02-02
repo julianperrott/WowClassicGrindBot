@@ -58,7 +58,7 @@ namespace Core
             var targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
 
             var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader, playerDirection, pathPoints, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, mountHandler, targetFinder);
-            var walkToCorpseAction = new WalkToCorpseGoal(logger, input, addonReader, playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
+            var walkToCorpseAction = new WalkToCorpseGoal(logger, input, wait, addonReader, playerDirection, stopMoving, stuckDetector, pather, mountHandler);
 
             availableActions.Clear();
 
