@@ -182,7 +182,7 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "20_Westfall_Vendor.json",
         "Cost": 6
       }

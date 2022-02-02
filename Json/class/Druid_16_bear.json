@@ -152,7 +152,7 @@
         "Name": "Sell",
         "Key": "C",
         "Form": "None",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "10_NightElf_Vendor.json",
         "Cost": 19
       }

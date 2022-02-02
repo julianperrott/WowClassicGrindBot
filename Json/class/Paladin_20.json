@@ -221,7 +221,7 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "23_Duskwood_Vendor.json",
         "Cost": 6
       }
