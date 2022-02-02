@@ -24,7 +24,6 @@ namespace Core.Goals
         private readonly IPPather pather;
         private readonly MountHandler mountHandler;
 
-        private readonly int PreciseMinDistance = 5;
         private readonly int MinDistance = 10;
         private readonly int MinDistanceMount = 15;
         private readonly int MaxDistance = 200;
@@ -41,9 +40,6 @@ namespace Core.Goals
 
         public event EventHandler? OnWayPointReached;
         public event EventHandler? OnDestinationReached;
-
-        public bool PreciseMovement { get; set; }
-        public bool PreciseEnd { get; set; }
 
         public bool SimplifyRouteToWaypoint { get; set; } = true;
 
@@ -107,6 +103,7 @@ namespace Core.Goals
                     else
                         RouteToWaypoint.Pop();
 
+                    lastDistance = float.MaxValue;
                     UpdateTotalRoute();
                 }
 
@@ -114,16 +111,8 @@ namespace Core.Goals
                 {
                     if (wayPoints.Count > 0)
                     {
-                        if (PreciseEnd)
-                        {
-                            RouteToWaypoint.Push(wayPoints.Pop());
-                            stuckDetector.SetTargetLocation(RouteToWaypoint.Peek());
-                        }
-                        else
-                        {
-                            wayPoints.Pop();
-                        }
-                        
+                        RouteToWaypoint.Push(wayPoints.Pop());
+                        stuckDetector.SetTargetLocation(RouteToWaypoint.Peek());
                         UpdateTotalRoute();
                     }
 
@@ -146,12 +135,9 @@ namespace Core.Goals
                 {
                     if (lastDistance < distance)
                     {
-                        if (!PreciseMovement)
-                        {
-                            AdjustNextWaypointPointToClosest();
-                        }
-
-                        AdjustHeading(heading, "Further away");
+                        // TODO: test this
+                        AdjustNextWaypointPointToClosest();
+                        AdjustHeading(heading, "unstuck Further away");
                     }
 
                     if (HasBeenActiveRecently())
@@ -175,21 +161,14 @@ namespace Core.Goals
 
         private int ReachedDistance(int distance)
         {
-            if (mountHandler.IsMounted())
-            {
-                return PreciseMovement ? PreciseMinDistance : MinDistanceMount;
-            }
-            else
-            {
-                return PreciseMovement ? PreciseMinDistance : distance;
-            }
+            return mountHandler.IsMounted() ? MinDistanceMount : distance;
         }
 
         private void ReduceByDistance(int minDistance)
         {
             var location = playerReader.PlayerLocation;
             var distance = location.DistanceXYTo(RouteToWaypoint.Peek());
-            while (distance < ReachedDistance(minDistance) && RouteToWaypoint.Count > 0) // -1
+            while (distance < ReachedDistance(minDistance) && RouteToWaypoint.Count > 0)
             {
                 RouteToWaypoint.Pop();
                 if (RouteToWaypoint.Count > 0)
@@ -204,21 +183,17 @@ namespace Core.Goals
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
-            var wanderAngle = 0.3;
-            if (input.ClassConfig.Mode != Mode.AttendedGather)
-            {
-                wanderAngle = 0.05;
-            }
+            var minAngle = MathF.PI / 20; // 9 degree
 
             var diff = MathF.Min(diff1, diff2);
-            if (diff > wanderAngle || PreciseMovement)
+            if (diff > minAngle)
             {
-                if (diff > Math.PI / 2)
+                if (diff > Math.PI / 4) // stop when angle greater than 60 degree -- 3 = good 60 degree | 4 = works well 45 degree
                 {
                     stopMoving.Stop();
                 }
 
-                playerDirection.SetDirection(heading, RouteToWaypoint.Peek(), source, PreciseMovement ? PreciseMinDistance : MinDistance);
+                playerDirection.SetDirection(heading, RouteToWaypoint.Peek(), source, MinDistance);
             }
         }
 
@@ -329,7 +304,7 @@ namespace Core.Goals
 
             var location = playerReader.PlayerLocation;
             var distance = location.DistanceXYTo(wayPoints.Peek());
-            if (forceUsePathing || (!PreciseMovement && distance > (AvgDistance + MinDistance)) || distance > MaxDistance)
+            if (forceUsePathing || (distance > (AvgDistance + MinDistance)) || distance > MaxDistance)
             {
                 Log($"RefillRouteToNextWaypoint - {distance} - ask pathfinder {location} -> {wayPoints.Peek()}");
 

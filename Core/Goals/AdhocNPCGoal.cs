@@ -127,7 +127,6 @@ namespace Core.Goals
             input.TapClearTarget();
             stopMoving.Stop();
 
-            navigation.PreciseEnd = true;
             var path = key.Path;
             navigation.SetWayPoints(path);
 
@@ -171,18 +170,11 @@ namespace Core.Goals
 
         private void Navigation_OnWayPointReached(object? sender, EventArgs e)
         {
-            if (pathState is PathState.ApproachPathStart or PathState.FollowPath or PathState.MoveBackToPathStart)
-            {
-                stopMoving.Stop();
-                wait.Update(1);
-            }
-
             if (pathState is PathState.ApproachPathStart)
             {
                 LogDebug("Reached the start point of the path.");
 
                 navigation.SimplifyRouteToWaypoint = false;
-                navigation.PreciseMovement = true;
             }
         }
 
@@ -232,7 +224,6 @@ namespace Core.Goals
                     wait.Update(1);
 
                     var path = key.Path.ToList();
-                    path.Reverse();
                     navigation.SetWayPoints(path);
 
                     pathState++;
@@ -252,10 +243,7 @@ namespace Core.Goals
             else if (pathState == PathState.MoveBackToPathStart)
             {
                 pathState = PathState.MoveBackToPathStart;
-
-                navigation.PreciseMovement = false;
                 navigation.SimplifyRouteToWaypoint = true;
-                navigation.PreciseEnd = false;
             }
         }
 
