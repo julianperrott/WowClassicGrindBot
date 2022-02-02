@@ -39,5 +39,7 @@
 
         // -- value2 based flags
         public bool IsDrowning => v2.IsBitSet(0);
+
+        public bool IsCorpseInRange => v2.IsBitSet(1);
     }
 }
