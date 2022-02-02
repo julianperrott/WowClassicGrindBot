@@ -267,7 +267,7 @@ namespace Core.Goals
 
         public void Resume()
         {
-            if (pather is not RemotePathingAPIV3)
+            if (pather is not RemotePathingAPIV3 && RouteToWaypoint.Count > 0)
             {
                 V1_AttemptToKeepRouteToWaypoint();
             }
