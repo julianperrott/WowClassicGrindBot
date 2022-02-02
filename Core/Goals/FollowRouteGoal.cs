@@ -43,7 +43,7 @@ namespace Core.Goals
 
         #region IRouteProvider
 
-        public DateTime LastActive { get; set; }
+        public DateTime LastActive => navigation.LastActive;
 
         public List<Vector3> PathingRoute()
         {
@@ -52,12 +52,12 @@ namespace Core.Goals
 
         public bool HasNext()
         {
-            return navigation.RouteToWaypoint.Count != 0;
+            return navigation.HasNext();
         }
 
         public Vector3 NextPoint()
         {
-            return navigation.RouteToWaypoint.Peek();
+            return navigation.NextPoint();
         }
 
         #endregion
@@ -171,8 +171,6 @@ namespace Core.Goals
             MountIfRequired();
 
             RandomJump();
-
-            LastActive = DateTime.Now;
 
             wait.Update(1);
         }

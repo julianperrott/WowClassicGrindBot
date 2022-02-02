@@ -57,15 +57,15 @@ namespace Core.Goals
 
         public bool HasNext()
         {
-            return navigation.RouteToWaypoint.Count != 0;
+            return navigation.HasNext();
         }
 
         public Vector3 NextPoint()
         {
-            return navigation.RouteToWaypoint.Peek();
+            return navigation.NextPoint();
         }
 
-        public DateTime LastActive { get; set; } = DateTime.Now;
+        public DateTime LastActive => navigation.LastActive;
 
         #endregion
 
@@ -164,8 +164,6 @@ namespace Core.Goals
                 await navigation.Update();
 
             MountIfRequired();
-
-            LastActive = DateTime.Now;
 
             wait.Update(1);
         }
