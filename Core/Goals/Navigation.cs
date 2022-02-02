@@ -241,8 +241,37 @@ namespace Core.Goals
             return true;
         }
 
+        private void V1_AttemptToKeepRouteToWaypoint()
+        {
+            float totalDistance = TotalRoute.Zip(TotalRoute.Skip(1), VectorExt.DistanceXY).Sum();
+            if (totalDistance > MaxDistance / 2)
+            {
+                var location = playerReader.PlayerLocation;
+                float distance = location.DistanceXYTo(RouteToWaypoint.Peek());
+                if (distance > 2 * MinDistanceMount)
+                {
+                    Log($"[{pather.GetType().Name}] distance from nearlest point is {distance}. Have to clear RouteToWaypoint.");
+                    RouteToWaypoint.Clear();
+                }
+                else
+                {
+                    Log($"[{pather.GetType().Name}] distance is close {distance}. Keep RouteToWaypoint.");
+                }
+            }
+            else
+            {
+                Log($"[{pather.GetType().Name}] total distance {totalDistance}<{MaxDistance / 2}. Have to clear RouteToWaypoint.");
+                RouteToWaypoint.Clear();
+            }
+        }
+
         public void Resume()
         {
+            if (pather is not RemotePathingAPIV3)
+            {
+                V1_AttemptToKeepRouteToWaypoint();
+            }
+
             var removed = 0;
             while (AdjustNextWaypointPointToClosest() && removed < 5) { removed++; };
             if (removed > 0)
@@ -253,7 +282,9 @@ namespace Core.Goals
 
         public void Stop()
         {
-            RouteToWaypoint.Clear();
+            if (pather is RemotePathingAPIV3)
+                RouteToWaypoint.Clear();
+
             ResetStuckParameters();
         }
 
