@@ -71,10 +71,7 @@ namespace Core
 
         public async Task<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
         {
-            if (targetMapId == 0)
-            {
-                targetMapId = map;
-            }
+            targetMapId = map;
 
             try
             {

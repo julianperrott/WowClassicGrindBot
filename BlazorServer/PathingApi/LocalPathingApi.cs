@@ -53,10 +53,7 @@ namespace BlazorServer
                 return new List<Vector3>();
             }
 
-            if (targetMapId == 0)
-            {
-                targetMapId = map;
-            }
+            targetMapId = map;
 
             var sw = new Stopwatch();
             sw.Start();
