@@ -16,6 +16,7 @@ namespace Core.Goals
             ApproachPathStart,
             FollowPath,
             MoveBackToPathStart,
+            Finished,
         }
 
         private PathState pathState;
@@ -159,7 +160,8 @@ namespace Core.Goals
                 input.TapJump("Drowning! Swim up");
             }
 
-            await navigation.Update();
+            if (pathState != PathState.Finished)
+                await navigation.Update();
 
             MountIfRequired();
 
@@ -219,6 +221,11 @@ namespace Core.Goals
 
                 if (OpenMerchantWindow())
                 {
+                    if (addonReader.BagReader.BagsFull)
+                    {
+                        LogWarn("There was no grey item to sell. Stuck here!");
+                    }
+
                     input.KeyPress(ConsoleKey.Escape, input.defaultKeyPress);
                     input.TapClearTarget();
                     wait.Update(1);
@@ -237,13 +244,17 @@ namespace Core.Goals
                         wait.Update(1);
                     }
 
+                    pathState++;
+
                     LogDebug("Reached the start point of the path.");
+                    stopMoving.Stop();
                 }
             }
             else if (pathState == PathState.MoveBackToPathStart)
             {
-                pathState = PathState.MoveBackToPathStart;
                 navigation.SimplifyRouteToWaypoint = true;
+                pathState++;
+                stopMoving.Stop();
             }
         }
 
