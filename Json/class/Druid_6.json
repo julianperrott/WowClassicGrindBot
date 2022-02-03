@@ -85,7 +85,7 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "5_NightElf_Vendor.json",
         "Cost": 19
       }

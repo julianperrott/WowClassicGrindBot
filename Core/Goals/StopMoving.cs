@@ -51,7 +51,6 @@ namespace Core.Goals
             if (Direction != playerReader.Direction)
             {
                 input.SetKeyState(input.TurnLeftKey, false, false, "");
-                Thread.Sleep(1);
                 input.SetKeyState(input.TurnRightKey, false, false, "StopTurn");
                 Thread.Sleep(1);
             }

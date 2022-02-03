@@ -49,6 +49,8 @@ function DataToColor:RegisterEvents()
     DataToColor:RegisterEvent('GOSSIP_SHOW', 'OnGossipShow')
     DataToColor:RegisterEvent('SPELLS_CHANGED', 'OnSpellsChanged')
     DataToColor:RegisterEvent('ACTIONBAR_SLOT_CHANGED', 'ActionbarSlotChanged')
+    DataToColor:RegisterEvent('CORPSE_IN_RANGE', 'CorpseInRangeEvent')
+    DataToColor:RegisterEvent('CORPSE_OUT_OF_RANGE', 'CorpseOutOfRangeEvent')
 end
 
 function DataToColor:OnUIErrorMessage(event, messageType, message)
@@ -271,6 +273,14 @@ function DataToColor:ActionbarSlotChanged(event, slot)
     if slot and HasAction(slot) then
         DataToColor.stack:push(DataToColor.actionBarCostQueue, slot)
     end
+end
+
+function DataToColor:CorpseInRangeEvent(event)
+    DataToColor.corpseInRange = 1
+end
+
+function DataToColor:CorpseOutOfRangeEvent(event)
+    DataToColor.corpseInRange = 0
 end
 
 DataToColor.playerInteractIterator = 0

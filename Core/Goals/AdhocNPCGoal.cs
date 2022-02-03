@@ -11,93 +11,88 @@ namespace Core.Goals
 {
     public class AdhocNPCGoal : GoapGoal, IRouteProvider
     {
-        enum PathState
+        private enum PathState
         {
-            MoveToPathStart,
-            MovePathFile,
+            ApproachPathStart,
+            FollowPath,
             MoveBackToPathStart,
+            Finished,
         }
 
         private PathState pathState;
 
+        private readonly bool debug = false;
+
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
-
+        private readonly KeyAction key;
+        private readonly Wait wait;
         private readonly AddonReader addonReader;
+        private readonly Navigation navigation;
         private readonly PlayerReader playerReader;
-        private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
-        private readonly StuckDetector stuckDetector;
-        private readonly ClassConfiguration classConfiguration;
+        private readonly ClassConfiguration classConfig;
         private readonly NpcNameTargeting npcNameTargeting;
         private readonly IBlacklist blacklist;
-        private readonly IPPather pather;
         private readonly MountHandler mountHandler;
 
-        private readonly Wait wait;
         private readonly ExecGameCommand execGameCommand;
         private readonly GossipReader gossipReader;
-        private readonly KeyAction key;
 
         private readonly int GossipTimeout = 5000;
 
         private bool shouldMount;
 
-        private readonly Navigation navigation;
+        public override string Name => Keys.Count == 0 ? base.Name : $"{base.Name} ({Keys[0].Name})";
+        public override float CostOfPerformingAction => key.Cost;
 
         #region IRouteProvider
 
-        public Stack<Vector3> PathingRoute()
+        public List<Vector3> PathingRoute()
         {
-            return navigation.RouteToWaypoint;
+            return navigation.TotalRoute;
         }
 
         public bool HasNext()
         {
-            return navigation.RouteToWaypoint.Count != 0;
+            return navigation.HasNext();
         }
 
         public Vector3 NextPoint()
         {
-            return navigation.RouteToWaypoint.Peek();
+            return navigation.NextPoint();
         }
 
-        public DateTime LastActive { get; set; } = DateTime.Now;
+        public DateTime LastActive => navigation.LastActive;
 
         #endregion
 
-        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, AddonReader addonReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler, Wait wait, ExecGameCommand exec)
+        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, KeyAction key, Wait wait, AddonReader addonReader, Navigation navigation, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, ClassConfiguration classConfig, IBlacklist blacklist, MountHandler mountHandler, ExecGameCommand exec)
         {
             this.logger = logger;
             this.input = input;
+            this.key = key;
+            this.wait = wait;
             this.addonReader = addonReader;
             this.playerReader = addonReader.PlayerReader;
-            this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.npcNameTargeting = npcNameTargeting;
 
-            this.stuckDetector = stuckDetector;
-            this.classConfiguration = classConfiguration;
-            this.pather = pather;
-            this.key = key;
+            this.classConfig = classConfig;
+            
             this.blacklist = blacklist;
             this.mountHandler = mountHandler;
 
-            this.wait = wait;
             this.execGameCommand = exec;
             this.gossipReader = addonReader.GossipReader;
 
-            shouldMount = classConfiguration.UseMount;
-
-            navigation = new Navigation(logger, playerDirection, input, addonReader, wait, stopMoving, stuckDetector, pather, mountHandler, key.Path, false);
+            this.navigation = navigation;
             navigation.OnDestinationReached += Navigation_OnDestinationReached;
             navigation.OnWayPointReached += Navigation_OnWayPointReached;
 
-            //MinDistance = !(pather is RemotePathingAPIV3) ? MinDistanceMount : 10;
-
             if (key.InCombat == "false")
             {
-                AddPrecondition(GoapKey.incombat, false);
+                AddPrecondition(GoapKey.dangercombat, false);
             }
             else if (key.InCombat == "true")
             {
@@ -107,8 +102,6 @@ namespace Core.Goals
             this.Keys.Add(key);
         }
 
-        public override float CostOfPerformingAction => key.Cost;
-
         public override bool CheckIfActionCanRun()
         {
             return key.CanRun();
@@ -116,10 +109,9 @@ namespace Core.Goals
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
         {
-            if (sender != this)
+            if (e.Key == GoapKey.resume)
             {
-                shouldMount = true;
-                navigation.RouteToWaypoint.Clear();
+                navigation.ResetStuckParameters();
             }
         }
 
@@ -127,69 +119,65 @@ namespace Core.Goals
         {
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, false));
 
-            //TODO: 
-            pathState = PathState.MoveToPathStart;
+            input.TapClearTarget();
+            stopMoving.Stop();
 
+            var path = key.Path;
+            navigation.SetWayPoints(path);
 
-            return ValueTask.CompletedTask;
+            pathState = PathState.ApproachPathStart;
+
+            if (classConfig.UseMount &&
+                mountHandler.CanMount() && !shouldMount &&
+                mountHandler.ShouldMount(navigation.TotalRoute.Last()))
+            {
+                shouldMount = true;
+                Log("Mount up since desination far away");
+            }
+
+            return base.OnEnter();
+        }
+
+        public override ValueTask OnExit()
+        {
+            navigation.Stop();
+
+            return base.OnExit();
         }
 
         public override async ValueTask PerformAction()
         {
-            if (this.playerReader.Bits.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
+            if (this.playerReader.Bits.PlayerInCombat && this.classConfig.Mode != Mode.AttendedGather) { return; }
 
             if (playerReader.Bits.IsDrowning)
             {
-                StopDrowning();
+                input.TapJump("Drowning! Swim up");
             }
 
-            await navigation.Update();
+            if (pathState != PathState.Finished)
+                await navigation.Update();
 
-            // should mount
             MountIfRequired();
-
-            LastActive = DateTime.Now;
 
             wait.Update(1);
         }
 
+
         private void Navigation_OnWayPointReached(object? sender, EventArgs e)
         {
-            if (pathState is PathState.MovePathFile or PathState.MoveBackToPathStart)
+            if (pathState is PathState.ApproachPathStart)
             {
-                stopMoving.Stop();
+                LogDebug("Reached the start point of the path.");
+
+                navigation.SimplifyRouteToWaypoint = false;
             }
         }
 
         private async void Navigation_OnDestinationReached(object? sender, EventArgs e)
         {
-            // TODO: State machine for different navigation pathing
-            // 1 = from any where to Key.Path
-            // 2 = follow Key.Path to reach vendor
-            // 3 = reverse Key.Path to safe location
-
-            if (pathState == PathState.MoveToPathStart)
+            if (pathState == PathState.ApproachPathStart)
             {
-                LogWarn("Reached the start point of the path.");
-                stopMoving.Stop();
-
-                // we have reached the start of the path to the npc
-                navigation.RouteToWaypoint.Clear();
-
-                var path = key.Path.ToList();
-                path.Reverse();
-                path.ForEach(x => navigation.RouteToWaypoint.Push(x));
-                navigation.UpdatedRouteToWayPoint();
-
-                navigation.AllowReduceByDistance = false;
-                navigation.PreciseMovement = true;
-                stopMoving.Stop();
-
-                pathState++;
-            }
-            else if (pathState == PathState.MovePathFile)
-            {
-                LogWarn("Reached defined path end");
+                LogDebug("Reached defined path end");
                 stopMoving.Stop();
 
                 input.TapClearTarget();
@@ -200,14 +188,15 @@ namespace Core.Goals
                 bool foundVendor = npcNameTargeting.FindBy(CursorType.Vendor, CursorType.Repair, CursorType.Innkeeper);
                 if (!foundVendor)
                 {
-                    LogWarn("Not found target by cursor. Attempt to use macro to aquire target");
+                    LogWarn($"No target found by cursor({nameof(CursorType.Vendor)}, {nameof(CursorType.Repair)}, {nameof(CursorType.Innkeeper)})! Attempt to use macro to aquire target");
                     input.KeyPress(key.ConsoleKey, input.defaultKeyPress);
                 }
 
-                (bool targetTimeout, double targetElapsedMs) = wait.Until(1000, () => playerReader.HasTarget);
+                (bool targetTimeout, double targetElapsedMs) = wait.Until(400, () => playerReader.HasTarget);
                 if (targetTimeout)
                 {
                     LogWarn("No target found!");
+                    input.KeyPressSleep(input.TurnLeftKey, 250, "Turn left to find NPC");
                     return;
                 }
 
@@ -220,64 +209,55 @@ namespace Core.Goals
 
                 if (OpenMerchantWindow())
                 {
-                    input.KeyPress(ConsoleKey.Escape, input.defaultKeyPress);
-                    wait.Update(1);
+                    if (addonReader.BagReader.BagsFull)
+                    {
+                        LogWarn("There was no grey item to sell. Stuck here!");
+                    }
 
+                    input.KeyPress(ConsoleKey.Escape, input.defaultKeyPress);
                     input.TapClearTarget();
                     wait.Update(1);
 
-                    navigation.RouteToWaypoint.Clear();
-
                     var path = key.Path.ToList();
-                    path.ForEach(x => navigation.RouteToWaypoint.Push(x));
-                    navigation.UpdatedRouteToWayPoint();
-
-                    Log("Look at where i came from!");
-                    navigation.LookAtNextWayPoint();
-
-                    wait.Update(1);
+                    navigation.SetWayPoints(path);
 
                     pathState++;
 
-                    LogWarn("Go back reverse to the start point of the path.");
+                    LogDebug("Go back reverse to the start point of the path.");
+                    navigation.ResetStuckParameters();
 
-                    while (HasNext())
+                    // At this point the BagsFull is false
+                    // which mean it it would exit the Goal
+                    // instead keep it trapped to follow the route back
+                    while (navigation.HasWaypoint())
                     {
                         await navigation.Update();
                         wait.Update(1);
                     }
 
-                    LogWarn("Reached the start point of the path.");
+                    pathState++;
+
+                    LogDebug("Reached the start point of the path.");
+                    stopMoving.Stop();
                 }
             }
             else if (pathState == PathState.MoveBackToPathStart)
             {
-                pathState = PathState.MoveBackToPathStart;
-
-                navigation.PreciseMovement = false;
-                navigation.AllowReduceByDistance = true;
+                navigation.SimplifyRouteToWaypoint = true;
+                pathState++;
+                stopMoving.Stop();
             }
         }
 
-
-        private void StopDrowning()
-        {
-            input.TapJump("Drowning! Swim up");
-        }
 
         private void MountIfRequired()
         {
-            if (shouldMount && !mountHandler.IsMounted() && !playerReader.Bits.PlayerInCombat)
+            if (shouldMount && !mountHandler.IsMounted())
             {
                 shouldMount = false;
-
                 mountHandler.MountUp();
-
-                input.SetKeyState(input.ForwardKey, true, false, "Move forward");
             }
         }
-
-        public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
 
         private bool OpenMerchantWindow()
         {
@@ -291,7 +271,7 @@ namespace Core.Goals
                 (bool gossipEndTimeout, double gossipEndElapsedMs) = wait.Until(GossipTimeout, () => gossipReader.GossipEnd);
                 if (timeout)
                 {
-                    LogWarn($"Gossip too many options? {gossipEndElapsedMs}ms");
+                    LogWarn($"Gossip - {nameof(gossipReader.GossipEnd)} not fired after {gossipEndElapsedMs}ms");
                     return false;
                 }
                 else
@@ -335,9 +315,16 @@ namespace Core.Goals
             }
         }
 
+
         private void Log(string text)
         {
             logger.LogInformation($"[{nameof(AdhocNPCGoal)}]: {text}");
+        }
+
+        private void LogDebug(string text)
+        {
+            if(debug)
+                logger.LogDebug($"[{nameof(AdhocNPCGoal)}]: {text}");
         }
 
         private void LogWarn(string text)

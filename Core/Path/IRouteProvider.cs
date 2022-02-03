@@ -6,9 +6,9 @@ namespace Core
 {
     public interface IRouteProvider
     {
-        Stack<Vector3> PathingRoute();
+        List<Vector3> PathingRoute();
 
-        DateTime LastActive { get; set; }
+        DateTime LastActive { get; }
 
         bool HasNext();
 

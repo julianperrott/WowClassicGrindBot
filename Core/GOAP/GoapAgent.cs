@@ -109,7 +109,7 @@ namespace Core.GOAP
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, playerReader.WithInCombatRange),
                 new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
-                new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
+                new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.Bits.DeadStatus),
                 new KeyValuePair<GoapKey, object>(GoapKey.isswimming, playerReader.Bits.IsSwimming),
                 new KeyValuePair<GoapKey, object>(GoapKey.itemsbroken, playerReader.Bits.ItemsAreBroken),
                 new KeyValuePair<GoapKey, object>(GoapKey.producedcorpse, GoapAgentState.LastCombatKillCount > 0),

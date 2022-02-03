@@ -14,7 +14,7 @@
     <div class="card-header">
         <table width="100%">
             <tr>
-                <td>Route</td>
+                <td>Route @routeSymbol</td>
                 <td>
                     <div class="float-right">
                         [@addonReader.PlayerReader.XCoord.ToString("00.0000"),@addonReader.PlayerReader.YCoord.ToString("00.0000")] @(AreaName) (@addonReader.UIMapId.Value)
@@ -101,6 +101,8 @@
 
     public int margin = 10;
 
+    private MarkupString routeSymbol = new MarkupString();
+
     private MarkupString RouteToWaypointLines = new MarkupString();
     private MarkupString RouteToWaypointPoints = new MarkupString();
 
@@ -134,6 +136,7 @@
 
         UpdateZoneName();
         UpdateDeaths();
+        UpdateSymbol();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -254,6 +257,18 @@
             refreshTimer.Elapsed += OnTimerTick;
 
             refreshTimer.Start();
+        }
+
+        UpdateSymbol();
+    }
+
+    private void UpdateSymbol()
+    {
+        if (botController.ClassConfig != null)
+        {
+            routeSymbol = botController.ClassConfig.PathThereAndBack ? 
+            new MarkupString("<span style=\"font-size: 125%;\">⥹</span>") : 
+            new MarkupString("<span style=\"font-size: 125%;\">⟳</span>");
         }
     }
 

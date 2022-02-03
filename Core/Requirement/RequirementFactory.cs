@@ -96,6 +96,7 @@ namespace Core
                 // Equipment - Bag
                 { "Items Broken", ()=> playerReader.Bits.ItemsAreBroken },
                 { "BagFull", ()=> bagReader.BagsFull },
+                { "BagGreyItem", ()=> bagReader.AnyGreyItem },
                 { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
                 { "HasAmmo", ()=> playerReader.Bits.HasAmmo },
                 

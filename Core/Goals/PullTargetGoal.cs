@@ -80,7 +80,7 @@ namespace Core.Goals
             }
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             if (SecondsSincePullStarted > 7)
             {
@@ -88,7 +88,7 @@ namespace Core.Goals
                 input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, "Too much time to pull!");
                 pullStart = DateTime.Now;
 
-                return;
+                return ValueTask.CompletedTask;
             }
 
             SendActionEvent(new ActionEventArgs(GoapKey.fighting, true));
@@ -109,7 +109,7 @@ namespace Core.Goals
                     {
                         if (this.playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe)
                         {
-                            return;
+                            return ValueTask.CompletedTask;
                         }
                     }
 
@@ -117,12 +117,12 @@ namespace Core.Goals
                     wait.Update(1);
                     pullStart = DateTime.Now;
 
-                    return;
+                    return ValueTask.CompletedTask;
                 }
 
                 if (!stuckDetector.IsMoving())
                 {
-                    await stuckDetector.Unstick();
+                    stuckDetector.Unstick();
                 }
 
                 if (classConfiguration.Approach.GetCooldownRemaining() == 0)
@@ -137,6 +137,8 @@ namespace Core.Goals
             }
 
             wait.Update(1);
+
+            return ValueTask.CompletedTask;
         }
 
         protected bool HasPickedUpAnAdd

@@ -65,7 +65,8 @@ namespace Core.Goals
                 return true;
             }
 
-            if (!cancellationToken.IsCancellationRequested)
+            if (!cancellationToken.IsCancellationRequested &&
+                !input.IsKeyDown(input.TurnLeftKey) && !input.IsKeyDown(input.TurnRightKey))
             {
                 npcNameTargeting.ChangeNpcType(NpcNameToFind);
                 input.TapNearestTarget(source);

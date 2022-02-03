@@ -134,7 +134,7 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "10_Loch_Modan_Vendor.json",
         "Cost": 6
       }

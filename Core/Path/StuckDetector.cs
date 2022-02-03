@@ -5,6 +5,7 @@ using SharedLib.Extensions;
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Core
@@ -72,7 +73,7 @@ namespace Core
         public int actionDurationSeconds => (int)(LastReachedDestiationTimer.ElapsedMilliseconds / 1000);
         public int unstickSeconds => (int)(LastUnstickAttemptTimer.ElapsedMilliseconds / 1000);
 
-        public async ValueTask Unstick()
+        public void Unstick()
         {
             input.TapJump();
 
@@ -83,7 +84,7 @@ namespace Core
                 // stuck for 4 minutes
                 logger.LogInformation("Stuck for 4 minutes");
                 SendActionEvent(new ActionEventArgs(GoapKey.abort, true));
-                await Task.Delay(120000);
+                Thread.Sleep(120000);
             }
 
             if (unstickSeconds > 2)
@@ -101,7 +102,7 @@ namespace Core
                     logger.LogInformation($"Trying to unstick by backing up for {actionDuration}ms");
                     input.SetKeyState(input.BackwardKey, true, false, "StuckDetector_back_up");
                     input.SetKeyState(input.ForwardKey, false, false, "StuckDetector");
-                    await Task.Delay(actionDuration);
+                    Thread.Sleep(actionDuration);
                     input.SetKeyState(input.BackwardKey, false, false, "StuckDetector");
                 }
                 this.stopMoving?.Stop();
@@ -112,14 +113,14 @@ namespace Core
                 var turnDuration = random.Next(0, 800) + 200;
                 logger.LogInformation($"Trying to unstick by turning for {turnDuration}ms");
                 input.SetKeyState(key, true, false, "StuckDetector");
-                await Task.Delay(turnDuration);
+                Thread.Sleep(turnDuration);
                 input.SetKeyState(key, false, false, "StuckDetector");
 
                 // Move forward
                 var strafeDuration = random.Next(0, 2000) + actionDurationSeconds;
                 logger.LogInformation($"Trying to unstick by moving forward after turning for {strafeDuration}ms");
                 input.SetKeyState(input.ForwardKey, true, false, "StuckDetector");
-                await Task.Delay(strafeDuration);
+                Thread.Sleep(strafeDuration);
 
                 input.TapJump();
 

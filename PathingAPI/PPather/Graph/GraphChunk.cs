@@ -150,6 +150,9 @@ namespace PatherPath.Graph
             int n_steps = 0;
             try
             {
+                if (!System.IO.Directory.Exists(filenamebin) || !System.IO.File.Exists(filenamebin))
+                    return false;
+
                 stream = System.IO.File.OpenRead(filenamebin);
                 if (stream != null)
                 {

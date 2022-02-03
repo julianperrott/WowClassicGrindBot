@@ -28,60 +28,54 @@ namespace BlazorServer
             this.service = service;
         }
 
-        public async Task DrawLines(List<LineArgs> lineArgs)
+        public ValueTask DrawLines(List<LineArgs> lineArgs)
         {
-            await Task.Delay(0);
+            return ValueTask.CompletedTask;
         }
 
-        public async Task DrawLines()
+        public ValueTask DrawLines()
         {
-            await Task.Delay(0);
+            return ValueTask.CompletedTask;
         }
 
-        public async Task DrawSphere(SphereArgs args)
+        public ValueTask DrawSphere(SphereArgs args)
         {
-            await Task.Delay(0);
+            return ValueTask.CompletedTask;
         }
 
-        public async Task<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
+        public ValueTask<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
         {
             if (!Enabled)
             {
                 logger.LogWarning($"Pathing is disabled, please check the messages when the bot started.");
-                return new List<Vector3>();
+                return new ValueTask<List<Vector3>>();
             }
 
-            if (targetMapId == 0)
-            {
-                targetMapId = map;
-            }
-
-            await Task.Delay(0);
+            targetMapId = map;
 
             var sw = new Stopwatch();
             sw.Start();
 
-            service.SetLocations(service.GetWorldLocation(map, (float)fromPoint.X, (float)fromPoint.Y), service.GetWorldLocation(targetMapId, (float)toPoint.X, (float)toPoint.Y));
+            service.SetLocations(service.GetWorldLocation(map, fromPoint.X, fromPoint.Y, fromPoint.Z), service.GetWorldLocation(targetMapId, toPoint.X, toPoint.Y));
             var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star_With_Model_Avoidance);
 
             if (path == null)
             {
-                logger.LogWarning($"LocalPathingApi: Failed to find a path from {fromPoint} to {toPoint}");
-                return new List<Vector3>();
+                logger.LogWarning($"[{nameof(LocalPathingApi)}]: Failed to find a path from {fromPoint} to {toPoint}");
+                return new ValueTask<List<Vector3>>();
             }
             else
             {
-                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} took {sw.ElapsedMilliseconds} ms.");
+                logger.LogInformation($"[{nameof(LocalPathingApi)}]: Finding route from {fromPoint} map {map} to {toPoint} took {sw.ElapsedMilliseconds} ms.");
                 service.Save();
             }
 
             var worldLocations = path.locations.Select(s => service.ToMapAreaSpot(s.X, s.Y, s.Z, map));
-
             var result = worldLocations.Select(l => new Vector3(l.X, l.Y, l.Z)).ToList();
-            return result;
+            return new ValueTask<List<Vector3>>(result);
         }
 
-        public Task<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
+        public ValueTask<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
         {
             return FindRoute(addonReader.UIMapId.Value, addonReader.PlayerReader.PlayerLocation, destination);
         }
@@ -91,8 +85,6 @@ namespace BlazorServer
             var mpqFiles = MPQTriangleSupplier.GetArchiveNames(DataConfig.Load(), s => logger.LogInformation(s));
 
             var countOfMPQFiles = mpqFiles.Where(f => File.Exists(f)).Count();
-            //countOfMPQFiles = 0;
-
             if (countOfMPQFiles == 0)
             {
                 logger.LogWarning("Some of these MPQ files should exist!");

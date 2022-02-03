@@ -977,6 +977,7 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | `"Has Pet"` | The player's pet is alive |
 | `"Pet Happy"` | Pet happienss is green |
 | `"BagFull"` | Inventory is full |
+| `"BagGreyItem"` | Indicates that there are at least one Grey Quality level item. |
 | `"Items Broken"` | Has any broken(red) worn item |
 | `"HasRangedWeapon"` | Has equipped ranged weapon (wand/crossbow/bow/gun) |
 | `"HasAmmo"` | AmmoSlot has equipped ammo and count is greater than zero |

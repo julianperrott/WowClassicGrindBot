@@ -18,7 +18,6 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
         private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
-        private readonly Wait wait;
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
         private readonly IPPather pather;
@@ -28,140 +27,123 @@ namespace Core.Goals
         private readonly int MinDistanceMount = 15;
         private readonly int MaxDistance = 200;
 
-        private bool firstLoad = true;
-        private bool useClassConfigRule;
+        private float AvgDistance;
         private float lastDistance = float.MaxValue;
 
-        private readonly List<Vector3> routePoints;
-        private readonly Stack<Vector3> wayPoints = new();
-        public Stack<Vector3> RouteToWaypoint { private init; get; } = new();
+        private readonly float minAngleToTurn = MathF.PI / 35;          // 5.14 degree
+        private readonly float minAngleToStopBeforeTurn = MathF.PI / 3; // 60 degree
 
-        private DateTime LastReset = DateTime.Now;
-        public DateTime LastActive { get; set; }
+        private readonly Stack<Vector3> wayPoints = new();
+        private readonly Stack<Vector3> routeToNextWaypoint = new();
+
+        public List<Vector3> TotalRoute { private init; get; } = new();
+
+        public DateTime LastActive { get; private set; }
 
         public event EventHandler? OnWayPointReached;
         public event EventHandler? OnDestinationReached;
 
-        public bool PreciseMovement { get; set; }
-        public bool AllowReduceByDistance { get; set; } = true;
+        public bool SimplifyRouteToWaypoint { get; set; } = true;
 
-        public Navigation(ILogger logger, IPlayerDirection playerDirection, ConfigurableInput input, AddonReader addonReader, Wait wait, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather, MountHandler mountHandler, List<Vector3> points, bool useClassConfigRule)
+        public Navigation(ILogger logger, IPlayerDirection playerDirection, ConfigurableInput input, AddonReader addonReader, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather, MountHandler mountHandler)
         {
             this.logger = logger;
             this.playerDirection = playerDirection;
             this.input = input;
             this.addonReader = addonReader;
             playerReader = addonReader.PlayerReader;
-            this.wait = wait;
             this.stopMoving = stopMoving;
             this.stuckDetector = stuckDetector;
             this.pather = pather;
             this.mountHandler = mountHandler;
 
-            routePoints = points;
-            this.useClassConfigRule = useClassConfigRule;
-
-            MinDistance = pather is not RemotePathingAPIV3 ? MinDistanceMount : 10;
+            AvgDistance = MinDistance;
         }
 
         public async ValueTask Update()
         {
-            if (RouteToWaypoint.Count == 0)
+            if (wayPoints.Count == 0 && routeToNextWaypoint.Count == 0)
             {
-                Log("Trying to path a new route.");
-
-                // recalculate next waypoint
-                var pointsRemoved = 0;
-                while (AdjustNextPointToClosest() && pointsRemoved < 5) { pointsRemoved++; };
-
-                await RefillRouteToNextWaypoint(true);
-
-                if (RouteToWaypoint.Count == 0)
-                {
-                    logger.LogError("No path found!");
-                }
+                OnDestinationReached?.Invoke(this, EventArgs.Empty);
+                return;
             }
-            else
+
+            if (routeToNextWaypoint.Count == 0)
             {
-                var playerLocation = playerReader.PlayerLocation;
-                var distanceToRoute = playerLocation.DistanceXYTo(RouteToWaypoint.Peek());
-                if (RouteToWaypoint.Count < 1 && distanceToRoute > MaxDistance)
+                await RefillRouteToNextWaypoint(false);
+
+                if (routeToNextWaypoint.Count == 0)
                 {
-                    logger.LogError($"No route To Waypoint or too far {distanceToRoute} > {MaxDistance}");
-                    RouteToWaypoint.Pop();
+                    LogWarn("No RouteToWaypoint available!");
+                    stopMoving.Stop();
                     return;
                 }
-
-                input.SetKeyState(input.ForwardKey, true, false);
             }
 
+            LastActive = DateTime.Now;
+            input.SetKeyState(input.ForwardKey, true, false);
 
             // main loop
-
             var location = playerReader.PlayerLocation;
-            var distance = location.DistanceXYTo(RouteToWaypoint.Peek());
-            var heading = DirectionCalculator.CalculateHeading(location, RouteToWaypoint.Peek());
+            var distance = location.DistanceXYTo(routeToNextWaypoint.Peek());
+            var heading = DirectionCalculator.CalculateHeading(location, routeToNextWaypoint.Peek());
 
-            if (distance < PointReachedDistance(MinDistance))
+            if (distance < ReachedDistance(MinDistance))
             {
-                LogDebug("Move to next point");
-
-                if (RouteToWaypoint.Count > 0 && RouteToWaypoint.Peek().Z != 0 && RouteToWaypoint.Peek().Z != location.Z)
+                if (routeToNextWaypoint.Count > 0)
                 {
-                    playerReader.ZCoord = RouteToWaypoint.Peek().Z;
-                    LogDebug($"Update PlayerLocation.Z = {playerReader.ZCoord}");
-                }
+                    if (routeToNextWaypoint.Peek().Z != 0 && routeToNextWaypoint.Peek().Z != location.Z)
+                    {
+                        playerReader.ZCoord = routeToNextWaypoint.Peek().Z;
+                        LogDebug($"Update PlayerLocation.Z = {playerReader.ZCoord}");
+                    }
 
-                OnWayPointReached?.Invoke(this, EventArgs.Empty);
-
-                if (RouteToWaypoint.Count > 0)
-                {
-                    if (AllowReduceByDistance)
-                        ReduceRouteByDistance(MinDistance);
+                    if (SimplifyRouteToWaypoint)
+                        ReduceByDistance(MinDistance);
                     else
-                        RouteToWaypoint.Pop();
+                        routeToNextWaypoint.Pop();
+
+                    lastDistance = float.MaxValue;
+                    UpdateTotalRoute();
                 }
 
-                if (RouteToWaypoint.Count == 0)
+                if (routeToNextWaypoint.Count == 0)
                 {
                     if (wayPoints.Count > 0)
                     {
-                        wayPoints.Pop();
+                        routeToNextWaypoint.Push(wayPoints.Pop());
+                        stuckDetector.SetTargetLocation(routeToNextWaypoint.Peek());
+                        UpdateTotalRoute();
                     }
 
-                    OnDestinationReached?.Invoke(this, EventArgs.Empty);
-                    return;
+                    LogDebug($"Move to next wayPoint! Remains: {wayPoints.Count} -- distance: {distance}");
+                    OnWayPointReached?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    stuckDetector.SetTargetLocation(RouteToWaypoint.Peek());
+                    stuckDetector.SetTargetLocation(routeToNextWaypoint.Peek());
 
-                    heading = DirectionCalculator.CalculateHeading(location, RouteToWaypoint.Peek());
+                    heading = DirectionCalculator.CalculateHeading(location, routeToNextWaypoint.Peek());
                     AdjustHeading(heading, "Turn to next point");
+                    return;
                 }
             }
-            else if (RouteToWaypoint.Count > 0)
+
+            if (routeToNextWaypoint.Count > 0)
             {
                 if (!stuckDetector.IsGettingCloser())
                 {
                     if (lastDistance < distance)
                     {
-                        if (!PreciseMovement)
-                        {
-                            AdjustNextPointToClosest();
-                        }
-
-                        AdjustHeading(heading, "Further away");
+                        // TODO: test this
+                        AdjustNextWaypointPointToClosest();
+                        AdjustHeading(heading, "unstuck Further away");
                     }
-
-                    // stuck so jump
-                    input.SetKeyState(input.ForwardKey, true, false, "FollowRouteAction 2");
-                    wait.Update(1);
 
                     if (HasBeenActiveRecently())
                     {
-                        await stuckDetector.Unstick();
-                        distance = location.DistanceXYTo(RouteToWaypoint.Peek());
+                        stuckDetector.Unstick();
+                        distance = location.DistanceXYTo(routeToNextWaypoint.Peek());
                     }
                     else
                     {
@@ -175,40 +157,132 @@ namespace Core.Goals
             }
 
             lastDistance = distance;
-
-            LastActive = DateTime.Now;
         }
 
-        public void UpdatedRouteToWayPoint()
+        public void Resume()
+        {
+            if (pather is not RemotePathingAPIV3 && routeToNextWaypoint.Count > 0)
+            {
+                V1_AttemptToKeepRouteToWaypoint();
+            }
+
+            var removed = 0;
+            while (AdjustNextWaypointPointToClosest() && removed < 5) { removed++; };
+            if (removed > 0)
+            {
+                LogDebug($"Resume: removed {removed} waypoint!");
+            }
+        }
+
+        public void Stop()
+        {
+            if (pather is RemotePathingAPIV3)
+                routeToNextWaypoint.Clear();
+
+            ResetStuckParameters();
+        }
+
+        public bool HasWaypoint()
+        {
+            return wayPoints.Count != 0;
+        }
+
+        public bool HasNext()
+        {
+            return routeToNextWaypoint.Count != 0;
+        }
+
+        public Vector3 NextPoint()
+        {
+            return routeToNextWaypoint.Peek();
+        }
+
+        public async void SetWayPoints(List<Vector3> points)
         {
             wayPoints.Clear();
-            stuckDetector.SetTargetLocation(RouteToWaypoint.Peek());
+            routeToNextWaypoint.Clear();
+
+            points.Reverse();
+            points.ForEach(x => wayPoints.Push(x));
+
+            if (wayPoints.Count > 1)
+            {
+                float sum = 0;
+                sum = points.Zip(points.Skip(1), (a, b) => a.DistanceXYTo(b)).Sum();
+                AvgDistance = sum / points.Count;
+            }
+            else
+            {
+                AvgDistance = MinDistance;
+            }
+            LogDebug($"SetWayPoints: Added {wayPoints.Count} - AvgDistance: {AvgDistance}");
+
+            await RefillRouteToNextWaypoint(false);
+
+            UpdateTotalRoute();
         }
 
-        public void LookAtNextWayPoint()
+        public void ResetStuckParameters()
         {
+            stuckDetector.ResetStuckParameters();
+        }
+
+        public async ValueTask RefillRouteToNextWaypoint(bool forceUsePathing)
+        {
+            routeToNextWaypoint.Clear();
+
             var location = playerReader.PlayerLocation;
-            var heading = DirectionCalculator.CalculateHeading(location, RouteToWaypoint.Peek());
-            AdjustHeading(heading, "LookAtNextWayPoint");
+            var distance = location.DistanceXYTo(wayPoints.Peek());
+            if (forceUsePathing || (distance > (AvgDistance + MinDistance)) || distance > MaxDistance)
+            {
+                Log($"RefillRouteToNextWaypoint - {distance} - ask pathfinder {location} -> {wayPoints.Peek()}");
+
+                stopMoving.Stop();
+                var path = await pather.FindRouteTo(addonReader, wayPoints.Peek());
+                if (path.Count == 0)
+                {
+                    LogWarn($"Unable to find path from {location} -> {wayPoints.Peek()}. Character may stuck!");
+                }
+
+                path.Reverse();
+                path.ForEach(p => routeToNextWaypoint.Push(p));
+
+                if (SimplifyRouteToWaypoint)
+                    SimplyfyRouteToWaypoint();
+
+                if (routeToNextWaypoint.Count == 0)
+                {
+                    routeToNextWaypoint.Push(wayPoints.Peek());
+                    LogDebug($"RefillRouteToNextWaypoint -- WayPoint reached! {wayPoints.Count}");
+                }
+            }
+            else
+            {
+                routeToNextWaypoint.Push(wayPoints.Peek());
+
+                var heading = DirectionCalculator.CalculateHeading(location, wayPoints.Peek());
+                AdjustHeading(heading, "Reached waypoint");
+            }
+
+            stuckDetector.SetTargetLocation(routeToNextWaypoint.Peek());
         }
 
 
-
-        private int PointReachedDistance(int distance)
+        private int ReachedDistance(int distance)
         {
             return mountHandler.IsMounted() ? MinDistanceMount : distance;
         }
 
-        private void ReduceRouteByDistance(int minDistance)
+        private void ReduceByDistance(int minDistance)
         {
             var location = playerReader.PlayerLocation;
-            var distance = location.DistanceXYTo(RouteToWaypoint.Peek());
-            while (distance < PointReachedDistance(minDistance - 1) && RouteToWaypoint.Count > 0)
+            var distance = location.DistanceXYTo(routeToNextWaypoint.Peek());
+            while (distance < ReachedDistance(minDistance) && routeToNextWaypoint.Count > 0)
             {
-                RouteToWaypoint.Pop();
-                if (RouteToWaypoint.Count > 0)
+                routeToNextWaypoint.Pop();
+                if (routeToNextWaypoint.Count > 0)
                 {
-                    distance = location.DistanceXYTo(RouteToWaypoint.Peek());
+                    distance = location.DistanceXYTo(routeToNextWaypoint.Peek());
                 }
             }
         }
@@ -218,20 +292,19 @@ namespace Core.Goals
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
-            var wanderAngle = 0.3;
-            if (input.ClassConfig.Mode != Mode.AttendedGather)
-            {
-                wanderAngle = 0.05;
-            }
-
             var diff = MathF.Min(diff1, diff2);
-            if (diff > wanderAngle)
+            if (diff > minAngleToTurn)
             {
-                playerDirection.SetDirection(heading, RouteToWaypoint.Peek(), source, PreciseMovement ? 0 : MinDistance);
+                if (diff > minAngleToStopBeforeTurn)
+                {
+                    stopMoving.Stop();
+                }
+
+                playerDirection.SetDirection(heading, routeToNextWaypoint.Peek(), source, MinDistance);
             }
         }
 
-        private bool AdjustNextPointToClosest()
+        private bool AdjustNextWaypointPointToClosest()
         {
             if (wayPoints.Count < 2) { return false; }
 
@@ -250,106 +323,51 @@ namespace Core.Goals
             return true;
         }
 
-        public async ValueTask RefillRouteToNextWaypoint(bool forceUsePathing)
+        private void V1_AttemptToKeepRouteToWaypoint()
         {
-            LastReset = DateTime.Now;
-
-            if (wayPoints.Count == 0)
+            float totalDistance = TotalRoute.Zip(TotalRoute.Skip(1), VectorExt.DistanceXY).Sum();
+            if (totalDistance > MaxDistance / 2)
             {
-                RefillWaypoints();
-            }
-
-            RouteToWaypoint.Clear();
-
-            var location = playerReader.PlayerLocation;
-            var heading = DirectionCalculator.CalculateHeading(location, wayPoints.Peek());
-            playerDirection.SetDirection(heading, wayPoints.Peek(), "Reached waypoint");
-
-            //Create path back to route
-            var distance = location.DistanceXYTo(wayPoints.Peek());
-            if (forceUsePathing || distance > MaxDistance)
-            {
-                stopMoving.Stop();
-                var path = await pather.FindRouteTo(addonReader, wayPoints.Peek());
-                path.Reverse();
-                path.ForEach(p => RouteToWaypoint.Push(p));
-            }
-
-            SimplyfyRouteToWaypoint();
-            if (RouteToWaypoint.Count == 0)
-            {
-                RouteToWaypoint.Push(wayPoints.Peek());
-            }
-
-            stuckDetector.SetTargetLocation(RouteToWaypoint.Peek());
-        }
-
-        private void RefillWaypoints(bool findClosest = false)
-        {
-            LogDebug($"RefillWaypoints firstLoad:{firstLoad} - findClosest:{findClosest} - ThereAndBack:{input.ClassConfig.PathThereAndBack}");
-
-            if (firstLoad)
-            {
-                firstLoad = false;
-                var closestPoint = routePoints.OrderBy(p => playerReader.PlayerLocation.DistanceXYTo(p)).FirstOrDefault();
-
-                for (int i = 0; i < routePoints.Count; i++)
+                var location = playerReader.PlayerLocation;
+                float distance = location.DistanceXYTo(routeToNextWaypoint.Peek());
+                if (distance > 2 * MinDistanceMount)
                 {
-                    wayPoints.Push(routePoints[i]);
-                    if (routePoints[i] == closestPoint) { break; }
-                }
-            }
-            else
-            {
-                RefillWayPointsBasedonClassConfigRule();
-                if (findClosest)
-                {
-                    AdjustNextPointToClosest();
-                }
-            }
-        }
-
-        private void RefillWayPointsBasedonClassConfigRule()
-        {
-            if (useClassConfigRule && input.ClassConfig.PathThereAndBack)
-            {
-                var player = playerReader.PlayerLocation;
-                var distanceToFirst = player.DistanceXYTo(routePoints[0]);
-                var distanceToLast = player.DistanceXYTo(routePoints[^1]);
-
-                if (distanceToLast > distanceToFirst)
-                {
-                    var reversed = routePoints.ToList();
-                    reversed.Reverse();
-                    reversed.ForEach(p => wayPoints.Push(p));
+                    Log($"[{pather.GetType().Name}] distance from nearlest point is {distance}. Have to clear RouteToWaypoint.");
+                    routeToNextWaypoint.Clear();
                 }
                 else
                 {
-                    routePoints.ForEach(p => wayPoints.Push(p));
+                    Log($"[{pather.GetType().Name}] distance is close {distance}. Keep RouteToWaypoint.");
                 }
             }
             else
             {
-                var reversed = routePoints.ToList();
-                reversed.Reverse();
-                reversed.ForEach(p => wayPoints.Push(p));
+                Log($"[{pather.GetType().Name}] total distance {totalDistance}<{MaxDistance / 2}. Have to clear RouteToWaypoint.");
+                routeToNextWaypoint.Clear();
             }
         }
 
         private void SimplyfyRouteToWaypoint()
         {
-            var simple = PathSimplify.Simplify(RouteToWaypoint.ToArray(), 0.05f);
+            var simple = PathSimplify.Simplify(routeToNextWaypoint.ToArray(), pather is RemotePathingAPIV3 ? 0.05f : 0.1f);
             simple.Reverse();
 
-            RouteToWaypoint.Clear();
-            simple.ForEach((x) => RouteToWaypoint.Push(x));
+            routeToNextWaypoint.Clear();
+            simple.ForEach((x) => routeToNextWaypoint.Push(x));
         }
 
+        private void UpdateTotalRoute()
+        {
+            TotalRoute.Clear();
+            TotalRoute.AddRange(routeToNextWaypoint);
+            TotalRoute.AddRange(wayPoints);
+        }
 
         private bool HasBeenActiveRecently()
         {
             return (DateTime.Now - LastActive).TotalSeconds < 2;
         }
+
 
         private void LogDebug(string text)
         {
@@ -364,5 +382,9 @@ namespace Core.Goals
             logger.LogInformation($"{nameof(Navigation)}: {text}");
         }
 
+        private void LogWarn(string text)
+        {
+            logger.LogWarning($"{nameof(Navigation)}: {text}");
+        }
     }
 }
