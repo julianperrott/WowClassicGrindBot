@@ -192,7 +192,7 @@ namespace Core.Goals
                 !playerReader.Bits.TargetIsDead;
 
             bool found = false;
-            while (!found && !playerReader.Bits.PlayerInCombat && !targetFinderCts.IsCancellationRequested)
+            while (!found && !targetFinderCts.IsCancellationRequested)
             {
                 if (classConfig.TargetNearestTarget.MillisecondsSinceLastClick > random.Next(minMs, maxMs) &&
                     !input.IsKeyDown(input.TurnLeftKey) && !input.IsKeyDown(input.TurnRightKey))
