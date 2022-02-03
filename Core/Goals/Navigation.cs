@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -139,7 +139,7 @@ namespace Core.Goals
 
                     if (HasBeenActiveRecently())
                     {
-                        await stuckDetector.Unstick();
+                        stuckDetector.Unstick();
                         distance = location.DistanceXYTo(routeToNextWaypoint.Peek());
                     }
                     else

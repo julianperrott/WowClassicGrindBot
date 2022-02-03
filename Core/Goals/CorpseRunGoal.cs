@@ -85,7 +85,7 @@ namespace Core.Goals
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
-                    await stuckDetector.Unstick();
+                    stuckDetector.Unstick();
                 }
                 else
                 {
