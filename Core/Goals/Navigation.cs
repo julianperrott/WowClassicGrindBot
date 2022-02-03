@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -29,6 +29,9 @@ namespace Core.Goals
 
         private float AvgDistance;
         private float lastDistance = float.MaxValue;
+
+        private readonly float minAngleToTurn = MathF.PI / 35;          // 5.14 degree
+        private readonly float minAngleToStopBeforeTurn = MathF.PI / 3; // 60 degree
 
         private readonly Stack<Vector3> wayPoints = new();
         private readonly Stack<Vector3> routeToNextWaypoint = new();
@@ -289,12 +292,10 @@ namespace Core.Goals
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
-            var minAngle = MathF.PI / 20; // 9 degree
-
             var diff = MathF.Min(diff1, diff2);
-            if (diff > minAngle)
+            if (diff > minAngleToTurn)
             {
-                if (diff > Math.PI / 4) // stop when angle greater than 60 degree -- 3 = good 60 degree | 4 = works well 45 degree
+                if (diff > minAngleToStopBeforeTurn)
                 {
                     stopMoving.Stop();
                 }
