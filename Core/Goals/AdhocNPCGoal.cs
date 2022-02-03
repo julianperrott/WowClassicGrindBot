@@ -25,28 +25,23 @@ namespace Core.Goals
 
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
-
+        private readonly KeyAction key;
+        private readonly Wait wait;
         private readonly AddonReader addonReader;
+        private readonly Navigation navigation;
         private readonly PlayerReader playerReader;
-        private readonly IPlayerDirection playerDirection;
         private readonly StopMoving stopMoving;
-        private readonly StuckDetector stuckDetector;
-        private readonly ClassConfiguration classConfiguration;
+        private readonly ClassConfiguration classConfig;
         private readonly NpcNameTargeting npcNameTargeting;
         private readonly IBlacklist blacklist;
-        private readonly IPPather pather;
         private readonly MountHandler mountHandler;
 
-        private readonly Wait wait;
         private readonly ExecGameCommand execGameCommand;
         private readonly GossipReader gossipReader;
-        private readonly KeyAction key;
 
         private readonly int GossipTimeout = 5000;
 
         private bool shouldMount;
-
-        private readonly Navigation navigation;
 
         #region IRouteProvider
 
@@ -69,28 +64,26 @@ namespace Core.Goals
 
         #endregion
 
-        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, AddonReader addonReader, IPlayerDirection playerDirection, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, StuckDetector stuckDetector, ClassConfiguration classConfiguration, IPPather pather, KeyAction key, IBlacklist blacklist, MountHandler mountHandler, Wait wait, ExecGameCommand exec)
+        public AdhocNPCGoal(ILogger logger, ConfigurableInput input, KeyAction key, Wait wait, AddonReader addonReader, Navigation navigation, StopMoving stopMoving, NpcNameTargeting npcNameTargeting, ClassConfiguration classConfig, IBlacklist blacklist, MountHandler mountHandler, ExecGameCommand exec)
         {
             this.logger = logger;
             this.input = input;
+            this.key = key;
+            this.wait = wait;
             this.addonReader = addonReader;
             this.playerReader = addonReader.PlayerReader;
-            this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
             this.npcNameTargeting = npcNameTargeting;
 
-            this.stuckDetector = stuckDetector;
-            this.classConfiguration = classConfiguration;
-            this.pather = pather;
-            this.key = key;
+            this.classConfig = classConfig;
+            
             this.blacklist = blacklist;
             this.mountHandler = mountHandler;
 
-            this.wait = wait;
             this.execGameCommand = exec;
             this.gossipReader = addonReader.GossipReader;
 
-            navigation = new Navigation(logger, playerDirection, input, addonReader, wait, stopMoving, stuckDetector, pather, mountHandler);
+            this.navigation = navigation;
             navigation.OnDestinationReached += Navigation_OnDestinationReached;
             navigation.OnWayPointReached += Navigation_OnWayPointReached;
 
@@ -133,7 +126,7 @@ namespace Core.Goals
 
             pathState = PathState.ApproachPathStart;
 
-            if (classConfiguration.UseMount &&
+            if (classConfig.UseMount &&
                 mountHandler.CanMount() && !shouldMount &&
                 mountHandler.ShouldMount(navigation.TotalRoute.Last()))
             {
@@ -153,7 +146,7 @@ namespace Core.Goals
 
         public override async ValueTask PerformAction()
         {
-            if (this.playerReader.Bits.PlayerInCombat && this.classConfiguration.Mode != Mode.AttendedGather) { return; }
+            if (this.playerReader.Bits.PlayerInCombat && this.classConfig.Mode != Mode.AttendedGather) { return; }
 
             if (playerReader.Bits.IsDrowning)
             {

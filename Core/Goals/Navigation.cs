@@ -18,7 +18,6 @@ namespace Core.Goals
         private readonly ConfigurableInput input;
         private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
-        private readonly Wait wait;
         private readonly StopMoving stopMoving;
         private readonly StuckDetector stuckDetector;
         private readonly IPPather pather;
@@ -43,14 +42,13 @@ namespace Core.Goals
 
         public bool SimplifyRouteToWaypoint { get; set; } = true;
 
-        public Navigation(ILogger logger, IPlayerDirection playerDirection, ConfigurableInput input, AddonReader addonReader, Wait wait, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather, MountHandler mountHandler)
+        public Navigation(ILogger logger, IPlayerDirection playerDirection, ConfigurableInput input, AddonReader addonReader, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather, MountHandler mountHandler)
         {
             this.logger = logger;
             this.playerDirection = playerDirection;
             this.input = input;
             this.addonReader = addonReader;
             playerReader = addonReader.PlayerReader;
-            this.wait = wait;
             this.stopMoving = stopMoving;
             this.stuckDetector = stuckDetector;
             this.pather = pather;

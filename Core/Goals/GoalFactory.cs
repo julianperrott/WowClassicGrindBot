@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using Core.GOAP;
 using System.Numerics;
-using System.Threading;
 
 namespace Core
 {
@@ -57,8 +56,11 @@ namespace Core
 
             var targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
 
-            var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader, playerDirection, pathPoints, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, mountHandler, targetFinder);
-            var walkToCorpseAction = new WalkToCorpseGoal(logger, input, wait, addonReader, playerDirection, stopMoving, stuckDetector, pather, mountHandler);
+            var followNav = new Navigation(logger, playerDirection, input, addonReader, stopMoving, stuckDetector, pather, mountHandler);
+            var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader, classConfig, pathPoints, followNav, mountHandler, npcNameFinder, targetFinder);
+
+            var corpseNav = new Navigation(logger, playerDirection, input, addonReader, stopMoving, stuckDetector, pather, mountHandler);
+            var walkToCorpseAction = new WalkToCorpseGoal(logger, input, wait, addonReader, corpseNav, stopMoving);
 
             availableActions.Clear();
 
@@ -147,7 +149,8 @@ namespace Core
 
                 foreach (var item in classConfig.NPC.Sequence)
                 {
-                    availableActions.Add(new AdhocNPCGoal(logger, input, addonReader, playerDirection, stopMoving, npcNameTargeting, stuckDetector, classConfig, pather, item, blacklist, mountHandler, wait, exec));
+                    var nav = new Navigation(logger, playerDirection, input, addonReader, stopMoving, stuckDetector, pather, mountHandler);
+                    availableActions.Add(new AdhocNPCGoal(logger, input, item, wait, addonReader, nav, stopMoving, npcNameTargeting, classConfig, blacklist, mountHandler, exec));
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 

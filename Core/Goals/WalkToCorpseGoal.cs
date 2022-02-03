@@ -19,12 +19,8 @@ namespace Core.Goals
 
         private readonly AddonReader addonReader;
         private readonly PlayerReader playerReader;
-        private readonly IPlayerDirection playerDirection;
-        private readonly StopMoving stopMoving;
-
-        private readonly StuckDetector stuckDetector;
-        private readonly IPPather pather;
         private readonly Navigation navigation;
+        private readonly StopMoving stopMoving;
 
         public List<Vector3> Deaths { get; private init; } = new();
 
@@ -51,7 +47,7 @@ namespace Core.Goals
 
         #endregion
 
-        public WalkToCorpseGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, IPlayerDirection playerDirection, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather, MountHandler mountHandler)
+        public WalkToCorpseGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, Navigation navigation, StopMoving stopMoving)
         {
             this.logger = logger;
             this.wait = wait;
@@ -59,13 +55,9 @@ namespace Core.Goals
 
             this.addonReader = addonReader;
             this.playerReader = addonReader.PlayerReader;
-            this.playerDirection = playerDirection;
             this.stopMoving = stopMoving;
 
-            this.stuckDetector = stuckDetector;
-            this.pather = pather;
-
-            navigation = new Navigation(logger, playerDirection, input, addonReader, wait, stopMoving, stuckDetector, pather, mountHandler);
+            this.navigation = navigation;
 
             AddPrecondition(GoapKey.isdead, true);
         }
