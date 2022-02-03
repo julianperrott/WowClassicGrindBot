@@ -26,12 +26,14 @@ namespace Core.Goals
         private readonly ClassConfiguration classConfig;
         private readonly MountHandler mountHandler;
         private readonly Navigation navigation;
+        private readonly List<Vector3> routePoints;
 
         private readonly TargetFinder targetFinder;
         private CancellationTokenSource? targetFinderCts;
         private Thread? targetFinderThread;
+        private readonly int minMs = 500, maxMs = 1000;
+        private readonly NpcNames NpcNameToFind = NpcNames.Enemy | NpcNames.Neutral;
 
-        private readonly List<Vector3> routePoints;
 
         private bool shouldMount;
 
@@ -75,6 +77,7 @@ namespace Core.Goals
 
             this.navigation = navigation;
             navigation.OnDestinationReached += Navigation_OnDestinationReached;
+            navigation.OnWayPointReached += Navigation_OnWayPointReached;
 
             if (classConfig.Mode != Mode.AttendedGather)
             {
@@ -160,8 +163,6 @@ namespace Core.Goals
 
             await navigation.Update();
 
-            MountIfRequired();
-
             RandomJump();
 
             wait.Update(1);
@@ -186,10 +187,18 @@ namespace Core.Goals
 
             Log("Start searching for target...");
 
+            Func<bool> validTarget = () =>
+                playerReader.HasTarget &&
+                !playerReader.Bits.TargetIsDead;
+
             bool found = false;
-            while (!found && !targetFinderCts.IsCancellationRequested)
+            while (!found && !playerReader.Bits.PlayerInCombat && !targetFinderCts.IsCancellationRequested)
             {
-                found = targetFinder.Search(nameof(FollowRouteGoal), targetFinderCts.Token);
+                if (classConfig.TargetNearestTarget.MillisecondsSinceLastClick > random.Next(minMs, maxMs) &&
+                    !input.IsKeyDown(input.TurnLeftKey) && !input.IsKeyDown(input.TurnRightKey))
+                {
+                    found = targetFinder.Search(NpcNameToFind, validTarget, nameof(FollowRouteGoal), targetFinderCts.Token);
+                }
                 wait.Update(1);
             }
 
@@ -240,6 +249,11 @@ namespace Core.Goals
         {
             LogDebug("Navigation_OnDestinationReached");
             RefillWaypoints(false);
+        }
+
+        private void Navigation_OnWayPointReached(object? sender, EventArgs e)
+        {
+            MountIfRequired();
         }
 
         public void RefillWaypoints(bool onlyClosest)
