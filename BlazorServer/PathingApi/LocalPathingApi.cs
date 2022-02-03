@@ -28,29 +28,27 @@ namespace BlazorServer
             this.service = service;
         }
 
-        public async Task DrawLines(List<LineArgs> lineArgs)
+        public ValueTask DrawLines(List<LineArgs> lineArgs)
         {
-            await ValueTask.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public async Task DrawLines()
+        public ValueTask DrawLines()
         {
-            await ValueTask.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public async Task DrawSphere(SphereArgs args)
+        public ValueTask DrawSphere(SphereArgs args)
         {
-            await ValueTask.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public async Task<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
+        public ValueTask<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
         {
-            await ValueTask.CompletedTask;
-
             if (!Enabled)
             {
                 logger.LogWarning($"Pathing is disabled, please check the messages when the bot started.");
-                return new List<Vector3>();
+                return new ValueTask<List<Vector3>>();
             }
 
             targetMapId = map;
@@ -64,7 +62,7 @@ namespace BlazorServer
             if (path == null)
             {
                 logger.LogWarning($"[{nameof(LocalPathingApi)}]: Failed to find a path from {fromPoint} to {toPoint}");
-                return new List<Vector3>();
+                return new ValueTask<List<Vector3>>();
             }
             else
             {
@@ -74,10 +72,10 @@ namespace BlazorServer
 
             var worldLocations = path.locations.Select(s => service.ToMapAreaSpot(s.X, s.Y, s.Z, map));
             var result = worldLocations.Select(l => new Vector3(l.X, l.Y, l.Z)).ToList();
-            return result;
+            return new ValueTask<List<Vector3>>(result);
         }
 
-        public Task<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
+        public ValueTask<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
         {
             return FindRoute(addonReader.UIMapId.Value, addonReader.PlayerReader.PlayerLocation, destination);
         }

@@ -33,7 +33,7 @@ namespace Core
             this.port = port;
         }
 
-        public async Task DrawLines(List<LineArgs> lineArgs)
+        public async ValueTask DrawLines(List<LineArgs> lineArgs)
         {
             this.lineArgs = lineArgs;
 
@@ -50,12 +50,12 @@ namespace Core
             }
         }
 
-        public async Task DrawLines()
+        public async ValueTask DrawLines()
         {
             await DrawLines(lineArgs);
         }
 
-        public async Task DrawSphere(SphereArgs args)
+        public async ValueTask DrawSphere(SphereArgs args)
         {
             using (var handler = new HttpClientHandler())
             {
@@ -69,7 +69,7 @@ namespace Core
             }
         }
 
-        public async Task<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
+        public async ValueTask<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
         {
             targetMapId = map;
 
@@ -100,9 +100,9 @@ namespace Core
             }
         }
 
-        public Task<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
+        public async ValueTask<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
         {
-            return FindRoute(addonReader.UIMapId.Value, addonReader.PlayerReader.PlayerLocation, destination);
+            return await FindRoute(addonReader.UIMapId.Value, addonReader.PlayerReader.PlayerLocation, destination);
         }
 
         public async Task<bool> PingServer()

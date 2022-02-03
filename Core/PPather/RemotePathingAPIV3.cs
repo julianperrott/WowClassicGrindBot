@@ -58,33 +58,31 @@ namespace Core
 
         #region old
 
-        public async Task DrawLines(List<LineArgs> lineArgs)
+        public ValueTask DrawLines(List<LineArgs> lineArgs)
         {
-            await ValueTask.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public async Task DrawLines()
+        public ValueTask DrawLines()
         {
-            await DrawLines(lineArgs);
+            return DrawLines(lineArgs);
         }
 
-        public async Task DrawSphere(SphereArgs args)
+        public ValueTask DrawSphere(SphereArgs args)
         {
-            await ValueTask.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-
-
-        public Task<List<Vector3>> FindRoute(int uiMapId, Vector3 fromPoint, Vector3 toPoint)
+        public ValueTask<List<Vector3>> FindRoute(int uiMapId, Vector3 fromPoint, Vector3 toPoint)
         {
-            throw new NotImplementedException();
+            return new ValueTask<List<Vector3>>();
         }
 
-        public async Task<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
+        public ValueTask<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
         {
             if (!Client.IsConnected)
             {
-                return new List<Vector3>();
+                return new ValueTask<List<Vector3>>();
             }
 
             int uiMapId = addonReader.UIMapId.Value;
@@ -93,15 +91,13 @@ namespace Core
 
             try
             {
-                await ValueTask.CompletedTask;
-
                 Vector3 start = worldMapAreaDB.GetWorldLocation(uiMapId, fromPoint, true);
                 Vector3 end = worldMapAreaDB.GetWorldLocation(uiMapId, toPoint, true);
 
                 var result = new List<Vector3>();
 
                 if (!worldMapAreaDB.TryGet(uiMapId, out WorldMapArea area))
-                    return result;
+                    return new ValueTask<List<Vector3>>(result);
 
                 // incase haven't asked a pathfinder for a route this value will be 0
                 // that case use the highest location
@@ -116,7 +112,7 @@ namespace Core
 
                 var path = Client.Send((byte)EMessageType.PATH, (area.MapID, PathRequestFlags.FIND_LOCATION | PathRequestFlags.CATMULLROM, start, end)).AsArray<Vector3>();
                 if (path.Length == 1 && path[0] == Vector3.Zero)
-                    return result;
+                    return new ValueTask<List<Vector3>>(result);
 
                 for (int i = 0; i < path.Length; i++)
                 {
@@ -139,13 +135,13 @@ namespace Core
                         logger.LogWarning($"Found route length is {path.Length}");
                 }
 
-                return result;
+                return new ValueTask<List<Vector3>>(result);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Finding route from {fromPoint} to {toPoint}");
                 Console.WriteLine(ex);
-                return new List<Vector3>();
+                return new ValueTask<List<Vector3>>();
             }
 
         }
