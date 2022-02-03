@@ -43,6 +43,9 @@ namespace Core.Goals
 
         private bool shouldMount;
 
+        public override string Name => Keys.Count == 0 ? base.Name : $"{base.Name} ({Keys[0].Name})";
+        public override float CostOfPerformingAction => key.Cost;
+
         #region IRouteProvider
 
         public List<Vector3> PathingRoute()
@@ -98,8 +101,6 @@ namespace Core.Goals
 
             this.Keys.Add(key);
         }
-
-        public override float CostOfPerformingAction => key.Cost;
 
         public override bool CheckIfActionCanRun()
         {
@@ -161,6 +162,7 @@ namespace Core.Goals
             wait.Update(1);
         }
 
+
         private void Navigation_OnWayPointReached(object? sender, EventArgs e)
         {
             if (pathState is PathState.ApproachPathStart)
@@ -173,11 +175,6 @@ namespace Core.Goals
 
         private async void Navigation_OnDestinationReached(object? sender, EventArgs e)
         {
-            // TODO: State machine for different navigation pathing
-            // 1 = from any where to Key.Path
-            // 2 = follow Key.Path to reach vendor
-            // 3 = reverse Key.Path to safe location
-
             if (pathState == PathState.ApproachPathStart)
             {
                 LogDebug("Reached defined path end");
@@ -195,7 +192,7 @@ namespace Core.Goals
                     input.KeyPress(key.ConsoleKey, input.defaultKeyPress);
                 }
 
-                (bool targetTimeout, double targetElapsedMs) = wait.Until(1000, () => playerReader.HasTarget);
+                (bool targetTimeout, double targetElapsedMs) = wait.Until(400, () => playerReader.HasTarget);
                 if (targetTimeout)
                 {
                     LogWarn("No target found!");
@@ -229,6 +226,9 @@ namespace Core.Goals
                     LogDebug("Go back reverse to the start point of the path.");
                     navigation.ResetStuckParameters();
 
+                    // At this point the BagsFull is false
+                    // which mean it it would exit the Goal
+                    // instead keep it trapped to follow the route back
                     while (navigation.HasWaypoint())
                     {
                         await navigation.Update();
@@ -249,6 +249,7 @@ namespace Core.Goals
             }
         }
 
+
         private void MountIfRequired()
         {
             if (shouldMount && !mountHandler.IsMounted())
@@ -257,8 +258,6 @@ namespace Core.Goals
                 mountHandler.MountUp();
             }
         }
-
-        public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
 
         private bool OpenMerchantWindow()
         {
@@ -315,6 +314,7 @@ namespace Core.Goals
                 return true;
             }
         }
+
 
         private void Log(string text)
         {
