@@ -73,25 +73,11 @@ namespace Core.GOAP
             Queue<GoapGoal> plan = planner.Plan(AvailableGoals, WorldState, goal);
             if (plan != null && plan.Count > 0)
             {
-                if (CurrentGoal == plan.Peek() && !CurrentGoal.Repeatable)
-                {
-                    logger.LogInformation($"Plan= {CurrentGoal.Name} is not Repeatable!");
-                    CurrentGoal = null;
-                }
-                else
-                {
-                    CurrentGoal = plan.Peek();
-                }
+                CurrentGoal = plan.Peek();
             }
             else
             {
-                if (CurrentGoal != null && !CurrentGoal.Repeatable)
-                {
-                    logger.LogInformation($"Plan= {CurrentGoal.Name} is not Repeatable!");
-                    CurrentGoal = null;
-
-                    stopMoving.Stop();
-                }
+                CurrentGoal = null;
             }
 
             return CurrentGoal;

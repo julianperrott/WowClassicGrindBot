@@ -39,13 +39,6 @@ namespace Core.Goals
 
         public abstract float CostOfPerformingAction { get; }
 
-        public virtual bool Repeatable { get; } = true;
-
-        public void DoReset()
-        {
-            ResetBeforePlanning();
-        }
-
         private string name = string.Empty;
 
         public virtual string Name
@@ -75,10 +68,6 @@ namespace Core.Goals
         public void SetState(Dictionary<string, bool> newState)
         {
             State = newState;
-        }
-
-        public virtual void ResetBeforePlanning()
-        {
         }
 
         public virtual bool CheckIfActionCanRun()

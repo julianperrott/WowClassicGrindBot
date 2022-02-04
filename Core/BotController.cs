@@ -224,22 +224,23 @@ namespace Core
             }
         }
 
-        public async Task BotThread()
+        public ValueTask BotThread()
         {
-            if (this.actionThread != null)
+            if (actionThread != null)
             {
                 actionThread.ResumeIfNeeded();
 
-                while (this.actionThread.Active && this.Enabled)
+                while (actionThread.Active && Enabled)
                 {
-                    await actionThread.GoapPerformGoal();
+                    actionThread.GoapPerformGoal();
                 }
             }
 
             if (ConfigurableInput != null)
                 new StopMoving(ConfigurableInput, AddonReader.PlayerReader).Stop();
 
-            logger.LogInformation("Stopped!");
+            logger.LogInformation("Bot thread stopped!");
+            return ValueTask.CompletedTask;
         }
 
         public bool InitialiseFromFile(string classFile, string? pathFile)
