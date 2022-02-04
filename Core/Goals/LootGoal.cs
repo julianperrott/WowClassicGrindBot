@@ -13,7 +13,6 @@ namespace Core.Goals
     public class LootGoal : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.4f; }
-        public override bool Repeatable => false;
 
         private ILogger logger;
         private readonly ConfigurableInput input;
@@ -68,11 +67,6 @@ namespace Core.Goals
             Log($"OnEnter: Search for {NpcNames.Corpse}");
             npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
 
-            return ValueTask.CompletedTask;
-        }
-
-        public override ValueTask PerformAction()
-        {
             lastLoot = playerReader.LastLootTime;
 
             stopMoving.Stop();
@@ -136,6 +130,12 @@ namespace Core.Goals
             }
 
             GoalExit();
+
+            return ValueTask.CompletedTask;
+        }
+
+        public override ValueTask PerformAction()
+        {
             return ValueTask.CompletedTask;
         }
 

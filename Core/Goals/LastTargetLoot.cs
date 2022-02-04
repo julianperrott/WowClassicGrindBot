@@ -1,8 +1,5 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
-using SharedLib.Extensions;
-using System.Numerics;
-using System;
 using System.Threading.Tasks;
 
 namespace Core.Goals
@@ -10,7 +7,6 @@ namespace Core.Goals
     public class LastTargetLoot : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.3f; }
-        public override bool Repeatable => false;
 
         private ILogger logger;
         private readonly ConfigurableInput input;
@@ -51,11 +47,6 @@ namespace Core.Goals
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
             }
 
-            return ValueTask.CompletedTask;
-        }
-
-        public override async ValueTask PerformAction()
-        {
             int lastHealth = playerReader.HealthCurrent;
             var lastPosition = playerReader.PlayerLocation;
             lastLoot = playerReader.LastLootTime;
@@ -76,7 +67,7 @@ namespace Core.Goals
                     if (foundTarget)
                     {
                         Log("Goal interrupted!");
-                        return;
+                        return ValueTask.CompletedTask;
                     }
 
                     if (moved)
@@ -90,10 +81,17 @@ namespace Core.Goals
                 }
             }
 
-            await GoalExit();
+            GoalExit();
+
+            return ValueTask.CompletedTask;
         }
 
-        private ValueTask GoalExit()
+        public override ValueTask PerformAction()
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        private void GoalExit()
         {
             if (!wait.Till(1000, () => lastLoot != playerReader.LastLootTime))
             {
@@ -113,8 +111,6 @@ namespace Core.Goals
                 input.TapClearTarget($"{nameof(LastTargetLoot)}: Exit Goal");
                 wait.Update(1);
             }
-
-            return ValueTask.CompletedTask;
         }
 
         private void Log(string text)

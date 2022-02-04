@@ -9,8 +9,6 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction { get => 4.6f; }
 
-        public override bool Repeatable => false;
-
         private ILogger logger;
         private readonly ConfigurableInput input;
         private readonly PlayerReader playerReader;
@@ -66,11 +64,6 @@ namespace Core.Goals
             Log($"OnEnter: Search for {NpcNames.Corpse}");
             npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
 
-            return ValueTask.CompletedTask;
-        }
-
-        public override ValueTask PerformAction()
-        {
             lastLoot = playerReader.LastLootTime;
 
             stopMoving.Stop();
@@ -144,6 +137,11 @@ namespace Core.Goals
                 }
             }
 
+            return ValueTask.CompletedTask;
+        }
+
+        public override ValueTask PerformAction()
+        {
             return ValueTask.CompletedTask;
         }
 

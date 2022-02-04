@@ -8,8 +8,6 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction { get => 4.1f; }
 
-        public override bool Repeatable => false;
-
         private readonly ILogger logger;
         private readonly ClassConfiguration classConfig;
 
@@ -37,7 +35,7 @@ namespace Core.Goals
             }
         }
 
-        public override ValueTask PerformAction()
+        public override ValueTask OnEnter()
         {
             logger.LogWarning("----- Safe to consume a corpse.");
             SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, true));
@@ -47,6 +45,11 @@ namespace Core.Goals
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, true));
             }
 
+            return base.OnEnter();
+        }
+
+        public override ValueTask PerformAction()
+        {
             return ValueTask.CompletedTask;
         }
     }

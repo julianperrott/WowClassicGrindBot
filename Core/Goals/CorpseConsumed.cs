@@ -7,7 +7,6 @@ namespace Core.Goals
     public class CorpseConsumed : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.7f; }
-        public override bool Repeatable => false;
 
         private readonly ILogger logger;
         private readonly GoapAgentState goapAgentState;
@@ -23,12 +22,18 @@ namespace Core.Goals
             AddEffect(GoapKey.consumecorpse, false);
         }
 
-        public override ValueTask PerformAction()
+        public override ValueTask OnEnter()
         {
             goapAgentState.DecKillCount();
             logger.LogInformation($"----- Corpse consumed. Remaining: {goapAgentState.LastCombatKillCount}");
 
             SendActionEvent(new ActionEventArgs(GoapKey.consumecorpse, false));
+
+            return base.OnEnter();
+        }
+
+        public override ValueTask PerformAction()
+        {
             return ValueTask.CompletedTask;
         }
     }

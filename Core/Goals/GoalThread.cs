@@ -63,21 +63,20 @@ namespace Core.Goals
             }
         }
 
-        public async ValueTask GoapPerformGoal()
+        public void GoapPerformGoal()
         {
-            if (this.goapAgent != null)
+            if (goapAgent != null)
             {
-                var newGoal = this.goapAgent.GetAction();
-
+                var newGoal = goapAgent.GetAction();
                 if (newGoal != null)
                 {
-                    if (newGoal != this.currentGoal)
+                    if (newGoal != currentGoal)
                     {
-                        if (this.currentGoal != null)
+                        if (currentGoal != null)
                         {
                             try
                             {
-                                await this.currentGoal.OnExit();
+                                currentGoal.OnExit();
                             }
                             catch (Exception ex)
                             {
@@ -85,8 +84,7 @@ namespace Core.Goals
                             }
                         }
 
-                        this.currentGoal?.DoReset();
-                        this.currentGoal = newGoal;
+                        currentGoal = newGoal;
 
                         logger.LogInformation("---------------------------------");
                         logger.LogInformation($"New Plan= {newGoal.Name}");
@@ -95,7 +93,7 @@ namespace Core.Goals
                         {
                             try
                             {
-                                await this.currentGoal.OnEnter();
+                                currentGoal.OnEnter();
                             }
                             catch (Exception ex)
                             {
@@ -103,15 +101,10 @@ namespace Core.Goals
                             }
                         }
                     }
-                    else if (!currentGoal.Repeatable)
-                    {
-                        //logger.LogInformation($"Current Plan= {currentGoal.Name} -- not Repeatable");
-                        return;
-                    }
 
                     try
                     {
-                        await newGoal.PerformAction();
+                        newGoal.PerformAction();
                     }
                     catch (Exception ex)
                     {
