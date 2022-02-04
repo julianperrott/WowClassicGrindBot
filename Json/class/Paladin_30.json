@@ -1,0 +1,238 @@
+{
+  "ClassName": "Paladin",
+  "PathFilename": "_p2\\25-30_hillsbrad.json",
+  "UseMount": true,
+  "MountKey": "N0",
+  "PathThereAndBack": false,
+  "IntVariables": {
+    "MIN_SPEED_SEAL": 3000,
+    "MIN_TARGET_HP%": 20,
+    "MIN_HP_BEFORE_HEAL%": 20
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Seal of the Crusader",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Seal of the Crusader",
+          "!Judgement of the Crusader",
+          "CD_Judgement <= 1500"
+        ],
+        "WaitBuffAfterCast": true,
+        "DelayAfterCast": 0
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:0",
+          "Seal of the Crusader",
+          "!Judgement of the Crusader"
+        ],
+        "DelayAfterCast": 0
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Divine Protection",
+        "Key": "N1",
+        "WhenUsable": true,
+        "WaitBuffAfterCast": true,
+        "Requirements": [
+          "Health% < MIN_HP_BEFORE_HEAL%",
+          "!Blessing of Protection"
+        ]
+      },
+      {
+        "Name": "Blessing of Protection",
+        "Key": "N2",
+        "WhenUsable": true,
+        "WaitBuffAfterCast": true,
+        "Requirements": [
+          "Health% < MIN_HP_BEFORE_HEAL%",
+          "!Divine Protection"
+        ]
+      },
+      {
+        "Name": "Lay on Hands",
+        "Key": "N3",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < MIN_HP_BEFORE_HEAL%",
+          "!Blessing of Protection && CD_Blessing of Protection > 0",
+          "!Divine Protection && CD_Divine Protection > 0"
+        ]
+      },
+      {
+        "Name": "Holy Light",
+        "Key": "3",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 75",
+          "(Blessing of Protection || Divine Protection)",
+          "CD == 0"
+        ]
+      },
+      {
+        "Name": "Flash of Light",
+        "Key": "8",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 60",
+          "!Blessing of Protection && CD_Blessing of Protection > 0 && !Divine Protection && CD_Divine Protection > 0",
+          "CD == 0",
+          "MobCount < 2",
+          "LastMainHandMs <= 1000"
+        ],
+        "Cooldown": 6000
+      },
+      {
+        "Name": "Consecration",
+        "Key": "0",
+        "WhenUsable": true,
+        "Requirements": [
+          "Mana% > 50",
+          "CD == 0",
+          "MobCount > 1"
+        ]
+      },
+      {
+        "Name": "Seal of the Crusader",
+        "Key": "6",
+        "Requirements": [
+          "!Seal of the Crusader",
+          "!Judgement of the Crusader",
+          "TargetHealth% > MIN_TARGET_HP%"
+        ],
+        "WaitBuffAfterCast": true
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Judgement of the Crusader || Hammer of Justice || CD_Hammer of Justice > CD_Judgement",
+          "Seal of Command || Seal of Righteousness || Seal of the Crusader"
+        ],
+        "DelayAfterCast": 400
+      },
+      {
+        "Name": "Hammer of Justice",
+        "Key": "7",
+        "WhenUsable": true,
+        "Requirements": [
+          "Judgement of the Crusader && CD_Judgement <= 400 && TargetHealth% > MIN_TARGET_HP% || TargetCastingSpell"
+        ]
+      },
+      {
+        "Name": "Seal of Command",
+        "Key": "9",
+        "WhenUsable": true,
+        "Requirements": [
+          "Talent:Seal of Command && MainHandSpeed > MIN_SPEED_SEAL",
+          "!Seal of Command",
+          "Judgement of the Crusader",
+          "TargetHealth% > MIN_TARGET_HP%"
+        ],
+        "WaitBuffAfterCast": true
+      },
+      {
+        "Name": "Seal of Righteousness",
+        "Key": "2",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Talent:Seal of Command || MainHandSpeed < MIN_SPEED_SEAL",
+          "!Seal of Righteousness",
+          "Judgement of the Crusader",
+          "TargetHealth% > MIN_TARGET_HP%"
+        ],
+        "WaitBuffAfterCast": true
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!AutoAttacking",
+          "!Divine Protection",
+          "!Blessing of Protection"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Blessing of Might",
+        "Key": "4",
+        "WaitBuffAfterCast": true,
+        "Requirement": "!Blessing of Might"
+      },
+      {
+/*
+#showtooltip
+/use Heavy Weightstone
+/use 16
+/click StaticPopup1Button1
+*/
+        "Name": "sharpen",
+        "Key": "F1",
+        "WhenUsable": true,
+        "HasCastbar": true,
+        "Requirement": "!HasMainHandEnchant",
+        "Cooldown": 1000
+      },
+      {
+        "Name": "Sanctity Aura",
+        "Key": "5",
+        "Requirements": ["Talent:Sanctity Aura", "!Sanctity Aura"]
+      },
+      {
+        "Name": "Retribution Aura",
+        "Key": "5",
+        "Requirements": ["!Talent:Sanctity Aura", "!Retribution Aura"]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Water",
+        "Key": "-",
+        "Requirement": "Mana% < 40"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 40"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Items Broken",
+        "PathFilename": "25-30_HillsbardFoothills_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": ["BagFull", "BagGreyItem"],
+        "PathFilename": "25-30_HillsbardFoothills_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}
