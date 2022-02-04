@@ -506,11 +506,17 @@ function DataToColor:checkTalentPoints()
 end
 
 function DataToColor:shapeshiftForm()
-    local form = GetShapeshiftForm(false)
-    if form == nil then
-        form = 0
+    local index = GetShapeshiftForm(false)
+    if index == nil or index == 0 then
+        return 0
     end
-    return form
+
+    local _, _, _, spellId = GetShapeshiftFormInfo(index)
+    local form = DataToColor.S.playerAuraMap[spellId]
+    if form ~= nil then
+        return form
+    end
+    return index
 end
 
 function DataToColor:playerCombatStatus()
