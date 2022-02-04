@@ -6,11 +6,14 @@ DataToColor.S.spellInRangeList = {}
 DataToColor.S.playerBuffs = {}
 DataToColor.S.targetDebuffs = {}
 
+DataToColor.S.playerAuraMap = {}
+
 function DataToColor:InitStorage()
     CreateSpellInRangeList()
 
     CreatePlayerBuffList()
     CreateTargetDebuffList()
+    CreatePlayerAuraMap()
 end
 
 function CreateSpellInRangeList()
@@ -181,4 +184,59 @@ function CreateTargetDebuffList()
     elseif DataToColor.C.CHARACTER_CLASS == "HUNTER" then
         DataToColor.S.targetDebuffs[0] = { "Serpent Sting", [132204]=1 }
     end
+end
+
+function CreatePlayerAuraMap()
+
+    -- spell id -> GetShapeshiftForm
+
+    -- Druid
+    DataToColor.S.playerAuraMap[5487] = 1 -- bear
+    DataToColor.S.playerAuraMap[9634] = 1 -- dire bear
+
+    DataToColor.S.playerAuraMap[1066] = 2 -- aqua
+    DataToColor.S.playerAuraMap[768] = 3 -- cat
+    DataToColor.S.playerAuraMap[783] = 4 -- travel
+    DataToColor.S.playerAuraMap[24858] = 5 -- moonkin
+
+    DataToColor.S.playerAuraMap[40120] = 6 -- fly
+    DataToColor.S.playerAuraMap[33943] = 6 -- fly
+
+    -- Paladin
+    DataToColor.S.playerAuraMap[465] = 1 -- devo
+    DataToColor.S.playerAuraMap[10290] = 1
+    DataToColor.S.playerAuraMap[643] = 1
+    DataToColor.S.playerAuraMap[10291] = 1
+    DataToColor.S.playerAuraMap[1032] = 1
+    DataToColor.S.playerAuraMap[10292] = 1
+    DataToColor.S.playerAuraMap[10293] = 1
+    DataToColor.S.playerAuraMap[27149] = 1
+
+    DataToColor.S.playerAuraMap[7294] = 2 -- retri
+    DataToColor.S.playerAuraMap[10298] = 2
+    DataToColor.S.playerAuraMap[10299] = 2
+    DataToColor.S.playerAuraMap[10300] = 2
+    DataToColor.S.playerAuraMap[10301] = 2
+    DataToColor.S.playerAuraMap[27150] = 2
+
+    DataToColor.S.playerAuraMap[19746] = 3 -- concent
+
+    DataToColor.S.playerAuraMap[19876] = 4 -- shadow
+    DataToColor.S.playerAuraMap[19895] = 4
+    DataToColor.S.playerAuraMap[19896] = 4
+    DataToColor.S.playerAuraMap[27151] = 4
+
+    DataToColor.S.playerAuraMap[19888] = 5 -- frost
+    DataToColor.S.playerAuraMap[19897] = 5
+    DataToColor.S.playerAuraMap[19898] = 5
+    DataToColor.S.playerAuraMap[27152] = 5
+
+    DataToColor.S.playerAuraMap[19891] = 6 -- fire
+    DataToColor.S.playerAuraMap[19899] = 6
+    DataToColor.S.playerAuraMap[19900] = 6
+    DataToColor.S.playerAuraMap[27153] = 6
+
+    DataToColor.S.playerAuraMap[20218] = 7 -- sanct
+
+    DataToColor.S.playerAuraMap[32223] = 8 -- crusader
 end
