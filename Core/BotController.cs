@@ -310,7 +310,7 @@ namespace Core
             if (File.Exists(classFilePath))
             {
                 ClassConfiguration classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilePath));
-                var requirementFactory = new RequirementFactory(logger, AddonReader);
+                var requirementFactory = new RequirementFactory(logger, AddonReader, npcNameFinder);
                 classConfig.Initialise(DataConfig, AddonReader, requirementFactory, logger, pathFilename);
 
                 logger.LogInformation($"[{nameof(BotController)}] Profile Loaded `{classFilename}` with `{classConfig.PathFilename}`.");

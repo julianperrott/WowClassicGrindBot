@@ -352,7 +352,6 @@ Can specify conditions with `Requirement(s)` in order to create a matching actio
 | Key | The key to click (`ConsoleKey`) | `""` |
 | PressDuration | How many milliseconds to press the key for | `50` |
 | Form | Shapeshift/Stance form to be in to cast this spell | `Form.None` |
-| CastIfAddsVisible | If the bot can "See" any adds | `false` |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | `1` |
 | Cooldown | **Note this is not the in-game cooldown!**<br>The time in milliseconds until the command can be used again.<br>This property will be updated when the backend registers the `Key` keypress. | `0` |
 | School | Indicate what type of element. `SchoolMask.`<br>(`Physical, Holy, Fire, Nature, Frost, Shadow, Arcane`) | `SchoolMask.None` |
@@ -971,6 +970,7 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | `"TargetsMe"` | The target currently targets the player |
 | `"TargetsPet"` | The target currently targets the player's pet |
 | `"TargetsNone"` | The target currently has not target |
+| `"AddVisible"` | Around the target there are possible additional NPCs |
 | `"TargetCastingSpell"` | Target casts any spell |
 | `"Swimming"` | The player is currently swimming. |
 | `"Falling"` | The player is currently falling down, not touching the ground. |

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Database;
 using SharedLib;
+using SharedLib.NpcFinder;
 
 namespace Core
 {
@@ -33,7 +34,7 @@ namespace Core
            "!"
         };
 
-        public RequirementFactory(ILogger logger, AddonReader addonReader)
+        public RequirementFactory(ILogger logger, AddonReader addonReader, NpcNameFinder npcNameFinder)
         {
             this.logger = logger;
             this.addonReader = addonReader;
@@ -73,6 +74,8 @@ namespace Core
                 { "TargetsMe", () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe },
                 { "TargetsPet", () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingPet },
                 { "TargetsNone", () => playerReader.TargetTarget == TargetTargetEnum.TargetHasNoTarget },
+
+                { "AddVisible", () => npcNameFinder.PotentialAddsExist },
 
                 // Range
                 { "InMeleeRange", ()=> playerReader.IsInMeleeRange },
