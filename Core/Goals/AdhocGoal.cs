@@ -17,6 +17,9 @@ namespace Core.Goals
         private readonly KeyAction key;
         private readonly CastingHandler castingHandler;
         private readonly MountHandler mountHandler;
+        public override float CostOfPerformingAction => key.Cost;
+
+        public override string Name => Keys.Count == 0 ? base.Name : Keys[0].Name;
 
         public AdhocGoal(ILogger logger, ConfigurableInput input, Wait wait, KeyAction key, PlayerReader playerReader, StopMoving stopMoving, CastingHandler castingHandler, MountHandler mountHandler)
         {
@@ -38,37 +41,31 @@ namespace Core.Goals
                 AddPrecondition(GoapKey.incombat, true);
             }
 
-            this.Keys.Add(key);
+            Keys.Add(key);
         }
 
-        public override bool CheckIfActionCanRun()
-        {
-            return this.key.CanRun();
-        }
+        public override bool CheckIfActionCanRun() => key.CanRun();
 
-        public override float CostOfPerformingAction { get => key.Cost; }
-
-        public override ValueTask PerformAction()
+        public override ValueTask OnEnter()
         {
             if (key.StopBeforeCast)
             {
                 stopMoving.Stop();
                 wait.Update(1);
+            }
 
-                if (mountHandler.IsMounted())
-                {
-                    mountHandler.Dismount();
-                    //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
-                }
+            if (mountHandler.IsMounted())
+            {
+                mountHandler.Dismount();
+                wait.Update(1);
             }
 
             castingHandler.CastIfReady(key, key.DelayBeforeCast);
 
             bool wasDrinkingOrEating = playerReader.Buffs.Drinking || playerReader.Buffs.Eating;
 
-            logger.LogInformation($"Waiting for {key.Name}");
-
             DateTime startTime = DateTime.Now;
+
             while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.Bits.PlayerInCombat)
             {
                 wait.Update(1);
@@ -95,13 +92,15 @@ namespace Core.Goals
 
             if (wasDrinkingOrEating)
             {
-                input.TapStopKey(); // stand up
+                input.TapStopKey();
             }
 
-            wait.Update(1);
-            return ValueTask.CompletedTask;
+            return base.OnEnter();
         }
 
-        public override string Name => this.Keys.Count == 0 ? base.Name : this.Keys[0].Name;
+        public override ValueTask PerformAction()
+        {
+            return ValueTask.CompletedTask;
+        }
     }
 }
