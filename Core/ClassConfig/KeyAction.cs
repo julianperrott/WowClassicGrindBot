@@ -17,7 +17,6 @@ namespace Core
         public int PressDuration { get; set; } = 50;
         public string Form { get; set; } = string.Empty;
         public Form FormEnum { get; set; } = Core.Form.None;
-        public string CastIfAddsVisible { get; set; } = "";
         public float Cooldown { get; set; }
 
         private int _charge;

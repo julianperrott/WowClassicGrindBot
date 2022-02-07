@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Database;
 using SharedLib;
+using SharedLib.NpcFinder;
 
 namespace Core
 {
@@ -33,7 +34,7 @@ namespace Core
            "!"
         };
 
-        public RequirementFactory(ILogger logger, AddonReader addonReader)
+        public RequirementFactory(ILogger logger, AddonReader addonReader, NpcNameFinder npcNameFinder)
         {
             this.logger = logger;
             this.addonReader = addonReader;
@@ -73,6 +74,8 @@ namespace Core
                 { "TargetsMe", () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingMe },
                 { "TargetsPet", () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingPet },
                 { "TargetsNone", () => playerReader.TargetTarget == TargetTargetEnum.TargetHasNoTarget },
+
+                { "AddVisible", () => npcNameFinder.PotentialAddsExist },
 
                 // Range
                 { "InMeleeRange", ()=> playerReader.IsInMeleeRange },
@@ -311,6 +314,7 @@ namespace Core
             if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
             {
                 item.RequirementObjects.Add(CreateActionUsableRequirement(item));
+                item.RequirementObjects.Add(CreateActionNotInGameCooldown(item));
             }
 
             CreateCooldownRequirement(item.RequirementObjects, item);
@@ -430,6 +434,18 @@ namespace Core
                     !item.HasFormRequirement() ? $"Usable" : // {playerReader.UsableAction.Num(item)}
                     (playerReader.Form != item.FormEnum && item.CanDoFormChangeAndHaveMinimumMana()) ? $"Usable after Form change" : // {playerReader.UsableAction.Num(item)}
                     (playerReader.Form == item.FormEnum && addonReader.UsableAction.Is(item)) ? $"Usable current Form" : $"not Usable current Form" // {playerReader.UsableAction.Num(item)}
+            };
+        }
+
+        private Requirement CreateActionNotInGameCooldown(KeyAction item)
+        {
+            string key = $"CD_{item.Name}";
+            return new Requirement
+            {
+                HasRequirement = () => valueDictionary[key]() == 0,
+                VisibleIfHasRequirement = false,
+                LogMessage = () =>
+                    $"CD {valueDictionary[key]() / 1000:F1}"
             };
         }
 

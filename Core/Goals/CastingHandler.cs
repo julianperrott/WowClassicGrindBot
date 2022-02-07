@@ -48,20 +48,6 @@ namespace Core.Goals
 
         public bool CanRun(KeyAction item)
         {
-            if (!string.IsNullOrEmpty(item.CastIfAddsVisible))
-            {
-                var needAdds = bool.Parse(item.CastIfAddsVisible);
-                if (needAdds != npcNameFinder.PotentialAddsExist)
-                {
-                    item.LogInformation($"Only cast if adds exist = {item.CastIfAddsVisible} and it is {npcNameFinder.PotentialAddsExist} - Targets:{npcNameFinder.TargetCount} - Adds:{npcNameFinder.AddCount}");
-                    return false;
-                }
-                else
-                {
-                    item.LogInformation($"Only cast if adds exist = {item.CastIfAddsVisible} and it is {npcNameFinder.PotentialAddsExist} - Targets:{npcNameFinder.TargetCount} - Adds:{npcNameFinder.AddCount}");
-                }
-            }
-
             if (item.School != SchoolMask.None &&
                 classConfig.ImmunityBlacklist.TryGetValue(playerReader.TargetId, out var list) &&
                 list.Contains(item.School))
