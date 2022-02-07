@@ -51,7 +51,10 @@
         "Name": "Rejuvenation",
         "Key": "1",
         "AfterCastWaitBuff": true,
-        "Requirements": ["Health%<70", "not Rejuvenation"],
+        "Requirements": [
+          "Health% < 70",
+          "!Rejuvenation"
+        ],
         "Form": "None"
       },
       {
@@ -65,7 +68,10 @@
         "Name": "Moonfire",
         "Key": "8",
         "Form": "None",
-        "Requirements": ["SpellInRange:0", "not Moonfire"],
+        "Requirements": [
+          "SpellInRange:0",
+          "!Moonfire"
+        ],
         "MinMana": 235
       },
       {
@@ -85,7 +91,7 @@
       {
         "Name": "Healing Touch",
         "Key": "6",
-        "Requirement": "Health%<40",
+        "Requirement": "Health% < 40",
         "Cooldown": 10000,
         "HasCastBar": true,
         "Form": "None"
@@ -97,13 +103,13 @@
       {
         "Name": "Healing Potion",
         "Key": "-",
-        "Requirement": "Health%<50",
+        "Requirement": "Health% < 50",
         "Cooldown": 10000,
         "Form": "None"
       },
       {
         "Name": "Tigers Fury",
-        "Requirement": "not TigersFury",
+        "Requirement": "!TigersFury",
         "Key": "3",
         "MinEnergy": 30,
         "Cooldown": 6000,
@@ -112,7 +118,7 @@
       },
       {
         "Name": "Faerie Fire",
-        "Requirement": "not Faerie Fire",
+        "Requirement": "!Faerie Fire",
         "Key": "7",
         "MinRage": 10,
         "Cooldown": 10000,
@@ -121,7 +127,7 @@
       },
       {
         "Name": "Rip",
-        "Requirement": "not Rip",
+        "Requirement": "!Rip",
         "Key": "2",
         "MinEnergy": 30,
         "MinComboPoints": 3,
@@ -137,7 +143,7 @@
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
@@ -150,7 +156,7 @@
       {
         "Name": "Healing Potion",
         "Key": "-",
-        "Requirement": "Health%<8",
+        "Requirement": "Health% < 8",
         "Cooldown": 60000,
         "Form": "None",
         "InCombat": "true",
@@ -159,7 +165,7 @@
       {
         "Name": "Healing Touch",
         "Key": "6",
-        "Requirement": "Health%<80",
+        "Requirement": "Health% < 80",
         "Cooldown": 10000,
         "HasCastBar": true,
         "Form": "None",
@@ -168,14 +174,14 @@
       {
         "Name": "Well Fed",
         "Key": "9",
-        "Requirement": "not Well Fed",
+        "Requirement": "!Well Fed",
         "Cooldown": 120000,
         "Form": "None"
       },
       {
         "Name": "Water",
         "Key": "0",
-        "Requirement": "Mana%<40",
+        "Requirement": "Mana% < 40",
         "Form": "None",
         "Cost": 3
       },
@@ -184,7 +190,7 @@
         "Key": "3",
         "AfterCastWaitBuff": true,
         "DelayAfterCast": 0,
-        "Requirement": "not Thorns",
+        "Requirement": "!Thorns",
         "Form": "None"
       },
       {
@@ -192,7 +198,7 @@
         "Key": "4",
         "AfterCastWaitBuff": true,
         "DelayAfterCast": 0,
-        "Requirement": "not Mark of the Wild",
+        "Requirement": "!Mark of the Wild",
         "Form": "None"
       },
       {

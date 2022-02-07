@@ -18,8 +18,8 @@
         "Name": "Healing Touch",
         "Key": "3",
         "HasCastBar": true,
-        "Requirement": "Health%<50",
-        "Cooldown": 5000
+        "WhenUsable": true,
+        "Requirement": "Health% < 50"
       },
       {
         "Name": "Wrath",
@@ -37,31 +37,33 @@
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<30"
+        "Requirement": "Mana% < 30"
       },
       {
         "Name": "Mark of the Wild",
         "Key": "4",
-        "Requirement": "not Mark of the Wild",
-        "Cooldown": 10000
+        "Requirement": "!Mark of the Wild"
       }
     ]
   },
   "NPC": {
     "Sequence": [
       {
+        "Cost": 6,
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "1_NightElf_Vendor.json",
-        "Cost": 6
+        "PathFilename": "1_NightElf_Vendor.json"
       },
       {
+        "Cost": 6,
         "Name": "Sell",
         "Key": "C",
-        "Requirements": ["BagFull", "BagGreyItem"],
-        "PathFilename": "1_NightElf_Vendor.json",
-        "Cost": 6
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "1_NightElf_Vendor.json"
       }
     ]
   }

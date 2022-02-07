@@ -4,7 +4,6 @@
   "PathFilename": "_pack\\1-20\\Night elf\\11-14_Darkshore_Ameth'Aran Ruins.json",
   "PathReduceSteps": true,
   "CheckTargetGivesExp": true,
-
   "Form": [
     {
       //macro: /cancelform
@@ -25,30 +24,40 @@
         "Name": "Rejuvenation",
         "Key": "6",
         "AfterCastWaitBuff": true,
-        "Requirements": ["Health%<75", "not Rejuvenation"],
-        "Cooldown": 5000,
+        "Requirements": [
+          "Health% < 75",
+          "!Rejuvenation"
+        ],
         "Form": "None"
       },
       {
         "Name": "Moonfire",
         "Key": "5",
-        "AfterCastWaitBuff": true,
-        "CastIfAddsVisible": true,
-        "Requirements": ["SpellInRange:0", "not InMeleeRange", "not Moonfire", "Mana%>50"],
-        "WaitForWithinMeleeRange": true,
         "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": [
+          "!Moonfire",
+          "AddVisible",
+          "SpellInRange:0",
+          "MinRange > 10"
+        ],
         "Form": "None"
       },
       {
         "Name": "Bear Form",
         "Key": "F2",
         "WaitForWithinMeleeRange": true,
-        "Requirements": ["Moonfire", "not Form:Druid_Bear"]
+        "Requirements": [
+          "Moonfire",
+          "!Form:Druid_Bear"
+        ]
       },
       {
         "Name": "Bear Form",
         "Key": "F2",
-        "Requirements": ["not Form:Druid_Bear"]
+        "Requirements": [
+          "!Form:Druid_Bear"
+        ]
       }
     ]
   },
@@ -58,15 +67,15 @@
         "Name": "Healing Touch",
         "Key": "3",
         "HasCastBar": true,
-        "Requirement": "Health%<30",
-        "Cooldown": 5000,
+        "WhenUsable": true,
+        "Requirement": "Health% < 30",
         "Form": "None"
       },
       {
         "Name": "Enrage",
         "Key": "4",
         "WhenUsable": true,
-        "Requirement": "TargetHealth%>40",
+        "Requirement": "TargetHealth% > 40",
         "Form": "Druid_Bear"
       },
       {
@@ -74,7 +83,10 @@
         "Key": "5",
         "WhenUsable": true,
         "MinRage": 10,
-        "Requirements": ["SpellInRange:1", "CD == 0", "TargetCastingSpell || Health%<38"],
+        "Requirements": [
+          "SpellInRange:1",
+          "TargetCastingSpell || Health% < 38"
+        ],
         "Form": "Druid_Bear"
       },
       {
@@ -82,20 +94,28 @@
         "Key": "3",
         "MinRage": 10,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "not Demoralizing Roar", "Form:Druid_Bear"],
+        "Requirements": [
+          "InMeleeRange",
+          "!Demoralizing Roar",
+          "Form:Druid_Bear"
+        ],
         "Form": "Druid_Bear"
       },
       {
         "Name": "Maul",
         "Key": "2",
         "MinRage": 15,
-        "Requirements": ["InMeleeRange", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
+        "Requirements": [
+          "InMeleeRange",
+          "LastMainHandMs > 2100",
+          "Form:Druid_Bear"
+        ], // bear swing speed fixed at 2.5
         "AfterCastWaitNextSwing": true,
         "Form": "Druid_Bear"
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
@@ -115,23 +135,19 @@
       {
         "Name": "Mark of the Wild",
         "Key": "4",
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Requirement": "not Mark of the Wild",
+        "Requirement": "!Mark of the Wild",
         "Form": "None"
       },
       {
         "Name": "Thorns",
         "Key": "7",
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Requirement": "not Thorns",
+        "Requirement": "!Thorns",
         "Form": "None"
       },
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<40",
+        "Requirement": "Mana% < 40",
         "Form": "None"
       }
     ]
@@ -139,20 +155,23 @@
   "NPC": {
     "Sequence": [
       {
+        "Cost": 19,
         "Name": "Repair",
         "Key": "C",
         "Form": "None",
         "Requirement": "Items Broken",
-        "PathFilename": "10_NightElf_Vendor.json",
-        "Cost": 19
+        "PathFilename": "10_NightElf_Vendor.json"
       },
       {
+        "Cost": 19,
         "Name": "Sell",
         "Key": "C",
         "Form": "None",
-        "Requirements": ["BagFull", "BagGreyItem"],
-        "PathFilename": "10_NightElf_Vendor.json",
-        "Cost": 19
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "10_NightElf_Vendor.json"
       }
     ]
   }

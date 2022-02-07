@@ -1,10 +1,13 @@
 {
   "ClassName": "Druid",
   "Loot": true,
-  "PathFilename": "24-30 Duskwood wolf ravager.json",
+  "PathFilename": "_pack\\30-40\\Alterac Mountains\\32-36 Yettis-Ogers.json",
   "PathReduceSteps": true,
   "PathThereAndBack": false,
   "CheckTargetGivesExp": true,
+  "IntVariables": {
+    "MIN_TARGET_HP_DOT%": 20
+  },
   "Form": [
     {
       //macro: /cancelform
@@ -38,13 +41,16 @@
         "Key": "0",
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirement": "Health% < 65",
+        "Requirements": [
+          "Health% < 65"
+        ],
         "Form": "None"
       },
       {
         "Name": "Rejuvenation",
         "Key": "6",
         "StopBeforeCast": true,
+        "HasCastBar": true,
         "AfterCastWaitBuff": true,
         "Requirements": [
           "Health% < 75",
@@ -71,6 +77,7 @@
         "WaitForWithinMeleeRange": true,
         "Requirements": [
           "Moonfire",
+          "SpellInRange:0",
           "!Form:Druid_Cat"
         ]
       },
@@ -78,6 +85,7 @@
         "Name": "Cat Form",
         "Key": "F3",
         "Requirements": [
+          "SpellInRange:0",
           "!Form:Druid_Cat"
         ]
       },
@@ -101,7 +109,9 @@
         "Key": "0",
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirement": "Health% < 30",
+        "Requirements": [
+          "Health% < 30"
+        ],
         "Form": "None"
       },
       {
@@ -114,7 +124,8 @@
           "!TigersFury",
           "Rip",
           "Rake",
-          "InMeleeRange"
+          "InMeleeRange",
+          "TargetHealth% > MIN_TARGET_HP_DOT%"
         ],
         "Form": "Druid_Cat"
       },
@@ -129,7 +140,7 @@
           "!Rip",
           "MobCount < 2",
           "Form:Druid_Cat",
-          "TargetHealth%  > 20"
+          "TargetHealth% > MIN_TARGET_HP_DOT%"
         ],
         "Form": "Druid_Cat"
       },
@@ -143,7 +154,20 @@
           "!Rake",
           "MobCount < 2",
           "Form:Druid_Cat",
-          "TargetHealth%  > 20"
+          "TargetHealth% > MIN_TARGET_HP_DOT%"
+        ],
+        "Form": "Druid_Cat"
+      },
+      {
+        "Name": "Ferocious Bite",
+        "Key": "6",
+        "MinEnergy": 35,
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:2",
+          "MobCount < 2",
+          "Form:Druid_Cat",
+          "TargetHealth% <= MIN_TARGET_HP_DOT%"
         ],
         "Form": "Druid_Cat"
       },
@@ -164,17 +188,17 @@
         "Key": "F2",
         "Requirements": [
           "!Form:Druid_Bear",
-          "Health% < 50 || MobCount  >  1"
+          "Health% < 50 || MobCount > 1"
         ]
       },
       {
         "Name": "Bash",
         "Key": "5",
+        "WhenUsable": true,
         "Requirements": [
           "SpellInRange:1",
-          "TargetCastingSpell || Health% < 38"
+          "TargetCastingSpell || Health% < 33"
         ],
-        "WhenUsable": true,
         "MinRage": 10,
         "Form": "Druid_Bear"
       },
@@ -228,7 +252,7 @@
         "Key": "F3",
         "Requirements": [
           "!Form:Druid_Cat",
-          "Health% > 60",
+          "Health% > 50",
           "MobCount < 2"
         ]
       },
@@ -273,27 +297,6 @@
         "Key": "-",
         "Requirement": "Mana% < 40",
         "Form": "None"
-      }
-    ]
-  },
-  "NPC": {
-    "Sequence": [
-      {
-        "Cost": 6,
-        "Name": "Repair",
-        "Key": "C",
-        "Requirement": "Items Broken",
-        "PathFilename": "23_Duskwood_Vendor.json"
-      },
-      {
-        "Cost": 6,
-        "Name": "Sell",
-        "Key": "C",
-        "Requirements": [
-          "BagFull",
-          "BagGreyItem"
-        ],
-        "PathFilename": "23_Duskwood_Vendor.json"
       }
     ]
   }

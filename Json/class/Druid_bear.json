@@ -44,7 +44,10 @@
         "Name": "Rejuvenation",
         "Key": "1",
         "AfterCastWaitBuff": true,
-        "Requirements": ["Health%<70", "not Rejuvenation"],
+        "Requirements": [
+          "Health% < 70",
+          "!Rejuvenation"
+        ],
         "Form": "None"
       },
       {
@@ -58,7 +61,10 @@
         "Name": "Moonfire",
         "Key": "8",
         "Form": "None",
-        "Requirements": ["not Moonfire", "SpellInRange:0"],
+        "Requirements": [
+          "!Moonfire",
+          "SpellInRange:0"
+        ],
         "MinMana": 235
       },
       {
@@ -82,9 +88,9 @@
       {
         "Name": "Healing Touch",
         "Key": "6",
-        "Requirement": "Health%<50",
-        "Cooldown": 10000,
         "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirement": "Health% < 50",        
         "Form": "None"
       },
       {
@@ -95,16 +101,17 @@
       },
       {
         "Name": "Faerie Fire",
-        "Requirement": "not Faerie Fire",
         "Key": "7",
         "MinRage": 10,
-        "Cooldown": 10000,
-        "Form": "Druid_Bear",
-        "ResetOnNewTarget": true
+        "Requirement": "!Faerie Fire",
+        "Form": "Druid_Bear"
       },
       {
         "Name": "Roar",
-        "Requirements": ["InMeleeRange", "not Demoralizing Roar"],
+        "Requirements": [
+          "InMeleeRange",
+          "!Demoralizing Roar"
+        ],
         "Key": "5",
         "MinRage": 6,
         "Cooldown": 10000,
@@ -113,8 +120,8 @@
       {
         "Name": "Bash",
         "Key": "4",
+        "WhenUsable": true,
         "MinRage": 10,
-        "Cooldown": 31000,
         "Form": "Druid_Bear"
       },
       {
@@ -122,7 +129,10 @@
         "Key": "N1",
         "MinRage": 20,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "MobCount>1"],
+        "Requirements": [
+          "InMeleeRange",
+          "MobCount > 1"
+        ],
         "Form": "Druid_Bear"
       },
       {
@@ -130,12 +140,16 @@
         "Key": "2",
         "MinRage": 10,
         "AfterCastWaitNextSwing": true,
-        "Requirements": ["InMeleeRange", "MobCount<2", "LastMainHandMs>2100"], // bear swing speed fixed at 2.5
+        "Requirements": [
+          "InMeleeRange",
+          "MobCount < 2",
+          "LastMainHandMs > 2100"
+        ], // bear swing speed fixed at 2.5
         "Form": "Druid_Bear"
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
@@ -148,7 +162,7 @@
       {
         "Name": "Healing Potion",
         "Key": "-",
-        "Requirement": "Health%<8",
+        "Requirement": "Health% < 8",
         "Cooldown": 60000,
         "Form": "None",
         "InCombat": "true",
@@ -157,7 +171,7 @@
       {
         "Name": "Heal",
         "Key": "6",
-        "Requirement": "Health%<60",
+        "Requirement": "Health% < 60",
         "Cooldown": 10000,
         "HasCastBar": true,
         "Form": "None",
@@ -167,14 +181,14 @@
         "Name": "Well Fed",
         "StopBeforeCast": false,
         "Key": "9",
-        "Requirement": "not Well Fed",
+        "Requirement": "!Well Fed",
         "Cooldown": 120000,
         "Form": "None"
       },
       {
         "Name": "Water",
         "Key": "0",
-        "Requirement": "Mana%<40",
+        "Requirement": "Mana% < 40",
         "Form": "None",
         "Cost": 3
       },
@@ -182,14 +196,14 @@
         "Name": "Thorns",
         "Key": "3",
         "Cooldown": 10000,
-        "Requirement": "not Thorns",
+        "Requirement": "!Thorns",
         "Form": "None"
       },
       {
         "Name": "Mark of the Wild",
         "Key": "4",
         "Cooldown": 10000,
-        "Requirement": "not Mark of the Wild",
+        "Requirement": "!Mark of the Wild",
         "Form": "None"
       },
       {
