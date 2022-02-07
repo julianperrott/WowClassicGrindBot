@@ -10,7 +10,7 @@ namespace Core.Goals
 {
     public class ParallelGoal : GoapGoal
     {
-        public override float CostOfPerformingAction { get => 3f; }
+        public override float CostOfPerformingAction => 3f;
 
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
@@ -30,7 +30,7 @@ namespace Core.Goals
             this.stopMoving = stopMoving;
             this.wait = wait;
             this.playerReader = playerReader;
-            
+
             this.castingHandler = castingHandler;
             this.mountHandler = mountHandler;
 
@@ -44,7 +44,7 @@ namespace Core.Goals
             return Keys.Any(key => key.CanRun());
         }
 
-        public override async ValueTask PerformAction()
+        public override async ValueTask OnEnter()
         {
             if (Keys.Any(k => k.StopBeforeCast))
             {
@@ -55,7 +55,6 @@ namespace Core.Goals
                 {
                     mountHandler.Dismount();
                     wait.Update(1);
-                    //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
                 }
             }
 
@@ -68,8 +67,6 @@ namespace Core.Goals
             });
 
             bool wasDrinkingOrEating = playerReader.Buffs.Drinking || playerReader.Buffs.Eating;
-
-            logger.LogInformation($"Waiting for {Name}");
 
             DateTime startTime = DateTime.Now;
             while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.Bits.PlayerInCombat)
@@ -100,6 +97,11 @@ namespace Core.Goals
             {
                 input.TapStandUpKey();
             }
+        }
+
+        public override ValueTask PerformAction()
+        {
+            return ValueTask.CompletedTask;
         }
     }
 }
