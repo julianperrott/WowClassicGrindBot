@@ -15,8 +15,12 @@
         "HasCastbar": true,
         "WhenUsable": true,
         "WaitForWithinMeleeRange": true,
-        "CastIfAddsVisible": true,
-        "Requirements": ["HasRangedWeapon && !Items Broken && SpellInRange:3"]
+        "Requirements": [
+          "AddVisible",
+          "HasRangedWeapon",
+          "SpellInRange:3",
+          "!Items Broken"
+        ]
       },
       {
         "Name": "Charge",
@@ -28,12 +32,16 @@
       {
         "Name": "StopAttack",
         "DelayBeforeCast": 30,
-        "Requirements": ["Battle Shout && AutoAttacking && Rage >= Cost_Heroic Strike"],
+        "Requirements": [
+          "Battle Shout && AutoAttacking && Rage >= Cost_Heroic Strike"
+        ],
         "DelayAfterCast": 50
       },
       {
         "Name": "Approach",
-        "Requirements": ["!Battle Shout && Rage < Cost_Heroic Strike"],
+        "Requirements": [
+          "!Battle Shout && Rage < Cost_Heroic Strike"
+        ],
         "Log": false
       }
     ]
@@ -45,7 +53,9 @@
         "Key": "6",
         "WhenUsable": true,
         "MinRage": 20,
-        "Requirements": ["!Thunder Clap && MobCount > 1"],
+        "Requirements": [
+          "!Thunder Clap && MobCount > 1"
+        ],
         "Form": "Warrior_BattleStance"
       },
       {
@@ -59,7 +69,9 @@
         "Key": "2",
         "WhenUsable": true,
         "MinRage": 15,
-        "Requirements": ["!Charge Stun && MainHandSwing > -400"],
+        "Requirements": [
+          "!Charge Stun && MainHandSwing > -400"
+        ],
         "AfterCastWaitNextSwing": true
       },
       {
@@ -67,12 +79,19 @@
         "Key": "5",
         "WhenUsable": true,
         "MinRage": 10,
-        "Requirements": ["!Charge Stun && TargetHealth% > 50", "!Rend"],
+        "Requirements": [
+          "!Charge Stun && TargetHealth% > 50",
+          "!Rend"
+        ],
         "Form": "Warrior_BattleStance"
       },
       {
         "Name": "AutoAttack",
-        "Requirements": ["InMeleeRange", "!Charge Stun", "!AutoAttacking"]
+        "Requirements": [
+          "InMeleeRange",
+          "!Charge Stun",
+          "!AutoAttacking"
+        ]
       },
       {
         "Name": "Approach",
@@ -113,7 +132,10 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirements": ["BagFull", "BagGreyItem"],
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
         "PathFilename": "10_Loch_Modan_Vendor.json",
         "Cost": 6
       }
