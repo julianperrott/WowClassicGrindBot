@@ -22,7 +22,7 @@ namespace Core.Goals
         public List<Vector3> Deaths { get; } = new List<Vector3>();
 
         private ILogger logger;
-        public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
+        public DateTime LastActive { get; set; }
 
         public CorpseRunGoal(PlayerReader playerReader, ConfigurableInput input, IPlayerDirection playerDirection, List<Vector3> spiritWalker, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
         {
@@ -114,7 +114,7 @@ namespace Core.Goals
                 }
             }
 
-            LastActive = DateTime.Now;
+            LastActive = DateTime.UtcNow;
         }
 
         private void AdjustHeading(float heading)
@@ -148,7 +148,7 @@ namespace Core.Goals
 
         private bool HasBeenActiveRecently()
         {
-            return (DateTime.Now - LastActive).TotalSeconds < 2;
+            return (DateTime.UtcNow - LastActive).TotalSeconds < 2;
         }
 
         public void Reset()

@@ -67,7 +67,7 @@ namespace Core
         public double AvgUpdateLatency { private set; get; } = 5;
         private readonly CircularBuffer<double> UpdateLatencys;
 
-        private DateTime lastFrontendUpdate = DateTime.Now;
+        private DateTime lastFrontendUpdate;
         private readonly int FrontendUpdateIntervalMs = 250;
 
         public AddonReader(ILogger logger, DataConfig dataConfig, IAddonDataProvider addonDataProvider)
@@ -110,7 +110,7 @@ namespace Core
 
             GlobalTime.Changed += (object? obj, EventArgs e) =>
             {
-                UpdateLatencys.Put((DateTime.Now - GlobalTime.LastChanged).TotalMilliseconds);
+                UpdateLatencys.Put((DateTime.UtcNow - GlobalTime.LastChanged).TotalMilliseconds);
                 AvgUpdateLatency = 0;
                 for (int i = 0; i < UpdateLatencys.Size; i++)
                 {
@@ -137,10 +137,10 @@ namespace Core
             SpellBookReader.Read();
             TalentReader.Read();
 
-            if ((DateTime.Now - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
+            if ((DateTime.UtcNow - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
             {
                 AddonDataChanged?.Invoke(this, EventArgs.Empty);
-                lastFrontendUpdate = DateTime.Now;
+                lastFrontendUpdate = DateTime.UtcNow;
             }
         }
 

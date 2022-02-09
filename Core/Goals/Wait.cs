@@ -25,8 +25,8 @@ namespace Core
 
         public bool Till(int timeoutMs, Func<bool> interrupt)
         {
-            DateTime start = DateTime.Now;
-            while ((DateTime.Now - start).TotalMilliseconds < timeoutMs)
+            DateTime start = DateTime.UtcNow;
+            while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
             {
                 Update(1);
                 if (interrupt())
@@ -38,9 +38,9 @@ namespace Core
 
         public (bool timeout, double elapsedMs) Until(int timeoutMs, Func<bool> interrupt, Action? repeat = null)
         {
-            DateTime start = DateTime.Now;
+            DateTime start = DateTime.UtcNow;
             double elapsedMs;
-            while ((elapsedMs = (DateTime.Now - start).TotalMilliseconds) < timeoutMs)
+            while ((elapsedMs = (DateTime.UtcNow - start).TotalMilliseconds) < timeoutMs)
             {
                 repeat?.Invoke();
                 Update(1);

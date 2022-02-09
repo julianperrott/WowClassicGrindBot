@@ -69,7 +69,7 @@ namespace Core
         public static int LastKeyClicked()
         {
             var last = LastClicked.OrderByDescending(s => s.Value).FirstOrDefault();
-            if (last.Key == 0 || (DateTime.Now - last.Value).TotalSeconds > 2)
+            if (last.Key == 0 || (DateTime.UtcNow - last.Value).TotalSeconds > 2)
             {
                 return (int)ConsoleKey.NoName;
             }
@@ -161,15 +161,15 @@ namespace Core
         {
             LastClickPostion = playerReader.PlayerLocation;
 
-            if (!LastClicked.TryAdd(ConsoleKeyFormHash, DateTime.Now))
+            if (!LastClicked.TryAdd(ConsoleKeyFormHash, DateTime.UtcNow))
             {
-                LastClicked[ConsoleKeyFormHash] = DateTime.Now;
+                LastClicked[ConsoleKeyFormHash] = DateTime.UtcNow;
             }
         }
 
         public double MillisecondsSinceLastClick =>
             LastClicked.TryGetValue(ConsoleKeyFormHash, out DateTime lastTime) ?
-            (DateTime.Now - lastTime).TotalMilliseconds :
+            (DateTime.UtcNow - lastTime).TotalMilliseconds :
             double.MaxValue;
 
         internal void ResetCooldown()

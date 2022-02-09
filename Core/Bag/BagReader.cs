@@ -17,7 +17,7 @@ namespace Core
         private readonly ItemDB itemDb;
         private readonly EquipmentReader equipmentReader;
 
-        private DateTime lastEvent = DateTime.Now;
+        private DateTime lastEvent;
 
         public List<BagItem> BagItems { get; private set; } = new List<BagItem>();
 
@@ -57,11 +57,11 @@ namespace Core
 
             ReadInventory(out bool inventoryChanged);
 
-            if (changedFromEvent || metaChanged || inventoryChanged || (DateTime.Now - this.lastEvent).TotalSeconds > 11)
+            if (changedFromEvent || metaChanged || inventoryChanged || (DateTime.UtcNow - this.lastEvent).TotalSeconds > 11)
             {
                 changedFromEvent = false;
                 DataChanged?.Invoke(this, EventArgs.Empty);
-                lastEvent = DateTime.Now;
+                lastEvent = DateTime.UtcNow;
             }
         }
 

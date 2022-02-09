@@ -40,7 +40,7 @@ namespace WowTriangles
         {
             this.logger = logger;
 
-            System.DateTime pre = System.DateTime.Now;
+            System.DateTime pre = System.DateTime.UtcNow;
             logger.WriteLine("Build hash  " + tc.GetNumberOfTriangles());
             matrix = new SparseFloatMatrix2D<List<int>>(resolution, tc.GetNumberOfTriangles());
 
@@ -83,7 +83,7 @@ namespace WowTriangles
                             AddTriangleAt(grid_x, grid_y, i);
                     }
             }
-            System.DateTime post = System.DateTime.Now;
+            System.DateTime post = System.DateTime.UtcNow;
             System.TimeSpan ts = post.Subtract(pre);
             logger.WriteLine("done " + maxAtOne + " time " + ts);
         }

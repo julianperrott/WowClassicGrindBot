@@ -80,7 +80,7 @@ namespace Core.Goals
                 }
             }
 
-            LastActive = DateTime.Now;
+            LastActive = DateTime.UtcNow;
             input.SetKeyState(input.ForwardKey, true, false);
 
             // main loop
@@ -365,7 +365,7 @@ namespace Core.Goals
 
         private bool HasBeenActiveRecently()
         {
-            return (DateTime.Now - LastActive).TotalSeconds < 2;
+            return (DateTime.UtcNow - LastActive).TotalSeconds < 2;
         }
 
 

@@ -21,7 +21,7 @@ namespace Core
                 return;
             }
 
-            LastUpdated = DateTime.Now;
+            LastUpdated = DateTime.UtcNow;
             LastChange = count - Count;
             LastChangeDescription = LastChange.ToString();
             if (!LastChangeDescription.StartsWith("-")) { LastChangeDescription = $"+{LastChangeDescription}"; }
@@ -30,8 +30,8 @@ namespace Core
 
         public static readonly int MaxLifeTime = 30;
 
-        public DateTime LastUpdated { get; set; } = DateTime.Now;
-        public bool WasRecentlyUpdated => (DateTime.Now - LastUpdated).TotalSeconds < MaxLifeTime;
+        public DateTime LastUpdated { get; set; }
+        public bool WasRecentlyUpdated => (DateTime.UtcNow - LastUpdated).TotalSeconds < MaxLifeTime;
 
         public BagItem(int bag, int bagIndex, int itemId, int count, Item item, bool IsSoulbound)
         {

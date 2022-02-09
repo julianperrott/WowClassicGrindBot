@@ -19,15 +19,15 @@ namespace Core
         
         private readonly StopMoving stopMoving;
         
-        private readonly Random random = new Random();
+        private readonly Random random = new();
         private readonly IPlayerDirection playerDirection;
 
         private Vector3 targetLocation;
 
-        private Stopwatch LastReachedDestiationTimer = new Stopwatch();
-        private Stopwatch LastUnstickAttemptTimer = new Stopwatch();
+        private Stopwatch LastReachedDestiationTimer = new();
+        private Stopwatch LastUnstickAttemptTimer = new();
         private float previousDistanceToTarget = 99999;
-        private DateTime timeOfLastSignificantMovement = DateTime.Now;
+        private DateTime timeOfLastSignificantMovement;
 
         public StuckDetector(ILogger logger, ConfigurableInput input, PlayerReader playerReader, IPlayerDirection playerDirection, StopMoving stopMoving)
         {
@@ -56,7 +56,7 @@ namespace Core
             LastUnstickAttemptTimer.Start();
 
             previousDistanceToTarget = 99999;
-            timeOfLastSignificantMovement = DateTime.Now;
+            timeOfLastSignificantMovement = DateTime.UtcNow;
 
             //logger.LogInformation("ResetStuckParameters()");
         }
@@ -152,7 +152,7 @@ namespace Core
                 currentDistanceToTarget = previousDistanceToTarget;
             }
 
-            if ((DateTime.Now - timeOfLastSignificantMovement).TotalSeconds > 3)
+            if ((DateTime.UtcNow - timeOfLastSignificantMovement).TotalSeconds > 3)
             {
                 logger.LogInformation("We seem to be stuck!");
                 return false;
@@ -172,7 +172,7 @@ namespace Core
                 return true;
             }
 
-            if ((DateTime.Now - timeOfLastSignificantMovement).TotalSeconds > 3)
+            if ((DateTime.UtcNow - timeOfLastSignificantMovement).TotalSeconds > 3)
             {
                 logger.LogInformation("We seem to be stuck!");
                 return false;

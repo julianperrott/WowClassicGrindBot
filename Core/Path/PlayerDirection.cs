@@ -44,7 +44,7 @@ namespace Core
                 TurnDuration(desiredDirection),
                 debug ? $"SetDirection: {source}-- Current: {playerReader.Direction:0.000} -> Target: {desiredDirection:0.000} - Distance: {distance:0.000}" : string.Empty);
 
-            LastSetDirection = DateTime.Now;
+            LastSetDirection = DateTime.UtcNow;
         }
 
         private float TurnAmount(float desiredDirection)

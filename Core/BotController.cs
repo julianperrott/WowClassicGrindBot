@@ -159,7 +159,7 @@ namespace Core
             var nodeFound = false;
             while (this.Enabled)
             {
-                if ((DateTime.Now - lastScreenshot).TotalMilliseconds > screenshotTickMs)
+                if ((DateTime.UtcNow - lastScreenshot).TotalMilliseconds > screenshotTickMs)
                 {
                     if (this.WowScreen.Enabled)
                     {
@@ -172,7 +172,7 @@ namespace Core
                         this.npcNameFinder.FakeUpdate();
                     }
 
-                    lastScreenshot = DateTime.Now;
+                    lastScreenshot = DateTime.UtcNow;
                 }
 
                 if (ClassConfig != null && this.ClassConfig.Mode == Mode.AttendedGather)

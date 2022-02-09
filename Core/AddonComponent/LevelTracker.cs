@@ -6,7 +6,7 @@ namespace Core
     {
         private readonly PlayerReader playerReader;
 
-        private DateTime levelStartTime = DateTime.Now;
+        private DateTime levelStartTime = DateTime.UtcNow;
         private int levelStartXP;
 
         public string TimeToLevel { get; private set; } = "∞";
@@ -47,7 +47,7 @@ namespace Core
 
         private void PlayerLevel_Changed(object? sender, EventArgs e)
         {
-            levelStartTime = DateTime.Now;
+            levelStartTime = DateTime.UtcNow;
             levelStartXP = playerReader.PlayerXp.Value;
         }
 
@@ -63,7 +63,7 @@ namespace Core
 
         public void UpdateExpPerHour()
         {
-            var runningSeconds = (DateTime.Now - levelStartTime).TotalSeconds;
+            var runningSeconds = (DateTime.UtcNow - levelStartTime).TotalSeconds;
             var xpPerSecond = (playerReader.PlayerXp.Value - levelStartXP) / runningSeconds;
             var secondsLeft = (playerReader.PlayerMaxXp - playerReader.PlayerXp.Value) / xpPerSecond;
 
@@ -78,7 +78,7 @@ namespace Core
 
             if (secondsLeft > 0 && secondsLeft < 60 * 60 * 10)
             {
-                PredictedLevelUpTime = DateTime.Now.AddSeconds(secondsLeft);
+                PredictedLevelUpTime = DateTime.UtcNow.AddSeconds(secondsLeft).ToLocalTime();
             }
         }
     }
