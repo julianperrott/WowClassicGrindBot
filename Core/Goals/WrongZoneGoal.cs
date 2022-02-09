@@ -17,7 +17,7 @@ namespace Core.Goals
         private readonly StuckDetector stuckDetector;
         private readonly ClassConfiguration classConfiguration;
         private float lastDistance = 999;
-        public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
+        public DateTime LastActive { get; set; }
         private ILogger logger;
 
         public WrongZoneGoal(AddonReader addonReader, ConfigurableInput input, IPlayerDirection playerDirection, ILogger logger, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
@@ -50,7 +50,7 @@ namespace Core.Goals
 
             if (this.playerReader.Bits.PlayerInCombat) { return; }
 
-            if ((DateTime.Now - LastActive).TotalSeconds > 10)
+            if ((DateTime.UtcNow - LastActive).TotalSeconds > 10)
             {
                 this.stuckDetector.SetTargetLocation(targetLocation);
             }
@@ -91,12 +91,12 @@ namespace Core.Goals
 
             lastDistance = distance;
 
-            LastActive = DateTime.Now;
+            LastActive = DateTime.UtcNow;
         }
 
         private bool HasBeenActiveRecently()
         {
-            return (DateTime.Now - LastActive).TotalSeconds < 2;
+            return (DateTime.UtcNow - LastActive).TotalSeconds < 2;
         }
     }
 }

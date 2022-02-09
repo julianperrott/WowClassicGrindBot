@@ -167,11 +167,11 @@ namespace SharedLib.NpcFinder
             if (AddCount > 0 && TargetCount >= 1)
             {
                 PotentialAddsExist = true;
-                LastPotentialAddsSeen = DateTime.Now;
+                LastPotentialAddsSeen = DateTime.UtcNow;
             }
             else
             {
-                if (PotentialAddsExist && (DateTime.Now - LastPotentialAddsSeen).TotalSeconds > 1)
+                if (PotentialAddsExist && (DateTime.UtcNow - LastPotentialAddsSeen).TotalSeconds > 1)
                 {
                     PotentialAddsExist = false;
                     AddCount = 0;

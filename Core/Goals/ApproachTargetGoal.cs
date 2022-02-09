@@ -21,7 +21,7 @@ namespace Core.Goals
 
         private readonly bool debug = true;
 
-        private readonly Random random = new Random(DateTime.Now.Millisecond);
+        private readonly Random random = new();
 
         private DateTime approachStart;
 
@@ -32,7 +32,7 @@ namespace Core.Goals
         private int initialTargetGuid;
         private float initialMinRange;
 
-        private int SecondsSinceApproachStarted => (int)(DateTime.Now - approachStart).TotalSeconds;
+        private int SecondsSinceApproachStarted => (int)(DateTime.UtcNow - approachStart).TotalSeconds;
 
         private bool HasPickedUpAnAdd
         {
@@ -72,7 +72,7 @@ namespace Core.Goals
             initialTargetGuid = playerReader.TargetGuid;
             initialMinRange = playerReader.MinRange;
 
-            approachStart = DateTime.Now;
+            approachStart = DateTime.UtcNow;
 
             return ValueTask.CompletedTask;
         }
@@ -130,7 +130,7 @@ namespace Core.Goals
                 wait.Update(1);
                 input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, $"Seems stuck! Clear Target. Turn away. d: {lastPlayerDistance}");
 
-                approachStart = DateTime.Now;
+                approachStart = DateTime.UtcNow;
             }
 
             if (SecondsSinceApproachStarted > 15 && !playerReader.Bits.PlayerInCombat)
@@ -139,7 +139,7 @@ namespace Core.Goals
                 wait.Update(1);
                 input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, "Too long time. Clear Target. Turn away.");
 
-                approachStart = DateTime.Now;
+                approachStart = DateTime.UtcNow;
             }
 
             if (playerReader.TargetGuid == initialTargetGuid)
@@ -183,7 +183,7 @@ namespace Core.Goals
                 input.TapClearTarget();
                 wait.Update(1);
 
-                approachStart = DateTime.Now;
+                approachStart = DateTime.UtcNow;
             }
 
             RandomJump();
@@ -195,7 +195,7 @@ namespace Core.Goals
         {
             if (e.Key == GoapKey.resume)
             {
-                approachStart = DateTime.Now;
+                approachStart = DateTime.UtcNow;
             }
         }
 

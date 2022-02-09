@@ -23,11 +23,11 @@ namespace Core.Goals
         private readonly CastingHandler castingHandler;
         private readonly MountHandler mountHandler;
 
-        private readonly Random random = new Random(DateTime.Now.Millisecond);
+        private readonly Random random = new();
 
-        private DateTime pullStart = DateTime.Now;
+        private DateTime pullStart;
 
-        private int SecondsSincePullStarted => (int)(DateTime.Now - pullStart).TotalSeconds;
+        private int SecondsSincePullStarted => (int)(DateTime.UtcNow - pullStart).TotalSeconds;
 
         public PullTargetGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, CastingHandler castingHandler, MountHandler mountHandler, StuckDetector stuckDetector, ClassConfiguration classConfiguration)
         {
@@ -67,7 +67,7 @@ namespace Core.Goals
             stopMoving.Stop();
             wait.Update(1);
 
-            pullStart = DateTime.Now;
+            pullStart = DateTime.UtcNow;
 
             return ValueTask.CompletedTask;
         }
@@ -76,7 +76,7 @@ namespace Core.Goals
         {
             if (e.Key == GoapKey.resume)
             {
-                pullStart = DateTime.Now;
+                pullStart = DateTime.UtcNow;
             }
         }
 
@@ -86,7 +86,7 @@ namespace Core.Goals
             {
                 input.TapClearTarget();
                 input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, "Too much time to pull!");
-                pullStart = DateTime.Now;
+                pullStart = DateTime.UtcNow;
 
                 return ValueTask.CompletedTask;
             }
@@ -115,7 +115,7 @@ namespace Core.Goals
 
                     input.TapClearTarget();
                     wait.Update(1);
-                    pullStart = DateTime.Now;
+                    pullStart = DateTime.UtcNow;
 
                     return ValueTask.CompletedTask;
                 }
@@ -154,13 +154,13 @@ namespace Core.Goals
             stopMoving.Stop();
             wait.Update(1);
 
-            var start = DateTime.Now;
+            var start = DateTime.UtcNow;
             var lastKnownHealth = playerReader.HealthCurrent;
             int maxWaitTime = 10;
 
             Log($"Waiting for the target to reach melee range - max {maxWaitTime}s");
 
-            while (playerReader.HasTarget && !playerReader.IsInMeleeRange && (DateTime.Now - start).TotalSeconds < maxWaitTime)
+            while (playerReader.HasTarget && !playerReader.IsInMeleeRange && (DateTime.UtcNow - start).TotalSeconds < maxWaitTime)
             {
                 if (playerReader.HealthCurrent < lastKnownHealth)
                 {

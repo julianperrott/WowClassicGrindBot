@@ -10,7 +10,7 @@ namespace Core
         public int Value { private set; get; }
         public DateTime LastChanged { private set; get; }
 
-        public int ElapsedMs => (int)(DateTime.Now - LastChanged).TotalMilliseconds;
+        public int ElapsedMs => (int)(DateTime.UtcNow - LastChanged).TotalMilliseconds;
 
         public event EventHandler? Changed;
 
@@ -26,7 +26,7 @@ namespace Core
             {
                 Value = temp;
                 Changed?.Invoke(this, EventArgs.Empty);
-                LastChanged = DateTime.Now;
+                LastChanged = DateTime.UtcNow;
                 return true;
             }
 
@@ -40,7 +40,7 @@ namespace Core
             {
                 Value = temp;
                 Changed?.Invoke(this, EventArgs.Empty);
-                LastChanged = DateTime.Now;
+                LastChanged = DateTime.UtcNow;
             }
         }
 

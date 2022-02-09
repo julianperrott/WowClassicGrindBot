@@ -10,7 +10,7 @@ namespace Core
 
         public bool HasExpired(int seconds)
         {
-            return (DateTime.Now - LastEvent).TotalSeconds > seconds;
+            return (DateTime.UtcNow - LastEvent).TotalSeconds > seconds;
         }
 
 

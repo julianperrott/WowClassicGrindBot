@@ -223,7 +223,7 @@ namespace Core.Goals
                 else
                 {
                     // threat must be behind me
-                    var anyDamageTakens = addonReader.CreatureHistory.DamageTaken.Where(x => (DateTime.Now - x.LastEvent).TotalSeconds < 10 && x.HealthPercent > 0);
+                    var anyDamageTakens = addonReader.CreatureHistory.DamageTaken.Where(x => (DateTime.UtcNow - x.LastEvent).TotalSeconds < 10 && x.HealthPercent > 0);
                     if (anyDamageTakens.Any())
                     {
                         logger.LogWarning($"---- Possible threats found behind {anyDamageTakens.Count()}. Waiting for my target to change!");

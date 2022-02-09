@@ -64,7 +64,7 @@ namespace Core.Goals
 
             bool wasDrinkingOrEating = playerReader.Buffs.Drinking || playerReader.Buffs.Eating;
 
-            DateTime startTime = DateTime.Now;
+            DateTime startTime = DateTime.UtcNow;
 
             while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.Bits.PlayerInCombat)
             {
@@ -83,7 +83,7 @@ namespace Core.Goals
                     break;
                 }
 
-                if ((DateTime.Now - startTime).TotalSeconds > 25)
+                if ((DateTime.UtcNow - startTime).TotalSeconds > 25)
                 {
                     logger.LogInformation($"Waited (25s) long enough for {key.Name}");
                     break;

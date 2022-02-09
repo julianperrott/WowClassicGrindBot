@@ -111,7 +111,7 @@ namespace Core
                     CreatureRecord creature = CombatCreatures[index];
 
                     creature.HealthPercent = healthPercent;
-                    creature.LastEvent = DateTime.Now;
+                    creature.LastEvent = DateTime.UtcNow;
 
                     CombatCreatures[index] = creature;
                 }
@@ -122,7 +122,7 @@ namespace Core
                 {
                     Guid = creatureId,
                     HealthPercent = healthPercent,
-                    LastEvent = DateTime.Now
+                    LastEvent = DateTime.UtcNow
                 });
             }
         }

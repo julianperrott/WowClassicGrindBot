@@ -10,7 +10,7 @@ namespace Core
 
         private readonly ISquareReader reader;
 
-        private DateTime lastEvent = DateTime.Now;
+        private DateTime lastEvent;
 
         public int Count { private set; get; }
         public Dictionary<Gossip, int> Gossips { get; private set; } = new Dictionary<Gossip, int>();
@@ -48,7 +48,7 @@ namespace Core
             {
                 Count = 0;
                 Gossips.Clear();
-                lastEvent = DateTime.Now;
+                lastEvent = DateTime.UtcNow;
 
                 return;
             }
