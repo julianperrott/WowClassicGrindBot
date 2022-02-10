@@ -7,7 +7,7 @@ namespace PathingAPI.Data
         public Sphere() { }
 
         public string Name { get; set; }
-        public Vector3 Spot { get; set; }
+        public DummyVector3 Spot { get; set; }
         public int Colour { get; set; }
         public int MapId { get; set; }
     }
