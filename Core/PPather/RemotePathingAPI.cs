@@ -24,8 +24,6 @@ namespace Core
 
         private List<LineArgs> lineArgs = new List<LineArgs>();
 
-        private int targetMapId;
-
         public RemotePathingAPI(ILogger logger, string host="", int port=0)
         {
             this.logger = logger;
@@ -71,12 +69,10 @@ namespace Core
 
         public async ValueTask<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
         {
-            targetMapId = map;
-
             try
             {
-                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} map {targetMapId}...");
-                var url = $"{api}MapRoute?map1={map}&x1={fromPoint.X}&y1={fromPoint.Y}&map2={targetMapId}&x2={toPoint.X}&y2={toPoint.Y}";
+                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} map {map}...");
+                var url = $"{api}MapRoute?map1={map}&x1={fromPoint.X}&y1={fromPoint.Y}&map2={map}&x2={toPoint.X}&y2={toPoint.Y}";
                 var sw = new Stopwatch();
                 sw.Start();
 
@@ -87,7 +83,7 @@ namespace Core
                         var responseString = await client.GetStringAsync(url);
                         logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} took {sw.ElapsedMilliseconds} ms.");
                         var path = JsonConvert.DeserializeObject<IEnumerable<WorldMapAreaSpot>>(responseString);
-                        var result = path.Select(l => new Vector3(l.X, l.Y, 0)).ToList();
+                        var result = path.Select(l => new Vector3(l.X, l.Y, l.Z)).ToList();
                         return result;
                     }
                 }
