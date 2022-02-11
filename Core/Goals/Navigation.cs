@@ -1,13 +1,44 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
+using System.Threading;
 using Microsoft.Extensions.Logging;
 using SharedLib.Extensions;
 
 namespace Core.Goals
 {
+    internal readonly struct PathRequest
+    {
+        public int MapId { init; get; }
+        public Vector3 Start { init; get; }
+        public Vector3 End { init; get; }
+        public Action<List<Vector3>, bool> Callback { init; get; }
+
+        public PathRequest(int mapId, Vector3 start, Vector3 end, Action<List<Vector3>, bool> callback)
+        {
+            MapId = mapId;
+            Start = start;
+            End = end;
+            Callback = callback;
+        }
+    }
+
+    internal readonly struct PathResult
+    {
+        public List<Vector3> Path { init; get; }
+        public bool Success { init; get; }
+        public Action<List<Vector3>, bool> Callback { init; get; }
+
+        public PathResult(List<Vector3> path, bool success, Action<List<Vector3>, bool> callback)
+        {
+            Path = path;
+            Success = success;
+            Callback = callback;
+        }
+    }
+
     public class Navigation
     {
         private readonly bool debug = false;
@@ -40,10 +71,16 @@ namespace Core.Goals
 
         public DateTime LastActive { get; private set; }
 
+        public event EventHandler? OnPathCalculated;
         public event EventHandler? OnWayPointReached;
         public event EventHandler? OnDestinationReached;
 
         public bool SimplifyRouteToWaypoint { get; set; } = true;
+
+        private bool active;
+
+        private readonly ConcurrentQueue<PathResult> pathResults = new();
+        private Thread? pathfinderThread;
 
         public Navigation(ILogger logger, IPlayerDirection playerDirection, ConfigurableInput input, AddonReader addonReader, StopMoving stopMoving, StuckDetector stuckDetector, IPPather pather, MountHandler mountHandler)
         {
@@ -60,24 +97,30 @@ namespace Core.Goals
             AvgDistance = MinDistance;
         }
 
-        public async ValueTask Update()
+        public void Update()
         {
+            active = true;
+
             if (wayPoints.Count == 0 && routeToNextWaypoint.Count == 0)
             {
                 OnDestinationReached?.Invoke(this, EventArgs.Empty);
                 return;
             }
 
+            while (pathResults.TryDequeue(out PathResult result))
+            {
+                result.Callback(result.Path, result.Success);
+            }
+
+            if (pathfinderThread != null)
+            {
+                return;
+            }
+
             if (routeToNextWaypoint.Count == 0)
             {
-                await RefillRouteToNextWaypoint(false);
-
-                if (routeToNextWaypoint.Count == 0)
-                {
-                    LogWarn("No RouteToWaypoint available!");
-                    stopMoving.Stop();
-                    return;
-                }
+                RefillRouteToNextWaypoint();
+                return;
             }
 
             LastActive = DateTime.UtcNow;
@@ -95,7 +138,8 @@ namespace Core.Goals
                     if (routeToNextWaypoint.Peek().Z != 0 && routeToNextWaypoint.Peek().Z != location.Z)
                     {
                         playerReader.ZCoord = routeToNextWaypoint.Peek().Z;
-                        LogDebug($"Update PlayerLocation.Z = {playerReader.ZCoord}");
+                        if (debug)
+                            LogDebug($"Update PlayerLocation.Z = {playerReader.ZCoord}");
                     }
 
                     if (SimplifyRouteToWaypoint)
@@ -116,7 +160,9 @@ namespace Core.Goals
                         UpdateTotalRoute();
                     }
 
-                    LogDebug($"Move to next wayPoint! Remains: {wayPoints.Count} -- distance: {distance}");
+                    if (debug)
+                        LogDebug($"Move to next wayPoint! Remains: {wayPoints.Count} -- distance: {distance}");
+
                     OnWayPointReached?.Invoke(this, EventArgs.Empty);
                 }
                 else
@@ -170,12 +216,15 @@ namespace Core.Goals
             while (AdjustNextWaypointPointToClosest() && removed < 5) { removed++; };
             if (removed > 0)
             {
-                LogDebug($"Resume: removed {removed} waypoint!");
+                if (debug)
+                    LogDebug($"Resume: removed {removed} waypoint!");
             }
         }
 
         public void Stop()
         {
+            active = false;
+
             if (pather is RemotePathingAPIV3)
                 routeToNextWaypoint.Clear();
 
@@ -197,7 +246,7 @@ namespace Core.Goals
             return routeToNextWaypoint.Peek();
         }
 
-        public async void SetWayPoints(List<Vector3> points)
+        public void SetWayPoints(List<Vector3> points)
         {
             wayPoints.Clear();
             routeToNextWaypoint.Clear();
@@ -215,9 +264,9 @@ namespace Core.Goals
             {
                 AvgDistance = MinDistance;
             }
-            LogDebug($"SetWayPoints: Added {wayPoints.Count} - AvgDistance: {AvgDistance}");
 
-            await RefillRouteToNextWaypoint(false);
+            if (debug)
+                LogDebug($"SetWayPoints: Added {wayPoints.Count} - AvgDistance: {AvgDistance}");
 
             UpdateTotalRoute();
         }
@@ -227,50 +276,84 @@ namespace Core.Goals
             stuckDetector.ResetStuckParameters();
         }
 
-        public async ValueTask RefillRouteToNextWaypoint(bool forceUsePathing)
+        private void RefillRouteToNextWaypoint()
         {
             routeToNextWaypoint.Clear();
 
             var location = playerReader.PlayerLocation;
             var distance = location.DistanceXYTo(wayPoints.Peek());
-            if (forceUsePathing || (distance > (AvgDistance + MinDistance)) || distance > MaxDistance)
+            if (distance > MaxDistance || distance > (AvgDistance + MinDistance))
             {
-                Log($"RefillRouteToNextWaypoint - {distance} - ask pathfinder {location} -> {wayPoints.Peek()}");
-
                 stopMoving.Stop();
-                var path = await pather.FindRouteTo(addonReader, wayPoints.Peek());
-                if (path.Count == 0)
+
+                Log($"pathfinder - {distance} - {location} -> {wayPoints.Peek()}");
+                PathRequest(new PathRequest(addonReader.UIMapId.Value, location, wayPoints.Peek(), (List<Vector3> path, bool success) =>
                 {
-                    LogWarn($"Unable to find path from {location} -> {wayPoints.Peek()}. Character may stuck!");
-                }
+                    if (!active)
+                        return;
 
-                path.Reverse();
-                path.ForEach(p => routeToNextWaypoint.Push(p));
+                    if (path == null)
+                    {
+                        LogWarn($"Unable to find path {location} -> {wayPoints.Peek()}. Character may stuck!");
+                        return;
+                    }
 
-                if (SimplifyRouteToWaypoint)
-                    SimplyfyRouteToWaypoint();
+                    if (path.Count == 0)
+                    {
+                        LogWarn($"Unable to find path {location} -> {wayPoints.Peek()}. Character may stuck!");
+                    }
 
-                if (routeToNextWaypoint.Count == 0)
-                {
-                    routeToNextWaypoint.Push(wayPoints.Peek());
-                    LogDebug($"RefillRouteToNextWaypoint -- WayPoint reached! {wayPoints.Count}");
-                }
+                    path.Reverse();
+                    path.ForEach(p => routeToNextWaypoint.Push(p));
+
+                    if (SimplifyRouteToWaypoint)
+                        SimplyfyRouteToWaypoint();
+
+                    if (routeToNextWaypoint.Count == 0)
+                    {
+                        routeToNextWaypoint.Push(wayPoints.Peek());
+
+                        if (debug)
+                            LogDebug($"RefillRouteToNextWaypoint -- WayPoint reached! {wayPoints.Count}");
+                    }
+
+                    stuckDetector.SetTargetLocation(routeToNextWaypoint.Peek());
+                    UpdateTotalRoute();
+
+                    OnPathCalculated?.Invoke(this, EventArgs.Empty);
+                }));
             }
             else
             {
+                Log($"non pathfinder - {distance} - {location} -> {wayPoints.Peek()}");
+
                 routeToNextWaypoint.Push(wayPoints.Peek());
 
                 var heading = DirectionCalculator.CalculateHeading(location, wayPoints.Peek());
                 AdjustHeading(heading, "Reached waypoint");
-            }
 
-            stuckDetector.SetTargetLocation(routeToNextWaypoint.Peek());
+                stuckDetector.SetTargetLocation(routeToNextWaypoint.Peek());
+                UpdateTotalRoute();
+            }
         }
 
-
-        private int ReachedDistance(int distance)
+        private void PathRequest(PathRequest pathRequest)
         {
-            return mountHandler.IsMounted() ? MinDistanceMount : distance;
+            pathfinderThread = new Thread(async () =>
+            {
+                var path = await pather.FindRoute(pathRequest.MapId, pathRequest.Start, pathRequest.End);
+                if (active)
+                {
+                    pathResults.Enqueue(new PathResult(path, true, pathRequest.Callback));
+                }
+                pathfinderThread = null;
+            });
+            pathfinderThread.Start();
+        }
+
+        private int ReachedDistance(int minDistance)
+        {
+            return mountHandler.IsMounted() ? MinDistanceMount : minDistance;
         }
 
         private void ReduceByDistance(int minDistance)
@@ -315,11 +398,15 @@ namespace Core.Goals
             if (newPoint.DistanceXYTo(wayPoints.Peek()) > MinDistance)
             {
                 wayPoints.Push(newPoint);
-                LogDebug("Adjusted resume point");
+                if (debug)
+                    LogDebug("Adjusted resume point");
+
                 return false;
             }
 
-            LogDebug("Skipped next point in path");
+            if (debug)
+                LogDebug("Skipped next point in path");
+
             return true;
         }
 
@@ -371,10 +458,7 @@ namespace Core.Goals
 
         private void LogDebug(string text)
         {
-            if (debug)
-            {
-                logger.LogDebug($"{nameof(Navigation)}: {text}");
-            }
+            logger.LogDebug($"{nameof(Navigation)}: {text}");
         }
 
         private void Log(string text)
