@@ -76,6 +76,7 @@ namespace Core.Goals
             this.targetFinder = targetFinder;
 
             this.navigation = navigation;
+            navigation.OnPathCalculated += Navigation_OnPathCalculated;
             navigation.OnDestinationReached += Navigation_OnDestinationReached;
             navigation.OnWayPointReached += Navigation_OnWayPointReached;
 
@@ -100,6 +101,15 @@ namespace Core.Goals
                 {
                     StartLookingForTarget();
                     navigation.ResetStuckParameters();
+
+                    if (!navigation.HasWaypoint())
+                    {
+                        RefillWaypoints(true);
+                    }
+                    else
+                    {
+                        navigation.Resume();
+                    }
                 }
             }
         }
@@ -246,6 +256,11 @@ namespace Core.Goals
         }
 
         #region Refill rules
+
+        private void Navigation_OnPathCalculated(object? sender, EventArgs e)
+        {
+            MountIfRequired();
+        }
 
         private void Navigation_OnDestinationReached(object? sender, EventArgs e)
         {
