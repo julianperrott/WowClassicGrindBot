@@ -10,14 +10,11 @@ namespace WowheadDB_Extractor
 {
     public class PerZoneSkinnable
     {
-        private int zoneId;
         private Area area;
-
         private string url;
 
         public PerZoneSkinnable(int zoneId, Area area)
         {
-            this.zoneId = zoneId;
             this.area = area;
             url = $"https://tbc.wowhead.com/npcs?filter=6:10;{zoneId}:1;0:0";
         }
@@ -40,7 +37,6 @@ namespace WowheadDB_Extractor
                     area.skinnable.Sort();
                 }
             }
-
             catch (Exception e)
             {
                 Console.WriteLine($" - PerZoneSkinnable\n {e}");
@@ -55,7 +51,7 @@ namespace WowheadDB_Extractor
             return await response.Content.ReadAsStringAsync();
         }
 
-        string GetPayloadFromWebpage(string content)
+        static string GetPayloadFromWebpage(string content)
         {
             string beginPat = "new Listview(";
             string endPat = "</script>";

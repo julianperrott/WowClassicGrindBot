@@ -45,7 +45,7 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "1_Gnome_Vendor.json",
         "Cost": 6
       }

@@ -1,16 +1,16 @@
 ﻿namespace SharedLib
 {
-    public struct WorldMapArea
+    public readonly struct WorldMapArea
     {
-        public int MapID { get; set; }
-        public int AreaID { get; set; }
-        public string AreaName { get; set; }
-        public float LocLeft { get; set; }
-        public float LocRight { get; set; }
-        public float LocTop { get; set; }
-        public float LocBottom { get; set; }
-        public int UIMapId { get; set; }
-        public string Continent { get; set; }
+        public int MapID { get; init; }
+        public int AreaID { get; init; }
+        public string AreaName { get; init; }
+        public float LocLeft { get; init; }
+        public float LocRight { get; init; }
+        public float LocTop { get; init; }
+        public float LocBottom { get; init; }
+        public int UIMapId { get; init; }
+        public string Continent { get; init; }
 
 
         public float ToWorldX(float value)

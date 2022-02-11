@@ -3,6 +3,7 @@ using Core.Goals;
 using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using SharedLib;
+using System.Threading;
 
 namespace CoreTests
 {
@@ -23,7 +24,7 @@ namespace CoreTests
             rectProvider.GetRectangle(out var rect);
             capturer = new DirectBitmapCapturer(rect);
 
-            npcNameFinder = new NpcNameFinder(logger, capturer);
+            npcNameFinder = new NpcNameFinder(logger, capturer, new AutoResetEvent(false));
             npcNameTargeting = new NpcNameTargeting(logger, npcNameFinder, mockWoWProcess);
         }
 

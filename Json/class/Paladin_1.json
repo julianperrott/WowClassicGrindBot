@@ -30,7 +30,7 @@
       {
         "Name": "Devotion Aura",
         "Key": "5",
-        "Requirement": "!Devotion Aura"
+        "Requirements": ["Spell:Devotion Aura", "!Devotion Aura"]
       }
     ]
   }

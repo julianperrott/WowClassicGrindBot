@@ -37,15 +37,15 @@ namespace Core
         public List<Vector3> PathPoints { get; private set; }
         public List<Vector3> SpiritPath { get; private set; }
 
-        public List<Vector3> RouteToWaypoint
+        public List<Vector3>? RouteToWaypoint
         {
             get
             {
-                var route = pathedRoutes.Select(r => r.PathingRoute())
-                    .Where(r => r.Any())
-                    .FirstOrDefault();
-
-                return route ?? new List<Vector3>();
+                if (pathedRoutes.Any())
+                {
+                    return pathedRoutes.OrderByDescending(x => x.LastActive).First().PathingRoute();
+                }
+                return default;
             }
         }
 
@@ -60,8 +60,8 @@ namespace Core
         private double addY;
         private double addX;
 
-        private int margin = 0;
-        private int canvasSize = 0;
+        private int margin;
+        private int canvasSize;
 
         private double pointToGrid;
 
@@ -134,7 +134,9 @@ namespace Core
             if (SpiritPath.Count > 1)
                 allPoints.AddRange(this.SpiritPath);
 
-            allPoints.AddRange(this.RouteToWaypoint);
+            var wayPoints = RouteToWaypoint;
+            if (wayPoints != null)
+                allPoints.AddRange(wayPoints);
 
             var pois = this.PoiList.Select(p => p.Location);
             allPoints.AddRange(pois);
@@ -178,6 +180,9 @@ namespace Core
             return sb.ToString();
         }
 
+        private readonly string first = "<br><b>First</b>";
+        private readonly string last = "<br><b>Last</b>";
+
         public string RenderPathPoints(List<Vector3> path)
         {
             StringBuilder sb = new StringBuilder();
@@ -186,7 +191,7 @@ namespace Core
                 var wowpoint = path[i];
                 float x = wowpoint.X;
                 float y = wowpoint.Y;
-                sb.AppendLine($"<circle onmousedown=\"pointClick(evt,{x},{y},{i});\"  onmousemove=\"showTooltip(evt,'{x},{y}');\" onmouseout=\"hideTooltip();\"  cx = '{ToCanvasPointX(wowpoint.X)}' cy = '{ToCanvasPointY(wowpoint.Y)}' r = '{dSize}' />");
+                sb.AppendLine($"<circle onmousedown=\"pointClick(evt,{x},{y},{i});\"  onmousemove=\"showTooltip(evt,'{x},{y}{(i == 0 ? first : i == path.Count-1 ? last : string.Empty)}');\" onmouseout=\"hideTooltip();\"  cx = '{ToCanvasPointX(wowpoint.X)}' cy = '{ToCanvasPointY(wowpoint.Y)}' r = '{dSize}' />");
             }
             return sb.ToString();
         }
@@ -208,7 +213,7 @@ namespace Core
         public string DeathImage(Vector3 pt)
         {
             var size = this.canvasSize / 25;
-            return pt == null ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X) - size / 2}' y = '{ToCanvasPointY(pt.Y) - size / 2}' height='{size}' width='{size}' />";
+            return pt == Vector3.Zero ? string.Empty : $"<image href = 'death.svg' x = '{ToCanvasPointX(pt.X) - size / 2}' y = '{ToCanvasPointY(pt.Y) - size / 2}' height='{size}' width='{size}' />";
         }
 
         public string DrawPoi(RouteInfoPoi poi)

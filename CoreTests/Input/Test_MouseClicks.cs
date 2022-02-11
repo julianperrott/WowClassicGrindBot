@@ -36,26 +36,26 @@ namespace CoreTests
             await Task.Delay(500);
 
             var p = new Point(120, 120);
-            await wowProcessInput.LeftClickMouse(p);
+            wowProcessInput.LeftClickMouse(p);
 
             await Task.Delay(500);
 
-            await wowProcessInput.RightClickMouse(p);
+            wowProcessInput.RightClickMouse(p);
 
             await Task.Delay(500);
 
-            await wowProcessInput.RightClickMouse(p);
+            wowProcessInput.RightClickMouse(p);
 
             wowScreen.GetRectangle(out var rect);
             p = new Point(rect.Width / 3, rect.Height / 5);
 
             await Task.Delay(500);
 
-            await wowProcessInput.RightClickMouse(p);
+            wowProcessInput.RightClickMouse(p);
 
             await Task.Delay(500);
 
-            await wowProcessInput.RightClickMouse(p);
+            wowProcessInput.RightClickMouse(p);
 
             logger.LogInformation("Finished");
         }

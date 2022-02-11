@@ -19,6 +19,11 @@ namespace SharedLib.Extensions
             return Vector2.Distance(l1.AsVector2() * 100, l2.AsVector2() * 100); // would be nice to remove that 100 multiplier :sweat:
         }
 
+        public static float DistanceXY(Vector3 l1, Vector3 l2)
+        {
+            return Vector2.Distance(l1.AsVector2() * 100, l2.AsVector2() * 100); // would be nice to remove that 100 multiplier :sweat:
+        }
+
         public static List<Vector3> ShortenRouteFromLocation(Vector3 location, List<Vector3> pointsList)
         {
             var result = new List<Vector3>();

@@ -31,7 +31,7 @@ namespace BlazorServer
         }
 
         public bool Installed()
-        {;
+        {
             return GetInstalledVersion() != null;
         }
 
@@ -39,26 +39,26 @@ namespace BlazorServer
         {
             if (!Directory.Exists(addonConfig.InstallPath))
             {
-                logger.LogError($"{GetType().Name}.InstallPath - error - does not exists: '{addonConfig.InstallPath}'");
+                logger.LogError($"{nameof(addonConfig)}.{nameof(addonConfig.InstallPath)} - error - does not exists: '{addonConfig.InstallPath}'");
                 return false;
             }
             else
             {
-                logger.LogInformation($"{GetType().Name}.InstallPath - correct: '{addonConfig.InstallPath}'");
+                logger.LogInformation($"{nameof(addonConfig)}.{nameof(addonConfig.InstallPath)} - correct: '{addonConfig.InstallPath}'");
                 if (!Directory.Exists(AddonBasePath))
                 {
-                    logger.LogError($"{GetType().Name}.InstallPath - error - unable to locate Interface\\Addons folder: '{addonConfig.InstallPath}'");
+                    logger.LogError($"{nameof(addonConfig)}.{nameof(addonConfig.InstallPath)} - error - unable to locate Interface\\Addons folder: '{addonConfig.InstallPath}'");
                     return false;
                 }
                 else
                 {
-                    logger.LogInformation($"{GetType().Name}.InstallPath - correct - Interface\\Addons : '{addonConfig.InstallPath}'");
+                    logger.LogInformation($"{nameof(addonConfig)}.{nameof(addonConfig.InstallPath)} - correct - Interface\\Addons : '{addonConfig.InstallPath}'");
                 }
             }
 
             if (string.IsNullOrEmpty(addonConfig.Author))
             {
-                logger.LogError($"{GetType().Name}.Author - error - cannot be empty: '{addonConfig.Author}'");
+                logger.LogError($"{nameof(addonConfig)}.{nameof(addonConfig.Author)} - error - cannot be empty: '{addonConfig.Author}'");
                 return false;
             }
 
@@ -74,13 +74,13 @@ namespace BlazorServer
 
                 if (addonConfig.Title.Length == 0)
                 {
-                    logger.LogError($"{GetType().Name}.Title - error - use letters only: '{addonConfig.Title}'");
+                    logger.LogError($"{nameof(addonConfig)}.{nameof(addonConfig.Title)} - error - use letters only: '{addonConfig.Title}'");
                     return false;
                 }
             }
             else
             {
-                logger.LogError($"{GetType().Name}.Title - error - cannot be empty: '{addonConfig.Title}'");
+                logger.LogError($"{nameof(addonConfig)}.{nameof(addonConfig.Title)} - error - cannot be empty: '{addonConfig.Title}'");
                 return false;
             }
 
@@ -92,15 +92,15 @@ namespace BlazorServer
             try
             {
                 DeleteAddon();
-                CopyAllAddons();
+                CopyAddonFiles();
                 RenameAddon();
                 MakeUnique();
 
-                logger.LogInformation($"{GetType().Name}.Install - Success");
+                logger.LogInformation($"{nameof(AddonConfigurator)}.{nameof(Install)} - Success");
             }
             catch (Exception e)
             {
-                logger.LogInformation($"{GetType().Name}.Install - Failed\n" + e.Message);
+                logger.LogInformation($"{nameof(AddonConfigurator)}.{nameof(Install)} - Failed\n" + e.Message);
             }
         }
 
@@ -108,23 +108,23 @@ namespace BlazorServer
         {
             if (Directory.Exists(DefaultAddonPath))
             {
-                logger.LogInformation($"{GetType().Name}.DeleteAddon -> Default Addon Exists");
+                logger.LogInformation($"{nameof(AddonConfigurator)}.{nameof(DeleteAddon)} -> Default Addon Exists");
                 Directory.Delete(DefaultAddonPath, true);
             }
 
             if (!string.IsNullOrEmpty(addonConfig.Title) && Directory.Exists(FinalAddonPath))
             {
-                logger.LogInformation($"{GetType().Name}.DeleteAddon -> Unique Addon Exists");
+                logger.LogInformation($"{nameof(AddonConfigurator)}.{nameof(DeleteAddon)} -> Unique Addon Exists");
                 Directory.Delete(FinalAddonPath, true);
             }
         }
 
-        private void CopyAllAddons()
+        private void CopyAddonFiles()
         {
             try
             {
                 CopyFolder("");
-                logger.LogInformation($"{GetType().Name}.CopyFiles - Success");
+                logger.LogInformation($"{nameof(AddonConfigurator)}.{nameof(CopyAddonFiles)} - Success");
             }
             catch (Exception e)
             {
@@ -132,7 +132,7 @@ namespace BlazorServer
 
                 // This only should be happen when running from IDE
                 CopyFolder(".");
-                logger.LogInformation($"{GetType().Name}.CopyFiles - Success");
+                logger.LogInformation($"{nameof(AddonConfigurator)}.{nameof(CopyAddonFiles)} - Success");
             }
         }
 
@@ -247,12 +247,12 @@ namespace BlazorServer
                 addonConfig.InstallPath = ExecutablePath.Get(wowProcess.WarcraftProcess);
                 if (!string.IsNullOrEmpty(addonConfig.InstallPath))
                 {
-                    logger.LogInformation($"{GetType().Name}.InstallPath - found running instance: '{addonConfig.InstallPath}'");
+                    logger.LogInformation($"{nameof(addonConfig)}.{nameof(addonConfig.InstallPath)} - found running instance: '{addonConfig.InstallPath}'");
                     return;
                 }
             }
 
-            logger.LogError($"{GetType().Name}.InstallPath - game not running");
+            logger.LogError($"{nameof(addonConfig)}.{nameof(addonConfig.InstallPath)} - game not running");
         }
 
         #endregion

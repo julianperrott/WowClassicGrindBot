@@ -27,7 +27,11 @@ namespace Core
 
             {CursorType.Vendor, new List<ulong>{ 17940331276560775168, 17940331276594329600,17940331276594460672} },
 
-            {CursorType.Repair, new List<ulong>{ 16207573517913036808, 4669140166357294088 } }
+            {CursorType.Repair, new List<ulong>{ 16207573517913036808, 4669140166357294088 } },
+
+            {CursorType.Innkeeper, new List<ulong> { 4667452417086599168, 4676529985085517824 } },
+
+            {CursorType.Quest, new List<ulong> { 4682718988357606424, 4682718988358655000 } }
         };
 
         public static void Classify(out CursorType classification)
@@ -47,14 +51,13 @@ namespace Core
             }
 
             var hash = ImageHashing.AverageHash(cursor);
-            cursor.Dispose();
-
             //var filename = hash + ".bmp";
             //var path = Path.Join("../Cursors/", filename);
             //if (!File.Exists(path))
             //{
-            //    result.Save(path);
+            //    cursor.Save(path);
             //}
+            cursor.Dispose();
 
             var matching = imageHashes
                 .SelectMany(i => i.Value.Select(v => (similarity: ImageHashing.Similarity(hash, v), imagehash: i)))

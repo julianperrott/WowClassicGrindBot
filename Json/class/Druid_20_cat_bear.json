@@ -31,29 +31,40 @@
         "Key": "6",
         "StopBeforeCast": true,
         "AfterCastWaitBuff": true,
-        "Requirements": ["Health%<75", "not Rejuvenation"],
-        "Cooldown": 5000,
+        "Requirements": [
+          "Health% < 75",
+          "!Rejuvenation"
+        ],
         "Form": "None"
       },
       {
         "Name": "Moonfire",
         "Key": "5",
-        "AfterCastWaitBuff": true,
-        "CastIfAddsVisible": true,
-        "Requirements": ["SpellInRange:0", "MinRange > 10", "not Moonfire", "Mana%>40"],
         "StopBeforeCast": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": [
+          "!Moonfire",
+          "AddVisible",
+          "SpellInRange:0",
+          "MinRange > 10"
+        ],
         "Form": "None"
       },
       {
         "Name": "Cat Form",
         "Key": "F3",
         "WaitForWithinMeleeRange": true,
-        "Requirements": ["Moonfire", "not Form:Druid_Cat"]
+        "Requirements": [
+          "Moonfire",
+          "!Form:Druid_Cat"
+        ]
       },
       {
         "Name": "Cat Form",
         "Key": "F3",
-        "Requirements": ["not Form:Druid_Cat"]
+        "Requirements": [
+          "!Form:Druid_Cat"
+        ]
       }
     ]
   },
@@ -64,8 +75,7 @@
         "Key": "0",
         "HasCastBar": true,
         "WhenUsable": true,
-        "Requirement": "Health%<30",
-        "Cooldown": 8000,
+        "Requirement": "Health% < 30",
         "Form": "None"
       },
       {
@@ -74,7 +84,12 @@
         "MinEnergy": 30,
         "MinComboPoints": 1,
         "WhenUsable": true,
-        "Requirements": ["SpellInRange:2", "not Rip", "MobCount<2", "Form:Druid_Cat"],
+        "Requirements": [
+          "SpellInRange:2",
+          "!Rip",
+          "MobCount < 2",
+          "Form:Druid_Cat"
+        ],
         "Form": "Druid_Cat"
       },
       {
@@ -82,18 +97,28 @@
         "Key": "2",
         "MinEnergy": 40,
         "WhenUsable": true,
-        "Requirements": ["SpellInRange:2", "MobCount<2", "Form:Druid_Cat"],
+        "Requirements": [
+          "SpellInRange:2",
+          "MobCount < 2",
+          "Form:Druid_Cat"
+        ],
         "Form": "Druid_Cat"
       },
       {
         "Name": "Bear Form",
         "Key": "F2",
-        "Requirements": ["not Form:Druid_Bear", "Health%<50||MobCount>1"]
+        "Requirements": [
+          "!Form:Druid_Bear",
+          "Health% < 50||MobCount > 1"
+        ]
       },
       {
         "Name": "Bash",
         "Key": "5",
-        "Requirements": ["SpellInRange:1", "TargetCastingSpell||Health%<38"],
+        "Requirements": [
+          "SpellInRange:1",
+          "TargetCastingSpell || Health% < 38"
+        ],
         "WhenUsable": true,
         "MinRage": 10,
         "Form": "Druid_Bear"
@@ -110,7 +135,12 @@
         "Key": "3",
         "MinRage": 10,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "not Demoralizing Roar", "MobCount>1", "Form:Druid_Bear"],
+        "Requirements": [
+          "InMeleeRange",
+          "!Demoralizing Roar",
+          "MobCount > 1",
+          "Form:Druid_Bear"
+        ],
         "Form": "Druid_Bear"
       },
       {
@@ -118,25 +148,38 @@
         "Key": "6",
         "MinRage": 20,
         "WhenUsable": true,
-        "Requirements": ["InMeleeRange", "MobCount>1", "Form:Druid_Bear"],
+        "Requirements": [
+          "InMeleeRange",
+          "MobCount > 1",
+          "Form:Druid_Bear"
+        ],
         "Form": "Druid_Bear"
       },
       {
         "Name": "Maul",
         "Key": "2",
         "MinRage": 15,
-        "Requirements": ["InMeleeRange", "MobCount<2", "LastMainHandMs>2100", "Form:Druid_Bear"], // bear swing speed fixed at 2.5
+        "Requirements": [
+          "InMeleeRange",
+          "MobCount < 2",
+          "LastMainHandMs > 2100",
+          "Form:Druid_Bear"
+        ], // bear swing speed fixed at 2.5
         "AfterCastWaitNextSwing": true,
         "Form": "Druid_Bear"
       },
       {
         "Name": "Cat Form",
         "Key": "F3",
-        "Requirements": ["not Form:Druid_Cat", "Health%>60", "MobCount<2"]
+        "Requirements": [
+          "!Form:Druid_Cat",
+          "Health% > 60",
+          "MobCount < 2"
+        ]
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
@@ -149,23 +192,19 @@
       {
         "Name": "Mark of the Wild",
         "Key": "4",
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Requirement": "not Mark of the Wild",
+        "Requirement": "!Mark of the Wild",
         "Form": "None"
       },
       {
         "Name": "Thorns",
         "Key": "7",
-        "AfterCastWaitBuff": true,
-        "DelayAfterCast": 0,
-        "Requirement": "not Thorns",
+        "Requirement": "!Thorns",
         "Form": "None"
       },
       {
         "Name": "Water",
         "Key": "-",
-        "Requirement": "Mana%<30",
+        "Requirement": "Mana% < 30",
         "Form": "None"
       }
     ]
@@ -173,18 +212,21 @@
   "NPC": {
     "Sequence": [
       {
+        "Cost": 6,
         "Name": "Repair",
         "Key": "C",
         "Requirement": "Items Broken",
-        "PathFilename": "20_Westfall_Vendor.json",
-        "Cost": 6
+        "PathFilename": "20_Westfall_Vendor.json"
       },
       {
+        "Cost": 6,
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
-        "PathFilename": "20_Westfall_Vendor.json",
-        "Cost": 6
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "20_Westfall_Vendor.json"
       }
     ]
   }

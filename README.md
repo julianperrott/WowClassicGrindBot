@@ -173,6 +173,7 @@ The bot reads the game state using small blocks of colour shown at the top of th
     * Required to restart the Game 
     * Enter world with your desired character
     * Click `5. Frame Configuration`
+    * [Guidance for good DataFrame](https://github.com/Xian55/WowClassicGrindBot/wiki/Guidance-for-good-DataFrame)
     * Click `Auto Configure and Restart`
     * [Validate FrameConfiguration](https://github.com/Xian55/WowClassicGrindBot/wiki/Validating-FrameConfiguration)
 
@@ -351,7 +352,6 @@ Can specify conditions with `Requirement(s)` in order to create a matching actio
 | Key | The key to click (`ConsoleKey`) | `""` |
 | PressDuration | How many milliseconds to press the key for | `50` |
 | Form | Shapeshift/Stance form to be in to cast this spell | `Form.None` |
-| CastIfAddsVisible | If the bot can "See" any adds | `false` |
 | Charge | How many times shoud this Command be used in sequence and ignore its Cooldown | `1` |
 | Cooldown | **Note this is not the in-game cooldown!**<br>The time in milliseconds until the command can be used again.<br>This property will be updated when the backend registers the `Key` keypress. | `0` |
 | School | Indicate what type of element. `SchoolMask.`<br>(`Physical, Holy, Fire, Nature, Frost, Shadow, Arcane`) | `SchoolMask.None` |
@@ -970,12 +970,14 @@ Allow requirements about what buffs/debuffs you have or the target has or in gen
 | `"TargetsMe"` | The target currently targets the player |
 | `"TargetsPet"` | The target currently targets the player's pet |
 | `"TargetsNone"` | The target currently has not target |
+| `"AddVisible"` | Around the target there are possible additional NPCs |
 | `"TargetCastingSpell"` | Target casts any spell |
 | `"Swimming"` | The player is currently swimming. |
 | `"Falling"` | The player is currently falling down, not touching the ground. |
 | `"Has Pet"` | The player's pet is alive |
 | `"Pet Happy"` | Pet happienss is green |
 | `"BagFull"` | Inventory is full |
+| `"BagGreyItem"` | Indicates that there are at least one Grey Quality level item. |
 | `"Items Broken"` | Has any broken(red) worn item |
 | `"HasRangedWeapon"` | Has equipped ranged weapon (wand/crossbow/bow/gun) |
 | `"HasAmmo"` | AmmoSlot has equipped ammo and count is greater than zero |
@@ -1415,14 +1417,15 @@ The bot will use the PathingAPI to work out routes, these are shown on the route
 
 Warlock `heal` macro used in warlock profiles.
 ```css
-#showtooltip
-/cast [nocombat] Create Healthstone
+#showtooltip Create Healthstone
 /use Minor Healthstone
 /use Lesser Healthstone
 /use Healthstone
 /use Greater Healthstone
 /use Major Healthstone
 /use Master Healthstone
+/stopmacro [combat]
+/cast [nocombat] Create Healthstone
 ```
 
 Hunter `feedpet` macro replace `Roasted Quail` with the proper diet
@@ -1441,6 +1444,7 @@ Hunter `sumpet` macro
 
 Rogue weapon enchant (use 17 for second weapon):
 ```css
+#showtooltip
 /use Instant Poison V 
 /use 16
 /click StaticPopup1Button1 
@@ -1448,6 +1452,7 @@ Rogue weapon enchant (use 17 for second weapon):
 
 Melee weapon enchant:
 ```css
+#showtooltip
 /use Dense Sharpening Stone
 /use 16
 /click StaticPopup1Button1

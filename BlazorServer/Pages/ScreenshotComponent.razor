@@ -54,6 +54,9 @@
 
     private async void ImageChanged(object sender, ScreenChangeEventArgs args)
     {
+        if (!this.botController.WowScreen.EnablePostProcess)
+            return;
+
         this.image = args.Screenshot;
 
         await InvokeAsync(() =>

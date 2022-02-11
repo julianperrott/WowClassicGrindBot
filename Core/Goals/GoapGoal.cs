@@ -39,13 +39,6 @@ namespace Core.Goals
 
         public abstract float CostOfPerformingAction { get; }
 
-        public virtual bool Repeatable { get; } = true;
-
-        public void DoReset()
-        {
-            ResetBeforePlanning();
-        }
-
         private string name = string.Empty;
 
         public virtual string Name
@@ -77,23 +70,19 @@ namespace Core.Goals
             State = newState;
         }
 
-        public virtual void ResetBeforePlanning()
-        {
-        }
-
         public virtual bool CheckIfActionCanRun()
         {
             return true;
         }
 
-        public virtual async ValueTask OnEnter()
+        public virtual ValueTask OnEnter()
         {
-            await Task.Delay(0);
+            return ValueTask.CompletedTask;
         }
 
-        public virtual async ValueTask OnExit()
+        public virtual ValueTask OnExit()
         {
-            await Task.Delay(0);
+            return ValueTask.CompletedTask;
         }
 
         public abstract ValueTask PerformAction();

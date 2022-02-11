@@ -22,6 +22,16 @@ local CELL_SPACING = 1 -- 0 or 1
 local globalCounter = 0
 local initPhase = 10
 
+DataToColor.DATA_CONFIG = {
+    ACCEPT_PARTY_REQUESTS = false, -- O
+    DECLINE_PARTY_REQUESTS = false, -- O
+    AUTO_REPAIR_ITEMS = true, -- O
+    AUTO_LEARN_TALENTS = false, -- O
+    AUTO_TRAIN_SPELLS = false, -- O
+    AUTO_RESURRECT = true,
+    AUTO_SELL_GREY_ITEMS = true
+}
+
 -- How often item frames change
 local ITEM_ITERATION_FRAME_CHANGE_RATE = 5
 -- How often the actionbar frames change
@@ -64,11 +74,15 @@ DataToColor.targetChanged = true
 DataToColor.playerGUID = UnitGUID(DataToColor.C.unitPlayer)
 DataToColor.petGUID = UnitGUID(DataToColor.C.unitPet)
 
+DataToColor.corpseInRange = 0
+
 -- buff / debuff counters
 local playerDebuffCount = 0
 local playerBuffCount = 0
 local targetDebuffCount = 0
 local targetBuffCount = 0
+
+local bagCache = {}
 
 -- Update Queue
 local stack = {}
@@ -233,12 +247,16 @@ function DataToColor:Reset()
     DataToColor.lastCastStartTime = 0
     DataToColor.CastNum = 0
 
+    DataToColor.corpseInRange = 0
+
     playerDebuffCount = 0
     playerBuffCount = 0
     targetDebuffCount = 0
     targetBuffCount = 0
 
     globalCounter = 0
+
+    bagCache = {}
 end
 
 function DataToColor:Update()
@@ -312,10 +330,35 @@ end
 
 function DataToColor:InitInventoryQueue(containerID)
     if containerID >= 0 and containerID <= 4 then
-        for i = 1, 21 do
-            DataToColor.stack:push(DataToColor.inventoryQueue, containerID * 1000 + i)
+        for i = 1, GetContainerNumSlots(containerID) do
+            if DataToColor:BagSlotChanged(containerID, i) then
+                DataToColor.stack:push(DataToColor.inventoryQueue, containerID * 1000 + i)
+            end
         end
     end
+end
+
+function DataToColor:BagSlotChanged(container, slot)
+
+    local _, count, _, _, _, _,
+    _, _, _, id = GetContainerItemInfo(container, slot)
+
+    if id == nil then
+        count = 0
+        id = 0
+    end
+
+    local index = container * 1000 + slot;
+    if bagCache[index] == nil then
+        bagCache[index] = { id = id, count = count };
+        return true
+    elseif bagCache[index].id ~= id or bagCache[index].count ~= count then
+        bagCache[index].id = id
+        bagCache[index].count = count
+        return true
+    end
+
+    return false
 end
 
 function DataToColor:InitBagQueue(min, max)
@@ -642,6 +685,7 @@ function DataToColor:CreateFrames(n)
             if DataToColor:Modulo(globalCounter, GOSSIP_ITERATION_FRAME_CHANGE_RATE) == 0 then
                 gossipNum = DataToColor.stack:pop(DataToColor.gossipQueue)
                 if gossipNum then
+                    --DataToColor:Print("gossipQueue:" .. gossipNum)
                     MakePixelSquareArrI(gossipNum, 73)
                 end
             end

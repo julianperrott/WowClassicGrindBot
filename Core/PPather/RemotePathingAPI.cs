@@ -24,8 +24,6 @@ namespace Core
 
         private List<LineArgs> lineArgs = new List<LineArgs>();
 
-        private int targetMapId = 0;
-
         public RemotePathingAPI(ILogger logger, string host="", int port=0)
         {
             this.logger = logger;
@@ -33,7 +31,7 @@ namespace Core
             this.port = port;
         }
 
-        public async Task DrawLines(List<LineArgs> lineArgs)
+        public async ValueTask DrawLines(List<LineArgs> lineArgs)
         {
             this.lineArgs = lineArgs;
 
@@ -50,12 +48,12 @@ namespace Core
             }
         }
 
-        public async Task DrawLines()
+        public async ValueTask DrawLines()
         {
             await DrawLines(lineArgs);
         }
 
-        public async Task DrawSphere(SphereArgs args)
+        public async ValueTask DrawSphere(SphereArgs args)
         {
             using (var handler = new HttpClientHandler())
             {
@@ -69,17 +67,12 @@ namespace Core
             }
         }
 
-        public async Task<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
+        public async ValueTask<List<Vector3>> FindRoute(int map, Vector3 fromPoint, Vector3 toPoint)
         {
-            if (targetMapId == 0)
-            {
-                targetMapId = map;
-            }
-
             try
             {
-                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} map {targetMapId}...");
-                var url = $"{api}MapRoute?map1={map}&x1={fromPoint.X}&y1={fromPoint.Y}&map2={targetMapId}&x2={toPoint.X}&y2={toPoint.Y}";
+                logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} map {map}...");
+                var url = $"{api}MapRoute?map1={map}&x1={fromPoint.X}&y1={fromPoint.Y}&map2={map}&x2={toPoint.X}&y2={toPoint.Y}";
                 var sw = new Stopwatch();
                 sw.Start();
 
@@ -90,7 +83,7 @@ namespace Core
                         var responseString = await client.GetStringAsync(url);
                         logger.LogInformation($"Finding route from {fromPoint} map {map} to {toPoint} took {sw.ElapsedMilliseconds} ms.");
                         var path = JsonConvert.DeserializeObject<IEnumerable<WorldMapAreaSpot>>(responseString);
-                        var result = path.Select(l => new Vector3(l.X, l.Y, 0)).ToList();
+                        var result = path.Select(l => new Vector3(l.X, l.Y, l.Z)).ToList();
                         return result;
                     }
                 }
@@ -101,11 +94,6 @@ namespace Core
                 Console.WriteLine(ex);
                 return new List<Vector3>();
             }
-        }
-
-        public Task<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
-        {
-            return FindRoute(addonReader.UIMapId.Value, addonReader.PlayerReader.PlayerLocation, destination);
         }
 
         public async Task<bool> PingServer()

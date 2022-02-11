@@ -23,7 +23,7 @@ namespace PathingAPI
         private const float toonHeight = 2.0f;
         private const float toonSize = 0.5f;
 
-        private static DateTime startTime = DateTime.Now;
+        private static DateTime startTime;
 
 
         public Search(string continent, Logger logger, DataConfig dataConfig)
@@ -38,10 +38,10 @@ namespace PathingAPI
             }
         }
 
-        public Location CreateLocation(float x, float y)
+        public Location CreateLocation(float x, float y, float z = 0)
         {
             // find model 0 i.e. terrain
-            var z0 = GetZValueAt(x, y, new int[] { 0 });
+            var z0 = GetZValueAt(x, y, new int[] { (int)z });
 
             // if no z value found then try any model
             if (z0 == float.MinValue) { z0 = GetZValueAt(x, y, null); }
@@ -87,14 +87,14 @@ namespace PathingAPI
             triangleWorld.AddSupplier(mpq);
             PathGraph = new PathGraph(continent, triangleWorld, null, this.logger, dataConfig);
             this.continent = continent;
-            startTime = DateTime.Now;
+            startTime = DateTime.UtcNow;
         }
 
         public Path DoSearch(PathGraph.eSearchScoreSpot searchType)
         {
             //create a new path graph if required
             const int ResetAfterMinutes = 15;
-            if (PathGraph == null || this.continent != locationFrom.Continent || (DateTime.Now - startTime).TotalMinutes >= ResetAfterMinutes)
+            if (PathGraph == null || this.continent != locationFrom.Continent || (DateTime.UtcNow - startTime).TotalMinutes >= ResetAfterMinutes)
             {
                 CreatePathGraph(locationFrom.Continent);
             }

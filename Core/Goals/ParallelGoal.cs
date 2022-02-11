@@ -10,7 +10,7 @@ namespace Core.Goals
 {
     public class ParallelGoal : GoapGoal
     {
-        public override float CostOfPerformingAction { get => 3f; }
+        public override float CostOfPerformingAction => 3f;
 
         private readonly ILogger logger;
         private readonly ConfigurableInput input;
@@ -30,7 +30,7 @@ namespace Core.Goals
             this.stopMoving = stopMoving;
             this.wait = wait;
             this.playerReader = playerReader;
-            
+
             this.castingHandler = castingHandler;
             this.mountHandler = mountHandler;
 
@@ -44,36 +44,34 @@ namespace Core.Goals
             return Keys.Any(key => key.CanRun());
         }
 
-        public override async ValueTask PerformAction()
+        public override async ValueTask OnEnter()
         {
             if (Keys.Any(k => k.StopBeforeCast))
             {
-                await stopMoving.Stop();
-                await wait.Update(1);
+                stopMoving.Stop();
+                wait.Update(1);
 
                 if (mountHandler.IsMounted())
                 {
-                    await mountHandler.Dismount();
-                    await wait.Update(1);
-                    //if (!await Wait(1000, () => playerReader.PlayerBitValues.PlayerInCombat)) return; // vanilla after dismout GCD
+                    mountHandler.Dismount();
+                    wait.Update(1);
                 }
             }
 
-            await AsyncExt.Loop(Keys, async (KeyAction key) =>
+            await AsyncExt.Loop(Keys, (KeyAction key) =>
             {
-                var pressed = await castingHandler.CastIfReady(key, key.DelayBeforeCast);
+                var pressed = castingHandler.CastIfReady(key, key.DelayBeforeCast);
                 key.ResetCooldown();
                 key.SetClicked();
+                return Task.CompletedTask;
             });
 
             bool wasDrinkingOrEating = playerReader.Buffs.Drinking || playerReader.Buffs.Eating;
 
-            logger.LogInformation($"Waiting for {Name}");
-
-            DateTime startTime = DateTime.Now;
+            DateTime startTime = DateTime.UtcNow;
             while ((playerReader.Buffs.Drinking || playerReader.Buffs.Eating || playerReader.IsCasting) && !playerReader.Bits.PlayerInCombat)
             {
-                await wait.Update(1);
+                wait.Update(1);
 
                 if (playerReader.Buffs.Drinking && playerReader.Buffs.Eating)
                 {
@@ -88,7 +86,7 @@ namespace Core.Goals
                     if (playerReader.HealthPercent > 98) { break; }
                 }
 
-                if ((DateTime.Now - startTime).TotalSeconds >= 25)
+                if ((DateTime.UtcNow - startTime).TotalSeconds >= 25)
                 {
                     logger.LogInformation($"Waited (25s) long enough for {Name}");
                     break;
@@ -97,8 +95,13 @@ namespace Core.Goals
 
             if (wasDrinkingOrEating)
             {
-                await input.TapStandUpKey();
+                input.TapStandUpKey();
             }
+        }
+
+        public override ValueTask PerformAction()
+        {
+            return ValueTask.CompletedTask;
         }
     }
 }

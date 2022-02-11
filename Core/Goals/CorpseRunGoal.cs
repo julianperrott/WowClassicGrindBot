@@ -22,7 +22,7 @@ namespace Core.Goals
         public List<Vector3> Deaths { get; } = new List<Vector3>();
 
         private ILogger logger;
-        public DateTime LastActive { get; set; } = DateTime.Now.AddDays(-1);
+        public DateTime LastActive { get; set; }
 
         public CorpseRunGoal(PlayerReader playerReader, ConfigurableInput input, IPlayerDirection playerDirection, List<Vector3> spiritWalker, StopMoving stopMoving, ILogger logger, StuckDetector stuckDetector)
         {
@@ -76,7 +76,7 @@ namespace Core.Goals
 
             if (lastDistance < distance)
             {
-                await playerDirection.SetDirection(heading, points.Peek(), "Further away");
+                playerDirection.SetDirection(heading, points.Peek(), "Further away");
             }
             else if (!this.stuckDetector.IsGettingCloser())
             {
@@ -85,7 +85,7 @@ namespace Core.Goals
                 await Task.Delay(100);
                 if (HasBeenActiveRecently())
                 {
-                    await stuckDetector.Unstick();
+                    stuckDetector.Unstick();
                 }
                 else
                 {
@@ -95,7 +95,7 @@ namespace Core.Goals
             }
             else // distance closer
             {
-                await AdjustHeading(heading);
+                AdjustHeading(heading);
             }
 
             lastDistance = distance;
@@ -108,23 +108,23 @@ namespace Core.Goals
                 if (points.Count > 0)
                 {
                     heading = DirectionCalculator.CalculateHeading(location, points.Peek());
-                    await playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
+                    playerDirection.SetDirection(heading, points.Peek(), "Move to next point");
 
                     this.stuckDetector.SetTargetLocation(points.Peek());
                 }
             }
 
-            LastActive = DateTime.Now;
+            LastActive = DateTime.UtcNow;
         }
 
-        private async Task AdjustHeading(float heading)
+        private void AdjustHeading(float heading)
         {
             var diff1 = MathF.Abs(RADIAN + heading - playerReader.Direction) % RADIAN;
             var diff2 = MathF.Abs(heading - playerReader.Direction - RADIAN) % RADIAN;
 
             if (MathF.Min(diff1, diff2) > 0.3)
             {
-                await playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
+                playerDirection.SetDirection(heading, points.Peek(), "Correcting direction");
             }
             else
             {
@@ -132,7 +132,7 @@ namespace Core.Goals
             }
         }
 
-        private async Task<bool> IsDead()
+        private async ValueTask<bool> IsDead()
         {
             bool hadNoHealth = true;
             if (playerReader.HealthPercent > 0)
@@ -148,7 +148,7 @@ namespace Core.Goals
 
         private bool HasBeenActiveRecently()
         {
-            return (DateTime.Now - LastActive).TotalSeconds < 2;
+            return (DateTime.UtcNow - LastActive).TotalSeconds < 2;
         }
 
         public void Reset()

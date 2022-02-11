@@ -10,7 +10,7 @@ namespace Core
 
         public bool HasExpired(int seconds)
         {
-            return (DateTime.Now - LastEvent).TotalSeconds > seconds;
+            return (DateTime.UtcNow - LastEvent).TotalSeconds > seconds;
         }
 
 
@@ -19,7 +19,7 @@ namespace Core
             return $"guid: {Guid} | hp: {HealthPercent}";
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is CreatureRecord other && other.Guid == Guid;
         }

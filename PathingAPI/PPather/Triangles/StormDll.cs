@@ -175,7 +175,7 @@ int   WINAPI SFileAddListFile(HANDLE hMpq, const char * szListFile);
             {
                 if (a.HasFile(from))
                 {
-                    logger.Debug("Extract " + from + " from " + a.FileName);
+                    //logger.Debug("Extract " + from + " from " + a.FileName);
                     bool ok = a.ExtractFile(from, to);
                     if (!ok)
                     {

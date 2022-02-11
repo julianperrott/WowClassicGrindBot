@@ -1,8 +1,7 @@
 ﻿using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading;
-using System.Threading.Tasks;
+using System;
 
 namespace Core.Goals
 {
@@ -17,10 +16,6 @@ namespace Core.Goals
         private readonly IBlacklist blacklist;
         private readonly NpcNameTargeting npcNameTargeting;
 
-        private readonly Random random = new Random();
-
-        public NpcNames NpcNameToFind = NpcNames.Enemy | NpcNames.Neutral;
-
         public TargetFinder(ILogger logger, ConfigurableInput input, ClassConfiguration classConfig, Wait wait, PlayerReader playerReader, IBlacklist blacklist, NpcNameTargeting npcNameTargeting)
         {
             this.logger = logger;
@@ -33,25 +28,21 @@ namespace Core.Goals
             this.npcNameTargeting = npcNameTargeting;
         }
 
-        public async ValueTask<bool> Search(string source, CancellationToken cancellationToken)
+        public bool Search(NpcNames target, Func<bool> validTarget, string source, CancellationToken cts)
         {
-            if (!cancellationToken.IsCancellationRequested && !playerReader.Bits.PlayerInCombat
-                && classConfig.TargetNearestTarget.MillisecondsSinceLastClick > random.Next(1000, 1500))
+            if (LookForTarget(target, source, cts))
             {
-                if (await LookForTarget(source, cancellationToken))
+                if (validTarget() && !blacklist.IsTargetBlacklisted())
                 {
-                    if (playerReader.HasTarget && !playerReader.Bits.TargetIsDead)
+                    logger.LogInformation($"{source}: Has target!");
+                    return true;
+                }
+                else
+                {
+                    if (!cts.IsCancellationRequested)
                     {
-                        logger.LogInformation($"{source}: Has target!");
-                        return true;
-                    }
-                    else
-                    {
-                        if (!cancellationToken.IsCancellationRequested)
-                            await input.TapClearTarget($"{source}: Target is dead!");
-
-                        if (!cancellationToken.IsCancellationRequested)
-                            await wait.Update(1);
+                        input.TapClearTarget($"{source}: Target is invalid!");
+                        wait.Update(1);
                     }
                 }
             }
@@ -59,36 +50,26 @@ namespace Core.Goals
             return false;
         }
 
-        private async ValueTask<bool> LookForTarget(string source, CancellationToken cancellationToken)
+        private bool LookForTarget(NpcNames target, string source, CancellationToken cts)
         {
-            if (playerReader.HasTarget && !playerReader.Bits.TargetIsDead && !blacklist.IsTargetBlacklisted())
+            if (!cts.IsCancellationRequested)
             {
-                return true;
+                npcNameTargeting.ChangeNpcType(target);
+                input.TapNearestTarget(source);
+                wait.Update(1);
             }
-            else
-            {
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    npcNameTargeting.ChangeNpcType(NpcNameToFind);
-                    await input.TapNearestTarget(source);
-                }
-                if (!classConfig.KeyboardOnly)
-                {
-                    if (!playerReader.HasTarget && !cancellationToken.IsCancellationRequested)
-                    {
-                        npcNameTargeting.ChangeNpcType(NpcNameToFind);
-                        if (npcNameTargeting.NpcCount > 0 && !cancellationToken.IsCancellationRequested)
-                        {
-                            await npcNameTargeting.TargetingAndClickNpc(true, cancellationToken);
 
-                            if (!cancellationToken.IsCancellationRequested)
-                                await wait.Update(1);
-                        }
-                    }
+            if (!cts.IsCancellationRequested && !classConfig.KeyboardOnly && !playerReader.HasTarget)
+            {
+                npcNameTargeting.ChangeNpcType(target);
+                if (!cts.IsCancellationRequested && npcNameTargeting.NpcCount > 0)
+                {
+                    npcNameTargeting.TargetingAndClickNpc(true, cts);
+                    wait.Update(1);
                 }
             }
 
-            return !cancellationToken.IsCancellationRequested && playerReader.HasTarget && !blacklist.IsTargetBlacklisted();
+            return playerReader.HasTarget;
         }
     }
 }

@@ -65,13 +65,15 @@
                 @foreach (var property in addonConfig.GetType().GetProperties())
                 {
                     <tr>
-                        @switch (property.PropertyType.FullName)
+                        @switch (System.Type.GetTypeCode(property.PropertyType))
                         {
-                            case "System.String":
+                            case TypeCode.String:
                                 <td>@(property.Name)</td>
                                 <td>
-                                    <input value="@property.GetValue(addonConfig)?.ToString()" style="width:100%" disabled="@(property.Name.Contains("Command") ? "disabled" : null)"
-                                           @onchange="c => { property.SetValue(addonConfig, c.Value); Update(); }" />
+                                    <input value="@property.GetValue(addonConfig)?.ToString()" 
+                                        class="form-control"
+                                        disabled="@(property.Name.Contains(nameof(addonConfig.Command)) ? "disabled" : null)"
+                                        @onchange="c => { property.SetValue(addonConfig, c.Value); Update(); }" />
                                 </td>
                                 break;
                         }
@@ -96,9 +98,9 @@
             </button>
         </div>
     </div>
+    <hr/>
+    <LogComponent />
 </div>
-
-<LogComponent />
 
 @using SharedLib;
 @code {

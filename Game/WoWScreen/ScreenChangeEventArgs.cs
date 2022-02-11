@@ -4,13 +4,13 @@ namespace Game
 {
     public class ScreenChangeEventArgs : EventArgs
     {
-        public String Screenshot { get; }
+        public string Screenshot { get; }
         public DateTime EventTime { get; }
 
-        public ScreenChangeEventArgs(String screenshot)
+        public ScreenChangeEventArgs(string screenshot)
         {
             this.Screenshot = screenshot;
-            this.EventTime = DateTime.Now;
+            this.EventTime = DateTime.UtcNow;
         }
     }
 }

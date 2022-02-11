@@ -1,33 +1,34 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Core
 {
     public class Wait
     {
         private readonly AddonReader addonReader;
+        private readonly AutoResetEvent autoResetEvent;
 
-        public Wait(AddonReader addonReader)
+        public Wait(AddonReader addonReader, AutoResetEvent autoResetEvent)
         {
             this.addonReader = addonReader;
+            this.autoResetEvent = autoResetEvent;
         }
 
-        public async ValueTask Update(int n)
+        public void Update(int n)
         {
             int s = addonReader.GlobalTime.Value;
             while (Math.Abs(s - addonReader.GlobalTime.Value) <= n)
             {
-                await Task.Delay(4);
+                autoResetEvent.WaitOne();
             }
         }
 
-
-        public async ValueTask<bool> Interrupt(int durationMs, Func<bool> interrupt)
+        public bool Till(int timeoutMs, Func<bool> interrupt)
         {
-            DateTime start = DateTime.Now;
-            while ((DateTime.Now - start).TotalMilliseconds < durationMs)
+            DateTime start = DateTime.UtcNow;
+            while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
             {
-                await Update(1);
+                Update(1);
                 if (interrupt())
                     return false;
             }
@@ -35,13 +36,14 @@ namespace Core
             return true;
         }
 
-        public async ValueTask<(bool interrupted, double elapsedMs)> InterruptTask(int durationMs, Func<bool> interrupt)
+        public (bool timeout, double elapsedMs) Until(int timeoutMs, Func<bool> interrupt, Action? repeat = null)
         {
-            DateTime start = DateTime.Now;
+            DateTime start = DateTime.UtcNow;
             double elapsedMs;
-            while ((elapsedMs = (DateTime.Now - start).TotalMilliseconds) < durationMs)
+            while ((elapsedMs = (DateTime.UtcNow - start).TotalMilliseconds) < timeoutMs)
             {
-                await Update(1);
+                repeat?.Invoke();
+                Update(1);
                 if (interrupt())
                     return (false, elapsedMs);
             }
@@ -49,39 +51,11 @@ namespace Core
             return (true, elapsedMs);
         }
 
-        public async ValueTask<(bool interrupted, double elapsedMs)> InterruptTask(int durationMs, Func<bool> interrupt, Action repeat)
-        {
-            DateTime start = DateTime.Now;
-            double elapsedMs;
-            while ((elapsedMs = (DateTime.Now - start).TotalMilliseconds) < durationMs)
-            {
-                repeat();
-                await Update(1);
-                if (interrupt())
-                    return (false, elapsedMs);
-            }
-
-            return (true, elapsedMs);
-        }
-
-        public async ValueTask<bool> Interrupt(int durationMs, ValueTask<bool> exit)
-        {
-            DateTime start = DateTime.Now;
-            while ((DateTime.Now - start).TotalMilliseconds < durationMs)
-            {
-                await Update(1);
-                if (await exit)
-                    return false;
-            }
-
-            return true;
-        }
-
-        public async ValueTask While(Func<bool> condition)
+        public void While(Func<bool> condition)
         {
             while (condition())
             {
-                await Update(1);
+                Update(1);
             }
         }
     }

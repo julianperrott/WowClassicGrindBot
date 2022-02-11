@@ -6,8 +6,8 @@ namespace Core
     {
         private readonly PlayerReader playerReader;
 
-        private DateTime levelStartTime = DateTime.Now;
-        private int levelStartXP = 0;
+        private DateTime levelStartTime = DateTime.UtcNow;
+        private int levelStartXP;
 
         public string TimeToLevel { get; private set; } = "∞";
         public DateTime PredictedLevelUpTime { get; private set; } = DateTime.MaxValue;
@@ -40,30 +40,30 @@ namespace Core
             UpdateExpPerHour();
         }
 
-        private void PlayerExp_Changed(object sender, EventArgs e)
+        private void PlayerExp_Changed(object? sender, EventArgs e)
         {
             UpdateExpPerHour();
         }
 
-        private void PlayerLevel_Changed(object sender, EventArgs e)
+        private void PlayerLevel_Changed(object? sender, EventArgs e)
         {
-            levelStartTime = DateTime.Now;
+            levelStartTime = DateTime.UtcNow;
             levelStartXP = playerReader.PlayerXp.Value;
         }
 
-        private void OnPlayerDeath(object sender, EventArgs e)
+        private void OnPlayerDeath(object? sender, EventArgs e)
         {
             Death++;
         }
 
-        private void OnKillCredit(object sender, EventArgs e)
+        private void OnKillCredit(object? sender, EventArgs e)
         {
             MobsKilled++;
         }
 
         public void UpdateExpPerHour()
         {
-            var runningSeconds = (DateTime.Now - levelStartTime).TotalSeconds;
+            var runningSeconds = (DateTime.UtcNow - levelStartTime).TotalSeconds;
             var xpPerSecond = (playerReader.PlayerXp.Value - levelStartXP) / runningSeconds;
             var secondsLeft = (playerReader.PlayerMaxXp - playerReader.PlayerXp.Value) / xpPerSecond;
 
@@ -78,7 +78,7 @@ namespace Core
 
             if (secondsLeft > 0 && secondsLeft < 60 * 60 * 10)
             {
-                PredictedLevelUpTime = DateTime.Now.AddSeconds(secondsLeft);
+                PredictedLevelUpTime = DateTime.UtcNow.AddSeconds(secondsLeft).ToLocalTime();
             }
         }
     }

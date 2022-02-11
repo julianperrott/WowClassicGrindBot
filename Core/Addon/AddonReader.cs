@@ -12,9 +12,7 @@ namespace Core
         private readonly ISquareReader squareReader;
         private readonly IAddonDataProvider addonDataProvider;
 
-        public bool Initialized { get; private set; } = false;
-
-        public int Sequence { get; private set; } = 0;
+        public bool Initialized { get; private set; }
 
         public bool Active { get; set; } = true;
         public PlayerReader PlayerReader { get; private set; }
@@ -69,7 +67,7 @@ namespace Core
         public double AvgUpdateLatency { private set; get; } = 5;
         private readonly CircularBuffer<double> UpdateLatencys;
 
-        private DateTime lastFrontendUpdate = DateTime.Now;
+        private DateTime lastFrontendUpdate;
         private readonly int FrontendUpdateIntervalMs = 250;
 
         public AddonReader(ILogger logger, DataConfig dataConfig, IAddonDataProvider addonDataProvider)
@@ -104,15 +102,15 @@ namespace Core
 
             UpdateLatencys = new CircularBuffer<double>(10);
 
-            UIMapId.Changed += (object obj, EventArgs e) =>
+            UIMapId.Changed += (object? obj, EventArgs e) =>
             {
                 this.AreaDb.Update(WorldMapAreaDb.GetAreaId(UIMapId.Value));
                 ZoneChanged?.Invoke(this, EventArgs.Empty);
             };
 
-            GlobalTime.Changed += (object obj, EventArgs e) =>
+            GlobalTime.Changed += (object? obj, EventArgs e) =>
             {
-                UpdateLatencys.Put((DateTime.Now - GlobalTime.LastChanged).TotalMilliseconds);
+                UpdateLatencys.Put((DateTime.UtcNow - GlobalTime.LastChanged).TotalMilliseconds);
                 AvgUpdateLatency = 0;
                 for (int i = 0; i < UpdateLatencys.Size; i++)
                 {
@@ -139,17 +137,16 @@ namespace Core
             SpellBookReader.Read();
             TalentReader.Read();
 
-            if ((DateTime.Now - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
+            if ((DateTime.UtcNow - lastFrontendUpdate).TotalMilliseconds >= FrontendUpdateIntervalMs)
             {
                 AddonDataChanged?.Invoke(this, EventArgs.Empty);
-                lastFrontendUpdate = DateTime.Now;
+                lastFrontendUpdate = DateTime.UtcNow;
             }
         }
 
         public void Refresh()
         {
             addonDataProvider.Update();
-            Sequence++;
 
             if (GlobalTime.Updated(squareReader) && (GlobalTime.Value <= 3 || !Initialized))
             {

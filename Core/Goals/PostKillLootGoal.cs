@@ -8,8 +8,8 @@ namespace Core.Goals
     {
         public override float CostOfPerformingAction { get => 4.5f; }
 
-        public PostKillLootGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
-            : base(logger, input, wait, addonReader, stopMoving, classConfiguration, npcNameTargeting, combatUtil)
+        public PostKillLootGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil, IPlayerDirection playerDirection)
+            : base(logger, input, wait, addonReader, stopMoving, classConfiguration, npcNameTargeting, combatUtil, playerDirection)
         {
         }
 
@@ -20,10 +20,10 @@ namespace Core.Goals
             AddPrecondition(GoapKey.shouldloot, true);
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-            await base.PerformAction();
+            return base.PerformAction();
         }
     }
 }

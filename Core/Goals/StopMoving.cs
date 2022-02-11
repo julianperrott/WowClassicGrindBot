@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Core.Goals
 {
@@ -20,13 +20,13 @@ namespace Core.Goals
             this.playerReader = playerReader;
         }
 
-        public async ValueTask Stop()
+        public void Stop()
         {
-            await StopForward();
-            await StopTurn();
+            StopForward();
+            StopTurn();
         }
 
-        public async ValueTask StopForward()
+        public void StopForward()
         {
             if (XCoord != playerReader.XCoord || YCoord != playerReader.YCoord)
             {
@@ -34,26 +34,25 @@ namespace Core.Goals
                     (MathF.Abs(XCoord - playerReader.XCoord) > MinDist || MathF.Abs(YCoord - playerReader.YCoord) > MinDist))
                 {
                     input.SetKeyState(input.ForwardKey, true, false, "StopForward - Cancel interact");
-                    await Task.Delay(1);
+                    Thread.Sleep(1);
                 }
 
                 input.SetKeyState(input.ForwardKey, false, false, "");
                 input.SetKeyState(input.BackwardKey, false, false, "StopForward");
-                await Task.Delay(10);
+                Thread.Sleep(10);
             }
 
             this.XCoord = playerReader.XCoord;
             this.YCoord = playerReader.YCoord;
         }
 
-        public async ValueTask StopTurn()
+        public void StopTurn()
         {
             if (Direction != playerReader.Direction)
             {
                 input.SetKeyState(input.TurnLeftKey, false, false, "");
-                await Task.Delay(1);
                 input.SetKeyState(input.TurnRightKey, false, false, "StopTurn");
-                await Task.Delay(1);
+                Thread.Sleep(1);
             }
 
             this.Direction = playerReader.Direction;

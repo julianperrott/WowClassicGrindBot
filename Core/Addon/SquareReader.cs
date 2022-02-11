@@ -28,7 +28,7 @@
             {
                 string colorString = color.ToString();
                 if (colorString.Length > 6) { return string.Empty; }
-                string colorText = "000000".Substring(0, 6 - colorString.Length) + colorString;
+                string colorText = "000000"[..(6 - colorString.Length)] + colorString;
                 return ToChar(colorText, 0) + ToChar(colorText, 2) + ToChar(colorText, 4);
             }
             else
@@ -37,7 +37,7 @@
             }
         }
 
-        private string ToChar(string colorText, int start)
+        private static string ToChar(string colorText, int start)
         {
             return ((char)int.Parse(colorText.Substring(start, 2))).ToString();
         }

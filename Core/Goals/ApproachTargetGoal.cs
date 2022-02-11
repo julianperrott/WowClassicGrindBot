@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using SharedLib.Extensions;
 using System;
-using System.Drawing;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace Core.Goals
 
         private readonly bool debug = true;
 
-        private readonly Random random = new Random(DateTime.Now.Millisecond);
+        private readonly Random random = new();
 
         private DateTime approachStart;
 
@@ -33,7 +32,7 @@ namespace Core.Goals
         private int initialTargetGuid;
         private float initialMinRange;
 
-        private int SecondsSinceApproachStarted => (int)(DateTime.Now - approachStart).TotalSeconds;
+        private int SecondsSinceApproachStarted => (int)(DateTime.UtcNow - approachStart).TotalSeconds;
 
         private bool HasPickedUpAnAdd
         {
@@ -66,27 +65,22 @@ namespace Core.Goals
             AddEffect(GoapKey.incombatrange, true);
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
-            await base.OnEnter();
-
-            if (mountHandler.IsMounted())
-            {
-                await mountHandler.Dismount();
-            }
-
             playerWasInCombat = playerReader.Bits.PlayerInCombat;
 
             initialTargetGuid = playerReader.TargetGuid;
             initialMinRange = playerReader.MinRange;
 
-            approachStart = DateTime.Now;
+            approachStart = DateTime.UtcNow;
+
+            return ValueTask.CompletedTask;
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             lastPlayerLocation = playerReader.PlayerLocation;
-            await wait.Update(1);
+            wait.Update(1);
 
             if (!playerReader.Bits.PlayerInCombat)
             {
@@ -100,15 +94,15 @@ namespace Core.Goals
                     logger.LogInformation("WARN Bodypull -- Looks like we have an add on approach");
                     logger.LogInformation($"Combat={playerReader.Bits.PlayerInCombat}, Is Target targetting me={playerReader.Bits.TargetOfTargetIsPlayer}");
 
-                    await stopMoving.Stop();
-                    await input.TapClearTarget();
-                    await wait.Update(1);
+                    stopMoving.Stop();
+                    input.TapClearTarget();
+                    wait.Update(1);
 
                     if (playerReader.PetHasTarget)
                     {
-                        await input.TapTargetPet();
-                        await input.TapTargetOfTarget();
-                        await wait.Update(1);
+                        input.TapTargetPet();
+                        input.TapTargetOfTarget();
+                        wait.Update(1);
                     }
                 }
 
@@ -117,7 +111,7 @@ namespace Core.Goals
 
             if (input.ClassConfig.Approach.GetCooldownRemaining() == 0)
             {
-                await input.TapApproachKey("");
+                input.TapApproachKey("");
             }
 
             lastPlayerDistance = playerReader.PlayerLocation.DistanceXYTo(lastPlayerLocation);
@@ -126,26 +120,26 @@ namespace Core.Goals
             {
                 playerReader.LastUIErrorMessage = UI_ERROR.NONE;
 
-                input.SetKeyState(input.ForwardKey, true, false, $"{GetType().Name}: Too far, start moving forward!");
-                await wait.Update(1);
+                input.SetKeyState(input.ForwardKey, true, false, $"{nameof(ApproachTargetGoal)}: Too far, start moving forward!");
+                wait.Update(1);
             }
 
             if (SecondsSinceApproachStarted > 1 && lastPlayerDistance < 0.05 && !playerReader.Bits.PlayerInCombat)
             {
-                await input.TapClearTarget("");
-                await wait.Update(1);
-                await input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, $"Seems stuck! Clear Target. Turn away. d: {lastPlayerDistance}");
+                input.TapClearTarget("");
+                wait.Update(1);
+                input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, $"Seems stuck! Clear Target. Turn away. d: {lastPlayerDistance}");
 
-                approachStart = DateTime.Now;
+                approachStart = DateTime.UtcNow;
             }
 
             if (SecondsSinceApproachStarted > 15 && !playerReader.Bits.PlayerInCombat)
             {
-                await input.TapClearTarget("");
-                await wait.Update(1);
-                await input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, "Too long time. Clear Target. Turn away.");
+                input.TapClearTarget("");
+                wait.Update(1);
+                input.KeyPress(random.Next(2) == 0 ? input.TurnLeftKey : input.TurnRightKey, 1000, "Too long time. Clear Target. Turn away.");
 
-                approachStart = DateTime.Now;
+                approachStart = DateTime.UtcNow;
             }
 
             if (playerReader.TargetGuid == initialTargetGuid)
@@ -153,8 +147,11 @@ namespace Core.Goals
                 var initialTargetMinRange = playerReader.MinRange;
                 if (!playerReader.Bits.PlayerInCombat)
                 {
-                    await input.TapNearestTarget("Try to find closer target...");
-                    await wait.Update(1);
+                    if (input.ClassConfig.TargetNearestTarget.GetCooldownRemaining() == 0)
+                    {
+                        input.TapNearestTarget("Try to find closer target...");
+                        wait.Update(1);
+                    }
                 }
 
                 if (playerReader.TargetGuid != initialTargetGuid)
@@ -169,8 +166,8 @@ namespace Core.Goals
                         else
                         {
                             initialTargetGuid = -1;
-                            await input.TapLastTargetKey($"Stick to initial target!");
-                            await wait.Update(1);
+                            input.TapLastTargetKey($"Stick to initial target!");
+                            wait.Update(1);
                         }
                     }
                     else
@@ -183,28 +180,30 @@ namespace Core.Goals
             if (initialMinRange < playerReader.MinRange && !playerReader.Bits.PlayerInCombat)
             {
                 Log($"We are going away from the target! {initialMinRange} < {playerReader.MinRange}");
-                await input.TapClearTarget();
-                await wait.Update(1);
+                input.TapClearTarget();
+                wait.Update(1);
 
-                approachStart = DateTime.Now;
+                approachStart = DateTime.UtcNow;
             }
 
-            await RandomJump();
+            RandomJump();
+
+            return ValueTask.CompletedTask;
         }
 
         public override void OnActionEvent(object sender, ActionEventArgs e)
         {
             if (e.Key == GoapKey.resume)
             {
-                approachStart = DateTime.Now;
+                approachStart = DateTime.UtcNow;
             }
         }
 
-        private async Task RandomJump()
+        private void RandomJump()
         {
-            if (input.ClassConfig.Jump.MillisecondsSinceLastClick > random.Next(5000, 7000))
+            if (input.ClassConfig.Jump.MillisecondsSinceLastClick > random.Next(12_000, 30_000))
             {
-                await input.TapJump();
+                input.TapJump();
             }
         }
 
@@ -212,7 +211,7 @@ namespace Core.Goals
         {
             if (debug)
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(ApproachTargetGoal)}: {text}");
             }
         }
 

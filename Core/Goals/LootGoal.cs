@@ -2,15 +2,17 @@
 using Core.GOAP;
 using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Linq;
+using SharedLib.Extensions;
 
 namespace Core.Goals
 {
     public class LootGoal : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.4f; }
-        public override bool Repeatable => false;
 
         private ILogger logger;
         private readonly ConfigurableInput input;
@@ -23,11 +25,14 @@ namespace Core.Goals
         private readonly ClassConfiguration classConfiguration;
         private readonly NpcNameTargeting npcNameTargeting;
         private readonly CombatUtil combatUtil;
+        private readonly IPlayerDirection playerDirection;
 
         private bool debug = true;
         private int lastLoot;
 
-        public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil)
+        private List<Vector3> corpseLocations = new();
+
+        public LootGoal(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, StopMoving stopMoving, ClassConfiguration classConfiguration, NpcNameTargeting npcNameTargeting, CombatUtil combatUtil, IPlayerDirection playerDirection)
         {
             this.logger = logger;
             this.input = input;
@@ -41,6 +46,7 @@ namespace Core.Goals
             this.classConfiguration = classConfiguration;
             this.npcNameTargeting = npcNameTargeting;
             this.combatUtil = combatUtil;
+            this.playerDirection = playerDirection;
         }
 
         public virtual void AddPreconditions()
@@ -50,10 +56,8 @@ namespace Core.Goals
             AddEffect(GoapKey.shouldloot, false);
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
-            await base.OnEnter();
-
             if (bagReader.BagsFull)
             {
                 logger.LogWarning("Inventory is full");
@@ -62,74 +66,130 @@ namespace Core.Goals
 
             Log($"OnEnter: Search for {NpcNames.Corpse}");
             npcNameTargeting.ChangeNpcType(NpcNames.Corpse);
-        }
 
-        public override async ValueTask PerformAction()
-        {
             lastLoot = playerReader.LastLootTime;
 
-            await stopMoving.Stop();
+            stopMoving.Stop();
             combatUtil.Update();
 
-            await npcNameTargeting.WaitForNUpdate(2);
-            bool foundCursor = await npcNameTargeting.FindBy(CursorType.Loot);
-            if (foundCursor)
+            bool foundByCursor = false;
+
+            npcNameTargeting.WaitForNUpdate(1);
+            if (FoundByCursor())
             {
-                Log("Found corpse - clicked");
-                (bool notFoundTarget, double elapsedMs) = await wait.InterruptTask(200, () => playerReader.TargetId != 0);
-                if (!notFoundTarget)
-                {
-                    Log($"Found target after {elapsedMs}ms");
-                }
+                foundByCursor = true;
+                corpseLocations.Remove(GetClosestCorpse());
+            }
+            else if (corpseLocations.Count > 0)
+            {
+                var location = playerReader.PlayerLocation;
+                var closestCorpse = GetClosestCorpse();
+                var heading = DirectionCalculator.CalculateHeading(location, closestCorpse);
+                playerDirection.SetDirection(heading, closestCorpse, "Look at possible corpse and try again");
 
-                CheckForSkinning();
-
-                (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
-                if (foundTarget)
+                npcNameTargeting.WaitForNUpdate(1);
+                if (FoundByCursor())
                 {
-                    Log("Interrupted!");
-                    return;
-                }
-
-                if (moved)
-                {
-                    await input.TapInteractKey($"{GetType().Name}: Had to move so interact again");
-                    await wait.Update(1);
+                    foundByCursor = true;
+                    corpseLocations.Remove(closestCorpse);
                 }
             }
-            else
+
+            if (!foundByCursor)
             {
-                await input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
-                await wait.Update(1);
+                corpseLocations.Remove(GetClosestCorpse());
+
+                input.TapLastTargetKey($"{nameof(LootGoal)}: No corpse name found - check last dead target exists");
+                wait.Update(1);
                 if (playerReader.HasTarget)
                 {
-                    if(playerReader.Bits.TargetIsDead)
+                    if (playerReader.Bits.TargetIsDead)
                     {
                         CheckForSkinning();
 
-                        await input.TapInteractKey($"{GetType().Name}: Found last dead target");
-                        await wait.Update(1);
+                        input.TapInteractKey($"{nameof(LootGoal)}: Found last dead target");
+                        wait.Update(1);
 
-                        (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
+                        (bool foundTarget, bool moved) = combatUtil.FoundTargetWhileMoved();
                         if (foundTarget)
                         {
                             Log("Goal interrupted!");
-                            return;
+                            return ValueTask.CompletedTask;
                         }
 
                         if (moved)
                         {
-                            await input.TapInteractKey($"{GetType().Name}: Last dead target double");
+                            input.TapInteractKey($"{nameof(LootGoal)}: Last dead target double");
                         }
                     }
                     else
                     {
-                        await input.TapClearTarget($"{GetType().Name}: Don't attack the target!");
+                        input.TapClearTarget($"{nameof(LootGoal)}: Don't attack the target!");
                     }
                 }
             }
 
-            await GoalExit();
+            GoalExit();
+
+            return ValueTask.CompletedTask;
+        }
+
+        public override ValueTask PerformAction()
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        public override void OnActionEvent(object sender, ActionEventArgs e)
+        {
+            if (e.Key == GoapKey.corpselocation && e.Value is CorpseLocation location)
+            {
+                //logger.LogInformation($"{nameof(LootGoal)}: --- Target is killed! Recorded death location.");
+                corpseLocations.Add(location.WowPoint);
+            }
+        }
+
+        private bool FoundByCursor()
+        {
+            if (!npcNameTargeting.FindBy(CursorType.Loot))
+            {
+                return false;
+            }
+
+            Log("Found corpse - clicked");
+            (bool searchTimeOut, double elapsedMs) = wait.Until(200, () => playerReader.HasTarget);
+            if (!searchTimeOut)
+            {
+                Log($"Found target after {elapsedMs}ms");
+            }
+
+            CheckForSkinning();
+
+            (bool foundTarget, bool moved) = combatUtil.FoundTargetWhileMoved();
+            if (foundTarget)
+            {
+                Log("Interrupted!");
+                return false;
+            }
+
+            if (moved)
+            {
+                input.TapInteractKey($"{nameof(LootGoal)}: Had to move so interact again");
+                wait.Update(1);
+            }
+
+            return true;
+        }
+
+        private Vector3 GetClosestCorpse()
+        {
+            if (corpseLocations.Count == 0)
+                return Vector3.Zero;
+
+            var closest = corpseLocations.
+                Select(loc => new { loc, d = playerReader.PlayerLocation.DistanceXYTo(loc) }).
+                Aggregate((a, b) => a.d <= b.d ? a : b);
+
+            return closest.loc;
         }
 
         private void CheckForSkinning()
@@ -155,9 +215,9 @@ namespace Core.Goals
             }
         }
 
-        private async Task GoalExit()
+        private void GoalExit()
         {
-            if (!await wait.Interrupt(1000, () => lastLoot != playerReader.LastLootTime))
+            if (!wait.Till(1000, () => lastLoot != playerReader.LastLootTime))
             {
                 Log($"Loot Successfull");
             }
@@ -174,16 +234,17 @@ namespace Core.Goals
 
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
-                await input.TapClearTarget($"{GetType().Name}: Exit Goal");
-                await wait.Update(1);
+                input.TapClearTarget($"{nameof(LootGoal)}: Exit Goal");
             }
+
+            wait.Update(1);
         }
 
         private void Log(string text)
         {
             if (debug)
             {
-                logger.LogInformation($"{GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(LootGoal)}: {text}");
             }
         }
     }

@@ -35,7 +35,7 @@ namespace Core
         public Thread? screenshotThread { get; set; }
 
         private const int screenshotTickMs = 150;
-        private DateTime lastScreenshot = default;
+        private DateTime lastScreenshot;
 
         public Thread addonThread { get; set; }
         public Thread? botThread { get; set; }
@@ -66,9 +66,13 @@ namespace Core
         public ExecGameCommand ExecGameCommand { get; set; }
 
         private bool Enabled = true;
+        private Wait wait;
 
         public event EventHandler? ProfileLoaded;
         public event EventHandler<bool>? StatusChanged;
+
+        private readonly AutoResetEvent addonAutoResetEvent = new(false);
+        private readonly AutoResetEvent npcNameFinderAutoResetEvent = new(false);
 
         public BotController(ILogger logger, IPPather pather, DataConfig dataConfig, IConfiguration configuration)
         {
@@ -85,7 +89,6 @@ namespace Core
 
             GrindSessionHandler = new LocalGrindSessionHandler(dataConfig.History);
             GrindSession = new GrindSession(this, GrindSessionHandler);
-            
 
             var frames = DataFrameConfiguration.LoadFrames();
 
@@ -104,6 +107,8 @@ namespace Core
 
             AddonReader = new AddonReader(logger, DataConfig, addonDataProvider);
 
+            wait = new Wait(AddonReader, addonAutoResetEvent);
+
             minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
 
@@ -113,19 +118,19 @@ namespace Core
             // wait for addon to read the wow state
             var sw = new Stopwatch();
             sw.Start();
-            while (AddonReader.Sequence == 0 || !Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.Class))
+            while (!Enum.GetValues(typeof(PlayerClassEnum)).Cast<PlayerClassEnum>().Contains(AddonReader.PlayerReader.Class))
             {
                 if (sw.ElapsedMilliseconds > 5000)
                 {
                     logger.LogWarning("There is a problem with the addon, I have been unable to read the player class. Is it running ?");
                     sw.Restart();
                 }
-                Thread.Sleep(100);
+                wait.Update(1);
             }
 
             logger.LogDebug($"Woohoo, I have read the player class. You are a {AddonReader.PlayerReader.Race} {AddonReader.PlayerReader.Class}.");
 
-            npcNameFinder = new NpcNameFinder(logger, WowScreen);
+            npcNameFinder = new NpcNameFinder(logger, WowScreen, npcNameFinderAutoResetEvent);
             npcNameTargeting = new NpcNameTargeting(logger, npcNameFinder, WowProcessInput);
             WowScreen.AddDrawAction(npcNameFinder.ShowNames);
             WowScreen.AddDrawAction(npcNameTargeting.ShowClickPositions);
@@ -142,7 +147,7 @@ namespace Core
             {
                 this.AddonReader.AddonRefresh();
                 this.GoapAgent?.UpdateWorldState();
-                System.Threading.Thread.Sleep(1);
+                addonAutoResetEvent.Set();
             }
             this.logger.LogInformation("Addon thread stoppped!");
         }
@@ -154,7 +159,7 @@ namespace Core
             var nodeFound = false;
             while (this.Enabled)
             {
-                if ((DateTime.Now - lastScreenshot).TotalMilliseconds > screenshotTickMs)
+                if ((DateTime.UtcNow - lastScreenshot).TotalMilliseconds > screenshotTickMs)
                 {
                     if (this.WowScreen.Enabled)
                     {
@@ -167,7 +172,7 @@ namespace Core
                         this.npcNameFinder.FakeUpdate();
                     }
 
-                    lastScreenshot = DateTime.Now;
+                    lastScreenshot = DateTime.UtcNow;
                 }
 
                 if (ClassConfig != null && this.ClassConfig.Mode == Mode.AttendedGather)
@@ -219,37 +224,42 @@ namespace Core
             }
         }
 
-        public async Task BotThread()
+        public ValueTask BotThread()
         {
-            if (this.actionThread != null)
+            if (actionThread != null)
             {
                 actionThread.ResumeIfNeeded();
 
-                while (this.actionThread.Active && this.Enabled)
+                while (actionThread.Active && Enabled)
                 {
-                    await actionThread.GoapPerformGoal();
+                    actionThread.GoapPerformGoal();
                 }
             }
 
             if (ConfigurableInput != null)
-                await new StopMoving(ConfigurableInput, AddonReader.PlayerReader).Stop();
+                new StopMoving(ConfigurableInput, AddonReader.PlayerReader).Stop();
 
-            logger.LogInformation("Stopped!");
+            logger.LogInformation("Bot thread stopped!");
+            return ValueTask.CompletedTask;
         }
 
         public bool InitialiseFromFile(string classFile, string? pathFile)
         {
+            Stopwatch stopwatch = Stopwatch.StartNew();
             try
             {
                 ClassConfig = ReadClassConfiguration(classFile, pathFile);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 logger.LogError(e.Message);
                 return false;
             }
 
             Initialize(ClassConfig);
+
+            stopwatch.Stop();
+            logger.LogInformation($"[{nameof(BotController)}] Elapsed time: {stopwatch.ElapsedMilliseconds}ms");
 
             return true;
         }
@@ -262,12 +272,12 @@ namespace Core
 
             ActionBarPopulator = new ActionBarPopulator(logger, config, AddonReader, ExecGameCommand);
 
-            var blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : (IBlacklist)new Blacklist(logger, AddonReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist);
+            IBlacklist blacklist = config.Mode != Mode.Grind ? new NoBlacklist() : new Blacklist(logger, AddonReader, config.NPCMaxLevels_Above, config.NPCMaxLevels_Below, config.CheckTargetGivesExp, config.Blacklist);
 
             var actionFactory = new GoalFactory(logger, AddonReader, ConfigurableInput, DataConfig, npcNameFinder, npcNameTargeting, pather, ExecGameCommand);
 
             var goapAgentState = new GoapAgentState();
-            var availableActions = actionFactory.CreateGoals(config, blacklist, goapAgentState);
+            var availableActions = actionFactory.CreateGoals(config, blacklist, goapAgentState, wait);
 
             this.GoapAgent?.Dispose();
             this.GoapAgent = new GoapAgent(logger, goapAgentState, ConfigurableInput, AddonReader, availableActions, blacklist);
@@ -293,17 +303,17 @@ namespace Core
         {
             if(!classFilename.ToLower().Contains(AddonReader.PlayerReader.Class.ToString().ToLower()))
             {
-                throw new Exception("Not allowed to load other class profile!");
+                throw new Exception($"[{nameof(BotController)}] Not allowed to load other class profile!");
             }
 
             var classFilePath = Path.Join(DataConfig.Class, classFilename);
             if (File.Exists(classFilePath))
             {
                 ClassConfiguration classConfig = JsonConvert.DeserializeObject<ClassConfiguration>(File.ReadAllText(classFilePath));
-                var requirementFactory = new RequirementFactory(logger, AddonReader);
+                var requirementFactory = new RequirementFactory(logger, AddonReader, npcNameFinder);
                 classConfig.Initialise(DataConfig, AddonReader, requirementFactory, logger, pathFilename);
 
-                logger.LogDebug($"Loaded `{classFilename}` with Path Profile `{classConfig.PathFilename}`.");
+                logger.LogInformation($"[{nameof(BotController)}] Profile Loaded `{classFilename}` with `{classConfig.PathFilename}`.");
 
                 return classConfig;
             }
@@ -313,6 +323,8 @@ namespace Core
 
         public void Dispose()
         {
+            npcNameFinderAutoResetEvent.Dispose();
+            addonAutoResetEvent.Dispose();
             WowScreen.Dispose();
             addonDataProvider?.Dispose();
         }
@@ -347,7 +359,7 @@ namespace Core
             DirectoryInfo directory = new DirectoryInfo(DataConfig.Class);
             var list = directory.GetFiles().Select(i => i.Name).ToList();
             list.Sort(new NaturalStringComparer());
-            list.Insert(0, String.Empty);
+            list.Insert(0, "Press Init State first!");
             return list;
         }
 

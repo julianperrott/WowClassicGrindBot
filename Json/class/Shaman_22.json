@@ -143,7 +143,7 @@
       {
         "Name": "Sell",
         "Key": "T",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "NPC_Stonetalon.json",
         "Cost": 6
       }

@@ -22,16 +22,18 @@ namespace Core.Goals
             AddPrecondition(GoapKey.producedcorpse, true);
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
-            await input.TapLastTargetKey(this.ToString());
+            input.TapLastTargetKey(nameof(TargetLastDeadGoal));
+
+            return ValueTask.CompletedTask;
         }
 
         private void Log(string text)
         {
             if (debug)
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(TargetLastDeadGoal)}: {text}");
             }
         }
     }

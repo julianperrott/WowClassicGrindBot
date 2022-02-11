@@ -39,18 +39,16 @@ namespace Core
             this.exec = execGameCommand;
         }
 
-        public HashSet<GoapGoal> CreateGoals(ClassConfiguration classConfig, IBlacklist blacklist, GoapAgentState goapAgentState)
+        public HashSet<GoapGoal> CreateGoals(ClassConfiguration classConfig, IBlacklist blacklist, GoapAgentState goapAgentState, Wait wait)
         {
             var availableActions = new HashSet<GoapGoal>();
 
             GetPaths(out List<Vector3> pathPoints, out List<Vector3> spiritPath, classConfig);
 
-            var wait = new Wait(addonReader);
-
             var playerDirection = new PlayerDirection(logger, input, addonReader.PlayerReader);
             var stopMoving = new StopMoving(input, addonReader.PlayerReader);
 
-            var castingHandler = new CastingHandler(logger, input, wait, addonReader, classConfig, playerDirection, npcNameFinder, stopMoving);
+            var castingHandler = new CastingHandler(logger, input, wait, addonReader, classConfig, playerDirection, stopMoving);
 
             var stuckDetector = new StuckDetector(logger, input, addonReader.PlayerReader, playerDirection, stopMoving);
             var combatUtil = new CombatUtil(logger, input, wait, addonReader.PlayerReader);
@@ -58,8 +56,11 @@ namespace Core
 
             var targetFinder = new TargetFinder(logger, input, classConfig, wait, addonReader.PlayerReader, blacklist, npcNameTargeting);
 
-            var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader, playerDirection, pathPoints, stopMoving, npcNameFinder, stuckDetector, classConfig, pather, mountHandler, targetFinder);
-            var walkToCorpseAction = new WalkToCorpseGoal(logger, input, addonReader, playerDirection, spiritPath, pathPoints, stopMoving, stuckDetector, pather);
+            var followNav = new Navigation(logger, playerDirection, input, addonReader, stopMoving, stuckDetector, pather, mountHandler);
+            var followRouteAction = new FollowRouteGoal(logger, input, wait, addonReader, classConfig, pathPoints, followNav, mountHandler, npcNameFinder, targetFinder);
+
+            var corpseNav = new Navigation(logger, playerDirection, input, addonReader, stopMoving, stuckDetector, pather, mountHandler);
+            var walkToCorpseAction = new WalkToCorpseGoal(logger, input, wait, addonReader, corpseNav, stopMoving);
 
             availableActions.Clear();
 
@@ -107,7 +108,7 @@ namespace Core
                     }
                     else
                     {
-                        var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil);
+                        var lootAction = new LootGoal(logger, input, wait, addonReader, stopMoving, classConfig, npcNameTargeting, combatUtil, playerDirection);
                         lootAction.AddPreconditions();
                         availableActions.Add(lootAction);
                     }
@@ -148,7 +149,9 @@ namespace Core
 
                 foreach (var item in classConfig.NPC.Sequence)
                 {
-                    availableActions.Add(new AdhocNPCGoal(logger, input, addonReader, playerDirection, stopMoving, npcNameTargeting, stuckDetector, classConfig, pather, item, blacklist, mountHandler, wait, exec));
+                    var nav = new Navigation(logger, playerDirection, input, addonReader, stopMoving, stuckDetector, pather, mountHandler);
+                    availableActions.Add(new AdhocNPCGoal(logger, input, item, wait, addonReader, nav, stopMoving, npcNameTargeting, classConfig, blacklist, mountHandler, exec));
+                    item.Path.Clear();
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 
@@ -170,7 +173,7 @@ namespace Core
 
         private string FixPathFilename(string path)
         {
-            if (!path.Contains(":") && !string.IsNullOrEmpty(path) && !path.Contains(dataConfig.Path))
+            if (!path.Contains(':') && !string.IsNullOrEmpty(path) && !path.Contains(dataConfig.Path))
             {
                 return Path.Join(dataConfig.Path, path);
             }

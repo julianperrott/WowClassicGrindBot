@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Database;
 using SharedLib;
+using SharedLib.NpcFinder;
 
 namespace Core
 {
-    public class RequirementFactory
+    public partial class RequirementFactory
     {
         private readonly ILogger logger;
         private readonly AddonReader addonReader;
@@ -33,7 +34,7 @@ namespace Core
            "!"
         };
 
-        public RequirementFactory(ILogger logger, AddonReader addonReader)
+        public RequirementFactory(ILogger logger, AddonReader addonReader, NpcNameFinder npcNameFinder)
         {
             this.logger = logger;
             this.addonReader = addonReader;
@@ -74,6 +75,8 @@ namespace Core
                 { "TargetsPet", () => playerReader.TargetTarget == TargetTargetEnum.TargetIsTargettingPet },
                 { "TargetsNone", () => playerReader.TargetTarget == TargetTargetEnum.TargetHasNoTarget },
 
+                { "AddVisible", () => npcNameFinder.PotentialAddsExist },
+
                 // Range
                 { "InMeleeRange", ()=> playerReader.IsInMeleeRange },
                 { "InDeadZoneRange", ()=> playerReader.IsInDeadZone },
@@ -96,6 +99,7 @@ namespace Core
                 // Equipment - Bag
                 { "Items Broken", ()=> playerReader.Bits.ItemsAreBroken },
                 { "BagFull", ()=> bagReader.BagsFull },
+                { "BagGreyItem", ()=> bagReader.AnyGreyItem },
                 { "HasRangedWeapon", ()=> equipmentReader.HasRanged() },
                 { "HasAmmo", ()=> playerReader.Bits.HasAmmo },
                 
@@ -310,6 +314,7 @@ namespace Core
             if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
             {
                 item.RequirementObjects.Add(CreateActionUsableRequirement(item));
+                item.RequirementObjects.Add(CreateActionNotInGameCooldown(item));
             }
 
             CreateCooldownRequirement(item.RequirementObjects, item);
@@ -326,7 +331,7 @@ namespace Core
                 }
                 else
                 {
-                    logger.LogInformation($"[{GetType().Name}] Added user defined int variable [{kvp.Key} -> {kvp.Value}]");
+                    LogUserDefinedValue(logger, nameof(RequirementFactory), kvp.Key, kvp.Value);
                 }
             }
         }
@@ -432,6 +437,18 @@ namespace Core
             };
         }
 
+        private Requirement CreateActionNotInGameCooldown(KeyAction item)
+        {
+            string key = $"CD_{item.Name}";
+            return new Requirement
+            {
+                HasRequirement = () => valueDictionary[key]() == 0,
+                VisibleIfHasRequirement = false,
+                LogMessage = () =>
+                    $"CD {valueDictionary[key]() / 1000:F1}"
+            };
+        }
+
         private void BindCooldown(KeyAction item)
         {
             string key = $"CD_{item.Name}";
@@ -494,12 +511,12 @@ namespace Core
 
         public Requirement GetRequirement(string name, string requirement)
         {
-            logger.LogInformation($"[{name}] Processing requirement: \"{requirement}\"");
+            LogProcessingRequirement(logger, name, requirement);
 
             requirement = requirement.Trim();
 
             bool negated = false;
-            string negateKeyword = negate.FirstOrDefault(x => requirement.StartsWith(x));
+            string negateKeyword = negate.FirstOrDefault(x => requirement.StartsWith(x)) ?? string.Empty;
             if (!string.IsNullOrEmpty(negateKeyword))
             {
                 requirement = requirement[negateKeyword.Length..];
@@ -513,7 +530,7 @@ namespace Core
                 return negated ? requirementObj.Negate(negateKeyword) : requirementObj;
             }
 
-            if (booleanDictionary.Keys.Contains(requirement))
+            if (booleanDictionary.ContainsKey(requirement))
             {
                 var requirementObj = new Requirement
                 {
@@ -534,7 +551,7 @@ namespace Core
 
         private Requirement CreateTargetCastingSpellRequirement(string requirement)
         {
-            if (requirement.Contains(":"))
+            if (requirement.Contains(':'))
             {
                 var parts = requirement.Split(":");
                 var spellsPart = parts[1].Split("|");
@@ -696,7 +713,7 @@ namespace Core
         private Requirement GetExcusiveValueBasedRequirement(string requirement)
         {
             var symbol = "<";
-            if (requirement.Contains(">"))
+            if (requirement.Contains('>'))
             {
                 symbol = ">";
             }
@@ -718,7 +735,7 @@ namespace Core
                 }
             }
 
-            if (!valueDictionary.Keys.Contains(key))
+            if (!valueDictionary.ContainsKey(key))
             {
                 logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
@@ -772,7 +789,7 @@ namespace Core
                 }
             }
 
-            if (!valueDictionary.Keys.Contains(key))
+            if (!valueDictionary.ContainsKey(key))
             {
                 logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
@@ -821,7 +838,7 @@ namespace Core
                 }
             }
 
-            if (!valueDictionary.Keys.Contains(key))
+            if (!valueDictionary.ContainsKey(key))
             {
                 logger.LogInformation($"UNKNOWN REQUIREMENT! {requirement}: try one of: {string.Join(", ", valueDictionary.Keys)}");
                 return new Requirement
@@ -839,5 +856,16 @@ namespace Core
             };
         }
 
+        [LoggerMessage(
+            EventId = 12,
+            Level = LogLevel.Information,
+            Message = "[{typeName}] Added user defined int variable [{key} -> {value}]")]
+        static partial void LogUserDefinedValue(ILogger logger, string typeName, string key, int value);
+
+        [LoggerMessage(
+            EventId = 13,
+            Level = LogLevel.Information,
+            Message = "[{name}] Processing requirement: \"{requirement}\"")]
+        static partial void LogProcessingRequirement(ILogger logger, string name, string requirement);
     }
 }

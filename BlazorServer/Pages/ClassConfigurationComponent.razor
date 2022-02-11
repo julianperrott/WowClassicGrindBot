@@ -4,55 +4,58 @@
 
 @if (classConfig != null)
 {
-    <div class="card">
-        <div class="card-header">
-            Class Configuration
-        </div>
-        <div class="card-body" style="padding-bottom: 0">
-            <table class="table table-bordered">
-                @foreach (var property in classConfig.GetType().GetProperties())
-                {
-                    if (property.Name.Contains("ClassName") ||
-                        property.Name.Contains("PathFilename") ||
-                        property.Name.Contains("SpiritPathFilename") ||
-                        property.Name.Contains("OverridePathFilename")
-                        )
-                        continue;
-                <tr>
-                    @switch (property.PropertyType.FullName)
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Class Configuration
+            </div>
+            <div class="card-body" style="padding-bottom: 0">
+                <table class="table table-bordered">
+                    @foreach (var property in classConfig.GetType().GetProperties())
                     {
-                        case "System.String":
-                            <td>@(property.Name)</td>
-                            <td>
-                                <input value="@property.GetValue(classConfig)?.ToString()"
-                                       @onchange="c => { property.SetValue(classConfig, c.Value); Update(); }" />
-                            </td>
-                            break;
+                        if (property.Name.Contains("ClassName") ||
+                            property.Name.Contains("PathFilename") ||
+                            property.Name.Contains("SpiritPathFilename") ||
+                            property.Name.Contains("OverridePathFilename")
+                            )
+                            continue;
+                    <tr>         
+                    
+                        @switch (System.Type.GetTypeCode(property.PropertyType))
+                        {
+                            case TypeCode.String:
+                                <td>@(property.Name)</td>
+                                <td>
+                                    <input value="@property.GetValue(classConfig)" class="form-control"
+                                           @onchange="c => { property.SetValue(classConfig, c.Value); Update(); }" />
+                                </td>
+                                break;
 
-                        case "System.Int32":
-                            <td>@(property.Name)</td>
-                            <td>
-                                <input value="@property.GetValue(classConfig)?.ToString()"
-                                       @onchange="c => { int n = System.Convert.ToInt32(c.Value); property.SetValue(classConfig, n); Update(); }" />
-                            </td>
-                            break;
-                        case "System.Boolean":
-                            <td>@(property.Name)</td>
-                            <td>
-                                <input type="checkbox" checked="@(CBool(property.GetValue(classConfig)))"
-                                       @onchange="c => { property.SetValue(classConfig, c.Value); Update(); }" />
-                            </td>
-                            break;
-                        default: /*Unsuported/Not implemented editing*/
-                            <!--<input Text="@property.GetValue(classConfig)?.ToString()" Disabled="true" />-->
-                            break;
+                            case TypeCode.Int32:
+                                <td>@(property.Name)</td>
+                                <td>
+                                    <input value="@property.GetValue(classConfig)" class="form-control"
+                                           @onchange="c => { int n = System.Convert.ToInt32(c.Value); property.SetValue(classConfig, n); Update(); }" />
+                                </td>
+                                break;
+                            case TypeCode.Boolean:
+                                <td>@(property.Name)</td>
+                                <td>
+                                    <input type="checkbox" class="form-control" checked="@(CBool(property.GetValue(classConfig)))"
+                                           @onchange="c => { property.SetValue(classConfig, c.Value); Update(); }" />
+                                </td>
+                                break;
+                            default: 
+                                <!--<input Text="@value?.ToString()" Disabled="true" />-->
+                                break;
+                        }
+                    </tr>
                     }
-                </tr>
-                }
-            </table>
+                </table>
+            </div>
         </div>
     </div>
-    }
+}
 
 @using SharedLib; 
 @code {

@@ -14,7 +14,7 @@
     <div class="card-header">
         <table width="100%">
             <tr>
-                <td>Route</td>
+                <td>Route @routeSymbol</td>
                 <td>
                     <div class="float-right">
                         [@addonReader.PlayerReader.XCoord.ToString("00.0000"),@addonReader.PlayerReader.YCoord.ToString("00.0000")] @(AreaName) (@addonReader.UIMapId.Value)
@@ -101,6 +101,8 @@
 
     public int margin = 10;
 
+    private MarkupString routeSymbol = new MarkupString();
+
     private MarkupString RouteToWaypointLines = new MarkupString();
     private MarkupString RouteToWaypointPoints = new MarkupString();
 
@@ -134,6 +136,7 @@
 
         UpdateZoneName();
         UpdateDeaths();
+        UpdateSymbol();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -220,14 +223,27 @@
         if (botController.RouteInfo == null) { return; }
         var routeinfo = botController.RouteInfo;
 
-        this.PathLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.PathPoints));
-        this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.PathPoints));
+        var paths = routeinfo.PathPoints;
+        this.PathLines = new MarkupString(routeinfo.RenderPathLines(paths));
+        this.PathPoints = new MarkupString(routeinfo.RenderPathPoints(paths));
 
-        this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.SpiritPath));
-        this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.SpiritPath));
+        var spirits = routeinfo.SpiritPath;
+        this.SpiritLines = new MarkupString(routeinfo.RenderPathLines(spirits));
+        this.SpiritPathPoints = new MarkupString(routeinfo.RenderPathPoints(spirits));
 
-        this.RouteToWaypointLines = new MarkupString(routeinfo.RenderPathLines(routeinfo.RouteToWaypoint));
-        this.RouteToWaypointPoints = new MarkupString(routeinfo.RenderPathPoints(routeinfo.RouteToWaypoint));
+        var waypoints = routeinfo.RouteToWaypoint;
+        if(waypoints != null)
+        {
+            var waylist = waypoints.ToList();
+            this.RouteToWaypointLines = new MarkupString(routeinfo.RenderPathLines(waylist));
+            this.RouteToWaypointPoints = new MarkupString(routeinfo.RenderPathPoints(waylist));
+        }
+        else
+        {
+            this.RouteToWaypointLines = new MarkupString();
+            this.RouteToWaypointPoints = new MarkupString();
+        }
+
     }
 
     private void OnProfileLoaded(object? sender, EventArgs e)
@@ -241,6 +257,18 @@
             refreshTimer.Elapsed += OnTimerTick;
 
             refreshTimer.Start();
+        }
+
+        UpdateSymbol();
+    }
+
+    private void UpdateSymbol()
+    {
+        if (botController.ClassConfig != null)
+        {
+            routeSymbol = botController.ClassConfig.PathThereAndBack ? 
+            new MarkupString("<span style=\"font-size: 125%;\">⥹</span>") : 
+            new MarkupString("<span style=\"font-size: 125%;\">⟳</span>");
         }
     }
 

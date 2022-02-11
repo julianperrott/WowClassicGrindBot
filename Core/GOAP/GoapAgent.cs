@@ -57,13 +57,13 @@ namespace Core.GOAP
             WorldState = GetWorldState();
         }
 
-        public async Task<GoapGoal?> GetAction()
+        public GoapGoal? GetAction()
         {
             if (playerReader.HealthPercent > 1 && blacklist.IsTargetBlacklisted())
             {
-                logger.LogWarning($"{GetType().Name}: Target is blacklisted - StopAttack & ClearTarget");
-                await input.TapStopAttack("");
-                await input.TapClearTarget("");
+                logger.LogWarning($"{nameof(GoapAgent)}: Target is blacklisted - StopAttack & ClearTarget");
+                input.TapStopAttack("");
+                input.TapClearTarget("");
                 UpdateWorldState();
             }
 
@@ -73,25 +73,11 @@ namespace Core.GOAP
             Queue<GoapGoal> plan = planner.Plan(AvailableGoals, WorldState, goal);
             if (plan != null && plan.Count > 0)
             {
-                if (CurrentGoal == plan.Peek() && !CurrentGoal.Repeatable)
-                {
-                    logger.LogInformation($"Plan= {CurrentGoal.GetType().Name} is not Repeatable!");
-                    CurrentGoal = null;
-                }
-                else
-                {
-                    CurrentGoal = plan.Peek();
-                }
+                CurrentGoal = plan.Peek();
             }
             else
             {
-                if (CurrentGoal != null && !CurrentGoal.Repeatable)
-                {
-                    logger.LogInformation($"Plan= {CurrentGoal.GetType().Name} is not Repeatable!");
-                    CurrentGoal = null;
-
-                    await stopMoving.Stop();
-                }
+                CurrentGoal = null;
             }
 
             return CurrentGoal;
@@ -102,14 +88,14 @@ namespace Core.GOAP
             var state = new HashSet<KeyValuePair<GoapKey, object>>
             {
                 new KeyValuePair<GoapKey, object>(GoapKey.hastarget, !blacklist.IsTargetBlacklisted() && playerReader.HasTarget),
-                new KeyValuePair<GoapKey, object>(GoapKey.dangercombat, addonReader.CombatCreatureCount > 0),
+                new KeyValuePair<GoapKey, object>(GoapKey.dangercombat, addonReader.PlayerReader.Bits.PlayerInCombat && addonReader.CombatCreatureCount > 0),
                 new KeyValuePair<GoapKey, object>(GoapKey.pethastarget, playerReader.PetHasTarget),
                 new KeyValuePair<GoapKey, object>(GoapKey.targetisalive, playerReader.HasTarget && !playerReader.Bits.TargetIsDead),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombat, playerReader.Bits.PlayerInCombat),
                 new KeyValuePair<GoapKey, object>(GoapKey.withinpullrange, playerReader.WithInPullRange),
                 new KeyValuePair<GoapKey, object>(GoapKey.incombatrange, playerReader.WithInCombatRange),
                 new KeyValuePair<GoapKey, object>(GoapKey.pulled, false),
-                new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.HealthPercent==0),
+                new KeyValuePair<GoapKey, object>(GoapKey.isdead, playerReader.Bits.DeadStatus),
                 new KeyValuePair<GoapKey, object>(GoapKey.isswimming, playerReader.Bits.IsSwimming),
                 new KeyValuePair<GoapKey, object>(GoapKey.itemsbroken, playerReader.Bits.ItemsAreBroken),
                 new KeyValuePair<GoapKey, object>(GoapKey.producedcorpse, GoapAgentState.LastCombatKillCount > 0),
@@ -150,7 +136,7 @@ namespace Core.GOAP
             }
         }
 
-        private void OnKillCredit(object obj, EventArgs e)
+        private void OnKillCredit(object? obj, EventArgs e)
         {
             if (Active)
             {
@@ -165,11 +151,11 @@ namespace Core.GOAP
                     CurrentGoal.OnActionEvent(this, new ActionEventArgs(GoapKey.producedcorpse, true));
                 }
 
-                logger.LogInformation($"{GetType().Name} --- Kill credit detected! Known kills: {GoapAgentState.LastCombatKillCount} | Combat mobs remaing: {addonReader.CombatCreatureCount}");
+                logger.LogInformation($"{nameof(GoapAgent)} --- Kill credit detected! Known kills: {GoapAgentState.LastCombatKillCount} | Remains: {addonReader.CombatCreatureCount}");
             }
             else
             {
-                logger.LogInformation($"{GetType().Name} --- Not active, but kill credit detected!");
+                logger.LogInformation($"{nameof(GoapAgent)} --- Not active, but kill credit detected!");
             }
         }
     }

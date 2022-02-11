@@ -45,8 +45,7 @@
         "HasCastBar": true,
         "WhenUsable": true,
         "Requirements": [
-          "(Divine Protection && Health% < 60) || (!Divine Protection && CD_Divine Protection > 0 && Health% < 50 && TargetHealth%>20 && LastMainHandMs <= 1000)",
-          "CD==0"
+          "(Divine Protection && Health% < 60) || (!Divine Protection && CD_Divine Protection > 0 && Health% < 50 && TargetHealth%>20 && LastMainHandMs <= 1000)"
         ]
       },
       {
@@ -128,7 +127,7 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "5_Draenei_Vendor.json",
         "Cost": 6
       }

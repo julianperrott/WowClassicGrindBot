@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Threading.Tasks;
 using System.Numerics;
 using SharedLib.Extensions;
 
@@ -16,9 +15,9 @@ namespace Core
 
         private readonly float RADIAN = MathF.PI * 2;
 
-        private const int DefaultIgnoreDistance = 15;
+        private const int DefaultIgnoreDistance = 10;
 
-        public DateTime LastSetDirection { get; private set; } = default;
+        public DateTime LastSetDirection { get; private set; }
 
         public PlayerDirection(ILogger logger, ConfigurableInput input, PlayerReader playerReader)
         {
@@ -27,25 +26,25 @@ namespace Core
             this.playerReader = playerReader;
         }
 
-        public async ValueTask SetDirection(float desiredDirection, Vector3 point, string source)
+        public void SetDirection(float desiredDirection, Vector3 point, string source)
         {
-            await SetDirection(desiredDirection, point, source, DefaultIgnoreDistance);
+            SetDirection(desiredDirection, point, source, DefaultIgnoreDistance);
         }
 
-        public async ValueTask SetDirection(float desiredDirection, Vector3 point, string source, int ignoreDistance)
+        public void SetDirection(float desiredDirection, Vector3 point, string source, int ignoreDistance)
         {
             float distance = playerReader.PlayerLocation.DistanceXYTo(point);
             if (distance < ignoreDistance)
             {
-                Log("Too close, ignoring direction change.");
+                Log($"Too close, ignoring direction change. {distance} < {ignoreDistance}");
                 return;
             }
 
-            await input.KeyPressNoDelay(GetDirectionKeyToPress(desiredDirection),
+            input.KeyPressSleep(GetDirectionKeyToPress(desiredDirection),
                 TurnDuration(desiredDirection),
-                debug ? $"SetDirection: {source} -- Desired: {desiredDirection:0.000} - Current: {playerReader.Direction:0.000} - Distance: {distance:0.000}" : string.Empty);
+                debug ? $"SetDirection: {source}-- Current: {playerReader.Direction:0.000} -> Target: {desiredDirection:0.000} - Distance: {distance:0.000}" : string.Empty);
 
-            LastSetDirection = DateTime.Now;
+            LastSetDirection = DateTime.UtcNow;
         }
 
         private float TurnAmount(float desiredDirection)
@@ -70,7 +69,7 @@ namespace Core
         {
             if (debug)
             {
-                logger.LogInformation($"{this.GetType().Name}: {text}");
+                logger.LogInformation($"[{nameof(PlayerDirection)}]: {text}");
             }
         }
     }

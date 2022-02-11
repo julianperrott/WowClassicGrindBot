@@ -50,7 +50,8 @@ end
 
 function DataToColor:Base2Converter2()
     return
-    DataToColor:MakeIndexBase2(DataToColor:IsPlayerDrowning(), 0)
+    DataToColor:MakeIndexBase2(DataToColor:IsPlayerDrowning(), 0) +
+    DataToColor:MakeIndexBase2(DataToColor.corpseInRange, 1)
 end
 
 function DataToColor:Base2CustomTrigger(t)
@@ -313,7 +314,8 @@ function DataToColor:isActionUseable(min,max)
     for i = min, max do
         local start, duration, enabled = GetActionCooldown(i)
         isUsable, notEnough = IsUsableAction(i)
-        if start == 0 and isUsable == true and notEnough == false then
+
+        if start == 0 and isUsable == true and notEnough == false and GetActionTexture(i) ~= 134400 then -- red question mark texture
             isUsableBits = isUsableBits + (2 ^ (i - min))
         end
 
@@ -504,11 +506,17 @@ function DataToColor:checkTalentPoints()
 end
 
 function DataToColor:shapeshiftForm()
-    local form = GetShapeshiftForm(false)
-    if form == nil then
-        form = 0
+    local index = GetShapeshiftForm(false)
+    if index == nil or index == 0 then
+        return 0
     end
-    return form
+
+    local _, _, _, spellId = GetShapeshiftFormInfo(index)
+    local form = DataToColor.S.playerAuraMap[spellId]
+    if form ~= nil then
+        return form
+    end
+    return index
 end
 
 function DataToColor:playerCombatStatus()

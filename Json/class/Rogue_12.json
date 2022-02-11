@@ -10,8 +10,13 @@
         "HasCastbar": true,
         "WhenUsable": true,
         "WaitForWithinMeleeRange": true,
-        "CastIfAddsVisible": true,
-        "Requirements": ["HasRangedWeapon", "not InMeleeRange", "SpellInRange:1", "not Items Broken"]
+        "Requirements": [
+          "AddVisible",
+          "HasRangedWeapon",
+          "!InMeleeRange",
+          "SpellInRange:1",
+          "!Items Broken"
+        ]
       }
     ]
   },
@@ -30,14 +35,19 @@
         "WaitBuffAfterCast": true,
         "MinEnergy": 25,
         "MinComboPoints": 1,
-        "Requirements": ["not Slice and Dice"]
+        "Requirements": [
+          "!Slice and Dice"
+        ]
       },
       {
         "Name": "Eviscerate",
         "Key": "3",
         "MinEnergy": 35,
         "MinComboPoints": 2,
-        "Requirements": ["TargetHealth%>20", "LastMainHandMs<500"]
+        "Requirements": [
+          "TargetHealth%>20",
+          "LastMainHandMs<500"
+        ]
       },
       {
         "Name": "Sinister Strike",
@@ -47,7 +57,7 @@
       },
       {
         "Name": "AutoAttack",
-        "Requirement": "not AutoAttacking"
+        "Requirement": "!AutoAttacking"
       },
       {
         "Name": "Approach",
@@ -76,7 +86,10 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
         "PathFilename": "5_Gnome_Vendor.json",
         "Cost": 6
       }

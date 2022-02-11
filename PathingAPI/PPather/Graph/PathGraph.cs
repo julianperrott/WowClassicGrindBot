@@ -977,7 +977,7 @@ namespace PatherPath.Graph
 
         public Path CreatePath(Location fromLoc, Location toLoc, float howClose, ILocationHeuristics locationHeuristics)
         {
-            logger.WriteLine("Creating Path from " + fromLoc.ToString() + " tot " + toLoc.ToString());
+            logger.WriteLine($"Creating Path from {fromLoc} to {toLoc}");
 
             var sw = new Stopwatch();
             sw.Start();
@@ -1013,7 +1013,7 @@ namespace PatherPath.Graph
                     prev = l;
                 }
             }
-            logger.Debug(string.Format("CreatePath took {0} seconds.", sw.ElapsedMilliseconds / 1000));
+            logger.WriteLine($"CreatePath took {sw.ElapsedMilliseconds}ms");
             if (rawPath == null)
             {
                 return null;

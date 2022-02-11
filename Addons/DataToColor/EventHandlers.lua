@@ -4,6 +4,12 @@ local DataToColor = unpack(Load)
 local CAST_START = 999998
 local CAST_SUCCESS = 999999
 
+local MERCHANT_SHOW_V = 9999999
+local MERCHANT_CLOSED_V = 9999998
+
+local GOSSIP_START = 69
+local GOSSIP_END = 9999994
+
 local ignoreErrorList = {
     "ERR_ABILITY_COOLDOWN",
     "ERR_OUT_OF_RAGE",
@@ -43,6 +49,8 @@ function DataToColor:RegisterEvents()
     DataToColor:RegisterEvent('GOSSIP_SHOW', 'OnGossipShow')
     DataToColor:RegisterEvent('SPELLS_CHANGED', 'OnSpellsChanged')
     DataToColor:RegisterEvent('ACTIONBAR_SLOT_CHANGED', 'ActionbarSlotChanged')
+    DataToColor:RegisterEvent('CORPSE_IN_RANGE', 'CorpseInRangeEvent')
+    DataToColor:RegisterEvent('CORPSE_OUT_OF_RANGE', 'CorpseOutOfRangeEvent')
 end
 
 function DataToColor:OnUIErrorMessage(event, messageType, message)
@@ -207,37 +215,20 @@ function DataToColor:OnBagUpdate(event, containerID)
     if containerID >= 0 and containerID <=4 then
         DataToColor.stack:push(DataToColor.bagQueue, containerID)
         DataToColor:InitInventoryQueue(containerID)
+
+        if containerID >= 1 then
+            DataToColor.stack:push(DataToColor.equipmentQueue, 19 + containerID) -- from tabard
+        end
     end
     --DataToColor:Print("OnBagUpdate "..containerID)
 end
 
 function DataToColor:OnMerchantShow(event)
-    
-    DataToColor.stack:push(DataToColor.gossipQueue, 9999999)
-    TotalPrice = 0
-    for myBags = 0,4 do
-        for bagSlots = 1, GetContainerNumSlots(myBags) do
-            CurrentItemLink = GetContainerItemLink(myBags, bagSlots)
-                if CurrentItemLink then
-                    _, _, itemRarity, _, _, _, _, _, _, _, itemSellPrice = GetItemInfo(CurrentItemLink)
-                    _, itemCount = GetContainerItemInfo(myBags, bagSlots)
-                    if itemRarity == 0 and itemSellPrice ~= 0 then
-                        TotalPrice = TotalPrice + (itemSellPrice * itemCount);
-                        DataToColor:Print("Selling: "..itemCount.." "..CurrentItemLink.." for "..GetCoinTextureString(itemSellPrice * itemCount));
-                        UseContainerItem(myBags, bagSlots)
-                    end
-                end
-        end
-    end
-    if TotalPrice ~= 0 then
-        DataToColor:Print("Total Price for all items: " .. GetCoinTextureString(TotalPrice))
-    else
-        DataToColor:Print("No grey items were sold.")
-    end
+    DataToColor.stack:push(DataToColor.gossipQueue, MERCHANT_SHOW_V)
 end
 
 function DataToColor:OnMerchantClosed(event)
-    DataToColor.stack:push(DataToColor.gossipQueue, 9999998)
+    DataToColor.stack:push(DataToColor.gossipQueue, MERCHANT_CLOSED_V)
 end
 
 function DataToColor:OnPlayerTargetChanged(event)
@@ -256,8 +247,8 @@ function DataToColor:OnGossipShow(event)
         return
     end
 
-    DataToColor.stack:push(DataToColor.gossipQueue, 0)
-    
+    DataToColor.stack:push(DataToColor.gossipQueue, GOSSIP_START)
+
     -- returns variable string - format of one entry
     -- [1] localized name
     -- [2] gossip_type
@@ -269,6 +260,7 @@ function DataToColor:OnGossipShow(event)
             DataToColor.stack:push(DataToColor.gossipQueue, 10000 * count + 100 * (k/2) + DataToColor.C.Gossip[v])
         end
     end
+    DataToColor.stack:push(DataToColor.gossipQueue, GOSSIP_END)
 end
 
 function DataToColor:OnSpellsChanged(event)
@@ -283,17 +275,15 @@ function DataToColor:ActionbarSlotChanged(event, slot)
     end
 end
 
-DataToColor.playerInteractIterator = 0
+function DataToColor:CorpseInRangeEvent(event)
+    DataToColor.corpseInRange = 1
+end
 
-DATA_CONFIG = {
-    ACCEPT_PARTY_REQUESTS = false, -- O
-    DECLINE_PARTY_REQUESTS = false, -- O
-    AUTO_REPAIR_ITEMS = true, -- O
-    AUTO_LEARN_TALENTS = false, -- O
-    AUTO_TRAIN_SPELLS = false, -- O
-    AUTO_RESURRECT = true,
-    SELL_WHITE_ITEMS = true
-}
+function DataToColor:CorpseOutOfRangeEvent(event)
+    DataToColor.corpseInRange = 0
+end
+
+DataToColor.playerInteractIterator = 0
 
 -- List of talents that will be trained
 local talentList = {
@@ -325,23 +315,23 @@ local CORPSE_RETRIEVAL_DISTANCE = 40
 -----------------------------------------------------------------------------
 function DataToColor:HandlePlayerInteractionEvents()
     -- Handles group accept/decline
-    if DATA_CONFIG.ACCEPT_PARTY_REQUESTS or DATA_CONFIG.DECLINE_PARTY_REQUESTS then
+    if DataToColor.DATA_CONFIG.ACCEPT_PARTY_REQUESTS or DataToColor.DATA_CONFIG.DECLINE_PARTY_REQUESTS then
         DataToColor:HandlePartyInvite()
     end
     -- Handles item repairs when talking to item repair NPC
-    if DATA_CONFIG.AUTO_REPAIR_ITEMS then
+    if DataToColor.DATA_CONFIG.AUTO_REPAIR_ITEMS then
         DataToColor:RepairItems()
     end
     -- Handles learning talents, only works after level 10
-    if DATA_CONFIG.AUTO_LEARN_TALENTS then
+    if DataToColor.DATA_CONFIG.AUTO_LEARN_TALENTS then
         --DataToColor:LearnTalents()
     end
     -- Handles train new spells and talents
-    if DATA_CONFIG.AUTO_TRAIN_SPELLS then
+    if DataToColor.DATA_CONFIG.AUTO_TRAIN_SPELLS then
         --DataToColor:CheckTrainer()  
     end
     -- Resurrect player
-    if DATA_CONFIG.AUTO_RESURRECT then
+    if DataToColor.DATA_CONFIG.AUTO_RESURRECT then
         DataToColor:ResurrectPlayer()
     end
 
@@ -351,9 +341,9 @@ end
 -- Declines/Accepts Party Invites.
 function DataToColor:HandlePartyInvite()
     -- Declines party invite if configured to decline
-    if DATA_CONFIG.DECLINE_PARTY_REQUESTS then
+    if DataToColor.DATA_CONFIG.DECLINE_PARTY_REQUESTS then
         DeclineGroup()
-    else if DATA_CONFIG.ACCEPT_PARTY_REQUESTS then
+    else if DataToColor.DATA_CONFIG.ACCEPT_PARTY_REQUESTS then
             AcceptGroup()
         end
     end
@@ -443,7 +433,7 @@ function DataToColor:CheckTrainer()
     if DataToColor:Modulo(DataToColor.playerInteractIterator, 30) == 1 then
         -- First checks that the trainer gossip window is open
         -- DEFAULT_CHAT_FRAME:AddMessage(GetTrainerServdiceInfo(1))
-        if GetTrainerServiceInfo(1) ~= nil and DATA_CONFIG .AUTO_TRAIN_SPELLS then
+        if GetTrainerServiceInfo(1) ~= nil and DataToColor.DATA_CONFIG.AUTO_TRAIN_SPELLS then
             -- LPCONFIG.AUTO_TRAIN_SPELLS = false
             local allAvailableOptions = GetNumTrainerServices()
             local money = GetMoney()

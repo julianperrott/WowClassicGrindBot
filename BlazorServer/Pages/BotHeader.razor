@@ -29,7 +29,7 @@
                 <td>
                     @if (addonReader.PlayerReader.Bits.HasTarget)
                     {
-                        <a href="https://tbc.wowhead.com/npc=@playerReader.TargetId" target="_blank">
+                        <a href="@($"{WApi.NpcId}{playerReader.TargetId}")" target="_blank">
                             <div>
                                 @addonReader.TargetName<br />
                                 (@playerReader.TargetLevel) @((int)playerReader.TargetHealthPercentage) %<br />

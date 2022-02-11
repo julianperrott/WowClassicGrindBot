@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Threading.Tasks;
 
 namespace Game
 {
@@ -7,8 +6,8 @@ namespace Game
     {
         void SetCursorPosition(Point point);
 
-        ValueTask RightClickMouse(Point position);
+        void RightClickMouse(Point position);
 
-        ValueTask LeftClickMouse(Point position);
+        void LeftClickMouse(Point position);
     }
 }

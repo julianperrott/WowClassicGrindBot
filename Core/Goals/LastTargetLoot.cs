@@ -1,8 +1,5 @@
 ﻿using Core.GOAP;
 using Microsoft.Extensions.Logging;
-using SharedLib.Extensions;
-using System.Numerics;
-using System;
 using System.Threading.Tasks;
 
 namespace Core.Goals
@@ -10,7 +7,6 @@ namespace Core.Goals
     public class LastTargetLoot : GoapGoal
     {
         public override float CostOfPerformingAction { get => 4.3f; }
-        public override bool Repeatable => false;
 
         private ILogger logger;
         private readonly ConfigurableInput input;
@@ -43,59 +39,61 @@ namespace Core.Goals
             AddEffect(GoapKey.shouldloot, false);
         }
 
-        public override async ValueTask OnEnter()
+        public override ValueTask OnEnter()
         {
-            await base.OnEnter();
-
             if (bagReader.BagsFull)
             {
                 logger.LogWarning("Inventory is full");
                 SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
             }
-        }
 
-        public override async ValueTask PerformAction()
-        {
             int lastHealth = playerReader.HealthCurrent;
             var lastPosition = playerReader.PlayerLocation;
             lastLoot = playerReader.LastLootTime;
 
-            await stopMoving.Stop();
+            stopMoving.Stop();
             combatUtil.Update();
 
-            await input.TapLastTargetKey($"{GetType().Name}: No corpse name found - check last dead target exists");
-            await wait.Update(1);
+            input.TapLastTargetKey($"{nameof(LastTargetLoot)}: No corpse name found - check last dead target exists");
+            wait.Update(1);
             if (playerReader.HasTarget)
             {
                 if (playerReader.Bits.TargetIsDead)
                 {
-                    await input.TapInteractKey($"{GetType().Name}: Found last dead target");
-                    await wait.Update(1);
+                    input.TapInteractKey($"{nameof(LastTargetLoot)}: Found last dead target");
+                    wait.Update(1);
 
-                    (bool foundTarget, bool moved) = await combatUtil.FoundTargetWhileMoved();
+                    (bool foundTarget, bool moved) = combatUtil.FoundTargetWhileMoved();
                     if (foundTarget)
                     {
                         Log("Goal interrupted!");
-                        return;
+                        return ValueTask.CompletedTask;
                     }
 
                     if (moved)
                     {
-                        await input.TapInteractKey($"{GetType().Name}: Last dead target double");
+                        input.TapInteractKey($"{nameof(LastTargetLoot)}: Last dead target double");
                     }
                 }
                 else
                 {
-                    await input.TapClearTarget($"{GetType().Name}: Don't attack the target!");
+                    input.TapClearTarget($"{nameof(LastTargetLoot)}: Don't attack the target!");
                 }
             }
 
-            await GoalExit();
+            GoalExit();
+
+            return ValueTask.CompletedTask;
         }
 
-        private async Task GoalExit()
+        public override ValueTask PerformAction()
         {
-            if (!await wait.Interrupt(1000, () => lastLoot != playerReader.LastLootTime))
+            return ValueTask.CompletedTask;
+        }
+
+        private void GoalExit()
+        {
+            if (!wait.Till(1000, () => lastLoot != playerReader.LastLootTime))
             {
                 Log($"Loot Successfull");
             }
@@ -110,8 +108,8 @@ namespace Core.Goals
 
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
-                await input.TapClearTarget($"{GetType().Name}: Exit Goal");
-                await wait.Update(1);
+                input.TapClearTarget($"{nameof(LastTargetLoot)}: Exit Goal");
+                wait.Update(1);
             }
         }
 
@@ -119,7 +117,7 @@ namespace Core.Goals
         {
             if (debug)
             {
-                logger.LogInformation($"{GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(LastTargetLoot)}: {text}");
             }
         }
     }

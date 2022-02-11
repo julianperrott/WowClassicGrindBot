@@ -35,12 +35,6 @@ namespace Core.GOAP
                                       HashSet<KeyValuePair<GoapKey, object>> worldState,
                                       HashSet<KeyValuePair<GoapKey, GoapPreCondition>> goal)
         {
-            // reset the actions so we can start fresh with them
-            foreach (GoapGoal a in availableActions)
-            {
-                a.ResetBeforePlanning();
-            }
-
             Node start = new Node(null, 0, worldState, null);
 
             // check what actions can run using their checkProceduralPrecondition

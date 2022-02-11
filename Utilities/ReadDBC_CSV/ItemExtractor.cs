@@ -31,7 +31,7 @@ namespace ReadDBC_CSV
 
         }
 
-        private List<Item> ExtractItems(string path)
+        private static List<Item> ExtractItems(string path)
         {
             int idIndex = -1;
             int nameIndex = -1;
@@ -51,8 +51,8 @@ namespace ReadDBC_CSV
             Action<string> extractLine = line =>
             {
                 string[] values = line.Split(",");
-                if (line.Contains("\""))
-                    values = extractor.SplitQuotes(line);
+                if (line.Contains('\"'))
+                    values = CSVExtractor.SplitQuotes(line);
                 else
                     values = line.Split(",");
 

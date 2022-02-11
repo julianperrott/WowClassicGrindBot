@@ -36,9 +36,9 @@ namespace Core
             lastPosition = playerReader.PlayerLocation;
         }
 
-        public async ValueTask<bool> EnteredCombat()
+        public bool EnteredCombat()
         {
-            await wait.Update(1);
+            wait.Update(1);
             if (!outOfCombat && !playerReader.Bits.PlayerInCombat)
             {
                 Log("Combat Leave");
@@ -56,23 +56,23 @@ namespace Core
             return false;
         }
 
-        public async ValueTask<bool> AquiredTarget()
+        public bool AquiredTarget()
         {
             if (this.playerReader.Bits.PlayerInCombat)
             {
                 if (this.playerReader.PetHasTarget)
                 {
-                    await input.TapTargetPet();
+                    input.TapTargetPet();
                     Log($"Pets target {this.playerReader.TargetTarget}");
                     if (this.playerReader.TargetTarget == TargetTargetEnum.PetHasATarget)
                     {
-                        await input.TapTargetOfTarget($"{GetType().Name}.AquiredTarget: Found target by pet");
+                        input.TapTargetOfTarget($"{nameof(CombatUtil)}.AquiredTarget: Found target by pet");
                         return true;
                     }
                 }
 
-                await input.TapNearestTarget();
-                await wait.Update(1);
+                input.TapNearestTarget();
+                wait.Update(1);
                 if (this.playerReader.HasTarget && playerReader.Bits.TargetInCombat &&
                     playerReader.Bits.TargetOfTargetIsPlayer)
                 {
@@ -80,13 +80,13 @@ namespace Core
                     return true;
                 }
 
-                if (await Wait(200, () => playerReader.HasTarget))
+                if (wait.Till(200, () => playerReader.HasTarget))
                 {
                     return true;
                 }
 
-                await input.TapClearTarget($"{GetType().Name}.AquiredTarget: No target found");
-                await wait.Update(1);
+                input.TapClearTarget($"{nameof(CombatUtil)}.AquiredTarget: No target found");
+                wait.Update(1);
             }
             return false;
         }
@@ -97,67 +97,32 @@ namespace Core
             return distance > 0.01f;
         }
 
-        public async ValueTask<(bool foundTarget, bool hadToMove)> FoundTargetWhileMoved()
+        public (bool foundTarget, bool hadToMove) FoundTargetWhileMoved()
         {
-            bool hadToMove = false;
-            var startedMoving = await wait.InterruptTask(200, () => lastPosition != playerReader.PlayerLocation);
-            if (!startedMoving.Item1)
+            (bool movedTimeOut, double elapsedMs) = wait.Until(200, () => lastPosition != playerReader.PlayerLocation);
+            if (!movedTimeOut)
             {
-                Log($"  Goto corpse({startedMoving.Item2}ms) - Wait till player become stil!");
-                hadToMove = true;
+                Log($"  Went for corpse {elapsedMs}ms");
             }
 
             while (IsPlayerMoving(lastPosition))
             {
                 lastPosition = playerReader.PlayerLocation;
-                if (!await Wait(100, EnteredCombat()))
+                if (!wait.Till(100, EnteredCombat))
                 {
-                    if (await AquiredTarget())
-                        return (true, hadToMove);
+                    if (AquiredTarget())
+                        return (true, !movedTimeOut);
                 }
             }
 
-
-            return (false, hadToMove);
+            return (false, !movedTimeOut);
         }
-
-
-        public static async Task<bool> Wait(int durationMs, Func<bool> exit)
-        {
-            int elapsedMs = 0;
-            while (elapsedMs <= durationMs)
-            {
-                if (exit())
-                    return false;
-
-                await Task.Delay(50);
-                elapsedMs += 50;
-            }
-
-            return true;
-        }
-
-        public static async Task<bool> Wait(int durationMs, ValueTask<bool> exit)
-        {
-            int elapsedMs = 0;
-            while (elapsedMs <= durationMs)
-            {
-                if (await exit)
-                    return false;
-
-                await Task.Delay(50);
-                elapsedMs += 50;
-            }
-
-            return true;
-        }
-
 
         private void Log(string text)
         {
             if (debug)
             {
-                logger.LogInformation($"{GetType().Name}: {text}");
+                logger.LogInformation($"{nameof(CombatUtil)}: {text}");
             }
         }
     }

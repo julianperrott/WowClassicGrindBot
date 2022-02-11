@@ -66,8 +66,7 @@
         "HasCastBar": true,
         "WhenUsable": true,
         "Requirements": [
-          "(Blessing of Protection || Divine Protection && Health% < 60) || (!Blessing of Protection && CD_Blessing of Protection > 0 && !Divine Protection && CD_Divine Protection > 0 && Health% < 50 && TargetHealth%>20 && LastMainHandMs <= 1000)",
-          "CD==0"
+          "(Blessing of Protection || Divine Protection && Health% < 60) || (!Blessing of Protection && CD_Blessing of Protection > 0 && !Divine Protection && CD_Divine Protection > 0 && Health% < 50 && TargetHealth%>20 && LastMainHandMs <= 1000)"
         ]
       },
       {
@@ -157,7 +156,7 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "20_Westfall_Vendor.json",
         "Cost": 6
       }

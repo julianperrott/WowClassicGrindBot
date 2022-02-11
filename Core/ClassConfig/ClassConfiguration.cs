@@ -26,9 +26,9 @@ namespace Core
     {
         public string ClassName { get; set; } = string.Empty;
         public bool Loot { get; set; } = true;
-        public bool Skin { get; set; } = false;
+        public bool Skin { get; set; }
         public bool UseMount { get; set; } = true;
-        public bool KeyboardOnly { get; set; } = false;
+        public bool KeyboardOnly { get; set; }
 
         public string PathFilename { get; set; } = string.Empty;
         public string SpiritPathFilename { get; set; } = string.Empty;
@@ -36,7 +36,7 @@ namespace Core
         public string? OverridePathFilename { get; set; } = string.Empty;
 
         public bool PathThereAndBack { get; set; } = true;
-        public bool PathReduceSteps { get; set; } = false;
+        public bool PathReduceSteps { get; set; }
 
         public Mode Mode { get; set; } = Mode.Grind;
 
@@ -45,7 +45,7 @@ namespace Core
         public int NPCMaxLevels_Above { get; set; } = 1;
         public int NPCMaxLevels_Below { get; set; } = 7;
 
-        public bool CheckTargetGivesExp { get; set; } = false;
+        public bool CheckTargetGivesExp { get; set; }
         public List<string> Blacklist { get; } = new List<string>();
 
         public Dictionary<int, List<SchoolMask>> ImmunityBlacklist { get; } = new Dictionary<int, List<SchoolMask>>();
@@ -126,6 +126,7 @@ namespace Core
             StopAttack.Initialise(addonReader, requirementFactory, logger);
 
             TargetNearestTarget.Key = TargetNearestTargetKey;
+            TargetNearestTarget.Cooldown = 400;
             TargetNearestTarget.Initialise(addonReader, requirementFactory, logger);
 
             TargetPet.Key = TargetPetKey;
@@ -154,7 +155,7 @@ namespace Core
             Approach.WaitForGCD = false;
             Approach.DelayAfterCast = 0;
             Approach.PressDuration = 10;
-            Approach.Cooldown = 150;
+            Approach.Cooldown = 400;
             Approach.SkipValidation = true;
             Approach.Initialise(addonReader, requirementFactory, logger);
 
@@ -173,20 +174,20 @@ namespace Core
             InitializeKeyActions(Pull, Interact, Approach, AutoAttack, StopAttack);
             InitializeKeyActions(Combat, Interact, Approach, AutoAttack, StopAttack);
 
-            logger.LogInformation("[Form] Initialise KeyActions.");
+            logger.LogInformation($"[{nameof(Form)}] Initialise KeyActions.");
             Form.ForEach(i => i.InitialiseForm(addonReader, requirementFactory, logger));
 
-            Pull.PreInitialise("Pull", requirementFactory, logger);
-            Combat.PreInitialise("Combat", requirementFactory, logger);
-            Adhoc.PreInitialise("Adhoc", requirementFactory, logger);
-            NPC.PreInitialise("AdhocNpc", requirementFactory, logger);
-            Parallel.PreInitialise("Parallel", requirementFactory, logger);
+            Pull.PreInitialise(nameof(Pull), requirementFactory, logger);
+            Combat.PreInitialise(nameof(Combat), requirementFactory, logger);
+            Adhoc.PreInitialise(nameof(Adhoc), requirementFactory, logger);
+            NPC.PreInitialise(nameof(NPC), requirementFactory, logger);
+            Parallel.PreInitialise(nameof(Parallel), requirementFactory, logger);
 
-            Pull.Initialise("Pull", addonReader, requirementFactory, logger);
-            Combat.Initialise("Combat", addonReader, requirementFactory, logger);
-            Adhoc.Initialise("Adhoc", addonReader, requirementFactory, logger);
-            NPC.Initialise("AdhocNpc", addonReader, requirementFactory, logger);
-            Parallel.Initialise("Parallel", addonReader, requirementFactory, logger);
+            Pull.Initialise(nameof(Pull), addonReader, requirementFactory, logger);
+            Combat.Initialise(nameof(Combat), addonReader, requirementFactory, logger);
+            Adhoc.Initialise(nameof(Adhoc), addonReader, requirementFactory, logger);
+            NPC.Initialise(nameof(NPC), addonReader, requirementFactory, logger);
+            Parallel.Initialise(nameof(Parallel), addonReader, requirementFactory, logger);
 
             GatherFindKeys.ForEach(key =>
             {

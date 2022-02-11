@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Drawing.Imaging;
+using System.Threading;
 
 namespace SharedLib.NpcFinder
 {
@@ -35,6 +35,7 @@ namespace SharedLib.NpcFinder
 
         private readonly ILogger logger;
         private readonly IBitmapProvider bitmapProvider;
+        private readonly AutoResetEvent autoResetEvent;
 
         public Rectangle Area { private set; get; }
 
@@ -45,12 +46,12 @@ namespace SharedLib.NpcFinder
         public float scaleToRefHeight { private set; get; } = 1;
 
         public List<NpcPosition> Npcs { get; private set; } = new List<NpcPosition>();
-        public int NpcCount => npcs.Count;
+        public int NpcCount => Npcs.Count;
         public int AddCount { private set; get; }
         public int TargetCount { private set; get; }
         public bool MobsVisible => npcs.Count > 0;
         public bool PotentialAddsExist { get; private set; }
-        public DateTime LastPotentialAddsSeen { get; private set; } = default;
+        public DateTime LastPotentialAddsSeen { get; private set; }
 
         private Func<Color, bool> colorMatcher;
 
@@ -94,10 +95,11 @@ namespace SharedLib.NpcFinder
 
         #endregion
 
-        public NpcNameFinder(ILogger logger, IBitmapProvider bitmapProvider)
+        public NpcNameFinder(ILogger logger, IBitmapProvider bitmapProvider, AutoResetEvent autoResetEvent)
         {
             this.logger = logger;
             this.bitmapProvider = bitmapProvider;
+            this.autoResetEvent = autoResetEvent;
 
             UpdateSearchMode();
         }
@@ -116,6 +118,10 @@ namespace SharedLib.NpcFinder
         {
             if (nameType != type)
             {
+                npcNameLine.Clear();
+                npcs.Clear();
+                Npcs.Clear();
+
                 nameType = type;
 
                 if (nameType.HasFlag(NpcNames.Corpse))
@@ -129,7 +135,7 @@ namespace SharedLib.NpcFinder
 
                 UpdateSearchMode();
 
-                logger.LogInformation($"{GetType().Name}.ChangeNpcType = {type} | searchMode = {searchMode}");
+                logger.LogInformation($"{nameof(NpcNameFinder)}.{nameof(ChangeNpcType)} = {type} | searchMode = {searchMode}");
             }
         }
 
@@ -257,7 +263,7 @@ namespace SharedLib.NpcFinder
 
             UpdatePotentialAddsExist();
 
-            Sequence++;
+            autoResetEvent.Set();
         }
 
         public void FakeUpdate()
@@ -266,7 +272,7 @@ namespace SharedLib.NpcFinder
             npcs.Clear();
             Npcs.Clear();
 
-            Sequence++;
+            autoResetEvent.Set();
         }
 
         public void UpdatePotentialAddsExist()
@@ -277,11 +283,11 @@ namespace SharedLib.NpcFinder
             if (AddCount > 0 && TargetCount >= 1)
             {
                 PotentialAddsExist = true;
-                LastPotentialAddsSeen = DateTime.Now;
+                LastPotentialAddsSeen = DateTime.UtcNow;
             }
             else
             {
-                if (PotentialAddsExist && (DateTime.Now - LastPotentialAddsSeen).TotalSeconds > 1)
+                if (PotentialAddsExist && (DateTime.UtcNow - LastPotentialAddsSeen).TotalSeconds > 1)
                 {
                     PotentialAddsExist = false;
                     AddCount = 0;
@@ -375,12 +381,12 @@ namespace SharedLib.NpcFinder
             }
         }
 
-        public async ValueTask WaitForNUpdate(int n)
+        public void WaitForNUpdate(int n)
         {
-            var s = this.Sequence;
-            while (this.Sequence <= s + n)
+            while (n >= 0)
             {
-                await Task.Delay(10);
+                autoResetEvent.WaitOne();
+                n--;
             }
         }
 

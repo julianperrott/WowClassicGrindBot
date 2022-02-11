@@ -4,7 +4,6 @@ using SharedLib.Extensions;
 using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Core.Goals
 {
@@ -45,7 +44,7 @@ namespace Core.Goals
             if (e.Key == GoapKey.corpselocation && e.Value is CorpseLocation corpseLocation)
             {
                 routeInfo?.PoiList.Add(new RouteInfoPoi(corpseLocation.WowPoint, "Corpse", "black", corpseLocation.Radius));
-                logger.LogInformation($"{GetType().Name} Kill location added to list");
+                //logger.LogInformation($"{nameof(GoalThread)} Kill location added to list");
             }
             else if (e.Key == GoapKey.consumecorpse && (bool)e.Value == false)
             {
@@ -63,59 +62,52 @@ namespace Core.Goals
             }
         }
 
-        public async Task GoapPerformGoal()
+        public void GoapPerformGoal()
         {
-            if (this.goapAgent != null)
+            if (goapAgent != null)
             {
-                var newGoal = await this.goapAgent.GetAction();
-
+                var newGoal = goapAgent.GetAction();
                 if (newGoal != null)
                 {
-                    if (newGoal != this.currentGoal)
+                    if (newGoal != currentGoal)
                     {
-                        if (this.currentGoal != null)
+                        if (currentGoal != null)
                         {
                             try
                             {
-                                await this.currentGoal.OnExit();
+                                currentGoal.OnExit();
                             }
                             catch (Exception ex)
                             {
-                                logger.LogError(ex, $"OnExit on {currentGoal.GetType().Name}");
+                                logger.LogError(ex, $"OnExit on {currentGoal.Name}");
                             }
                         }
 
-                        this.currentGoal?.DoReset();
-                        this.currentGoal = newGoal;
+                        currentGoal = newGoal;
 
                         logger.LogInformation("---------------------------------");
-                        logger.LogInformation($"New Plan= {newGoal.GetType().Name}");
+                        logger.LogInformation($"New Plan= {newGoal.Name}");
                         
                         if (currentGoal != null)
                         {
                             try
                             {
-                                await this.currentGoal.OnEnter();
+                                currentGoal.OnEnter();
                             }
                             catch (Exception ex)
                             {
-                                logger.LogError(ex, $"OnEnter on {currentGoal.GetType().Name}");
+                                logger.LogError(ex, $"OnEnter on {currentGoal.Name}");
                             }
                         }
-                    }
-                    else if (!currentGoal.Repeatable)
-                    {
-                        //logger.LogInformation($"Current Plan= {currentGoal.Name} -- not Repeatable");
-                        return;
                     }
 
                     try
                     {
-                        await newGoal.PerformAction();
+                        newGoal.PerformAction();
                     }
                     catch (Exception ex)
                     {
-                        logger.LogError(ex, $"PerformAction on {newGoal.GetType().Name}");
+                        logger.LogError(ex, $"PerformAction on {newGoal.Name}");
                     }
                 }
                 else

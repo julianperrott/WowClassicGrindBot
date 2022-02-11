@@ -42,3 +42,5 @@ dotnet_diagnostic.CS1591.severity = none
 dotnet_diagnostic.CA1822.severity = error
 dotnet_analyzer_diagnostic.category-performance.severity = warning
 dotnet_analyzer_diagnostic.severity = suggestion
+[*.{cs,vb}]
+dotnet_diagnostic.CA1848.severity=suggestion

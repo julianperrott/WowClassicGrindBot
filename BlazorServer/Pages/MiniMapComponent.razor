@@ -41,7 +41,7 @@
     public bool PlayerInCombat => this.addonReader.PlayerReader.Bits.PlayerInCombat;
 
     string image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
-    string eventTime = "";
+    //string eventTime = "";
     string lastnode = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
 
     bool lastNodeFound = false;
@@ -67,7 +67,7 @@
                 lastNodeFound = nodeFound;
 
                 this.image = WowScreen.ToBase64(e.Bitmap, Size);
-                this.eventTime = DateTime.Now.ToString("HH:mm:ss");
+                //this.eventTime = DateTime.Now.ToString("HH:mm:ss");
 
                 if (nodeFound)
                 {

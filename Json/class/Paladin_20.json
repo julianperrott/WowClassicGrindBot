@@ -72,8 +72,7 @@
         "WhenUsable": true,
         "Requirements": [
           "Health% < 75",
-          "(Blessing of Protection || Divine Protection)",
-          "CD == 0"
+          "(Blessing of Protection || Divine Protection)"
         ]
       },
       {
@@ -84,7 +83,6 @@
         "Requirements": [
           "Health% < 60",
           "!Blessing of Protection && CD_Blessing of Protection > 0 && !Divine Protection && CD_Divine Protection > 0",
-          "CD == 0",
           "MobCount < 2",
           "LastMainHandMs <= 1000"
         ],
@@ -96,7 +94,6 @@
         "WhenUsable": true,
         "Requirements": [
           "Mana% > 50",
-          "CD == 0",
           "MobCount > 1"
         ]
       },
@@ -221,7 +218,7 @@
       {
         "Name": "Sell",
         "Key": "C",
-        "Requirement": "BagFull",
+        "Requirements": ["BagFull", "BagGreyItem"],
         "PathFilename": "23_Duskwood_Vendor.json",
         "Cost": 6
       }
