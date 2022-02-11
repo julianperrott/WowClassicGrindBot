@@ -1,4 +1,4 @@
-﻿using Core.GOAP;
+using Core.GOAP;
 using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
@@ -145,9 +145,9 @@ namespace Core.Goals
             return base.OnExit();
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
-            if (this.playerReader.Bits.PlayerInCombat && this.classConfig.Mode != Mode.AttendedGather) { return; }
+            if (this.playerReader.Bits.PlayerInCombat && this.classConfig.Mode != Mode.AttendedGather) { return ValueTask.CompletedTask; }
 
             if (playerReader.Bits.IsDrowning)
             {
@@ -155,11 +155,13 @@ namespace Core.Goals
             }
 
             if (pathState != PathState.Finished)
-                await navigation.Update();
+                navigation.Update();
 
             MountIfRequired();
 
             wait.Update(1);
+
+            return ValueTask.CompletedTask;
         }
 
 

@@ -93,11 +93,11 @@ namespace Core.Goals
             return base.OnExit();
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             if (!playerReader.Bits.IsCorpseInRange)
             {
-                await navigation.Update();
+                navigation.Update();
             }
             else
             {
@@ -108,6 +108,8 @@ namespace Core.Goals
             RandomJump();
 
             wait.Update(1);
+
+            return ValueTask.CompletedTask;
         }
 
         private void RandomJump()

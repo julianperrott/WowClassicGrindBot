@@ -141,7 +141,7 @@ namespace Core.Goals
             return base.OnExit();
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
@@ -159,13 +159,15 @@ namespace Core.Goals
                 AlternateGatherTypes();
             }
 
-            if (playerReader.Bits.PlayerInCombat && classConfig.Mode != Mode.AttendedGather) { return; }
+            if (playerReader.Bits.PlayerInCombat && classConfig.Mode != Mode.AttendedGather) { return ValueTask.CompletedTask; }
 
-            await navigation.Update();
+            navigation.Update();
 
             RandomJump();
 
             wait.Update(1);
+
+            return ValueTask.CompletedTask;
         }
 
         private void StartLookingForTarget()
