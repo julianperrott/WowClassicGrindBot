@@ -96,11 +96,6 @@ namespace Core
             }
         }
 
-        public async ValueTask<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
-        {
-            return await FindRoute(addonReader.UIMapId.Value, addonReader.PlayerReader.PlayerLocation, destination);
-        }
-
         public async Task<bool> PingServer()
         {
             try
