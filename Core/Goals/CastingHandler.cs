@@ -18,7 +18,6 @@ namespace Core.Goals
         
         private readonly ClassConfiguration classConfig;
         private readonly IPlayerDirection direction;
-        private readonly NpcNameFinder npcNameFinder;
         private readonly StopMoving stopMoving;
 
         private readonly KeyAction defaultKeyAction = new KeyAction();
@@ -31,7 +30,7 @@ namespace Core.Goals
         private const int MaxCastTimeMs = 15000;
         private const int MaxAirTimeMs = 10000;
 
-        public CastingHandler(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, ClassConfiguration classConfig, IPlayerDirection direction, NpcNameFinder npcNameFinder, StopMoving stopMoving)
+        public CastingHandler(ILogger logger, ConfigurableInput input, Wait wait, AddonReader addonReader, ClassConfiguration classConfig, IPlayerDirection direction, StopMoving stopMoving)
         {
             this.logger = logger;
             this.input = input;
@@ -42,7 +41,6 @@ namespace Core.Goals
             
             this.classConfig = classConfig;
             this.direction = direction;
-            this.npcNameFinder = npcNameFinder;
             this.stopMoving = stopMoving;
         }
 
