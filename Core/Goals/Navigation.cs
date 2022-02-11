@@ -292,7 +292,7 @@ namespace Core.Goals
                     if (!active)
                         return;
 
-                    if (path == null)
+                    if (!success || path == null)
                     {
                         LogWarn($"Unable to find path {location} -> {wayPoints.Peek()}. Character may stuck!");
                         return;
