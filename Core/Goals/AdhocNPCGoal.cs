@@ -1,4 +1,4 @@
-using Core.GOAP;
+﻿using Core.GOAP;
 using SharedLib.NpcFinder;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,7 +15,6 @@ namespace Core.Goals
         {
             ApproachPathStart,
             FollowPath,
-            MoveBackToPathStart,
             Finished,
         }
 
@@ -169,8 +168,7 @@ namespace Core.Goals
         {
             if (pathState is PathState.ApproachPathStart)
             {
-                LogDebug("Reached the start point of the path.");
-
+                LogDebug("1 Reached the start point of the path.");
                 navigation.SimplifyRouteToWaypoint = false;
             }
         }
@@ -238,17 +236,13 @@ namespace Core.Goals
                         wait.Update(1);
                     }
 
-                    pathState++;
+                    pathState = PathState.Finished;
 
-                    LogDebug("Reached the start point of the path.");
+                    LogDebug("2 Reached the start point of the path.");
                     stopMoving.Stop();
+
+                    navigation.SimplifyRouteToWaypoint = true;
                 }
-            }
-            else if (pathState == PathState.MoveBackToPathStart)
-            {
-                navigation.SimplifyRouteToWaypoint = true;
-                pathState++;
-                stopMoving.Stop();
             }
         }
 
