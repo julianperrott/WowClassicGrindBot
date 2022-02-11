@@ -15,7 +15,6 @@ namespace Core.Goals
         {
             ApproachPathStart,
             FollowPath,
-            MoveBackToPathStart,
             Finished,
         }
 
@@ -122,7 +121,7 @@ namespace Core.Goals
             input.TapClearTarget();
             stopMoving.Stop();
 
-            var path = key.Path;
+            var path = key.Path.ToList();
             navigation.SetWayPoints(path);
 
             pathState = PathState.ApproachPathStart;
@@ -145,9 +144,9 @@ namespace Core.Goals
             return base.OnExit();
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
-            if (this.playerReader.Bits.PlayerInCombat && this.classConfig.Mode != Mode.AttendedGather) { return; }
+            if (this.playerReader.Bits.PlayerInCombat && this.classConfig.Mode != Mode.AttendedGather) { return ValueTask.CompletedTask; }
 
             if (playerReader.Bits.IsDrowning)
             {
@@ -155,11 +154,13 @@ namespace Core.Goals
             }
 
             if (pathState != PathState.Finished)
-                await navigation.Update();
+                navigation.Update();
 
             MountIfRequired();
 
             wait.Update(1);
+
+            return ValueTask.CompletedTask;
         }
 
 
@@ -167,13 +168,12 @@ namespace Core.Goals
         {
             if (pathState is PathState.ApproachPathStart)
             {
-                LogDebug("Reached the start point of the path.");
-
+                LogDebug("1 Reached the start point of the path.");
                 navigation.SimplifyRouteToWaypoint = false;
             }
         }
 
-        private async void Navigation_OnDestinationReached(object? sender, EventArgs e)
+        private void Navigation_OnDestinationReached(object? sender, EventArgs e)
         {
             if (pathState == PathState.ApproachPathStart)
             {
@@ -219,6 +219,7 @@ namespace Core.Goals
                     wait.Update(1);
 
                     var path = key.Path.ToList();
+                    path.Reverse();
                     navigation.SetWayPoints(path);
 
                     pathState++;
@@ -231,21 +232,17 @@ namespace Core.Goals
                     // instead keep it trapped to follow the route back
                     while (navigation.HasWaypoint())
                     {
-                        await navigation.Update();
+                        navigation.Update();
                         wait.Update(1);
                     }
 
-                    pathState++;
+                    pathState = PathState.Finished;
 
-                    LogDebug("Reached the start point of the path.");
+                    LogDebug("2 Reached the start point of the path.");
                     stopMoving.Stop();
+
+                    navigation.SimplifyRouteToWaypoint = true;
                 }
-            }
-            else if (pathState == PathState.MoveBackToPathStart)
-            {
-                navigation.SimplifyRouteToWaypoint = true;
-                pathState++;
-                stopMoving.Stop();
             }
         }
 

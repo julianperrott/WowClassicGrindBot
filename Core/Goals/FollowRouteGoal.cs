@@ -76,6 +76,7 @@ namespace Core.Goals
             this.targetFinder = targetFinder;
 
             this.navigation = navigation;
+            navigation.OnPathCalculated += Navigation_OnPathCalculated;
             navigation.OnDestinationReached += Navigation_OnDestinationReached;
             navigation.OnWayPointReached += Navigation_OnWayPointReached;
 
@@ -100,6 +101,15 @@ namespace Core.Goals
                 {
                     StartLookingForTarget();
                     navigation.ResetStuckParameters();
+
+                    if (!navigation.HasWaypoint())
+                    {
+                        RefillWaypoints(true);
+                    }
+                    else
+                    {
+                        navigation.Resume();
+                    }
                 }
             }
         }
@@ -141,7 +151,7 @@ namespace Core.Goals
             return base.OnExit();
         }
 
-        public override async ValueTask PerformAction()
+        public override ValueTask PerformAction()
         {
             if (playerReader.HasTarget && playerReader.Bits.TargetIsDead)
             {
@@ -159,13 +169,15 @@ namespace Core.Goals
                 AlternateGatherTypes();
             }
 
-            if (playerReader.Bits.PlayerInCombat && classConfig.Mode != Mode.AttendedGather) { return; }
+            if (playerReader.Bits.PlayerInCombat && classConfig.Mode != Mode.AttendedGather) { return ValueTask.CompletedTask; }
 
-            await navigation.Update();
+            navigation.Update();
 
             RandomJump();
 
             wait.Update(1);
+
+            return ValueTask.CompletedTask;
         }
 
         private void StartLookingForTarget()
@@ -244,6 +256,11 @@ namespace Core.Goals
         }
 
         #region Refill rules
+
+        private void Navigation_OnPathCalculated(object? sender, EventArgs e)
+        {
+            MountIfRequired();
+        }
 
         private void Navigation_OnDestinationReached(object? sender, EventArgs e)
         {

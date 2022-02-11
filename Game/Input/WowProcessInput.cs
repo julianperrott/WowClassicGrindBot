@@ -8,6 +8,8 @@ namespace Game
 {
     public partial class WowProcessInput : IMouseInput
     {
+        private readonly bool log = true;
+
         private const int MIN_DELAY = 25;
         private const int MAX_DELAY = 55;
 
@@ -41,7 +43,7 @@ namespace Game
                 }
             }
 
-            if (!string.IsNullOrEmpty(description))
+            if (log && !string.IsNullOrEmpty(description))
                 LogKeyDown(logger, key, description);
 
             nativeInput.KeyDown((int)key);
@@ -65,7 +67,7 @@ namespace Game
                 }
             }
 
-            if (!string.IsNullOrEmpty(description))
+            if (log && !string.IsNullOrEmpty(description))
                 LogKeyUp(logger, key, description);
 
             nativeInput.KeyUp((int)key);
@@ -103,7 +105,7 @@ namespace Game
             keyDict[key] = true;
             int totalElapsedMs = nativeInput.KeyPress((int)key, milliseconds);
             keyDict[key] = false;
-            if (!string.IsNullOrEmpty(description))
+            if (log && !string.IsNullOrEmpty(description))
             {
                 LogKeyPress(logger, key, description, totalElapsedMs);
             }
@@ -114,7 +116,7 @@ namespace Game
             if (milliseconds < 1)
                 return;
 
-            if (!string.IsNullOrEmpty(description))
+            if (log && !string.IsNullOrEmpty(description))
             {
                 LogKeyPress(logger, key, description, milliseconds);
             }
@@ -126,7 +128,7 @@ namespace Game
 
         public void SetKeyState(ConsoleKey key, bool pressDown, bool forceClick, string description = "")
         {
-            if (!string.IsNullOrEmpty(description))
+            if (log && !string.IsNullOrEmpty(description))
                 description = "SetKeyState-" + description;
 
             if (pressDown) { KeyDown(key, description); } else { KeyUp(key, forceClick, description); }

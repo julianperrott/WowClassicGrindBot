@@ -20,8 +20,6 @@ namespace BlazorServer
 
         private bool Enabled = true;
 
-        private int targetMapId;
-
         public LocalPathingApi(ILogger logger, PPatherService service)
         {
             this.logger = logger;
@@ -51,12 +49,10 @@ namespace BlazorServer
                 return new ValueTask<List<Vector3>>();
             }
 
-            targetMapId = map;
-
             var sw = new Stopwatch();
             sw.Start();
 
-            service.SetLocations(service.GetWorldLocation(map, fromPoint.X, fromPoint.Y, fromPoint.Z), service.GetWorldLocation(targetMapId, toPoint.X, toPoint.Y));
+            service.SetLocations(service.GetWorldLocation(map, fromPoint.X, fromPoint.Y, fromPoint.Z), service.GetWorldLocation(map, toPoint.X, toPoint.Y));
             var path = service.DoSearch(PatherPath.Graph.PathGraph.eSearchScoreSpot.A_Star_With_Model_Avoidance);
 
             if (path == null)
@@ -73,11 +69,6 @@ namespace BlazorServer
             var worldLocations = path.locations.Select(s => service.ToMapAreaSpot(s.X, s.Y, s.Z, map));
             var result = worldLocations.Select(l => new Vector3(l.X, l.Y, l.Z)).ToList();
             return new ValueTask<List<Vector3>>(result);
-        }
-
-        public ValueTask<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
-        {
-            return FindRoute(addonReader.UIMapId.Value, addonReader.PlayerReader.PlayerLocation, destination);
         }
 
         public bool SelfTest()

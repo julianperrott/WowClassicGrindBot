@@ -100,6 +100,12 @@ namespace Core.Goals
 
         public override ValueTask PerformAction()
         {
+            if (key.Charge >= 1)
+            {
+                castingHandler.CastIfReady(key, key.DelayBeforeCast);
+            }
+
+            wait.Update(1);
             return ValueTask.CompletedTask;
         }
     }

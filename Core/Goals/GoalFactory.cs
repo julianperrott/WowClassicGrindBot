@@ -151,6 +151,7 @@ namespace Core
                 {
                     var nav = new Navigation(logger, playerDirection, input, addonReader, stopMoving, stuckDetector, pather, mountHandler);
                     availableActions.Add(new AdhocNPCGoal(logger, input, item, wait, addonReader, nav, stopMoving, npcNameTargeting, classConfig, blacklist, mountHandler, exec));
+                    item.Path.Clear();
                     item.Path.AddRange(ReadPath(item.Name, item.PathFilename));
                 }
 

@@ -75,19 +75,10 @@ namespace Core
 
         public ValueTask<List<Vector3>> FindRoute(int uiMapId, Vector3 fromPoint, Vector3 toPoint)
         {
-            return new ValueTask<List<Vector3>>();
-        }
-
-        public ValueTask<List<Vector3>> FindRouteTo(AddonReader addonReader, Vector3 destination)
-        {
             if (!Client.IsConnected)
             {
                 return new ValueTask<List<Vector3>>();
             }
-
-            int uiMapId = addonReader.UIMapId.Value;
-            Vector3 fromPoint = addonReader.PlayerReader.PlayerLocation;
-            Vector3 toPoint = destination;
 
             try
             {
@@ -123,18 +114,6 @@ namespace Core
                     result.Add(point);
                 }
 
-                if (result.Count > 0)
-                {
-                    addonReader.PlayerReader.ZCoord = result[0].Z;
-                    if (debug)
-                        logger.LogInformation($"PlayerLocation.Z = {addonReader.PlayerReader.PlayerLocation.Z}");
-                }
-                else
-                {
-                    if (debug)
-                        logger.LogWarning($"Found route length is {path.Length}");
-                }
-
                 return new ValueTask<List<Vector3>>(result);
             }
             catch (Exception ex)
@@ -143,7 +122,6 @@ namespace Core
                 Console.WriteLine(ex);
                 return new ValueTask<List<Vector3>>();
             }
-
         }
 
 
