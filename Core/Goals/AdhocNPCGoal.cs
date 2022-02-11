@@ -122,7 +122,7 @@ namespace Core.Goals
             input.TapClearTarget();
             stopMoving.Stop();
 
-            var path = key.Path;
+            var path = key.Path.ToList();
             navigation.SetWayPoints(path);
 
             pathState = PathState.ApproachPathStart;
@@ -175,7 +175,7 @@ namespace Core.Goals
             }
         }
 
-        private async void Navigation_OnDestinationReached(object? sender, EventArgs e)
+        private void Navigation_OnDestinationReached(object? sender, EventArgs e)
         {
             if (pathState == PathState.ApproachPathStart)
             {
@@ -221,6 +221,7 @@ namespace Core.Goals
                     wait.Update(1);
 
                     var path = key.Path.ToList();
+                    path.Reverse();
                     navigation.SetWayPoints(path);
 
                     pathState++;
@@ -233,7 +234,7 @@ namespace Core.Goals
                     // instead keep it trapped to follow the route back
                     while (navigation.HasWaypoint())
                     {
-                        await navigation.Update();
+                        navigation.Update();
                         wait.Update(1);
                     }
 
