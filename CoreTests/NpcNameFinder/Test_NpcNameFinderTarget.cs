@@ -32,10 +32,13 @@ namespace CoreTests
         {
             npcNameFinder.ChangeNpcType(NpcNames.Enemy | NpcNames.Neutral);
 
-            capturer.Capture();
-
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
+            capturer.Capture();
+            stopwatch.Stop();
+            logger.LogInformation($"Capture: {stopwatch.ElapsedMilliseconds}ms");
+
+            stopwatch.Restart();
             this.npcNameFinder.Update();
             stopwatch.Stop();
             logger.LogInformation($"Update: {stopwatch.ElapsedMilliseconds}ms");
