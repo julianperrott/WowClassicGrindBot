@@ -37,6 +37,9 @@ namespace Core
         public event EventHandler? ProfileLoaded;
         public event EventHandler<bool>? StatusChanged;
 
+        public double AvgScreenLatency { get => throw new NotImplementedException(); }
+        public double AvgNPCLatency { get => throw new NotImplementedException(); }
+
         public void Shutdown()
         {
 

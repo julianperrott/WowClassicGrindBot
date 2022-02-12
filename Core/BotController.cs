@@ -15,6 +15,7 @@ using Game;
 using WinAPI;
 using Microsoft.Extensions.Configuration;
 using SharedLib.NpcFinder;
+using Cyotek.Collections.Generic;
 
 namespace Core
 {
@@ -34,7 +35,7 @@ namespace Core
 
         public Thread? screenshotThread { get; set; }
 
-        private const int screenshotTickMs = 150;
+        private const int screenshotTickMs = 200;
         private DateTime lastScreenshot;
 
         public Thread addonThread { get; set; }
@@ -74,6 +75,34 @@ namespace Core
         private readonly AutoResetEvent addonAutoResetEvent = new(false);
         private readonly AutoResetEvent npcNameFinderAutoResetEvent = new(false);
 
+        public double AvgScreenLatency
+        {
+            get
+            {
+                double avg = 0;
+                for (int i = 0; i < ScreenLatencys.Size; i++)
+                {
+                    avg += ScreenLatencys.PeekAt(i);
+                }
+                return avg /= ScreenLatencys.Size;
+            }
+        }
+        private readonly CircularBuffer<double> ScreenLatencys;
+
+        public double AvgNPCLatency
+        {
+            get
+            {
+                double avg = 0;
+                for (int i = 0; i < NPCLatencys.Size; i++)
+                {
+                    avg += NPCLatencys.PeekAt(i);
+                }
+                return avg /= NPCLatencys.Size;
+            }
+        }
+        private readonly CircularBuffer<double> NPCLatencys;
+
         public BotController(ILogger logger, IPPather pather, DataConfig dataConfig, IConfiguration configuration)
         {
             this.logger = logger;
@@ -111,6 +140,9 @@ namespace Core
 
             minimapNodeFinder = new MinimapNodeFinder(WowScreen, new PixelClassifier());
             MinimapImageFinder = minimapNodeFinder as IImageProvider;
+
+            ScreenLatencys = new CircularBuffer<double>(5);
+            NPCLatencys = new CircularBuffer<double>(5);
 
             addonThread = new Thread(AddonRefreshThread);
             addonThread.Start();
@@ -157,14 +189,21 @@ namespace Core
         public void ScreenshotRefreshThread()
         {
             var nodeFound = false;
+            var stopWatch = new Stopwatch();
             while (this.Enabled)
             {
                 if ((DateTime.UtcNow - lastScreenshot).TotalMilliseconds > screenshotTickMs)
                 {
                     if (this.WowScreen.Enabled)
                     {
+                        stopWatch.Restart();
                         this.WowScreen.UpdateScreenshot();
+                        ScreenLatencys.Put(stopWatch.ElapsedMilliseconds);
+
+                        stopWatch.Restart();
                         this.npcNameFinder.Update();
+                        NPCLatencys.Put(stopWatch.ElapsedMilliseconds);
+
                         this.WowScreen.PostProcess();
                     }
                     else
@@ -189,11 +228,10 @@ namespace Core
                         MapId = this.AddonReader.UIMapId.Value,
                         Spot = this.AddonReader.PlayerReader.PlayerLocation
                     });
-                    updatePlayerPostion.Reset();
                     updatePlayerPostion.Restart();
                 }
 
-                Thread.Sleep(10);
+                Thread.Sleep(5);
             }
             this.logger.LogInformation("Screenshot thread stoppped!");
         }

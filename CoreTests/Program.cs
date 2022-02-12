@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using Serilog.Extensions.Logging;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoreTests
@@ -25,7 +26,14 @@ namespace CoreTests
 
             //var test = new Test_NpcNameFinderTarget(logger);
             var test = new Test_NpcNameFinderLoot(logger);
-            test.Execute();
+            int count = 1;
+            int i = 0;
+            while (i < count)
+            {
+                test.Execute();
+                i++;
+                Thread.Sleep(150);
+            }
 
             //MainAsync().GetAwaiter().GetResult();
         }
