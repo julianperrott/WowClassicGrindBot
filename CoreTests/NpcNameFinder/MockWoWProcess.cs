@@ -6,12 +6,12 @@ namespace CoreTests
 {
     public class MockWoWProcess : IMouseInput
     {
-        public ValueTask RightClickMouse(Point position)
+        public void RightClickMouse(Point position)
         {
             throw new System.NotImplementedException();
         }
 
-        public ValueTask LeftClickMouse(Point position)
+        public void LeftClickMouse(Point position)
         {
             throw new System.NotImplementedException();
         }
