@@ -33,6 +33,9 @@ namespace Core
         event System.EventHandler? ProfileLoaded;
         event System.EventHandler<bool> StatusChanged;
 
+        double AvgScreenLatency { get; }
+        double AvgNPCLatency { get; }
+
         void ToggleBotStatus();
         void StopBot();
 
