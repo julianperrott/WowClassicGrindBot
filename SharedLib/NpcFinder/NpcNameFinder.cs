@@ -27,7 +27,7 @@ namespace SharedLib.NpcFinder
 
     public class NpcNameFinder
     {
-        private SearchMode searchMode = SearchMode.Simple;
+        private readonly SearchMode searchMode = SearchMode.Simple;
         private NpcNames nameType = NpcNames.Enemy | NpcNames.Neutral;
 
         private readonly List<LineOfNpcName> npcNameLine = new List<LineOfNpcName>();
@@ -54,8 +54,6 @@ namespace SharedLib.NpcFinder
         public DateTime LastPotentialAddsSeen { get; private set; }
 
         private Func<Color, bool> colorMatcher;
-
-        public int Sequence { get; private set; } = 0;
 
         #region variables
 
