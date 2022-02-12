@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Drawing.Imaging;
 using System.Threading;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace SharedLib.NpcFinder
 {
@@ -336,7 +338,8 @@ namespace SharedLib.NpcFinder
                 BitmapData bitmapData = bitmapProvider.Bitmap.LockBits(new Rectangle(0, 0, bitmapProvider.Bitmap.Width, bitmapProvider.Bitmap.Height), ImageLockMode.ReadOnly, bitmapProvider.Bitmap.PixelFormat);
                 int bytesPerPixel = Bitmap.GetPixelFormatSize(bitmapProvider.Bitmap.PixelFormat) / 8;
 
-                for (int y = Area.Top; y < Area.Height; y += incY)
+                //for (int y = Area.Top; y < Area.Height; y += incY)
+                Parallel.For(Area.Top, Area.Height, y =>
                 {
                     bool isEndOfSection;
                     var lengthStart = -1;
@@ -373,7 +376,7 @@ namespace SharedLib.NpcFinder
                     {
                         npcNameLine.Add(new LineOfNpcName(lengthStart, lengthEnd, y));
                     }
-                }
+                });
 
                 bitmapProvider.Bitmap.UnlockBits(bitmapData);
             }
